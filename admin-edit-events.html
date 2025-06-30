@@ -6,6 +6,10 @@
     <title>Manage Events | Admin Panel</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
@@ -18,7 +22,44 @@
 </head>
 <body class="antialiased">
 
-    <div id="header-placeholder"></div>
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="max-w-4xl mx-auto">
@@ -96,8 +137,37 @@
         </form>
     </div>
 
-    <div id="footer-placeholder"></div>
-    <script src="/js/main.js" defer></script>
+    <footer class="border-t-2 border-gray-800 p-8">
+    <div class="container mx-auto grid md:grid-cols-2">
+        <div>
+             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+             </div>
+        </div>
+        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+            <div>
+                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                <ul>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+            <script src="/js/main.js" defer></script>
     <script>
         const eventList = document.getElementById('event-list');
         const loadingState = document.getElementById('loading-state');

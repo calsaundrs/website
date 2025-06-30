@@ -20,6 +20,10 @@ body {
     letter-spacing: 0.05em;
 }
 
+.font-omnes-pro {
+    font-family: 'Omnes Pro', sans-serif;
+}
+
 /* Core Colour Palette Classes */
 .accent-color { color: #B564F7; }
 .bg-accent-color { background-color: #B564F7; }

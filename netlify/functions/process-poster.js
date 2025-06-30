@@ -81,8 +81,22 @@ exports.handler = async function (event, context) {
 
         const aiResult = await aiResponse.json();
         const textResponse = aiResult.candidates[0].content.parts[0].text;
-        const jsonString = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsedEvents = JSON.parse(jsonString);
+        console.log('Raw AI response:', textResponse);
+        const jsonMatch = textResponse.match(/```json
+([\s\S]*?)
+```/);
+        let jsonString = jsonMatch ? jsonMatch[1].trim() : textResponse.trim();
+        // Aggressively clean up common JSON issues like trailing commas
+        jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
+        console.log('Cleaned JSON string:', jsonString);
+        let parsedEvents;
+        try {
+            parsedEvents = JSON.parse(jsonString);
+        } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            console.error('Problematic JSON string:', jsonString);
+            throw new Error(`Failed to parse AI response as JSON: ${parseError.message}. Raw string: ${jsonString}`);
+        }
 
         return {
             statusCode: 200,
