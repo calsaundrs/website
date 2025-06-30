@@ -26,9 +26,18 @@ async function uploadImage(file) {
 exports.handler = async function (event, context) {
     try {
         const submission = await parser.parse(event);
+        console.log('submission.categoryIds:', submission.categoryIds);
         
         const imageUrl = await uploadImage(submission.files.find(f => f.fieldname === 'promo-image'));
         const venueId = submission.venueId || null;
+        // Ensure submittedCategoryNames is always an array
+        let submittedCategoryNames = submission.categoryIds;
+        if (typeof submittedCategoryNames === 'string') {
+            submittedCategoryNames = [submittedCategoryNames];
+        } else if (!Array.isArray(submittedCategoryNames)) {
+            submittedCategoryNames = [];
+        }
+        
         const combinedDateTime = new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString();
 
         const eventRecord = {
@@ -38,7 +47,6 @@ exports.handler = async function (event, context) {
             "Link":            submission.link || '',
             "Recurring Info":  submission['recurring-info'] || '',
             "Status":          "Pending Review",
-            // --- NEW FIELD ADDED HERE ---
             "Submitter Email": submission['contact-email'] || null
         };
 
@@ -48,6 +56,10 @@ exports.handler = async function (event, context) {
         
         if (venueId && venueId.startsWith('rec')) {
             eventRecord["Venue"] = [venueId];
+        }
+
+        if (submittedCategoryNames.length > 0) {
+            eventRecord["Category"] = submittedCategoryNames;
         }
 
         await base('Events').create([{ fields: eventRecord }]);

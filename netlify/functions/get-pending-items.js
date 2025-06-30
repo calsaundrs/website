@@ -39,8 +39,25 @@ exports.handler = async (event) => {
             'Link', 'Recurring Info', 'Category', 'Promo Image', 'Parent Event Name'
         ]);
 
+        const venueIds = [...new Set(eventRecords.map(rec => rec.fields.Venue).flat().filter(Boolean))];
+        let venueNames = {};
+
+        if (venueIds.length > 0) {
+            const venueRecords = await base('Venues').select({
+                filterByFormula: `OR(${venueIds.map(id => `RECORD_ID() = '${id}'`).join(',')})`,
+                fields: ['Name']
+            }).all();
+            venueRecords.forEach(rec => {
+                venueNames[rec.id] = rec.fields.Name;
+            });
+        }
+
         const formattedEvents = eventRecords.map(record => {
             const newFields = { ...record.fields };
+
+            if (newFields.Venue && newFields.Venue.length > 0) {
+                newFields['Venue Name'] = newFields.Venue.map(id => venueNames[id]).filter(Boolean);
+            }
 
             // Remap 'Submitter Email' to 'Contact Email' as expected by frontend
             if (newFields['Submitter Email']) {

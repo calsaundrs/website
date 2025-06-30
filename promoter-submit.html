@@ -6,17 +6,56 @@
     <title>Submit Your LGBTQ+ Event to Brum Outloud | Simple Form</title>
     <meta name="description" content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
     
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/main.js"></script>
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
 </head>
 <body class="antialiased">
 
-    <header class="p-8">
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
         <nav class="container mx-auto flex justify-between items-center">
             <a href="/" class="font-anton text-2xl tracking-widest text-white">BRUM OUT LOUD</a>
         </nav>
@@ -44,6 +83,12 @@
                               <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue</label>
                               <select id="venue-select" name="venueId" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
                                   <option value="">Loading venues...</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">Categories (Select all that apply)</label>
+                              <select id="category-select" name="categoryIds" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" multiple required>
+                                  <option value="">Loading categories...</option>
                               </select>
                             </div>
                             <div id="new-venue-fields" class="hidden space-y-6 transition-all duration-300">
@@ -82,110 +127,159 @@
     </main>
 
     <script>
-        // All JavaScript from the previous working version remains the same.
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('single-event-form');
-            const venueSelect = document.getElementById('venue-select');
-            const newVenueFields = document.getElementById('new-venue-fields');
-            const newVenueNameInput = document.getElementById('new-venue-name');
-            const newVenueAddressInput = document.getElementById('new-venue-address');
-            const statusDiv = document.getElementById('form-status');
-            const submitButton = document.getElementById('submit-button');
-            const termsCheckbox = document.getElementById('terms-agree');
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('single-event-form');
+        const venueSelect = document.getElementById('venue-select');
+        const categorySelect = document.getElementById('category-select');
+        const newVenueFields = document.getElementById('new-venue-fields');
+        const newVenueNameInput = document.getElementById('new-venue-name');
+        const newVenueAddressInput = document.getElementById('new-venue-address');
+        const statusDiv = document.getElementById('form-status');
+        const submitButton = document.getElementById('submit-button');
+        const termsCheckbox = document.getElementById('terms-agree');
 
-            termsCheckbox.addEventListener('change', () => {
-                submitButton.disabled = !termsCheckbox.checked;
-            });
+        termsCheckbox.addEventListener('change', () => {
+            submitButton.disabled = !termsCheckbox.checked;
+        });
 
-            fetch('/.netlify/functions/get-venue-list')
-                .then(response => response.json())
-                .then(venues => {
-                    venueSelect.innerHTML = '<option value="" disabled selected>Select an existing venue...</option>';
-                    venues.forEach(venue => {
-                        const option = document.createElement('option');
-                        option.value = venue.id;
-                        option.textContent = venue.name;
-                        venueSelect.appendChild(option);
-                    });
-                    venueSelect.insertAdjacentHTML('beforeend', '<option value="__CREATE_NEW__">-- Add a new venue --</option>');
-                })
-                .catch(error => {
-                    console.error('Failed to load venues:', error);
-                    venueSelect.innerHTML = '<option value="">Could not load venues</option>';
+        // --- Categories Population ---
+        // Moved this up to ensure it runs without waiting for the fetch, making the UI feel faster.
+        const categories = ["Comedy", "Drag", "Live Music", "Men Only", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Women Only", "Fetish", "Community", "Exhibition", "Health", "Quiz"];
+        categorySelect.innerHTML = ''; // Clear "Loading..."
+        categories.forEach(categoryName => {
+            const option = document.createElement('option');
+            option.value = categoryName; // Value is the string name
+            option.textContent = categoryName;
+            categorySelect.appendChild(option);
+        });
+
+        // --- Fetch venues ---
+        fetch('/.netlify/functions/get-venue-list')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(venues => {
+                venueSelect.innerHTML = '<option value="" disabled selected>Select an existing venue...</option>';
+                venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.id;
+                    option.textContent = venue.name;
+                    venueSelect.appendChild(option);
                 });
-
-            venueSelect.addEventListener('change', () => {
-                if (venueSelect.value === '__CREATE_NEW__') {
-                    newVenueFields.classList.remove('hidden');
-                    newVenueNameInput.required = true;
-                    newVenueAddressInput.required = true;
-                } else {
-                    newVenueFields.classList.add('hidden');
-                    newVenueNameInput.required = false;
-                    newVenueAddressInput.required = false;
-                }
+                venueSelect.insertAdjacentHTML('beforeend', '<option value="__CREATE_NEW__">-- Add a new venue --</option>');
+            })
+            .catch(error => {
+                console.error('Failed to load venues:', error);
+                venueSelect.innerHTML = '<option value="">Could not load venues</option>';
             });
 
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                submitButton.disabled = true;
-                statusDiv.textContent = 'Submitting, please wait...';
-                statusDiv.className = 'text-center p-4 rounded-lg bg-gray-700 text-white';
+        venueSelect.addEventListener('change', () => {
+            if (venueSelect.value === '__CREATE_NEW__') {
+                newVenueFields.classList.remove('hidden');
+                newVenueNameInput.required = true;
+                newVenueAddressInput.required = true;
+            } else {
+                newVenueFields.classList.add('hidden');
+                newVenueNameInput.required = false;
+                newVenueAddressInput.required = false;
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Basic validation
+            if (!termsCheckbox.checked) {
+                statusDiv.textContent = 'You must agree to the Terms of Submission.';
+                statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
                 statusDiv.classList.remove('hidden');
+                return;
+            }
 
-                let venueId = venueSelect.value;
-                
-                if (venueId === '__CREATE_NEW__') {
-                    try {
-                        const response = await fetch('/.netlify/functions/create-unlisted-venue', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                venueName: newVenueNameInput.value,
-                                address: newVenueAddressInput.value
-                            })
-                        });
-                        const result = await response.json();
-                        if (!response.ok || !result.success) throw new Error(result.message || 'Failed to create venue.');
-                        venueId = result.id;
-                    } catch (error) {
-                        statusDiv.textContent = `Error: ${error.message}`;
-                        statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
-                        submitButton.disabled = false;
-                        return;
-                    }
-                }
+            submitButton.disabled = true;
+            statusDiv.textContent = 'Submitting, please wait...';
+            statusDiv.className = 'text-center p-4 rounded-lg bg-gray-700 text-white';
+            statusDiv.classList.remove('hidden');
 
-                if (!venueId) {
-                    statusDiv.textContent = 'Error: Please select or create a venue.';
-                    statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
-                    submitButton.disabled = false;
-                    return;
-                }
-                
-                const formData = new FormData(form);
-                formData.set('venueId', venueId);
+            let venueId = venueSelect.value;
 
+            if (venueId === '__CREATE_NEW__') {
                 try {
-                     const response = await fetch('/.netlify/functions/event-submission', {
+                    const response = await fetch('/.netlify/functions/create-unlisted-venue', {
                         method: 'POST',
-                        body: formData
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            venueName: newVenueNameInput.value,
+                            address: newVenueAddressInput.value
+                        })
                     });
-                    if (!response.ok) throw new Error('Server error during event submission.');
-                    
-                    statusDiv.textContent = 'Success! Your event has been submitted for review.';
-                    statusDiv.className = 'text-center p-4 rounded-lg bg-green-800 text-white';
-                    form.reset();
-                    newVenueFields.classList.add('hidden');
-                    venueSelect.value = "";
-
+                    const result = await response.json();
+                    if (!response.ok || !result.success) throw new Error(result.message || 'Failed to create venue.');
+                    venueId = result.id;
                 } catch (error) {
                     statusDiv.textContent = `Error: ${error.message}`;
                     statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
-                    submitButton.disabled = false;
+                    submitButton.disabled = !termsCheckbox.checked; // Re-enable based on terms
+                    return;
                 }
+            }
+
+            if (!venueId) {
+                statusDiv.textContent = 'Error: Please select or create a venue.';
+                statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
+                submitButton.disabled = !termsCheckbox.checked;
+                return;
+            }
+            
+            const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+            if (selectedCategories.length === 0) {
+                 statusDiv.textContent = 'Error: Please select at least one category.';
+                 statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
+                 submitButton.disabled = !termsCheckbox.checked;
+                 return;
+            }
+
+            const formData = new FormData(form);
+            formData.set('venueId', venueId);
+
+            // The 'lambda-multipart-parser' correctly handles multiple form fields with the same name.
+            // We need to remove the placeholder 'categoryIds' that FormData creates from the select element
+            // and append our actual selected values.
+            formData.delete('categoryIds');
+            selectedCategories.forEach(categoryName => {
+                formData.append('categoryIds', categoryName);
             });
+            
+
+            try {
+                const response = await fetch('/.netlify/functions/event-submission', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    // Try to get a more specific error message from the server response
+                    const errorResult = await response.json().catch(() => ({ message: 'Server error during event submission.' }));
+                    throw new Error(errorResult.message || `Server responded with status: ${response.status}`);
+                }
+
+                statusDiv.textContent = 'Success! Your event has been submitted for review.';
+                statusDiv.className = 'text-center p-4 rounded-lg bg-green-800 text-white';
+                form.reset();
+                newVenueFields.classList.add('hidden');
+                termsCheckbox.checked = false;
+                submitButton.disabled = true;
+
+            } catch (error) {
+                statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
+                submitButton.disabled = !termsCheckbox.checked;
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>
