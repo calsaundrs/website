@@ -3,6 +3,18 @@ const fetch = require('node-fetch');
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
+// Helper to get the effective "today" for event filtering (6 AM cutoff)
+const getEffectiveToday = () => {
+    const now = new Date();
+    const effectiveToday = new Date(now);
+    // If current time is before 6 AM, consider it part of the previous day for event filtering
+    if (now.getHours() < 6) {
+        effectiveToday.setDate(now.getDate() - 1);
+    }
+    effectiveToday.setHours(6, 0, 0, 0); // Set to 6 AM
+    return effectiveToday;
+};
+
 // Helper function to create HTML for a list of tags in the sidebar
 function createTagsHtml(tags, iconClass) {
     if (!tags || tags.length === 0) return '';
@@ -191,7 +203,8 @@ exports.handler = async function (event, context) {
         if (eventRecordIds && eventRecordIds.length > 0) {
             try {
                 const eventFilterFormula = `OR(${eventRecordIds.map(id => `RECORD_ID() = '${id}'`).join(',')})`;
-                const finalFilter = `AND(${eventFilterFormula}, IS_AFTER({Date}, TODAY()))`;
+                const effectiveToday = getEffectiveToday();
+                const finalFilter = `AND(${eventFilterFormula}, IS_AFTER({Date}, DATETIME_PARSE('${effectiveToday.toISOString().split('T')[0]}', 'YYYY-MM-DD')))`
 
                 const eventRecords = await base('Events').select({
                     filterByFormula: finalFilter,
