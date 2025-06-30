@@ -206,7 +206,108 @@ exports.handler = async function (event, context) {
         }
 
         // --- Rest of your HTML generation logic remains the same ---
-        const eventRecord = eventRecords[0];
+        let eventRecord = null;
+        if (dateMatch) {
+            // Case 1: Slug has a date. This is a specific child event.
+            console.log(`[${slug}] Attempting to fetch specific dated event.`);
+            const dateFromSlug = dateMatch[0];
+            eventRecords = await base('Events').select({
+                maxRecords: 1,
+                filterByFormula: `AND({Slug} = "${slug}", DATETIME_FORMAT(Date, 'YYYY-MM-DD') = '${dateFromSlug}')`
+            }).firstPage();
+            console.log(`[${slug}] Specific dated event records found: ${eventRecords.length > 0}`);
+            if (eventRecords && eventRecords.length > 0) {
+                eventRecord = eventRecords[0];
+            } else {
+                // If a dated slug was provided but no event found, it's a 404
+                console.log(`[${slug}] Dated event not found.`);
+                return { statusCode: 404, body: `Event '${slug}' not found.` };
+            }
+
+        } else {
+            // Case 2: Slug does NOT have a date. This could be a standalone event or a parent series.
+            // First, try to find a standalone event with this exact dateless slug.
+            console.log(`[${slug}] Attempting to fetch standalone dateless event.`);
+            eventRecords = await base('Events').select({
+                maxRecords: 1,
+                filterByFormula: `{Slug} = "${slug}"`
+            }).firstPage();
+            console.log(`[${slug}] Standalone dateless event records found: ${eventRecords.length > 0}`);
+
+            if (eventRecords && eventRecords.length > 0) {
+                eventRecord = eventRecords[0];
+            } else {
+                // If no standalone event was found, now check if it implies a parent event series
+                // that should redirect to its next instance.
+                console.log(`[${slug}] Standalone event not found, checking for parent series.`);
+
+                // The filter to find an anchor record for the series.
+                // Using FIND to simulate STARTS_WITH
+                const escapedSlug = slug.replace(/"/g, '"'); // Escape any quotes in the slug for the formula
+                const seriesAnchorFilter = `OR({Slug} = "${escapedSlug}", FIND("${escapedSlug}-", {Slug}) = 1)`;
+
+                console.log(`[${slug}] Series Anchor Filter: ${seriesAnchorFilter}`);
+
+                const seriesAnchorRecords = await base('Events').select({
+                    maxRecords: 1,
+                    filterByFormula: seriesAnchorFilter
+                }).firstPage();
+                console.log(`[${slug}] Series Anchor Records found: ${seriesAnchorRecords.length > 0}`);
+
+                if (seriesAnchorRecords && seriesAnchorRecords.length > 0) {
+                    const anchorRecord = seriesAnchorRecords[0];
+                    const rawParentEventName = anchorRecord.fields['Parent Event Name'];
+                    const rawEventName = anchorRecord.fields['Event Name'];
+
+                    console.log(`[${slug}] Raw Parent Event Name from anchor: "${rawParentEventName}"`);
+                    console.log(`[${slug}] Raw Event Name from anchor: "${rawEventName}"`);
+
+                    const seriesNameForQuery = rawParentEventName || rawEventName;
+
+                    if (!seriesNameForQuery) {
+                        console.error(`[${slug}] ERROR: Could not derive series name from anchor record.`);
+                        return { statusCode: 404, body: `Could not identify series name for '${slug}'.` };
+                    }
+
+                    const escapedSeriesName = seriesNameForQuery.replace(/"/g, '"');
+                    const nextInstanceFilter = `AND(OR({Parent Event Name} = "${escapedSeriesName}", {Event Name} = "${escapedSeriesName}"), IS_AFTER({Date}, DATEADD(TODAY(), -1, 'days')))`
+                    console.log(`[${slug}] Next Instance Filter: ${nextInstanceFilter}`);
+
+                    // Find the next upcoming instance of this series
+                    const nextInstanceRecords = await base('Events').select({
+                        maxRecords: 1,
+                        filterByFormula: nextInstanceFilter,
+                        sort: [{ field: 'Date', direction: 'asc' }]
+                    }).firstPage();
+                    console.log(`[${slug}] Next Instance Records found: ${nextInstanceRecords.length > 0}`);
+
+                    if (nextInstanceRecords && nextInstanceRecords.length > 0) {
+                        const nextInstanceSlug = nextInstanceRecords[0].fields.Slug;
+                        if (nextInstanceSlug) {
+                            console.log(`[${slug}] Redirecting to next instance: /event/${nextInstanceSlug}`);
+                            return {
+                                statusCode: 302,
+                                headers: { 'Location': `/event/${nextInstanceSlug}` }
+                            };
+                        }
+                    }
+                    // If a series was identified but no upcoming instance.
+                    console.log(`[${slug}] Series identified, but no upcoming dates found.`);
+                    return { statusCode: 404, body: `Event series '${seriesNameForQuery}' has concluded or has no upcoming dates.` };
+                } else {
+                    // If it's not a dated slug, not a standalone event, and not identifiable as any series.
+                    console.log(`[${slug}] Not found as dated, standalone, or parent series.`);
+                    return { statusCode: 404, body: `Event '${slug}' not found.` };
+                }
+            }
+        }
+
+        // If eventRecord is still null at this point, it means no event was found by any logic.
+        if (!eventRecord) {
+            console.log(`[${slug}] No event record found after all attempts.`);
+            return { statusCode: 404, body: `Event '${slug}' not found.` };
+        }
+
         const fields = eventRecord.fields;
         console.log(`[${slug}] Successfully found event record. Processing page generation.`);
 
@@ -342,7 +443,105 @@ exports.handler = async function (event, context) {
   }
 }
 <\/script><script src="https://cdn.tailwindcss.com"><\/script><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"><link rel="stylesheet" href="/css/main.css"><script src="/js/main.js" defer><\/script><style>.hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); } .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; } .hero-image-container:hover .hero-image-bg { opacity: 1; } .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; } .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); } .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; } .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); } .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); } .suggested-carousel::-webkit-scrollbar { height: 4px; } .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; } .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; }<\/style><\/head><body class="antialiased"><div id="header-placeholder"><\/div><main class="container mx-auto px-8 py-16"><div class="grid lg:grid-cols-3 gap-16"><div class="lg:col-span-2"><div class="hero-image-container mb-8"><img src="${imageUrl}" alt="" class="hero-image-bg" aria-hidden="true"><img src="${imageUrl}" alt="${eventName}" class="hero-image-fg"><\/div><p class="font-semibold accent-color mb-2">EVENT DETAILS<\/p><h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">${eventName}<\/h1><div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}<\/div>${(parentEventName || recurringInfo) && otherInstancesHTML ? `<div class="mt-16"><h2 class="font-anton text-4xl mb-8"><span class="accent-color">Other Events<\/span> in this Series<\/h2><div class="space-y-4">${otherInstancesHTML}<\/div><\/div>` : ''}<\/div><div class="lg:col-span-1"><div class="card-bg p-8 sticky top-8 space-y-6"><div><h3 class="font-bold text-lg accent-color-secondary mb-2">Date & Time<\/h3><p class="text-2xl font-semibold">${eventDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}<\/p><p class="text-xl text-gray-400">${eventDate.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}<\/p>${recurringInfo ? `<p class="mt-2 inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">${recurringInfo}<\/p>` : ''}<\/div><div><h3 class="font-bold text-lg accent-color-secondary mb-2">Location<\/h3>${venueHtml}<\/div>                    ${fields['Link'] ? `<a href="${fields['Link']}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-accent-color text-white font-bold py-4 px-4 rounded-lg hover:bg-accent-color-dark transition-colors">Get Tickets / More Info</a>` : ''}
-                    ${generateAddToCalendarLinks(calendarData)}<div id="add-to-calendar-section" class="border-t border-gray-700 pt-6"><h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Add to Calendar<\/h3><div class="grid grid-cols-1 gap-2"><\/div><\/div><\/div><\/div><\/div>${suggestedEventsHtml}<\/main><div id="footer-placeholder"><\/div><script>const calendarData = ${JSON.stringify(calendarData)}; function toICSDate(dateStr) { return new Date(dateStr).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; } function generateGoogleLink(isSeries) { const params = new URLSearchParams({ action: 'TEMPLATE', text: calendarData.title, dates: toICSDate(calendarData.startTime) + '/' + toICSDate(calendarData.endTime), details: calendarData.description, location: calendarData.location }); if (isSeries && calendarData.isRecurring) { const rrule = 'RRULE:RDATE;VALUE=DATE-TIME:' + calendarData.recurringDates.map(d => toICSDate(d)).join(','); params.set('recur', rrule); } return 'https://www.google.com/calendar/render?' + params.toString(); } function generateICSFile(isSeries) { let icsContent = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Brum Outloud//EN', 'BEGIN:VEVENT', 'UID:' + new Date().getTime() + '@brumoutloud.co.uk', 'DTSTAMP:' + toICSDate(new Date()), 'DTSTART:' + toICSDate(calendarData.startTime), 'DTEND:' + toICSDate(calendarData.endTime), 'SUMMARY:' + calendarData.title, 'DESCRIPTION:' + calendarData.description, 'LOCATION:' + calendarData.location]; if (isSeries && calendarData.isRecurring) { const rdateString = calendarData.recurringDates.map(d => toICSDate(d)).join(','); icsContent.push('RDATE;VALUE=DATE-TIME:' + rdateString); } icsContent.push('END:VEVENT', 'END:VCALENDAR'); const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = calendarData.title.replace(/ /g, '_') + '.ics'; document.body.appendChild(a); a.click(); document.body.removeChild(a); } document.addEventListener('DOMContentLoaded', () => { const container = document.querySelector('#add-to-calendar-section .grid'); let buttonsHTML = ''; if (calendarData.isRecurring) { buttonsHTML = '<a href="' + generateGoogleLink(false) + '" target="_blank" class="bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-600">Google Cal (This Event)<\/a>' + '<button onclick="generateICSFile(false)" class="bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-600">Apple/Outlook (This Event)<\/button>' + '<a href="' + generateGoogleLink(true) + '" target="_blank" class="bg-accent-color text-white font-bold py-3 px-4 rounded-lg text-center hover:opacity-90">Google Cal (All)<\/a>' + '<button onclick="generateICSFile(true)" class="bg-accent-color text-white font-bold py-3 px-4 rounded-lg text-center hover:opacity-90">Apple/Outlook (All)<\/button>'; } else { buttonsHTML = '<a href="' + generateGoogleLink(false) + '" target="_blank" class="bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-600">Google Calendar<\/a>' + '<button onclick="generateICSFile(false)" class="bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-600">Apple/Outlook (.ics)<\/button>'; } container.innerHTML = buttonsHTML; });<\/script><\/body><\/html>`;
+                    ${generateAddToCalendarLinks(calendarData)}<div id="add-to-calendar-section" class="border-t border-gray-700 pt-6"><h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Add to Calendar<\/h3><div class="grid grid-cols-1 gap-2"><\/div><\/div><\/div><\/div><\/div>${suggestedEventsHtml}<\/main><div id="footer-placeholder"><\/div><script>
+        // Helper functions for calendar links
+        function toICSDate(dateStr) {
+            return new Date(dateStr).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        }
+
+        function generateGoogleCalendarLink(event) {
+            const params = new URLSearchParams({
+                action: 'TEMPLATE',
+                text: event.title,
+                dates: toICSDate(event.startTime) + '/' + toICSDate(event.endTime),
+                details: event.description,
+                location: event.location
+            });
+            if (event.isRecurring && event.recurringDates && event.recurringDates.length > 0) {
+                // Google Calendar doesn't directly support RRULE for web links, but we can add RDATE
+                const rdateString = event.recurringDates.map(d => toICSDate(d)).join(',');
+                params.set('recur', 'RRULE:RDATE;VALUE=DATE-TIME:' + rdateString);
+            }
+            return 'https://www.google.com/calendar/render?' + params.toString();
+        }
+
+        function generateOutlookCalendarLink(event) {
+            const params = new URLSearchParams({
+                path: '/calendar/action/compose',
+                rru: 'addevent',
+                startdt: event.startTime,
+                enddt: event.endTime,
+                subject: event.title,
+                body: event.description,
+                location: event.location
+            });
+            return 'https://outlook.live.com/owa/?' + params.toString();
+        }
+
+        function generateYahooCalendarLink(event) {
+            const params = new URLSearchParams({
+                v: 60,
+                view: 'd',
+                type: '20',
+                title: event.title,
+                st: toICSDate(event.startTime),
+                et: toICSDate(event.endTime),
+                desc: event.description,
+                loc: event.location
+            });
+            return 'https://calendar.yahoo.com/?' + params.toString();
+        }
+
+        function generateIcalLink(event) {
+            // For iCal, it's usually a .ics file download
+            return generateIcsFile(event);
+        }
+
+        function generateIcsFile(event) {
+            let icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Brum Outloud//EN',
+                'BEGIN:VEVENT',
+                'UID:' + new Date().getTime() + '@brumoutloud.co.uk',
+                'DTSTAMP:' + toICSDate(new Date()),
+                'DTSTART:' + toICSDate(event.startTime),
+                'DTEND:' + toICSDate(event.endTime),
+                'SUMMARY:' + event.title,
+                'DESCRIPTION:' + event.description.replace(/\n/g, '\n'),
+                'LOCATION:' + event.location
+            ];
+
+            if (event.isRecurring && event.recurringDates && event.recurringDates.length > 0) {
+                const rdateString = event.recurringDates.map(d => toICSDate(d)).join(',');
+                icsContent.push('RDATE;VALUE=DATE-TIME:' + rdateString);
+            }
+
+            icsContent.push('END:VEVENT', 'END:VCALENDAR');
+
+            const blob = new Blob([icsContent.join('\n')], { type: 'text/calendar;charset=utf-8' });
+            return URL.createObjectURL(blob);
+        }
+
+        function generateAddToCalendarLinks(event) {
+            return `
+                <a href="${generateGoogleCalendarLink(event)}" target="_blank" rel="noopener noreferrer" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"><i class="fab fa-google mr-2"><\/i> Google Calendar<\/a>
+                <a href="${generateOutlookCalendarLink(event)}" target="_blank" rel="noopener noreferrer" class="bg-orange-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors duration-200 flex items-center justify-center"><i class="fab fa-windows mr-2"><\/i> Outlook Calendar<\/a>
+                <a href="${generateYahooCalendarLink(event)}" target="_blank" rel="noopener noreferrer" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center"><i class="fab fa-yahoo mr-2"><\/i> Yahoo Calendar<\/a>
+                <a href="${generateIcalLink(event)}" download="${event.title.replace(/ /g, '_')}.ics" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center"><i class="fas fa-calendar-plus mr-2"><\/i> Download iCal<\/a>
+            `;
+        }
+
+        const calendarData = ${JSON.stringify(calendarData)};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const addToCalendarSection = document.getElementById('add-to-calendar-section');
+            if (addToCalendarSection) {
+                addToCalendarSection.querySelector('.grid').innerHTML = generateAddToCalendarLinks(calendarData);
+            }
+        });
+
+    <\/script><\/body><\/html>`;
 
         return {
             statusCode: 200,
