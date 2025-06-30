@@ -47,6 +47,38 @@ function createGooglePhotoGalleryHtml(resolvedPhotos) {
     `;
 }
 
+// *** NEW: Helper function to create a single event card ***
+function createEventCardHtml(instance) {
+    if (!instance) return '';
+
+    const d = new Date(instance.Date);
+    // Fallback for invalid dates
+    const eventDate = !isNaN(d) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date TBC';
+    const eventTime = !isNaN(d) ? d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' }) : '';
+
+    const imageUrl = (instance['Promo Image'] && instance['Promo Image'].length > 0)
+        ? instance['Promo Image'][0].url
+        : 'https://placehold.co/500x281/1a1a1a/f5efe6?text=Event';
+
+    const recurringInfoPill =
+        instance['Recurring Info']
+            ? `<span class="absolute top-3 right-3 bg-accent-color text-white text-xs font-bold px-2 py-1 rounded-full">${instance['Recurring Info']}</span>`
+            : '';
+
+    return `
+        <a href="/event/${instance.Slug}" class="suggested-card block rounded-xl overflow-hidden group bg-gray-800/50">
+            <div class="relative">
+                <img src="${imageUrl}" alt="${instance['Event Name']}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105">
+                ${recurringInfoPill}
+            </div>
+            <div class="p-4">
+                <h4 class="font-bold text-white text-lg mb-1 truncate">${instance['Event Name']}</h4>
+                <p class="text-sm text-gray-400">${eventDate}${eventTime ? ` - ${eventTime}` : ''}</p>
+            </div>
+        </a>
+    `;
+}
+
 // Helper function to generate star rating HTML
 function generateStars(rating) {
     let stars = '';
@@ -144,7 +176,7 @@ exports.handler = async function (event, context) {
         const venueRecords = await base('Venues').select({
             maxRecords: 1,
             filterByFormula: `{Slug} = "${slug}"`,
-            fields: [ "Name", "Description", "Address", "Opening Hours", "Accessibility", "Website", "Instagram", "Facebook", "TikTok", "Photo", "Google Place ID", "Vibe Tags", "Venue Features", "Accessibility Rating", "Accessibility Features", "Parking Exception" ]
+            fields: [ "Name", "Description", "Address", "Opening Hours", "Accessibility", "Website", "Instagram", "Facebook", "TikTok", "Photo", "Google Place ID", "Vibe Tags", "Venue Features", "Accessibility Rating", "Accessibility Features", "Parking Exception", "Events" ]
         }).all();
 
         if (!venueRecords || venueRecords.length === 0) { return { statusCode: 404, body: 'Venue not found.' }; }
@@ -153,6 +185,54 @@ exports.handler = async function (event, context) {
         const venue = venueRecord.fields;
         const venueRecordId = venueRecord.id;
 
+        let upcomingEventsHtml = '';
+        const eventRecordIds = venue['Events']; 
+
+        if (eventRecordIds && eventRecordIds.length > 0) {
+            try {
+                const eventFilterFormula = `OR(${eventRecordIds.map(id => `RECORD_ID() = '${id}'`).join(',')})`;
+                const finalFilter = `AND(${eventFilterFormula}, IS_AFTER({Date}, TODAY()))`;
+
+                const eventRecords = await base('Events').select({
+                    filterByFormula: finalFilter,
+                    sort: [{ field: 'Date', direction: 'asc' }],
+                    fields: ["Event Name", "Date", "Slug", "Recurring Info", "Promo Image"]
+                }).all();
+
+                if (eventRecords && eventRecords.length > 0) {
+                    const allEvents = eventRecords.map(r => r.fields);
+                    const recurringEvents = allEvents.filter(e => e['Recurring Info']);
+                    const oneOffEvents = allEvents.filter(e => !e['Recurring Info']);
+
+                    // --- UPDATED: Use the new card helper and wrap in a grid ---
+                    const recurringEventsHTML = recurringEvents.length > 0 
+                        ? recurringEvents.slice(0, 4).map(createEventCardHtml).join('') 
+                        : '';
+
+                    const oneOffEventsHTML = oneOffEvents.length > 0 
+                        ? oneOffEvents.slice(0, 4).map(createEventCardHtml).join('') 
+                        : '';
+
+                    upcomingEventsHtml = `
+                        ${recurringEventsHTML ? `
+                        <div class="mt-16">
+                            <h2 class="font-bold text-3xl accent-color-secondary mb-6">Regular Events</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${recurringEventsHTML}</div>
+                        </div>` : ''}
+
+                        ${oneOffEventsHTML ? `
+                        <div class="mt-16">
+                            <h2 class="font-bold text-3xl accent-color-secondary mb-6">Upcoming Events</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${oneOffEventsHTML}</div>
+                        </div>` : ''}
+                    `;
+                }
+            } catch (err) {
+                console.error("Error fetching linked events for venue:", err);
+                upcomingEventsHtml = '';
+            }
+        }
+        
         let placeId = venue['Google Place ID'];
         let googleRatingHtml = '';
         let googleReviewsHtml = '';
@@ -183,8 +263,7 @@ exports.handler = async function (event, context) {
                         const { rating, user_ratings_total, reviews, url, photos } = placeDetailsData.result;
                         if(url) googleMapsUrl = url;
                         if (rating) {
-                            const stars = generateStars(rating);
-                            googleRatingHtml = createSidebarSection( 'Google Rating', `<div class="flex items-center space-x-2 text-xl"><div>${stars}</div><p class="text-white font-semibold">${rating} <span class="text-gray-400">(${user_ratings_total})</span></p></div> <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm mt-1 block">View on Google Maps</a>`, 'fab fa-google' );
+                            googleRatingHtml = createSidebarSection( 'Google Rating', `<div class="flex items-center space-x-2 text-xl"><div>${generateStars(rating)}</div><p class="text-white font-semibold">${rating} <span class="text-gray-400">(${user_ratings_total})</span></p></div> <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm mt-1 block">View on Google Maps</a>`, 'fab fa-google' );
                         }
                         if (reviews && reviews.length > 0) {
                             googleReviewsHtml = `<div class="mt-24"><h2 class="font-anton text-5xl text-white mb-8">Recent Reviews from Google</h2><div class="space-y-4">${reviews.slice(0, 3).map(review => { const reviewStars = generateStars(review.rating); let reviewText = review.text; let readMoreLink = ''; if (reviewText.length > 280) { reviewText = reviewText.substring(0, 280) + '...'; readMoreLink = `<a href="${googleMapsUrl}" target="_blank" class="text-blue-400 hover:underline text-xs">Read more on Google</a>`; } return `<div class="card-bg p-4 space-y-2"><div class="flex items-center justify-between"><p class="font-semibold text-white">${review.author_name}</p><div class="text-xs">${reviewStars}</div></div><p class="text-gray-300 text-sm">${reviewText}</p>${readMoreLink}</div>` }).join('')}<div class="mt-8 text-center"><img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;"></div></div></div>`;
@@ -195,7 +274,7 @@ exports.handler = async function (event, context) {
                                 try {
                                     const photoResponse = await fetch(photoApiUrl, { redirect: 'manual' });
                                     const finalUrl = photoResponse.headers.get('location');
-                                    if (finalUrl) { return { finalUrl: finalUrl, title: photo.html_attributions[0].replace(/<[^>]*>/g, '') || 'Venue Photo' }; }
+                                    if (finalUrl) { return { finalUrl: finalUrl, title: photo.html_attributions[0].replace(/<[^>]*>/g, '') || 'Venue Photo' }; } 
                                 } catch (e) { console.error("Could not resolve photo URL", e); return null; }
                             });
                             const resolvedPhotos = (await Promise.all(photoPromises)).filter(p => p !== null);
@@ -233,35 +312,20 @@ exports.handler = async function (event, context) {
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/main.js" defer></script>
     <style>
-        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); } .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; } .hero-image-container:hover .hero-image-bg { opacity: 1; } .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; } .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); } .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; } .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); } .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); } .suggested-carousel::-webkit-scrollbar { height: 4px; } .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; } .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; }
-        
-        /* --- CUSTOM LIGHTBOX STYLES --- */
+        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); } .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; } .hero-image-container:hover .hero-image-bg { opacity: 1; } .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; } .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); } .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; } .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); } .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); } .suggested-carousel::-webkit-scrollbar { height: 4px; } .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; } .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; } 
         .custom-lightbox { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
         .custom-lightbox.active { display: flex; }
         .custom-lightbox-content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;}
         .custom-lightbox-image { width: auto; height: auto; max-width: 95vw; max-height: 85vh; object-fit: contain; border-radius: 1rem; }
-        .custom-lightbox-close, .custom-lightbox-prev, .custom-lightbox-next {
-            cursor: pointer;
-            position: absolute;
-            color: white;
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            user-select: none;
-            transition: background-color 0.2s;
-            z-index: 10000;
-        }
+        .custom-lightbox-close, .custom-lightbox-prev, .custom-lightbox-next { cursor: pointer; position: absolute; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 24px; user-select: none; transition: background-color 0.2s; z-index: 10000; }
         .custom-lightbox-close:hover, .custom-lightbox-prev:hover, .custom-lightbox-next:hover { background-color: rgba(0,0,0,0.8); }
         .custom-lightbox-close { top: 15px; right: 15px; }
         .custom-lightbox-prev { left: 15px; top: 50%; transform: translateY(-50%); }
         .custom-lightbox-next { right: 15px; top: 50%; transform: translateY(-50%); }
         .custom-lightbox-title { text-align: center; color: white; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; max-width: 80vw; }
     </style>
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body class="antialiased">
     <div id="header-placeholder"></div>
@@ -272,6 +336,7 @@ exports.handler = async function (event, context) {
                 <p class="font-semibold accent-color mb-2">VENUE DETAILS</p>
                 <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">${venue.Name}</h1>
                 <div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}</div>
+                ${upcomingEventsHtml}
                 ${photoGalleryHtml}
             </div>
             <div class="lg:col-span-1">
@@ -374,7 +439,7 @@ exports.handler = async function (event, context) {
 
         return { statusCode: 200, headers: { 'Content-Type': 'text/html' }, body: html };
     } catch (error) {
-        console.error(error);
-        return { statusCode: 500, body: 'Server error building venue page.' };
+        console.error("Server error building venue page:", error);
+        return { statusCode: 500, body: `Server error building venue page. Error: ${error.toString()}` };
     }
 };
