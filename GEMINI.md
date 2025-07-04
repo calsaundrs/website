@@ -103,8 +103,11 @@ This section tracks identified bugs and their current statuses.
 *   **Day logic:** For the purposes of a nightlife events website, we need to consider the period between midnight and 6 am as part of the day before, as some events may even start at midnight on June 26th, for example, yet our current logic would place that at the morning of that date rather than a continuation of that date's nighttime.
     *   **Resolution:** Implemented `getEffectiveToday()` helper function in `netlify/functions/get-venue-details.js` to adjust the "today" cutoff to 6 AM, ensuring accurate filtering for nightlife events.
     *   **Status:** RESOLVED
-*   **Add to Calendar Link:** The "Add to Calendar" functionality is missing or broken, especially for recurring events.
-    *   **Resolution:** Added helper functions (`generateGoogleCalendarLink`, `generateOutlookCalendarLink`, `generateIcalLink`, `generateYahooCalendarLink`, `generateIcsFile`) and integrated them into `netlify/functions/get-event-details.js` to provide "Add to Calendar" links for events.
+   **Add to Calendar button not working.**
+    *   **Resolution:** The `get-event-details` serverless function was generating incorrect data for recurring events in both Google Calendar and ICS files. The function has been updated to correctly format the recurring dates for both calendar types, ensuring that all events in a series are added to the user's calendar.
+    *   **Status:** RESOLVED
+*   **Add to calendar for event series only adds the first event**
+    *   **Resolution:** This issue was resolved as part of the fix for the "Add to Calendar button not working" bug. The `get-event-details` serverless function now correctly formats recurring event data for all calendar types, ensuring all events in a series are added.
     *   **Status:** RESOLVED
 
 ## Next Steps
