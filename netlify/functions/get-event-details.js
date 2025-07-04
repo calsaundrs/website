@@ -87,9 +87,17 @@ exports.handler = async function (event, context) {
                     const suggEventDate = new Date(suggEvent.get('Date'));
                     const suggImageUrl = suggEvent.get('Promo Image') ? suggEvent.get('Promo Image')[0].url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
                     const suggEventSlug = suggEvent.get('Slug');
-                    return `<a href="/event/${suggEventSlug}" class="suggested-card aspect-[2/3] w-[calc(100%-2rem)] sm:w-10/12 md:w-5/12 lg:w-[32%] flex-shrink-0 relative overflow-hidden flex flex-col justify-end snap-start"><div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${suggImageUrl}')"></div><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div><div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-center p-2 rounded-lg z-20"><p class="font-bold text-xl leading-none">${suggEventDate.getDate()}</p><p class="text-sm uppercase">${suggEventDate.toLocaleDateString('en-GB', { month: 'short' })}</p></div><div class="relative z-10 p-4"><h4 class="font-extrabold text-white text-2xl">${suggEventName}</h4></div></a>`;
+                    return `<a href="/event/${suggEventSlug}" class="suggested-card block rounded-xl overflow-hidden group bg-gray-800/50">
+            <div class="relative">
+                <img src="${suggImageUrl}" alt="${suggEventName}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105">
+            </div>
+            <div class="p-4">
+                <h4 class="font-bold text-white text-lg mb-1 truncate">${suggEventName}</h4>
+                <p class="text-sm text-gray-400">${suggEventDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            </div>
+        </a>`;
                 }).join('');
-                suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="suggested-carousel flex overflow-x-auto gap-6 snap-x snap-mandatory px-4">${suggestedCardsHtml}</div></div>`;
+                suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${suggestedCardsHtml}</div></div>`;
             }
         }
 
