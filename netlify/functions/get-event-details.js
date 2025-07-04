@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
-// All helper functions (getBritishTime, etc.) from your original file remain at the top.
+// All helper functions from your original file remain at the top.
 
 exports.handler = async function (event, context) {
     const slug = event.path.split("/").pop();
@@ -85,25 +85,18 @@ exports.handler = async function (event, context) {
                 const suggestedCardsHtml = suggestedRecords.map(suggEvent => {
                     const suggEventName = suggEvent.get('Event Name');
                     const suggEventDate = new Date(suggEvent.get('Date'));
-                    const suggCloudinaryPublicId = suggEvent.get('Cloudinary Public ID');
-                    const suggImageUrl = suggCloudinaryPublicId ? getCloudinaryUrl(suggCloudinaryPublicId, 400, 600) : (suggEvent.get('Promo Image') ? suggEvent.get('Promo Image')[0].url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event');
+                    const suggImageUrl = suggEvent.get('Promo Image') ? suggEvent.get('Promo Image')[0].url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
                     const suggEventSlug = suggEvent.get('Slug');
-                    return `<a href="/event/${suggEventSlug}" class="suggested-card aspect-[3/4] w-[80vw] md:w-5/12 lg:w-[32%] flex-shrink-0 relative overflow-hidden flex flex-col justify-end"><div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${suggImageUrl}')"></div><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div><div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-center p-2 rounded-lg z-20"><p class="font-bold text-base leading-none sm:text-xl">${suggEventDate.getDate()}</p><p class="text-xs uppercase sm:text-sm">${suggEventDate.toLocaleDateString('en-GB', { month: 'short' })}</p></div><div class="relative z-10 p-2 sm:p-4"><h4 class="font-extrabold text-white text-xl sm:text-2xl break-words">${suggEventName}</h4></div></a>`;
+                    return `<a href="/event/${suggEventSlug}" class="suggested-card aspect-[2/3] w-10/12 md:w-5/12 lg:w-[32%] flex-shrink-0 relative overflow-hidden flex flex-col justify-end snap-start"><div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${suggImageUrl}')"></div><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div><div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-center p-2 rounded-lg z-20"><p class="font-bold text-xl leading-none">${suggEventDate.getDate()}</p><p class="text-sm uppercase">${suggEventDate.toLocaleDateString('en-GB', { month: 'short' })}</p></div><div class="relative z-10 p-4"><h4 class="font-extrabold text-white text-2xl">${suggEventName}</h4></div></a>`;
                 }).join('');
-                suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="suggested-carousel flex overflow-x-auto gap-4 snap-x snap-mandatory">${suggestedCardsHtml}</div></div>`;
+                suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="suggested-carousel flex overflow-x-auto gap-6 snap-x snap-mandatory pr-6">${suggestedCardsHtml}</div></div>`;
             }
         }
 
         const eventDate = new Date(fields['Date']);
         const description = fields['Description'] || 'No description provided.';
         const pageUrl = `https://brumoutloud.co.uk${event.path}`;
-        const cloudinaryCloudName = 'dbxhpjoiz';
-        const getCloudinaryUrl = (publicId, width, height) => {
-            return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
-        };
-
-        const cloudinaryPublicId = fields['Cloudinary Public ID'];
-        const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 1200, 675) : (fields['Promo Image'] ? fields['Promo Image'][0].url : 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud');
+        const imageUrl = fields['Promo Image'] ? fields['Promo Image'][0].url : 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud';
         const endTime = fields['End Time'] ? new Date(fields['End Time']) : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
 
         const calendarData = {
@@ -124,19 +117,27 @@ exports.handler = async function (event, context) {
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
+    
     <style>
-        .hero-image-container { position: relative; width: auto; max-width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); } 
-        .hero-image-bg { position: absolute; top: 0; left: 0; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; } 
-        .hero-image-container:hover .hero-image-bg { opacity: 1; } 
-        .hero-image-fg { position: relative; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; } 
-        .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); }
-        .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; box-sizing: border-box; }
+        .hero-image-link { display: block; position: relative; border-radius: 1.25rem; overflow: hidden; cursor: zoom-in; }
+        .hero-image-link .image-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .hero-image-link:hover .image-overlay { opacity: 1; }
+        .hero-image-link img { transition: transform 0.3s ease; }
+        .hero-image-link:hover img { transform: scale(1.05); }
+
+        .custom-lightbox { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
+        .custom-lightbox.active { display: flex; }
+        .custom-lightbox-image { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 0.5rem; }
+        .custom-lightbox-close { cursor: pointer; position: absolute; top: 15px; right: 25px; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 28px; transition: background-color 0.2s; z-index: 10000; line-height: 1; }
+        .custom-lightbox-close:hover { background-color: rgba(0,0,0,0.8); }
+
+        .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
-        .social-button-sm { display: flex; align-items: center; justify-content: center; background-color: #374151; color: white; font-weight: bold; padding: 0.75rem 1rem; border-radius: 0.5rem; text-align: center; transition: background-color 0.2s; } 
+        .social-button-sm { display: flex; align-items: center; justify-content: center; background-color: #374151; color: white; font-weight: bold; padding: 0.75rem 1rem; border-radius: 0.5rem; text-align: center; transition: background-color 0.2s; }
         .social-button-sm:hover { background-color: #4b5563; }
-                .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: #4b5563 #1f2937; } 
-        .suggested-carousel::-webkit-scrollbar { height: 8px; } 
-        .suggested-carousel::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; } 
+        .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: #4b5563 #1f2937; }
+        .suggested-carousel::-webkit-scrollbar { height: 8px; }
+        .suggested-carousel::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
         .suggested-carousel::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 4px; }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -145,32 +146,35 @@ exports.handler = async function (event, context) {
     {
       "@context": "https://schema.org",
       "@type": "Event",
-      "name": "${eventName.replace(/"/g, '\\"')}",
+      "name": "${eventName.replace(/"/g, '\"')}",
       "startDate": "${eventDate.toISOString()}",
       "endDate": "${endTime.toISOString()}",
       "eventStatus": "https://schema.org/EventScheduled",
       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "location": { "@type": "Place", "name": "${venueNameForDisplay.replace(/"/g, '\\"')}", "address": { "@type": "PostalAddress", "addressLocality": "Birmingham", "addressCountry": "UK" } },
+      "location": { "@type": "Place", "name": "${venueNameForDisplay.replace(/"/g, '\"')}", "address": { "@type": "PostalAddress", "addressLocality": "Birmingham", "addressCountry": "UK" } },
       "image": [ "${imageUrl}" ],
-      "description": "${description.replace(/\n/g, ' ').replace(/"/g, '\\"')}",
+      "description": "${description.replace(/\n/g, ' ').replace(/"/g, '\"')}",
       "url": "${pageUrl}",
       "offers": { "@type": "Offer", "url": "${fields['Link'] || pageUrl}", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" }
     }
     <\/script>
+    <link rel="icon" href="/faviconV2.png" type="image/png">
 </head>
-<body class="antialiased overflow-x-hidden">
+<body class="antialiased">
 <div id="header-placeholder"><\/div>
-<main class="container mx-auto px-4 py-16 lg:px-8">
-    <div class="grid lg:grid-cols-3 gap-8 lg:gap-16">
-        <div class="lg:col-span-2 w-full min-w-0">
-            <div class="hero-image-container mb-8 max-w-full">
-                <img src="${imageUrl}" alt="" class="hero-image-bg max-w-full h-auto" aria-hidden="true">
-                <img src="${imageUrl}" alt="${eventName}" class="hero-image-fg max-w-full h-auto">
-            </div>
+<main class="container mx-auto px-8 py-16">
+    <div class="grid lg:grid-cols-3 gap-16">
+        <div class="lg:col-span-2">
+            <a href="${imageUrl}" id="hero-image-link" class="hero-image-link mb-8">
+                <div class="image-overlay">
+                    <i class="fa-solid fa-expand text-white text-4xl"></i>
+                </div>
+                <img src="${imageUrl}" alt="${eventName}" class="aspect-[16/9] w-full object-cover">
+            </a>
             <p class="font-semibold accent-color mb-2">EVENT DETAILS<\/p>
-            <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-4 break-words">${eventName}</h1>
-            <div class="mb-8 max-w-full flex flex-wrap">${tagsHtml}</div>
-            <div class="prose prose-invert prose-lg max-w-none text-gray-300 break-words">${description.replace(/\n/g, '<br>')}</div>
+            <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-4">${eventName}<\/h1>
+            <div class="mb-8">${tagsHtml}</div>
+            <div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}</div>
             ${suggestedEventsHtml}
         </div>
         <div class="lg:col-span-1">
@@ -194,6 +198,11 @@ exports.handler = async function (event, context) {
     </div>
 </main>
 <div id="footer-placeholder"><\/div>
+
+<div id="custom-lightbox" class="custom-lightbox">
+    <span id="custom-lightbox-close" class="custom-lightbox-close">&times;</span>
+    <img id="custom-lightbox-image" class="custom-lightbox-image" src="">
+</div>
         
 <script>
     const calendarData = ${JSON.stringify(calendarData)};
@@ -229,6 +238,7 @@ exports.handler = async function (event, context) {
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const shareContainer = document.getElementById('share-container');
+        if (!shareContainer) return;
         const pageUrl = window.location.href;
         const shareMessage = "Just saw this cool event on Brum Outloud! Wanna go? 👀";
 
@@ -266,6 +276,44 @@ exports.handler = async function (event, context) {
                 });
             });
         }
+    });
+</script>
+<script>
+    // Simplified Lightbox Script for single hero image
+    document.addEventListener('DOMContentLoaded', () => {
+        const heroLink = document.getElementById('hero-image-link');
+        const lightbox = document.getElementById('custom-lightbox');
+        const lightboxImage = document.getElementById('custom-lightbox-image');
+        const lightboxClose = document.getElementById('custom-lightbox-close');
+
+        if (!heroLink || !lightbox || !lightboxImage || !lightboxClose) return;
+
+        const openLightbox = (imageUrl) => {
+            lightboxImage.src = imageUrl;
+            lightbox.classList.add('active');
+        };
+
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            lightboxImage.src = ''; 
+        };
+
+        heroLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openLightbox(heroLink.href);
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
     });
 </script>
         

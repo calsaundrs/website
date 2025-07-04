@@ -36,6 +36,13 @@ function createSidebarSection(title, content, iconClass) {
 }
 
 // Creates gallery from photo data that has already been resolved to direct URLs
+const cloudinaryCloudName = 'dbxhpjoiz'; // Your Cloudinary cloud name
+
+const getCloudinaryUrl = (publicId, width, height) => {
+    return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
+};
+
+// Creates gallery from photo data that has already been resolved to direct URLs
 function createGooglePhotoGalleryHtml(resolvedPhotos) {
     if (!resolvedPhotos || resolvedPhotos.length === 0) {
         return '';
@@ -68,9 +75,11 @@ function createEventCardHtml(instance) {
     const eventDate = !isNaN(d) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date TBC';
     const eventTime = !isNaN(d) ? d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' }) : '';
 
-    const imageUrl = (instance['Promo Image'] && instance['Promo Image'].length > 0)
-        ? instance['Promo Image'][0].url
-        : 'https://placehold.co/500x281/1a1a1a/f5efe6?text=Event';
+    const imageUrl = (instance['Cloudinary Processed'] && instance['Cloudinary Public ID'])
+        ? getCloudinaryUrl(instance['Cloudinary Public ID'], 500, 281)
+        : (instance['Promo Image'] && instance['Promo Image'].length > 0
+            ? instance['Promo Image'][0].url
+            : 'https://placehold.co/500x281/1a1a1a/f5efe6?text=Event');
 
     const recurringInfoPill =
         instance['Recurring Info']
@@ -188,7 +197,7 @@ exports.handler = async function (event, context) {
         const venueRecords = await base('Venues').select({
             maxRecords: 1,
             filterByFormula: `{Slug} = "${slug}"`,
-            fields: [ "Name", "Description", "Address", "Opening Hours", "Accessibility", "Website", "Instagram", "Facebook", "TikTok", "Photo", "Google Place ID", "Vibe Tags", "Venue Features", "Accessibility Rating", "Accessibility Features", "Parking Exception", "Events" ]
+            fields: [ "Name", "Description", "Address", "Opening Hours", "Accessibility", "Website", "Instagram", "Facebook", "TikTok", "Photo", "Photo URL", "Photo Thumbnail URL", "Photo Medium URL", "Google Place ID", "Vibe Tags", "Venue Features", "Accessibility Rating", "Accessibility Features", "Parking Exception", "Events" ]
         }).all();
 
         if (!venueRecords || venueRecords.length === 0) { return { statusCode: 404, body: 'Venue not found.' }; }
@@ -209,7 +218,7 @@ exports.handler = async function (event, context) {
                 const eventRecords = await base('Events').select({
                     filterByFormula: finalFilter,
                     sort: [{ field: 'Date', direction: 'asc' }],
-                    fields: ["Event Name", "Date", "Slug", "Recurring Info", "Promo Image"]
+                    fields: ["Event Name", "Date", "Slug", "Recurring Info", "Cloudinary Public ID", "Cloudinary Processed", "Promo Image"]
                 }).all();
 
                 if (eventRecords && eventRecords.length > 0) {
@@ -299,7 +308,7 @@ exports.handler = async function (event, context) {
             }
         }
 
-        const mainPhoto = venue['Photo'] && venue['Photo'].length > 0 ? venue['Photo'][0].url : 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Venue+Photo';
+        const mainPhoto = venue['Photo URL'] || 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Venue+Photo';
         const description = venue['Description'] || 'No description provided.';
         const openingHoursText = venue['Opening Hours'] ? venue['Opening Hours'].replace(/\n/g, '<br>') : 'Not Available';
         const openingStatus = getOpeningStatus(openingHoursText);
