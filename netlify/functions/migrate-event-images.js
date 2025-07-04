@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
-// All helper functions from your original file remain at the top.
+// All helper functions (getBritishTime, etc.) from your original file remain at the top.
 
 exports.handler = async function (event, context) {
     const slug = event.path.split("/").pop();
@@ -11,7 +11,7 @@ exports.handler = async function (event, context) {
     }
 
     try {
-        // --- The entire event fetching logic remains unchanged ---
+        // --- This entire event fetching logic remains unchanged ---
         const dateMatch = slug.match(/\d{4}-\d{2}-\d{2}$/);
         let eventRecords = [];
 
@@ -117,19 +117,51 @@ exports.handler = async function (event, context) {
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    
     <style>
-        .hero-image-link { display: block; position: relative; border-radius: 1.25rem; overflow: hidden; cursor: zoom-in; }
-        .hero-image-link .image-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; }
-        .hero-image-link:hover .image-overlay { opacity: 1; }
-        .hero-image-link img { transition: transform 0.3s ease; }
-        .hero-image-link:hover img { transform: scale(1.05); }
-
-        .custom-lightbox { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-        .custom-lightbox.active { display: flex; }
-        .custom-lightbox-image { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 0.5rem; }
-        .custom-lightbox-close { cursor: pointer; position: absolute; top: 15px; right: 25px; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 28px; transition: background-color 0.2s; z-index: 10000; line-height: 1; }
-        .custom-lightbox-close:hover { background-color: rgba(0,0,0,0.8); }
+        .hero-image-container { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            background-color: #1e1e1e; 
+            overflow: hidden; 
+            border-radius: 1.25rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+        .hero-image-bg { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            filter: blur(24px) brightness(0.5); 
+            transform: scale(1.1); 
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .hero-image-fg {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+        /* --- CORRECTED HOVER EFFECT --- */
+        .hero-image-container:hover {
+            /* Use an inset shadow for the border effect instead of padding */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 0 1rem #1a1a1a;
+        }
+        .hero-image-container:hover .hero-image-bg { 
+            opacity: 1; 
+            transform: scale(1.2); 
+        }
+        .hero-image-container:hover .hero-image-fg {
+             /* This now works as expected because the container size doesn't change */
+            object-fit: contain;
+        }
 
         .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
@@ -146,31 +178,28 @@ exports.handler = async function (event, context) {
     {
       "@context": "https://schema.org",
       "@type": "Event",
-      "name": "${eventName.replace(/"/g, '\"')}",
+      "name": "${eventName.replace(/"/g, '\\"')}",
       "startDate": "${eventDate.toISOString()}",
       "endDate": "${endTime.toISOString()}",
       "eventStatus": "https://schema.org/EventScheduled",
       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "location": { "@type": "Place", "name": "${venueNameForDisplay.replace(/"/g, '\"')}", "address": { "@type": "PostalAddress", "addressLocality": "Birmingham", "addressCountry": "UK" } },
+      "location": { "@type": "Place", "name": "${venueNameForDisplay.replace(/"/g, '\\"')}", "address": { "@type": "PostalAddress", "addressLocality": "Birmingham", "addressCountry": "UK" } },
       "image": [ "${imageUrl}" ],
-      "description": "${description.replace(/\n/g, ' ').replace(/"/g, '\"')}",
+      "description": "${description.replace(/\n/g, ' ').replace(/"/g, '\\"')}",
       "url": "${pageUrl}",
       "offers": { "@type": "Offer", "url": "${fields['Link'] || pageUrl}", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock" }
     }
     <\/script>
-    <link rel="icon" href="/faviconV2.png" type="image/png">
 </head>
 <body class="antialiased">
 <div id="header-placeholder"><\/div>
 <main class="container mx-auto px-8 py-16">
     <div class="grid lg:grid-cols-3 gap-16">
         <div class="lg:col-span-2">
-            <a href="${imageUrl}" id="hero-image-link" class="hero-image-link mb-8">
-                <div class="image-overlay">
-                    <i class="fa-solid fa-expand text-white text-4xl"></i>
-                </div>
-                <img src="${imageUrl}" alt="${eventName}" class="aspect-[16/9] w-full object-cover">
-            </a>
+            <div class="hero-image-container mb-8">
+                <img src="${imageUrl}" alt="" class="hero-image-bg" aria-hidden="true">
+                <img src="${imageUrl}" alt="${eventName}" class="hero-image-fg">
+            </div>
             <p class="font-semibold accent-color mb-2">EVENT DETAILS<\/p>
             <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-4">${eventName}<\/h1>
             <div class="mb-8">${tagsHtml}</div>
@@ -198,11 +227,6 @@ exports.handler = async function (event, context) {
     </div>
 </main>
 <div id="footer-placeholder"><\/div>
-
-<div id="custom-lightbox" class="custom-lightbox">
-    <span id="custom-lightbox-close" class="custom-lightbox-close">&times;</span>
-    <img id="custom-lightbox-image" class="custom-lightbox-image" src="">
-</div>
         
 <script>
     const calendarData = ${JSON.stringify(calendarData)};
@@ -238,7 +262,6 @@ exports.handler = async function (event, context) {
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const shareContainer = document.getElementById('share-container');
-        if (!shareContainer) return;
         const pageUrl = window.location.href;
         const shareMessage = "Just saw this cool event on Brum Outloud! Wanna go? 👀";
 
@@ -276,44 +299,6 @@ exports.handler = async function (event, context) {
                 });
             });
         }
-    });
-</script>
-<script>
-    // Simplified Lightbox Script for single hero image
-    document.addEventListener('DOMContentLoaded', () => {
-        const heroLink = document.getElementById('hero-image-link');
-        const lightbox = document.getElementById('custom-lightbox');
-        const lightboxImage = document.getElementById('custom-lightbox-image');
-        const lightboxClose = document.getElementById('custom-lightbox-close');
-
-        if (!heroLink || !lightbox || !lightboxImage || !lightboxClose) return;
-
-        const openLightbox = (imageUrl) => {
-            lightboxImage.src = imageUrl;
-            lightbox.classList.add('active');
-        };
-
-        const closeLightbox = () => {
-            lightbox.classList.remove('active');
-            lightboxImage.src = ''; 
-        };
-
-        heroLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            openLightbox(heroLink.href);
-        });
-
-        lightboxClose.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                closeLightbox();
-            }
-        });
     });
 </script>
         
