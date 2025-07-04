@@ -1,5 +1,14 @@
 const Airtable = require('airtable');
+const Airtable = require('airtable');
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+
+const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+
+const getCloudinaryUrl = (publicId, width, height) => {
+    if (!publicId || !cloudinaryCloudName) return null;
+    return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
+};
+
 console.log('AIRTABLE_PERSONAL_ACCESS_TOKEN:', process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN ? 'Loaded' : 'Not Loaded');
 console.log('AIRTABLE_BASE_ID:', process.env.AIRTABLE_BASE_ID ? 'Loaded' : 'Not Loaded');
 
@@ -25,7 +34,8 @@ exports.handler = async (event, context) => {
                 'Event Name', 'Description', 'Date', 'Promo Image', 'Slug', 
                 'Venue Name', 'VenueText', 'Category',
                 'Featured Banner Start Date', 'Featured Banner End Date',
-                'Boosted Listing Start Date', 'Boosted Listing End Date'
+                'Boosted Listing Start Date', 'Boosted Listing End Date',
+                'Cloudinary Public ID'
             ]
         }).all();
         
@@ -49,7 +59,9 @@ exports.handler = async (event, context) => {
                 isBoosted = true;
             }
 
+            const cloudinaryPublicId = fields['Cloudinary Public ID'];
             const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
+            const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
             const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
 
             events.push({

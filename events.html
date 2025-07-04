@@ -466,6 +466,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         function hideEventModal() { document.getElementById('event-modal').style.display = 'none'; }
 
         // --- Date Helper ---
+        const cloudinaryCloudName = 'dbxhpjoiz'; // Your Cloudinary cloud name
+        const getCloudinaryUrl = (publicId, width, height) => {
+            if (!publicId || !cloudinaryCloudName) return null;
+            return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
+        };
+
         const getToday = () => { const now = new Date(); now.setHours(0, 0, 0, 0); return now; };
 
         // --- Filtering Logic ---
@@ -527,7 +533,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             events.forEach(event => {
                 const tagsHTML = event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('');
-                const imageUrl = event.image || 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Event';
+                const imageUrl = event.image || getCloudinaryUrl('brumoutloud_events/placeholder', 400, 400);
 
                 const isBoosted = event.isBoosted;
 

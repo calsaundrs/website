@@ -16,7 +16,7 @@ async function uploadImage(file) {
         const base64String = file.content.toString('base64');
         const dataUri = `data:${file.contentType};base64,${base64String}`;
         const result = await cloudinary.uploader.upload(dataUri, { folder: 'brumoutloud_events' });
-        return result.secure_url;
+        return { secure_url: result.secure_url, public_id: result.public_id };
     } catch (error) {
         console.error("Cloudinary upload error in event-submission:", error);
         return null;
@@ -28,7 +28,9 @@ exports.handler = async function (event, context) {
         const submission = await parser.parse(event);
         console.log('submission.categoryIds:', submission.categoryIds);
         
-        const imageUrl = await uploadImage(submission.files.find(f => f.fieldname === 'promo-image'));
+        const uploadResult = await uploadImage(submission.files.find(f => f.fieldname === 'promo-image'));
+        const imageUrl = uploadResult ? uploadResult.secure_url : null;
+        const cloudinaryPublicId = uploadResult ? uploadResult.public_id : null;
         const venueId = submission.venueId || null;
         // Ensure submittedCategoryNames is always an array
         let submittedCategoryNames = submission.categoryIds;
@@ -52,6 +54,9 @@ exports.handler = async function (event, context) {
 
         if (imageUrl) {
             eventRecord["Promo Image"] = [{ url: imageUrl }];
+        }
+        if (cloudinaryPublicId) {
+            eventRecord["Cloudinary Public ID"] = cloudinaryPublicId;
         }
         
         if (venueId && venueId.startsWith('rec')) {

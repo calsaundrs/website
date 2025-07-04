@@ -29,7 +29,7 @@ Version 1.0 of our listings platform is stable and operational.
 *   **Database:** Airtable
 *   **Authentication:** Firebase Authentication
 *   **AI/ML:** Google's Gemini API
-*   **Image Hosting:** Cloudinary
+*   **Image Hosting:** Cloudinary (Implemented optimized image delivery via Cloudinary URLs in `get-events.js` and `event-submission.js`.)
 
 ## Development Roadmap & Backlog
 
