@@ -62,7 +62,7 @@ Key SEO tasks to enhance visibility:
     *   `robots.txt`: Configured to guide crawlers. (Status: Done)
     *   XML Sitemap: Generated and submitted. (Status: Done)
     *   Canonical Tags: Implement for dynamic pages. (Status: To Do)
-    *   Mobile-Friendliness: Review responsiveness, especially event filters. (Status: In Progress - Bug #6)
+    *   Mobile-Friendliness: Improved responsiveness of suggested events section on event details page. (Status: Resolved - Bug #6)
     *   Site Speed: Optimize images, minify CSS/JS, leverage caching. (Status: To Do)
     *   HTTPS: Ensured via Netlify. (Status: Done)
 *   **On-Page SEO (Event & Venue Pages):**
