@@ -219,7 +219,7 @@ exports.handler = async function (event, context) {
             return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
         }).join('');
 
-        const templatePath = path.resolve(__dirname, '../../event-details-template.html');
+        const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
         console.log("Attempting to read template file:", templatePath);
         let htmlTemplate = await fs.readFile(templatePath, 'utf8');
         console.log("Template file read successfully. Length:", htmlTemplate.length);
