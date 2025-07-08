@@ -67,7 +67,26 @@ exports.handler = async function (event, context) {
             eventRecord["Category"] = submittedCategoryNames;
         }
 
-        await base('Events').create([{ fields: eventRecord }]);
+        const createdRecords = await base('Events').create([{ fields: eventRecord }]);
+        const newEventId = createdRecords[0].id;
+
+        // Trigger update-recurring-events if recurring info is present
+        if (submission['recurring-info']) {
+            try {
+                const recurrenceRule = JSON.parse(submission['recurring-info']);
+                const recurringUpdateResponse = await fetch(`${process.env.URL}/.netlify/functions/update-recurring-events`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eventId: newEventId, recurrenceRule: recurrenceRule })
+                });
+
+                if (!recurringUpdateResponse.ok) {
+                    console.error('Failed to trigger recurring events update:', recurringUpdateResponse.status, recurringUpdateResponse.statusText);
+                }
+            } catch (recurringError) {
+                console.error('Error parsing recurring info or triggering update:', recurringError);
+            }
+        }
     
         return {
             statusCode: 200,
