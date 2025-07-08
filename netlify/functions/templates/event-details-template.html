@@ -84,5 +84,34 @@
         {{{suggestedEventsHtml}}}
     </main>
     <div id="footer-placeholder"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const shareButton = document.getElementById('share-button');
+
+            if (shareButton) {
+                shareButton.addEventListener('click', async () => {
+                    const shareData = {
+                        title: '{{eventName}}',
+                        text: 'Check out this event on Brum Out Loud!',
+                        url: '{{pageUrlCanonical}}'
+                    };
+
+                    try {
+                        if (navigator.share) {
+                            await navigator.share(shareData);
+                            console.log('Event shared successfully');
+                        } else {
+                            // Fallback for browsers that do not support Web Share API
+                            console.log('Web Share API not supported. Copying URL to clipboard.');
+                            await navigator.clipboard.writeText(shareData.url);
+                            alert('Link copied to clipboard!');
+                        }
+                    } catch (err) {
+                        console.error('Error sharing:', err);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
