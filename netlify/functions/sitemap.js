@@ -2,6 +2,18 @@ const Airtable = require('airtable');
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
+function escapeXml(unsafe) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '"': return '&quot;';
+            case "'": return '&apos;';
+        }
+    });
+}
+
 exports.handler = async function (event, context) {
     try {
         let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
@@ -34,7 +46,7 @@ exports.handler = async function (event, context) {
         }).all();
 
         eventRecords.forEach(record => {
-            const slug = record.fields.Slug;
+            const slug = escapeXml(record.fields.Slug);
             const lastMod = new Date(record.fields.Date).toISOString().split('T')[0]; // Use event date as lastmod
             sitemap += `  <url>\n    <loc>${baseUrl}/event/${slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.0</priority>\n  </url>\n`;
         });
@@ -45,8 +57,8 @@ exports.handler = async function (event, context) {
             fields: ['Slug']
         }).all();
 
-        venueRecords.forEach(record => {
-            const slug = record.fields.Slug;
+        venueRecords.forEach(record =>{
+            const slug = escapeXml(record.fields.Slug);
             sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         });
 
