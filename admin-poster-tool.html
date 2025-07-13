@@ -18,12 +18,51 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="font-anton text-2xl tracking-widest text-white">BRUM OUT LOUD</a>
-            <a href="/admin/settings" class="text-gray-300 hover:text-white">Back to Admin Settings</a>
-        </nav>
-    </header>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<!-- End Google Tag Manager -->
+<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
@@ -56,6 +95,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </section>
     </main>
     
+    <footer class="border-t-2 border-gray-800 p-8">
+    <div class="container mx-auto grid md:grid-cols-2">
+        <div>
+             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+             </div>
+        </div>
+        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+            <div>
+                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                <ul>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
     <script>
         const form = document.getElementById('poster-form');
         const fileInput = document.getElementById('poster-file');
@@ -80,36 +150,75 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
         
         function renderEventForm(eventData, index) {
-            const categories = Array.isArray(eventData.categories) ? eventData.categories.join(', ') : '';
-            const formHtml = `
-                <form class="event-review-form card-bg p-6 space-y-4" data-index="${index}">
-                    <h3 class="font-anton text-2xl text-white">Review Event ${index + 1}</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Name</label><input type="text" name="name" value="${eventData.name || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Venue</label><input type="text" name="venue" value="${eventData.venue || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Date</label><input type="date" name="date" value="${eventData.date || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Time (24hr)</label><input type="time" name="time" value="${eventData.time || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                    </div>
-                    <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Description</label><textarea name="description" rows="3" class="w-full p-2 bg-gray-900/50 rounded-md">${eventData.description || ''}</textarea></div>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Ticket Link</label><input type="url" name="ticketLink" value="${eventData.ticketLink || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                        <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Parent Event Name</label><input type="text" name="parentEventName" value="${eventData.parentEventName || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                    </div>
-                    <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Recurring Info</label><input type="text" name="recurringInfo" value="" class="w-full p-2 bg-gray-900/50 rounded-md" placeholder="e.g., Every second Friday"></div>
-                    <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Categories (comma-separated)</label><input type="text" name="categories" value="${categories}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                    <!-- **FIX**: Added Contact Email field -->
-                    <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Contact Email</label><input type="email" name="contactEmail" value="${eventData.contactEmail || ''}" class="w-full p-2 bg-gray-900/50 rounded-md"></div>
-                    <div><label class="block text-sm font-semibold mb-1 accent-color-secondary">Promo Image (Optional Override)</label><input type="file" name="promoImage" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif"></div>
-                    
-                    <div class="flex justify-end gap-4 pt-2">
-                        <button type="button" class="reject-btn bg-red-600/20 text-red-300 font-bold py-2 px-4 rounded-lg">Reject</button>
-                        <button type="submit" class="approve-btn bg-green-600/20 text-green-300 font-bold py-2 px-4 rounded-lg">Approve & Add</button>
-                    </div>
-                </form>
+            const form = document.createElement('form');
+            form.className = "event-review-form card-bg p-6 space-y-4";
+            form.dataset.index = index;
+
+            form.innerHTML = `<h3 class="font-anton text-2xl text-white">Review Event ${index + 1}</h3>`;
+
+            const createField = (labelText, name, type, value, placeholder = '', rows = 0) => {
+                const div = document.createElement('div');
+                div.innerHTML = `<label class="block text-sm font-semibold mb-1 accent-color-secondary">${labelText}</label>`;
+                let inputElement;
+                if (type === 'textarea') {
+                    inputElement = document.createElement('textarea');
+                    inputElement.rows = rows;
+                    inputElement.textContent = value || '';
+                } else {
+                    inputElement = document.createElement('input');
+                    inputElement.type = type;
+                    inputElement.value = value || '';
+                }
+                inputElement.name = name;
+                inputElement.className = 'w-full p-2 bg-gray-900/50 rounded-md';
+                if (placeholder) inputElement.placeholder = placeholder;
+                div.appendChild(inputElement);
+                return div;
+            };
+
+            const gridDiv1 = document.createElement('div');
+            gridDiv1.className = 'grid md:grid-cols-2 gap-4';
+            gridDiv1.appendChild(createField('Name', 'name', 'text', eventData.name));
+            gridDiv1.appendChild(createField('Venue', 'venue', 'text', eventData.venue));
+            form.appendChild(gridDiv1);
+
+            const gridDiv2 = document.createElement('div');
+            gridDiv2.className = 'grid md:grid-cols-2 gap-4';
+            gridDiv2.appendChild(createField('Date', 'date', 'date', eventData.date));
+            gridDiv2.appendChild(createField('Time (24hr)', 'time', 'time', eventData.time));
+            form.appendChild(gridDiv2);
+
+            form.appendChild(createField('Description', 'description', 'textarea', eventData.description, '', 3));
+
+            const gridDiv3 = document.createElement('div');
+            gridDiv3.className = 'grid md:grid-cols-2 gap-4';
+            gridDiv3.appendChild(createField('Ticket Link', 'ticketLink', 'url', eventData.ticketLink));
+            gridDiv3.appendChild(createField('Parent Event Name', 'parentEventName', 'text', eventData.parentEventName));
+            form.appendChild(gridDiv3);
+
+            form.appendChild(createField('Recurring Info', 'recurringInfo', 'text', '', 'e.g., Every second Friday'));
+            
+            const categoriesString = Array.isArray(eventData.categories) ? eventData.categories.join(', ') : '';
+            form.appendChild(createField('Categories (comma-separated)', 'categories', 'text', categoriesString));
+            
+            form.appendChild(createField('Contact Email', 'contactEmail', 'email', eventData.contactEmail));
+
+            const promoImageDiv = document.createElement('div');
+            promoImageDiv.innerHTML = `
+                <label class="block text-sm font-semibold mb-1 accent-color-secondary">Promo Image (Optional Override)</label>
+                <input type="file" name="promoImage" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif">
             `;
-            resultsContainer.insertAdjacentHTML('beforeend', formHtml);
+            form.appendChild(promoImageDiv);
+
+            const buttonDiv = document.createElement('div');
+            buttonDiv.className = 'flex justify-end gap-4 pt-2';
+            buttonDiv.innerHTML = `
+                <button type="button" class="reject-btn bg-red-600/20 text-red-300 font-bold py-2 px-4 rounded-lg">Reject</button>
+                <button type="submit" class="approve-btn bg-green-600/20 text-green-300 font-bold py-2 px-4 rounded-lg">Approve & Add</button>
+            `;
+            form.appendChild(buttonDiv);
+
+            resultsContainer.appendChild(form);
         }
 
         form.addEventListener('submit', async (e) => {
@@ -128,12 +237,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
 
                 const result = await response.json();
-                if (!response.ok) throw new Error(result.message || 'An unknown server error occurred.');
+                console.log("Response from Netlify function:", result);
+                if (!response.ok) {
+                    console.error("Server response not OK:", result);
+                    throw new Error(result.message || 'An unknown server error occurred.');
+                }
                 
-                statusMessage.textContent = `AI found ${result.events.length} event(s). Please review and approve.`;
-                if(result.events.length === 0) { statusMessage.textContent = "AI couldn't find any clear event details on this poster."; }
+                statusMessage.textContent = `AI found ${result.length} event(s). Please review and approve.`;
+                if(result.length === 0) { statusMessage.textContent = "AI couldn't find any clear event details in this spreadsheet."; }
 
+                console.log("Calling renderEventForm for each result...");
                 result.events.forEach(renderEventForm);
+                console.log("renderEventForm calls completed.");
 
             } catch (error) {
                 statusMessage.textContent = `Error: ${error.toString()}`;
@@ -145,22 +260,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
 
         resultsContainer.addEventListener('click', async (e) => {
+            console.log("Click event detected on resultsContainer.");
             const target = e.target;
+            console.log("Event target:", target);
             const reviewForm = target.closest('.event-review-form');
-            if (!reviewForm) return;
+            console.log("Closest review form:", reviewForm);
+            if (!reviewForm) {
+                console.log("No review form found, returning.");
+                return;
+            }
 
             if (target.classList.contains('reject-btn')) {
+                console.log("Reject button clicked.");
                 reviewForm.style.opacity = '0.5';
                 reviewForm.innerHTML = '<p class="text-center text-red-400 font-bold">Rejected</p>';
             }
 
             if (target.classList.contains('approve-btn')) {
+                console.log("Approve button clicked.");
                 e.preventDefault();
                 target.disabled = true;
                 target.textContent = 'Adding...';
 
                 const formData = new FormData(reviewForm);
-                
+                console.log("FormData entries:", Array.from(formData.entries()));
                 try {
                     const response = await fetch('/.netlify/functions/create-approved-event', {
                         method: 'POST',

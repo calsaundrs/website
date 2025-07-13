@@ -15,11 +15,60 @@ exports.handler = async (event, context) => {
     try {
         const { view } = event.queryStringParameters;
         if (view === 'admin') {
-            // Admin view logic remains unchanged
-            const query = base('Events').select({ view: "Approved Upcoming", sort: [{ field: 'Date', direction: 'asc' }]});
+            const query = base('Events').select({
+                view: "Approved Upcoming",
+                sort: [{ field: 'Date', direction: 'asc' }],
+                fields: [
+                    'Event Name', 'Description', 'Date', 'Promo Image', 'Slug',
+                    'Venue', 'Venue Name', 'VenueText', 'Category', 'Recurring Info', 'Recurring JSON', 'Series ID'
+                ]
+            });
             const allRecords = await query.all();
-            const records = allRecords.map(record => ({ id: record.id, fields: record.fields }));
-            return { statusCode: 200, body: JSON.stringify({ events: records, offset: allRecords.offset }) };
+
+            const eventsById = new Map();
+            const seriesParents = new Map(); // Stores parent events (those with Recurring Info)
+            const seriesChildren = new Map(); // Stores arrays of child events, keyed by Series ID
+
+            allRecords.forEach(record => {
+                eventsById.set(record.id, record);
+
+                if (record.fields['Recurring Info']) {
+                    // This event is a series parent (it defines the recurrence)
+                    seriesParents.set(record.id, record);
+                }
+
+                if (record.fields['Series ID'] && record.fields['Series ID'] !== record.id) {
+                    // This event is a child instance of a series
+                    const seriesId = record.fields['Series ID'];
+                    if (!seriesChildren.has(seriesId)) {
+                        seriesChildren.set(seriesId, []);
+                    }
+                    seriesChildren.get(seriesId).push(record);
+                }
+            });
+
+            const finalEvents = [];
+            eventsById.forEach(record => {
+                if (seriesParents.has(record.id)) {
+                    // This is a series parent (has Recurring Info)
+                    const children = seriesChildren.get(record.id) || [];
+                    children.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+                    finalEvents.push({
+                        id: record.id,
+                        fields: record.fields,
+                        seriesChildren: children.map(child => ({ id: child.id, fields: child.fields }))
+                    });
+                } else if (!record.fields['Series ID']) {
+                    // This is a single event (no Series ID, no Recurring Info)
+                    finalEvents.push({ id: record.id, fields: record.fields });
+                }
+                // Events that are children (have Series ID but no Recurring Info, and Series ID != record.id) are implicitly handled by their parent and not added as top-level events.
+            });
+
+            // Sort the final list of events (single events and series parents) by date
+            finalEvents.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+
+            return { statusCode: 200, body: JSON.stringify({ events: finalEvents, offset: allRecords.offset }) };
         }
 
         // --- PUBLIC SITE LOGIC ---

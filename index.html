@@ -66,7 +66,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </video>
     </div>
 
-    <div id="header-placeholder"></div>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<!-- End Google Tag Manager -->
+<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
@@ -100,7 +148,90 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="https://www.instagram.com/dominus_von_vexo/" target="_blank" rel="noopener noreferrer" class="underline hover:text-white">Dominus Von Vexo</a>.
             </p>
         </div>
-        <div id="footer-placeholder" class="relative z-10"></div>
+        <footer class="border-t-2 border-gray-800 p-8">
+    <div class="container mx-auto grid md:grid-cols-2">
+        <div>
+             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+             </div>
+        </div>
+        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+            <div>
+                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                <ul>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 hidden">
+        <div class="card-bg w-full max-w-4xl text-center p-8 md:p-12 animate-fade-in-up relative overflow-hidden">
+            
+            <!-- Close Button -->
+            <button id="closeModalButton" class="absolute top-6 right-6 text-gray-600 hover:text-white transition-colors z-10">
+                <i class="fas fa-times fa-2x"></i>
+            </button>
+
+            <!-- Modal Content -->
+            <div class="relative">
+                <h2 class="font-anton text-4xl md:text-6xl text-white uppercase">Welcome to the New</h2>
+                <h1 class="font-anton text-6xl md:text-8xl accent-color tracking-wider -mt-2 md:-mt-4">Brum Outloud</h1>
+                
+                <p class="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
+                    Your essential guide to Birmingham's vibrant LGBTQ+ scene. Dive in and discover:
+                </p>
+            </div>
+
+            <!-- Interactive Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                <!-- Events Card -->
+                <a href="/events.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="text-center">
+                        <i class="fas fa-calendar-days fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-2xl text-white mt-4">EVENTS</h3>
+                        <p class="text-gray-400 mt-1">Find out what's on.</p>
+                    </div>
+                </a>
+                <!-- Venues Card -->
+                <a href="/all-venues.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="text-center">
+                        <i class="fas fa-map-location-dot fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-2xl text-white mt-4">VENUES</h3>
+                        <p class="text-gray-400 mt-1">Explore the scene.</p>
+                    </div>
+                </a>
+                <!-- Promoter Tools Card -->
+                <a href="/promoter-tool.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="text-center">
+                        <i class="fas fa-bullhorn fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-2xl text-white mt-4">PROMOTERS</h3>
+                        <p class="text-gray-400 mt-1">Get your event listed.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Fallback Close action -->
+            <button id="exploreButton" class="text-gray-400 hover:text-white underline font-semibold transition-colors">
+                Or just start exploring
+            </button>
+        </div>
     </div>
 </body>
 </html>

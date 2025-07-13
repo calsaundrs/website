@@ -82,9 +82,7 @@ exports.handler = async function (event, context) {
         const aiResult = await aiResponse.json();
         const textResponse = aiResult.candidates[0].content.parts[0].text;
         console.log('Raw AI response:', textResponse);
-        const jsonMatch = textResponse.match(/```json
-([\s\S]*?)
-```/);
+        const jsonMatch = textResponse.match(/```json([\s\S]*?)```/);
         let jsonString = jsonMatch ? jsonMatch[1].trim() : textResponse.trim();
         // Aggressively clean up common JSON issues like trailing commas
         jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
@@ -100,13 +98,15 @@ exports.handler = async function (event, context) {
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true, events: parsedEvents }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ events: parsedEvents }),
         };
 
     } catch (error) {
         console.error("Error processing poster:", error);
         return {
             statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ success: false, message: error.toString() }),
         };
     }

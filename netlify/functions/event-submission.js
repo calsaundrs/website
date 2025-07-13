@@ -1,6 +1,7 @@
 const Airtable = require('airtable');
 const parser = require('lambda-multipart-parser');
 const cloudinary = require('cloudinary').v2;
+const fetch = require('node-fetch');
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
@@ -9,6 +10,74 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+async function getDatesFromAI(startDate, recurrenceData, modelName) {
+    console.log("getDatesFromAI: Received recurrenceData:", recurrenceData);
+    let recurrenceRule = "";
+    if (recurrenceData.type === 'weekly') {
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const selectedDays = recurrenceData.days.map(dayIndex => daysOfWeek[dayIndex]);
+        recurrenceRule = `the event repeats weekly on ${selectedDays.join(', ')}`;
+    } else if (recurrenceData.type === 'monthly') {
+        if (recurrenceData.monthlyType === 'date') {
+            recurrenceRule = `the event repeats monthly on day ${recurrenceData.dayOfMonth}`;
+        } else if (recurrenceData.monthlyType === 'day') {
+            const ordinal = { '1': 'first', '2': 'second', '3': 'third', '4': 'fourth', '-1': 'last' }[recurrenceData.week];
+            const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][recurrenceData.dayOfWeek];
+            recurrenceRule = `the event repeats monthly on the ${ordinal} ${dayOfWeek} of each month`;
+        }
+    }
+
+    const prompt = `Based on a start date of ${startDate}, and the rule that "${recurrenceRule}", provide a comma-separated list of all dates for the next 3 months in format YYYY-MM-DD, INCLUDING the start date if it matches the rule. IMPORTANT: Only return the comma-separated list of dates and nothing else.`;
+    
+    console.log(`[getDatesFromAI] AI PROMPT: "${prompt}"`);
+
+    const payload = { contents: [{ parts: [{ text: prompt }] }] };
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("AI API Error Response:", errorBody);
+        throw new Error(`AI API call failed with status: ${response.status}`);
+    }
+    const data = await response.json();
+    const datesText = data.candidates[0].content.parts[0].text.trim();
+    console.log("getDatesFromAI: Raw AI response datesText:", datesText);
+    return datesText.split(',').map(d => d.trim());
+}
+
+function generateSlug(eventName, date) {
+    const datePart = new Date(date).toISOString().split('T')[0];
+    const namePart = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return `${namePart}-${datePart}`;
+}
+
+function createNaturalLanguageRule(recurrenceData) {
+    if (!recurrenceData || recurrenceData.type === 'none') {
+        return '';
+    }
+
+    if (recurrenceData.type === 'weekly') {
+        const days = recurrenceData.days.map(day => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]);
+        return `Weekly on ${days.join(', ')}`;
+    }
+
+    if (recurrenceData.type === 'monthly') {
+        if (recurrenceData.monthlyType === 'date') {
+            return `Monthly on day ${recurrenceData.dayOfMonth}`;
+        }
+        if (recurrenceData.monthlyType === 'day') {
+            const week = { '1': 'First', '2': 'Second', '3': 'Third', '4': 'Fourth', '-1': 'Last' }[recurrenceData.week];
+            const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][recurrenceData.dayOfWeek];
+            return `Monthly on the ${week} ${dayOfWeek}`;
+        }
+    }
+
+    return '';
+}
 
 async function uploadImage(file) {
     if (!file) return null;
@@ -24,6 +93,7 @@ async function uploadImage(file) {
 }
 
 exports.handler = async function (event, context) {
+    const geminiModel = 'gemini-1.5-flash';
     try {
         const submission = await parser.parse(event);
         console.log('submission.categoryIds:', submission.categoryIds);
@@ -32,62 +102,116 @@ exports.handler = async function (event, context) {
         const imageUrl = uploadResult ? uploadResult.secure_url : null;
         const cloudinaryPublicId = uploadResult ? uploadResult.public_id : null;
         const venueId = submission.venueId || null;
-        // Ensure submittedCategoryNames is always an array
+
         let submittedCategoryNames = submission.categoryIds;
         if (typeof submittedCategoryNames === 'string') {
             submittedCategoryNames = [submittedCategoryNames];
         } else if (!Array.isArray(submittedCategoryNames)) {
             submittedCategoryNames = [];
         }
-        
-        const combinedDateTime = new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString();
 
-        const eventRecord = {
+        let recurrenceData = null;
+        if (submission['recurring-info']) {
+            try {
+                recurrenceData = JSON.parse(submission['recurring-info']);
+                console.log('Parsed recurrenceData:', recurrenceData);
+            } catch (e) {
+                console.error("Error parsing recurring-info JSON:", e);
+            }
+        }
+
+        let datesToCreate = [];
+        if (recurrenceData && recurrenceData.type && recurrenceData.type !== 'none' && submission.date) {
+            datesToCreate = await getDatesFromAI(submission.date, recurrenceData, geminiModel);
+            console.log('Dates generated by AI:', datesToCreate);
+        } else if (submission.date) {
+            datesToCreate.push(submission.date);
+            console.log('Single date to create:', datesToCreate);
+        } else {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ success: false, message: "Date is required." }),
+            };
+        }
+
+        let firstEventRecord = {
             "Event Name":      submission['event-name'] || 'Untitled Event',
-            "Date":            combinedDateTime,
+            "Date":            new Date(`${datesToCreate[0]}T${submission['start-time'] || '00:00'}`).toISOString(),
             "Description":     submission.description || '',
             "Link":            submission.link || '',
-            "Recurring Info":  submission['recurring-info'] || '',
             "Status":          "Pending Review",
-            "Submitter Email": submission['contact-email'] || null
+            "Submitter Email": submission['contact-email'] || null,
+            "Slug":            generateSlug(submission['event-name'], datesToCreate[0])
         };
 
+        if (recurrenceData && recurrenceData.type !== 'none') {
+            firstEventRecord["Recurring JSON"] = JSON.stringify(recurrenceData);
+            firstEventRecord["Recurring Info"] = createNaturalLanguageRule(recurrenceData);
+            console.log('Natural language recurrence for first event:', firstEventRecord["Recurring Info"]);
+        }
+
         if (imageUrl) {
-            eventRecord["Promo Image"] = [{ url: imageUrl }];
+            firstEventRecord["Promo Image"] = [{ url: imageUrl }];
         }
         if (cloudinaryPublicId) {
-            eventRecord["Cloudinary Public ID"] = cloudinaryPublicId;
+            firstEventRecord["Cloudinary Public ID"] = cloudinaryPublicId;
         }
-        
+
         if (venueId && venueId.startsWith('rec')) {
-            eventRecord["Venue"] = [venueId];
+            firstEventRecord["Venue"] = [venueId];
         }
 
         if (submittedCategoryNames.length > 0) {
-            eventRecord["Category"] = submittedCategoryNames;
+            firstEventRecord["Category"] = submittedCategoryNames;
         }
 
-        const createdRecords = await base('Events').create([{ fields: eventRecord }]);
-        const newEventId = createdRecords[0].id;
+        console.log('Attempting to create first event record in Airtable:', firstEventRecord);
+        const createdFirstRecord = await base('Events').create([{ fields: firstEventRecord }]);
+        const seriesId = createdFirstRecord[0].id;
+        console.log('First event created with Series ID:', seriesId);
+        console.log('Series ID for subsequent records:', seriesId);
 
-        // Trigger update-recurring-events if recurring info is present
-        if (submission['recurring-info']) {
-            try {
-                const recurrenceRule = JSON.parse(submission['recurring-info']);
-                const recurringUpdateResponse = await fetch(`${process.env.URL}/.netlify/functions/update-recurring-events`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ eventId: newEventId, recurrenceRule: recurrenceRule })
-                });
+        const subsequentRecordsToCreate = datesToCreate.slice(1).map(d => {
+            const recordFields = {
+                "Event Name":      submission['event-name'] || 'Untitled Event',
+                "Date":            new Date(`${d}T${submission['start-time'] || '00:00'}`).toISOString(),
+                "Description":     submission.description || '',
+                "Link":            submission.link || '',
+                "Status":          "Pending Review",
+                "Submitter Email": submission['contact-email'] || null,
+                "Slug":            generateSlug(submission['event-name'], d),
+                "Series ID":       seriesId // Link to the first event in the series
+            };
 
-                if (!recurringUpdateResponse.ok) {
-                    console.error('Failed to trigger recurring events update:', recurringUpdateResponse.status, recurringUpdateResponse.statusText);
-                }
-            } catch (recurringError) {
-                console.error('Error parsing recurring info or triggering update:', recurringError);
+            if (imageUrl) {
+                recordFields["Promo Image"] = [{ url: imageUrl }];
             }
+            if (cloudinaryPublicId) {
+                recordFields["Cloudinary Public ID"] = cloudinaryPublicId;
+            }
+
+            if (venueId && venueId.startsWith('rec')) {
+                recordFields["Venue"] = [venueId];
+            }
+
+            if (submittedCategoryNames.length > 0) {
+                recordFields["Category"] = submittedCategoryNames;
+            }
+            console.log(`Subsequent record to create for date ${d}:`, recordFields);
+            return { fields: recordFields };
+        });
+
+        if (subsequentRecordsToCreate.length > 0) {
+            console.log('Attempting to create subsequent records in Airtable:', subsequentRecordsToCreate);
+            const chunkSize = 10;
+            for (let i = 0; i < subsequentRecordsToCreate.length; i += chunkSize) {
+                await base('Events').create(subsequentRecordsToCreate.slice(i, i + chunkSize));
+            }
+            console.log(`Successfully created ${subsequentRecordsToCreate.length} subsequent event(s) in Airtable.`);
+        } else {
+            console.log('No subsequent records to create.');
         }
-    
+
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'text/html' },

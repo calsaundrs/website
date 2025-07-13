@@ -6,10 +6,6 @@
     <title>Manage Events | Admin Panel</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
@@ -26,7 +22,14 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<!-- End Google Tag Manager -->
+<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
     <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
 </div>
 
@@ -96,6 +99,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button id="start-cleanup-btn" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity w-full flex items-center justify-center">
                      <span id="cleanup-btn-text">AI Category Cleanup</span>
                      <span id="cleanup-loader" class="loader ml-3 w-5 h-5 border-2 hidden"></span>
+                </button>
+                <button id="migrate-categories-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity w-full flex items-center justify-center mt-4">
+                     <span id="migrate-btn-text">Migrate Old Categories</span>
+                     <span id="migrate-loader" class="loader ml-3 w-5 h-5 border-2 hidden"></span>
                 </button>
                 <div id="status-message" class="text-green-400 mt-6 text-center hidden font-semibold"></div>
             </div>
@@ -173,6 +180,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
             <script src="/js/main.js" defer></script>
     <script>
+        (function() {
+        function createNaturalLanguageRule(recurrenceData) {
+            if (!recurrenceData || recurrenceData.type === 'none') {
+                return '';
+            }
+
+            if (recurrenceData.type === 'weekly') {
+                const days = recurrenceData.days.map(day => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]);
+                return `Weekly on ${days.join(', ')}`;
+            }
+
+            if (recurrenceData.type === 'monthly') {
+                if (recurrenceData.monthlyType === 'date') {
+                    return `Monthly on day ${recurrenceData.dayOfMonth}`;
+                }
+                if (recurrenceData.monthlyType === 'day') {
+                    const week = { '1': 'First', '2': 'Second', '3': 'Third', '4': 'Fourth', '-1': 'Last' }[recurrenceData.week];
+                    const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][recurrenceData.dayOfWeek];
+                    return `Monthly on the ${week} ${dayOfWeek}`;
+                }
+            }
+
+            return '';
+        }
+
         const eventList = document.getElementById('event-list');
         const loadingState = document.getElementById('loading-state');
         const loadMoreContainer = document.getElementById('load-more-container');
@@ -190,13 +222,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const filterBar = document.getElementById('filter-bar');
         const deleteEventBtn = document.getElementById('delete-event-btn');
 
-        const VALID_CATEGORIES = ["Comedy", "Drag", "Live Music", "Men Only", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Women Only", "Fetish", "Community", "Exhibition", "Health", "Quiz"];
+        const VALID_CATEGORIES = ["Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"];
         let allAdminEvents = [];
         let allVenues = [];
         let currentItemForAction = null;
         let currentOffset = null;
         let isFetching = false;
-        let currentFilter = 'all';
+        var currentFilter = 'all';
 
         function renderEvent(item) {
             const fields = item.fields;
@@ -208,6 +240,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             const card = document.createElement('div');
             card.className = 'card-bg p-4 flex justify-between items-start';
+
+            let recurringInfoHtml = '';
+            if (fields['Recurring Info']) {
+                recurringInfoHtml = `<p class="text-sm text-purple-300 mt-1">${fields['Recurring Info']}</p>`;
+            }
+
+            let childrenHtml = '';
+            if (item.seriesChildren && item.seriesChildren.length > 0) {
+                const childrenList = item.seriesChildren.map(child => {
+                    const childDate = new Date(child.fields.Date);
+                    return `
+                        <div class="flex justify-between items-center p-2 bg-gray-800 rounded-lg mt-2">
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm text-gray-300">${childDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</p>
+                                <p class="text-sm text-gray-400">${child.fields['Event Name']}</p>
+                            </div>
+                            <button class="edit-btn bg-blue-600/20 text-blue-300 font-bold py-1 px-3 rounded-lg hover:bg-blue-600/40" data-id="${child.id}">Edit</button>
+                        </div>
+                    `;
+                }).join('');
+                childrenHtml = `
+                    <div class="series-children mt-4 hidden">
+                        <h4 class="text-sm font-semibold text-gray-400 mb-2">Upcoming Instances:</h4>
+                        ${childrenList}
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 <div class="flex-grow">
                     <div class="flex items-center gap-4">
@@ -218,12 +278,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div>
                             <h3 class="font-bold text-xl text-white">${fields['Event Name']}</h3>
                             <p class="text-sm text-gray-400">${fields['Venue Name'] && fields['Venue Name'].length > 0 ? fields['Venue Name'][0] : (fields['VenueText'] || 'Venue TBC')}</p>
+                            ${recurringInfoHtml}
                         </div>
                     </div>
                     <div class="mt-2 pl-[80px] flex gap-2 flex-wrap">${tagsHtml}</div>
+                    ${childrenHtml}
                 </div>
-                <button class="edit-btn bg-blue-600/20 text-blue-300 font-bold py-2 px-4 rounded-lg hover:bg-blue-600/40 flex-shrink-0 ml-4" data-id="${item.id}">Edit</button>
+                <div class="flex flex-col items-end gap-2">
+                    <button class="edit-btn bg-blue-600/20 text-blue-300 font-bold py-2 px-4 rounded-lg hover:bg-blue-600/40 flex-shrink-0" data-id="${item.id}">Edit</button>
+                    ${item.seriesChildren && item.seriesChildren.length > 0 ? 
+                        `<button class="toggle-children-btn bg-gray-600/20 text-gray-300 font-bold py-2 px-4 rounded-lg hover:bg-gray-600/40 flex-shrink-0" data-target="${item.id}">Show Instances (${item.seriesChildren.length})</button>` : ''}
+                </div>
             `;
+
+            if (item.seriesChildren && item.seriesChildren.length > 0) {
+                const toggleButton = card.querySelector('.toggle-children-btn');
+                const childrenContainer = card.querySelector('.series-children');
+                toggleButton.addEventListener('click', () => {
+                    childrenContainer.classList.toggle('hidden');
+                    if (childrenContainer.classList.contains('hidden')) {
+                        toggleButton.textContent = `Show Instances (${item.seriesChildren.length})`;
+                    } else {
+                        toggleButton.textContent = `Hide Instances (${item.seriesChildren.length})`;
+                    }
+                });
+            }
+
             return card;
         }
 
@@ -242,6 +322,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             currentItemForAction = item;
             const isAdding = !item;
             const fields = isAdding ? {} : item.fields;
+            console.log('Item fields:', fields);
+            console.log('Venue field:', fields.Venue);
+            console.log('Recurring JSON field:', fields['Recurring JSON']);
+            console.log('Item fields:', fields);
+            console.log('Venue field:', fields.Venue);
+            console.log('Recurring JSON field:', fields['Recurring JSON']);
             modalTitle.textContent = isAdding ? 'Add New Event' : 'Edit Event';
 
             // --- FIX: Reset submit button and status message state ---
@@ -340,8 +426,180 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             // 6. Recurring Info
             const recurringDiv = document.createElement('div');
-            recurringDiv.innerHTML = `<label>Recurring Info (Optional)</label><input type="text" name="Recurring Info" value="${fields['Recurring Info'] || ''}" placeholder="e.g., Every Thursday">`;
+            recurringDiv.innerHTML = `
+                <div class="mb-4 p-4 border border-gray-700 rounded-lg bg-gray-800/50">
+                    <label class="block text-lg font-bold mb-3 accent-color-secondary">Recurrence (Optional)</label>
+                    <div class="flex flex-wrap items-center space-x-4 mb-4">
+                        <div class="flex items-center">
+                            <input type="radio" id="recurrence-none" name="recurrence-type" value="none" class="form-radio h-5 w-5 text-accent-color" checked>
+                            <label for="recurrence-none" class="ml-2 text-gray-300">No Recurrence</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly" class="form-radio h-5 w-5 text-accent-color">
+                            <label for="recurrence-weekly" class="ml-2 text-gray-300">Weekly</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="recurrence-monthly" name="recurrence-type" value="monthly" class="form-radio h-5 w-5 text-accent-color">
+                            <label for="recurrence-monthly" class="ml-2 text-gray-300">Monthly</label>
+                        </div>
+                    </div>
+                    <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
+                        <!-- Weekly Options -->
+                        <div id="weekly-options" class="hidden">
+                            <label class="block text-sm font-semibold mb-2 accent-color-secondary">Repeat on:</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="1" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Monday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="2" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Tuesday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="3" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Wednesday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="4" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Thursday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="5" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Friday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="6" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Saturday</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="weekly_days" value="0" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Sunday</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Monthly Options -->
+                        <div id="monthly-options" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 accent-color-secondary">Monthly Recurrence Type:</label>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="monthly-type-date" name="monthly_type" value="date" class="form-radio h-4 w-4 text-accent-color" checked>
+                                        <label for="monthly-type-date" class="ml-2 text-gray-300">By Date (e.g., 15th of every month)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="monthly-type-day" name="monthly_type" value="day" class="form-radio h-4 w-4 text-accent-color">
+                                        <label for="monthly-type-day" class="ml-2 text-gray-300">By Day (e.g., 2nd Friday of every month)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="monthly-by-date-options">
+                                <label for="monthly-day-of-month" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Month:</label>
+                                <input type="number" id="monthly-day-of-month" name="monthly_day_of_month" min="1" max="31" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                            </div>
+                            <div id="monthly-by-day-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="monthly-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Week of Month:</label>
+                                    <select id="monthly-week" name="monthly_week" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                                        <option value="1">First</option>
+                                        <option value="2">Second</option>
+                                        <option value="3">Third</option>
+                                        <option value="4">Fourth</option>
+                                        <option value="-1">Last</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="monthly-day-of-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Week:</label>
+                                    <select id="monthly-day-of-week" name="monthly_day_of_week" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                                        <option value="0">Sunday</option>
+                                        <option value="1">Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
             editFormFields.appendChild(recurringDiv);
+
+            // Hidden input for the JSON string
+            const recurringInfoHiddenInput = document.createElement('input');
+            recurringInfoHiddenInput.type = 'hidden';
+            recurringInfoHiddenInput.name = 'recurring-info';
+            recurringInfoHiddenInput.id = 'recurring-info-hidden'; // Add an ID for easy access
+            editFormFields.appendChild(recurringInfoHiddenInput);
+
+            // Recurrence Logic
+            const recurrenceTypeRadios = editFormFields.querySelectorAll('input[name="recurrence-type"]');
+            const recurringOptionsDiv = editFormFields.querySelector('#recurring-options');
+            const weeklyOptionsDiv = editFormFields.querySelector('#weekly-options');
+            const monthlyOptionsDiv = editFormFields.querySelector('#monthly-options');
+            const monthlyTypeRadios = editFormFields.querySelectorAll('input[name="monthly_type"]');
+            const monthlyByDateOptionsDiv = editFormFields.querySelector('#monthly-by-date-options');
+            const monthlyByDayOptionsDiv = editFormFields.querySelector('#monthly-by-day-options');
+
+            function updateRecurrenceVisibility() {
+                const selectedType = document.querySelector('input[name="recurrence-type"]:checked').value;
+                recurringOptionsDiv.classList.add('hidden');
+                weeklyOptionsDiv.classList.add('hidden');
+                monthlyOptionsDiv.classList.add('hidden');
+
+                if (selectedType === 'weekly') {
+                    recurringOptionsDiv.classList.remove('hidden');
+                    weeklyOptionsDiv.classList.remove('hidden');
+                } else if (selectedType === 'monthly') {
+                    recurringOptionsDiv.classList.remove('hidden');
+                    monthlyOptionsDiv.classList.remove('hidden');
+                    updateMonthlyRecurrenceVisibility();
+                }
+
+                // Update the hidden input with the current recurrence selection
+                const currentRecurrence = { type: selectedType };
+                if (selectedType === 'weekly') {
+                    currentRecurrence.days = Array.from(editFormFields.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value));
+                } else if (selectedType === 'monthly') {
+                    const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                    currentRecurrence.monthlyType = monthlyType;
+                    if (monthlyType === 'date') {
+                        currentRecurrence.dayOfMonth = parseInt(editFormFields.querySelector('#monthly-day-of-month').value);
+                    } else if (monthlyType === 'day') {
+                        currentRecurrence.week = parseInt(editFormFields.querySelector('#monthly-week').value);
+                        currentRecurrence.dayOfWeek = parseInt(editFormFields.querySelector('#monthly-day-of-week').value);
+                    }
+                }
+                document.getElementById('recurring-info-hidden').value = JSON.stringify(currentRecurrence);
+            }
+
+            function updateMonthlyRecurrenceVisibility() {
+                const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                monthlyByDateOptionsDiv.classList.add('hidden');
+                monthlyByDayOptionsDiv.classList.add('hidden');
+
+                if (selectedMonthlyType === 'date') {
+                    monthlyByDateOptionsDiv.classList.remove('hidden');
+                } else if (selectedMonthlyType === 'day') {
+                    monthlyByDayOptionsDiv.classList.remove('hidden');
+                }
+            }
+
+            recurrenceTypeRadios.forEach(radio => radio.addEventListener('change', updateRecurrenceVisibility));
+            monthlyTypeRadios.forEach(radio => radio.addEventListener('change', updateMonthlyRecurrenceVisibility));
+
+            // Pre-populate recurrence fields if editing an existing event
+            if (!isAdding && fields['Recurring JSON']) {
+                try {
+                    const recurringInfo = JSON.parse(fields['Recurring JSON']);
+                    console.log('populateEditForm: Parsed Recurring Info from item:', recurringInfo);
+                    if (recurringInfo.type) {
+                        document.querySelector(`input[name="recurrence-type"][value="${recurringInfo.type}"]`).checked = true;
+                        if (recurringInfo.type === 'weekly' && recurringInfo.days) {
+                            recurringInfo.days.forEach(day => {
+                                const checkbox = editFormFields.querySelector(`input[name="weekly_days"][value="${day}"]`);
+                                if (checkbox) checkbox.checked = true;
+                            });
+                        } else if (recurringInfo.type === 'monthly' && recurringInfo.monthlyType) {
+                            document.querySelector(`input[name="monthly_type"][value="${recurringInfo.monthlyType}"]`).checked = true;
+                            if (recurringInfo.monthlyType === 'date' && recurringInfo.dayOfMonth) {
+                                editFormFields.querySelector('#monthly-day-of-month').value = recurringInfo.dayOfMonth;
+                            } else if (recurringInfo.monthlyType === 'day' && recurringInfo.week && recurringInfo.dayOfWeek) {
+                                editFormFields.querySelector('#monthly-week').value = recurringInfo.week;
+                                editFormFields.querySelector('#monthly-day-of-week').value = recurringInfo.dayOfWeek;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing Recurring Info JSON:', e);
+                }
+            } else if (isAdding) {
+                // For new events, ensure 'none' is checked by default
+                document.querySelector('input[name="recurrence-type"][value="none"]').checked = true;
+            }
+            updateRecurrenceVisibility(); // Initial call to set visibility based on pre-populated or default values
+            console.log('populateEditForm: recurringInfoHiddenInput.value after pre-population:', recurringInfoHiddenInput.value);
 
             // 7. Promo Image (File Upload)
             const promoImageDiv = document.createElement('div');
@@ -386,6 +644,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if (!response.ok) throw new Error('Failed to fetch events.');
 
                 const data = await response.json();
+                console.log('Raw data from get-events.js:', data);
                 loadingState.style.display = 'none';
                 const events = data.events || [];
 
@@ -417,10 +676,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         function applyFilters() {
             eventList.innerHTML = '';
             const filtered = allAdminEvents.filter(item => {
-                if (currentFilter === 'all') return true;
-                if (currentFilter === 'missing-image') return !item.fields['Promo Image'];
-                if (currentFilter === 'missing-desc') return !item.fields.Description;
-                if (currentFilter === 'missing-cat') return !item.fields.Category || item.fields.Category.length === 0;
+                // If it's a series parent, check its own fields
+                if (item.fields['Recurring Info']) {
+                    if (currentFilter === 'all') return true;
+                    if (currentFilter === 'missing-image') return !item.fields['Promo Image'];
+                    if (currentFilter === 'missing-desc') return !item.fields.Description;
+                    if (currentFilter === 'missing-cat') return !item.fields.Category || item.fields.Category.length === 0;
+                } else { // It's a single event
+                    if (currentFilter === 'all') return true;
+                    if (currentFilter === 'missing-image') return !item.fields['Promo Image'];
+                    if (currentFilter === 'missing-desc') return !item.fields.Description;
+                    if (currentFilter === 'missing-cat') return !item.fields.Category || item.fields.Category.length === 0;
+                }
                 return true;
             });
             if(filtered.length > 0) {
@@ -504,7 +771,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const editButton = e.target.closest('.edit-btn');
                 if (editButton) {
                     const itemId = editButton.dataset.id;
-                    const item = allAdminEvents.find(event => event.id === itemId);
+                    let item = allAdminEvents.find(event => event.id === itemId);
+
+                    // If not found directly, check within seriesChildren
+                    if (!item) {
+                        for (const parentEvent of allAdminEvents) {
+                            if (parentEvent.seriesChildren) {
+                                item = parentEvent.seriesChildren.find(child => child.id === itemId);
+                                if (item) break;
+                            }
+                        }
+                    }
+
                     if (item) {
                         populateEditForm(item);
                     } else {
@@ -534,6 +812,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const submitBtn = editForm.querySelector('button[type=submit]');
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Saving...';
+                console.log('Submit button disabled.');
 
                 let venueId = editForm.elements.venueId.value;
 
@@ -573,12 +852,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
 
                 const formData = new FormData(editForm);
+
+                // Construct recurring-info JSON
+                const recurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
+                let recurringInfo = { type: recurrenceType };
+
+                if (recurrenceType === 'weekly') {
+                    const selectedDays = Array.from(editForm.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value));
+                    recurringInfo.days = selectedDays;
+                } else if (recurrenceType === 'monthly') {
+                    const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                    recurringInfo.monthlyType = monthlyType;
+                    if (monthlyType === 'date') {
+                        recurringInfo.dayOfMonth = parseInt(editForm.querySelector('#monthly-day-of-month').value);
+                    } else if (monthlyType === 'day') {
+                        recurringInfo.week = parseInt(editForm.querySelector('#monthly-week').value);
+                        recurringInfo.dayOfWeek = parseInt(editForm.querySelector('#monthly-day-of-week').value);
+                    }
+                }
+                document.getElementById('recurring-info-hidden').value = JSON.stringify(recurringInfo);
+
                 console.log('FormData prepared. Check browser Network tab for payload.');
                 if (venueId) {
                      formData.set('venueId', venueId);
                 } else {
                      formData.delete('venueId');
                 }
+
+                // Append recurring-info to formData
+                formData.append('recurring-info', document.getElementById('recurring-info-hidden').value);
 
                 let endpoint = isAdding ? '/.netlify/functions/create-approved-event' : '/.netlify/functions/update-submission';
                 if (!isAdding) {
@@ -592,9 +894,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     const response = await fetch(endpoint, { method: 'POST', body: formData });
                     const result = await response.json();
                     if (!response.ok) {
+                        console.error('Server response not OK:', result);
                         throw new Error(result.message || 'Server returned an error');
                     }
 
+                    console.log('Submission successful:', result);
                     statusMessage.textContent = 'Success!';
                     statusMessage.classList.remove('hidden', 'text-red-400');
                     statusMessage.classList.add('text-green-400');
@@ -607,8 +911,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     statusMessage.classList.remove('hidden', 'text-green-400');
                     statusMessage.classList.add('text-red-400');
                     setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+                } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Save Changes';
+                    console.log('Submit button re-enabled in finally block.');
                 }
             });
 
@@ -636,7 +942,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     setTimeout(() => statusMessage.classList.add('hidden'), 5000);
                 }
             });
+
+            const migrateBtn = document.getElementById('migrate-categories-btn');
+            const migrateBtnText = document.getElementById('migrate-btn-text');
+            const migrateLoader = document.getElementById('migrate-loader');
+
+            migrateBtn.addEventListener('click', async () => {
+                migrateBtn.disabled = true;
+                migrateBtnText.textContent = 'Migrating...';
+                migrateLoader.classList.remove('hidden');
+                statusMessage.classList.add('hidden');
+                try {
+                    const response = await fetch('/.netlify/functions/update-event-categories', { method: 'POST' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    statusMessage.textContent = result.message;
+                    statusMessage.classList.remove('hidden');
+                    statusMessage.classList.add('text-green-400');
+                    await fetchAndRenderEvents(null);
+                } catch (error) {
+                    statusMessage.textContent = `Error during migration: ${error.toString()}`;
+                    statusMessage.classList.remove('hidden');
+                    statusMessage.classList.add('text-red-400');
+                } finally {
+                    migrateBtn.disabled = false;
+                    migrateBtnText.textContent = 'Migrate Old Categories';
+                    migrateLoader.classList.add('hidden');
+                    setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+                }
+            });
         });
+        })();
     </script>
 </body>
 </html>
