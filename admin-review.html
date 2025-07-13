@@ -18,11 +18,51 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="font-anton text-2xl tracking-widest text-white">BRUM OUT LOUD</a>
-        </nav>
-    </header>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<!-- End Google Tag Manager -->
+<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
@@ -42,6 +82,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         </section>
     </main>
+
+    <footer class="border-t-2 border-gray-800 p-8">
+    <div class="container mx-auto grid md:grid-cols-2">
+        <div>
+             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+             </div>
+        </div>
+        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+            <div>
+                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                <ul>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -70,60 +141,129 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const card = document.createElement('div');
                 card.id = `event-card-${index}`;
                 card.className = `card-bg p-6 rounded-lg ${!matchedVenue ? 'border-2 border-yellow-500' : 'border-2 border-transparent'}`;
-                card.innerHTML = `
-                    <form class="event-review-form" data-index="${index}">
-                        <div class="grid md:grid-cols-2 gap-x-8 gap-y-4">
-                            <div><label>Event Name</label><input type="text" name="name" value="${event.name || ''}"></div>
-                            <div><label>Venue</label><select name="venueId" class="venue-select">${venueOptionsHtml}</select></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label>Date</label><input type="date" name="date" value="${event.date || ''}"></div>
-                                <div><label>Time</label><input type="time" name="time" value="${event.time || ''}"></div>
-                            </div>
-                            <div><label>Ticket Link</label><input type="url" name="link" value="${event.ticketLink || ''}" placeholder="https://"></div>
-                            <div class="md:col-span-2"><label>Description</label><textarea name="description" rows="3">${event.description || ''}</textarea></div>
-                            
-                            <div class="md:col-span-2 border-t border-gray-700 pt-4 space-y-4">
-                                <label class="block text-sm font-semibold accent-color-secondary">Recurrence</label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="text-xs">Frequency</label><select name="recurrence_frequency" class="recurrence-control"><option value="none" selected>Does not repeat</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
-                                    <div class="recurrence-options recurrence-weekly-options recurrence-monthly-options hidden"><label class="text-xs">Repeats every</label><input type="number" name="recurrence_interval" value="1" min="1"><span>&nbsp;weeks/months</span></div>
-                                </div>
-                                <div class="recurrence-options recurrence-weekly-options hidden"><label class="text-xs">On these days</label><div class="grid grid-cols-4 lg:grid-cols-7 gap-2">${daysOfWeek.map(day => `<label class="text-center p-2 rounded-md border border-gray-700 has-[:checked]:bg-accent-color has-[:checked]:border-accent-color cursor-pointer"><input type="checkbox" name="recurrence_days" value="${day}" class="sr-only"><span>${day}</span></label>`).join('')}</div></div>
-                                <div class="recurrence-options recurrence-monthly-options hidden space-y-3"><label class="text-xs">On</label>
-                                    <div class="flex items-center gap-x-2"><input type="radio" name="monthly_type_${index}" value="day_of_month" id="day_of_month_${index}" checked class="form-radio bg-gray-800"><label for="day_of_month_${index}" class="flex items-center gap-x-2"><span>Day</span><input type="number" name="monthly_day" value="1" min="1" max="31" class="w-16 p-1 text-center"><span>of the month</span></label></div>
-                                    <div class="flex items-center gap-x-2"><input type="radio" name="monthly_type_${index}" value="day_of_week" id="day_of_week_${index}" class="form-radio bg-gray-800"><label for="day_of_week_${index}" class="flex items-center gap-x-2"><span>The</span><select name="monthly_ordinal">${ordinals.map(o => `<option value="${o.v}">${o.t}</option>`).join('')}</select><select name="monthly_weekday">${daysOfWeek.map(day => `<option value="${day}">${day}</option>`).join('')}</select></label></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right mt-4"><label class="text-sm mr-2"><input type="checkbox" name="approved" class="form-checkbox bg-gray-800" checked>Approve</label></div>
-                    </form>
+
+                const form = document.createElement('form');
+                form.className = "event-review-form";
+                form.dataset.index = index;
+
+                // Event Name
+                const eventNameDiv = document.createElement('div');
+                eventNameDiv.innerHTML = `<label>Event Name</label><input type="text" name="name" value="${event.name || ''}">`;
+                form.appendChild(eventNameDiv);
+
+                // Venue Select
+                const venueDiv = document.createElement('div');
+                const venueLabel = document.createElement('label');
+                venueLabel.textContent = 'Venue';
+                venueDiv.appendChild(venueLabel);
+                const venueSelect = document.createElement('select');
+                venueSelect.name = 'venueId';
+                venueSelect.className = 'venue-select';
+                venueSelect.innerHTML = venueOptionsHtml;
+                venueDiv.appendChild(venueSelect);
+                form.appendChild(venueDiv);
+
+                // Date & Time
+                const dateTimeDiv = document.createElement('div');
+                dateTimeDiv.className = 'grid grid-cols-2 gap-4';
+                dateTimeDiv.innerHTML = `
+                    <div><label>Date</label><input type="date" name="date" value="${event.date ? `20${event.date.substring(0, 2)}-${event.date.substring(3, 5)}-${event.date.substring(6, 8)}` : ''}"></div>
+                    <div><label>Time</label><input type="time" name="time" value="${event.time || ''}"></div>
                 `;
+                form.appendChild(dateTimeDiv);
+
+                // Ticket Link
+                const ticketLinkDiv = document.createElement('div');
+                ticketLinkDiv.innerHTML = `<label>Ticket Link</label><input type="url" name="link" value="${event.ticketLink || ''}" placeholder="https://">`;
+                form.appendChild(ticketLinkDiv);
+
+                // Description
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.className = 'md:col-span-2';
+                descriptionDiv.innerHTML = `<label>Description</label><textarea name="description" rows="3">${event.description || ''}</textarea>`;
+                form.appendChild(descriptionDiv);
+
+                // Recurrence Section
+                const recurrenceSection = document.createElement('div');
+                recurrenceSection.className = 'md:col-span-2 border-t border-gray-700 pt-4 space-y-4';
+                recurrenceSection.innerHTML = `
+                    <label class="block text-sm font-semibold accent-color-secondary">Recurrence</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs">Frequency</label><select name="recurrence_frequency" class="recurrence-control"><option value="none" selected>Does not repeat</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+                        <div class="recurrence-options recurrence-interval-options"><label class="text-xs">Repeats every</label><input type="number" name="recurrence_interval" value="1" min="1"><span>&nbsp;weeks/months</span></div>
+                    </div>
+                    <div class="recurrence-options recurrence-weekly-options">
+                        <label class="text-xs">On these days</label>
+                        <div class="grid grid-cols-4 lg:grid-cols-7 gap-2">${daysOfWeek.map(day => `<label class="text-center p-2 rounded-md border border-gray-700 has-[:checked]:bg-accent-color has-[:checked]:border-accent-color cursor-pointer"><input type="checkbox" name="recurrence_days" value="${day}" class="sr-only"><span>${day}</span></label>`).join('')}</div>
+                    </div>
+                    <div class="recurrence-options recurrence-monthly-options space-y-3">
+                        <label class="text-xs">On</label>
+                        <div class="flex items-center gap-x-2"><input type="radio" name="monthly_type_${index}" value="day_of_month" id="day_of_month_${index}" checked class="form-radio bg-gray-800"><label for="day_of_month_${index}" class="flex items-center gap-x-2"><span>Day</span><input type="number" name="monthly_day" value="1" min="1" max="31" class="w-16 p-1 text-center"><span>of the month</span></label></div>
+                        <div class="flex items-center gap-x-2"><input type="radio" name="monthly_type_${index}" value="day_of_week" id="day_of_week_${index}" class="form-radio bg-gray-800"><label for="day_of_week_${index}" class="flex items-center gap-x-2"><span>The</span><select name="monthly_ordinal">${ordinals.map(o => `<option value="${o.v}">${o.t}</option>`).join('')}</select><select name="monthly_weekday">${daysOfWeek.map(day => `<option value="${day}">${day}</option>`).join('')}</select></label></div>
+                    </div>
+                `;
+                form.appendChild(recurrenceSection);
+
+                // Approved Checkbox
+                const approvedDiv = document.createElement('div');
+                approvedDiv.className = 'text-right mt-4';
+                approvedDiv.innerHTML = `<label class="text-sm mr-2"><input type="checkbox" name="approved" class="form-checkbox bg-gray-800" checked>Approve</label>`;
+                form.appendChild(approvedDiv);
+
+                card.appendChild(form);
                 reviewContainer.appendChild(card);
                 
+                // Apply common styling
                 card.querySelectorAll('input:not([type=checkbox]):not([type=radio]), textarea, select').forEach(el => el.className = 'w-full p-2 bg-gray-900/50 rounded-md border border-gray-700');
                 card.querySelectorAll('input[type=radio]').forEach(el => el.className = 'form-radio bg-gray-800 border-gray-600 text-accent-color focus:ring-accent-color');
-                
-                const venueSelect = card.querySelector('.venue-select');
-                if (matchedVenue) venueSelect.value = matchedVenue.id;
-                
-                const freqSelect = card.querySelector('[name="recurrence_frequency"]');
-                freqSelect.addEventListener('change', () => {
-                    const showWeekly = freqSelect.value === 'weekly';
-                    const showMonthly = freqSelect.value === 'monthly';
-                    card.querySelectorAll('.recurrence-weekly-options').forEach(el => el.classList.toggle('hidden', !showWeekly));
-                    card.querySelectorAll('.recurrence-monthly-options').forEach(el => el.classList.toggle('hidden', !showMonthly));
+                card.querySelectorAll('label').forEach(el => {
+                    if (!el.classList.contains('text-xs') && !el.classList.contains('flex')) { // Avoid overriding small labels or flex containers
+                        el.classList.add('block', 'text-sm', 'font-semibold', 'mb-1', 'accent-color-secondary');
+                    }
                 });
+
+                // Set venue select value
+                if (matchedVenue) {
+                    venueSelect.value = matchedVenue.id;
+                }
+
+                // Recurrence visibility logic
+                const freqSelect = recurrenceSection.querySelector('[name="recurrence_frequency"]');
+                const recurrenceIntervalOptions = recurrenceSection.querySelector('.recurrence-interval-options');
+                const weeklyOptions = recurrenceSection.querySelector('.recurrence-weekly-options');
+                const monthlyOptions = recurrenceSection.querySelector('.recurrence-monthly-options');
+
+                const updateRecurrenceVisibility = () => {
+                    const selectedType = freqSelect.value;
+                    recurrenceIntervalOptions.classList.toggle('hidden', selectedType === 'none');
+                    weeklyOptions.classList.toggle('hidden', selectedType !== 'weekly');
+                    monthlyOptions.classList.toggle('hidden', selectedType !== 'monthly');
+                };
+
+                freqSelect.addEventListener('change', updateRecurrenceVisibility);
+                updateRecurrenceVisibility(); // Initial call to set visibility
             };
 
             if (window.location.hash) {
                 try {
-                    const events = JSON.parse(atob(window.location.hash.substring(1)));
+                    const hashData = window.location.hash.substring(1);
+                    console.log('Raw hash data:', hashData);
+                    const decodedData = atob(hashData);
+                    console.log('Decoded data (before JSON.parse):', decodedData);
+                    const events = JSON.parse(decodedData);
                     if(events && events.length > 0) {
                         events.forEach(createEventCard);
                         approveAllContainer.classList.remove('hidden');
-                    } else { reviewContainer.innerHTML = '<p class="text-gray-400 text-center">The AI could not find any events in the provided file.</p>'; }
-                } catch (e) { reviewContainer.innerHTML = '<p class="text-red-500 text-center">Could not parse event data. Please try uploading again.</p>'; }
-            } else { reviewContainer.innerHTML = '<p class="text-gray-400 text-center">No event data found. Please submit through the promoter tools page.</p>'; }
+                    } else {
+                        reviewContainer.innerHTML = '<p class="text-gray-400 text-center">The AI could not find any events in the provided file.</p>';
+                    }
+                } catch (e) {
+                    console.error('Error parsing event data from hash:', e.message, e);
+                    reviewContainer.innerHTML = '<p class="text-red-500 text-center">Could not parse event data. Please try uploading again.</p>';
+                }
+            } else {
+                reviewContainer.innerHTML = '<p class="text-gray-400 text-center">No event data found. Please submit through the promoter tools page.</p>';
+            }
 
             document.getElementById('approve-all-btn').addEventListener('click', async () => {
                 const eventsToCreate = [];

@@ -23,31 +23,40 @@ exports.handler = async (event, context) => {
         return { statusCode: 405, body: JSON.stringify({ message: 'Method Not Allowed' }) };
     }
     try {
+        console.log('Received request to update recurring events.', { eventId: JSON.parse(event.body).eventId, recurrenceRule: JSON.parse(event.body).recurrenceRule });
         const { AIRTABLE_PERSONAL_ACCESS_TOKEN, AIRTABLE_BASE_ID } = process.env;
         const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
         const { eventId, recurrenceRule } = JSON.parse(event.body);
         if (!eventId || !recurrenceRule) {
+            console.log('Missing eventId or recurrenceRule.');
             return { statusCode: 400, body: JSON.stringify({ message: 'Missing eventId or recurrenceRule' }) };
         }
         
         const sourceEvent = await base('Events').find(eventId);
+        console.log('Source event fetched:', { date: sourceEvent.fields.Date, parentEventName: sourceEvent.fields['Parent Event Name'] });
         const parentEventName = sourceEvent.fields['Parent Event Name'];
         if (!parentEventName) {
+            console.log('Source event does not have a "Parent Event Name".');
             return { statusCode: 400, body: JSON.stringify({ message: 'Source event must have a "Parent Event Name" to update its series.' }) };
         }
 
+        const archiveFilterFormula = `AND({Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}", IS_AFTER({Date}, TODAY()), {Status} = 'Approved')`;
+        console.log('Archiving filter formula:', archiveFilterFormula);
         const futureEventsToArchive = await base('Events').select({
-            filterByFormula: `AND({Parent Event Name} = "${parentEventName.replace(/"/g, '\\"')}", IS_AFTER({Date}, TODAY()), {Status} = 'Approved')`
+            filterByFormula: archiveFilterFormula
         }).all();
         const archivePayload = futureEventsToArchive.map(record => ({ id: record.id, fields: { 'Status': 'Archived' } }));
+        console.log(`Found ${archivePayload.length} events to archive.`);
         if (archivePayload.length > 0) {
             for (let i = 0; i < archivePayload.length; i += 10) {
                 await base('Events').update(archivePayload.slice(i, i + 10));
             }
+            console.log('Events archived successfully.');
         }
         
         const newDates = [];
         const startDate = new Date(sourceEvent.fields.Date + 'T00:00:00Z');
+        console.log('Generating new dates starting from:', startDate.toISOString());
         
         if (recurrenceRule.type === 'weekly') {
             const daysOfWeek = recurrenceRule.weekly_days.map(d => parseInt(d, 10));
@@ -78,6 +87,7 @@ exports.handler = async (event, context) => {
                 if (nextDate) newDates.push(nextDate);
             }
         }
+        console.log(`Generated ${newDates.length} new dates:`, newDates.map(d => d.toISOString().split('T')[0]));
         
         const newEventRecords = newDates.map(date => {
             const newFields = { ...sourceEvent.fields };
@@ -88,10 +98,12 @@ exports.handler = async (event, context) => {
             return { fields: newFields };
         });
 
+        console.log(`Creating ${newEventRecords.length} new event records.`);
         if (newEventRecords.length > 0) {
              for (let i = 0; i < newEventRecords.length; i += 10) {
                 await base('Events').create(newEventRecords.slice(i, i + 10));
             }
+            console.log('New events created successfully.');
         }
         return {
             statusCode: 200,

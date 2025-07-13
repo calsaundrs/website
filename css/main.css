@@ -144,3 +144,91 @@ body {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
 }
+
+/* Button Primary Styles */
+.button-primary {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #B564F7; /* accent-color */
+    color: white;
+    font-weight: bold;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: opacity 0.3s ease;
+}
+.button-primary:hover {
+    opacity: 0.9;
+}
+
+/* Calendar Link Styles */
+.calendar-link {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #B564F7; /* accent-color */
+    color: white;
+    font-weight: bold;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 0.5rem; /* For the icon spacing */
+}
+
+.calendar-link:hover {
+    opacity: 0.9;
+}
+
+/* Specific colors for each calendar type (if needed, but now using primary accent) */
+.calendar-link.google {
+    background-color: #B564F7; /* Use accent-color for consistency */
+}
+.calendar-link.google:hover {
+    opacity: 0.9;
+}
+
+.calendar-link.ical {
+    background-color: #B564F7; /* Use accent-color for consistency */
+}
+.calendar-link.ical:hover {
+    opacity: 0.9;
+}
+
+/* Venue Link Styles */
+.venue-link-style {
+    display: inline-flex;
+    align-items: center;
+    color: #B564F7; /* accent-color */
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.venue-link-style:hover {
+    color: #FADCD9; /* accent-color-secondary */
+    text-decoration: underline;
+}
+
+/* Modal Specific Styles */
+.modal-open {
+    overflow: hidden;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

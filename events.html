@@ -317,7 +317,51 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <div id="header-placeholder"></div>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<!-- End Google Tag Manager -->
+<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+</div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <!-- GET LISTED button styling reverted to original Tailwind classes -->
+            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+        </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    </div>
+</header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
@@ -371,11 +415,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div id="nsfw-toggle-container" class="filter-button flex items-center justify-between !p-3 w-full min-w-fit ml-auto order-last">
                     <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer flex-grow">
                         <div class="relative flex-shrink-0">
-                            <input type="checkbox" id="nsfw-toggle" class="sr-only" checked> <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                            <input type="checkbox" id="nsfw-toggle" class="sr-only"> <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
                             <div class="toggle-dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white"></div> </div>
                         <span id="nsfw-mode-text-mobile" class="ml-3 text-white font-medium">SFW Mode</span>
                         <span id="nsfw-mode-text-desktop" class="ml-3 text-white font-medium">SFW Mode</span>
                     </label>
+                </div>
+            </div>
+
+            <div id="kink-sfw-notice" class="hidden text-center card-bg p-8 md:p-12 col-span-full mb-6">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
+                    <i class="fas fa-eye-slash fa-2x"></i>
+                </div>
+                <h3 class="mt-4 text-xl font-semibold text-white">"Kink" Events Hidden</h3>
+                <p class="mt-2 text-gray-400">You are in SFW (Safe for Work) mode, which hides events categorized as "Kink".</p>
+                <p class="mt-1 text-gray-400">To view these events, please disable SFW mode using the toggle below.</p>
+                <div class="mt-6 flex items-center justify-center">
+                    <div class="filter-button flex items-center justify-between !p-3">
+                        <label for="nsfw-toggle-notice" class="flex items-center cursor-pointer">
+                            <div class="relative flex-shrink-0">
+                                <input type="checkbox" id="nsfw-toggle-notice" class="sr-only">
+                                <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                                <div class="toggle-dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white"></div>
+                            </div>
+                            <span id="nsfw-mode-text-notice" class="ml-3 text-white font-medium">SFW Mode</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -422,7 +487,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-    <div id="footer-placeholder"></div>
+    <footer class="border-t-2 border-gray-800 p-8">
+    <div class="container mx-auto grid md:grid-cols-2">
+        <div>
+             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+             </div>
+        </div>
+        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+            <div>
+                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                <ul>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script>
         // --- Global State ---
@@ -430,9 +524,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         let featuredEvents = [];
         let activeDateFilter = { type: 'all', from: null, to: null };
         let activeCategoryFilter = 'all';
-        let activeVenueFilter = 'all'; // Added activeVenueFilter
-        let isSfwMode = true; // true = SFW (hide fetish), false = NSFW (show fetish)
-        let allVenuesForFilter = []; // Stores unique venues associated with events
+        let activeVenueFilter = 'all';
+        let isSfwMode = true;
+        let allVenuesForFilter = [];
 
         // --- DOM Elements ---
         const eventGrid = document.getElementById('event-grid');
@@ -448,12 +542,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const featuredEventsSection = document.getElementById('featured-events-section');
         const slideshowContainer = document.querySelector('#featured-banner .slideshow-container');
         const slideshowDotsContainer = document.querySelector('#featured-banner .slideshow-dots');
-        // Added DOM elements for venue filter and NSFW toggle
         const venueBtn = document.getElementById('venue-btn');
         const venuePopover = document.getElementById('venue-popover');
         const nsfwToggle = document.getElementById('nsfw-toggle');
         const nsfwModeTextMobile = document.getElementById('nsfw-mode-text-mobile');
         const nsfwModeTextDesktop = document.getElementById('nsfw-mode-text-desktop');
+        const kinkSfwNotice = document.getElementById('kink-sfw-notice');
+        const nsfwToggleNotice = document.getElementById('nsfw-toggle-notice');
+        const nsfwModeTextNotice = document.getElementById('nsfw-mode-text-notice');
 
 
         // --- Slideshow State ---
@@ -466,7 +562,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         function hideEventModal() { document.getElementById('event-modal').style.display = 'none'; }
 
         // --- Date Helper ---
+        const cloudinaryCloudName = 'dbxhpjoiz'; // Your Cloudinary cloud name
+        const getCloudinaryUrl = (publicId, width, height) => {
+            if (!publicId || !cloudinaryCloudName) return null;
+            return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
+        };
+
         const getToday = () => { const now = new Date(); now.setHours(0, 0, 0, 0); return now; };
+
+        // --- SFW Mode Logic ---
+        function setSfwMode(newState) {
+            isSfwMode = newState;
+            nsfwToggle.checked = isSfwMode;
+            nsfwToggleNotice.checked = isSfwMode;
+
+            const modeText = isSfwMode ? 'SFW Mode' : 'NSFW Mode';
+            nsfwModeTextMobile.textContent = modeText;
+            nsfwModeTextDesktop.textContent = modeText;
+            nsfwModeTextNotice.textContent = modeText;
+
+            applyFilters();
+        }
 
         // --- Filtering Logic ---
         function applyFilters() {
@@ -511,9 +627,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 filteredEvents = filteredEvents.filter(e => e.venue === activeVenueFilter);
             }
 
-            // NSFW Filter
-            if (isSfwMode) { // If SFW mode is active, filter out 'Fetish'
-                filteredEvents = filteredEvents.filter(e => !(e.category && e.category.includes('Fetish')));
+            // NSFW Filter & Kink Notice
+            if (isSfwMode && activeCategoryFilter === 'Kink') {
+                eventGrid.innerHTML = '';
+                eventGrid.style.display = 'none';
+                noResultsMessage.style.display = 'none';
+                kinkSfwNotice.style.display = 'block';
+                return; 
+            } else {
+                kinkSfwNotice.style.display = 'none';
+            }
+
+            if (isSfwMode) {
+                filteredEvents = filteredEvents.filter(e => !(e.category && e.category.includes('Kink')));
             }
 
             renderEvents(filteredEvents);
@@ -527,7 +653,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             events.forEach(event => {
                 const tagsHTML = event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('');
-                const imageUrl = event.image || 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Event';
+                const imageUrl = event.image || getCloudinaryUrl('brumoutloud_events/placeholder', 400, 400);
 
                 const isBoosted = event.isBoosted;
 
@@ -567,9 +693,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
         }
 
-        // NEW: Render Venue Options (now uses allVenuesForFilter from get-events.js)
         function renderVenueOptions() {
-            venuePopover.innerHTML = ''; // Clear existing options
+            venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
             allButton.className = 'popover-option';
@@ -577,12 +702,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             allButton.dataset.filterValue = 'all';
             venuePopover.appendChild(allButton);
 
-            // Populate from the allVenuesForFilter array
             allVenuesForFilter.forEach(venue => {
                 const button = document.createElement('button');
                 button.className = 'popover-option';
                 button.textContent = venue.name;
-                button.dataset.filterValue = venue.name; // Filter by venue name string
+                button.dataset.filterValue = venue.name;
                 venuePopover.appendChild(button);
             });
         }
@@ -591,38 +715,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         function resetFilters() {
             activeDateFilter = { type: 'all', from: null, to: null };
             activeCategoryFilter = 'all';
-            activeVenueFilter = 'all'; // Reset venue filter
-            isSfwMode = true; // Reset NSFW toggle to SFW
-
-            // Reset active states for date filter buttons
+            activeVenueFilter = 'all';
+            
             document.querySelectorAll('#filter-bar-container .filter-button[data-filter-type="date"]').forEach(b => b.classList.remove('active'));
             document.querySelector('#filter-bar-container .filter-button[data-filter-value="all"][data-filter-type="date"]').classList.add('active');
             
-            // Reset popover button texts
             categoryBtn.querySelector('span').textContent = 'All Categories';
             venueBtn.querySelector('span').textContent = 'All Venues';
             
-            // Reset NSFW toggle state and text
-            nsfwToggle.checked = true;
-            nsfwModeTextMobile.textContent = 'SFW Mode'; // Update mobile text
-            nsfwModeTextDesktop.textContent = 'SFW Mode'; // Update desktop text
-
             dateFromInput.value = '';
             dateToInput.value = '';
-            applyFilters();
+            
+            setSfwMode(true);
         }
 
         // --- Popover & Filter Event Listeners ---
         function setupEventListeners() {
             filterBarContainer.addEventListener('click', e => {
                 const button = e.target.closest('.filter-button');
-                // Ensure the clicked element is a filter button and not part of a popover or the toggle itself
-                // Also ensure it's not the actual NSFW toggle itself (nsfwToggle element)
                 if (!button || button.id === 'custom-date-btn' || button.id === 'category-btn' || button.id === 'venue-btn' || button.contains(nsfwToggle)) {
                     return;
                 }
 
-                // If it's a date filter button (All Upcoming, Today, This Weekend)
                 if (button.dataset.filterType === 'date') {
                     document.querySelectorAll('#filter-bar-container .filter-button[data-filter-type="date"]').forEach(b => b.classList.remove('active'));
                     button.classList.add('active');
@@ -636,7 +750,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             customDateBtn.addEventListener('click', (e) => { e.stopPropagation(); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); customDatePopover.classList.toggle('show'); });
             categoryBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); venuePopover.classList.remove('show'); categoryPopover.classList.toggle('show'); });
-            venueBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); }); // Corrected to close all others
+            venueBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); });
             
             clearFiltersBtn.addEventListener('click', resetFilters);
 
@@ -660,7 +774,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 applyFilters();
             });
 
-            // NEW: Venue Popover Event Listener
             venuePopover.addEventListener('click', e => {
                 const button = e.target.closest('.popover-option');
                 if(!button) return;
@@ -670,13 +783,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 applyFilters();
             });
 
-            // NEW: NSFW Toggle Event Listener
-            nsfwToggle.addEventListener('change', () => {
-                isSfwMode = nsfwToggle.checked;
-                nsfwModeTextMobile.textContent = isSfwMode ? 'SFW Mode' : 'NSFW Mode'; // Update mobile text
-                nsfwModeTextDesktop.textContent = isSfwMode ? 'SFW Mode' : 'NSFW Mode'; // Update desktop text
-                applyFilters();
-            });
+            nsfwToggle.addEventListener('change', () => setSfwMode(nsfwToggle.checked));
+            nsfwToggleNotice.addEventListener('change', () => setSfwMode(nsfwToggleNotice.checked));
 
 
             window.addEventListener('click', () => { 
@@ -693,42 +801,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             if (slides.length === 0) return;
 
-            // Loop slides if index is out of bounds
             if (index >= slides.length) currentSlide = 0;
             else if (index < 0) currentSlide = slides.length - 1;
             else currentSlide = index;
 
-            // Hide all slides and deactivate all dots
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
 
-            // Show the current slide and activate the current dot
             slides[currentSlide].classList.add('active');
             dots[currentSlide].classList.add('active');
 
-            // Reset the interval
             clearInterval(slideshowInterval);
             slideshowInterval = setInterval(() => showSlide(currentSlide + 1), SLIDESHOW_INTERVAL_TIME);
         }
 
         function createSlideshowElements() {
-            slideshowContainer.innerHTML = ''; // Clear existing slides
-            slideshowDotsContainer.innerHTML = ''; // Clear existing dots
+            slideshowContainer.innerHTML = '';
+            slideshowDotsContainer.innerHTML = '';
 
             if (featuredEvents.length === 0) {
-                featuredEventsSection.classList.add('hidden'); // Hide the entire section if no featured events
+                featuredEventsSection.classList.add('hidden');
                 return;
             } else {
-                featuredEventsSection.classList.remove('hidden'); // Show the section if featured events exist
+                featuredEventsSection.classList.remove('hidden');
             }
 
             featuredEvents.forEach((event, index) => {
                 const slideDiv = document.createElement('div');
                 slideDiv.classList.add('slide');
-                if (index === 0) slideDiv.classList.add('active'); // First slide active by default
+                if (index === 0) slideDiv.classList.add('active');
 
                 const imageUrl = event.image || 'https://placehold.co/1200x350/1e1e1e/EAEAEA?text=Featured+Event';
-                // Format date similar to existing events.html logic
                 const formattedDate = new Date(event.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
                 slideDiv.innerHTML = `
@@ -757,11 +860,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 slideshowDotsContainer.appendChild(dotSpan);
             });
 
-            // Start slideshow if there's more than one slide
             if (featuredEvents.length > 1) {
-                showSlide(0); // Initialize first slide and start interval
+                showSlide(0);
             } else {
-                clearInterval(slideshowInterval); // Clear any existing interval if only one or no slides
+                clearInterval(slideshowInterval);
             }
         }
 
@@ -769,37 +871,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // --- Initial Data Fetch & Processing ---
         async function initializePage() {
             try {
-                // Fetch events and venues from your Netlify function
                 const response = await fetch('/.netlify/functions/get-events');
-                const data = await response.json(); // Now expects { events: [], venues: [] }
+                const data = await response.json();
 
-                // Assign fetched data to global state
                 allEvents = data.events.sort((a, b) => new Date(a.date) - new Date(b.date));
-                allVenuesForFilter = data.venues; // Assign the unique venues list
+                allVenuesForFilter = data.venues;
                 
-                // Initialize NSFW toggle state and text
-                nsfwToggle.checked = isSfwMode;
-                nsfwModeTextMobile.textContent = isSfwMode ? 'SFW Mode' : 'NSFW Mode';
-                nsfwModeTextDesktop.textContent = isSfwMode ? 'SFW Mode' : 'NSFW Mode';
+                setSfwMode(true);
 
+                featuredEvents = []; 
 
-                // Featured events logic (unchanged, will be hidden if featuredEvents is empty)
-                // featuredEvents = allEvents.filter(event => event.isFeatured);
-                featuredEvents = []; // Explicitly clear featuredEvents to hide the banner
-
-                createSlideshowElements(); // Render featured banner
+                createSlideshowElements(); 
 
                 renderCategoryOptions();
-                renderVenueOptions(); // Render venue filter options from fetched data
+                renderVenueOptions(); 
                 setupEventListeners();
-                applyFilters(); // Apply initial filters after all data is loaded and setup
+                applyFilters(); 
             } catch (error) {
                 console.error("Error fetching events:", error);
                 eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
             }
         }
 
-        // Call initializePage when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', initializePage);
     </script>
         <script src="/js/main.js"></script>
