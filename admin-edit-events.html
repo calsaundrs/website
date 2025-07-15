@@ -406,8 +406,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             // 3. Date & Time
             const dateTimeDiv = document.createElement('div');
             dateTimeDiv.classList.add('grid', 'md:grid-cols-2', 'gap-4');
-            const eventDate = fields['Date'] ? new Date(fields['Date']).toISOString().split('T')[0] : '';
-            const eventTime = fields['Date'] ? new Date(fields['Date']).toTimeString().substring(0, 5) : '';
+            const eventDate = fields['Date'] ? `20${fields['Date'].substring(0, 2)}-${fields['Date'].substring(3, 5)}-${fields['Date'].substring(6, 8)}` : '';
+                        const eventTime = fields['Date'] ? fields['Date'].substring(11, 16) : '';
             dateTimeDiv.innerHTML = `
                 <div><label>Date</label><input type="date" name="date" value="${eventDate}" required></div>
                 <div><label>Time (24hr)</label><input type="time" name="time" value="${eventTime}" required></div>
