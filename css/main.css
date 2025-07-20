@@ -23,8 +23,18 @@ body:not(.homepage) {
 
 /* Homepage specific styles */
 body.homepage {
-    background-color: #121212; /* Fallback in case video doesn't load */
+    /* No background color - let video show through */
     min-height: 100vh;
+}
+
+/* Ensure main content on homepage doesn't block video */
+body.homepage main {
+    background: transparent;
+}
+
+/* Make cards semi-transparent on homepage to see video */
+body.homepage .card-bg {
+    background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent cards */
 }
 
 
