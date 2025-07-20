@@ -108,6 +108,18 @@
     <meta name="theme-color" content="#8a2be2">
     
     <style>
+        /* Critical CSS to prevent pride flag flashing */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
         /* Existing styles from original code - PRESERVED */
         .popover {
             display: none;

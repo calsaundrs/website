@@ -109,6 +109,18 @@
     <meta name="theme-color" content="#8a2be2">
 
     <style>
+        /* Critical CSS to prevent pride flag flashing */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
         /* Existing styles from design-system or main.css (ensure these are present in your main.css too for consistency) */
         .filter-button {
             background-color: rgba(42, 42, 42, 0.8); color: #EAEAEA; border: 2px solid transparent;

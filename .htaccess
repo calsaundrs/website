@@ -178,7 +178,6 @@ FileETag None
     <FilesMatch "\.html$">
         Header add Link "</css/main.css>; rel=preload; as=style"
         Header add Link "</js/main.js>; rel=preload; as=script"
-        Header add Link "</progressflag.svg.png>; rel=preload; as=image"
     </FilesMatch>
 </IfModule>
 

@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Fix pride flag flashing issue
+    const fixPrideFlagFlash = () => {
+        // Add flag-loaded class to body after a short delay to ensure CSS is loaded
+        setTimeout(() => {
+            document.body.classList.add('flag-loaded');
+        }, 100);
+        
+        // Also add it immediately for fast connections
+        document.body.classList.add('flag-loaded');
+    };
+    
+    // Run the fix
+    fixPrideFlagFlash();
+    
     // Welcome Modal Logic
     const modal = document.getElementById('welcomeModal');
     const closeModalButton = document.getElementById('closeModalButton');
@@ -49,13 +63,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exploreButton) {
         exploreButton.addEventListener('click', closeModal);
     }
-    
-    // Optional: Close modal if user clicks on the background overlay
+
+    // Close modal when clicking outside of it
     if (modal) {
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
                 closeModal();
             }
+        });
+    }
+
+    // Mobile menu functionality
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('menu');
+
+    if (menuBtn && menu) {
+        menuBtn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
         });
     }
 

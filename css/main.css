@@ -17,6 +17,21 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Prevent pride flag from flashing at full size - Universal fix */
+img[src*="progressflag"] {
+    height: 1.5rem !important;
+    width: auto !important;
+    max-width: 1.5rem !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show flag after page loads */
+.flag-loaded img[src*="progressflag"],
+body.flag-loaded img[src*="progressflag"] {
+    opacity: 1;
+}
+
 /* Performance optimization for video background */
 .video-background-container {
     position: fixed;
