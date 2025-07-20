@@ -1,27 +1,73 @@
 /* Add this to the very top of your main.css file */
 @font-face {
-    font-family: 'Omnes Pro'; /* Use 'Omnes Pro' as the family name for consistency */
-    src: url('./fonts/Omnes Bold.woff') format('woff'); /* Path to your Omnes Bold font file relative to main.css */
-    font-weight: bold; /* This font file is specifically for bold weight */
+    font-family: 'Omnes Pro';
+    src: url('./fonts/Omnes Bold.woff') format('woff');
+    font-weight: bold;
     font-style: normal;
     font-display: swap; /* Ensures text is visible during font loading */
 }
 
-/* Custom Styles for Brum Outloud */
+/* Critical CSS - Above the fold styles */
 body {
     background-color: #121212;
     color: #EAEAEA;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif; /* Added fallbacks */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent pride flag from flashing at full size - Universal fix */
+img[src*="progressflag"] {
+    height: 1.5rem !important;
+    width: auto !important;
+    max-width: 1.5rem !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show flag after page loads */
+.flag-loaded img[src*="progressflag"],
+body.flag-loaded img[src*="progressflag"] {
+    opacity: 1;
+}
+
+/* Performance optimization for video background */
+.video-background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform; /* Optimize for animations */
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
 }
 
 /* Custom font for bold, impactful headlines */
 .font-anton {
-    font-family: 'Anton', sans-serif;
+    font-family: 'Anton', system-ui, sans-serif;
     letter-spacing: 0.05em;
 }
 
 .font-omnes-pro {
-    font-family: 'Omnes Pro', sans-serif;
+    font-family: 'Omnes Pro', system-ui, sans-serif;
 }
 
 /* Core Colour Palette Classes */
@@ -31,23 +77,33 @@ body {
 .accent-color-secondary { color: #FADCD9; }
 .bg-accent-color-secondary { background-color: #FADCD9; }
 
-/* Component Styles */
+/* Component Styles - Optimized for performance */
 .nav-cta {
-    background-color: #FADCD9; color: #333333; font-weight: bold;
-    padding: 0.75rem 1.5rem; border-radius: 0.5rem; transition: opacity 0.3s ease;
+    background-color: #FADCD9; 
+    color: #333333; 
+    font-weight: bold;
+    padding: 0.75rem 1.5rem; 
+    border-radius: 0.5rem; 
+    transition: opacity 0.3s ease;
+    will-change: opacity; /* Optimize for transitions */
 }
 .nav-cta:hover { opacity: 0.9; }
 
 .card-bg {
-    background-color: #1e1e1e; border: 1px solid #2e2e2e;
-    border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    background-color: #1e1e1e; 
+    border: 1px solid #2e2e2e;
+    border-radius: 1.25rem; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     overflow: hidden;
+    will-change: transform; /* Optimize for hover effects */
 }
 
 .heading-gradient {
     background: linear-gradient(180deg, #FFFFFF 50%, #d1c7b8 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; text-fill-color: transparent;
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    background-clip: text; 
+    color: transparent; /* Fallback for unsupported browsers */
 }
 
 .filter-button {
@@ -65,6 +121,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    will-change: background-color, color, border-color;
 }
 .filter-button:hover {
     background-color: rgba(60, 60, 60, 0.8);
@@ -76,159 +133,181 @@ body {
     border-color: #B564F7;
 }
 
-/* Event/Venue Card Styles */
+/* Event/Venue Card Styles - Performance optimized */
 .item-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
 }
 .item-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 }
+
 .item-card-image-container {
     aspect-ratio: 1 / 1;
     overflow: hidden;
     position: relative;
 }
+
 .item-card-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s ease;
+    will-change: transform;
 }
+
 .item-card:hover .item-card-image {
     transform: scale(1.05);
 }
 
-
-/* --- Video Background Styles --- */
-.video-background-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: -1;
-    overflow: hidden;
-    background-color: #111;
+/* Feature cards optimization */
+.feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
 }
 
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* **THE FIX**: Changed from 0.6 to 0.75 for a darker effect */
-    background-color: rgba(17, 17, 17, 0.75);
-    z-index: 1;
+.feature-card:hover {
+    transform: scale(1.03) translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
-.background-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
+/* Loading states and accessibility improvements */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
-.tag-missing {
-    display: inline-block;
-    background-color: rgba(239, 68, 68, 0.1); /* Red-ish background */
-    color: #F87171; /* Red-ish text */
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Button Primary Styles */
-.button-primary {
-    display: block;
-    width: 100%;
-    text-align: center;
-    background-color: #B564F7; /* accent-color */
-    color: white;
-    font-weight: bold;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    transition: opacity 0.3s ease;
-}
-.button-primary:hover {
-    opacity: 0.9;
-}
-
-/* Calendar Link Styles */
-.calendar-link {
-    display: block;
-    width: 100%;
-    text-align: center;
-    background-color: #B564F7; /* accent-color */
-    color: white;
-    font-weight: bold;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    transition: opacity 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center content horizontally */
-    gap: 0.5rem; /* For the icon spacing */
-}
-
-.calendar-link:hover {
-    opacity: 0.9;
-}
-
-/* Specific colors for each calendar type (if needed, but now using primary accent) */
-.calendar-link.google {
-    background-color: #B564F7; /* Use accent-color for consistency */
-}
-.calendar-link.google:hover {
-    opacity: 0.9;
-}
-
-.calendar-link.ical {
-    background-color: #B564F7; /* Use accent-color for consistency */
-}
-.calendar-link.ical:hover {
-    opacity: 0.9;
-}
-
-/* Venue Link Styles */
-.venue-link-style {
-    display: inline-flex;
-    align-items: center;
-    color: #B564F7; /* accent-color */
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.venue-link-style:hover {
-    color: #FADCD9; /* accent-color-secondary */
-    text-decoration: underline;
-}
-
-/* Modal Specific Styles */
-.modal-open {
-    overflow: hidden;
-}
-
-.animate-fade-in-up {
-    animation: fadeInUp 0.5s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+    
+    .item-card:hover {
+        transform: none;
+    }
+    
+    .feature-card:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .accent-color { color: #E080FF; }
+    .heading-gradient {
+        background: none;
+        -webkit-text-fill-color: initial;
+        color: #FFFFFF;
+    }
+}
+
+/* Dark mode optimization (already dark, but for consistency) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #EAEAEA;
+    }
+}
+
+/* Print styles */
+@media print {
+    .video-background-container,
+    .background-video,
+    .video-overlay {
+        display: none;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .feature-card,
+    .item-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+    outline: 2px solid #B564F7;
+    outline-offset: 2px;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #B564F7;
+    color: white;
+    padding: 8px;
+    z-index: 1000;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Performance: GPU acceleration for animations */
+.item-card,
+.feature-card,
+.filter-button,
+.background-video {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Lazy loading placeholder */
+.lazy-loading {
+    background-color: #2a2a2a;
+    background-image: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .font-anton {
+        letter-spacing: 0.025em;
+    }
+}
+
+/* Container queries support (progressive enhancement) */
+@supports (container-type: inline-size) {
+    .item-card {
+        container-type: inline-size;
+    }
+    
+    @container (max-width: 300px) {
+        .category-tag {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.5rem;
+        }
     }
 }

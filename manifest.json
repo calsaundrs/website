@@ -1,21 +1,116 @@
 {
-  "name": "Brum Outloud",
-  "short_name": "BrumOutloud",
+  "name": "Brum Outloud - LGBTQ+ Birmingham Guide",
+  "short_name": "Brum Outloud",
   "description": "Your essential guide to Birmingham's vibrant LGBTQ+ scene. Discover queer-friendly events, venues, and community resources for residents and visitors.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#8a2be2",
+  "orientation": "portrait-primary",
+  "background_color": "#121212",
+  "theme_color": "#B564F7",
+  "categories": ["lifestyle", "social", "entertainment"],
+  "lang": "en-GB",
+  "dir": "ltr",
+  "scope": "/",
   "icons": [
     {
       "src": "/faviconV2.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/faviconV2.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/faviconV2.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/faviconV2.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/faviconV2.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/faviconV2.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/progressflag.svg.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Brum Outloud homepage featuring Birmingham's LGBTQ+ events and venues"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Events",
+      "short_name": "Events",
+      "description": "Browse LGBTQ+ events in Birmingham",
+      "url": "/events.html",
+      "icons": [
+        {
+          "src": "/faviconV2.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Venues",
+      "short_name": "Venues",
+      "description": "Find LGBTQ+ friendly venues",
+      "url": "/all-venues.html",
+      "icons": [
+        {
+          "src": "/faviconV2.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Get Listed",
+      "short_name": "Submit",
+      "description": "Submit your event or venue",
+      "url": "/promoter-tool.html",
+      "icons": [
+        {
+          "src": "/faviconV2.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+brumoutloud",
+      "url": "/?handler=%s"
     }
   ]
 }
