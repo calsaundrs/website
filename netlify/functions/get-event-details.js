@@ -597,12 +597,14 @@ function getEmbeddedEventTemplate() {
  * @returns {string} HTML string containing multiple <a> tags.
  */
 function generateAddToCalendarLinks(event) {
+    console.log('🗓️ Generating calendar links for event:', event.title);
+    
     const googleLink = 'https://www.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(event.title) + '&dates=' + toICSDate(new Date(event.startTime)) + '/' + toICSDate(new Date(event.endTime)) + '&details=' + encodeURIComponent(event.description) + '&location=' + encodeURIComponent(event.location);
     const icalDataUri = generateIcsDataURI(event);
     const safeTitle = event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     // Return properly styled buttons matching design system
-    return '<a href="' + googleLink + '" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">' +
+    const calendarHTML = '<a href="' + googleLink + '" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">' +
         '<i class="fab fa-google mr-2"></i>' +
         '<span>Google Calendar</span>' +
         '<i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>' +
@@ -612,6 +614,9 @@ function generateAddToCalendarLinks(event) {
         '<span>Apple/Outlook/Other</span>' +
         '<i class="fas fa-download ml-auto text-xs opacity-70"></i>' +
         '</a>';
+    
+    console.log('✅ Calendar links generated. Length:', calendarHTML.length);
+    return calendarHTML;
 }
 
 exports.handler = async function (event, context) {
@@ -827,43 +832,19 @@ exports.handler = async function (event, context) {
             return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
         }).join('');
 
-        // Try multiple possible template paths for different deployment environments
-        const possibleTemplatePaths = [
-            path.resolve(__dirname, './templates/event-details-template.html'),
-            path.resolve(__dirname, '../templates/event-details-template.html'),
-            path.resolve(__dirname, 'templates/event-details-template.html'),
-            path.join(__dirname, 'templates', 'event-details-template.html'),
-            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html')
-        ];
-        
+        // Force use of embedded template with updated button styles
+        console.log("🔄 Using embedded template with updated button styles");
+        let htmlTemplate = getEmbeddedEventTemplate();
         let templatePath = null;
-        let htmlTemplate = null;
-        
-        for (const tryPath of possibleTemplatePaths) {
-            try {
-                console.log(`📄 Trying template path: ${tryPath}`);
-                htmlTemplate = await fs.readFile(tryPath, 'utf8');
-                templatePath = tryPath;
-                console.log(`✅ Template file found at: ${templatePath}`);
-                break;
-            } catch (pathError) {
-                console.log(`❌ Template not found at: ${tryPath}`);
-                continue;
-            }
-        }
-        // Check if we found a template
-        if (!htmlTemplate || !templatePath) {
-            console.error("❌ No template file found in any of the attempted paths");
-            console.log("🔄 Using embedded fallback template");
-            
-            // Use embedded template as fallback
-            htmlTemplate = getEmbeddedEventTemplate();
-        }
         
         console.log("✅ Template ready. Length:", htmlTemplate.length);
         console.log("📝 Template source:", templatePath ? `File: ${templatePath}` : 'Embedded fallback');
 
         console.log("🔄 Preparing data for Handlebars template.");
+        
+        const calendarLinksResult = generateAddToCalendarLinks(calendarData);
+        console.log("📊 Calendar links HTML preview:", calendarLinksResult.substring(0, 100) + '...');
+        
         const data = {
             eventName: eventName,
             descriptionMeta: description.substring(0, 150).replace(/\n/g, ' ') + '...',
@@ -904,7 +885,7 @@ exports.handler = async function (event, context) {
             tagsHtml: tagsHtml,
             description: description.replace(/\n/g, '<br>'),
             ticketLink: fields['Link'],
-            calendarLinksHtml: generateAddToCalendarLinks(calendarData),
+            calendarLinksHtml: calendarLinksResult,
             otherInstancesHTML: otherInstancesHTML,
             suggestedEventsHtml: suggestedEventsHtml,
             venueNameForDisplay: venueNameForDisplay,
