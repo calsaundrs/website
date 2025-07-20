@@ -116,9 +116,11 @@ validate_html() {
     # Basic HTML validation (check for common issues)
     find . -name "*.html" -not -path "./node_modules/*" | while read html_file; do
         # Check for missing alt attributes
-        if grep -q '<img[^>]*src[^>]*>' "$html_file" && ! grep -q 'alt=' "$html_file"; then
-            print_warning "Missing alt attributes in $html_file"
-        fi
+grep -io '<img[^>]*>' "$html_file" | while read -r img_tag; do
+    if ! echo "$img_tag" | grep -iq 'alt='; then
+        print_warning "Missing alt attribute in $html_file: $img_tag"
+    fi
+done
         
         # Check for missing meta description
         if ! grep -q 'meta name="description"' "$html_file"; then
