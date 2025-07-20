@@ -306,7 +306,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
-<body class="antialiased">
+<body class="antialiased homepage">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -315,7 +315,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- Background Video -->
 <div class="video-background-container">
     <div class="video-overlay"></div>
-    <video autoplay loop muted playsinline class="background-video" preload="metadata">
+    <video autoplay loop muted playsinline class="background-video" preload="auto" controls="false">
         <source src="/HouseOfAllureReel.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -451,7 +451,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div id="footer-placeholder"></div>
 
     <script>
-        // Ensure background video plays
+        // Ensure background video plays on all devices
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.querySelector('.background-video');
             const container = document.querySelector('.video-background-container');
@@ -463,24 +463,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 console.log('Video src:', video.currentSrc || video.src);
                 console.log('Video readyState:', video.readyState);
                 
-                // Try to play the video, handle any autoplay restrictions
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Video is playing');
-                    }).catch(error => {
-                        console.log('Video autoplay failed:', error);
-                        // Video autoplay was prevented, but that's okay for background videos
-                    });
-                }
+                // Function to attempt video play
+                const attemptPlay = () => {
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log('Video is playing');
+                        }).catch(error => {
+                            console.log('Video autoplay failed:', error);
+                            // For mobile, try again after user interaction
+                            setTimeout(attemptPlay, 1000);
+                        });
+                    }
+                };
                 
                 // Ensure video is properly loaded
                 video.addEventListener('loadeddata', function() {
                     console.log('Background video loaded successfully');
+                    attemptPlay();
                 });
                 
                 video.addEventListener('canplay', function() {
                     console.log('Video can start playing');
+                    attemptPlay();
                 });
                 
                 video.addEventListener('error', function(e) {
@@ -491,6 +496,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 video.addEventListener('loadstart', function() {
                     console.log('Video started loading');
                 });
+                
+                // Try to play immediately if already loaded
+                if (video.readyState >= 3) {
+                    attemptPlay();
+                }
+                
+                // Mobile-specific: try to play on any user interaction
+                const playOnInteraction = () => {
+                    attemptPlay();
+                    // Remove listeners after first interaction
+                    document.removeEventListener('touchstart', playOnInteraction);
+                    document.removeEventListener('click', playOnInteraction);
+                };
+                
+                document.addEventListener('touchstart', playOnInteraction, { once: true });
+                document.addEventListener('click', playOnInteraction, { once: true });
+                
             } else {
                 console.error('Video element not found!');
             }

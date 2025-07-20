@@ -9,12 +9,16 @@
 
 /* Critical CSS - Above the fold styles */
 body {
-    /* background-color removed to show video background */
     color: #EAEAEA;
     font-family: 'Poppins', system-ui, -apple-system, sans-serif; /* Added fallbacks */
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* Background color for all pages except homepage */
+body:not(.homepage) {
+    background-color: #121212;
 }
 
 
