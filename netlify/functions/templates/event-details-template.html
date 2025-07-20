@@ -25,18 +25,39 @@
 
 /* Button Styles for Calendar Links */
 .calendar-btn { 
-    display: block; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
     padding: 0.75rem 1rem; 
     background-color: #374151; 
     color: white; 
     text-decoration: none; 
-    border-radius: 0.5rem; 
-    margin-bottom: 0.5rem; 
-    transition: background-color 0.2s;
+    border-radius: 0.75rem; 
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-weight: 500;
+    min-width: 200px;
+    flex: 1;
 }
 .calendar-btn:hover { 
     background-color: #4B5563; 
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
+.google-cal:hover { 
+    background-color: #4285f4; 
+    border-color: #4285f4; 
+}
+.ical-download:hover { 
+    background-color: #B564F7; 
+    border-color: #B564F7; 
+}
+
+/* Icon spacing utilities */
+.mr-2 { margin-right: 0.5rem; }
+.ml-auto { margin-left: auto; }
+.text-xs { font-size: 0.75rem; }
+.opacity-70 { opacity: 0.7; }
 </style></head>
 <body class="antialiased">
     <!-- Google Tag Manager (noscript) -->
