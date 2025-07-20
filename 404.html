@@ -165,7 +165,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     id="search-input"
                     aria-label="Search site content"
                 >
-                <button type="button" class="search-button" onclick="performSearch()" aria-label="Search">
+                <button type="button" class="search-button" id="search-button" aria-label="Search">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -206,7 +206,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <i class="fas fa-envelope mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
                     Contact Us
                 </a>
-                <button onclick="goBack()" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors inline-flex items-center justify-center group">
+                <button id="go-back-button" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors inline-flex items-center justify-center group">
                     <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
                     Go Back
                 </button>
@@ -254,38 +254,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </footer>
 
 <script>
-    // Search functionality
-    function performSearch() {
-        const searchTerm = document.getElementById('search-input').value.trim();
-        if (searchTerm) {
-            // Redirect to events page with search parameter
-            window.location.href = `/events.html?q=${encodeURIComponent(searchTerm)}`;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (searchTerm) {
+                // Redirect to events page with search parameter
+                window.location.href = `/events.html?q=${encodeURIComponent(searchTerm)}`;
+            }
         }
-    }
-    
-    // Allow Enter key to trigger search
-    document.getElementById('search-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
+        
+        // Go back functionality
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+        
+        // Event listeners using proper separation of concerns
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const goBackButton = document.getElementById('go-back-button');
+        
+        if (searchButton) {
+            searchButton.addEventListener('click', performSearch);
+        }
+        
+        if (searchInput) {
+            // Allow Enter key to trigger search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+        
+        if (goBackButton) {
+            goBackButton.addEventListener('click', goBack);
+        }
+        
+        // Track 404 errors for analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', '404_error', {
+                'page_location': window.location.href,
+                'page_referrer': document.referrer
+            });
         }
     });
-    
-    // Go back functionality
-    function goBack() {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            window.location.href = '/';
-        }
-    }
-    
-    // Track 404 errors for analytics
-    if (typeof gtag !== 'undefined') {
-        gtag('event', '404_error', {
-            'page_location': window.location.href,
-            'page_referrer': document.referrer
-        });
-    }
 </script>
 </body>
 </html>

@@ -117,8 +117,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <div class="space-y-6">
                             <div class="grid grid-cols-2 gap-4">
-                                <div><label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input type="date" name="date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
-                                <div><label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">Start Time</label><input type="time" name="start-time" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                                <div><label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input type="date" id="date" name="date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                                <div><label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">Start Time</label><input type="time" id="start-time" name="start-time" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
                             </div>
                             <div><label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link (Optional)</label><input type="url" name="link" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://"></div>
                             <div class="mb-4 p-4 border border-gray-700 rounded-lg bg-gray-800/50">
@@ -380,7 +380,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             // Check required fields
             const eventName = document.getElementById('event-name').value.trim();
-            const eventDate = document.getElementById('date').value; // Changed from 'event-date' to 'date'
+            const eventDate = document.getElementById('date').value;
             const startTime = document.getElementById('start-time').value;
             
             if (!eventName) {
@@ -390,7 +390,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             if (!eventDate) {
                 errors.push('Event date is required.');
-                document.getElementById('date').classList.add('border-red-500'); // Changed from 'event-date' to 'date'
+                document.getElementById('date').classList.add('border-red-500');
             } else {
                 // Check if date is in the past
                 const selectedDate = new Date(eventDate);
@@ -399,7 +399,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 if (selectedDate < today) {
                     errors.push('Event date cannot be in the past.');
-                    document.getElementById('date').classList.add('border-red-500'); // Changed from 'event-date' to 'date'
+                    document.getElementById('date').classList.add('border-red-500');
                 }
             }
             

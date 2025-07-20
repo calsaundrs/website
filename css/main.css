@@ -86,7 +86,8 @@ select:focus-visible {
 }
 
 /* Error states for form validation */
-.field-error {
+.field-error,
+.border-red-500 {
     border-color: #ef4444 !important;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
@@ -338,11 +339,7 @@ input[type="submit"]:disabled {
     cursor: not-allowed;
 }
 
-/* Form validation styles */
-.border-red-500 {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
+/* Form validation styles - consolidated with .field-error above */
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
