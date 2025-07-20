@@ -60,7 +60,7 @@ function generateIcsDataURI(event) {
  * @returns {object} Response object with error page HTML
  */
 async function renderErrorPage(slug, error) {
-    // Use embedded HTML template to avoid file path issues
+    // Use embedded HTML template matching the design system
     const errorPageHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,76 +70,193 @@ async function renderErrorPage(slug, error) {
     <meta name="description" content="Sorry, this event could not be found.">
     <link rel="icon" type="image/png" href="/faviconV2.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Design System Styles */
+        body {
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .accent-color { color: #B564F7; }
+        .bg-accent-color { background-color: #B564F7; }
+        .accent-color-secondary { color: #FADCD9; }
+        .bg-accent-color-secondary { background-color: #FADCD9; }
+        .card-bg {
+            background-color: #1e1e1e; 
+            border: 1px solid #2e2e2e;
+            border-radius: 1.25rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .nav-cta {
+            background-color: #FADCD9; 
+            color: #333333; 
+            font-weight: bold;
+            padding: 0.75rem 1.5rem; 
+            border-radius: 0.5rem; 
+            transition: opacity 0.3s ease;
+        }
+        .nav-cta:hover { opacity: 0.9; }
+        .animate-fade-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .heading-gradient {
+            background: linear-gradient(180deg, #FFFFFF 50%, #d1c7b8 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- Header with navigation -->
+<body class="antialiased min-h-screen">
+    <!-- Header with navigation matching design system -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            <a href="/" class="font-anton text-2xl tracking-widest text-white">
+                BRUM OUT LOUD
             </a>
             <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+                <a href="/events.html" class="text-gray-300 hover:text-white font-semibold">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white font-semibold">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white font-semibold">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white font-semibold">CONTACT</a>
+                <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
             </div>
         </nav>
     </header>
 
     <!-- Main content -->
-    <div class="container mx-auto px-8 flex-grow flex items-center justify-center">
-        <div class="text-center p-8 max-w-2xl">
-            <div class="mb-8">
-                <i class="fas fa-calendar-times text-6xl text-gray-500 mb-4"></i>
-                <h1 class="text-4xl font-bold mb-4">Event Not Found</h1>
-                <p class="text-gray-300 mb-8 text-lg">Sorry, we couldn't find the event details you were looking for.</p>
-            </div>
-            
-            <div class="bg-gray-800 rounded-lg p-6 mb-8">
-                <p class="text-sm text-gray-400 mb-2">Event slug:</p>
-                <code class="bg-gray-700 p-2 rounded text-green-400 text-sm">${slug || 'unknown'}</code>
+    <main class="container mx-auto px-8 py-8 flex-grow">
+        <div class="text-center mb-8 animate-fade-in">
+            <!-- Hero section with design system typography -->
+            <h1 class="font-anton text-6xl md:text-7xl lg:text-8xl leading-none tracking-wider heading-gradient mb-4">
+                EVENT <span class="accent-color">NOT FOUND</span>
+            </h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                Sorry, we couldn't find the event details you were looking for.
+            </p>
+        </div>
+
+        <!-- Error details card using design system -->
+        <div class="max-w-4xl mx-auto">
+            <div class="card-bg p-8 mb-8 animate-fade-in">
+                <div class="text-center mb-6">
+                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color mb-4">
+                        <i class="fas fa-search fa-2x"></i>
+                    </div>
+                    <h2 class="font-anton text-3xl text-white mb-2">Event Lookup Failed</h2>
+                </div>
+                
+                <!-- Event slug info -->
+                <div class="bg-gray-900/50 rounded-lg p-4 mb-6">
+                    <p class="text-sm font-semibold accent-color-secondary mb-2">Requested Event Slug:</p>
+                    <code class="bg-gray-800 px-3 py-2 rounded text-accent-color font-mono text-sm">${slug || 'unknown'}</code>
+                </div>
+
+                <!-- Error details (collapsible) -->
                 ${error ? `
-                <details class="text-left mt-4">
-                    <summary class="cursor-pointer text-blue-400 hover:text-blue-300 text-sm">Error Details</summary>
-                    <pre class="bg-gray-900 p-4 rounded mt-2 text-xs overflow-auto text-red-400">${error}</pre>
+                <details class="group mb-6">
+                    <summary class="flex items-center justify-between cursor-pointer list-none">
+                        <span class="font-semibold text-lg accent-color-secondary">Technical Details</span>
+                        <span class="text-2xl accent-color transition-transform transform group-open:rotate-45">+</span>
+                    </summary>
+                    <div class="mt-4 bg-red-900/20 border border-red-500/50 rounded-lg p-4">
+                        <pre class="text-red-300 text-xs overflow-auto whitespace-pre-wrap">${error}</pre>
+                    </div>
                 </details>
                 ` : ''}
+
+                <!-- Possible reasons -->
+                <div class="mb-8">
+                    <h3 class="font-semibold text-lg accent-color-secondary mb-4">This might happen if:</h3>
+                    <ul class="text-gray-300 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-calendar-times text-accent-color mr-3 mt-1 flex-shrink-0"></i>
+                            <span>The event has been moved or cancelled</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-link text-accent-color mr-3 mt-1 flex-shrink-0"></i>
+                            <span>The URL contains a typo or is outdated</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-clock text-accent-color mr-3 mt-1 flex-shrink-0"></i>
+                            <span>The event is no longer available</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-database text-accent-color mr-3 mt-1 flex-shrink-0"></i>
+                            <span>There's a temporary server issue</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/events.html" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-3 group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>View All Events</span>
+                        <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                    <a href="/" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors inline-flex items-center justify-center gap-3">
+                        <i class="fas fa-home"></i>
+                        <span>Go Home</span>
+                    </a>
+                </div>
             </div>
-            
-            <div class="space-x-4">
-                <a href="/events.html" class="inline-block bg-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">
-                    <i class="fas fa-calendar-alt mr-2"></i>View All Events
-                </a>
-                <a href="/" class="inline-block bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-home mr-2"></i>Go Home
-                </a>
-            </div>
-            
-            <div class="mt-8 text-sm text-gray-500">
-                <p>This might happen if:</p>
-                <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>The event has been moved or cancelled</li>
-                    <li>The URL contains a typo</li>
-                    <li>The event is no longer available</li>
-                </ul>
+
+            <!-- Helpful links card -->
+            <div class="card-bg p-8 animate-fade-in">
+                <h3 class="font-anton text-2xl text-white mb-6 text-center">Looking for Something Else?</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <a href="/events.html" class="block p-4 bg-gray-900/50 rounded-lg hover:bg-gray-800 transition-colors group">
+                        <div class="text-center">
+                            <i class="fas fa-calendar-check text-2xl accent-color mb-2"></i>
+                            <h4 class="font-semibold text-white group-hover:accent-color">Browse Events</h4>
+                            <p class="text-sm text-gray-400">See what's happening</p>
+                        </div>
+                    </a>
+                    <a href="/all-venues.html" class="block p-4 bg-gray-900/50 rounded-lg hover:bg-gray-800 transition-colors group">
+                        <div class="text-center">
+                            <i class="fas fa-map-marker-alt text-2xl accent-color mb-2"></i>
+                            <h4 class="font-semibold text-white group-hover:accent-color">Find Venues</h4>
+                            <p class="text-sm text-gray-400">Discover places</p>
+                        </div>
+                    </a>
+                    <a href="/contact.html" class="block p-4 bg-gray-900/50 rounded-lg hover:bg-gray-800 transition-colors group">
+                        <div class="text-center">
+                            <i class="fas fa-question-circle text-2xl accent-color mb-2"></i>
+                            <h4 class="font-semibold text-white group-hover:accent-color">Get Help</h4>
+                            <p class="text-sm text-gray-400">Contact support</p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Footer -->
+    <!-- Footer matching design system -->
     <footer class="bg-gray-800 text-gray-300 py-8 mt-16">
         <div class="container mx-auto px-8 text-center">
             <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
         </div>
     </footer>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </body>
 </html>`;
 
