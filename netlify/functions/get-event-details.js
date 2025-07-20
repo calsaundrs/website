@@ -1,9 +1,22 @@
-const Airtable = require('airtable');
-const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
-const fetch = require('node-fetch');
-const fs = require('fs').promises;
 const path = require('path');
-const Handlebars = require('handlebars');
+const fs = require('fs').promises;
+
+// Try to load optional dependencies with error handling
+let Airtable, base, fetch, Handlebars;
+
+try {
+    Airtable = require('airtable');
+    fetch = require('node-fetch');
+    Handlebars = require('handlebars');
+    
+    if (process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN && process.env.AIRTABLE_BASE_ID) {
+        base = new Airtable({ 
+            apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
+        }).base(process.env.AIRTABLE_BASE_ID);
+    }
+} catch (depError) {
+    console.error('❌ Dependency loading error:', depError);
+}
 
 /**
  * Converts a date object to an ISO string suitable for ICS files (YYYYMMDDTHHMMSSZ).
@@ -41,6 +54,57 @@ function generateIcsDataURI(event) {
 
 
 /**
+ * Renders an error page for failed event lookups
+ * @param {string} slug The event slug that failed
+ * @param {string} error The error message
+ * @returns {object} Response object with error page HTML
+ */
+async function renderErrorPage(slug, error) {
+    try {
+        const errorTemplatePath = path.resolve(__dirname, './templates/event-error-template.html');
+        const errorTemplate = await fs.readFile(errorTemplatePath, 'utf8');
+        
+        if (Handlebars) {
+            const template = Handlebars.compile(errorTemplate);
+            const errorHtml = template({ slug, error });
+            
+            return {
+                statusCode: 404,
+                headers: { 'Content-Type': 'text/html' },
+                body: errorHtml
+            };
+        } else {
+            // Fallback if Handlebars isn't available
+            const simpleErrorHtml = errorTemplate
+                .replace('{{slug}}', slug || 'unknown')
+                .replace('{{error}}', error || 'Unknown error');
+            
+            return {
+                statusCode: 404,
+                headers: { 'Content-Type': 'text/html' },
+                body: simpleErrorHtml
+            };
+        }
+    } catch (templateError) {
+        // Ultimate fallback
+        return {
+            statusCode: 500,
+            headers: { 'Content-Type': 'text/html' },
+            body: `
+                <html>
+                <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+                    <h1>Event Not Found</h1>
+                    <p>Sorry, we couldn't load the event details for: <code>${slug}</code></p>
+                    <p>Error: ${error}</p>
+                    <a href="/events.html">← Back to Events</a>
+                </body>
+                </html>
+            `
+        };
+    }
+}
+
+/**
  * Generates the HTML for all "Add to Calendar" links.
  * @param {object} event The event data object.
  * @returns {string} HTML string containing multiple <a> tags.
@@ -58,38 +122,89 @@ function generateAddToCalendarLinks(event) {
 }
 
 exports.handler = async function (event, context) {
+    console.log('🔍 Event details handler started');
+    console.log('📍 Event path:', event.path);
+    console.log('🔑 Environment check:', {
+        hasAirtableToken: !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
+        hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+        baseUrl: process.env.URL || 'https://www.brumoutloud.co.uk'
+    });
+
     const baseUrl = process.env.URL || 'https://www.brumoutloud.co.uk';
     const slug = event.path.split("/").pop();
+    
     if (!slug) {
+        console.error('❌ No slug provided in path');
         return { statusCode: 400, body: 'Error: Event slug not provided.' };
+    }
+    
+    console.log('🏷️ Extracted slug:', slug);
+
+    // Check if dependencies and Airtable credentials are available
+    if (!Airtable || !Handlebars || !base) {
+        console.error('❌ Missing dependencies or Airtable credentials:', {
+            hasAirtable: !!Airtable,
+            hasHandlebars: !!Handlebars,
+            hasBase: !!base,
+            hasToken: !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
+            hasBaseId: !!process.env.AIRTABLE_BASE_ID
+        });
+        
+        // Return a user-friendly error page
+        return await renderErrorPage(slug, 'Server configuration error - missing dependencies or credentials');
     }
 
     try {
         const dateMatch = slug.match(/\d{4}-\d{2}-\d{2}$/);
         let eventRecords = [];
 
-        console.log("Attempting to fetch event records from Airtable.");
-        if (dateMatch) {
-            const dateFromSlug = dateMatch[0];
-            eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${slug}", DATETIME_FORMAT(Date, 'YYYY-MM-DD') = '${dateFromSlug}')` }).firstPage();
-        } else {
-            eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `{Slug} = "${slug}"` }).firstPage();
-            if (!eventRecords || eventRecords.length === 0) {
-                console.log("Standalone event not found, checking for recurring event.");
-                const escapedSlug = slug.replace(/"/g, '"');
-                eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${escapedSlug}", {Recurring Info})` }).firstPage();
+        console.log("🔄 Attempting to fetch event records from Airtable for slug:", slug);
+        
+        try {
+            if (dateMatch) {
+                const dateFromSlug = dateMatch[0];
+                console.log('📅 Date-specific event search for:', dateFromSlug);
+                const formula = `AND({Slug} = "${slug}", DATETIME_FORMAT(Date, 'YYYY-MM-DD') = '${dateFromSlug}')`;
+                console.log('🔍 Using formula:', formula);
+                eventRecords = await base('Events').select({ 
+                    maxRecords: 1, 
+                    filterByFormula: formula 
+                }).firstPage();
+            } else {
+                console.log('🔍 Standard event search');
+                const formula = `{Slug} = "${slug}"`;
+                console.log('🔍 Using formula:', formula);
+                eventRecords = await base('Events').select({ 
+                    maxRecords: 1, 
+                    filterByFormula: formula 
+                }).firstPage();
+                
                 if (!eventRecords || eventRecords.length === 0) {
-                    console.log("Event not found after checking recurring info.");
-                    return { statusCode: 404, body: 'Event not found.' };
+                    console.log("⚠️ Standalone event not found, checking for recurring event.");
+                    const escapedSlug = slug.replace(/"/g, '"');
+                    const recurringFormula = `AND({Slug} = "${escapedSlug}", {Recurring Info})`;
+                    console.log('🔍 Recurring formula:', recurringFormula);
+                    eventRecords = await base('Events').select({ 
+                        maxRecords: 1, 
+                        filterByFormula: recurringFormula 
+                    }).firstPage();
+                    
+                    if (!eventRecords || eventRecords.length === 0) {
+                        console.log("❌ Event not found after checking recurring info.");
+                        return await renderErrorPage(slug, 'Event not found - checked both standard and recurring events');
+                    }
                 }
             }
+        } catch (airtableError) {
+            console.error('❌ Airtable query error:', airtableError);
+            return await renderErrorPage(slug, `Database query failed: ${airtableError.message}`);
         }
         console.log("Event records fetched. Count:", eventRecords.length);
 
         const eventRecord = eventRecords[0];
         if (!eventRecord) {
-            console.log("Event record is null or undefined.");
-            return { statusCode: 404, body: `Event '${slug}' not found.` };
+            console.log("❌ Event record is null or undefined.");
+            return await renderErrorPage(slug, 'Event record not found in database');
         }
         const fields = eventRecord.fields;
         const eventName = fields['Event Name'];
@@ -220,11 +335,18 @@ exports.handler = async function (event, context) {
         }).join('');
 
         const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
-        console.log("Attempting to read template file:", templatePath);
-        let htmlTemplate = await fs.readFile(templatePath, 'utf8');
-        console.log("Template file read successfully. Length:", htmlTemplate.length);
+        console.log("📄 Attempting to read template file:", templatePath);
+        
+        let htmlTemplate;
+        try {
+            htmlTemplate = await fs.readFile(templatePath, 'utf8');
+            console.log("✅ Template file read successfully. Length:", htmlTemplate.length);
+        } catch (templateError) {
+            console.error("❌ Failed to read template file:", templateError);
+            return await renderErrorPage(slug, `Template file error: ${templateError.message}`);
+        }
 
-        console.log("Preparing data for Handlebars template.");
+        console.log("🔄 Preparing data for Handlebars template.");
         const data = {
             eventName: eventName,
             descriptionMeta: description.substring(0, 150).replace(/\n/g, ' ') + '...',
@@ -279,12 +401,22 @@ exports.handler = async function (event, context) {
             hasEventDetails: !!(addressHtml || priceHtml || ageRestrictionHtml || linkHtml)
         };
 
+        console.log("🔄 Compiling Handlebars template...");
         try {
             const template = Handlebars.compile(htmlTemplate);
+            console.log("✅ Template compiled successfully");
+            
+            console.log("🔄 Rendering template with data...");
             htmlTemplate = template(data);
+            console.log("✅ Template rendered successfully");
         } catch (templateError) {
-            console.error("Error compiling or rendering Handlebars template:", templateError);
-            return { statusCode: 500, body: 'Server error rendering event details.' };
+            console.error("❌ Error compiling or rendering Handlebars template:", templateError);
+            console.error("📊 Template error details:", {
+                name: templateError.name,
+                message: templateError.message,
+                stack: templateError.stack
+            });
+            return await renderErrorPage(slug, `Template rendering error: ${templateError.message}`);
         }
 
         console.log("Final htmlTemplate length:", htmlTemplate.length);
@@ -300,7 +432,14 @@ exports.handler = async function (event, context) {
         return response;
 
     } catch (error) {
-        console.error("Caught error in handler:", error);
-        return { statusCode: 500, body: 'Server error fetching event details. Please try again later.' };
+        console.error("❌ Caught error in handler:", error);
+        console.error("📊 Error details:", {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            slug: slug || 'unknown'
+        });
+        
+        return await renderErrorPage(slug, `Server error: ${error.message}`);
     }
 };
