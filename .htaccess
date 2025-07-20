@@ -1,0 +1,202 @@
+# Brum Outloud - Performance & SEO Optimization
+# Apache .htaccess Configuration
+
+# Security Headers
+<IfModule mod_headers.c>
+    # Security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Content Security Policy
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.googletagmanager.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://www.googletagmanager.com;"
+    
+    # Performance headers
+    Header always set X-DNS-Prefetch-Control "on"
+    
+    # Cache control for different file types
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        Header set Expires "Thu, 31 Dec 2025 23:59:59 GMT"
+    </FilesMatch>
+    
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "public, max-age=3600"
+    </FilesMatch>
+    
+    <FilesMatch "\.json$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+</IfModule>
+
+# GZIP Compression
+<IfModule mod_deflate.c>
+    # Enable compression for text files
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/ld+json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    
+    # Don't compress images and videos
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|mp4|avi|mov)$ no-gzip dont-vary
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Default expiration
+    ExpiresDefault "access plus 1 hour"
+    
+    # Specific file types
+    ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType video/mp4 "access plus 1 month"
+    ExpiresByType application/json "access plus 1 day"
+    ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>
+
+# URL Rewriting for Clean URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Force HTTPS (uncomment if you have SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Force www or non-www (choose one)
+    # Force non-www
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+    
+    # Remove trailing slashes except for root
+    RewriteCond %{REQUEST_URI} !^/$
+    RewriteCond %{REQUEST_URI} /$
+    RewriteRule (.*)/$ $1 [R=301,L]
+    
+    # Add .html extension if file exists
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.*)$ $1.html [L]
+    
+    # Handle service worker
+    RewriteRule ^sw\.js$ /sw.js [L]
+    
+    # Handle manifest
+    RewriteRule ^manifest\.json$ /manifest.json [L]
+    
+    # Custom 404 page
+    ErrorDocument 404 /404.html
+</IfModule>
+
+# File Security
+<Files ~ "^.*\.(htaccess|htpasswd|ini|log|sh|sql|bak)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</Files>
+
+# Prevent access to sensitive files
+<FilesMatch "^(wp-config|configuration|config)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# MIME Types
+<IfModule mod_mime.c>
+    # Web fonts
+    AddType application/font-woff woff
+    AddType application/font-woff2 woff2
+    AddType application/vnd.ms-fontobject eot
+    AddType application/x-font-ttf ttf
+    AddType font/opentype otf
+    
+    # Web app manifest
+    AddType application/manifest+json json
+    AddType application/x-web-app-manifest+json webapp
+    
+    # Audio
+    AddType audio/mp4 m4a f4a f4b
+    AddType audio/ogg oga ogg
+    
+    # Video
+    AddType video/mp4 mp4 m4v f4v f4p
+    AddType video/ogg ogv
+    AddType video/webm webm
+    
+    # Images
+    AddType image/webp webp
+    AddType image/svg+xml svg svgz
+    AddEncoding gzip svgz
+    
+    # JavaScript
+    AddType application/javascript js jsonp
+    AddType application/json json
+</IfModule>
+
+# Remove ETags (can cause issues with caching)
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# Prevent image hotlinking (uncomment if needed)
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTP_REFERER} !^$
+#     RewriteCond %{HTTP_REFERER} !^https?://(www\.)?brumoutloud\.co\.uk [NC]
+#     RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F]
+# </IfModule>
+
+# Performance optimizations
+<IfModule mod_alias.c>
+    # Preload key resources
+    <FilesMatch "\.html$">
+        Header add Link "</css/main.css>; rel=preload; as=style"
+        Header add Link "</js/main.js>; rel=preload; as=script"
+        Header add Link "</progressflag.svg.png>; rel=preload; as=image"
+    </FilesMatch>
+</IfModule>
+
+# Redirect old URLs (add as needed)
+# Redirect 301 /old-page.html /new-page.html
+
+# Enable Keep-Alive connections
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+
+# Optimize content delivery
+<IfModule mod_deflate.c>
+    <Location />
+        SetOutputFilter DEFLATE
+        SetEnvIfNoCase Request_URI \
+            \.(?:gif|jpe?g|png|webp|mp4|avi|mov)$ no-gzip dont-vary
+        SetEnvIfNoCase Request_URI \
+            \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
+    </Location>
+</IfModule>
