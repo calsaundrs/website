@@ -39,6 +39,15 @@
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/main.js" defer></script>
     <style>
+        /* Critical CSS to prevent FOUC */
+        img[src="/progressflag.svg.png"] {
+            height: 24px !important;
+            width: auto !important;
+            max-width: 32px !important;
+            display: inline-block !important;
+            margin-left: 8px !important;
+        }
+        
         .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .feature-card:hover { transform: scale(1.03) translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
         .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
@@ -91,6 +100,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
             <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 style="height: 24px; width: auto; max-width: 32px; display: inline-block;"
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
