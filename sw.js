@@ -157,7 +157,7 @@ async function cacheFirst(request, cacheName) {
   }
   
   const networkResponse = await fetch(request);
-  if (networkResponse.ok) {
+  if (networkResponse.ok && networkResponse.status !== 206) {
     const cache = await caches.open(cacheName);
     cache.put(request, networkResponse.clone());
   }
