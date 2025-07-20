@@ -603,14 +603,14 @@ function generateAddToCalendarLinks(event) {
     const icalDataUri = generateIcsDataURI(event);
     const safeTitle = event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    // Return properly styled buttons matching design system
+    // Return properly styled buttons with shorter text for mobile
     const calendarHTML = '<a href="' + googleLink + '" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">' +
         '<i class="fab fa-google"></i>' +
-        '<span>Google Calendar</span>' +
+        '<span class="btn-text">Google</span>' +
         '</a>' +
         '<a href="' + icalDataUri + '" download="' + safeTitle + '.ics" class="calendar-btn ical-download">' +
         '<i class="fas fa-calendar-plus"></i>' +
-        '<span>iCal Download</span>' +
+        '<span class="btn-text">Download</span>' +
         '</a>';
     
     console.log('✅ Calendar links generated. Length:', calendarHTML.length);

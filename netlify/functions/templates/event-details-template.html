@@ -23,12 +23,33 @@
 .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; } 
 .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; }
 
+/* Ticket Button */
+.button-primary {
+    display: inline-block;
+    background-color: #B564F7;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+.button-primary:hover {
+    background-color: #9333ea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(181, 100, 247, 0.3);
+}
+
 /* Button Styles for Calendar Links */
 .calendar-btn { 
     display: flex; 
     align-items: center; 
     justify-content: center;
-    padding: 0.75rem 1rem; 
+    padding: 0.75rem 0.5rem; 
     background-color: #374151; 
     color: white; 
     text-decoration: none; 
@@ -38,8 +59,8 @@
     font-weight: 500;
     flex: 1;
     min-width: 0;
-    white-space: nowrap;
     gap: 0.5rem;
+    font-size: 0.875rem;
 }
 .calendar-btn:hover { 
     background-color: #4B5563; 
@@ -53,6 +74,21 @@
 .ical-download:hover { 
     background-color: #B564F7; 
     border-color: #B564F7; 
+}
+
+/* Responsive text for buttons */
+.btn-text {
+    display: none;
+}
+
+@media (min-width: 480px) {
+    .btn-text {
+        display: inline;
+    }
+    .calendar-btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
 }
 
 /* Make sure the calendar links container works well */
