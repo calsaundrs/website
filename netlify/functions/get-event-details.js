@@ -605,14 +605,12 @@ function generateAddToCalendarLinks(event) {
 
     // Return properly styled buttons matching design system
     const calendarHTML = '<a href="' + googleLink + '" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">' +
-        '<i class="fab fa-google mr-2"></i>' +
+        '<i class="fab fa-google"></i>' +
         '<span>Google Calendar</span>' +
-        '<i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>' +
         '</a>' +
         '<a href="' + icalDataUri + '" download="' + safeTitle + '.ics" class="calendar-btn ical-download">' +
-        '<i class="fas fa-calendar-plus mr-2"></i>' +
-        '<span>Apple/Outlook/Other</span>' +
-        '<i class="fas fa-download ml-auto text-xs opacity-70"></i>' +
+        '<i class="fas fa-calendar-plus"></i>' +
+        '<span>iCal Download</span>' +
         '</a>';
     
     console.log('✅ Calendar links generated. Length:', calendarHTML.length);

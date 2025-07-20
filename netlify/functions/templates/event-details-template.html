@@ -27,21 +27,23 @@
 .calendar-btn { 
     display: flex; 
     align-items: center; 
-    justify-content: space-between;
+    justify-content: center;
     padding: 0.75rem 1rem; 
     background-color: #374151; 
     color: white; 
     text-decoration: none; 
-    border-radius: 0.75rem; 
+    border-radius: 0.5rem; 
     transition: all 0.2s ease;
     border: 1px solid transparent;
     font-weight: 500;
-    min-width: 200px;
     flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    gap: 0.5rem;
 }
 .calendar-btn:hover { 
     background-color: #4B5563; 
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 .google-cal:hover { 
@@ -51,6 +53,13 @@
 .ical-download:hover { 
     background-color: #B564F7; 
     border-color: #B564F7; 
+}
+
+/* Make sure the calendar links container works well */
+.calendar-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 /* Icon spacing utilities */
