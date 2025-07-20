@@ -359,10 +359,14 @@ exports.handler = async function (event, context) {
                 <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">${venue.Name}</h1>
                 <div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}</div>
                 ${upcomingEventsHtml}
-                ${photoGalleryHtml}
+                
+                <!-- Gallery hidden on mobile, shown after sidebar content -->
+                <div class="hidden lg:block">
+                    ${photoGalleryHtml}
+                </div>
             </div>
             <div class="lg:col-span-1">
-                <div class="card-bg p-8 sticky top-8 space-y-6">
+                <div class="card-bg p-8 lg:sticky lg:top-8 space-y-6">
                     <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Current Status</h3>${openingStatus.html}</div>
                     <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Location</h3><p class="text-2xl font-semibold">${venue.Address}</p><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-accent-color hover:underline">Get Directions</a></div>
                     ${createSidebarSection('Opening Hours', openingHoursContent, 'fa-solid fa-clock')}
@@ -376,6 +380,11 @@ exports.handler = async function (event, context) {
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Gallery shown on mobile after all content -->
+        <div class="lg:hidden mt-16">
+            ${photoGalleryHtml}
         </div>
         ${googleReviewsHtml}
     </main>
