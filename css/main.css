@@ -21,6 +21,12 @@ body:not(.homepage) {
     background-color: #121212;
 }
 
+/* Homepage specific styles */
+body.homepage {
+    background-color: #121212; /* Fallback in case video doesn't load */
+    min-height: 100vh;
+}
+
 
 
 /* Prevent pride flag from flashing at full size - Universal fix */
@@ -179,6 +185,7 @@ select:focus-visible {
     height: 100vh;
     z-index: -2;
     overflow: hidden;
+    pointer-events: none; /* Ensure it doesn't block interactions */
 }
 
 .background-video {
@@ -186,6 +193,8 @@ select:focus-visible {
     height: 100%;
     object-fit: cover;
     will-change: transform; /* Optimize for animations */
+    display: block; /* Ensure video displays */
+    visibility: visible; /* Force visibility */
 }
 
 .video-overlay {
@@ -195,7 +204,8 @@ select:focus-visible {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 1;
+    z-index: -1; /* Changed from 1 to -1 to stay behind content */
+    pointer-events: none;
 }
 
 /* Custom font for bold, impactful headlines */

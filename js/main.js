@@ -221,28 +221,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load header and footer content
     const loadHeaderFooter = async () => {
         try {
+            console.log('Starting header/footer load...');
+            
             // Load header
             const headerPlaceholder = document.getElementById('header-placeholder');
+            console.log('Header placeholder found:', !!headerPlaceholder);
+            
             if (headerPlaceholder) {
+                console.log('Fetching header from /global/header.html');
                 const headerResponse = await fetch('/global/header.html');
+                console.log('Header response status:', headerResponse.status);
+                
                 if (headerResponse.ok) {
                     const headerContent = await headerResponse.text();
+                    console.log('Header content length:', headerContent.length);
                     headerPlaceholder.innerHTML = headerContent;
+                    console.log('Header loaded successfully');
                     
                     // Reinitialize mobile menu after header is loaded
                     setTimeout(() => {
+                        console.log('Reinitializing mobile menu...');
                         initializeMobileMenu();
                     }, 100);
+                } else {
+                    console.error('Header fetch failed with status:', headerResponse.status);
                 }
             }
             
             // Load footer
             const footerPlaceholder = document.getElementById('footer-placeholder');
+            console.log('Footer placeholder found:', !!footerPlaceholder);
+            
             if (footerPlaceholder) {
+                console.log('Fetching footer from /global/footer.html');
                 const footerResponse = await fetch('/global/footer.html');
+                console.log('Footer response status:', footerResponse.status);
+                
                 if (footerResponse.ok) {
                     const footerContent = await footerResponse.text();
+                    console.log('Footer content length:', footerContent.length);
                     footerPlaceholder.innerHTML = footerContent;
+                    console.log('Footer loaded successfully');
+                } else {
+                    console.error('Footer fetch failed with status:', footerResponse.status);
                 }
             }
         } catch (error) {
