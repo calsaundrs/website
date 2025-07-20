@@ -4,11 +4,13 @@
 [build]
   # Directory that contains the deploy-ready HTML files and assets.
   publish = "/"
+  functions = "netlify/functions"
 
 # Specifies how serverless functions are handled
 [functions]
   # Main directory for all serverless functions
   directory = "netlify/functions/"
+  included_files = ["netlify/functions/**"]
 
 
 # --- Page Redirect and Rewrite Rules ---
@@ -16,13 +18,13 @@
 # Rule for individual EVENT pages
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details?slug=:splat"
+  to = "/.netlify/functions/get-event-details"
   status = 200
 
 # Rule for individual VENUE pages
 [[redirects]]
   from = "/venue/*"
-  to = "/.netlify/functions/get-venue-details?slug=:splat"
+  to = "/.netlify/functions/get-venue-details"
   status = 200
 
 # Rule for the main EVENTS listing page

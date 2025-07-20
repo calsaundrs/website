@@ -60,48 +60,261 @@ function generateIcsDataURI(event) {
  * @returns {object} Response object with error page HTML
  */
 async function renderErrorPage(slug, error) {
-    try {
-        const errorTemplatePath = path.resolve(__dirname, './templates/event-error-template.html');
-        const errorTemplate = await fs.readFile(errorTemplatePath, 'utf8');
-        
-        if (Handlebars) {
-            const template = Handlebars.compile(errorTemplate);
-            const errorHtml = template({ slug, error });
+    // Use embedded HTML template to avoid file path issues
+    const errorPageHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Not Found | Brum Outloud</title>
+    <meta name="description" content="Sorry, this event could not be found.">
+    <link rel="icon" type="image/png" href="/faviconV2.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header with navigation -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <div class="container mx-auto px-8 flex-grow flex items-center justify-center">
+        <div class="text-center p-8 max-w-2xl">
+            <div class="mb-8">
+                <i class="fas fa-calendar-times text-6xl text-gray-500 mb-4"></i>
+                <h1 class="text-4xl font-bold mb-4">Event Not Found</h1>
+                <p class="text-gray-300 mb-8 text-lg">Sorry, we couldn't find the event details you were looking for.</p>
+            </div>
             
-            return {
-                statusCode: 404,
-                headers: { 'Content-Type': 'text/html' },
-                body: errorHtml
-            };
-        } else {
-            // Fallback if Handlebars isn't available
-            const simpleErrorHtml = errorTemplate
-                .replace('{{slug}}', slug || 'unknown')
-                .replace('{{error}}', error || 'Unknown error');
+            <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                <p class="text-sm text-gray-400 mb-2">Event slug:</p>
+                <code class="bg-gray-700 p-2 rounded text-green-400 text-sm">${slug || 'unknown'}</code>
+                ${error ? `
+                <details class="text-left mt-4">
+                    <summary class="cursor-pointer text-blue-400 hover:text-blue-300 text-sm">Error Details</summary>
+                    <pre class="bg-gray-900 p-4 rounded mt-2 text-xs overflow-auto text-red-400">${error}</pre>
+                </details>
+                ` : ''}
+            </div>
             
-            return {
-                statusCode: 404,
-                headers: { 'Content-Type': 'text/html' },
-                body: simpleErrorHtml
-            };
-        }
-    } catch (templateError) {
-        // Ultimate fallback
-        return {
-            statusCode: 500,
-            headers: { 'Content-Type': 'text/html' },
-            body: `
-                <html>
-                <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-                    <h1>Event Not Found</h1>
-                    <p>Sorry, we couldn't load the event details for: <code>${slug}</code></p>
-                    <p>Error: ${error}</p>
-                    <a href="/events.html">← Back to Events</a>
-                </body>
-                </html>
-            `
-        };
-    }
+            <div class="space-x-4">
+                <a href="/events.html" class="inline-block bg-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-calendar-alt mr-2"></i>View All Events
+                </a>
+                <a href="/" class="inline-block bg-gray-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-home mr-2"></i>Go Home
+                </a>
+            </div>
+            
+            <div class="mt-8 text-sm text-gray-500">
+                <p>This might happen if:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>The event has been moved or cancelled</li>
+                    <li>The URL contains a typo</li>
+                    <li>The event is no longer available</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-8 mt-16">
+        <div class="container mx-auto px-8 text-center">
+            <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</body>
+</html>`;
+
+    return {
+        statusCode: 404,
+        headers: { 'Content-Type': 'text/html' },
+        body: errorPageHtml
+    };
+}
+
+/**
+ * Returns an embedded HTML template for event details
+ * Used as fallback when template file is not found
+ * @returns {string} HTML template string
+ */
+function getEmbeddedEventTemplate() {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{eventName}} | Brum Outloud</title>
+    <meta name="description" content="{{descriptionMeta}}">
+    <link rel="canonical" href="{{pageUrlCanonical}}">
+    <link rel="icon" type="image/png" href="/faviconV2.png">
+    <script type="application/ld+json">
+    {{{schemaMarkup}}}
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/main.js" defer></script>
+</head>
+<body class="antialiased bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <!-- Event Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl lg:text-6xl font-anton mb-4">{{eventName}}</h1>
+            <div class="flex flex-wrap items-center gap-4 text-lg text-gray-300">
+                <div class="flex items-center">
+                    <i class="fas fa-calendar mr-2 text-purple-400"></i>
+                    <span>{{eventDateFormatted}}</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-clock mr-2 text-purple-400"></i>
+                    <span>{{eventTimeFormatted}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Image -->
+        <div class="mb-8">
+            <div class="hero-image-container">
+                <img src="{{imageUrl}}" alt="{{eventName}}" class="hero-image-fg">
+                <img src="{{imageUrl}}" alt="" class="hero-image-bg" aria-hidden="true">
+            </div>
+        </div>
+
+        <!-- Event Details Grid -->
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Description -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-4">About This Event</h2>
+                    <div class="prose prose-invert max-w-none">
+                        <p>{{{description}}}</p>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                {{#if tagsHtml}}
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4">Categories</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {{{tagsHtml}}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="card-bg p-6 rounded-xl">
+                    <!-- Venue -->
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-2">Venue</h3>
+                        {{{venueHtml}}}
+                    </div>
+
+                    <!-- Event Details -->
+                    {{#if hasEventDetails}}
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Event Details</h3>
+                        <ul class="space-y-2">
+                            {{{addressHtml}}}
+                            {{{priceHtml}}}
+                            {{{ageRestrictionHtml}}}
+                            {{{linkHtml}}}
+                        </ul>
+                    </div>
+                    {{/if}}
+
+                    <!-- Calendar Links -->
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Add to Calendar</h3>
+                        <div class="space-y-2">
+                            {{{calendarLinksHtml}}}
+                        </div>
+                    </div>
+
+                    <!-- Ticket Link -->
+                    {{#if ticketLink}}
+                    <div>
+                        <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 block text-center">
+                            <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
+                        </a>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Instances -->
+        {{#if otherInstancesHTML}}
+        <div class="mt-16">
+            <h2 class="text-3xl font-anton mb-8">Other Dates</h2>
+            <div class="space-y-4">
+                {{{otherInstancesHTML}}}
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Suggested Events -->
+        {{{suggestedEventsHtml}}}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-8 mt-16">
+        <div class="container mx-auto px-8 text-center">
+            <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; }
+        .hero-image-container:hover .hero-image-bg { opacity: 1; }
+        .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; }
+        .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); }
+        .card-bg { background-color: #1e1e1e; border: 1px solid #2e2e2e; }
+        .calendar-link { display: block; padding: 0.75rem 1rem; background-color: #374151; color: white; text-decoration: none; border-radius: 0.5rem; margin-bottom: 0.5rem; transition: background-color 0.2s; }
+        .calendar-link:hover { background-color: #4B5563; }
+    </style>
+</body>
+</html>`;
 }
 
 /**
@@ -334,17 +547,41 @@ exports.handler = async function (event, context) {
             return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
         }).join('');
 
-        const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
-        console.log("📄 Attempting to read template file:", templatePath);
+        // Try multiple possible template paths for different deployment environments
+        const possibleTemplatePaths = [
+            path.resolve(__dirname, './templates/event-details-template.html'),
+            path.resolve(__dirname, '../templates/event-details-template.html'),
+            path.resolve(__dirname, 'templates/event-details-template.html'),
+            path.join(__dirname, 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html')
+        ];
         
-        let htmlTemplate;
-        try {
-            htmlTemplate = await fs.readFile(templatePath, 'utf8');
-            console.log("✅ Template file read successfully. Length:", htmlTemplate.length);
-        } catch (templateError) {
-            console.error("❌ Failed to read template file:", templateError);
-            return await renderErrorPage(slug, `Template file error: ${templateError.message}`);
+        let templatePath = null;
+        let htmlTemplate = null;
+        
+        for (const tryPath of possibleTemplatePaths) {
+            try {
+                console.log(`📄 Trying template path: ${tryPath}`);
+                htmlTemplate = await fs.readFile(tryPath, 'utf8');
+                templatePath = tryPath;
+                console.log(`✅ Template file found at: ${templatePath}`);
+                break;
+            } catch (pathError) {
+                console.log(`❌ Template not found at: ${tryPath}`);
+                continue;
+            }
         }
+        // Check if we found a template
+        if (!htmlTemplate || !templatePath) {
+            console.error("❌ No template file found in any of the attempted paths");
+            console.log("🔄 Using embedded fallback template");
+            
+            // Use embedded template as fallback
+            htmlTemplate = getEmbeddedEventTemplate();
+        }
+        
+        console.log("✅ Template ready. Length:", htmlTemplate.length);
+        console.log("📝 Template source:", templatePath ? `File: ${templatePath}` : 'Embedded fallback');
 
         console.log("🔄 Preparing data for Handlebars template.");
         const data = {
