@@ -123,13 +123,91 @@
     
     <script src="/js/main.js" defer></script>
     
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <!-- Load Tailwind immediately to prevent FOUC -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FOUC Prevention Script -->
+    <script>
+        // Show content once Tailwind is loaded
+        document.body.classList.add('styles-loaded');
+    </script>
     
     <style>
-        /* Critical CSS to prevent flashing */
-        .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        /* Critical CSS to prevent FOUC - EXPANDED */
+        
+        /* Base styles that MUST load immediately */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Hide content until styles load to prevent FOUC */
+        body:not(.styles-loaded) {
+            visibility: hidden;
+        }
+        
+        /* Immediately show loading state */
+        body:not(.styles-loaded)::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            z-index: 9999;
+            visibility: visible;
+        }
+        
+        /* Basic layout to prevent jumping */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Header styles */
+        header {
+            padding: 2rem;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Basic text styles */
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+            font-weight: bold;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* Critical component styles */
+        .feature-card { 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            display: block;
+            padding: 2rem;
+            text-align: center;
+            background-color: #1e1e1e;
+            border: 1px solid #2e2e2e;
+            border-radius: 1.25rem;
+            margin-bottom: 2rem;
+        }
         .feature-card:hover { transform: scale(1.03) translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+        
+        /* Mobile menu button */
         .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
         .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; top: 0; left: 0; width: 24px; height: 3px; background: #fff; transform: rotate(0); transition: all 0.5s; }
         .hamburger-middle { transform: translateY(7px); }
@@ -138,7 +216,89 @@
         .open .hamburger-middle { display: none; }
         .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
         
-        /* Prevent pride flag from flashing at full size */
+        /* Navigation styles */
+        nav a {
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: #ffffff;
+        }
+        
+        /* Button styles */
+        .bg-purple-600 {
+            background-color: #9333ea;
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .bg-purple-600:hover {
+            background-color: #7c3aed;
+        }
+        
+        /* Grid layout */
+        .grid {
+            display: grid;
+        }
+        
+        @media (min-width: 768px) {
+            .md\\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 2rem;
+            }
+        }
+        
+        /* Hide/show classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        @media (min-width: 1024px) {
+            .lg\\:flex {
+                display: flex !important;
+            }
+            .lg\\:hidden {
+                display: none !important;
+            }
+        }
+        
+        /* Flex utilities */
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .space-x-8 > * + * {
+            margin-left: 2rem;
+        }
+        
+        /* Text utilities */
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-white {
+            color: #ffffff;
+        }
+        
+        .text-gray-300 {
+            color: #d1d5db;
+        }
+        
+        /* Pride flag optimization */
         img[src*="progressflag"] {
             height: 1.5rem !important;
             width: auto !important;
@@ -147,9 +307,35 @@
             transition: opacity 0.3s ease;
         }
         
-        /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
+        }
+        
+        /* Video background */
+        .video-background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .background-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
         }
     </style>
     

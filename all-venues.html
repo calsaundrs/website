@@ -99,8 +99,13 @@
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/main.js" defer></script>
 
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <!-- Load Tailwind immediately to prevent FOUC -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FOUC Prevention Script -->
+    <script>
+        document.body.classList.add('styles-loaded');
+    </script>
     
     <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
@@ -109,6 +114,29 @@
     <meta name="theme-color" content="#8a2be2">
 
     <style>
+        /* Critical CSS to prevent FOUC */
+        html, body {
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        body:not(.styles-loaded) {
+            visibility: hidden;
+        }
+        
+        body:not(.styles-loaded)::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            z-index: 9999;
+            visibility: visible;
+        }
+        
         /* Critical CSS to prevent pride flag flashing */
         img[src*="progressflag"] {
             height: 1.5rem !important;

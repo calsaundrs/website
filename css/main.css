@@ -17,6 +17,16 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Ensure body is visible once styles load */
+body.styles-loaded {
+    visibility: visible !important;
+}
+
+/* Remove the loading overlay once styles load */
+body.styles-loaded::before {
+    display: none !important;
+}
+
 /* Prevent pride flag from flashing at full size - Universal fix */
 img[src*="progressflag"] {
     height: 1.5rem !important;
