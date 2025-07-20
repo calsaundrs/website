@@ -203,7 +203,7 @@ select:focus-visible {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.1); /* Very light overlay to see video clearly */
+    background: rgba(0, 0, 0, 0.05); /* 95% transparent overlay */
     z-index: -1; /* Changed from 1 to -1 to stay behind content */
     pointer-events: none;
 }
