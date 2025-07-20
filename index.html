@@ -328,45 +328,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
 <!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-<header class="p-8">
-    <nav class="container mx-auto flex justify-between items-center">
-        <!-- Site name with consolidated flag image and fallback -->
-        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-           style="font-family: 'Omnes Pro', sans-serif;">
-            <span>Brum Outloud</span>
-            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                 onload="document.body.classList.add('flag-loaded')">
-        </a>
-        <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-        </div>
-        <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
-    </div>
-</header>
+<div id="header-placeholder"></div>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
@@ -485,6 +447,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </button>
         </div>
     </div>
+    
+    <div id="footer-placeholder"></div>
 
     <script>
         // Ensure background video plays

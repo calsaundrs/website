@@ -9,7 +9,7 @@
 
 /* Critical CSS - Above the fold styles */
 body {
-    background-color: #121212;
+    /* background-color removed to show video background */
     color: #EAEAEA;
     font-family: 'Poppins', system-ui, -apple-system, sans-serif; /* Added fallbacks */
     line-height: 1.6;
