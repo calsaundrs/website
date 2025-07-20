@@ -379,22 +379,41 @@ function getEmbeddedEventTemplate() {
                     </div>
                     {{/if}}
 
+                    <!-- Ticket Link -->
+                    {{#if ticketLink}}
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Get Tickets</h3>
+                        <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="w-full bg-accent-color hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 block text-center group">
+                            <i class="fas fa-ticket-alt mr-2"></i>
+                            <span>Buy Tickets</span>
+                            <i class="fas fa-external-link-alt ml-2 text-sm transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                    </div>
+                    {{/if}}
+
                     <!-- Calendar Links -->
                     <div class="mb-6">
                         <h3 class="text-xl font-bold mb-4">Add to Calendar</h3>
-                        <div class="space-y-2">
+                        <div class="space-y-3">
                             {{{calendarLinksHtml}}}
                         </div>
                     </div>
 
-                    <!-- Ticket Link -->
-                    {{#if ticketLink}}
-                    <div>
-                        <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 block text-center">
-                            <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
-                        </a>
+                    <!-- Share Event -->
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Share Event</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="shareOnFacebook()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+                                <i class="fab fa-facebook-f mr-1"></i> Facebook
+                            </button>
+                            <button onclick="shareOnTwitter()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+                                <i class="fab fa-twitter mr-1"></i> Twitter
+                            </button>
+                            <button onclick="copyLink()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm col-span-2">
+                                <i class="fas fa-link mr-1"></i> Copy Link
+                            </button>
+                        </div>
                     </div>
-                    {{/if}}
                 </div>
             </div>
         </div>
@@ -421,15 +440,92 @@ function getEmbeddedEventTemplate() {
     </footer>
 
     <style>
-        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        /* Design System Colors */
+        :root {
+            --accent-primary: #B564F7;
+            --accent-secondary: #FADCD9;
+            --bg-card: #1e1e1e;
+            --bg-surface: #121212;
+            --text-primary: #EAEAEA;
+            --border-subtle: #2e2e2e;
+        }
+
+        /* Hero Image Styles */
+        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: var(--bg-card); overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; }
         .hero-image-container:hover .hero-image-bg { opacity: 1; }
         .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; }
         .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); }
-        .card-bg { background-color: #1e1e1e; border: 1px solid #2e2e2e; }
-        .calendar-link { display: block; padding: 0.75rem 1rem; background-color: #374151; color: white; text-decoration: none; border-radius: 0.5rem; margin-bottom: 0.5rem; transition: background-color 0.2s; }
-        .calendar-link:hover { background-color: #4B5563; }
+        
+        /* Card Styles */
+        .card-bg { background-color: var(--bg-card); border: 1px solid var(--border-subtle); }
+        
+        /* Button Styles */
+        .calendar-btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 0.75rem 1rem; 
+            background-color: #374151; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+        .calendar-btn:hover { 
+            background-color: #4B5563; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .google-cal:hover { background-color: #4285f4; border-color: #4285f4; }
+        .ical-download:hover { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+        
+        /* Design System Classes */
+        .accent-color { color: var(--accent-primary); }
+        .bg-accent-color { background-color: var(--accent-primary); }
+        .accent-color-secondary { color: var(--accent-secondary); }
     </style>
+
+    <script>
+        // Share functionality
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+        }
+
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank', 'width=600,height=400');
+        }
+
+        async function copyLink() {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                // Show feedback
+                const btn = event.target.closest('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                btn.style.backgroundColor = '#10b981';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = '';
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.href;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Link copied to clipboard!');
+            }
+        }
+    </script>
 </body>
 </html>`;
 }
@@ -444,10 +540,18 @@ function generateAddToCalendarLinks(event) {
     const icalDataUri = generateIcsDataURI(event);
     const safeTitle = event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    // All href attributes are correctly quoted to prevent parsing errors.
+    // Return properly styled buttons matching design system
     return `
-        <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="calendar-link google"><i class="fab fa-google mr-2"></i> Google Calendar</a>
-        <a href="${icalDataUri}" download="${safeTitle}.ics" class="calendar-link ical"><i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other</a>
+        <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">
+            <i class="fab fa-google mr-2"></i>
+            <span>Google Calendar</span>
+            <i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>
+        </a>
+        <a href="${icalDataUri}" download="${safeTitle}.ics" class="calendar-btn ical-download">
+            <i class="fas fa-calendar-plus mr-2"></i>
+            <span>Apple/Outlook/Other</span>
+            <i class="fas fa-download ml-auto text-xs opacity-70"></i>
+        </a>
     `;
 }
 
