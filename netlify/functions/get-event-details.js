@@ -172,17 +172,17 @@ async function renderErrorPage(slug, error) {
                 </div>
 
                 <!-- Error details (collapsible) -->
-                ${error ? `
-                <details class="group mb-6">
-                    <summary class="flex items-center justify-between cursor-pointer list-none">
-                        <span class="font-semibold text-lg accent-color-secondary">Technical Details</span>
-                        <span class="text-2xl accent-color transition-transform transform group-open:rotate-45">+</span>
-                    </summary>
-                    <div class="mt-4 bg-red-900/20 border border-red-500/50 rounded-lg p-4">
-                        <pre class="text-red-300 text-xs overflow-auto whitespace-pre-wrap">${error}</pre>
-                    </div>
-                </details>
-                ` : ''}
+                ${error ? 
+                '<details class="group mb-6">' +
+                    '<summary class="flex items-center justify-between cursor-pointer list-none">' +
+                        '<span class="font-semibold text-lg accent-color-secondary">Technical Details</span>' +
+                        '<span class="text-2xl accent-color transition-transform transform group-open:rotate-45">+</span>' +
+                    '</summary>' +
+                    '<div class="mt-4 bg-red-900/20 border border-red-500/50 rounded-lg p-4">' +
+                        '<pre class="text-red-300 text-xs overflow-auto whitespace-pre-wrap">' + error + '</pre>' +
+                    '</div>' +
+                '</details>'
+                : ''}
 
                 <!-- Possible reasons -->
                 <div class="mb-8">
@@ -493,13 +493,13 @@ function getEmbeddedEventTemplate() {
         function shareOnFacebook() {
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
         }
 
         function shareOnTwitter() {
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
-            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${title}`, '_blank', 'width=600,height=400');
+            window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + title, '_blank', 'width=600,height=400');
         }
 
         async function copyLink() {
@@ -541,18 +541,16 @@ function generateAddToCalendarLinks(event) {
     const safeTitle = event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     // Return properly styled buttons matching design system
-    return `
-        <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">
-            <i class="fab fa-google mr-2"></i>
-            <span>Google Calendar</span>
-            <i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>
-        </a>
-        <a href="${icalDataUri}" download="${safeTitle}.ics" class="calendar-btn ical-download">
-            <i class="fas fa-calendar-plus mr-2"></i>
-            <span>Apple/Outlook/Other</span>
-            <i class="fas fa-download ml-auto text-xs opacity-70"></i>
-        </a>
-    `;
+    return '<a href="' + googleLink + '" target="_blank" rel="noopener noreferrer" class="calendar-btn google-cal">' +
+        '<i class="fab fa-google mr-2"></i>' +
+        '<span>Google Calendar</span>' +
+        '<i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>' +
+        '</a>' +
+        '<a href="' + icalDataUri + '" download="' + safeTitle + '.ics" class="calendar-btn ical-download">' +
+        '<i class="fas fa-calendar-plus mr-2"></i>' +
+        '<span>Apple/Outlook/Other</span>' +
+        '<i class="fas fa-download ml-auto text-xs opacity-70"></i>' +
+        '</a>';
 }
 
 exports.handler = async function (event, context) {
