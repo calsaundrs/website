@@ -295,32 +295,7 @@
             opacity: 1;
         }
         
-        /* Video background */
-        .video-background-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            z-index: -2;
-            overflow: hidden;
-        }
-        
-        .background-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1;
-        }
+        /* Video background styles moved to main.css */
     </style>
     
     <!-- PWA and favicons -->
@@ -337,13 +312,14 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-    <div class="video-background-container">
-        <div class="video-overlay"></div>
-        <video autoplay loop muted playsinline class="background-video" preload="metadata" poster="/video-poster.jpg">
-            <source src="/HouseOfAllureReel.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+<!-- Background Video -->
+<div class="video-background-container">
+    <div class="video-overlay"></div>
+    <video autoplay loop muted playsinline class="background-video" preload="metadata">
+        <source src="/HouseOfAllureReel.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
 <!-- End Google Tag Manager (noscript) -->
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -514,11 +490,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // Ensure background video plays
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.querySelector('.background-video');
+            const container = document.querySelector('.video-background-container');
+            
+            console.log('Video element found:', !!video);
+            console.log('Container found:', !!container);
+            
             if (video) {
+                console.log('Video src:', video.currentSrc || video.src);
+                console.log('Video readyState:', video.readyState);
+                
                 // Try to play the video, handle any autoplay restrictions
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
-                    playPromise.catch(error => {
+                    playPromise.then(() => {
+                        console.log('Video is playing');
+                    }).catch(error => {
                         console.log('Video autoplay failed:', error);
                         // Video autoplay was prevented, but that's okay for background videos
                     });
@@ -529,9 +515,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.log('Background video loaded successfully');
                 });
                 
+                video.addEventListener('canplay', function() {
+                    console.log('Video can start playing');
+                });
+                
                 video.addEventListener('error', function(e) {
                     console.error('Video error:', e);
+                    console.error('Video error details:', video.error);
                 });
+                
+                video.addEventListener('loadstart', function() {
+                    console.log('Video started loading');
+                });
+            } else {
+                console.error('Video element not found!');
             }
         });
     </script>
