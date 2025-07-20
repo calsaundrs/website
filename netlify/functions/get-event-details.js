@@ -473,6 +473,7 @@ function getEmbeddedEventTemplate() {
             transition: all 0.2s ease;
             border: 1px solid transparent;
             font-weight: 500;
+            margin-bottom: 0.75rem;
         }
         .calendar-btn:hover { 
             background-color: #4B5563; 
@@ -481,6 +482,66 @@ function getEmbeddedEventTemplate() {
         }
         .google-cal:hover { background-color: #4285f4; border-color: #4285f4; }
         .ical-download:hover { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+        
+        /* Utility Classes for Icons */
+        .mr-2 { margin-right: 0.5rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .ml-auto { margin-left: auto; }
+        .text-xs { font-size: 0.75rem; }
+        .opacity-70 { opacity: 0.7; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-8 { padding-left: 2rem; padding-right: 2rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-white { color: white; }
+        .w-full { width: 100%; }
+        .block { display: block; }
+        .text-center { text-align: center; }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .col-span-2 { grid-column: span 2 / span 2; }
+        .inline-flex { display: inline-flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .group { /* For hover group functionality */ }
+        .transition-colors { transition-property: color, background-color, border-color; transition-duration: 0.2s; }
+        .transition-all { transition-property: all; transition-duration: 0.2s; }
+        .transition-transform { transition-property: transform; transition-duration: 0.2s; }
+        .duration-200 { transition-duration: 200ms; }
+        
+        /* Text classes */
+        .text-xl { font-size: 1.25rem; }
+        .font-bold { font-weight: 700; }
+        
+        /* Space classes */
+        .space-y-2 > * + * { margin-top: 0.5rem; }
+        .group:hover .group-hover\\:translate-x-1 { transform: translateX(0.25rem); }
+        .group:hover .group-hover\\:opacity-90 { opacity: 0.9; }
+        
+        /* Background Color Classes */
+        .bg-blue-600 { background-color: #2563eb; }
+        .bg-blue-700 { background-color: #1d4ed8; }
+        .bg-gray-700 { background-color: #374151; }
+        .bg-gray-600 { background-color: #4b5563; }
+        .bg-gray-800 { background-color: #1f2937; }
+        
+        /* Hover States */
+        .bg-blue-600:hover { background-color: #1d4ed8; }
+        .bg-gray-700:hover { background-color: #4b5563; }
+        .bg-gray-800:hover { background-color: #374151; }
+        .hover\\:opacity-90:hover { opacity: 0.9; }
+        .hover\\:bg-blue-700:hover { background-color: #1d4ed8; }
+        .hover\\:bg-gray-600:hover { background-color: #4b5563; }
+        .hover\\:bg-gray-700:hover { background-color: #374151; }
         
         /* Design System Classes */
         .accent-color { color: var(--accent-primary); }

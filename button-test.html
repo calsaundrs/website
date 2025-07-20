@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Styling Test | Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Design System Colors */
+        :root {
+            --accent-primary: #B564F7;
+            --accent-secondary: #FADCD9;
+            --bg-card: #1e1e1e;
+            --bg-surface: #121212;
+            --text-primary: #EAEAEA;
+            --border-subtle: #2e2e2e;
+        }
+
+        body {
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-bg {
+            background-color: var(--bg-card); 
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.25rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Button Styles */
+        .calendar-btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 0.75rem 1rem; 
+            background-color: #374151; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        .calendar-btn:hover { 
+            background-color: #4B5563; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .google-cal:hover { background-color: #4285f4; border-color: #4285f4; }
+        .ical-download:hover { background-color: var(--accent-primary); border-color: var(--accent-primary); }
+
+        /* Design System Classes */
+        .accent-color { color: var(--accent-primary); }
+        .bg-accent-color { background-color: var(--accent-primary); }
+        .accent-color-secondary { color: var(--accent-secondary); }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold mb-8">
+        <p>This is a button styling test page!</p>
+    </div>
+
+    <div class="max-w-md mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">Button Styling Test</h1>
+        
+        <!-- Ticket Button -->
+        <div class="card-bg p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Get Tickets</h3>
+            <a href="#" class="w-full bg-accent-color hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 block text-center group">
+                <i class="fas fa-ticket-alt mr-2"></i>
+                <span>Buy Tickets</span>
+                <i class="fas fa-external-link-alt ml-2 text-sm transition-transform group-hover:translate-x-1"></i>
+            </a>
+        </div>
+
+        <!-- Calendar Buttons -->
+        <div class="card-bg p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Add to Calendar</h3>
+            <div class="space-y-3">
+                <a href="#" class="calendar-btn google-cal">
+                    <i class="fab fa-google mr-2"></i>
+                    <span>Google Calendar</span>
+                    <i class="fas fa-external-link-alt ml-auto text-xs opacity-70"></i>
+                </a>
+                <a href="#" class="calendar-btn ical-download">
+                    <i class="fas fa-calendar-plus mr-2"></i>
+                    <span>Apple/Outlook/Other</span>
+                    <i class="fas fa-download ml-auto text-xs opacity-70"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Share Buttons -->
+        <div class="card-bg p-6">
+            <h3 class="text-xl font-bold mb-4">Share Event</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+                    <i class="fab fa-facebook-f mr-1"></i> Facebook
+                </button>
+                <button class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+                    <i class="fab fa-twitter mr-1"></i> Twitter
+                </button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm col-span-2">
+                    <i class="fas fa-link mr-1"></i> Copy Link
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
