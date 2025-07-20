@@ -272,7 +272,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // Periodic background sync (if supported)
-if ('periodicSync' in window.ServiceWorkerRegistration.prototype) {
+if ('PeriodicSyncManager' in self) {
   self.addEventListener('periodicsync', (event) => {
     if (event.tag === 'content-sync') {
       event.waitUntil(syncContent());
