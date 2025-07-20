@@ -230,7 +230,7 @@ function isPageRequest(pathname) {
 }
 
 // Background sync for form submissions (if supported)
-if ('sync' in window.ServiceWorkerRegistration.prototype) {
+if ('SyncManager' in self) {
   self.addEventListener('sync', (event) => {
     if (event.tag === 'background-sync') {
       console.log('Service Worker: Background sync triggered');
