@@ -460,36 +460,28 @@ function getEmbeddedEventTemplate() {
         /* Card Styles */
         .card-bg { background-color: var(--bg-card); border: 1px solid var(--border-subtle); }
         
-        /* Button Styles - !important to override Tailwind */
+        /* Button Styles */
         .calendar-btn { 
-            display: flex !important; 
-            align-items: center !important; 
-            justify-content: space-between !important;
-            padding: 0.75rem 1rem !important; 
-            background-color: #374151 !important; 
-            color: white !important; 
-            text-decoration: none !important; 
-            border-radius: 0.75rem !important; 
-            transition: all 0.2s ease !important;
-            border: 1px solid transparent !important;
-            font-weight: 500 !important;
-            margin-bottom: 0.75rem !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 0.75rem 1rem; 
+            background-color: #374151; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
         }
         .calendar-btn:hover { 
-            background-color: #4B5563 !important; 
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+            background-color: #4B5563; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .google-cal:hover { 
-            background-color: #4285f4 !important; 
-            border-color: #4285f4 !important; 
-        }
-        .ical-download:hover { 
-            background-color: var(--accent-primary) !important; 
-            border-color: var(--accent-primary) !important; 
-        }
+        .google-cal:hover { background-color: #4285f4; border-color: #4285f4; }
+        .ical-download:hover { background-color: var(--accent-primary); border-color: var(--accent-primary); }
         
         /* Utility Classes for Icons */
         .mr-2 { margin-right: 0.5rem; }
