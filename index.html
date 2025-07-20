@@ -344,10 +344,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             Your browser does not support the video tag.
         </video>
     </div>
-
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -513,5 +509,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </button>
         </div>
     </div>
+
+    <script>
+        // Ensure background video plays
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.background-video');
+            if (video) {
+                // Try to play the video, handle any autoplay restrictions
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log('Video autoplay failed:', error);
+                        // Video autoplay was prevented, but that's okay for background videos
+                    });
+                }
+                
+                // Ensure video is properly loaded
+                video.addEventListener('loadeddata', function() {
+                    console.log('Background video loaded successfully');
+                });
+                
+                video.addEventListener('error', function(e) {
+                    console.error('Video error:', e);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

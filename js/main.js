@@ -217,4 +217,39 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Apply form validation to all forms
     document.querySelectorAll('form').forEach(handleFormErrors);
+    
+    // Load header and footer content
+    const loadHeaderFooter = async () => {
+        try {
+            // Load header
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                const headerResponse = await fetch('/global/header.html');
+                if (headerResponse.ok) {
+                    const headerContent = await headerResponse.text();
+                    headerPlaceholder.innerHTML = headerContent;
+                    
+                    // Reinitialize mobile menu after header is loaded
+                    setTimeout(() => {
+                        initializeMobileMenu();
+                    }, 100);
+                }
+            }
+            
+            // Load footer
+            const footerPlaceholder = document.getElementById('footer-placeholder');
+            if (footerPlaceholder) {
+                const footerResponse = await fetch('/global/footer.html');
+                if (footerResponse.ok) {
+                    const footerContent = await footerResponse.text();
+                    footerPlaceholder.innerHTML = footerContent;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading header/footer:', error);
+        }
+    };
+    
+    // Load header and footer
+    loadHeaderFooter();
 });
