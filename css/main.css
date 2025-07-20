@@ -32,6 +32,138 @@ body.flag-loaded img[src*="progressflag"] {
     opacity: 1;
 }
 
+/* Enhanced Accessibility Styles */
+/* Skip link for keyboard navigation */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #B564F7;
+    color: white;
+    padding: 8px 16px;
+    z-index: 1000;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Enhanced focus styles for better accessibility */
+:focus-visible {
+    outline: 3px solid #B564F7;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Button focus states */
+button:focus-visible,
+input[type="button"]:focus-visible,
+input[type="submit"]:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid #B564F7;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(181, 100, 247, 0.2);
+}
+
+/* Link focus states */
+a:focus-visible {
+    outline: 2px solid #B564F7;
+    outline-offset: 2px;
+    text-decoration: underline;
+}
+
+/* Form field focus states */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    border-color: #B564F7 !important;
+    box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.2);
+    outline: none;
+}
+
+/* Error states for form validation */
+.field-error,
+.border-red-500 {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Show content on focus for screen readers */
+.sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    background: #B564F7;
+    color: white;
+    border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .accent-color { 
+        color: #E080FF; 
+    }
+    
+    .heading-gradient {
+        background: none;
+        -webkit-text-fill-color: initial;
+        color: #FFFFFF;
+    }
+    
+    .filter-button {
+        border-width: 2px;
+        border-color: #FFFFFF;
+    }
+    
+    .card-bg {
+        border-color: #FFFFFF;
+        border-width: 2px;
+    }
+}
+
+/* Enhanced mobile menu accessibility */
+#menu {
+    transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+
+#menu.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+#menu.flex {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Mobile menu focus trap */
+#menu a:focus {
+    background-color: rgba(181, 100, 247, 0.2);
+    outline: 2px solid #B564F7;
+}
+
 /* Performance optimization for video background */
 .video-background-container {
     position: fixed;
@@ -84,10 +216,17 @@ body.flag-loaded img[src*="progressflag"] {
     font-weight: bold;
     padding: 0.75rem 1.5rem; 
     border-radius: 0.5rem; 
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.2s ease;
     will-change: opacity; /* Optimize for transitions */
 }
-.nav-cta:hover { opacity: 0.9; }
+.nav-cta:hover { 
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.nav-cta:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(181, 100, 247, 0.3);
+}
 
 .card-bg {
     background-color: #1e1e1e; 
@@ -132,6 +271,10 @@ body.flag-loaded img[src*="progressflag"] {
     color: #B564F7;
     border-color: #B564F7;
 }
+.filter-button:focus-visible {
+    border-color: #B564F7;
+    box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.3);
+}
 
 /* Event/Venue Card Styles - Performance optimized */
 .item-card {
@@ -141,6 +284,11 @@ body.flag-loaded img[src*="progressflag"] {
 .item-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+}
+.item-card:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+    outline: 2px solid #B564F7;
 }
 
 .item-card-image-container {
@@ -172,11 +320,26 @@ body.flag-loaded img[src*="progressflag"] {
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
+.feature-card:focus-within {
+    transform: scale(1.02) translateY(-3px);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+    outline: 2px solid #B564F7;
+}
+
 /* Loading states and accessibility improvements */
 .loading {
     opacity: 0.6;
     pointer-events: none;
 }
+
+/* Improve button accessibility */
+button:disabled,
+input[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Form validation styles - consolidated with .field-error above */
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
@@ -196,15 +359,9 @@ body.flag-loaded img[src*="progressflag"] {
     .feature-card:hover {
         transform: none;
     }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .accent-color { color: #E080FF; }
-    .heading-gradient {
-        background: none;
-        -webkit-text-fill-color: initial;
-        color: #FFFFFF;
+    
+    .background-video {
+        animation: none;
     }
 }
 
@@ -234,29 +391,13 @@ body.flag-loaded img[src*="progressflag"] {
         box-shadow: none;
         border: 1px solid #ccc;
     }
-}
-
-/* Focus styles for accessibility */
-:focus-visible {
-    outline: 2px solid #B564F7;
-    outline-offset: 2px;
-}
-
-/* Skip link for accessibility */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #B564F7;
-    color: white;
-    padding: 8px;
-    z-index: 1000;
-    border-radius: 4px;
-    text-decoration: none;
-}
-
-.skip-link:focus {
-    top: 6px;
+    
+    /* Hide interactive elements in print */
+    button,
+    .filter-button,
+    #menu-btn {
+        display: none;
+    }
 }
 
 /* Performance: GPU acceleration for animations */
@@ -296,6 +437,20 @@ body.flag-loaded img[src*="progressflag"] {
     .font-anton {
         letter-spacing: 0.025em;
     }
+    
+    /* Improve mobile touch targets */
+    button,
+    .filter-button,
+    a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Better mobile menu spacing */
+    #menu a {
+        padding: 1rem;
+        display: block;
+    }
 }
 
 /* Container queries support (progressive enhancement) */
@@ -310,4 +465,38 @@ body.flag-loaded img[src*="progressflag"] {
             padding: 0.125rem 0.5rem;
         }
     }
+}
+
+/* Error message styling */
+.error-message {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    color: #fca5a5;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.success-message {
+    background-color: rgba(34, 197, 94, 0.1);
+    border: 1px solid #22c55e;
+    color: #86efac;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #B564F7;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

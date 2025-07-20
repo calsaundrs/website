@@ -3,19 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seriously? (404) | Brum Outloud</title>
-    <meta name="description" content="You've found a page that doesn't exist. Again. It's not hard, is it? Let's get you back to the actual Brum Outloud website.">
+    <title>Page Not Found (404) | Brum Outloud</title>
+    <meta name="description" content="Sorry, the page you're looking for doesn't exist. Let us help you find what you're looking for in Birmingham's LGBTQ+ scene.">
+    <meta name="robots" content="noindex">
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/404.html">
+    
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/main.js" defer></script>
+    
+    <!-- Tailwind loaded with defer -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="apple-touch-icon" href="/faviconV2.png">
     <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#B564F7">
+    
+    <style>
+        /* Critical CSS for 404 page */
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 48px 12px 16px;
+            border: 2px solid #2e2e2e;
+            border-radius: 0.5rem;
+            background: #1e1e1e;
+            color: #EAEAEA;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            border-color: #B564F7;
+            box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.2);
+            outline: none;
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #B564F7;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .search-button:hover {
+            background: #9f4fd4;
+        }
+    </style>
 </head>
 <body class="antialiased">
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -28,11 +103,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
 <!-- End Google Tag Manager -->
+
 <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
     <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
 </div>
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
 <header class="p-8">
     <nav class="container mx-auto flex justify-between items-center">
@@ -41,7 +115,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            style="font-family: 'Omnes Pro', sans-serif;">
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
@@ -53,12 +127,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
+            <button id="menu-btn" class="text-white text-2xl" aria-expanded="false" aria-controls="menu" aria-label="Toggle navigation menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6" role="navigation" aria-hidden="true">
         <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
@@ -67,35 +141,87 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <section class="text-center mb-8 animate-fade-in">
-            <div class="spark-icon accent-color text-6xl mb-4">✦</div>
-            <h1 class="font-anton text-9xl md:text-[15rem] leading-none tracking-wider heading-gradient">
-                404
-            </h1>
-            <h2 class="mt-4 text-3xl md:text-5xl text-gray-300 max-w-2xl mx-auto">
-                OH, FOR <span class="accent-color">F***'S SAKE</span>.
-            </h2>
-            <p class="mt-6 text-lg text-gray-400 max-w-xl mx-auto">
-                Right. You've found a page that doesn't exist. Again. It's not a secret. It's just... not here. Like my patience. Let's get you back to the actual website, shall we? Before you break something else.
-            </p>
-            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity inline-flex items-center justify-center group">
-                    <i class="fas fa-home mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> Back to Hurst Street
-                </a>
-                <a href="/events.html" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-opacity inline-flex items-center justify-center group">
-                    <i class="fas fa-calendar-alt mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> Find an Event
-                </a>
+<main id="main-content" class="container mx-auto px-8 py-8 relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+    <section class="text-center mb-8 animate-fade-in">
+        <div class="spark-icon accent-color text-6xl mb-4" aria-hidden="true">✦</div>
+        <h1 class="font-anton text-9xl md:text-[15rem] leading-none tracking-wider heading-gradient">
+            404
+        </h1>
+        <h2 class="mt-4 text-3xl md:text-5xl text-gray-300 max-w-2xl mx-auto">
+            Page Not <span class="accent-color">Found</span>
+        </h2>
+        <p class="mt-6 text-lg text-gray-400 max-w-xl mx-auto">
+            Sorry, the page you're looking for doesn't exist. It might have been moved, deleted, or you may have mistyped the URL. Let's help you find what you're looking for!
+        </p>
+        
+        <!-- Search functionality -->
+        <div class="mt-8 mb-8">
+            <h3 class="text-xl text-white mb-4">Search for events or venues:</h3>
+            <div class="search-container">
+                <input 
+                    type="search" 
+                    class="search-input" 
+                    placeholder="Search events, venues, or categories..."
+                    id="search-input"
+                    aria-label="Search site content"
+                >
+                <button type="button" class="search-button" id="search-button" aria-label="Search">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-        </section>
-    </main>
+        </div>
+        
+        <!-- Quick navigation options -->
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
+            <a href="/" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
+                <i class="fas fa-home text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                <h3 class="font-bold text-white mb-2">Home</h3>
+                <p class="text-gray-400 text-sm">Back to the main page</p>
+            </a>
+            
+            <a href="/events.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
+                <i class="fas fa-calendar-alt text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                <h3 class="font-bold text-white mb-2">Events</h3>
+                <p class="text-gray-400 text-sm">Find LGBTQ+ events</p>
+            </a>
+            
+            <a href="/all-venues.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
+                <i class="fas fa-map-marker-alt text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                <h3 class="font-bold text-white mb-2">Venues</h3>
+                <p class="text-gray-400 text-sm">Explore queer spaces</p>
+            </a>
+            
+            <a href="/community.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
+                <i class="fas fa-users text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                <h3 class="font-bold text-white mb-2">Community</h3>
+                <p class="text-gray-400 text-sm">Join the community</p>
+            </a>
+        </div>
+        
+        <!-- Help section -->
+        <div class="mt-12 text-center">
+            <h3 class="text-xl text-white mb-4">Still can't find what you're looking for?</h3>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/contact.html" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity inline-flex items-center justify-center group">
+                    <i class="fas fa-envelope mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
+                    Contact Us
+                </a>
+                <button id="go-back-button" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors inline-flex items-center justify-center group">
+                    <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
 
-    <footer class="border-t-2 border-gray-800 p-8">
+<!-- Include the footer component -->
+<footer class="border-t-2 border-gray-800 p-8">
     <div class="container mx-auto grid md:grid-cols-2">
         <div>
              <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
              <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
              </div>
         </div>
         <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
@@ -104,22 +230,79 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <ul>
                     <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
                     <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    <li class="mb-2"><a href="/promoter-tool.html" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/admin-login.html" class="text-gray-400 hover:text-white">Admin</a></li>
                 </ul>
             </div>
              <div>
                 <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                 <ul>
                     <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
                     <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
                     <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
                 </ul>
             </div>
         </div>
     </div>
+    
+    <!-- Copyright and accessibility info -->
+    <div class="container mx-auto mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+        <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
+        <p class="mt-2">Celebrating Birmingham's vibrant LGBTQ+ community</p>
+    </div>
 </footer>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (searchTerm) {
+                // Redirect to events page with search parameter
+                window.location.href = `/events.html?q=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+        
+        // Go back functionality
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+        
+        // Event listeners using proper separation of concerns
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const goBackButton = document.getElementById('go-back-button');
+        
+        if (searchButton) {
+            searchButton.addEventListener('click', performSearch);
+        }
+        
+        if (searchInput) {
+            // Allow Enter key to trigger search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+        
+        if (goBackButton) {
+            goBackButton.addEventListener('click', goBack);
+        }
+        
+        // Track 404 errors for analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', '404_error', {
+                'page_location': window.location.href,
+                'page_referrer': document.referrer
+            });
+        }
+    });
+</script>
 </body>
 </html>
