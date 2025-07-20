@@ -832,10 +832,38 @@ exports.handler = async function (event, context) {
             return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
         }).join('');
 
-        // Force use of embedded template with updated button styles
-        console.log("🔄 Using embedded template with updated button styles");
-        let htmlTemplate = getEmbeddedEventTemplate();
+        // Try multiple possible template paths for different deployment environments
+        const possibleTemplatePaths = [
+            path.resolve(__dirname, './templates/event-details-template.html'),
+            path.resolve(__dirname, '../templates/event-details-template.html'),
+            path.resolve(__dirname, 'templates/event-details-template.html'),
+            path.join(__dirname, 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html')
+        ];
+        
         let templatePath = null;
+        let htmlTemplate = null;
+        
+        for (const tryPath of possibleTemplatePaths) {
+            try {
+                console.log(`📄 Trying template path: ${tryPath}`);
+                htmlTemplate = await fs.readFile(tryPath, 'utf8');
+                templatePath = tryPath;
+                console.log(`✅ Template file found at: ${templatePath}`);
+                break;
+            } catch (pathError) {
+                console.log(`❌ Template not found at: ${tryPath}`);
+                continue;
+            }
+        }
+        // Check if we found a template
+        if (!htmlTemplate || !templatePath) {
+            console.error("❌ No template file found in any of the attempted paths");
+            console.log("🔄 Using embedded fallback template");
+            
+            // Use embedded template as fallback
+            htmlTemplate = getEmbeddedEventTemplate();
+        }
         
         console.log("✅ Template ready. Length:", htmlTemplate.length);
         console.log("📝 Template source:", templatePath ? `File: ${templatePath}` : 'Embedded fallback');
