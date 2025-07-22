@@ -113,13 +113,19 @@ exports.handler = async (event, context) => {
         
         const prompt = `Analyze this event poster and extract the following information in JSON format:
         {
-            "eventName": "Event name",
-            "date": "YYYY-MM-DD format",
-            "time": "HH:MM format (24-hour)",
-            "description": "Brief description"
+            "eventName": "Event name (extract the main title/name of the event)",
+            "date": "YYYY-MM-DD format (extract the event date, convert any date format to YYYY-MM-DD)",
+            "time": "HH:MM format (24-hour, extract the start time)",
+            "description": "Brief description of the event (what it's about, who it's for)",
+            "venue": "Venue name (extract the location/venue where the event is happening)"
         }
         
-        If any information is not found, use null for that field.`;
+        IMPORTANT INSTRUCTIONS:
+        - For dates: Convert any date format (e.g., "15th August", "Aug 15", "15/08/2024") to YYYY-MM-DD
+        - For times: Convert to 24-hour format (e.g., "8pm" becomes "20:00", "2:30pm" becomes "14:30")
+        - For venue: Extract the specific venue name/location
+        - If any information is not found, use null for that field
+        - Be as accurate as possible with the extraction`;
 
         // Use the content type from the parsed file
         const mimeType = result.files[0].contentType || 'image/jpeg';
@@ -186,6 +192,9 @@ exports.handler = async (event, context) => {
             if (jsonMatch) {
                 extractedData = JSON.parse(jsonMatch[0]);
                 console.log('Extracted data:', extractedData);
+                
+                // Post-process the extracted data
+                extractedData = postProcessExtractedData(extractedData);
             } else {
                 throw new Error('No JSON found in response');
             }
@@ -215,6 +224,152 @@ exports.handler = async (event, context) => {
     }
 };
 
+function postProcessExtractedData(data) {
+    // Clean up and enhance the extracted data
+    const processed = { ...data };
+    
+    // Clean up event name
+    if (processed.eventName) {
+        processed.eventName = processed.eventName.trim();
+    }
+    
+    // Clean up date format
+    if (processed.date) {
+        processed.date = processed.date.trim();
+        // Ensure it's in YYYY-MM-DD format
+        if (processed.date && !/^\d{4}-\d{2}-\d{2}$/.test(processed.date)) {
+            console.log('Date format needs conversion:', processed.date);
+            // Try to convert common date formats
+            const converted = convertDateToISO(processed.date);
+            if (converted) {
+                processed.date = converted;
+            }
+        }
+    }
+    
+    // Clean up time format
+    if (processed.time) {
+        processed.time = processed.time.trim();
+        // Ensure it's in HH:MM format
+        if (processed.time && !/^\d{2}:\d{2}$/.test(processed.time)) {
+            console.log('Time format needs conversion:', processed.time);
+            const converted = convertTimeTo24Hour(processed.time);
+            if (converted) {
+                processed.time = converted;
+            }
+        }
+    }
+    
+    // Clean up description
+    if (processed.description) {
+        processed.description = processed.description.trim();
+    }
+    
+    // Clean up venue
+    if (processed.venue) {
+        processed.venue = processed.venue.trim();
+    }
+    
+    console.log('Post-processed data:', processed);
+    return processed;
+}
+
+function convertDateToISO(dateStr) {
+    // Common date conversion patterns
+    const patterns = [
+        // DD/MM/YYYY
+        /(\d{1,2})\/(\d{1,2})\/(\d{4})/,
+        // MM/DD/YYYY
+        /(\d{1,2})\/(\d{1,2})\/(\d{4})/,
+        // DD-MM-YYYY
+        /(\d{1,2})-(\d{1,2})-(\d{4})/,
+        // Month DD, YYYY
+        /(\w+)\s+(\d{1,2}),?\s+(\d{4})/,
+        // DD Month YYYY
+        /(\d{1,2})\s+(\w+)\s+(\d{4})/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = dateStr.match(pattern);
+        if (match) {
+            let day, month, year;
+            
+            if (pattern.source.includes('\\w+')) {
+                // Text month format
+                const monthNames = {
+                    'january': '01', 'jan': '01',
+                    'february': '02', 'feb': '02',
+                    'march': '03', 'mar': '03',
+                    'april': '04', 'apr': '04',
+                    'may': '05',
+                    'june': '06', 'jun': '06',
+                    'july': '07', 'jul': '07',
+                    'august': '08', 'aug': '08',
+                    'september': '09', 'sep': '09',
+                    'october': '10', 'oct': '10',
+                    'november': '11', 'nov': '11',
+                    'december': '12', 'dec': '12'
+                };
+                
+                if (pattern.source.includes('\\d{1,2}\\s+\\w+')) {
+                    // DD Month YYYY
+                    day = match[1].padStart(2, '0');
+                    month = monthNames[match[2].toLowerCase()];
+                    year = match[3];
+                } else {
+                    // Month DD, YYYY
+                    month = monthNames[match[1].toLowerCase()];
+                    day = match[2].padStart(2, '0');
+                    year = match[3];
+                }
+            } else {
+                // Numeric format
+                day = match[1].padStart(2, '0');
+                month = match[2].padStart(2, '0');
+                year = match[3];
+            }
+            
+            if (day && month && year) {
+                return `${year}-${month}-${day}`;
+            }
+        }
+    }
+    
+    return null;
+}
+
+function convertTimeTo24Hour(timeStr) {
+    // Common time conversion patterns
+    const patterns = [
+        // HH:MM AM/PM
+        /(\d{1,2}):(\d{2})\s*(AM|PM)/i,
+        // H:MM AM/PM
+        /(\d{1,2}):(\d{2})\s*(AM|PM)/i,
+        // HH AM/PM
+        /(\d{1,2})\s*(AM|PM)/i,
+        // H AM/PM
+        /(\d{1,2})\s*(AM|PM)/i
+    ];
+    
+    for (const pattern of patterns) {
+        const match = timeStr.match(pattern);
+        if (match) {
+            let hours = parseInt(match[1]);
+            let minutes = match[2] ? parseInt(match[2]) : 0;
+            const period = match[3] ? match[3].toUpperCase() : null;
+            
+            if (period) {
+                if (period === 'PM' && hours !== 12) hours += 12;
+                if (period === 'AM' && hours === 12) hours = 0;
+            }
+            
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+    }
+    
+    return null;
+}
+
 function extractBasicInfo(text) {
     // Basic regex-based extraction as fallback
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
@@ -223,6 +378,7 @@ function extractBasicInfo(text) {
     let date = null;
     let time = null;
     let description = null;
+    let venue = null;
     
     // Look for event name (usually the largest text or first prominent line)
     if (lines.length > 0) {
@@ -282,10 +438,29 @@ function extractBasicInfo(text) {
         if (time) break;
     }
     
+    // Look for venue patterns
+    const venuePatterns = [
+        /at\s+([^,]+)/i,
+        /venue[:\s]+([^,]+)/i,
+        /location[:\s]+([^,]+)/i
+    ];
+    
+    for (const line of lines) {
+        for (const pattern of venuePatterns) {
+            const match = line.match(pattern);
+            if (match) {
+                venue = match[1].trim();
+                break;
+            }
+        }
+        if (venue) break;
+    }
+    
     return {
         eventName,
         date,
         time,
-        description
+        description,
+        venue
     };
 }

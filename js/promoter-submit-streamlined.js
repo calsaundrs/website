@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'eventName', label: 'Event Name', value: data.eventName },
             { key: 'date', label: 'Date', value: data.date },
             { key: 'time', label: 'Time', value: data.time },
+            { key: 'venue', label: 'Venue', value: data.venue },
             { key: 'description', label: 'Description', value: data.description }
         ];
         
@@ -183,6 +184,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (extractedEventData.time) {
                 document.getElementById('start-time').value = extractedEventData.time;
+            }
+            if (extractedEventData.venue) {
+                // Try to match venue name to venue dropdown
+                const venueSelect = document.getElementById('venue-select');
+                const extractedVenue = extractedEventData.venue.toLowerCase();
+                
+                for (let i = 0; i < venueSelect.options.length; i++) {
+                    const option = venueSelect.options[i];
+                    if (option.text.toLowerCase().includes(extractedVenue) || 
+                        extractedVenue.includes(option.text.toLowerCase())) {
+                        venueSelect.selectedIndex = i;
+                        break;
+                    }
+                }
             }
             if (extractedEventData.description) {
                 document.getElementById('description').value = extractedEventData.description;
