@@ -40,11 +40,26 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = !termsCheckbox.checked;
     });
 
-    // Spreadsheet upload button
-    const spreadsheetUploadBtn = document.getElementById('spreadsheet-upload-btn');
-    if (spreadsheetUploadBtn) {
-        spreadsheetUploadBtn.addEventListener('click', () => {
-            showStatus('Spreadsheet upload feature coming soon! This will allow bulk upload of multiple events from Excel/CSV files.', 'info');
+    // Description character counter
+    const descriptionTextarea = document.getElementById('description');
+    const descriptionCount = document.getElementById('description-count');
+    
+    if (descriptionTextarea && descriptionCount) {
+        descriptionTextarea.addEventListener('input', () => {
+            const length = descriptionTextarea.value.length;
+            descriptionCount.textContent = `${length}/500`;
+            
+            if (length > 450) {
+                descriptionCount.classList.add('text-yellow-400');
+            } else {
+                descriptionCount.classList.remove('text-yellow-400');
+            }
+            
+            if (length > 500) {
+                descriptionCount.classList.add('text-red-400');
+            } else {
+                descriptionCount.classList.remove('text-red-400');
+            }
         });
     }
 
@@ -73,25 +88,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // AI Poster Processing
+    // Poster Processing
     async function handlePosterUpload(file) {
-        // Show AI processing
+        // Show processing
         aiProcessing.classList.remove('hidden');
         extractedData.classList.add('hidden');
         
         try {
-            // Create form data for AI processing
+            // Create form data for processing
             const formData = new FormData();
             formData.append('poster', file);
             
-            // Call AI processing function
+            // Call processing function
             const response = await fetch('/.netlify/functions/process-poster', {
                 method: 'POST',
                 body: formData
             });
             
             if (!response.ok) {
-                throw new Error('AI processing failed');
+                throw new Error('Processing failed');
             }
             
             const result = await response.json();
@@ -104,9 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 aiProcessing.classList.add('hidden');
             }
         } catch (error) {
-            console.error('AI processing error:', error);
+            console.error('Processing error:', error);
             aiProcessing.classList.add('hidden');
-            showStatus('AI processing failed. You can still fill the form manually.', 'error');
+            showStatus('Poster processing failed. You can still fill the form manually.', 'error');
         }
     }
 
@@ -631,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorResult.message || `Server responded with status: ${response.status}`);
             }
             
-            showStatus('Success! Your event has been submitted for review.', 'success');
+            showStatus('Success! Your event has been submitted for review. Our team will review it within 24-48 hours and you\'ll be notified once it\'s live.', 'success');
             form.reset();
             termsCheckbox.checked = false;
             submitButton.disabled = true;

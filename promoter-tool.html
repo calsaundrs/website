@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Promoter Tools | Submit LGBTQ+ Events in Birmingham | Brum Outloud</title>
-    <meta name="description" content="Promoters: Easily submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our AI-enhanced form with poster upload and spreadsheet support.">
+    <meta name="description" content="Promoters: Easily submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -75,40 +75,64 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <section class="text-center mb-8">
             <div class="text-center mb-16">
                 <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">PROMOTER <span class="accent-color">TOOLS</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Submit your LGBTQ+ events to Brum Outloud with our AI-enhanced form.</p>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="card-bg p-6 mb-8 max-w-4xl mx-auto">
+                <h2 class="font-anton text-2xl text-white mb-4">Welcome!</h2>
+                <p class="text-gray-300 mb-4">This enhanced form will help you submit your event quickly and easily. Upload a poster and our system will attempt to fill in the details automatically. Don't worry if it doesn't work perfectly - you can always complete the form manually.</p>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="text-center">
+                        <i class="fas fa-clock text-accent-color text-2xl mb-2"></i>
+                        <p class="text-gray-300">Events reviewed within 24-48 hours</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-check-circle text-accent-color text-2xl mb-2"></i>
+                        <p class="text-gray-300">All submissions reviewed by our team</p>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-users text-accent-color text-2xl mb-2"></i>
+                        <p class="text-gray-300">Reach Birmingham's LGBTQ+ community</p>
+                    </div>
+                </div>
             </div>
 
             <div class="card-bg p-8 md:p-12">
-                <h2 class="font-anton text-3xl text-white mb-6">AI-Enhanced Event Submission</h2>
-                
-                <!-- Spreadsheet Upload Button -->
-                <div class="mb-8 text-center">
-                    <button id="spreadsheet-upload-btn" class="inline-flex items-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm">
-                        <i class="fas fa-file-excel mr-2"></i>Upload Spreadsheet (Coming Soon)
-                    </button>
-                    <p class="text-xs text-gray-400 mt-2">Bulk upload multiple events from Excel/CSV</p>
-                </div>
+                <h2 class="font-anton text-3xl text-white mb-6">Event Submission Form</h2>
                 
                 <form id="event-submission-form" class="space-y-8">
                     <!-- Poster Upload Section -->
                     <div class="space-y-4">
                         <h3 class="text-xl font-bold accent-color-secondary">
-                            <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster
+                            <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster (Optional)
                         </h3>
+                        
+                        <div class="bg-blue-900/20 border border-blue-600 rounded-lg p-4 mb-4">
+                            <h4 class="text-blue-300 font-semibold mb-2">
+                                <i class="fas fa-lightbulb mr-2"></i>Tips for Better Results
+                            </h4>
+                            <ul class="text-sm text-blue-200 space-y-1">
+                                <li>• Use clear, high-quality images with good contrast</li>
+                                <li>• Ensure text is readable and well-lit</li>
+                                <li>• Include event name, date, time, and venue if possible</li>
+                                <li>• Maximum file size: 10MB</li>
+                            </ul>
+                        </div>
                         
                         <!-- Upload Area -->
                         <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-accent-color transition-colors cursor-pointer">
                             <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                             <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
-                            <p class="text-sm text-gray-500">We'll try to extract event details automatically</p>
+                            <p class="text-sm text-gray-500">We'll attempt to extract event details automatically</p>
                             <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
                         </div>
 
-                        <!-- AI Processing Status -->
+                        <!-- Processing Status -->
                         <div id="ai-processing" class="hidden p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
                             <div class="flex items-center">
                                 <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400 mr-3"></div>
-                                <span class="text-blue-300">AI is analyzing your poster...</span>
+                                <span class="text-blue-300">Analyzing your poster...</span>
                             </div>
                         </div>
 
@@ -125,7 +149,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-check mr-2"></i>Use Extracted Info
                                 </button>
                                 <button type="button" id="ignore-extracted" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
-                                    <i class="fas fa-times mr-2"></i>Ignore
+                                    <i class="fas fa-times mr-2"></i>Fill Manually
                                 </button>
                             </div>
                         </div>
@@ -208,8 +232,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     Description
                                 </label>
                                 <textarea id="description" name="description" rows="4" 
-                                          placeholder="Tell us about your event..."
+                                          placeholder="Tell us about your event... What makes it special? Who should attend?"
                                           class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none"></textarea>
+                                <div class="flex justify-between items-center mt-2">
+                                    <p class="text-xs text-gray-400">Tell people what to expect and why they should come</p>
+                                    <span id="description-count" class="text-xs text-gray-400">0/500</span>
+                                </div>
                             </div>
 
                             <!-- Ticket Link -->
@@ -220,6 +248,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <input type="url" id="link" name="link" 
                                        placeholder="https://"
                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
+                                <p class="text-xs text-gray-400 mt-1">Include if tickets are required or available online</p>
                             </div>
                         </div>
                     </div>
@@ -229,6 +258,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <h3 class="text-xl font-bold accent-color-secondary">
                             <i class="fas fa-redo mr-2"></i>Step 3: Recurrence (Optional)
                         </h3>
+                        
+                        <div class="bg-yellow-900/20 border border-yellow-600 rounded-lg p-4 mb-4">
+                            <h4 class="text-yellow-300 font-semibold mb-2">
+                                <i class="fas fa-info-circle mr-2"></i>Recurring Events
+                            </h4>
+                            <p class="text-sm text-yellow-200">Set up recurrence if your event happens regularly (weekly, monthly). You can edit or remove individual dates below.</p>
+                        </div>
                         
                         <!-- Recurrence Type Selection -->
                         <div class="mb-6">
@@ -362,6 +398,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <!-- Exception Dates -->
                         <div class="pt-6 border-t border-gray-600">
                             <h4 class="text-lg font-semibold mb-3 accent-color-secondary">Exception Dates</h4>
+                            <p class="text-sm text-gray-400 mb-4">Add dates when the event won't happen (e.g., holidays, venue closures)</p>
                             <div id="exception-dates-list" class="space-y-2 mb-4">
                                 <!-- Exception dates will be populated here -->
                             </div>
@@ -373,7 +410,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-plus mr-2"></i>Add Exception
                                 </button>
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">Add dates when the event won't happen (e.g., holidays, venue closures)</p>
                         </div>
                     </div>
 
@@ -399,6 +435,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 <!-- Status Messages -->
                 <div id="form-status" class="hidden mt-6 p-4 rounded-lg text-center"></div>
+            </div>
+
+            <!-- What Happens Next Section -->
+            <div class="card-bg p-6 mt-8 max-w-4xl mx-auto">
+                <h3 class="font-anton text-2xl text-white mb-4">What Happens Next?</h3>
+                <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div>
+                        <div class="bg-accent-color rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white font-bold">1</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Review</h4>
+                        <p class="text-sm text-gray-300">Our team reviews your submission within 24-48 hours</p>
+                    </div>
+                    <div>
+                        <div class="bg-accent-color rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white font-bold">2</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Approval</h4>
+                        <p class="text-sm text-gray-300">Once approved, your event goes live on our site</p>
+                    </div>
+                    <div>
+                        <div class="bg-accent-color rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white font-bold">3</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Promotion</h4>
+                        <p class="text-sm text-gray-300">We'll help promote your event to our community</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
