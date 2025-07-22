@@ -201,6 +201,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- End Date for Recurring Series -->
+                    <div id="recurrence-end-date" class="hidden">
+                        <label for="recurrence-end-date-input" class="block text-sm font-semibold mb-2 accent-color-secondary">End Date (Optional)</label>
+                        <input type="date" id="recurrence-end-date-input" name="recurrence-end-date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" min="">
+                        <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing series</p>
+                    </div>
                 </div>
             </div>
                             <input type="hidden" name="recurring-info" id="recurring-info-hidden">
@@ -330,18 +337,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         const updateRecurrenceVisibility = () => {
             const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
+            const endDateDiv = document.getElementById('recurrence-end-date');
+            const endDateInput = document.getElementById('recurrence-end-date-input');
 
             recurringOptionsDiv.classList.add('hidden');
             weeklyOptionsDiv.classList.add('hidden');
             monthlyOptionsDiv.classList.add('hidden');
+            endDateDiv.classList.add('hidden');
 
             if (selectedRecurrenceType === 'weekly') {
                 recurringOptionsDiv.classList.remove('hidden');
                 weeklyOptionsDiv.classList.remove('hidden');
+                endDateDiv.classList.remove('hidden');
             } else if (selectedRecurrenceType === 'monthly') {
                 recurringOptionsDiv.classList.remove('hidden');
                 monthlyOptionsDiv.classList.remove('hidden');
+                endDateDiv.classList.remove('hidden');
                 updateMonthlyOptionsVisibility();
+            }
+            
+            // Set minimum date for end date input
+            const startDate = document.getElementById('date').value;
+            if (startDate && endDateInput) {
+                endDateInput.min = startDate;
             }
         };
 
@@ -589,7 +607,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 categorySelect.classList.add('border-red-500');
             }
             
-            // Show validation errors
+            // Build recurrenceRule object and validate
+            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
+            console.log('selectedRecurrenceType:', selectedRecurrenceType);
+            let recurrenceRule = null;
+
+            if (selectedRecurrenceType === 'weekly') {
+                const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
+                console.log('weeklyDays:', weeklyDays);
+                if (weeklyDays.length > 0) {
+                    recurrenceRule = { type: 'weekly', days: weeklyDays };
+                } else {
+                    errors.push('Please select at least one day for weekly recurrence.');
+                }
+            } else if (selectedRecurrenceType === 'monthly') {
+                const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                console.log('monthlyType:', monthlyType);
+                if (monthlyType === 'date') {
+                    const monthlyDayOfMonth = document.getElementById('monthly-day-of-month').value;
+                    console.log('monthlyDayOfMonth:', monthlyDayOfMonth);
+                    if (monthlyDayOfMonth && monthlyDayOfMonth >= 1 && monthlyDayOfMonth <= 31) {
+                        recurrenceRule = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(monthlyDayOfMonth, 10) };
+                    } else {
+                        errors.push('Please enter a valid day of month (1-31) for monthly recurrence.');
+                    }
+                } else if (monthlyType === 'day') {
+                    const monthlyWeek = document.getElementById('monthly-week').value;
+                    const monthlyDayOfWeek = document.getElementById('monthly-day-of-week').value;
+                    console.log('monthlyWeek:', monthlyWeek, 'monthlyDayOfWeek:', monthlyDayOfWeek);
+                    if (monthlyWeek && monthlyDayOfWeek) {
+                        recurrenceRule = { type: 'monthly', monthlyType: 'day', week: parseInt(monthlyWeek, 10), dayOfWeek: parseInt(monthlyDayOfWeek, 10) };
+                    } else {
+                        errors.push('Please select both week and day of week for monthly recurrence.');
+                    }
+                }
+            }
+
+            // Show validation errors (including recurrence validation)
             if (errors.length > 0) {
                 statusDiv.innerHTML = `
                     <div class="text-red-400 font-semibold mb-2">Please fix the following issues:</div>
@@ -664,42 +718,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     submitButton.disabled = false;
                     submitButton.textContent = 'Submit Event';
                     return;
-                }
-            }
-
-            // Build recurrenceRule object
-            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
-            console.log('selectedRecurrenceType:', selectedRecurrenceType);
-            let recurrenceRule = null;
-
-            if (selectedRecurrenceType === 'weekly') {
-                const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
-                console.log('weeklyDays:', weeklyDays);
-                if (weeklyDays.length > 0) {
-                    recurrenceRule = { type: 'weekly', days: weeklyDays };
-                } else {
-                    errors.push('Please select at least one day for weekly recurrence.');
-                }
-            } else if (selectedRecurrenceType === 'monthly') {
-                const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                console.log('monthlyType:', monthlyType);
-                if (monthlyType === 'date') {
-                    const monthlyDayOfMonth = document.getElementById('monthly-day-of-month').value;
-                    console.log('monthlyDayOfMonth:', monthlyDayOfMonth);
-                    if (monthlyDayOfMonth && monthlyDayOfMonth >= 1 && monthlyDayOfMonth <= 31) {
-                        recurrenceRule = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(monthlyDayOfMonth, 10) };
-                    } else {
-                        errors.push('Please enter a valid day of month (1-31) for monthly recurrence.');
-                    }
-                } else if (monthlyType === 'day') {
-                    const monthlyWeek = document.getElementById('monthly-week').value;
-                    const monthlyDayOfWeek = document.getElementById('monthly-day-of-week').value;
-                    console.log('monthlyWeek:', monthlyWeek, 'monthlyDayOfWeek:', monthlyDayOfWeek);
-                    if (monthlyWeek && monthlyDayOfWeek) {
-                        recurrenceRule = { type: 'monthly', monthlyType: 'day', week: parseInt(monthlyWeek, 10), dayOfWeek: parseInt(monthlyDayOfWeek, 10) };
-                    } else {
-                        errors.push('Please select both week and day of week for monthly recurrence.');
-                    }
                 }
             }
 
