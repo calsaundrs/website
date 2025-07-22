@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const parser = require('lambda-multipart-parser');
 const admin = require('firebase-admin');
 
 // Initialize Firebase Admin SDK
@@ -60,35 +61,21 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Parse multipart form data
-        const boundary = event.headers['content-type'].split('boundary=')[1];
-        const body = Buffer.from(event.body, 'base64');
-        
-        // Improved multipart parser for the poster file
-        const parts = body.toString().split(`--${boundary}`);
+        // Parse multipart form data using the parser library
+        const result = await parser.parse(event);
+        console.log('Parsed form data:', {
+            files: result.files ? result.files.length : 0,
+            fields: Object.keys(result.fields || {})
+        });
+
         let posterFile = null;
         let fileName = null;
-        
-        for (const part of parts) {
-            if (part.includes('Content-Type: image/')) {
-                const lines = part.split('\r\n');
-                
-                // Extract filename if present
-                const filenameMatch = part.match(/name="[^"]*";\s*filename="([^"]*)"/);
-                if (filenameMatch) {
-                    fileName = filenameMatch[1];
-                }
-                
-                // Find the content start (after headers)
-                const contentStart = lines.findIndex(line => line === '') + 1;
-                if (contentStart > 0 && contentStart < lines.length) {
-                    const content = lines.slice(contentStart, -1).join('\r\n');
-                    posterFile = Buffer.from(content, 'binary');
-                    break;
-                }
-            }
+
+        if (result.files && result.files.length > 0) {
+            posterFile = result.files[0].content;
+            fileName = result.files[0].filename;
         }
-        
+
         if (!posterFile) {
             console.error('No poster file found in multipart data');
             return {
@@ -100,7 +87,7 @@ exports.handler = async (event, context) => {
         console.log('File processing:', {
             fileName: fileName,
             fileSize: posterFile.length,
-            fileType: event.headers['content-type']
+            fileType: result.files[0].contentType
         });
 
         // Check file size (Gemini has limits)
@@ -134,22 +121,11 @@ exports.handler = async (event, context) => {
         
         If any information is not found, use null for that field.`;
 
-        // Detect image format from file signature
-        let mimeType = 'image/jpeg'; // default
-        if (posterFile.length >= 4) {
-            const signature = posterFile.slice(0, 4);
-            if (signature[0] === 0x89 && signature[1] === 0x50 && signature[2] === 0x4E && signature[3] === 0x47) {
-                mimeType = 'image/png';
-            } else if (signature[0] === 0xFF && signature[1] === 0xD8 && signature[2] === 0xFF) {
-                mimeType = 'image/jpeg';
-            } else if (signature[0] === 0x47 && signature[1] === 0x49 && signature[2] === 0x46) {
-                mimeType = 'image/gif';
-            } else if (signature[0] === 0x52 && signature[1] === 0x49 && signature[2] === 0x46 && signature[3] === 0x46) {
-                mimeType = 'image/webp';
-            }
-        }
+        // Use the content type from the parsed file
+        const mimeType = result.files[0].contentType || 'image/jpeg';
 
-        console.log('Detected MIME type:', mimeType);
+        console.log('Using MIME type:', mimeType);
+        console.log('File signature (hex):', posterFile.slice(0, 8).toString('hex'));
 
         const payload = {
             contents: [{
@@ -193,14 +169,14 @@ exports.handler = async (event, context) => {
             throw new Error(`Gemini API call failed with status ${response.status}: ${errorText}`);
         }
 
-        const result = await response.json();
+        const result2 = await response.json();
         console.log('Gemini API response received');
         
-        if (!result.candidates || !result.candidates[0] || !result.candidates[0].content) {
+        if (!result2.candidates || !result2.candidates[0] || !result2.candidates[0].content) {
             throw new Error('Invalid response format from Gemini API');
         }
         
-        const aiResponse = result.candidates[0].content.parts[0].text;
+        const aiResponse = result2.candidates[0].content.parts[0].text;
         console.log('AI Response:', aiResponse);
         
         // Try to parse the JSON response
