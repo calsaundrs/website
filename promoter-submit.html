@@ -87,9 +87,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <form id="single-event-form" class="space-y-6">
                      <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
                         <div class="space-y-6">
-                            <div><label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label><input type="text" name="event-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                            <div><label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label><input type="text" id="event-name" name="event-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
                             
-                            <div><label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact Email</label><input type="email" name="contact-email" placeholder="So we can contact you with any issues" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                            <div><label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact Email</label><input type="email" id="contact-email" name="contact-email" placeholder="So we can contact you with any issues" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
                             
                             <div>
                               <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue</label>
@@ -113,14 +113,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                   <input type="text" id="new-venue-address" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="e.g., 123 Main Street, Birmingham">
                                 </div>
                             </div>
-                            <div><label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea name="description" rows="3" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea></div>
+                            <div><label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea id="description" name="description" rows="3" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea></div>
                         </div>
                         <div class="space-y-6">
                             <div class="grid grid-cols-2 gap-4">
                                 <div><label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input type="date" id="date" name="date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
                                 <div><label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">Start Time</label><input type="time" id="start-time" name="start-time" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
                             </div>
-                            <div><label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link (Optional)</label><input type="url" name="link" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://"></div>
+                            <div><label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link (Optional)</label><input type="url" id="link" name="link" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://"></div>
                             <div class="mb-4 p-4 border border-gray-700 rounded-lg bg-gray-800/50">
                 <label class="block text-lg font-bold mb-3 accent-color-secondary">Recurrence (Optional)</label>
                 <div class="flex flex-wrap items-center space-x-4 mb-4">
@@ -224,7 +224,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
                             <input type="hidden" name="recurring-info" id="recurring-info-hidden">
-                            <div><label for="promo-image" class="block text-sm font-semibold mb-2 accent-color-secondary">Promo Image</label><input type="file" name="promo-image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif"></div>
+                            <div><label for="promo-image" class="block text-sm font-semibold mb-2 accent-color-secondary">Promo Image</label><input type="file" id="promo-image" name="promo-image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif"></div>
                         </div>
                     </div>
                     <div id="form-status" class="text-center hidden p-4 rounded-lg"></div>
@@ -617,17 +617,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             e.preventDefault();
             console.log('Form submit event triggered');
             
-            // Debug: Check if form elements exist
-            console.log('Form elements check:');
-            console.log('- Event name field:', document.getElementById('event-name'));
-            console.log('- Date field:', document.getElementById('date'));
-            console.log('- Start time field:', document.getElementById('start-time'));
-            console.log('- Venue select:', document.getElementById('venue-select'));
-            console.log('- Category select:', document.getElementById('category-select'));
-            console.log('- Terms checkbox:', document.getElementById('terms-checkbox'));
-            console.log('- Submit button:', document.getElementById('submit-button'));
-            console.log('- Status div:', document.getElementById('status-message'));
-            
             try {
             
             // Clear previous error states
@@ -707,26 +696,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             // Build recurrenceRule object and validate
             const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
-            console.log('Found recurrence type radios:', recurrenceTypeRadios.length);
-            console.log('Recurrence elements check:');
-            console.log('- Recurrence type radios:', recurrenceTypeRadios);
-            console.log('- Weekly options div:', document.getElementById('weekly-options'));
-            console.log('- Monthly options div:', document.getElementById('monthly-options'));
-            console.log('- Recurring info hidden input:', document.getElementById('recurring-info-hidden'));
-            
             const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked');
-            console.log('Selected recurrence type element:', selectedRecurrenceType);
             
             if (!selectedRecurrenceType) {
                 console.error('No recurrence type selected!');
                 errors.push('Please select a recurrence type.');
-            } else {
-                console.log('selectedRecurrenceType value:', selectedRecurrenceType.value);
             }
             
             let recurrenceRule = null;
-            
-            console.log('Form submission started - checking recurrence...');
 
             if (selectedRecurrenceType && selectedRecurrenceType.value === 'weekly') {
                 const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
@@ -760,9 +737,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             // Show validation errors (including recurrence validation)
-            console.log('Validation errors found:', errors);
             if (errors.length > 0) {
-                console.log('Displaying validation errors...');
                 statusDiv.innerHTML = `
                     <div class="text-red-400 font-semibold mb-2">Please fix the following issues:</div>
                     <ul class="list-disc list-inside text-left">
@@ -784,8 +759,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 submitButton.textContent = 'Submit Event';
                 return;
             }
-            
-            console.log('No validation errors, proceeding with submission...');
 
             // Disable submit button and show loading state
             submitButton.disabled = true;
@@ -845,13 +818,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 }
             }
 
-            console.log('Constructed recurrenceRule:', recurrenceRule);
-            console.log('Exception dates:', exceptionDates);
-
             if (recurrenceRule) {
                 // Add end date and exceptions to recurrence rule
                 const endDate = document.getElementById('recurrence-end-date-input').value;
-                console.log('End date:', endDate);
                 if (endDate) {
                     recurrenceRule.endDate = endDate;
                 }
@@ -860,9 +829,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     recurrenceRule.exceptions = exceptionDates;
                 }
                 
-                const finalRecurrenceRule = JSON.stringify(recurrenceRule);
-                console.log('Final recurrence rule JSON:', finalRecurrenceRule);
-                recurringInfoHiddenInput.value = finalRecurrenceRule;
+                recurringInfoHiddenInput.value = JSON.stringify(recurrenceRule);
             } else {
                 recurringInfoHiddenInput.value = ''; // Clear if no recurrence selected
             }
@@ -886,14 +853,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             try {
-                console.log('=== FORM SUBMISSION START ===');
-                console.log('Submitting form data...');
-                console.log('FormData contents:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-                console.log('=== ABOUT TO SEND FETCH REQUEST ===');
-                
                 const response = await fetch('/.netlify/functions/event-submission', {
                     method: 'POST',
                     body: formData
