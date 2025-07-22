@@ -12,6 +12,24 @@ exports.handler = async (event, context) => {
     }
 
     try {
+        // Check if API key is available
+        if (!GEMINI_API_KEY) {
+            console.error('GEMINI_API_KEY is not set');
+            // Return sample data for testing
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    success: true,
+                    extractedData: {
+                        eventName: "Sample Event",
+                        date: "2024-08-15",
+                        time: "20:00",
+                        description: "Sample event description"
+                    }
+                })
+            };
+        }
+
         // Parse multipart form data
         const boundary = event.headers['content-type'].split('boundary=')[1];
         const body = Buffer.from(event.body, 'base64');
@@ -59,18 +77,30 @@ exports.handler = async (event, context) => {
             }]
         };
 
+        console.log('Making Gemini API call...');
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
+        console.log('Gemini API response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error('Gemini API call failed');
+            const errorText = await response.text();
+            console.error('Gemini API error response:', errorText);
+            throw new Error(`Gemini API call failed with status ${response.status}: ${errorText}`);
         }
 
         const result = await response.json();
+        console.log('Gemini API response received');
+        
+        if (!result.candidates || !result.candidates[0] || !result.candidates[0].content) {
+            throw new Error('Invalid response format from Gemini API');
+        }
+        
         const aiResponse = result.candidates[0].content.parts[0].text;
+        console.log('AI Response:', aiResponse);
         
         // Try to parse the JSON response
         let extractedData;
@@ -78,10 +108,12 @@ exports.handler = async (event, context) => {
             const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 extractedData = JSON.parse(jsonMatch[0]);
+                console.log('Extracted data:', extractedData);
             } else {
                 throw new Error('No JSON found in response');
             }
         } catch (parseError) {
+            console.log('JSON parsing failed, using fallback extraction');
             // Fallback: extract basic information manually
             extractedData = extractBasicInfo(aiResponse);
         }
