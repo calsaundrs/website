@@ -419,6 +419,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const exceptionDatesList = document.getElementById('exception-dates-list');
         let exceptionDates = [];
 
+        // Event delegation for exception date removal
+        if (exceptionDatesList) {
+            exceptionDatesList.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('button[data-exception-date]');
+                if (removeBtn) {
+                    const date = removeBtn.dataset.exceptionDate;
+                    exceptionDates = exceptionDates.filter(d => d !== date);
+                    renderExceptionDates();
+                    updateRecurrencePreview();
+                }
+            });
+        }
+
         if (addExceptionBtn && exceptionDateInput) {
             addExceptionBtn.addEventListener('click', () => {
                 const date = exceptionDateInput.value;
@@ -443,18 +456,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             exceptionDatesList.innerHTML = exceptionDates.map(date => `
                 <div class="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
                     <span class="text-sm text-gray-300">${new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-                    <button type="button" class="text-red-400 hover:text-red-300" onclick="removeExceptionDate('${date}')">
+                    <button type="button" class="text-red-400 hover:text-red-300" data-exception-date="${date}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `).join('');
         }
-
-        window.removeExceptionDate = function(date) {
-            exceptionDates = exceptionDates.filter(d => d !== date);
-            renderExceptionDates();
-            updateRecurrencePreview();
-        };
 
         updateRecurrenceVisibility();
         
@@ -532,6 +539,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
         
         // Simple date calculation for preview (client-side)
+        // TODO: This function is duplicated in netlify/functions/event-submission.js. Consider creating a shared utility
+        // to eliminate code duplication and ensure consistency between frontend and backend.
         function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
             const dates = [];
             const start = new Date(startDate);
@@ -582,6 +591,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             return dates;
         }
         
+        // TODO: This function is duplicated in netlify/functions/event-submission.js. Consider creating a shared utility
+        // to eliminate code duplication and ensure consistency between frontend and backend.
         function getNthWeekdayOfMonth(year, month, week, dayOfWeek) {
             const date = new Date(year, month, 1);
             

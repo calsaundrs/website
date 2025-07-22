@@ -162,7 +162,9 @@ exports.handler = async (event) => {
                 
                 if (seriesUpdateOption === 'future') {
                     // Update this event and all future events in the series
-                    filterFormula = `AND({Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}", IS_AFTER({Date}, DATEADD("${eventDate}", -1, 'days')))`;
+                    // Use a more robust date comparison that handles timezone differences
+                    const eventDateISO = new Date(eventDate).toISOString().split('T')[0];
+                    filterFormula = `AND({Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}", IS_AFTER({Date}, "${eventDateISO}"))`;
                 } else if (seriesUpdateOption === 'all') {
                     // Update all events in the series
                     filterFormula = `{Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}"`;

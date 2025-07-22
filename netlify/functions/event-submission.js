@@ -14,6 +14,9 @@ cloudinary.config({
 /**
  * Calculate recurring dates using pure JavaScript logic
  * This serves as a fallback when AI is unavailable
+ * 
+ * TODO: This function is duplicated in promoter-submit.html. Consider creating a shared utility
+ * to eliminate code duplication and ensure consistency between frontend and backend.
  */
 function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
     const dates = [];
@@ -68,6 +71,9 @@ function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
 
 /**
  * Get the nth weekday of a month
+ * 
+ * TODO: This function is duplicated in promoter-submit.html. Consider creating a shared utility
+ * to eliminate code duplication and ensure consistency between frontend and backend.
  */
 function getNthWeekdayOfMonth(year, month, week, dayOfWeek) {
     const date = new Date(year, month, 1);

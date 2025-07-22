@@ -286,10 +286,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
                 <div class="flex flex-col items-end gap-2">
                     <button class="edit-btn bg-blue-600/20 text-blue-300 font-bold py-2 px-4 rounded-lg hover:bg-blue-600/40 flex-shrink-0" data-id="${item.id}">Edit</button>
-                    ${item.seriesChildren && item.seriesChildren.length > 0 ? 
-                        `<button class="toggle-children-btn bg-gray-600/20 text-gray-300 font-bold py-2 px-4 rounded-lg hover:bg-gray-600/40 flex-shrink-0" data-target="${item.id}">Show Instances (${item.seriesChildren.length})</button>` : ''}
-                    ${item.seriesChildren && item.seriesChildren.length > 0 ? 
-                        `<button class="bulk-delete-btn bg-red-600/20 text-red-300 font-bold py-2 px-4 rounded-lg hover:bg-red-600/40 flex-shrink-0" data-series-id="${item.id}">Delete Series</button>` : ''}
+                    ${item.seriesChildren && item.seriesChildren.length > 0 ? `
+                        <button class="toggle-children-btn bg-gray-600/20 text-gray-300 font-bold py-2 px-4 rounded-lg hover:bg-gray-600/40 flex-shrink-0" data-target="${item.id}">Show Instances (${item.seriesChildren.length})</button>
+                        <button class="bulk-delete-btn bg-red-600/20 text-red-300 font-bold py-2 px-4 rounded-lg hover:bg-red-600/40 flex-shrink-0" data-series-id="${item.id}">Delete Series</button>` : ''}
                 </div>
             `;
 
@@ -854,12 +853,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 statusMessage.classList.remove('hidden', 'text-red-400');
                 statusMessage.classList.add('text-green-400');
                 fetchAndRenderEvents(null);
-            } catch (error) {
-                console.error('Error deleting series:', error);
-                statusMessage.textContent = `Error deleting series: ${error.toString()}`;
-                statusMessage.classList.remove('hidden', 'text-green-400');
-                statusMessage.classList.add('text-red-400');
-            }
+                            } catch (error) {
+                    console.error('Error deleting series:', error);
+                    statusMessage.textContent = `Error deleting series: ${error.message}`;
+                    statusMessage.classList.remove('hidden', 'text-green-400');
+                    statusMessage.classList.add('text-red-400');
+                }
             setTimeout(() => statusMessage.classList.add('hidden'), 5000);
         }
 
