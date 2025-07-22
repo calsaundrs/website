@@ -1,35 +1,4 @@
 const fetch = require('node-fetch');
-const parser = require('lambda-multipart-parser');
-const admin = require('firebase-admin');
-
-// Initialize Firebase Admin SDK
-try {
-    if (!admin.apps.length) {
-        admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-            }),
-        });
-    }
-} catch (error) {
-    console.error("Firebase Admin Initialization Error:", error);
-}
-const db = admin.firestore();
-
-// Helper to get Gemini model name from Firestore
-async function getGeminiModelName() {
-    try {
-        const doc = await db.collection('settings').doc('gemini').get();
-        if (doc.exists && doc.data().modelName) {
-            return doc.data().modelName;
-        }
-    } catch (error) {
-        console.error("Error fetching Gemini model from Firestore:", error);
-    }
-    return 'gemini-2.5-flash';
-}
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 

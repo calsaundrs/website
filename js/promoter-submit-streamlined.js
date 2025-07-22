@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const posterFilename = document.getElementById('poster-filename');
     const removePosterBtn = document.getElementById('remove-poster');
     const aiProcessing = document.getElementById('ai-processing');
-    const uploadError = document.getElementById('upload-error');
-    const uploadErrorMessage = document.getElementById('upload-error-message');
+    const uploadNote = document.getElementById('upload-note');
     const extractedData = document.getElementById('extracted-data');
     const extractedFields = document.getElementById('extracted-fields');
     const useExtractedBtn = document.getElementById('use-extracted');
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Show processing, hide other states
         aiProcessing.classList.remove('hidden');
-        uploadError.classList.add('hidden');
+        uploadNote.classList.add('hidden');
         extractedData.classList.add('hidden');
         
         try {
@@ -126,19 +125,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 extractedEventData = result.extractedData;
                 showExtractedData(result.extractedData);
             } else {
-                // No data extracted, hide processing
+                // No data extracted, just show success message
                 aiProcessing.classList.add('hidden');
+                showUploadSuccess();
             }
         } catch (error) {
             console.error('Processing error:', error);
             aiProcessing.classList.add('hidden');
-            showUploadError('Couldn\'t extract details from poster. You can still fill the form manually.');
+            showUploadSuccess();
         }
     }
 
     function showExtractedData(data) {
         aiProcessing.classList.add('hidden');
-        uploadError.classList.add('hidden');
+        uploadNote.classList.add('hidden');
         
         // Clear previous extracted fields
         extractedFields.innerHTML = '';
@@ -168,9 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
         extractedData.classList.remove('hidden');
     }
 
-    function showUploadError(message) {
-        uploadErrorMessage.textContent = message;
-        uploadError.classList.remove('hidden');
+    function showUploadSuccess() {
+        uploadNote.classList.remove('hidden');
     }
 
     // Use extracted data
@@ -208,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         extractedData.classList.add('hidden');
         extractedEventData = null;
         aiProcessing.classList.add('hidden');
-        uploadError.classList.add('hidden');
+        uploadNote.classList.add('hidden');
     });
 
     // Recurrence type handlers
