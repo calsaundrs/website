@@ -58,6 +58,12 @@ exports.handler = async (event, context) => {
         // Use Gemini Vision API to analyze the image
         const base64Image = posterFile.toString('base64');
         
+        console.log('Image processing:', {
+            originalSize: posterFile.length,
+            base64Size: base64Image.length,
+            isValidBase64: /^[A-Za-z0-9+/]*={0,2}$/.test(base64Image)
+        });
+        
         const prompt = `Analyze this event poster and extract the following information in JSON format:
         {
             "eventName": "Event name",
@@ -77,14 +83,28 @@ exports.handler = async (event, context) => {
             }]
         };
 
+        console.log('Payload structure:', {
+            hasContents: !!payload.contents,
+            contentsLength: payload.contents.length,
+            hasParts: !!payload.contents[0].parts,
+            partsLength: payload.contents[0].parts.length,
+            hasText: !!payload.contents[0].parts[0].text,
+            hasImage: !!payload.contents[0].parts[1].inline_data,
+            imageDataLength: payload.contents[0].parts[1].inline_data.data.length
+        });
+
         console.log('Making Gemini API call...');
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        console.log('API Key available:', !!GEMINI_API_KEY);
+        console.log('API Key length:', GEMINI_API_KEY ? GEMINI_API_KEY.length : 0);
+        
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         console.log('Gemini API response status:', response.status);
+        console.log('Gemini API response headers:', Object.fromEntries(response.headers.entries()));
         
         if (!response.ok) {
             const errorText = await response.text();
