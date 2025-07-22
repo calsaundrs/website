@@ -117,13 +117,29 @@ exports.handler = async (event, context) => {
             "date": "YYYY-MM-DD format (extract the event date, convert any date format to YYYY-MM-DD)",
             "time": "HH:MM format (24-hour, extract the start time)",
             "description": "Brief description of the event (what it's about, who it's for)",
-            "venue": "Venue name (extract the location/venue where the event is happening)"
+            "venue": "Venue name (extract the location/venue where the event is happening)",
+            "recurrence": {
+                "type": "none|weekly|monthly",
+                "weekly_days": [0,1,2,3,4,5,6] (0=Sunday, 1=Monday, etc.),
+                "monthly_type": "date|day",
+                "monthly_day_of_month": 1-31,
+                "monthly_week": 1-4 or -1 for last,
+                "monthly_day_of_week": 0-6 (0=Sunday, 1=Monday, etc.)
+            },
+            "categories": ["category1", "category2"] (extract relevant event categories)
         }
         
         IMPORTANT INSTRUCTIONS:
         - For dates: Convert any date format (e.g., "15th August", "Aug 15", "15/08/2024") to YYYY-MM-DD
         - For times: Convert to 24-hour format (e.g., "8pm" becomes "20:00", "2:30pm" becomes "14:30")
         - For venue: Extract the specific venue name/location
+        - For recurrence: Analyze the event name and description for recurring patterns:
+          * "Turnt Up Tuesdays" = weekly, day 2 (Tuesday)
+          * "Monthly Mixer" = monthly
+          * "Every Friday" = weekly, day 5 (Friday)
+          * "First Saturday of the month" = monthly, week 1, day 6 (Saturday)
+          * "Last Thursday" = monthly, week -1, day 4 (Thursday)
+        - For categories: Extract relevant categories like "LGBTQ+", "Dance", "Live Music", "Comedy", "Drag", "Karaoke", "Quiz", "Social", "Party", "Workshop", "Support Group", "Sports", "Art", "Food", "Drinks"
         - If any information is not found, use null for that field
         - Be as accurate as possible with the extraction`;
 
@@ -456,11 +472,96 @@ function extractBasicInfo(text) {
         if (venue) break;
     }
     
+    // Look for recurrence patterns
+    let recurrence = { type: 'none' };
+    const fullText = text.toLowerCase();
+    
+    // Weekly patterns
+    const weeklyPatterns = [
+        { pattern: /(?:every\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?/gi, day: 1 },
+        { pattern: /(?:every\s+)?(mon|tue|wed|thu|fri|sat|sun)s?/gi, day: 1 }
+    ];
+    
+    const dayMap = {
+        'monday': 1, 'mon': 1,
+        'tuesday': 2, 'tue': 2,
+        'wednesday': 3, 'wed': 3,
+        'thursday': 4, 'thu': 4,
+        'friday': 5, 'fri': 5,
+        'saturday': 6, 'sat': 6,
+        'sunday': 0, 'sun': 0
+    };
+    
+    for (const pattern of weeklyPatterns) {
+        const matches = fullText.match(pattern.pattern);
+        if (matches) {
+            const days = matches.map(match => dayMap[match.toLowerCase()]).filter(day => day !== undefined);
+            if (days.length > 0) {
+                recurrence = { type: 'weekly', weekly_days: days };
+                break;
+            }
+        }
+    }
+    
+    // Monthly patterns
+    if (fullText.includes('monthly') || fullText.includes('month')) {
+        recurrence.type = 'monthly';
+        // Try to extract specific monthly patterns
+        const monthlyPatterns = [
+            { pattern: /first\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i, week: 1 },
+            { pattern: /second\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i, week: 2 },
+            { pattern: /third\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i, week: 3 },
+            { pattern: /fourth\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i, week: 4 },
+            { pattern: /last\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i, week: -1 }
+        ];
+        
+        for (const pattern of monthlyPatterns) {
+            const match = fullText.match(pattern.pattern);
+            if (match) {
+                const dayName = match[1].toLowerCase();
+                recurrence.monthly_type = 'day';
+                recurrence.monthly_week = pattern.week;
+                recurrence.monthly_day_of_week = dayMap[dayName];
+                break;
+            }
+        }
+    }
+    
+    // Look for categories
+    const categoryKeywords = {
+        'LGBTQ+': ['lgbtq', 'lgbt', 'queer', 'gay', 'lesbian', 'trans', 'pride'],
+        'Dance': ['dance', 'dancing', 'club', 'nightclub'],
+        'Live Music': ['live music', 'band', 'concert', 'gig', 'performance'],
+        'Comedy': ['comedy', 'standup', 'stand-up', 'jokes', 'funny'],
+        'Drag': ['drag', 'drag queen', 'drag show', 'drag performance'],
+        'Karaoke': ['karaoke', 'singing', 'sing'],
+        'Quiz': ['quiz', 'trivia', 'pub quiz'],
+        'Social': ['social', 'meet', 'meeting', 'gathering'],
+        'Party': ['party', 'celebration', 'birthday'],
+        'Workshop': ['workshop', 'class', 'lesson', 'training'],
+        'Support Group': ['support', 'group', 'therapy', 'counseling'],
+        'Sports': ['sport', 'fitness', 'gym', 'exercise', 'football', 'basketball'],
+        'Art': ['art', 'exhibition', 'gallery', 'creative'],
+        'Food': ['food', 'dinner', 'lunch', 'breakfast', 'meal'],
+        'Drinks': ['drinks', 'cocktail', 'wine', 'beer', 'bar']
+    };
+    
+    const categories = [];
+    for (const [category, keywords] of Object.entries(categoryKeywords)) {
+        for (const keyword of keywords) {
+            if (fullText.includes(keyword)) {
+                categories.push(category);
+                break;
+            }
+        }
+    }
+    
     return {
         eventName,
         date,
         time,
         description,
-        venue
+        venue,
+        recurrence,
+        categories
     };
-}

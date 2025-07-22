@@ -152,6 +152,36 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'description', label: 'Description', value: data.description }
         ];
         
+        // Add recurrence info if present
+        if (data.recurrence && data.recurrence.type !== 'none') {
+            let recurrenceText = '';
+            if (data.recurrence.type === 'weekly' && data.recurrence.weekly_days) {
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const days = data.recurrence.weekly_days.map(day => dayNames[day]).join(', ');
+                recurrenceText = `Weekly on ${days}`;
+            } else if (data.recurrence.type === 'monthly') {
+                if (data.recurrence.monthly_type === 'day') {
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const weekNames = ['', 'First', 'Second', 'Third', 'Fourth', 'Last'];
+                    const week = data.recurrence.monthly_week;
+                    const day = dayNames[data.recurrence.monthly_day_of_week];
+                    const weekName = week === -1 ? 'Last' : weekNames[week];
+                    recurrenceText = `Monthly on ${weekName} ${day}`;
+                } else if (data.recurrence.monthly_day_of_month) {
+                    recurrenceText = `Monthly on day ${data.recurrence.monthly_day_of_month}`;
+                }
+            }
+            
+            if (recurrenceText) {
+                fields.push({ key: 'recurrence', label: 'Recurrence', value: recurrenceText });
+            }
+        }
+        
+        // Add categories if present
+        if (data.categories && data.categories.length > 0) {
+            fields.push({ key: 'categories', label: 'Categories', value: data.categories.join(', ') });
+        }
+        
         fields.forEach(field => {
             if (field.value) {
                 const fieldDiv = document.createElement('div');
@@ -201,6 +231,56 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (extractedEventData.description) {
                 document.getElementById('description').value = extractedEventData.description;
+            }
+            
+            // Handle recurrence
+            if (extractedEventData.recurrence && extractedEventData.recurrence.type !== 'none') {
+                // Set recurrence type
+                const recurrenceType = extractedEventData.recurrence.type;
+                document.querySelector(`input[name="recurrence-type"][value="${recurrenceType}"]`).checked = true;
+                updateRecurrenceVisibility();
+                
+                if (recurrenceType === 'weekly' && extractedEventData.recurrence.weekly_days) {
+                    // Set weekly days
+                    extractedEventData.recurrence.weekly_days.forEach(day => {
+                        const checkbox = document.querySelector(`input[name="weekly_days"][value="${day}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (recurrenceType === 'monthly') {
+                    if (extractedEventData.recurrence.monthly_type === 'day') {
+                        // Set monthly by day
+                        document.querySelector('input[name="monthly_type"][value="day"]').checked = true;
+                        updateMonthlyOptionsVisibility();
+                        
+                        if (extractedEventData.recurrence.monthly_week) {
+                            document.getElementById('monthly-week').value = extractedEventData.recurrence.monthly_week;
+                        }
+                        if (extractedEventData.recurrence.monthly_day_of_week) {
+                            document.getElementById('monthly-day-of-week').value = extractedEventData.recurrence.monthly_day_of_week;
+                        }
+                    } else if (extractedEventData.recurrence.monthly_day_of_month) {
+                        // Set monthly by date
+                        document.querySelector('input[name="monthly_type"][value="date"]').checked = true;
+                        updateMonthlyOptionsVisibility();
+                        document.getElementById('monthly-day-of-month').value = extractedEventData.recurrence.monthly_day_of_month;
+                    }
+                }
+                
+                // Update preview
+                updateDatesPreview();
+            }
+            
+            // Handle categories
+            if (extractedEventData.categories && extractedEventData.categories.length > 0) {
+                const categorySelect = document.getElementById('category-select');
+                const extractedCategories = extractedEventData.categories.map(cat => cat.toLowerCase());
+                
+                for (let i = 0; i < categorySelect.options.length; i++) {
+                    const option = categorySelect.options[i];
+                    if (extractedCategories.some(cat => option.text.toLowerCase().includes(cat))) {
+                        option.selected = true;
+                    }
+                }
             }
             
             extractedData.classList.add('hidden');
