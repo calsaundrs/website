@@ -33,213 +33,6 @@ async function getGeminiModelName() {
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-exports.handler = async (event, context) => {
-    // Only allow POST requests
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: 'Method not allowed' })
-        };
-    }
-
-    try {
-        // Check if API key is available
-        if (!GEMINI_API_KEY) {
-            console.error('GEMINI_API_KEY is not set');
-            // Return sample data for testing
-            return {
-                statusCode: 200,
-                body: JSON.stringify({
-                    success: true,
-                    extractedData: {
-                        eventName: "Sample Event",
-                        date: "2024-08-15",
-                        time: "20:00",
-                        description: "Sample event description"
-                    }
-                })
-            };
-        }
-
-        // Parse multipart form data using the parser library
-        const result = await parser.parse(event);
-        console.log('Parsed form data:', {
-            files: result.files ? result.files.length : 0,
-            fields: Object.keys(result.fields || {})
-        });
-
-        let posterFile = null;
-        let fileName = null;
-
-        if (result.files && result.files.length > 0) {
-            posterFile = result.files[0].content;
-            fileName = result.files[0].filename;
-        }
-
-        if (!posterFile) {
-            console.error('No poster file found in multipart data');
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'No poster file found' })
-            };
-        }
-
-        console.log('File processing:', {
-            fileName: fileName,
-            fileSize: posterFile.length,
-            fileType: result.files[0].contentType
-        });
-
-        // Check file size (Gemini has limits)
-        const maxSize = 20 * 1024 * 1024; // 20MB limit
-        if (posterFile.length > maxSize) {
-            console.error('File too large:', posterFile.length, 'bytes');
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'File too large. Please use an image smaller than 20MB.' })
-            };
-        }
-
-        // Use Gemini Vision API to analyze the image
-        const base64Image = posterFile.toString('base64');
-        
-        console.log('Image processing:', {
-            originalSize: posterFile.length,
-            base64Size: base64Image.length,
-            isValidBase64: /^[A-Za-z0-9+/]*={0,2}$/.test(base64Image),
-            base64Start: base64Image.substring(0, 50) + '...',
-            base64End: '...' + base64Image.substring(base64Image.length - 50)
-        });
-        
-        const prompt = `Analyze this event poster and extract the following information in JSON format:
-        {
-            "eventName": "Event name (extract the main title/name of the event)",
-            "date": "YYYY-MM-DD format (extract the event date, convert any date format to YYYY-MM-DD)",
-            "time": "HH:MM format (24-hour, extract the start time)",
-            "description": "Brief description of the event (what it's about, who it's for)",
-            "venue": "Venue name (extract the location/venue where the event is happening)",
-            "recurrence": {
-                "type": "none|weekly|monthly",
-                "weekly_days": [0,1,2,3,4,5,6] (0=Sunday, 1=Monday, etc.),
-                "monthly_type": "date|day",
-                "monthly_day_of_month": 1-31,
-                "monthly_week": 1-4 or -1 for last,
-                "monthly_day_of_week": 0-6 (0=Sunday, 1=Monday, etc.)
-            },
-            "categories": ["category1", "category2"] (extract relevant event categories)
-        }
-        
-        IMPORTANT INSTRUCTIONS:
-        - For dates: Convert any date format (e.g., "15th August", "Aug 15", "15/08/2024") to YYYY-MM-DD
-        - For times: Convert to 24-hour format (e.g., "8pm" becomes "20:00", "2:30pm" becomes "14:30")
-        - For venue: Extract the specific venue name/location
-        - For recurrence: Analyze the event name and description for recurring patterns:
-          * "Turnt Up Tuesdays" = weekly, day 2 (Tuesday)
-          * "Monthly Mixer" = monthly
-          * "Every Friday" = weekly, day 5 (Friday)
-          * "First Saturday of the month" = monthly, week 1, day 6 (Saturday)
-          * "Last Thursday" = monthly, week -1, day 4 (Thursday)
-        - For categories: Extract relevant categories like "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
-        - If any information is not found, use null for that field
-        - Be as accurate as possible with the extraction`;
-
-        // Use the content type from the parsed file
-        const mimeType = result.files[0].contentType || 'image/jpeg';
-
-        console.log('Using MIME type:', mimeType);
-        console.log('File signature (hex):', posterFile.slice(0, 8).toString('hex'));
-
-        const payload = {
-            contents: [{
-                parts: [
-                    { text: prompt },
-                    { inline_data: { mime_type: mimeType, data: base64Image } }
-                ]
-            }]
-        };
-
-        console.log('Payload structure:', {
-            hasContents: !!payload.contents,
-            contentsLength: payload.contents.length,
-            hasParts: !!payload.contents[0].parts,
-            partsLength: payload.contents[0].parts.length,
-            hasText: !!payload.contents[0].parts[0].text,
-            hasImage: !!payload.contents[0].parts[1].inline_data,
-            imageDataLength: payload.contents[0].parts[1].inline_data.data.length
-        });
-
-        // Get the model name from Firestore
-        const modelName = await getGeminiModelName();
-        console.log('Using Gemini model:', modelName);
-
-        console.log('Making Gemini API call...');
-        console.log('API Key available:', !!GEMINI_API_KEY);
-        console.log('API Key length:', GEMINI_API_KEY ? GEMINI_API_KEY.length : 0);
-        
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        console.log('Gemini API response status:', response.status);
-        console.log('Gemini API response headers:', Object.fromEntries(response.headers.entries()));
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Gemini API error response:', errorText);
-            throw new Error(`Gemini API call failed with status ${response.status}: ${errorText}`);
-        }
-
-        const result2 = await response.json();
-        console.log('Gemini API response received');
-        
-        if (!result2.candidates || !result2.candidates[0] || !result2.candidates[0].content) {
-            throw new Error('Invalid response format from Gemini API');
-        }
-        
-        const aiResponse = result2.candidates[0].content.parts[0].text;
-        console.log('AI Response:', aiResponse);
-        
-        // Try to parse the JSON response
-        let extractedData;
-        try {
-            const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                extractedData = JSON.parse(jsonMatch[0]);
-                console.log('Extracted data:', extractedData);
-                
-                // Post-process the extracted data
-                extractedData = postProcessExtractedData(extractedData);
-            } else {
-                throw new Error('No JSON found in response');
-            }
-        } catch (parseError) {
-            console.log('JSON parsing failed, using fallback extraction');
-            // Fallback: extract basic information manually
-            extractedData = extractBasicInfo(aiResponse);
-        }
-        
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                success: true,
-                extractedData: extractedData
-            })
-        };
-
-    } catch (error) {
-        console.error('Error processing poster:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                success: false,
-                error: 'Failed to process poster'
-            })
-        };
-    }
-};
-
 function postProcessExtractedData(data) {
     // Clean up and enhance the extracted data
     const processed = { ...data };
@@ -566,3 +359,171 @@ function extractBasicInfo(text) {
         recurrence,
         categories
     };
+}
+
+exports.handler = async function(event, context) {
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method not allowed' })
+        };
+    }
+
+    try {
+        // Check for API key
+        if (!process.env.GEMINI_API_KEY) {
+            console.error('GEMINI_API_KEY not set');
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: 'API key not configured' })
+            };
+        }
+
+        // Parse multipart form data
+        const result = await parser.parse(event);
+        
+        if (!result.files || result.files.length === 0) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'No image file provided' })
+            };
+        }
+
+        const imageFile = result.files[0];
+        
+        // Validate file size (max 20MB)
+        if (imageFile.content.length > 20 * 1024 * 1024) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'File too large. Maximum size is 20MB.' })
+            };
+        }
+
+        // Convert to base64
+        const base64Image = imageFile.content.toString('base64');
+        
+        // Get Gemini model name from Firestore
+        const modelName = await getGeminiModelName();
+        console.log('Using Gemini model:', modelName);
+
+        // Prepare the API request
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        
+        const prompt = `Analyze this event poster and extract the following information in JSON format:
+        {
+            "eventName": "Event name (extract the main title/name of the event)",
+            "date": "YYYY-MM-DD format (extract the event date, convert any date format to YYYY-MM-DD)",
+            "time": "HH:MM format (24-hour, extract the start time)",
+            "description": "Brief description of the event (what it's about, who it's for)",
+            "venue": "Venue name (extract the location/venue where the event is happening)",
+            "recurrence": {
+                "type": "none|weekly|monthly",
+                "weekly_days": [0,1,2,3,4,5,6] (0=Sunday, 1=Monday, etc.),
+                "monthly_type": "date|day",
+                "monthly_day_of_month": 1-31,
+                "monthly_week": 1-4 or -1 for last,
+                "monthly_day_of_week": 0-6 (0=Sunday, 1=Monday, etc.)
+            },
+            "categories": ["category1", "category2"] (extract relevant event categories)
+        }
+        
+        IMPORTANT INSTRUCTIONS:
+        - For dates: Convert any date format (e.g., "15th August", "Aug 15", "15/08/2024") to YYYY-MM-DD
+        - For times: Convert to 24-hour format (e.g., "8pm" becomes "20:00", "2:30pm" becomes "14:30")
+        - For venue: Extract the specific venue name/location
+        - For recurrence: Analyze the event name and description for recurring patterns:
+          * "Turnt Up Tuesdays" = weekly, day 2 (Tuesday)
+          * "Monthly Mixer" = monthly
+          * "Every Friday" = weekly, day 5 (Friday)
+          * "First Saturday of the month" = monthly, week 1, day 6 (Saturday)
+          * "Last Thursday" = monthly, week -1, day 4 (Thursday)
+        - For categories: Extract relevant categories like "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
+        - If any information is not found, use null for that field
+        - Be as accurate as possible with the extraction`;
+
+        const payload = {
+            contents: [{
+                parts: [{
+                    text: prompt
+                }, {
+                    inline_data: {
+                        mime_type: imageFile.contentType || 'image/jpeg',
+                        data: base64Image
+                    }
+                }]
+            }]
+        };
+
+        console.log('Sending request to Gemini API...');
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Gemini API error:', errorText);
+            throw new Error(`Gemini API call failed: ${response.status} ${response.statusText}`);
+        }
+
+        const result_data = await response.json();
+        console.log('Gemini API response received');
+
+        if (!result_data.candidates || !result_data.candidates[0] || !result_data.candidates[0].content) {
+            throw new Error('Invalid response from Gemini API');
+        }
+
+        const textResponse = result_data.candidates[0].content.parts[0].text;
+        console.log('Raw text response:', textResponse);
+
+        // Try to extract JSON from the response
+        let extractedData = null;
+        try {
+            // Look for JSON in the response
+            const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                extractedData = JSON.parse(jsonMatch[0]);
+            } else {
+                throw new Error('No JSON found in response');
+            }
+        } catch (parseError) {
+            console.log('JSON parsing failed, using fallback extraction');
+            // Fallback to basic text extraction
+            extractedData = extractBasicInfo(textResponse);
+        }
+
+        // Post-process the extracted data
+        extractedData = postProcessExtractedData(extractedData);
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: JSON.stringify({
+                success: true,
+                data: extractedData
+            })
+        };
+
+    } catch (error) {
+        console.error('Error processing poster:', error);
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: JSON.stringify({
+                success: false,
+                error: error.message
+            })
+        };
+    }
+};
