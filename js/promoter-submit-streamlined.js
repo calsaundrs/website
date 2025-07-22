@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Processing error:', error);
             aiProcessing.classList.add('hidden');
-            showUploadError('Poster processing failed. You can still fill the form manually.');
+            showUploadError('Couldn\'t extract details from poster. You can still fill the form manually.');
         }
     }
 
