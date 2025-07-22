@@ -120,12 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const result = await response.json();
+            console.log('Poster processing result:', result);
             
-            if (result.success && result.extractedData) {
-                extractedEventData = result.extractedData;
-                showExtractedData(result.extractedData);
+            if (result.success && result.data) {
+                extractedEventData = result.data;
+                console.log('Extracted data:', result.data);
+                showExtractedData(result.data);
             } else {
                 // No data extracted, just show success message
+                console.log('No data extracted or processing failed');
                 aiProcessing.classList.add('hidden');
                 showUploadSuccess();
             }
@@ -183,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         fields.forEach(field => {
-            if (field.value) {
+            if (field.value && field.value !== null && field.value !== 'null') {
                 const fieldDiv = document.createElement('div');
                 fieldDiv.className = 'extracted-field';
                 fieldDiv.innerHTML = `
