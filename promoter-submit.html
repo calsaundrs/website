@@ -604,6 +604,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log('Form submit event triggered');
+            
+            // Debug: Check if form elements exist
+            console.log('Form elements check:');
+            console.log('- Event name field:', document.getElementById('event-name'));
+            console.log('- Date field:', document.getElementById('date'));
+            console.log('- Start time field:', document.getElementById('start-time'));
+            console.log('- Venue select:', document.getElementById('venue-select'));
+            console.log('- Category select:', document.getElementById('category-select'));
+            console.log('- Terms checkbox:', document.getElementById('terms-checkbox'));
+            console.log('- Submit button:', document.getElementById('submit-button'));
+            console.log('- Status div:', document.getElementById('status-message'));
+            
+            try {
             
             // Clear previous error states
             document.querySelectorAll('.border-red-500').forEach(field => {
@@ -642,7 +656,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 document.getElementById('date').classList.add('border-red-500');
             } else {
                 // Update recurrence preview when date changes
-                updateRecurrencePreview();
+                try {
+                    updateRecurrencePreview();
+                } catch (previewError) {
+                    console.warn('Error updating recurrence preview:', previewError);
+                }
             }
             }
             
@@ -677,11 +695,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
             
             // Build recurrenceRule object and validate
-            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
-            console.log('selectedRecurrenceType:', selectedRecurrenceType);
+            const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
+            console.log('Found recurrence type radios:', recurrenceTypeRadios.length);
+            console.log('Recurrence elements check:');
+            console.log('- Recurrence type radios:', recurrenceTypeRadios);
+            console.log('- Weekly options div:', document.getElementById('weekly-options'));
+            console.log('- Monthly options div:', document.getElementById('monthly-options'));
+            console.log('- Recurring info hidden input:', document.getElementById('recurring-info-hidden'));
+            
+            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked');
+            console.log('Selected recurrence type element:', selectedRecurrenceType);
+            
+            if (!selectedRecurrenceType) {
+                console.error('No recurrence type selected!');
+                errors.push('Please select a recurrence type.');
+            } else {
+                console.log('selectedRecurrenceType value:', selectedRecurrenceType.value);
+            }
+            
             let recurrenceRule = null;
+            
+            console.log('Form submission started - checking recurrence...');
 
-            if (selectedRecurrenceType === 'weekly') {
+            if (selectedRecurrenceType && selectedRecurrenceType.value === 'weekly') {
                 const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
                 console.log('weeklyDays:', weeklyDays);
                 if (weeklyDays.length > 0) {
@@ -689,7 +725,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 } else {
                     errors.push('Please select at least one day for weekly recurrence.');
                 }
-            } else if (selectedRecurrenceType === 'monthly') {
+            } else if (selectedRecurrenceType && selectedRecurrenceType.value === 'monthly') {
                 const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
                 console.log('monthlyType:', monthlyType);
                 if (monthlyType === 'date') {
@@ -713,7 +749,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             // Show validation errors (including recurrence validation)
+            console.log('Validation errors found:', errors);
             if (errors.length > 0) {
+                console.log('Displaying validation errors...');
                 statusDiv.innerHTML = `
                     <div class="text-red-400 font-semibold mb-2">Please fix the following issues:</div>
                     <ul class="list-disc list-inside text-left">
@@ -729,8 +767,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     firstErrorField.focus();
                     firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
+                
+                // Reset submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Event';
                 return;
             }
+            
+            console.log('No validation errors, proceeding with submission...');
 
             // Disable submit button and show loading state
             submitButton.disabled = true;
@@ -791,10 +835,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             console.log('Constructed recurrenceRule:', recurrenceRule);
+            console.log('Exception dates:', exceptionDates);
 
             if (recurrenceRule) {
                 // Add end date and exceptions to recurrence rule
                 const endDate = document.getElementById('recurrence-end-date-input').value;
+                console.log('End date:', endDate);
                 if (endDate) {
                     recurrenceRule.endDate = endDate;
                 }
@@ -803,7 +849,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     recurrenceRule.exceptions = exceptionDates;
                 }
                 
-                recurringInfoHiddenInput.value = JSON.stringify(recurrenceRule);
+                const finalRecurrenceRule = JSON.stringify(recurrenceRule);
+                console.log('Final recurrence rule JSON:', finalRecurrenceRule);
+                recurringInfoHiddenInput.value = finalRecurrenceRule;
             } else {
                 recurringInfoHiddenInput.value = ''; // Clear if no recurrence selected
             }
@@ -827,6 +875,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             try {
+                console.log('=== FORM SUBMISSION START ===');
+                console.log('Submitting form data...');
+                console.log('FormData contents:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                console.log('=== ABOUT TO SEND FETCH REQUEST ===');
+                
                 const response = await fetch('/.netlify/functions/event-submission', {
                     method: 'POST',
                     body: formData
@@ -847,11 +903,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 updateRecurrenceVisibility(); // Reset recurrence fields after submission
 
             } catch (error) {
+                console.error('Form submission error:', error);
                 statusDiv.textContent = `Error: ${error.message}`;
                 statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
                 submitButton.disabled = !termsCheckbox.checked;
             }
-        });
+        } catch (outerError) {
+            console.error('Outer form submission error:', outerError);
+            statusDiv.textContent = `Unexpected error: ${outerError.message}`;
+            statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Event';
+        }
     });
 </script>
 </body>
