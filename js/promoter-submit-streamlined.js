@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadArea = document.getElementById('upload-area');
     const posterUpload = document.getElementById('poster-upload');
     const aiProcessing = document.getElementById('ai-processing');
+    const uploadError = document.getElementById('upload-error');
+    const uploadErrorMessage = document.getElementById('upload-error-message');
     const extractedData = document.getElementById('extracted-data');
     const extractedFields = document.getElementById('extracted-fields');
     const useExtractedBtn = document.getElementById('use-extracted');
@@ -90,8 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Poster Processing
     async function handlePosterUpload(file) {
-        // Show processing
+        // Show processing, hide other states
         aiProcessing.classList.remove('hidden');
+        uploadError.classList.add('hidden');
         extractedData.classList.add('hidden');
         
         try {
@@ -121,12 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Processing error:', error);
             aiProcessing.classList.add('hidden');
-            showStatus('Poster processing failed. You can still fill the form manually.', 'error');
+            showUploadError('Poster processing failed. You can still fill the form manually.');
         }
     }
 
     function showExtractedData(data) {
         aiProcessing.classList.add('hidden');
+        uploadError.classList.add('hidden');
         
         // Clear previous extracted fields
         extractedFields.innerHTML = '';
@@ -154,6 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         extractedData.classList.remove('hidden');
+    }
+
+    function showUploadError(message) {
+        uploadErrorMessage.textContent = message;
+        uploadError.classList.remove('hidden');
     }
 
     // Use extracted data
