@@ -1,4 +1,34 @@
 const fetch = require('node-fetch');
+const admin = require('firebase-admin');
+
+// Initialize Firebase Admin SDK
+try {
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            }),
+        });
+    }
+} catch (error) {
+    console.error("Firebase Admin Initialization Error:", error);
+}
+const db = admin.firestore();
+
+// Helper to get Gemini model name from Firestore
+async function getGeminiModelName() {
+    try {
+        const doc = await db.collection('settings').doc('gemini').get();
+        if (doc.exists && doc.data().modelName) {
+            return doc.data().modelName;
+        }
+    } catch (error) {
+        console.error("Error fetching Gemini model from Firestore:", error);
+    }
+    return 'gemini-2.5-flash';
+}
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -93,11 +123,15 @@ exports.handler = async (event, context) => {
             imageDataLength: payload.contents[0].parts[1].inline_data.data.length
         });
 
+        // Get the model name from Firestore
+        const modelName = await getGeminiModelName();
+        console.log('Using Gemini model:', modelName);
+
         console.log('Making Gemini API call...');
         console.log('API Key available:', !!GEMINI_API_KEY);
         console.log('API Key length:', GEMINI_API_KEY ? GEMINI_API_KEY.length : 0);
         
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
