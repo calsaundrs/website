@@ -208,6 +208,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <input type="date" id="recurrence-end-date-input" name="recurrence-end-date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" min="">
                         <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing series</p>
                     </div>
+                    
+                    <!-- Exception Dates -->
+                    <div id="recurrence-exceptions" class="hidden">
+                        <label class="block text-sm font-semibold mb-2 accent-color-secondary">Exception Dates (Optional)</label>
+                        <div id="exception-dates-list" class="space-y-2">
+                            <!-- Exception dates will be added here dynamically -->
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <input type="date" id="exception-date-input" class="flex-1 p-2 bg-gray-900/50 rounded-lg border border-gray-700 text-white" min="">
+                            <button type="button" id="add-exception-btn" class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Add</button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Add dates when the event won't happen (e.g., holidays, venue closures)</p>
+                    </div>
                 </div>
             </div>
                             <input type="hidden" name="recurring-info" id="recurring-info-hidden">
@@ -344,15 +357,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             weeklyOptionsDiv.classList.add('hidden');
             monthlyOptionsDiv.classList.add('hidden');
             endDateDiv.classList.add('hidden');
+            document.getElementById('recurrence-exceptions').classList.add('hidden');
 
             if (selectedRecurrenceType === 'weekly') {
                 recurringOptionsDiv.classList.remove('hidden');
                 weeklyOptionsDiv.classList.remove('hidden');
                 endDateDiv.classList.remove('hidden');
+                document.getElementById('recurrence-exceptions').classList.remove('hidden');
             } else if (selectedRecurrenceType === 'monthly') {
                 recurringOptionsDiv.classList.remove('hidden');
                 monthlyOptionsDiv.classList.remove('hidden');
                 endDateDiv.classList.remove('hidden');
+                document.getElementById('recurrence-exceptions').classList.remove('hidden');
                 updateMonthlyOptionsVisibility();
             }
             
@@ -396,6 +412,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         if (monthlyDayInput) monthlyDayInput.addEventListener('input', updateRecurrencePreview);
         if (monthlyWeekSelect) monthlyWeekSelect.addEventListener('change', updateRecurrencePreview);
         if (monthlyDaySelect) monthlyDaySelect.addEventListener('change', updateRecurrencePreview);
+
+        // Exception date handling
+        const addExceptionBtn = document.getElementById('add-exception-btn');
+        const exceptionDateInput = document.getElementById('exception-date-input');
+        const exceptionDatesList = document.getElementById('exception-dates-list');
+        let exceptionDates = [];
+
+        if (addExceptionBtn && exceptionDateInput) {
+            addExceptionBtn.addEventListener('click', () => {
+                const date = exceptionDateInput.value;
+                if (date && !exceptionDates.includes(date)) {
+                    exceptionDates.push(date);
+                    renderExceptionDates();
+                    exceptionDateInput.value = '';
+                    updateRecurrencePreview();
+                }
+            });
+
+            exceptionDateInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addExceptionBtn.click();
+                }
+            });
+        }
+
+        function renderExceptionDates() {
+            if (!exceptionDatesList) return;
+            
+            exceptionDatesList.innerHTML = exceptionDates.map(date => `
+                <div class="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
+                    <span class="text-sm text-gray-300">${new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                    <button type="button" class="text-red-400 hover:text-red-300" onclick="removeExceptionDate('${date}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.removeExceptionDate = function(date) {
+            exceptionDates = exceptionDates.filter(d => d !== date);
+            renderExceptionDates();
+            updateRecurrencePreview();
+        };
 
         updateRecurrenceVisibility();
         
@@ -442,8 +501,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             if (recurrenceData) {
                 const dates = calculateRecurringDates(startDate, recurrenceData, 3);
-                if (dates.length > 0) {
-                    const dateList = dates.slice(0, 8).map(date => {
+                
+                // Filter out exception dates
+                const filteredDates = dates.filter(date => !exceptionDates.includes(date));
+                
+                if (filteredDates.length > 0) {
+                    const dateList = filteredDates.slice(0, 8).map(date => {
                         const d = new Date(date);
                         return d.toLocaleDateString('en-GB', { 
                             weekday: 'short', 
@@ -452,7 +515,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         });
                     }).join(', ');
                     
-                    previewDates.innerHTML = dateList + (dates.length > 8 ? ` and ${dates.length - 8} more...` : '');
+                    let previewText = dateList + (filteredDates.length > 8 ? ` and ${filteredDates.length - 8} more...` : '');
+                    
+                    if (exceptionDates.length > 0) {
+                        previewText += `<br><span class="text-yellow-400 text-xs">Excluding: ${exceptionDates.slice(0, 3).map(d => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })).join(', ')}${exceptionDates.length > 3 ? ` and ${exceptionDates.length - 3} more` : ''}</span>`;
+                    }
+                    
+                    previewDates.innerHTML = previewText;
                     previewDiv.classList.remove('hidden');
                 } else {
                     previewDiv.classList.add('hidden');
@@ -724,6 +793,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             console.log('Constructed recurrenceRule:', recurrenceRule);
 
             if (recurrenceRule) {
+                // Add end date and exceptions to recurrence rule
+                const endDate = document.getElementById('recurrence-end-date-input').value;
+                if (endDate) {
+                    recurrenceRule.endDate = endDate;
+                }
+                
+                if (exceptionDates.length > 0) {
+                    recurrenceRule.exceptions = exceptionDates;
+                }
+                
                 recurringInfoHiddenInput.value = JSON.stringify(recurrenceRule);
             } else {
                 recurringInfoHiddenInput.value = ''; // Clear if no recurrence selected

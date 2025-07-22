@@ -15,7 +15,7 @@ exports.handler = async (event) => {
     }
 
     try {
-        const { id, type } = JSON.parse(event.body); // 'type' is included but 'id' is primary
+        const { id, type, deleteSeries } = JSON.parse(event.body); // 'type' is included but 'id' is primary
 
         if (!id) {
             return {
@@ -24,9 +24,38 @@ exports.handler = async (event) => {
             };
         }
 
-        // Update the record in the 'Events' table
-        // This assumes you have a 'Status' field in your Airtable 'Events' table.
-        // If your field name is different (e.g., 'isActive', 'Visibility'), adjust it here.
+        if (deleteSeries) {
+            // Delete entire series
+            const currentEvent = await base('Events').find(id);
+            const parentEventName = currentEvent.fields['Parent Event Name'];
+            
+            if (parentEventName) {
+                // Find all events in the series
+                const seriesEvents = await base('Events').select({
+                    filterByFormula: `{Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}"`
+                }).all();
+                
+                // Archive all events in the series
+                const batchUpdates = seriesEvents.map(event => ({
+                    id: event.id,
+                    fields: { "Status": "Archived" }
+                }));
+                
+                // Update in batches of 10
+                const batchSize = 10;
+                for (let i = 0; i < batchUpdates.length; i += batchSize) {
+                    const batch = batchUpdates.slice(i, i + batchSize);
+                    await base('Events').update(batch);
+                }
+                
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({ success: true, message: `Series with ${batchUpdates.length} events archived successfully!` }),
+                };
+            }
+        }
+
+        // Single event archive
         await base('Events').update([
             {
                 id: id,

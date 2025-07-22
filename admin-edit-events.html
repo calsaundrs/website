@@ -288,6 +288,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <button class="edit-btn bg-blue-600/20 text-blue-300 font-bold py-2 px-4 rounded-lg hover:bg-blue-600/40 flex-shrink-0" data-id="${item.id}">Edit</button>
                     ${item.seriesChildren && item.seriesChildren.length > 0 ? 
                         `<button class="toggle-children-btn bg-gray-600/20 text-gray-300 font-bold py-2 px-4 rounded-lg hover:bg-gray-600/40 flex-shrink-0" data-target="${item.id}">Show Instances (${item.seriesChildren.length})</button>` : ''}
+                    ${item.seriesChildren && item.seriesChildren.length > 0 ? 
+                        `<button class="bulk-delete-btn bg-red-600/20 text-red-300 font-bold py-2 px-4 rounded-lg hover:bg-red-600/40 flex-shrink-0" data-series-id="${item.id}">Delete Series</button>` : ''}
                 </div>
             `;
 
@@ -554,17 +556,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 document.getElementById('recurring-info-hidden').value = JSON.stringify(currentRecurrence);
             }
 
-            function updateMonthlyRecurrenceVisibility() {
-                const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                monthlyByDateOptionsDiv.classList.add('hidden');
-                monthlyByDayOptionsDiv.classList.add('hidden');
+                    function updateMonthlyRecurrenceVisibility() {
+            const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+            monthlyByDateOptionsDiv.classList.add('hidden');
+            monthlyByDayOptionsDiv.classList.add('hidden');
 
-                if (selectedMonthlyType === 'date') {
-                    monthlyByDateOptionsDiv.classList.remove('hidden');
-                } else if (selectedMonthlyType === 'day') {
-                    monthlyByDayOptionsDiv.classList.remove('hidden');
-                }
+            if (selectedMonthlyType === 'date') {
+                monthlyByDateOptionsDiv.classList.remove('hidden');
+            } else if (selectedMonthlyType === 'day') {
+                monthlyByDayOptionsDiv.classList.remove('hidden');
             }
+        }
+
+        function updateSeriesPreview() {
+            const selectedOption = document.querySelector('input[name="series-update"]:checked').value;
+            const previewDiv = document.getElementById('series-preview');
+            
+            if (!previewDiv) return;
+            
+            let previewText = '';
+            switch (selectedOption) {
+                case 'single':
+                    previewText = 'Only this specific event will be updated.';
+                    break;
+                case 'future':
+                    previewText = 'This event and all future events in the series will be updated. Past events remain unchanged.';
+                    break;
+                case 'all':
+                    previewText = 'All events in the series (past, present, and future) will be updated.';
+                    break;
+            }
+            
+            previewDiv.innerHTML = `<p class="text-sm text-gray-300">${previewText}</p>`;
+            previewDiv.classList.remove('hidden');
+        }
 
             recurrenceTypeRadios.forEach(radio => radio.addEventListener('change', updateRecurrenceVisibility));
             monthlyTypeRadios.forEach(radio => radio.addEventListener('change', updateMonthlyRecurrenceVisibility));
@@ -635,6 +660,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             categoriesDiv.classList.add('border-t', 'border-gray-700', 'pt-4');
             categoriesDiv.innerHTML = `<label>Categories</label><div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2 p-3 rounded-md border border-gray-700">${categoryCheckboxes}</div>`;
             editFormFields.appendChild(categoriesDiv);
+
+            // 9. Series Update Options (for recurring events)
+            if (!isAdding && fields['Recurring Info']) {
+                const seriesUpdateDiv = document.createElement('div');
+                seriesUpdateDiv.classList.add('border-t', 'border-gray-700', 'pt-4');
+                seriesUpdateDiv.innerHTML = `
+                    <div class="bg-blue-900/20 border border-blue-600 rounded-lg p-4">
+                        <h4 class="text-sm font-semibold mb-3 accent-color-secondary">Series Update Options</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="radio" name="series-update" value="single" class="form-radio h-4 w-4 text-accent-color" checked>
+                                <span class="ml-2 text-gray-300">Update this event only</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="series-update" value="future" class="form-radio h-4 w-4 text-accent-color">
+                                <span class="ml-2 text-gray-300">Update this and all future events in series</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="series-update" value="all" class="form-radio h-4 w-4 text-accent-color">
+                                <span class="ml-2 text-gray-300">Update entire series (all events)</span>
+                            </label>
+                        </div>
+                        <div id="series-preview" class="mt-3 p-3 bg-gray-800/50 rounded-lg hidden">
+                            <p class="text-sm text-gray-300">Preview of affected events will appear here</p>
+                        </div>
+                    </div>
+                `;
+                editFormFields.appendChild(seriesUpdateDiv);
+                
+                // Add event listeners for series update preview
+                const seriesUpdateRadios = seriesUpdateDiv.querySelectorAll('input[name="series-update"]');
+                seriesUpdateRadios.forEach(radio => {
+                    radio.addEventListener('change', updateSeriesPreview);
+                });
+            }
 
 
             // Apply common styling to newly created inputs/textareas/selects
@@ -773,6 +833,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         }
 
+        async function deleteEntireSeries(seriesId) {
+            try {
+                const response = await fetch('/.netlify/functions/archive-event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        id: seriesId,
+                        deleteSeries: true,
+                        type: 'Event'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Server returned an error');
+                }
+                
+                statusMessage.textContent = 'Series deleted successfully!';
+                statusMessage.classList.remove('hidden', 'text-red-400');
+                statusMessage.classList.add('text-green-400');
+                fetchAndRenderEvents(null);
+            } catch (error) {
+                console.error('Error deleting series:', error);
+                statusMessage.textContent = `Error deleting series: ${error.toString()}`;
+                statusMessage.classList.remove('hidden', 'text-green-400');
+                statusMessage.classList.add('text-red-400');
+            }
+            setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             await fetchVenues();
             await fetchAndRenderEvents(null);
@@ -789,6 +879,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             eventList.addEventListener('click', (e) => {
                 const editButton = e.target.closest('.edit-btn');
+                const bulkDeleteButton = e.target.closest('.bulk-delete-btn');
+                
                 if (editButton) {
                     const itemId = editButton.dataset.id;
                     let item = allAdminEvents.find(event => event.id === itemId);
@@ -811,6 +903,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         statusMessage.classList.remove('hidden', 'text-green-400');
                         statusMessage.classList.add('text-red-400');
                         setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+                    }
+                } else if (bulkDeleteButton) {
+                    const seriesId = bulkDeleteButton.dataset.seriesId;
+                    const item = allAdminEvents.find(event => event.id === seriesId);
+                    if (item && confirm(`Are you sure you want to delete the entire series "${item.fields['Event Name']}"? This will delete ${item.seriesChildren.length + 1} events.`)) {
+                        deleteEntireSeries(seriesId);
                     }
                 }
             });
@@ -901,6 +999,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 // Append recurring-info to formData
                 formData.append('recurring-info', document.getElementById('recurring-info-hidden').value);
+
+                // Add series update option if this is a recurring event
+                const seriesUpdateOption = document.querySelector('input[name="series-update"]:checked');
+                if (seriesUpdateOption) {
+                    formData.append('seriesUpdateOption', seriesUpdateOption.value);
+                }
 
                 let endpoint = isAdding ? '/.netlify/functions/create-approved-event' : '/.netlify/functions/update-submission';
                 if (!isAdding) {
