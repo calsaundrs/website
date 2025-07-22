@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('event-submission-form');
     const uploadArea = document.getElementById('upload-area');
     const posterUpload = document.getElementById('poster-upload');
+    const posterPreview = document.getElementById('poster-preview');
+    const posterFilename = document.getElementById('poster-filename');
+    const removePosterBtn = document.getElementById('remove-poster');
     const aiProcessing = document.getElementById('ai-processing');
     const uploadError = document.getElementById('upload-error');
     const uploadErrorMessage = document.getElementById('upload-error-message');
@@ -92,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Poster Processing
     async function handlePosterUpload(file) {
+        // Show poster preview
+        posterFilename.textContent = file.name;
+        posterPreview.classList.remove('hidden');
+        uploadArea.classList.add('hidden');
+        
         // Show processing, hide other states
         aiProcessing.classList.remove('hidden');
         uploadError.classList.add('hidden');
@@ -190,6 +198,17 @@ document.addEventListener('DOMContentLoaded', () => {
     ignoreExtractedBtn.addEventListener('click', () => {
         extractedData.classList.add('hidden');
         extractedEventData = null;
+    });
+
+    // Remove poster
+    removePosterBtn.addEventListener('click', () => {
+        posterUpload.value = '';
+        posterPreview.classList.add('hidden');
+        uploadArea.classList.remove('hidden');
+        extractedData.classList.add('hidden');
+        extractedEventData = null;
+        aiProcessing.classList.add('hidden');
+        uploadError.classList.add('hidden');
     });
 
     // Recurrence type handlers
@@ -660,6 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
             termsCheckbox.checked = false;
             submitButton.disabled = true;
             extractedData.classList.add('hidden');
+            posterPreview.classList.add('hidden');
+            uploadArea.classList.remove('hidden');
             datesPreviewSection.classList.add('hidden');
             generatedDates = [];
             exceptionDates = [];
