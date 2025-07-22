@@ -40,6 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = !termsCheckbox.checked;
     });
 
+    // Spreadsheet upload button
+    const spreadsheetUploadBtn = document.getElementById('spreadsheet-upload-btn');
+    if (spreadsheetUploadBtn) {
+        spreadsheetUploadBtn.addEventListener('click', () => {
+            showStatus('Spreadsheet upload feature coming soon! This will allow bulk upload of multiple events from Excel/CSV files.', 'info');
+        });
+    }
+
     // Poster upload functionality
     uploadArea.addEventListener('click', () => posterUpload.click());
     uploadArea.addEventListener('dragover', (e) => {
@@ -267,11 +275,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 year: 'numeric'
             });
             
+            // Get current venue and time
+            const venueSelect = document.getElementById('venue-select');
+            const selectedVenue = venueSelect.options[venueSelect.selectedIndex];
+            const venueName = selectedVenue ? selectedVenue.textContent : 'No venue selected';
+            const startTime = document.getElementById('start-time').value || 'TBD';
+            
             dateDiv.innerHTML = `
                 <div class="flex items-center">
                     <i class="fas fa-calendar-day text-accent-color mr-3"></i>
-                    <span class="text-white">${formattedDate}</span>
-                    <span class="text-gray-400 ml-2">at ${document.getElementById('start-time').value || 'TBD'}</span>
+                    <div>
+                        <div class="text-white">${formattedDate}</div>
+                        <div class="text-sm text-gray-400">${startTime} at ${venueName}</div>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button type="button" class="edit-date-btn text-blue-400 hover:text-blue-300" data-index="${index}">
@@ -379,6 +395,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthly-day-of-week').addEventListener('change', updateDatesPreview);
     document.getElementById('date').addEventListener('change', updateDatesPreview);
     document.getElementById('start-time').addEventListener('change', updateDatesPreview);
+    
+    // Update preview when venue changes
+    venueSelect.addEventListener('change', () => {
+        if (datesPreviewSection.classList.contains('hidden') === false) {
+            renderDatesPreview();
+        }
+    });
 
     // Date calculation functions
     function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
