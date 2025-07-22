@@ -83,7 +83,7 @@ exports.handler = async (event, context) => {
                 'Venue Name', 'VenueText', 'Category',
                 'Featured Banner Start Date', 'Featured Banner End Date',
                 'Boosted Listing Start Date', 'Boosted Listing End Date',
-                'Cloudinary Public ID'
+                'Cloudinary Public ID', 'Recurring Info'
             ]
         }).all();
         
@@ -124,7 +124,8 @@ exports.handler = async (event, context) => {
                 slug: fields['Slug'] || `#event-${record.id}`,
                 category: fields['Category'] || [],
                 isFeatured: isFeatured,
-                isBoosted: isBoosted
+                isBoosted: isBoosted,
+                recurringInfo: fields['Recurring Info'] || null
             });
 
             // Populate uniqueVenues map only with venues that have associated events

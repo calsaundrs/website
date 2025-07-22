@@ -62,7 +62,7 @@ exports.handler = async (event, context) => {
             const daysOfWeek = recurrenceRule.weekly_days.map(d => parseInt(d, 10));
             if(daysOfWeek.length > 0) {
                 let currentDate = new Date(startDate);
-                currentDate.setUTCDate(currentDate.getUTCDate() + 1); // Start checking from the day after the source event
+                // Start from the source event date, not the day after
                 for (let i = 0; i < 365; i++) { // Generate for the next year
                     if (daysOfWeek.includes(currentDate.getUTCDay())) {
                         newDates.push(new Date(currentDate));
@@ -80,7 +80,10 @@ exports.handler = async (event, context) => {
                 const targetMonth = currentTargetMonth % 12;
 
                 if (recurrenceRule.monthly_type === 'date') {
-                    nextDate = new Date(Date.UTC(targetYear, targetMonth, recurrenceRule.monthly_day_of_month));
+                    // Handle edge case where day doesn't exist in target month
+                    const maxDay = new Date(targetYear, targetMonth + 1, 0).getDate();
+                    const dayOfMonth = Math.min(recurrenceRule.monthly_day_of_month, maxDay);
+                    nextDate = new Date(Date.UTC(targetYear, targetMonth, dayOfMonth));
                 } else if (recurrenceRule.monthly_type === 'day') {
                     nextDate = getNthWeekdayOfMonth(targetYear, targetMonth, parseInt(recurrenceRule.monthly_week, 10), parseInt(recurrenceRule.monthly_day_of_week, 10));
                 }

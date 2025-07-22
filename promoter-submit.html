@@ -521,6 +521,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 console.log('weeklyDays:', weeklyDays);
                 if (weeklyDays.length > 0) {
                     recurrenceRule = { type: 'weekly', days: weeklyDays };
+                } else {
+                    errors.push('Please select at least one day for weekly recurrence.');
                 }
             } else if (selectedRecurrenceType === 'monthly') {
                 const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
@@ -528,8 +530,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 if (monthlyType === 'date') {
                     const monthlyDayOfMonth = document.getElementById('monthly-day-of-month').value;
                     console.log('monthlyDayOfMonth:', monthlyDayOfMonth);
-                    if (monthlyDayOfMonth) {
+                    if (monthlyDayOfMonth && monthlyDayOfMonth >= 1 && monthlyDayOfMonth <= 31) {
                         recurrenceRule = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(monthlyDayOfMonth, 10) };
+                    } else {
+                        errors.push('Please enter a valid day of month (1-31) for monthly recurrence.');
                     }
                 } else if (monthlyType === 'day') {
                     const monthlyWeek = document.getElementById('monthly-week').value;
@@ -537,6 +541,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.log('monthlyWeek:', monthlyWeek, 'monthlyDayOfWeek:', monthlyDayOfWeek);
                     if (monthlyWeek && monthlyDayOfWeek) {
                         recurrenceRule = { type: 'monthly', monthlyType: 'day', week: parseInt(monthlyWeek, 10), dayOfWeek: parseInt(monthlyDayOfWeek, 10) };
+                    } else {
+                        errors.push('Please select both week and day of week for monthly recurrence.');
                     }
                 }
             }

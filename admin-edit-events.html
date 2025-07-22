@@ -574,25 +574,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 try {
                     const recurringInfo = JSON.parse(fields['Recurring JSON']);
                     console.log('populateEditForm: Parsed Recurring Info from item:', recurringInfo);
-                    if (recurringInfo.type) {
-                        document.querySelector(`input[name="recurrence-type"][value="${recurringInfo.type}"]`).checked = true;
+                    if (recurringInfo.type && recurringInfo.type !== 'none') {
+                        const typeRadio = document.querySelector(`input[name="recurrence-type"][value="${recurringInfo.type}"]`);
+                        if (typeRadio) {
+                            typeRadio.checked = true;
+                        } else {
+                            console.warn('Recurrence type not found in form:', recurringInfo.type);
+                            // Fallback to 'none' if type not found
+                            document.querySelector('input[name="recurrence-type"][value="none"]').checked = true;
+                        }
+                        
                         if (recurringInfo.type === 'weekly' && recurringInfo.days) {
                             recurringInfo.days.forEach(day => {
                                 const checkbox = editFormFields.querySelector(`input[name="weekly_days"][value="${day}"]`);
                                 if (checkbox) checkbox.checked = true;
                             });
                         } else if (recurringInfo.type === 'monthly' && recurringInfo.monthlyType) {
-                            document.querySelector(`input[name="monthly_type"][value="${recurringInfo.monthlyType}"]`).checked = true;
+                            const monthlyTypeRadio = document.querySelector(`input[name="monthly_type"][value="${recurringInfo.monthlyType}"]`);
+                            if (monthlyTypeRadio) {
+                                monthlyTypeRadio.checked = true;
+                            }
+                            
                             if (recurringInfo.monthlyType === 'date' && recurringInfo.dayOfMonth) {
-                                editFormFields.querySelector('#monthly-day-of-month').value = recurringInfo.dayOfMonth;
+                                const dayInput = editFormFields.querySelector('#monthly-day-of-month');
+                                if (dayInput) dayInput.value = recurringInfo.dayOfMonth;
                             } else if (recurringInfo.monthlyType === 'day' && recurringInfo.week && recurringInfo.dayOfWeek) {
-                                editFormFields.querySelector('#monthly-week').value = recurringInfo.week;
-                                editFormFields.querySelector('#monthly-day-of-week').value = recurringInfo.dayOfWeek;
+                                const weekSelect = editFormFields.querySelector('#monthly-week');
+                                const daySelect = editFormFields.querySelector('#monthly-day-of-week');
+                                if (weekSelect) weekSelect.value = recurringInfo.week;
+                                if (daySelect) daySelect.value = recurringInfo.dayOfWeek;
                             }
                         }
+                    } else {
+                        // No recurrence or invalid type, default to 'none'
+                        document.querySelector('input[name="recurrence-type"][value="none"]').checked = true;
                     }
                 } catch (e) {
                     console.error('Error parsing Recurring Info JSON:', e);
+                    // Fallback to 'none' on error
+                    document.querySelector('input[name="recurrence-type"][value="none"]').checked = true;
                 }
             } else if (isAdding) {
                 // For new events, ensure 'none' is checked by default
