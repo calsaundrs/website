@@ -139,7 +139,7 @@ exports.handler = async (event, context) => {
           * "Every Friday" = weekly, day 5 (Friday)
           * "First Saturday of the month" = monthly, week 1, day 6 (Saturday)
           * "Last Thursday" = monthly, week -1, day 4 (Thursday)
-        - For categories: Extract relevant categories like "LGBTQ+", "Dance", "Live Music", "Comedy", "Drag", "Karaoke", "Quiz", "Social", "Party", "Workshop", "Support Group", "Sports", "Art", "Food", "Drinks"
+        - For categories: Extract relevant categories like "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
         - If any information is not found, use null for that field
         - Be as accurate as possible with the extraction`;
 
@@ -529,21 +529,22 @@ function extractBasicInfo(text) {
     
     // Look for categories
     const categoryKeywords = {
-        'LGBTQ+': ['lgbtq', 'lgbt', 'queer', 'gay', 'lesbian', 'trans', 'pride'],
-        'Dance': ['dance', 'dancing', 'club', 'nightclub'],
-        'Live Music': ['live music', 'band', 'concert', 'gig', 'performance'],
-        'Comedy': ['comedy', 'standup', 'stand-up', 'jokes', 'funny'],
-        'Drag': ['drag', 'drag queen', 'drag show', 'drag performance'],
-        'Karaoke': ['karaoke', 'singing', 'sing'],
-        'Quiz': ['quiz', 'trivia', 'pub quiz'],
-        'Social': ['social', 'meet', 'meeting', 'gathering'],
-        'Party': ['party', 'celebration', 'birthday'],
-        'Workshop': ['workshop', 'class', 'lesson', 'training'],
-        'Support Group': ['support', 'group', 'therapy', 'counseling'],
-        'Sports': ['sport', 'fitness', 'gym', 'exercise', 'football', 'basketball'],
-        'Art': ['art', 'exhibition', 'gallery', 'creative'],
-        'Food': ['food', 'dinner', 'lunch', 'breakfast', 'meal'],
-        'Drinks': ['drinks', 'cocktail', 'wine', 'beer', 'bar']
+        'Comedy': ['comedy', 'standup', 'stand-up', 'jokes', 'funny', 'humor'],
+        'Drag': ['drag', 'drag queen', 'drag show', 'drag performance', 'drag act'],
+        'Live Music': ['live music', 'band', 'concert', 'gig', 'performance', 'musician'],
+        'Party': ['party', 'celebration', 'birthday', 'club night', 'night out'],
+        'Pride': ['pride', 'lgbtq', 'lgbt', 'queer', 'gay', 'lesbian', 'trans'],
+        'Social': ['social', 'meet', 'meeting', 'gathering', 'social event'],
+        'Theatre': ['theatre', 'theater', 'play', 'drama', 'performance', 'show'],
+        'Viewing Party': ['viewing party', 'watch party', 'screening', 'tv', 'television'],
+        'Kink': ['kink', 'fetish', 'bdsm', 'leather', 'fetish party'],
+        'Community': ['community', 'support', 'group', 'therapy', 'counseling'],
+        'Exhibition': ['exhibition', 'art', 'gallery', 'creative', 'display'],
+        'Health': ['health', 'wellness', 'fitness', 'medical', 'therapy'],
+        'Quiz': ['quiz', 'trivia', 'pub quiz', 'game', 'competition'],
+        'Trans & Non-Binary': ['trans', 'transgender', 'non-binary', 'nonbinary', 'gender'],
+        'Sober': ['sober', 'alcohol-free', 'dry', 'recovery'],
+        'Queer Women & Sapphic': ['queer women', 'sapphic', 'lesbian', 'women only', 'female only']
     };
     
     const categories = [];
