@@ -64,24 +64,52 @@ exports.handler = async (event, context) => {
         const boundary = event.headers['content-type'].split('boundary=')[1];
         const body = Buffer.from(event.body, 'base64');
         
-        // Simple multipart parser for the poster file
+        // Improved multipart parser for the poster file
         const parts = body.toString().split(`--${boundary}`);
         let posterFile = null;
+        let fileName = null;
         
         for (const part of parts) {
             if (part.includes('Content-Type: image/')) {
                 const lines = part.split('\r\n');
+                
+                // Extract filename if present
+                const filenameMatch = part.match(/name="[^"]*";\s*filename="([^"]*)"/);
+                if (filenameMatch) {
+                    fileName = filenameMatch[1];
+                }
+                
+                // Find the content start (after headers)
                 const contentStart = lines.findIndex(line => line === '') + 1;
-                const content = lines.slice(contentStart, -1).join('\r\n');
-                posterFile = Buffer.from(content, 'binary');
-                break;
+                if (contentStart > 0 && contentStart < lines.length) {
+                    const content = lines.slice(contentStart, -1).join('\r\n');
+                    posterFile = Buffer.from(content, 'binary');
+                    break;
+                }
             }
         }
         
         if (!posterFile) {
+            console.error('No poster file found in multipart data');
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: 'No poster file found' })
+            };
+        }
+
+        console.log('File processing:', {
+            fileName: fileName,
+            fileSize: posterFile.length,
+            fileType: event.headers['content-type']
+        });
+
+        // Check file size (Gemini has limits)
+        const maxSize = 20 * 1024 * 1024; // 20MB limit
+        if (posterFile.length > maxSize) {
+            console.error('File too large:', posterFile.length, 'bytes');
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'File too large. Please use an image smaller than 20MB.' })
             };
         }
 
@@ -91,7 +119,9 @@ exports.handler = async (event, context) => {
         console.log('Image processing:', {
             originalSize: posterFile.length,
             base64Size: base64Image.length,
-            isValidBase64: /^[A-Za-z0-9+/]*={0,2}$/.test(base64Image)
+            isValidBase64: /^[A-Za-z0-9+/]*={0,2}$/.test(base64Image),
+            base64Start: base64Image.substring(0, 50) + '...',
+            base64End: '...' + base64Image.substring(base64Image.length - 50)
         });
         
         const prompt = `Analyze this event poster and extract the following information in JSON format:
@@ -104,11 +134,28 @@ exports.handler = async (event, context) => {
         
         If any information is not found, use null for that field.`;
 
+        // Detect image format from file signature
+        let mimeType = 'image/jpeg'; // default
+        if (posterFile.length >= 4) {
+            const signature = posterFile.slice(0, 4);
+            if (signature[0] === 0x89 && signature[1] === 0x50 && signature[2] === 0x4E && signature[3] === 0x47) {
+                mimeType = 'image/png';
+            } else if (signature[0] === 0xFF && signature[1] === 0xD8 && signature[2] === 0xFF) {
+                mimeType = 'image/jpeg';
+            } else if (signature[0] === 0x47 && signature[1] === 0x49 && signature[2] === 0x46) {
+                mimeType = 'image/gif';
+            } else if (signature[0] === 0x52 && signature[1] === 0x49 && signature[2] === 0x46 && signature[3] === 0x46) {
+                mimeType = 'image/webp';
+            }
+        }
+
+        console.log('Detected MIME type:', mimeType);
+
         const payload = {
             contents: [{
                 parts: [
                     { text: prompt },
-                    { inline_data: { mime_type: 'image/jpeg', data: base64Image } }
+                    { inline_data: { mime_type: mimeType, data: base64Image } }
                 ]
             }]
         };
