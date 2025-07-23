@@ -21,14 +21,18 @@ exports.handler = async (event) => {
     const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
 
     try {
+        console.log('approve-recurring-series: Request body:', event.body);
         const { eventId, approveFutureInstances = true } = JSON.parse(event.body);
 
         if (!eventId) {
+            console.error('approve-recurring-series: No event ID provided');
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: 'Event ID is required' }),
             };
         }
+        
+        console.log('approve-recurring-series: Processing event ID:', eventId, 'approveFutureInstances:', approveFutureInstances);
 
         console.log(`approve-recurring-series: Approving event ${eventId} with future instances: ${approveFutureInstances}`);
 

@@ -360,29 +360,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = modal.dataset.itemType;
         const approvalType = document.querySelector('input[name="approval-type"]:checked').value;
         
+        console.log('Admin Approvals: Approving recurring series:', {
+            id: id,
+            type: type,
+            approvalType: approvalType
+        });
+        
         try {
+            const requestBody = {
+                eventId: id,
+                approveFutureInstances: approvalType === 'series'
+            };
+            
+            console.log('Admin Approvals: Request body:', requestBody);
+            
             const response = await fetch('/.netlify/functions/approve-recurring-series', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    eventId: id,
-                    approveFutureInstances: approvalType === 'series'
-                })
+                body: JSON.stringify(requestBody)
             });
+            
+            console.log('Admin Approvals: Response status:', response.status);
             
             if (response.ok) {
                 const result = await response.json();
+                console.log('Admin Approvals: Success result:', result);
                 showNotification(result.message, 'success');
                 modal.classList.add('hidden');
                 await loadPendingItems(); // Refresh the list
             } else {
-                throw new Error('Failed to approve recurring series');
+                const errorText = await response.text();
+                console.error('Admin Approvals: Response not ok:', response.status, errorText);
+                throw new Error(`Failed to approve recurring series: ${response.status} - ${errorText}`);
             }
         } catch (error) {
             console.error('Error approving recurring series:', error);
-            showNotification('Error approving recurring series', 'error');
+            showNotification(`Error approving recurring series: ${error.message}`, 'error');
         }
     }
     

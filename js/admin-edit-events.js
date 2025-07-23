@@ -232,6 +232,17 @@ async function loadAllEvents() {
             events: recurringEvents
         });
         
+        // Debug: Log the raw API response for recurring events
+        if (recurringLoaded) {
+            try {
+                const debugResponse = await fetch('/.netlify/functions/get-recurring-events');
+                const debugData = await debugResponse.json();
+                console.log('Admin Edit Events: Raw recurring events API response:', debugData);
+            } catch (error) {
+                console.error('Admin Edit Events: Could not fetch debug data:', error);
+            }
+        }
+        
         // Update stats
         updateStats();
         

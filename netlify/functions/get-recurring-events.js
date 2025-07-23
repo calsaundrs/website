@@ -80,10 +80,42 @@ exports.handler = async (event) => {
         // Check if we have any recurring events
         const recurringEvents = allRecords.filter(record => {
             const fields = record.fields;
-            return getField(fields, 'Recurring Info') || getField(fields, 'Series ID');
+            const hasRecurringInfo = getField(fields, 'Recurring Info');
+            const hasSeriesId = getField(fields, 'Series ID');
+            const hasRecurring = getField(fields, 'Recurring');
+            const hasSeries = getField(fields, 'Series');
+            const hasRepeat = getField(fields, 'Repeat');
+            
+            const isRecurring = hasRecurringInfo || hasSeriesId || hasRecurring || hasSeries || hasRepeat;
+            
+            if (isRecurring) {
+                console.log('get-recurring-events: Found recurring event:', {
+                    id: record.id,
+                    name: getField(fields, 'Event Name'),
+                    recurringInfo: hasRecurringInfo,
+                    seriesId: hasSeriesId,
+                    recurring: hasRecurring,
+                    series: hasSeries,
+                    repeat: hasRepeat
+                });
+            }
+            
+            return isRecurring;
         });
         
         console.log(`get-recurring-events: Found ${recurringEvents.length} events with recurring info`);
+        
+        // Log sample of all records to see what fields are available
+        if (allRecords.length > 0) {
+            console.log('get-recurring-events: Sample record fields:', Object.keys(allRecords[0].fields));
+            console.log('get-recurring-events: Sample record data:', {
+                id: allRecords[0].id,
+                name: getField(allRecords[0].fields, 'Event Name'),
+                date: getField(allRecords[0].fields, 'Date'),
+                status: getField(allRecords[0].fields, 'Status'),
+                allFields: allRecords[0].fields
+            });
+        }
 
         // Group events by series
         const seriesMap = new Map();
