@@ -75,6 +75,10 @@ exports.handler = async (event, context) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Get the number of instances to show from settings
+        const instancesToShow = parseInt(process.env.RECURRING_INSTANCES_TO_SHOW) || 6;
+        console.log(`get-events: Will show up to ${instancesToShow} instances per recurring series`);
+
         const allRecords = await base('Events').select({
             filterByFormula: "AND({Status} = 'Approved', IS_AFTER({Date}, DATEADD(TODAY(), -1, 'days')))",
             sort: [{ field: 'Date', direction: 'asc' }],
@@ -83,54 +87,125 @@ exports.handler = async (event, context) => {
                 'Venue Name', 'VenueText', 'Category',
                 'Featured Banner Start Date', 'Featured Banner End Date',
                 'Boosted Listing Start Date', 'Boosted Listing End Date',
-                'Cloudinary Public ID'
+                'Cloudinary Public ID', 'Recurring Info', 'Series ID'
             ]
         }).all();
         
         const events = [];
         const uniqueVenues = new Map(); // To store unique venue names and a placeholder ID if needed
+        const recurringSeries = new Map(); // Group recurring events by Series ID
 
+        // First pass: group recurring events and process standalone events
         allRecords.forEach((record) => {
             const fields = record.fields;
-            let isFeatured = false;
-            let isBoosted = false;
+            
+            // If it's part of a recurring series, group it
+            if (fields['Series ID']) {
+                const seriesId = fields['Series ID'];
+                if (!recurringSeries.has(seriesId)) {
+                    recurringSeries.set(seriesId, []);
+                }
+                recurringSeries.get(seriesId).push(record);
+            } else {
+                // Standalone event - process it normally
+                let isFeatured = false;
+                let isBoosted = false;
 
-            const featuredStartDate = fields['Featured Banner Start Date'] ? new Date(fields['Featured Banner Start Date']) : null;
-            const featuredEndDate = fields['Featured Banner End Date'] ? new Date(fields['Featured Banner End Date']) : null;
-            if (featuredStartDate && featuredEndDate && today >= featuredStartDate && today <= new Date(featuredEndDate.getTime() + 86400000) ) { // Add one day to include end date
-                isFeatured = true;
+                const featuredStartDate = fields['Featured Banner Start Date'] ? new Date(fields['Featured Banner Start Date']) : null;
+                const featuredEndDate = fields['Featured Banner End Date'] ? new Date(fields['Featured Banner End Date']) : null;
+                if (featuredStartDate && featuredEndDate && today >= featuredStartDate && today <= new Date(featuredEndDate.getTime() + 86400000) ) {
+                    isFeatured = true;
+                }
+
+                const boostedStartDate = fields['Boosted Listing Start Date'] ? new Date(fields['Boosted Listing Start Date']) : null;
+                const boostedEndDate = fields['Boosted Listing End Date'] ? new Date(fields['Boosted Listing End Date']) : null;
+                if (boostedStartDate && boostedEndDate && today >= boostedStartDate && today <= new Date(boostedEndDate.getTime() + 86400000) ) {
+                    isBoosted = true;
+                }
+
+                const cloudinaryPublicId = fields['Cloudinary Public ID'];
+                const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
+                const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
+
+                events.push({
+                    id: record.id,
+                    name: fields['Event Name'],
+                    description: fields['Description'],
+                    date: fields['Date'],
+                    venue: venueName,
+                    image: promoImage ? promoImage.url : null,
+                    imageWidth: promoImage?.width,
+                    imageHeight: promoImage?.height,
+                    slug: fields['Slug'] || `#event-${record.id}`,
+                    category: fields['Category'] || [],
+                    isFeatured: isFeatured,
+                    isBoosted: isBoosted,
+                    recurringInfo: fields['Recurring Info'] || null
+                });
+
+                // Populate uniqueVenues map
+                if (venueName && !uniqueVenues.has(venueName)) {
+                    uniqueVenues.set(venueName, { id: venueName, name: venueName });
+                }
             }
+        });
 
-            const boostedStartDate = fields['Boosted Listing Start Date'] ? new Date(fields['Boosted Listing Start Date']) : null;
-            const boostedEndDate = fields['Boosted Listing End Date'] ? new Date(fields['Boosted Listing End Date']) : null;
-            if (boostedStartDate && boostedEndDate && today >= boostedStartDate && today <= new Date(boostedEndDate.getTime() + 86400000) ) {
-                isBoosted = true;
-            }
+        // Second pass: process recurring series with limited instances
+        recurringSeries.forEach((seriesInstances, seriesId) => {
+            // Sort instances by date (earliest first)
+            seriesInstances.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+            
+            // Limit to configured number of instances
+            const limitedInstances = seriesInstances.slice(0, instancesToShow);
+            
+            // Process each limited instance
+            limitedInstances.forEach((record) => {
+                const fields = record.fields;
+                let isFeatured = false;
+                let isBoosted = false;
 
-            const cloudinaryPublicId = fields['Cloudinary Public ID'];
-            const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
-            const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
-            const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
+                const featuredStartDate = fields['Featured Banner Start Date'] ? new Date(fields['Featured Banner Start Date']) : null;
+                const featuredEndDate = fields['Featured Banner End Date'] ? new Date(fields['Featured Banner End Date']) : null;
+                if (featuredStartDate && featuredEndDate && today >= featuredStartDate && today <= new Date(featuredEndDate.getTime() + 86400000) ) {
+                    isFeatured = true;
+                }
 
-            events.push({
-                id: record.id,
-                name: fields['Event Name'],
-                description: fields['Description'],
-                date: fields['Date'],
-                venue: venueName, // Use the resolved venue name
-                image: promoImage ? promoImage.url : null,
-                imageWidth: promoImage?.width,
-                imageHeight: promoImage?.height,
-                slug: fields['Slug'] || `#event-${record.id}`,
-                category: fields['Category'] || [],
-                isFeatured: isFeatured,
-                isBoosted: isBoosted
+                const boostedStartDate = fields['Boosted Listing Start Date'] ? new Date(fields['Boosted Listing Start Date']) : null;
+                const boostedEndDate = fields['Boosted Listing End Date'] ? new Date(fields['Boosted Listing End Date']) : null;
+                if (boostedStartDate && boostedEndDate && today >= boostedStartDate && today <= new Date(boostedEndDate.getTime() + 86400000) ) {
+                    isBoosted = true;
+                }
+
+                const cloudinaryPublicId = fields['Cloudinary Public ID'];
+                const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
+                const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
+
+                events.push({
+                    id: record.id,
+                    name: fields['Event Name'],
+                    description: fields['Description'],
+                    date: fields['Date'],
+                    venue: venueName,
+                    image: promoImage ? promoImage.url : null,
+                    imageWidth: promoImage?.width,
+                    imageHeight: promoImage?.height,
+                    slug: fields['Slug'] || `#event-${record.id}`,
+                    category: fields['Category'] || [],
+                    isFeatured: isFeatured,
+                    isBoosted: isBoosted,
+                    recurringInfo: fields['Recurring Info'] || null,
+                    seriesId: seriesId,
+                    totalSeriesInstances: seriesInstances.length,
+                    instanceNumber: seriesInstances.indexOf(record) + 1
+                });
+
+                // Populate uniqueVenues map
+                if (venueName && !uniqueVenues.has(venueName)) {
+                    uniqueVenues.set(venueName, { id: venueName, name: venueName });
+                }
             });
-
-            // Populate uniqueVenues map only with venues that have associated events
-            if (venueName && !uniqueVenues.has(venueName)) {
-                uniqueVenues.set(venueName, { id: venueName, name: venueName }); // Using name as ID for client-side filter
-            }
         });
         
         // Convert map values to an array for the response

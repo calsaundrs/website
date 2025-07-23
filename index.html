@@ -292,53 +292,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <!-- Welcome Modal -->
     <div id="welcomeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 hidden">
-        <div class="card-bg w-full max-w-4xl text-center p-8 md:p-12 animate-fade-in-up relative overflow-hidden">
+        <div class="card-bg w-full max-w-4xl text-center p-6 sm:p-8 md:p-12 animate-fade-in-up relative overflow-hidden">
             
             <!-- Close Button -->
-            <button id="closeModalButton" class="absolute top-6 right-6 text-gray-600 hover:text-white transition-colors z-10">
-                <i class="fas fa-times fa-2x"></i>
+            <button id="closeModalButton" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-gray-600 hover:text-white transition-colors z-10 p-2">
+                <i class="fas fa-times text-xl sm:text-2xl"></i>
             </button>
 
             <!-- Modal Content -->
             <div class="relative">
-                <h2 class="font-anton text-4xl md:text-6xl text-white uppercase">Welcome to the New</h2>
-                <h1 class="font-anton text-6xl md:text-8xl accent-color tracking-wider -mt-2 md:-mt-4">Brum Outloud</h1>
+                <h2 class="font-anton text-2xl sm:text-4xl md:text-6xl text-white uppercase">Welcome to the New</h2>
+                <h1 class="font-anton text-4xl sm:text-6xl md:text-8xl accent-color tracking-wider -mt-1 sm:-mt-2 md:-mt-4">Brum Outloud</h1>
                 
-                <p class="text-gray-300 mt-4 text-lg max-w-2xl mx-auto">
+                <p class="text-gray-300 mt-3 sm:mt-4 text-base sm:text-lg max-w-2xl mx-auto px-2">
                     Your essential guide to Birmingham's vibrant LGBTQ+ scene. Dive in and discover:
                 </p>
             </div>
 
             <!-- Interactive Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 my-6 sm:my-8">
                 <!-- Events Card -->
-                <a href="/events.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/events.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
                     <div class="text-center">
-                        <i class="fas fa-calendar-days fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
-                        <h3 class="font-anton text-2xl text-white mt-4">EVENTS</h3>
-                        <p class="text-gray-400 mt-1">Find out what's on.</p>
+                        <i class="fas fa-calendar-days text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">EVENTS</h3>
+                        <p class="text-gray-400 mt-1 text-sm sm:text-base">Find out what's on.</p>
                     </div>
                 </a>
                 <!-- Venues Card -->
-                <a href="/all-venues.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/all-venues.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
                     <div class="text-center">
-                        <i class="fas fa-map-location-dot fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
-                        <h3 class="font-anton text-2xl text-white mt-4">VENUES</h3>
-                        <p class="text-gray-400 mt-1">Explore the scene.</p>
+                        <i class="fas fa-map-location-dot text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">VENUES</h3>
+                        <p class="text-gray-400 mt-1 text-sm sm:text-base">Explore the scene.</p>
                     </div>
                 </a>
                 <!-- Promoter Tools Card -->
-                <a href="/promoter-tool.html" class="group block bg-gray-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/promoter-tool.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
                     <div class="text-center">
-                        <i class="fas fa-bullhorn fa-3x text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
-                        <h3 class="font-anton text-2xl text-white mt-4">PROMOTERS</h3>
-                        <p class="text-gray-400 mt-1">Get your event listed.</p>
+                        <i class="fas fa-bullhorn text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
+                        <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">PROMOTERS</h3>
+                        <p class="text-gray-400 mt-1 text-sm sm:text-base">Get your event listed.</p>
                     </div>
                 </a>
             </div>
 
             <!-- Fallback Close action -->
-            <button id="exploreButton" class="text-gray-400 hover:text-white underline font-semibold transition-colors">
+            <button id="exploreButton" class="text-gray-400 hover:text-white underline font-semibold transition-colors text-sm sm:text-base py-2">
                 Or just start exploring
             </button>
         </div>

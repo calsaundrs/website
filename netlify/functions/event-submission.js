@@ -11,42 +11,154 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-async function getDatesFromAI(startDate, recurrenceData, modelName) {
-    console.log("getDatesFromAI: Received recurrenceData:", recurrenceData);
-    let recurrenceRule = "";
+/**
+ * Calculate recurring dates using pure JavaScript logic
+ * This serves as a fallback when AI is unavailable
+ * 
+ * TODO: This function is duplicated in promoter-submit.html. Consider creating a shared utility
+ * to eliminate code duplication and ensure consistency between frontend and backend.
+ */
+function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
+    const dates = [];
+    const start = new Date(startDate);
+    const endDate = new Date(start);
+    endDate.setMonth(endDate.getMonth() + monthsAhead);
+    
     if (recurrenceData.type === 'weekly') {
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const selectedDays = recurrenceData.days.map(dayIndex => daysOfWeek[dayIndex]);
-        recurrenceRule = `the event repeats weekly on ${selectedDays.join(', ')}`;
+        const daysOfWeek = recurrenceData.days || [];
+        let currentDate = new Date(start);
+        
+        while (currentDate <= endDate) {
+            if (daysOfWeek.includes(currentDate.getDay())) {
+                dates.push(currentDate.toISOString().split('T')[0]);
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
     } else if (recurrenceData.type === 'monthly') {
         if (recurrenceData.monthlyType === 'date') {
-            recurrenceRule = `the event repeats monthly on day ${recurrenceData.dayOfMonth}`;
+            const dayOfMonth = recurrenceData.dayOfMonth;
+            let currentDate = new Date(start);
+            
+            while (currentDate <= endDate) {
+                // Handle months with fewer days
+                const maxDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+                const actualDay = Math.min(dayOfMonth, maxDay);
+                
+                const eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), actualDay);
+                if (eventDate >= start) {
+                    dates.push(eventDate.toISOString().split('T')[0]);
+                }
+                
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
         } else if (recurrenceData.monthlyType === 'day') {
-            const ordinal = { '1': 'first', '2': 'second', '3': 'third', '4': 'fourth', '-1': 'last' }[recurrenceData.week];
-            const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][recurrenceData.dayOfWeek];
-            recurrenceRule = `the event repeats monthly on the ${ordinal} ${dayOfWeek} of each month`;
+            const week = recurrenceData.week;
+            const dayOfWeek = recurrenceData.dayOfWeek;
+            let currentDate = new Date(start);
+            
+            while (currentDate <= endDate) {
+                const eventDate = getNthWeekdayOfMonth(currentDate.getFullYear(), currentDate.getMonth(), week, dayOfWeek);
+                if (eventDate && eventDate >= start) {
+                    dates.push(eventDate.toISOString().split('T')[0]);
+                }
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
         }
     }
-
-    const prompt = `Based on a start date of ${startDate}, and the rule that "${recurrenceRule}", provide a comma-separated list of all dates for the next 3 months in format YYYY-MM-DD, INCLUDING the start date if it matches the rule. IMPORTANT: Only return the comma-separated list of dates and nothing else.`;
     
-    console.log(`[getDatesFromAI] AI PROMPT: "${prompt}"`);
+    return dates;
+}
 
-    const payload = { contents: [{ parts: [{ text: prompt }] }] };
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-    if (!response.ok) {
-        const errorBody = await response.text();
-        console.error("AI API Error Response:", errorBody);
-        throw new Error(`AI API call failed with status: ${response.status}`);
+/**
+ * Get the nth weekday of a month
+ * 
+ * TODO: This function is duplicated in promoter-submit.html. Consider creating a shared utility
+ * to eliminate code duplication and ensure consistency between frontend and backend.
+ */
+function getNthWeekdayOfMonth(year, month, week, dayOfWeek) {
+    const date = new Date(year, month, 1);
+    
+    if (week > 0) {
+        // Find the nth occurrence
+        let day = date.getDay();
+        let diff = (dayOfWeek - day + 7) % 7;
+        date.setDate(date.getDate() + diff);
+        date.setDate(date.getDate() + (week - 1) * 7);
+    } else {
+        // Find the last occurrence
+        date.setMonth(date.getMonth() + 1);
+        date.setDate(0); // Last day of current month
+        let day = date.getDay();
+        let diff = (dayOfWeek - day + 7) % 7;
+        date.setDate(date.getDate() - diff);
     }
-    const data = await response.json();
-    const datesText = data.candidates[0].content.parts[0].text.trim();
-    console.log("getDatesFromAI: Raw AI response datesText:", datesText);
-    return datesText.split(',').map(d => d.trim());
+    
+    // Ensure the date is still in the target month
+    if (date.getMonth() !== month) return null;
+    return date;
+}
+
+async function getDatesFromAI(startDate, recurrenceData, modelName) {
+    console.log("getDatesFromAI: Received recurrenceData:", recurrenceData);
+    
+    // First try AI, with fallback to pure JavaScript
+    try {
+        let recurrenceRule = "";
+        if (recurrenceData.type === 'weekly') {
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const selectedDays = recurrenceData.days.map(dayIndex => daysOfWeek[dayIndex]);
+            recurrenceRule = `the event repeats weekly on ${selectedDays.join(', ')}`;
+        } else if (recurrenceData.type === 'monthly') {
+            if (recurrenceData.monthlyType === 'date') {
+                recurrenceRule = `the event repeats monthly on day ${recurrenceData.dayOfMonth}`;
+            } else if (recurrenceData.monthlyType === 'day') {
+                const ordinal = { '1': 'first', '2': 'second', '3': 'third', '4': 'fourth', '-1': 'last' }[recurrenceData.week];
+                const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][recurrenceData.dayOfWeek];
+                recurrenceRule = `the event repeats monthly on the ${ordinal} ${dayOfWeek} of each month`;
+            }
+        }
+
+        const prompt = `Based on a start date of ${startDate}, and the rule that "${recurrenceRule}", provide a comma-separated list of all dates for the next 3 months in format YYYY-MM-DD, INCLUDING the start date if it matches the rule. IMPORTANT: Only return the comma-separated list of dates and nothing else.`;
+        
+        console.log(`[getDatesFromAI] AI PROMPT: "${prompt}"`);
+
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`AI API call failed with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const datesText = data.candidates[0].content.parts[0].text.trim();
+        console.log("getDatesFromAI: Raw AI response datesText:", datesText);
+        
+        const aiDates = datesText.split(',').map(d => d.trim());
+        
+        // Validate AI response
+        const validDates = aiDates.filter(date => {
+            const parsed = new Date(date);
+            return !isNaN(parsed.getTime()) && date.match(/^\d{4}-\d{2}-\d{2}$/);
+        });
+        
+        if (validDates.length > 0) {
+            return validDates;
+        } else {
+            throw new Error('AI returned invalid dates');
+        }
+        
+    } catch (error) {
+        console.warn('AI date generation failed, falling back to JavaScript calculation:', error);
+        
+        // Fallback to pure JavaScript calculation
+        const jsDates = calculateRecurringDates(startDate, recurrenceData, 3);
+        console.log('getDatesFromAI: JavaScript fallback dates:', jsDates);
+        return jsDates;
+    }
 }
 
 function generateSlug(eventName, date) {

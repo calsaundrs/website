@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Settings | Brum Out Loud</title>
+    <title>Admin Dashboard | Brum Out Loud</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -11,8 +11,129 @@
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
     <link rel="icon" href="/faviconV2.png" type="image/png">
+    <style>
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .accent-color {
+            color: #E83A99;
+        }
+        .accent-color-secondary {
+            color: #8B5CF6;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .stats-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+            box-shadow: 0 8px 25px rgba(232, 58, 153, 0.15);
+        }
+        
+        .urgent {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.2) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        .urgent .notification-badge {
+            background: #EF4444;
+            animation: pulse 1s infinite;
+        }
+        
+        .admin-link {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .admin-link:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+            background: rgba(232, 58, 153, 0.1);
+        }
+        
+        .stats-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+        .stats-card.urgent {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            min-width: 1.5rem;
+            text-align: center;
+            border: 2px solid rgba(17, 24, 39, 0.7);
+        }
+    </style>
 </head>
-<body class="antialiased">
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -42,10 +163,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
             <!-- GET LISTED button styling reverted to original Tailwind classes -->
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
@@ -65,91 +186,201 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol role="list" class="flex items-center space-x-4">
+                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <span class="ml-4 font-medium text-white">Admin Dashboard</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADMIN <span class="accent-color">SETTINGS</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage global settings and access content management tools.</p>
+                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADMIN <span class="accent-color">DASHBOARD</span></h1>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage your LGBTQ+ events platform with powerful admin tools.</p>
             </div>
 
-            <div class="space-y-8">
-                <div class="card-bg p-8 md:p-12">
-                    <h2 class="font-anton text-3xl text-white mb-4 border-b border-gray-700 pb-2">Content Management</h2>
-                    <p class="text-gray-400 mb-6">Tools for managing submissions and site data.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <a href="/admin/approvals" class="nav-cta text-center flex items-center justify-center gap-2">
-                            <span>Approval Queue</span>
-                        </a>
-                        <!-- MODIFIED: Replaced "Add New Venue" with "Manage Venues" and updated the link -->
-                        <a href="/admin-manage-venues.html" class="nav-cta text-center flex items-center justify-center gap-2">
-                            <span>Manage Venues</span>
-                        </a>
-                        <a href="/admin-edit-events.html" class="nav-cta text-center flex items-center justify-center gap-2">
-                            <span>Manage Events</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <form id="settings-form" class="card-bg p-8 md:p-12 space-y-8">
-                    <div>
-                        <h2 class="font-anton text-3xl text-white mb-4 border-b border-gray-700 pb-2">Global Site Settings</h2>
-                        <p class="text-gray-400 mb-6">These values are used by functions across the website.</p>
-                        
-                        <div class="space-y-6">
-                             <div>
-                                <label for="gemini-model" class="block text-sm font-semibold mb-2 accent-color-secondary">Gemini Model Name</label>
-                                <input type="text" id="gemini-model" name="geminiModel" placeholder="loading from firestore..." class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-accent-color focus:border-transparent outline-none">
-                            </div>
-                             <div>
-                                <label for="skiddle-id" class="block text-sm font-semibold mb-2 accent-color-secondary">Skiddle Affiliate ID (sktag)</label>
-                                <input type="text" id="skiddle-id" name="skiddleId" placeholder="loading from firestore..." class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-accent-color focus:border-transparent outline-none">
-                            </div>
-                             <div>
-                                <label for="hotels-id" class="block text-sm font-semibold mb-2 accent-color-secondary">Hotels.com Affiliate ID</label>
-                                <input type="text" id="hotels-id" name="hotelsId" placeholder="loading from firestore..." class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-accent-color focus:border-transparent outline-none">
-                            </div>
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="stats-card rounded-xl p-6 relative">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Pending Events</p>
+                            <p class="text-3xl font-bold text-white" id="pending-events-count">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-calendar-clock"></i>
                         </div>
                     </div>
-                    
-                    <div class="text-right pt-4">
-                        <button type="submit" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity flex items-center">
-                             <span id="save-button-text">Save Settings</span>
-                             <span id="save-loader" class="loader ml-3 w-5 h-5 border-2 hidden"></span>
-                        </button>
+                    <div id="pending-events-badge" class="notification-badge hidden">0</div>
+                </div>
+
+                <div class="stats-card rounded-xl p-6 relative">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Pending Venues</p>
+                            <p class="text-3xl font-bold text-white" id="pending-venues-count">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
                     </div>
-                    <div id="success-message" class="text-green-400 mt-4 text-center hidden"></div>
-                </form>
+                    <div id="pending-venues-badge" class="notification-badge hidden">0</div>
+                </div>
+
+                <div class="stats-card rounded-xl p-6 relative">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Events</p>
+                            <p class="text-3xl font-bold text-white" id="total-events-count">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card rounded-xl p-6 relative">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Venues</p>
+                            <p class="text-3xl font-bold text-white" id="total-venues-count">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+                <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                    <i class="fas fa-bolt mr-3 accent-color"></i>Quick Actions
+                </h2>
+                <p class="text-gray-400 mb-8">Essential tools for managing submissions and content.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="/admin-approvals.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div id="approval-badge" class="notification-badge hidden">0</div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Review Submissions</h3>
+                        <p class="text-gray-400 text-sm">Approve or reject pending events and venues</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin-edit-events.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Manage Events</h3>
+                        <p class="text-gray-400 text-sm">Edit, delete, and manage all events</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin-manage-venues.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Manage Venues</h3>
+                        <p class="text-gray-400 text-sm">Add, edit, and manage venue information</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin-poster-tool.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Poster Parser</h3>
+                        <p class="text-gray-400 text-sm">Extract event details from uploaded posters</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin-add-venue.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Add Venue</h3>
+                        <p class="text-gray-400 text-sm">Quickly add a new venue to the database</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin-migrate.html" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-database"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Data Migration</h3>
+                        <p class="text-gray-400 text-sm">Tools for data cleanup and migration</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="card-bg p-8 md:p-12 rounded-2xl">
+                <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                    <i class="fas fa-server mr-3 accent-color"></i>System Status
+                </h2>
+                <p class="text-gray-400 mb-8">Monitor the health and performance of your platform.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="admin-link rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">API Status</h3>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-green-400 text-sm">Online</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">All backend services are running normally</p>
+                    </div>
+
+                    <div class="admin-link rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Database</h3>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-green-400 text-sm">Connected</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">Airtable connection is stable and responsive</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
-    
-    <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-            <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
-            </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
+
+    <script src="/js/admin-dashboard.js"></script>
+</body>
 </html>

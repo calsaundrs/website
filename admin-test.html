@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test | Brum Out Loud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="antialiased bg-gray-900 text-white">
+    <div class="container mx-auto px-8 py-8">
+        <h1 class="text-3xl font-bold mb-8">Admin Functions Test</h1>
+        
+        <div class="space-y-6">
+            <div class="card-bg p-6">
+                <h2 class="text-xl font-bold mb-4">Test Functions</h2>
+                <div class="space-y-4">
+                    <button onclick="testFunction('get-pending-items')" class="bg-blue-600 px-4 py-2 rounded">Test get-pending-items</button>
+                    <button onclick="testFunction('get-pending-venues')" class="bg-blue-600 px-4 py-2 rounded">Test get-pending-venues</button>
+                    <button onclick="testFunction('get-events-count')" class="bg-blue-600 px-4 py-2 rounded">Test get-events-count</button>
+                    <button onclick="testFunction('get-venues-count')" class="bg-blue-600 px-4 py-2 rounded">Test get-venues-count</button>
+                    <button onclick="testFunction('get-recent-activity')" class="bg-blue-600 px-4 py-2 rounded">Test get-recent-activity</button>
+                    <button onclick="testFunction('get-settings')" class="bg-blue-600 px-4 py-2 rounded">Test get-settings</button>
+                    <button onclick="testFunction('get-recurring-events')" class="bg-blue-600 px-4 py-2 rounded">Test get-recurring-events</button>
+                    <button onclick="testFunction('debug-events')" class="bg-red-600 px-4 py-2 rounded">Debug Events (Check Status Values)</button>
+                    <button onclick="testFunction('debug-venues')" class="bg-red-600 px-4 py-2 rounded">Debug Venues (Check Status Values)</button>
+                    <button onclick="testFunction('add-test-pending-event')" class="bg-green-600 px-4 py-2 rounded">Add Test Pending Event</button>
+                </div>
+            </div>
+            
+            <div class="card-bg p-6">
+                <h2 class="text-xl font-bold mb-4">Results</h2>
+                <pre id="result" class="bg-gray-800 p-4 rounded text-sm overflow-auto max-h-96"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testFunction(functionName) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="text-blue-400">Testing ' + functionName + '...</div>';
+            
+            try {
+                let response;
+                if (functionName === 'add-test-pending-event') {
+                    response = await fetch('/.netlify/functions/' + functionName, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } else {
+                    response = await fetch('/.netlify/functions/' + functionName);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-white mb-2">${functionName} Response:</h3>
+                        <div class="text-green-400 mb-2">Status: ${response.status}</div>
+                        <pre class="bg-gray-800 p-4 rounded text-sm overflow-auto max-h-96">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-white mb-2">${functionName} Error:</h3>
+                        <div class="text-red-400">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

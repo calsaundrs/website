@@ -11,12 +11,51 @@
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
     <style>
-        /* Existing styles from original file */
-        .tag-missing{display:inline-block;background-color:rgba(239,68,68,.1);color:#F87171;font-size:.75rem;font-weight:600;padding:.25rem .75rem;border-radius:9999px;margin-right:.5rem;margin-bottom:.5rem}.filter-button{padding:.5rem 1rem;border-radius:.5rem;font-weight:600;transition:background-color .2s,color .2s;background-color:rgba(255,255,255,.05);color:#d1d5db}.filter-button.active{background-color:#E83A99;color:#fff}.filter-button:hover:not(.active){background-color:rgba(255,255,255,.1)}
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .accent-color {
+            color: #E83A99;
+        }
+        .accent-color-secondary {
+            color: #8B5CF6;
+        }
+        .form-input {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        .form-input:focus {
+            border-color: #E83A99;
+            box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
+        }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
 </head>
-<body class="antialiased">
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -46,10 +85,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
             <!-- GET LISTED button styling reverted to original Tailwind classes -->
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
@@ -69,20 +108,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
-        <!-- Breadcrumbs for Admin Add Venue -->
+        <!-- Breadcrumbs -->
         <nav class="flex mb-8" aria-label="Breadcrumb">
             <ol role="list" class="flex items-center space-x-4">
-                <li><a href="/" class="text-gray-400 hover:text-white">Home</a></li>
+                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin/settings" class="ml-4 text-gray-400 hover:text-white">Admin</a>
+                        <a href="/admin/settings" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
                     </div>
                 </li>
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin/add-venue" aria-current="page" class="ml-4 font-medium text-white">Add Venue</a>
+                        <span class="ml-4 font-medium text-white">Add Venue</span>
                     </div>
                 </li>
             </ol>
@@ -94,31 +133,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Quickly add a new venue record to the database.</p>
             </div>
             
-            <div class="card-bg p-8 md:p-12">
+            <div class="card-bg p-8 md:p-12 rounded-2xl">
                 <form id="add-venue-form" class="space-y-6">
-                    <div>
-                        <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                        <input type="text" id="venue-name" name="venue-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <i class="fas fa-building mr-1"></i>Venue Name
+                            </label>
+                            <input type="text" id="venue-name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue name">
+                        </div>
+                        <div>
+                            <label for="venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <i class="fas fa-map mr-1"></i>Address
+                            </label>
+                            <input type="text" id="venue-address" name="address" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue address">
+                        </div>
+                        <div>
+                            <label for="venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <i class="fas fa-mail-bulk mr-1"></i>Postcode
+                            </label>
+                            <input type="text" id="venue-postcode" name="postcode" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., B1 1AA">
+                        </div>
+                        <div>
+                            <label for="venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <i class="fas fa-globe mr-1"></i>Website (Optional)
+                            </label>
+                            <input type="url" id="venue-website" name="website" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="https://">
+                        </div>
                     </div>
-                    <div>
-                        <label for="address" class="block text-sm font-semibold mb-2 accent-color-secondary">Address</label>
-                        <input type="text" id="address" name="address" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
-                    </div>
-                    <div>
-                        <label for="website" class="block text-sm font-semibold mb-2 accent-color-secondary">Website (Optional)</label>
-                        <input type="url" id="website" name="website" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://">
-                    </div>
-                    <div>
-                        <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">Description (Optional)</label>
-                        <textarea id="description" name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea>
-                    </div>
-                    <div>
-                        <label for="logo" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Photo (Optional)</label>
-                        <input type="file" id="logo" name="logo" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/webp">
-                    </div>
-                    <div id="form-status" class="text-center hidden p-4 rounded-lg"></div>
-                    <div class="text-right pt-4">
-                        <button type="submit" id="submit-button" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity">Add Venue</button>
+                    
+                    <div class="flex justify-end pt-6">
+                        <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg transition-all">
+                            <i class="fas fa-plus mr-2"></i>Add Venue
+                        </button>
                     </div>
                 </form>
             </div>

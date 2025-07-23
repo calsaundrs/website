@@ -146,12 +146,77 @@ exports.handler = async (event) => {
         }
 
         console.log('Attempting Airtable update...');
-        await base('Events').update([
-            {
-                id: recordId,
-                fields: updateFields,
-            },
-        ]);
+        
+        // Handle series updates for recurring events
+        const seriesUpdateOption = fields.seriesUpdateOption;
+        if (seriesUpdateOption && seriesUpdateOption !== 'single') {
+            console.log(`Series update option: ${seriesUpdateOption}`);
+            
+            // Get the current event to find series information
+            const currentEvent = await base('Events').find(recordId);
+            const parentEventName = currentEvent.fields['Parent Event Name'];
+            const eventDate = currentEvent.fields['Date'];
+            
+            if (parentEventName) {
+                let filterFormula = '';
+                
+                if (seriesUpdateOption === 'future') {
+                    // Update this event and all future events in the series
+                    // Use a more robust date comparison that handles timezone differences
+                    const eventDateISO = new Date(eventDate).toISOString().split('T')[0];
+                    filterFormula = `AND({Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}", IS_AFTER({Date}, "${eventDateISO}"))`;
+                } else if (seriesUpdateOption === 'all') {
+                    // Update all events in the series
+                    filterFormula = `{Parent Event Name} = "${parentEventName.replace(/"/g, '\"')}"`;
+                }
+                
+                if (filterFormula) {
+                    console.log(`Finding events with filter: ${filterFormula}`);
+                    const seriesEvents = await base('Events').select({
+                        filterByFormula: filterFormula
+                    }).all();
+                    
+                    console.log(`Found ${seriesEvents.length} events to update in series`);
+                    
+                    // Prepare batch updates
+                    const batchUpdates = seriesEvents.map(event => ({
+                        id: event.id,
+                        fields: {
+                            ...updateFields,
+                            // Don't update the Date field for other events in the series
+                            Date: event.fields['Date']
+                        }
+                    }));
+                    
+                    // Update in batches of 10
+                    const batchSize = 10;
+                    for (let i = 0; i < batchUpdates.length; i += batchSize) {
+                        const batch = batchUpdates.slice(i, i + batchSize);
+                        await base('Events').update(batch);
+                        console.log(`Updated batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(batchUpdates.length/batchSize)}`);
+                    }
+                    
+                    console.log(`Successfully updated ${batchUpdates.length} events in series`);
+                }
+            } else {
+                // Single event update
+                await base('Events').update([
+                    {
+                        id: recordId,
+                        fields: updateFields,
+                    },
+                ]);
+            }
+        } else {
+            // Single event update
+            await base('Events').update([
+                {
+                    id: recordId,
+                    fields: updateFields,
+                },
+            ]);
+        }
+        
         console.log('Airtable update successful.');
 
         return {

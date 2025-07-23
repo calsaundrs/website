@@ -1,0 +1,123 @@
+/* Custom styles for the streamlined form */
+
+/* Drag and drop upload area */
+#upload-area {
+    transition: all 0.3s ease;
+}
+
+#upload-area:hover {
+    border-color: var(--accent-color);
+    background-color: rgba(139, 92, 246, 0.05);
+}
+
+#upload-area.dragover {
+    border-color: var(--accent-color);
+    background-color: rgba(139, 92, 246, 0.1);
+    transform: scale(1.02);
+}
+
+/* AI Processing animation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Extracted data styling */
+.extracted-field {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Date preview cards */
+.date-card {
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(75, 85, 99, 1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.date-card:hover {
+    border-color: var(--accent-color);
+    background: rgba(31, 41, 55, 0.7);
+}
+
+/* Exception date styling */
+.exception-date {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Form validation styling */
+.form-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-success {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .date-card {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .date-card .flex {
+        justify-content: space-between;
+    }
+}
+
+/* Accessibility improvements */
+.form-radio:focus,
+.form-checkbox:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Custom scrollbar for categories */
+#category-select::-webkit-scrollbar {
+    width: 8px;
+}
+
+#category-select::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 4px;
+}
+
+#category-select::-webkit-scrollbar-thumb {
+    background: rgba(75, 85, 99, 1);
+    border-radius: 4px;
+}
+
+#category-select::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}

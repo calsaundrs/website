@@ -453,6 +453,116 @@ input[type="submit"]:disabled {
     }
 }
 
+/* Mobile-specific form improvements */
+@media (max-width: 768px) {
+    /* Enhanced form field visibility on mobile */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    textarea,
+    select {
+        background-color: rgba(31, 41, 55, 0.9) !important;
+        border-color: #4B5563 !important;
+        color: #FFFFFF !important;
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px 16px !important;
+        border-width: 2px !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="url"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+        background-color: rgba(31, 41, 55, 1) !important;
+        border-color: #B564F7 !important;
+        box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Better placeholder visibility */
+    input::placeholder,
+    textarea::placeholder {
+        color: #9CA3AF !important;
+        opacity: 1 !important;
+    }
+    
+    /* Enhanced label visibility */
+    label {
+        color: #FADCD9 !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        margin-bottom: 8px !important;
+        display: block !important;
+    }
+    
+    /* Better button visibility */
+    button[type="submit"],
+    button[type="button"] {
+        background-color: #B564F7 !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        padding: 16px 24px !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        border: none !important;
+        box-shadow: 0 4px 8px rgba(181, 100, 247, 0.3) !important;
+        min-height: 48px !important; /* Better touch target */
+    }
+    
+    button[type="submit"]:hover,
+    button[type="button"]:hover {
+        background-color: #9333EA !important;
+        box-shadow: 0 6px 12px rgba(181, 100, 247, 0.4) !important;
+    }
+    
+    /* Enhanced card background for better contrast */
+    .card-bg {
+        background-color: rgba(17, 24, 39, 0.95) !important;
+        border: 1px solid #374151 !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Better spacing for mobile forms */
+    .space-y-6 > * + * {
+        margin-top: 1.5rem !important;
+    }
+    
+    .space-y-4 > * + * {
+        margin-top: 1rem !important;
+    }
+    
+    /* Enhanced radio and checkbox visibility */
+    input[type="radio"],
+    input[type="checkbox"] {
+        width: 20px !important;
+        height: 20px !important;
+        accent-color: #B564F7 !important;
+        border: 2px solid #4B5563 !important;
+        background-color: rgba(31, 41, 55, 0.9) !important;
+    }
+    
+    /* Better text contrast for headings */
+    h1, h2, h3 {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Enhanced tooltip visibility */
+    .absolute.bottom-full {
+        background-color: rgba(17, 24, 39, 0.98) !important;
+        border: 2px solid #4B5563 !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+    }
+}
+
 /* Container queries support (progressive enhancement) */
 @supports (container-type: inline-size) {
     .item-card {
