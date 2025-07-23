@@ -173,17 +173,51 @@ async function loadAllEvents() {
             console.error('Admin Edit Events: Failed to load events:', eventsResponse.status, eventsResponse.statusText);
         }
         
-        // Load recurring events
-        const recurringResponse = await fetch('/.netlify/functions/get-recurring-events');
-        console.log('Admin Edit Events: Recurring response status:', recurringResponse.status);
-        
-        if (recurringResponse.ok) {
-            const recurringData = await recurringResponse.json();
-            console.log('Admin Edit Events: Recurring data received:', recurringData);
-            recurringEvents = recurringData.recurringEvents || [];
-            console.log(`Admin Edit Events: Loaded ${recurringEvents.length} recurring events`);
-        } else {
-            console.error('Admin Edit Events: Failed to load recurring events:', recurringResponse.status, recurringResponse.statusText);
+        // Load recurring events with retry mechanism
+        const loadRecurringEvents = async (retryCount = 0) => {
+            try {
+                const recurringResponse = await fetch('/.netlify/functions/get-recurring-events');
+                console.log('Admin Edit Events: Recurring response status:', recurringResponse.status);
+                
+                if (recurringResponse.ok) {
+                    const recurringData = await recurringResponse.json();
+                    console.log('Admin Edit Events: Recurring data received:', recurringData);
+                    recurringEvents = recurringData.recurringEvents || [];
+                    console.log(`Admin Edit Events: Loaded ${recurringEvents.length} recurring events`);
+                    return true;
+                } else {
+                    console.error('Admin Edit Events: Failed to load recurring events:', recurringResponse.status, recurringResponse.statusText);
+                    // Try to get error details
+                    try {
+                        const errorData = await recurringResponse.text();
+                        console.error('Admin Edit Events: Recurring error details:', errorData);
+                    } catch (e) {
+                        console.error('Admin Edit Events: Could not read error response');
+                    }
+                    return false;
+                }
+            } catch (error) {
+                console.error('Admin Edit Events: Error loading recurring events:', error);
+                return false;
+            }
+        };
+
+        // Try to load recurring events with up to 2 retries
+        let recurringLoaded = false;
+        for (let i = 0; i < 3; i++) {
+            if (await loadRecurringEvents(i)) {
+                recurringLoaded = true;
+                break;
+            }
+            if (i < 2) {
+                console.log(`Admin Edit Events: Retrying recurring events load (attempt ${i + 2}/3)...`);
+                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+            }
+        }
+
+        if (!recurringLoaded) {
+            console.warn('Admin Edit Events: Failed to load recurring events after all retries');
+            recurringEvents = []; // Set empty array to prevent errors
         }
         
         // Update stats

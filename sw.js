@@ -87,6 +87,8 @@ self.addEventListener('activate', (event) => {
       self.clients.claim()
     ]).then(() => {
       console.log('Service Worker: Activated and ready');
+    }).catch(error => {
+      console.error('Service Worker: Activation failed:', error);
     })
   );
 });
@@ -234,7 +236,9 @@ if ('SyncManager' in self) {
   self.addEventListener('sync', (event) => {
     if (event.tag === 'background-sync') {
       console.log('Service Worker: Background sync triggered');
-      event.waitUntil(handleBackgroundSync());
+      event.waitUntil(handleBackgroundSync().catch(error => {
+        console.error('Service Worker: Background sync failed:', error);
+      }));
     }
   });
 }
@@ -275,7 +279,9 @@ self.addEventListener('notificationclick', (event) => {
 if ('PeriodicSyncManager' in self) {
   self.addEventListener('periodicsync', (event) => {
     if (event.tag === 'content-sync') {
-      event.waitUntil(syncContent());
+      event.waitUntil(syncContent().catch(error => {
+        console.error('Service Worker: Periodic sync failed:', error);
+      }));
     }
   });
 }
@@ -292,9 +298,25 @@ self.addEventListener('message', (event) => {
   }
   
   if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(clearAllCaches());
+    event.waitUntil(clearAllCaches().catch(error => {
+      console.error('Service Worker: Cache clear failed:', error);
+    }));
   }
 });
+
+// Safe client communication helper
+async function safeClientCommunication(clientId, message) {
+  try {
+    const client = await clients.get(clientId);
+    if (client) {
+      client.postMessage(message);
+    } else {
+      console.warn('Service Worker: Client not found:', clientId);
+    }
+  } catch (error) {
+    console.error('Service Worker: Client communication failed:', error);
+  }
+}
 
 async function clearAllCaches() {
   const cacheNames = await caches.keys();

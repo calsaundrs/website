@@ -183,8 +183,39 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Global error handling for forms
     window.addEventListener('error', (e) => {
+        // Filter out errors from external scripts and extensions
+        if (e.filename && (
+            e.filename.includes('background.js') ||
+            e.filename.includes('serviceWorker.js') ||
+            e.filename.includes('content.js') ||
+            e.filename.includes('extension') ||
+            e.filename.includes('chrome-extension') ||
+            e.filename.includes('moz-extension')
+        )) {
+            console.warn('External script error (likely extension):', e.error);
+            return;
+        }
+        
         console.error('Global error:', e.error);
         // Don't show error to user unless it's critical
+    });
+    
+    // Handle unhandled promise rejections
+    window.addEventListener('unhandledrejection', (e) => {
+        // Filter out errors from external scripts
+        if (e.reason && e.reason.message && (
+            e.reason.message.includes('background.js') ||
+            e.reason.message.includes('serviceWorker.js') ||
+            e.reason.message.includes('content.js') ||
+            e.reason.message.includes('No tab with id') ||
+            e.reason.message.includes('Receiving end does not exist')
+        )) {
+            console.warn('External script promise rejection (likely extension):', e.reason);
+            e.preventDefault(); // Prevent default handling
+            return;
+        }
+        
+        console.error('Unhandled promise rejection:', e.reason);
     });
     
     // Handle form validation errors

@@ -12,9 +12,14 @@ exports.handler = async (event) => {
 
     if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
         console.error('get-recurring-events: Missing required environment variables');
+        console.error('get-recurring-events: AIRTABLE_PERSONAL_ACCESS_TOKEN:', !!AIRTABLE_PERSONAL_ACCESS_TOKEN);
+        console.error('get-recurring-events: AIRTABLE_BASE_ID:', !!AIRTABLE_BASE_ID);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Missing Airtable configuration' }),
+            body: JSON.stringify({ 
+                error: 'Missing Airtable configuration',
+                details: 'Environment variables not properly configured'
+            }),
         };
     }
 
