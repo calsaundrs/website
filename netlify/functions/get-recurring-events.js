@@ -85,8 +85,17 @@ exports.handler = async (event) => {
             const hasRecurring = getField(fields, 'Recurring');
             const hasSeries = getField(fields, 'Series');
             const hasRepeat = getField(fields, 'Repeat');
+            const hasRecurrence = getField(fields, 'Recurrence');
+            const hasRecurringPattern = getField(fields, 'Recurring Pattern');
+            const hasFrequency = getField(fields, 'Frequency');
+            const hasRepeatEvery = getField(fields, 'Repeat Every');
+            const hasWeekly = getField(fields, 'Weekly');
+            const hasMonthly = getField(fields, 'Monthly');
+            const hasYearly = getField(fields, 'Yearly');
             
-            const isRecurring = hasRecurringInfo || hasSeriesId || hasRecurring || hasSeries || hasRepeat;
+            const isRecurring = hasRecurringInfo || hasSeriesId || hasRecurring || hasSeries || hasRepeat || 
+                               hasRecurrence || hasRecurringPattern || hasFrequency || hasRepeatEvery ||
+                               hasWeekly || hasMonthly || hasYearly;
             
             if (isRecurring) {
                 console.log('get-recurring-events: Found recurring event:', {
@@ -96,7 +105,14 @@ exports.handler = async (event) => {
                     seriesId: hasSeriesId,
                     recurring: hasRecurring,
                     series: hasSeries,
-                    repeat: hasRepeat
+                    repeat: hasRepeat,
+                    recurrence: hasRecurrence,
+                    recurringPattern: hasRecurringPattern,
+                    frequency: hasFrequency,
+                    repeatEvery: hasRepeatEvery,
+                    weekly: hasWeekly,
+                    monthly: hasMonthly,
+                    yearly: hasYearly
                 });
             }
             

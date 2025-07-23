@@ -56,7 +56,13 @@ exports.handler = async (event) => {
         const recurringFields = availableFields.filter(field => 
             field.toLowerCase().includes('recurring') || 
             field.toLowerCase().includes('series') ||
-            field.toLowerCase().includes('repeat')
+            field.toLowerCase().includes('repeat') ||
+            field.toLowerCase().includes('recurrence') ||
+            field.toLowerCase().includes('frequency') ||
+            field.toLowerCase().includes('weekly') ||
+            field.toLowerCase().includes('monthly') ||
+            field.toLowerCase().includes('yearly') ||
+            field.toLowerCase().includes('pattern')
         );
 
         // Check for image-related fields
