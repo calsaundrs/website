@@ -203,6 +203,7 @@ exports.handler = async (event, context) => {
                 // Generate proper slug for standalone events
                 let eventSlug = fields['Slug'];
                 if (!eventSlug || eventSlug.startsWith('#event-')) {
+                    // For standalone events, include the date
                     eventSlug = generateSlug(fields['Event Name'], fields['Date']);
                 }
 
@@ -302,12 +303,18 @@ exports.handler = async (event, context) => {
                 
                 const venueInfo = resolveVenueInfo(fields);
 
-                // For recurring events, generate proper slugs
+                // For recurring events, generate proper slugs (without dates)
                 let eventSlug = fields['Slug'];
                 
                 if (!eventSlug || eventSlug.startsWith('#event-')) {
-                    // Generate a proper slug for this event
-                    eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                    // Generate a proper slug for this event (without date for recurring events)
+                    if (fields['Recurring Info'] || parentEvent) {
+                        // This is a recurring event, don't include date
+                        eventSlug = generateSlug(fields['Event Name']);
+                    } else {
+                        // This is a standalone event, include date
+                        eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                    }
                 }
                 
                 // For child instances, use the parent's slug (without date)
