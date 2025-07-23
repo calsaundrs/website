@@ -325,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const recurrenceTips = document.getElementById('recurrence-tips');
 
     if (uploadTipsToggle && uploadTips) {
+        // Desktop hover
         uploadTipsToggle.addEventListener('mouseenter', () => {
             uploadTips.classList.remove('opacity-0', 'pointer-events-none');
         });
@@ -332,15 +333,40 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadTipsToggle.addEventListener('mouseleave', () => {
             uploadTips.classList.add('opacity-0', 'pointer-events-none');
         });
+
+        // Mobile touch
+        uploadTipsToggle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            uploadTips.classList.remove('opacity-0', 'pointer-events-none');
+        });
+
+        uploadTipsToggle.addEventListener('touchend', () => {
+            setTimeout(() => {
+                uploadTips.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000); // Hide after 3 seconds on mobile
+        });
     }
 
     if (recurrenceTipsToggle && recurrenceTips) {
+        // Desktop hover
         recurrenceTipsToggle.addEventListener('mouseenter', () => {
             recurrenceTips.classList.remove('opacity-0', 'pointer-events-none');
         });
         
         recurrenceTipsToggle.addEventListener('mouseleave', () => {
             recurrenceTips.classList.add('opacity-0', 'pointer-events-none');
+        });
+
+        // Mobile touch
+        recurrenceTipsToggle.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            recurrenceTips.classList.remove('opacity-0', 'pointer-events-none');
+        });
+
+        recurrenceTipsToggle.addEventListener('touchend', () => {
+            setTimeout(() => {
+                recurrenceTips.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000); // Hide after 3 seconds on mobile
         });
     }
 

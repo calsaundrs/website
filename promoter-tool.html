@@ -71,40 +71,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
+    <main class="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative z-10">
         <section class="text-center mb-8">
                                     <div class="text-center mb-16">
-                            <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADD <span class="accent-color">EVENT</span></h1>
-                            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
+                                        <h1 class="font-anton text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-none tracking-wider heading-gradient">ADD <span class="accent-color">EVENT</span></h1>
+            <p class="mt-4 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
                         </div>
 
                                     <!-- Welcome Section -->
-                        <div class="card-bg p-6 mb-8 max-w-4xl mx-auto">
-                            <h2 class="font-anton text-2xl text-white mb-4">Welcome!</h2>
-                            <p class="text-gray-300 mb-4">This form will help you submit your event quickly and easily. Upload a poster and our system will attempt to fill in the details automatically. Don't worry if it doesn't work perfectly - you can always complete the form manually.</p>
-                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div class="card-bg p-4 sm:p-6 mb-6 sm:mb-8 max-w-4xl mx-auto">
+                            <h2 class="font-anton text-xl sm:text-2xl text-white mb-3 sm:mb-4">Welcome!</h2>
+                            <p class="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">This form will help you submit your event quickly and easily. Upload a poster and our system will attempt to fill in the details automatically. Don't worry if it doesn't work perfectly - you can always complete the form manually.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 text-sm">
                     <div class="text-center">
-                        <i class="fas fa-clock text-accent-color text-2xl mb-2"></i>
+                        <i class="fas fa-clock text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">Events reviewed within 24-48 hours</p>
                     </div>
                     <div class="text-center">
-                        <i class="fas fa-check-circle text-accent-color text-2xl mb-2"></i>
+                        <i class="fas fa-check-circle text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">All submissions reviewed by our team</p>
                     </div>
-                    <div class="text-center">
-                        <i class="fas fa-users text-accent-color text-2xl mb-2"></i>
+                    <div class="text-center sm:col-span-2 md:col-span-1">
+                        <i class="fas fa-users text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">Reach Birmingham's LGBTQ+ community</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card-bg p-8 md:p-12">
-                <h2 class="font-anton text-3xl text-white mb-6">Event Submission Form</h2>
+            <div class="card-bg p-4 sm:p-6 md:p-8 lg:p-12">
+                <h2 class="font-anton text-2xl sm:text-3xl text-white mb-4 sm:mb-6">Event Submission Form</h2>
                 
-                <form id="event-submission-form" class="space-y-8">
+                <form id="event-submission-form" class="space-y-6 sm:space-y-8">
                     <!-- Poster Upload Section -->
                     <div class="space-y-4">
-                        <h3 class="text-xl font-bold accent-color-secondary">
+                        <h3 class="text-lg sm:text-xl font-bold accent-color-secondary">
                             <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster (Optional)
                         </h3>
                         
@@ -112,7 +112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors" id="upload-tips-toggle">
                                 <i class="fas fa-info-circle text-lg"></i>
                             </button>
-                            <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="upload-tips">
+                            <div class="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="upload-tips">
                                 <h4 class="text-blue-300 font-semibold mb-2">
                                     <i class="fas fa-lightbulb mr-2"></i>Tips for Better Results
                                 </h4>
@@ -127,10 +127,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         
                         <!-- Upload Area -->
-                        <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-accent-color transition-colors cursor-pointer">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
-                            <p class="text-sm text-gray-500">We'll attempt to extract event details automatically</p>
+                        <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-6 sm:p-8 text-center hover:border-accent-color transition-colors cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-gray-400 mb-3 sm:mb-4"></i>
+                            <p class="text-base sm:text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
+                            <p class="text-xs sm:text-sm text-gray-500">We'll attempt to extract event details automatically</p>
                             <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
                         </div>
 
@@ -175,7 +175,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div id="extracted-fields" class="space-y-3 text-sm">
                                 <!-- Extracted fields will be populated here -->
                             </div>
-                            <div class="mt-4 flex space-x-3">
+                            <div class="mt-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                                 <button type="button" id="use-selected" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                                     <i class="fas fa-check mr-2"></i>Use Selected Info
                                 </button>
@@ -192,7 +192,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <i class="fas fa-calendar-plus mr-2"></i>Step 2: Event Details
                         </h3>
                         
-                        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                             <!-- Event Name -->
                             <div class="md:col-span-2">
                                 <label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
@@ -286,7 +286,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                     <!-- Recurrence Section -->
                     <div class="space-y-6">
-                        <h3 class="text-xl font-bold accent-color-secondary">
+                        <h3 class="text-lg sm:text-xl font-bold accent-color-secondary">
                             <i class="fas fa-redo mr-2"></i>Step 3: Recurrence (Optional)
                         </h3>
                         
@@ -294,7 +294,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <button type="button" class="text-yellow-400 hover:text-yellow-300 transition-colors" id="recurrence-tips-toggle">
                                 <i class="fas fa-info-circle text-lg"></i>
                             </button>
-                            <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
+                            <div class="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
                                 <h4 class="text-yellow-300 font-semibold mb-2">
                                     <i class="fas fa-redo mr-2"></i>Recurring Events
                                 </h4>
@@ -305,7 +305,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         
                         <!-- Recurrence Type Selection -->
                         <div class="mb-6">
-                            <div class="flex flex-wrap items-center space-x-6">
+                            <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
                                 <label class="flex items-center">
                                     <input type="radio" name="recurrence-type" value="none" class="h-5 w-5 text-accent-color" checked>
                                     <span class="ml-2 text-gray-300">No Recurrence</span>
@@ -326,7 +326,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <!-- Weekly Options -->
                             <div id="weekly-options" class="hidden">
                                 <label class="block text-sm font-semibold mb-3 accent-color-secondary">Repeat on:</label>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                                     <label class="flex items-center">
                                         <input type="checkbox" name="weekly_days" value="1" class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
                                         <span class="ml-2 text-gray-300">Monday</span>
@@ -362,7 +362,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div id="monthly-options" class="hidden space-y-4">
                                 <div>
                                     <label class="block text-sm font-semibold mb-3 accent-color-secondary">Monthly Recurrence Type:</label>
-                                    <div class="flex items-center space-x-6">
+                                    <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
                                         <label class="flex items-center">
                                             <input type="radio" name="monthly_type" value="date" class="h-4 w-4 text-accent-color" checked>
                                             <span class="ml-2 text-gray-300">By Date (e.g., 15th of every month)</span>
