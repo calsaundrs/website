@@ -27,6 +27,7 @@ exports.handler = async (event) => {
         // Parse the request body
         const requestBody = JSON.parse(event.body);
         console.log('update-recurring-series: Request body:', requestBody);
+        console.log('update-recurring-series: Request body keys:', Object.keys(requestBody));
 
         const { 
             seriesId, 
@@ -120,43 +121,55 @@ exports.handler = async (event) => {
         }
 
         // Update the parent record
-        await base('Events').update(parentRecord.id, updateFields);
-
-        console.log(`update-recurring-series: Updated parent record with fields:`, Object.keys(updateFields));
+        try {
+            await base('Events').update(parentRecord.id, updateFields);
+            console.log(`update-recurring-series: Updated parent record with fields:`, Object.keys(updateFields));
+        } catch (updateError) {
+            console.error('update-recurring-series: Error updating parent record:', updateError);
+            throw new Error(`Failed to update parent record: ${updateError.message}`);
+        }
 
         // If recurrence rules changed, regenerate instances
         if (recurringInfo && instancesAhead) {
-            // Delete existing future instances
-            const today = new Date().toISOString().split('T')[0];
-            const existingInstances = await base('Events').select({
-                filterByFormula: `AND(OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}'), {Date} >= '${today}')`
-            }).all();
+            try {
+                // Delete existing future instances
+                const today = new Date().toISOString().split('T')[0];
+                const existingInstances = await base('Events').select({
+                    filterByFormula: `AND(OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}'), {Date} >= '${today}')`
+                }).all();
 
-            if (existingInstances.length > 0) {
-                const deleteIds = existingInstances.map(record => record.id);
-                await base('Events').destroy(deleteIds);
-                console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
-            }
-
-            // Generate new instances
-            const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
-            const instanceRecords = newInstances.map(date => ({
-                fields: {
-                    'Event Name': name || parentRecord.fields['Event Name'],
-                    'Description': description || parentRecord.fields['Description'],
-                    'Date': date,
-                    'Time': parentRecord.fields['Time'],
-                    'Venue': updateFields['Venue'] || parentRecord.fields['Venue'],
-                    'Category': categories || parentRecord.fields['Category'],
-                    'Series ID': seriesId,
-                    'Status': 'Pending Review',
-                    'Is Instance': true
+                if (existingInstances.length > 0) {
+                    const deleteIds = existingInstances.map(record => record.id);
+                    await base('Events').destroy(deleteIds);
+                    console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
                 }
-            }));
 
-            if (instanceRecords.length > 0) {
-                await base('Events').create(instanceRecords);
-                console.log(`update-recurring-series: Created ${instanceRecords.length} new instances`);
+                // Generate new instances
+                const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
+                console.log(`update-recurring-series: Generated ${newInstances.length} new instances`);
+                
+                const instanceRecords = newInstances.map(date => ({
+                    fields: {
+                        'Event Name': name || parentRecord.fields['Event Name'],
+                        'Description': description || parentRecord.fields['Description'],
+                        'Date': date,
+                        'Time': parentRecord.fields['Time'],
+                        'Venue': updateFields['Venue'] || parentRecord.fields['Venue'],
+                        'Category': categories || parentRecord.fields['Category'],
+                        'Series ID': seriesId,
+                        'Status': 'Pending Review',
+                        'Is Instance': true
+                    }
+                }));
+
+                if (instanceRecords.length > 0) {
+                    await base('Events').create(instanceRecords);
+                    console.log(`update-recurring-series: Created ${instanceRecords.length} new instances`);
+                }
+            } catch (instanceError) {
+                console.error('update-recurring-series: Error regenerating instances:', instanceError);
+                // Don't throw here - the parent record was already updated successfully
+                console.log('update-recurring-series: Continuing without regenerating instances');
             }
         }
 
@@ -173,7 +186,6 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 success: true,
                 message: `Successfully updated series ${seriesId}`,
-                action: action,
                 updatedCount: updatedCount,
                 seriesId: seriesId,
                 timestamp: new Date().toISOString()
