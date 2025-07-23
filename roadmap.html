@@ -164,14 +164,17 @@
             background: #E83A99;
             border: 3px solid #8B5CF6;
             z-index: 10;
+            transform: translateX(-50%);
         }
 
         .roadmap-item:nth-child(odd)::before {
             right: -0.5rem;
+            transform: translateX(50%);
         }
 
         .roadmap-item:nth-child(even)::before {
             left: -0.5rem;
+            transform: translateX(-50%);
         }
 
         .status-badge {
@@ -187,6 +190,12 @@
             background: rgba(16, 185, 129, 0.2);
             color: #10B981;
             border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-badge.rip {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6B7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
         }
         
         .status-badge.planned {
@@ -238,6 +247,7 @@
             
             .roadmap-item::before {
                 left: 0.5rem !important;
+                transform: translateX(-50%) !important;
             }
         }
     </style>
@@ -384,14 +394,16 @@
                 <!-- V1: Basic Squarespace Site -->
                 <div class="roadmap-item">
                     <div class="card-bg p-6 rounded-2xl">
-                        <div class="status-badge live">V1 - COMPLETED</div>
+                        <div class="status-badge rip">💀 V1 - RIP - DEAD NOW</div>
                         <h3 class="text-white font-bold text-2xl mb-4">Basic Squarespace Site</h3>
-                        <p class="text-gray-400 mb-4">Our humble beginnings with a simple event listing platform.</p>
+                        <p class="text-gray-400 mb-4">Our humble beginnings with a simple event listing platform. Replaced by the superior V2.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
-                            <li>• Basic event listings</li>
+                            <li>• Basic event listings (5 categories)</li>
                             <li>• Simple venue information</li>
-                            <li>• Squarespace hosting</li>
-                            <li>• Manual content updates</li>
+                            <li>• Squarespace hosting limitations</li>
+                            <li>• Manual content updates only</li>
+                            <li>• Template-based design</li>
+                            <li>• No automation or AI features</li>
                         </ul>
                     </div>
                 </div>
@@ -401,14 +413,16 @@
                     <div class="card-bg p-6 rounded-2xl">
                         <div class="status-badge live">V2 - CURRENT</div>
                         <h3 class="text-white font-bold text-2xl mb-4">Modern Web Platform</h3>
-                        <p class="text-gray-400 mb-4">Full-featured platform with advanced functionality and community focus.</p>
+                        <p class="text-gray-400 mb-4">Complete platform transformation with advanced functionality and community focus.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
-                            <li>• Advanced event filtering and search</li>
+                            <li>• Advanced event filtering (15+ categories)</li>
+                            <li>• AI-powered poster processing</li>
+                            <li>• Real-time event updates</li>
                             <li>• Comprehensive venue directory</li>
-                            <li>• Event submission system</li>
-                            <li>• Admin management tools</li>
                             <li>• Progressive web app features</li>
-                            <li>• Community FAQ section</li>
+                            <li>• 33+ serverless functions</li>
+                            <li>• Bulk upload capabilities</li>
+                            <li>• Modern glassmorphism design</li>
                         </ul>
                     </div>
                 </div>
@@ -488,6 +502,8 @@
                             <li>• Performer notifications and updates</li>
                             <li>• Favorites and saved events</li>
                             <li>• Review and rating system</li>
+                            <li>• See which friends are attending events</li>
+                            <li>• Get notified when favorite performers announce events</li>
                         </ul>
                     </div>
                 </div>
