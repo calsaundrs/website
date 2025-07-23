@@ -470,11 +470,12 @@
         <section class="ds-section">
             <h2 class="font-anton text-4xl text-white mb-8">Filter Buttons</h2>
             <div class="card-bg p-8 rounded-2xl">
-                <div class="flex flex-wrap gap-4">
-                    <button class="filter-button active">All Events</button>
-                    <button class="filter-button">Pending</button>
-                    <button class="filter-button">Approved</button>
-                    <button class="filter-button">Recurring</button>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button class="filter-btn active">All Events</button>
+                    <button class="filter-btn">Today</button>
+                    <button class="filter-btn">This Week</button>
+                    <button class="filter-btn">This Month</button>
+                    <button class="filter-btn">Recurring</button>
                 </div>
             </div>
         </section>
@@ -514,21 +515,62 @@
             <div class="card-bg p-8 rounded-2xl">
                 <div class="space-y-8">
                     <!-- Main Navigation -->
-                    <div>
+                    <div class="venue-card p-6">
                         <h3 class="text-white font-bold mb-4">Main Navigation</h3>
-                        <nav class="flex justify-between items-center p-4 bg-gray-900/50 rounded-lg">
-                            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                        <nav class="flex justify-between items-center">
+                            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+                               style="font-family: 'Omnes Pro', sans-serif;">
                                 <span>Brum Outloud</span>
-                                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 rounded">
+                                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
                             </a>
-                            <div class="flex items-center space-x-8">
-                                <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
-                                <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
-                                <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
-                                <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
-                                <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
+                            <div class="hidden lg:flex items-center space-x-8">
+                                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                                <a href="/promoter-tool.html" class="btn-primary text-white px-4 py-2 rounded-lg">GET LISTED</a>
+                            </div>
+                            <div class="lg:hidden">
+                                <button class="text-white text-2xl">
+                                    <i class="fas fa-bars"></i>
+                                </button>
                             </div>
                         </nav>
+                    </div>
+
+                    <!-- Future Feature: User Authentication -->
+                    <div class="venue-card p-6 border-2 border-dashed border-gray-600">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fas fa-clock text-yellow-400"></i>
+                            <h3 class="text-white font-bold">Future Feature: User Authentication</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">These components are designed for future implementation of user accounts and personalization features.</p>
+                        
+                        <!-- User Menu -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold">John Doe</p>
+                                    <p class="text-gray-400 text-sm">john@example.com</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-cog mr-1"></i>Settings
+                            </button>
+                        </div>
+
+                        <!-- Login/Register Buttons -->
+                        <div class="flex gap-2">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-sign-in-alt mr-1"></i>Login
+                            </button>
+                            <button class="btn-secondary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-user-plus mr-1"></i>Register
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Breadcrumbs -->
@@ -878,7 +920,6 @@
                                 </div>
                                 <div class="p-6">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="status-badge approved">Approved</span>
                                         <span class="text-sm text-gray-400">Jun 15, 2024</span>
                                     </div>
                                     <h3 class="text-xl font-bold text-white mb-2">Glittershit: The Summer Ball</h3>
@@ -911,7 +952,6 @@
                                 </div>
                                 <div class="p-6">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="status-badge approved">Approved</span>
                                         <span class="text-sm text-gray-400">Jun 20, 2024</span>
                                     </div>
                                     <h3 class="text-xl font-bold text-white mb-2">Drag Race UK Viewing Party</h3>
@@ -1195,10 +1235,12 @@
                                         </div>
 
                                         <!-- Event Schedule -->
-                                        <div class="venue-card p-6 mb-6">
-                                            <h2 class="text-2xl font-bold text-white mb-4">
-                                                <i class="fas fa-calendar-alt mr-3 text-accent-color"></i>Event Schedule
-                                            </h2>
+                                        <div class="venue-card p-6 mb-6 border-2 border-dashed border-gray-600">
+                                            <div class="flex items-center gap-2 mb-4">
+                                                <i class="fas fa-clock text-yellow-400"></i>
+                                                <h2 class="text-2xl font-bold text-white">Event Schedule (Future Feature)</h2>
+                                            </div>
+                                            <p class="text-gray-400 text-sm mb-4">This feature will be implemented when we collect detailed event schedules and timing information.</p>
                                             <div class="space-y-4">
                                                 <div class="flex items-center gap-4 p-3 bg-gray-800/50 rounded-lg">
                                                     <div class="text-center w-16 flex-shrink-0">
@@ -2325,6 +2367,169 @@
                 </div>
             </div>
         </section>
+
+        <!-- Regular Events Section -->
+        <div>
+            <h3 class="text-white font-bold mb-6">Regular Events (Weekly/Recurring)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Weekly Event Card -->
+                <div class="venue-card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-green-600/20 to-blue-600/20 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">Every Friday</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-redo text-green-400"></i>
+                            <span class="text-sm text-green-400 font-semibold">Weekly Event</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Karaoke Night</h3>
+                        <p class="text-gray-400 text-sm mb-3">The Rainbow Bar</p>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Weekly karaoke night with prizes and great atmosphere.</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">Karaoke</span>
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Weekly</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Event Card -->
+                <div class="venue-card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-pink-600/20 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">First Saturday</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-calendar-alt text-purple-400"></i>
+                            <span class="text-sm text-purple-400 font-semibold">Monthly Event</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Bear Night</h3>
+                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Monthly bear community night with themed drinks and music.</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Bear Community</span>
+                            <span class="inline-block bg-pink-100/20 text-pink-300 text-xs px-2 py-1 rounded-full">Monthly</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Major Event Series Section -->
+        <div>
+            <h3 class="text-white font-bold mb-6">Major Event Series (Multi-Venue Events)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Pride Weekend Series -->
+                <div class="venue-card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-rainbow-600/20 to-purple-600/20 flex items-center justify-center relative">
+                        <i class="fas fa-flag text-4xl text-gray-600"></i>
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="bg-gradient-to-r from-rainbow-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                <i class="fas fa-star mr-1"></i>Major Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">Birmingham Pride Weekend</h3>
+                        <p class="text-gray-400 text-sm mb-3">Multiple Venues • July 27-28, 2024</p>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Birmingham's biggest LGBTQ+ celebration with events across the city including the main parade, festival, and club events.</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="inline-block bg-rainbow-100/20 text-rainbow-300 text-xs px-2 py-1 rounded-full">Pride</span>
+                            <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Festival</span>
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Parade</span>
+                            <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">Multi-Venue</span>
+                        </div>
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt text-accent-color"></i>
+                                <span>5+ Venues Participating</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-calendar text-accent-color"></i>
+                                <span>2 Days of Events</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-users text-accent-color"></i>
+                                <span>10,000+ Attendees Expected</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View All Events
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bear Brum Weekend -->
+                <div class="venue-card rounded-xl overflow-hidden">
+                    <div class="aspect-video bg-gradient-to-br from-brown-600/20 to-orange-600/20 flex items-center justify-center relative">
+                        <i class="fas fa-paw text-4xl text-gray-600"></i>
+                        <div class="absolute top-4 left-4 z-10">
+                            <span class="bg-gradient-to-r from-brown-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                <i class="fas fa-star mr-1"></i>Major Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">Bear Brum Weekend</h3>
+                        <p class="text-gray-400 text-sm mb-3">Multiple Venues • September 14-15, 2024</p>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Birmingham's premier bear community weekend with events, parties, and social gatherings across multiple venues.</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="inline-block bg-brown-100/20 text-brown-300 text-xs px-2 py-1 rounded-full">Bear Community</span>
+                            <span class="inline-block bg-orange-100/20 text-orange-300 text-xs px-2 py-1 rounded-full">Weekend</span>
+                            <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">Multi-Venue</span>
+                        </div>
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt text-accent-color"></i>
+                                <span>3+ Venues Participating</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-calendar text-accent-color"></i>
+                                <span>2 Days of Events</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <i class="fas fa-users text-accent-color"></i>
+                                <span>500+ Attendees Expected</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View All Events
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </body>
 </html>
