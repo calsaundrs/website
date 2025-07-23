@@ -129,35 +129,45 @@ exports.handler = async function (event, context) {
 
         if (venueId) {
             try {
+                console.log("Attempting to fetch venue record for ID:", venueId);
                 const venueRecord = await base('Venues').find(venueId);
-                const status = venueRecord.get('Listing Status');
-                const name = venueRecord.get('Name');
-                const website = venueRecord.get('Website');
-                const facebook = venueRecord.get('Facebook');
-                const instagram = venueRecord.get('Instagram');
-                const twitter = venueRecord.get('Twitter');
-                finalVenueSlug = venueRecord.get('Slug') || '';
-                venueNameForDisplay = name || venueNameForDisplay;
-                if (status === 'Listed' && finalVenueSlug) {
-                    venueHtml = `<a href="/venue/${finalVenueSlug}" class="text-2xl font-semibold hover:text-white underline">${venueNameForDisplay}</a>`;
+                
+                if (venueRecord && venueRecord.fields) {
+                    const status = venueRecord.fields['Listing Status'];
+                    const name = venueRecord.fields['Name'];
+                    const website = venueRecord.fields['Website'];
+                    const facebook = venueRecord.fields['Facebook'];
+                    const instagram = venueRecord.fields['Instagram'];
+                    const twitter = venueRecord.fields['Twitter'];
+                    finalVenueSlug = venueRecord.fields['Slug'] || '';
+                    venueNameForDisplay = name || venueNameForDisplay;
+                    
+                    if (status === 'Listed' && finalVenueSlug) {
+                        venueHtml = `<a href="/venue/${finalVenueSlug}" class="text-2xl font-semibold hover:text-white underline">${venueNameForDisplay}</a>`;
+                    } else {
+                        venueHtml = `<p class="text-2xl font-semibold">${venueNameForDisplay}</p>`;
+                    }
+
+                    if (website) {
+                        venueWebsiteHtml = `<a href="${website}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fas fa-globe mr-2"></i> Website</a>`;
+                    }
+                    if (facebook) {
+                        venueSocialHtml += `<a href="${facebook}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-facebook-square mr-2"></i> Facebook</a>`;
+                    }
+                    if (instagram) {
+                        venueSocialHtml += `<a href="${instagram}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-instagram mr-2"></i> Instagram</a>`;
+                    }
+                    if (twitter) {
+                        venueSocialHtml += `<a href="${twitter}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-twitter-square mr-2"></i> Twitter</a>`;
+                    }
                 } else {
-                    venueHtml = `<p class="text-2xl font-semibold">${venueNameForDisplay}</p>`;
+                    console.log("Venue record found but has no fields, using fallback");
                 }
 
-                if (website) {
-                    venueWebsiteHtml = `<a href="${website}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fas fa-globe mr-2"></i> Website</a>`;
-                }
-                if (facebook) {
-                    venueSocialHtml += `<a href="${facebook}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-facebook-square mr-2"></i> Facebook</a>`;
-                }
-                if (instagram) {
-                    venueSocialHtml += `<a href="${instagram}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-instagram mr-2"></i> Instagram</a>`;
-                }
-                if (twitter) {
-                    venueSocialHtml += `<a href="${twitter}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline"><i class="fab fa-twitter-square mr-2"></i> Twitter</a>`;
-                }
-
-            } catch (venueError) { console.error("Could not fetch linked venue, falling back to text.", venueError); }
+            } catch (venueError) { 
+                console.error("Could not fetch linked venue, falling back to text. Venue ID:", venueId, "Error:", venueError.message);
+                // Keep the fallback venue name and HTML
+            }
         }
 
         let addressHtml = fields['Address'] ? `<li><i class="fas fa-map-pin text-accent-color mr-3"></i> <strong>Address:</strong> ${fields['Address']}</li>` : '';
@@ -170,28 +180,47 @@ exports.handler = async function (event, context) {
         const currentEventId = eventRecord.id;
 
         if (primaryEventCategories.length > 0) {
-            const categoryFilterString = primaryEventCategories.map(cat => `FIND("${cat.replace(/"/g, '\"')}", ARRAYJOIN({Category}, ","))`).join(', ');
+            try {
+                const categoryFilterString = primaryEventCategories.map(cat => `FIND("${cat.replace(/"/g, '\"')}", ARRAYJOIN({Category}, ","))`).join(', ');
 
-            const suggestedEventsFilter = `AND({Status} = 'Approved', IS_AFTER({Date}, TODAY()), NOT(RECORD_ID() = '${currentEventId}'), OR(${categoryFilterString}))`;
+                const suggestedEventsFilter = `AND({Status} = 'Approved', IS_AFTER({Date}, TODAY()), NOT(RECORD_ID() = '${currentEventId}'), OR(${categoryFilterString}))`;
 
-            const suggestedRecords = await base('Events').select({
-                filterByFormula: suggestedEventsFilter,
-                sort: [{ field: 'Date', direction: 'asc' }],
-                maxRecords: 6,
-                fields: ['Event Name', 'Date', 'Promo Image', 'Slug', 'Venue Name', 'VenueText']
-            }).all();
+                const suggestedRecords = await base('Events').select({
+                    filterByFormula: suggestedEventsFilter,
+                    sort: [{ field: 'Date', direction: 'asc' }],
+                    maxRecords: 6,
+                    fields: ['Event Name', 'Date', 'Promo Image', 'Slug', 'Venue Name', 'VenueText']
+                }).all();
 
-            if (suggestedRecords.length > 0) {
-                const suggestedCardsHtml = suggestedRecords.map(suggEvent => {
-                    const suggEventName = suggEvent.get('Event Name');
-                    const suggEventDate = new Date(suggEvent.get('Date'));
-                    const suggImageUrl = suggEvent.get('Promo Image') ? suggEvent.get('Promo Image')[0].url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
-                    const suggEventSlug = suggEvent.get('Slug');
+                if (suggestedRecords.length > 0) {
+                    const suggestedCardsHtml = suggestedRecords.map(suggEvent => {
+                        try {
+                            const suggEventName = suggEvent.fields['Event Name'] || 'Event';
+                            const suggEventDate = new Date(suggEvent.fields['Date']);
+                            const suggImageUrl = suggEvent.fields['Promo Image'] && suggEvent.fields['Promo Image'].length > 0 
+                                ? suggEvent.fields['Promo Image'][0].url 
+                                : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
+                            const suggEventSlug = suggEvent.fields['Slug'] || '';
 
-                    return `<a href="/event/${suggEventSlug}" class="suggested-card aspect-[2/3] w-10/12 md:w-5/12 lg:w-[32%] flex-shrink-0 relative overflow-hidden flex flex-col justify-end snap-start"><div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${suggImageUrl}')"></div><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div><div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-center p-2 rounded-lg z-20"><p class="font-bold text-xl leading-none">${suggEventDate.getDate()}</p><p class="text-sm uppercase">${suggEventDate.toLocaleDateString('en-GB', { month: 'short' })}</p></div><div class="relative z-10 p-4"><h4 class="font-extrabold text-white text-2xl">${suggEventName}</h4></div></a>`;
-                }).join('');
+                            if (!suggEventSlug) {
+                                console.log("Skipping suggested event without slug:", suggEventName);
+                                return '';
+                            }
 
-                suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="suggested-carousel flex overflow-x-auto gap-6 snap-x snap-mandatory pr-6">${suggestedCardsHtml}</div></div>`;
+                            return `<a href="/event/${suggEventSlug}" class="suggested-card aspect-[2/3] w-10/12 md:w-5/12 lg:w-[32%] flex-shrink-0 relative overflow-hidden flex flex-col justify-end snap-start"><div class="absolute inset-0 bg-cover bg-center" style="background-image: url('${suggImageUrl}')"></div><div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div><div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-center p-2 rounded-lg z-20"><p class="font-bold text-xl leading-none">${suggEventDate.getDate()}</p><p class="text-sm uppercase">${suggEventDate.toLocaleDateString('en-GB', { month: 'short' })}</p></div><div class="relative z-10 p-4"><h4 class="font-extrabold text-white text-2xl">${suggEventName}</h4></div></a>`;
+                        } catch (cardError) {
+                            console.error("Error processing suggested event card:", cardError);
+                            return '';
+                        }
+                    }).filter(html => html !== '').join('');
+
+                    if (suggestedCardsHtml) {
+                        suggestedEventsHtml = `<div class="mt-16 suggested-events-section"><h2 class="font-anton text-4xl mb-8">Don't Miss These...</h2><div class="suggested-carousel flex overflow-x-auto gap-6 snap-x snap-mandatory pr-6">${suggestedCardsHtml}</div></div>`;
+                    }
+                }
+            } catch (suggestedError) {
+                console.error("Error fetching suggested events:", suggestedError);
+                // Continue without suggested events
             }
         }
 
@@ -213,11 +242,24 @@ exports.handler = async function (event, context) {
         const otherInstancesToDisplay = allFutureInstances.filter(inst => inst.Date !== fields['Date']);
 
         const otherInstancesHTML = otherInstancesToDisplay.slice(0, 5).map(instance => {
-            const d = new Date(instance.Date);
-            const day = d.toLocaleDateString('en-GB', { day: 'numeric' });
-            const month = d.toLocaleDateString('en-GB', { month: 'short' });
-            return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
-        }).join('');
+            try {
+                const d = new Date(instance.Date);
+                const day = d.toLocaleDateString('en-GB', { day: 'numeric' });
+                const month = d.toLocaleDateString('en-GB', { month: 'short' });
+                const eventName = instance['Event Name'] || 'Event';
+                const slug = instance['Slug'] || '';
+                
+                if (!slug) {
+                    console.log("Skipping other instance without slug:", eventName);
+                    return '';
+                }
+                
+                return `<a href="/event/${slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${eventName}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
+            } catch (instanceError) {
+                console.error("Error processing other instance:", instanceError);
+                return '';
+            }
+        }).filter(html => html !== '').join('');
 
         const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
         console.log("Attempting to read template file:", templatePath);
