@@ -75,7 +75,7 @@ exports.handler = async (event) => {
         // Get a sample of records with recurring info
         const recurringRecords = sampleRecords.filter(record => {
             const fields = record.fields;
-            return fields['Recurring Info'] || fields['Series ID'] || 
+            return fields['Recurring Info'] || fields['Series ID'] || fields['seriesId'] || 
                    fields['Recurring'] || fields['Series'] ||
                    fields['Repeat'];
         });
@@ -98,7 +98,7 @@ exports.handler = async (event) => {
                     id: record.id,
                     name: record.fields['Event Name'],
                     recurringInfo: record.fields['Recurring Info'] || record.fields['Recurring'] || record.fields['Series'] || record.fields['Repeat'],
-                    seriesId: record.fields['Series ID'] || record.fields['Series'],
+                    seriesId: record.fields['Series ID'] || record.fields['seriesId'] || record.fields['Series'],
                     date: record.fields['Date']
                 }))
             })

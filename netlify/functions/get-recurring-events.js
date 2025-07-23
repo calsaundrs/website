@@ -51,6 +51,7 @@ exports.handler = async (event) => {
             'Category', 
             'Recurring Info', 
             'Series ID',
+            'seriesId', // Add camelCase version
             'Status',
             'Promo Image'
         ];
@@ -81,7 +82,7 @@ exports.handler = async (event) => {
         const recurringEvents = allRecords.filter(record => {
             const fields = record.fields;
             const hasRecurringInfo = getField(fields, 'Recurring Info');
-            const hasSeriesId = getField(fields, 'Series ID');
+            const hasSeriesId = getField(fields, 'Series ID') || getField(fields, 'seriesId'); // Check both versions
             const hasRecurring = getField(fields, 'Recurring');
             const hasSeries = getField(fields, 'Series');
             const hasRepeat = getField(fields, 'Repeat');
@@ -103,6 +104,8 @@ exports.handler = async (event) => {
                     name: getField(fields, 'Event Name'),
                     recurringInfo: hasRecurringInfo,
                     seriesId: hasSeriesId,
+                    seriesIdField: getField(fields, 'Series ID'),
+                    seriesIdCamel: getField(fields, 'seriesId'),
                     recurring: hasRecurring,
                     series: hasSeries,
                     repeat: hasRepeat,
@@ -160,9 +163,9 @@ exports.handler = async (event) => {
             allRecords.forEach(record => {
                 const fields = record.fields;
                 
-                // If it has Series ID, it's part of a series
-                if (getField(fields, 'Series ID')) {
-                    const seriesId = getField(fields, 'Series ID');
+                // If it has Series ID (check both versions), it's part of a series
+                const seriesId = getField(fields, 'Series ID') || getField(fields, 'seriesId');
+                if (seriesId) {
                     if (!seriesMap.has(seriesId)) {
                         seriesMap.set(seriesId, []);
                     }
