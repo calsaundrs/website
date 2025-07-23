@@ -1,134 +1,185 @@
 const Airtable = require('airtable');
 
-exports.handler = async function(event, context) {
-    // Enable CORS
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-    };
+const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
-    // Handle preflight requests
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
-    }
-
+exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    console.log('regenerate-instances: Starting function execution');
+
+    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
+        console.error('regenerate-instances: Missing required environment variables');
         return {
-            statusCode: 405,
-            headers,
-            body: JSON.stringify({ error: 'Method not allowed' })
+            statusCode: 500,
+            body: JSON.stringify({ 
+                error: 'Missing Airtable configuration',
+                details: 'Environment variables not properly configured'
+            }),
         };
     }
+
+    const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
 
     try {
-        const { seriesId } = JSON.parse(event.body);
-        
+        // Parse the request body
+        const requestBody = JSON.parse(event.body);
+        console.log('regenerate-instances: Request body:', requestBody);
+
+        const { seriesId } = requestBody;
+
         if (!seriesId) {
             return {
                 statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: 'Series ID is required' })
+                body: JSON.stringify({ 
+                    error: 'Missing seriesId',
+                    details: 'Series ID is required for regenerating instances'
+                }),
             };
         }
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
-        
-        // Get the series template record
-        const seriesRecords = await base('Events').select({
-            filterByFormula: `{Series ID} = '${seriesId}'`,
-            maxRecords: 1
+        console.log(`regenerate-instances: Processing series ${seriesId}`);
+
+        // First, try to find records by Series ID
+        console.log(`regenerate-instances: Looking for series with ID: ${seriesId}`);
+        let seriesRecords = await base('Events').select({
+            filterByFormula: `{Series ID} = '${seriesId}'`
         }).all();
+
+        console.log(`regenerate-instances: Found ${seriesRecords.length} events in series ${seriesId}`);
+        
+        // If no records found by Series ID, try to find by event ID
+        if (seriesRecords.length === 0) {
+            console.log('regenerate-instances: No records found by Series ID, trying to find by event ID...');
+            try {
+                const eventRecord = await base('Events').find(seriesId);
+                console.log(`regenerate-instances: Found event by ID: ${eventRecord.fields['Event Name']}`);
+                
+                if (eventRecord.fields['Series ID']) {
+                    console.log(`regenerate-instances: Event has Series ID: ${eventRecord.fields['Series ID']}`);
+                    seriesRecords = await base('Events').select({
+                        filterByFormula: `{Series ID} = '${eventRecord.fields['Series ID']}'`
+                    }).all();
+                    seriesId = eventRecord.fields['Series ID'];
+                    console.log(`regenerate-instances: Found ${seriesRecords.length} events in series ${seriesId}`);
+                } else {
+                    console.log('regenerate-instances: Event has no Series ID, treating as standalone');
+                    seriesRecords = [eventRecord];
+                }
+            } catch (findError) {
+                console.log('regenerate-instances: Could not find event by ID either');
+            }
+        }
 
         if (seriesRecords.length === 0) {
             return {
                 statusCode: 404,
-                headers,
-                body: JSON.stringify({ error: 'Series not found' })
+                body: JSON.stringify({ 
+                    error: 'Series not found',
+                    details: `No events found with series ID: ${seriesId}`
+                }),
             };
         }
 
-        const seriesRecord = seriesRecords[0];
-        const recurringInfo = seriesRecord.get('Recurring Info');
-        let recurrenceRules = {};
-        
+        // Find the parent record (one with recurring info)
+        let parentRecord = seriesRecords.find(record => 
+            record.fields['Recurring Info'] || record.fields['recurringInfo']
+        ) || seriesRecords[0];
+
+        console.log(`regenerate-instances: Using parent record: ${parentRecord.id}`);
+
+        // Parse recurring info
+        const recurringInfo = parentRecord.fields['Recurring Info'] || parentRecord.fields['recurringInfo'];
+        if (!recurringInfo) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ 
+                    error: 'No recurring info found',
+                    details: 'Parent record has no recurring information'
+                }),
+            };
+        }
+
+        let recurringInfoObj;
         try {
-            recurrenceRules = JSON.parse(recurringInfo);
+            recurringInfoObj = typeof recurringInfo === 'string' ? JSON.parse(recurringInfo) : recurringInfo;
         } catch (e) {
             return {
                 statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: 'Invalid recurrence rules' })
+                body: JSON.stringify({ 
+                    error: 'Invalid recurring info',
+                    details: 'Could not parse recurring information'
+                }),
             };
         }
 
         // Delete existing future instances
         const today = new Date().toISOString().split('T')[0];
+        console.log(`regenerate-instances: Looking for existing instances with Series ID: ${seriesId}`);
         const existingInstances = await base('Events').select({
             filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
         }).all();
 
+        console.log(`regenerate-instances: Found ${existingInstances.length} existing future instances`);
         if (existingInstances.length > 0) {
             const deleteIds = existingInstances.map(record => record.id);
-            // Delete in batches of 10
-            const batchSize = 10;
-            for (let i = 0; i < deleteIds.length; i += batchSize) {
-                const batch = deleteIds.slice(i, i + batchSize);
-                await base('Events').destroy(batch);
-            }
+            await base('Events').destroy(deleteIds);
+            console.log(`regenerate-instances: Deleted ${deleteIds.length} existing future instances`);
         }
 
-        // Generate new instances based on recurrence rules
-        const instancesAhead = seriesRecord.get('Instances Ahead') || 12;
-        const endDate = seriesRecord.get('End Date');
-        const newInstances = generateInstances(recurrenceRules, instancesAhead, endDate);
-
-        // Create new instances
+        // Generate new instances
+        const instancesAhead = recurringInfoObj.instancesAhead || 12;
+        const endDate = recurringInfoObj.endDate;
+        
+        const newInstances = generateInstances(recurringInfoObj, instancesAhead, endDate);
+        console.log(`regenerate-instances: Generated ${newInstances.length} new instances`);
+        
         const instanceRecords = newInstances.map(date => ({
             fields: {
-                'Event Name': seriesRecord.get('Event Name'),
-                'Description': seriesRecord.get('Description'),
+                'Event Name': parentRecord.fields['Event Name'],
+                'Description': parentRecord.fields['Description'],
                 'Date': date,
-                'Time': seriesRecord.get('Time'),
-                'Venue': seriesRecord.get('Venue'),
-                'Category': seriesRecord.get('Category'),
+                'Time': parentRecord.fields['Time'],
+                'Venue': parentRecord.fields['Venue'],
+                'Category': parentRecord.fields['Category'],
                 'Series ID': seriesId,
-                'Status': 'Pending Review',
-                'Is Instance': true
+                'Status': 'Pending Review'
             }
         }));
 
         if (instanceRecords.length > 0) {
-            // Create in batches of 10
-            const batchSize = 10;
-            for (let i = 0; i < instanceRecords.length; i += batchSize) {
-                const batch = instanceRecords.slice(i, i + batchSize);
-                await base('Events').create(batch);
-            }
+            await base('Events').create(instanceRecords);
+            console.log(`regenerate-instances: Created ${instanceRecords.length} new instances`);
         }
 
         return {
             statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                success: true, 
-                message: `Successfully regenerated ${instanceRecords.length} instances` 
-            })
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            },
+            body: JSON.stringify({
+                success: true,
+                message: `Successfully regenerated ${instanceRecords.length} instances for series ${seriesId}`,
+                instancesCreated: instanceRecords.length,
+                seriesId: seriesId,
+                timestamp: new Date().toISOString()
+            }),
         };
 
     } catch (error) {
-        console.error('Error regenerating instances:', error);
+        console.error("regenerate-instances: Critical error:", error);
+        console.error("regenerate-instances: Error stack:", error.stack);
+        
         return {
             statusCode: 500,
-            headers,
             body: JSON.stringify({ 
-                error: 'Failed to regenerate instances',
-                details: error.message 
-            })
+                error: 'Failed to regenerate instances', 
+                details: error.toString(),
+                message: error.message 
+            }),
         };
     }
 };
@@ -136,6 +187,13 @@ exports.handler = async function(event, context) {
 function generateInstances(recurrenceRules, instancesAhead, endDate) {
     const instances = [];
     const today = new Date();
+    
+    // Handle "none" recurrence type - don't generate any instances
+    if (!recurrenceRules || !recurrenceRules.type || recurrenceRules.type === 'none') {
+        console.log('generateInstances: No recurrence type specified, not generating instances');
+        return instances;
+    }
+    
     let currentDate = new Date(today);
     
     // Set end date if specified
@@ -179,5 +237,6 @@ function generateInstances(recurrenceRules, instancesAhead, endDate) {
         currentDate.setDate(currentDate.getDate() + 1);
     }
     
+    console.log(`generateInstances: Generated ${instances.length} instances for type: ${recurrenceRules.type}`);
     return instances;
 }
