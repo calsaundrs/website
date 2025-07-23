@@ -129,8 +129,42 @@ exports.handler = async function (event, context) {
                         console.log("Found matching recurring event:", eventRecords[0].fields['Event Name']);
                         eventRecords = [eventRecords[0]];
                     } else {
-                        console.log("Event not found after checking recurring info.");
-                        return { statusCode: 404, body: 'Event not found.' };
+                        // Try to find by Series ID if the slug might be a child event
+                        console.log("No recurring parent found, checking if this is a child event");
+                        const childEventRecords = await base('Events').select({ 
+                            maxRecords: 1, 
+                            filterByFormula: `{Slug} = "${escapedSlug}"`,
+                            fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+                        }).firstPage();
+                        
+                        if (childEventRecords && childEventRecords.length > 0) {
+                            const childEvent = childEventRecords[0];
+                            const seriesId = childEvent.fields['Series ID'];
+                            
+                            if (seriesId) {
+                                console.log("Found child event with Series ID:", seriesId);
+                                // Find the parent event (the one with Recurring Info and this Series ID)
+                                const parentRecords = await base('Events').select({ 
+                                    maxRecords: 1, 
+                                    filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
+                                    fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+                                }).firstPage();
+                                
+                                if (parentRecords && parentRecords.length > 0) {
+                                    console.log("Found parent event:", parentRecords[0].fields['Event Name']);
+                                    eventRecords = [parentRecords[0]];
+                                } else {
+                                    console.log("No parent event found for Series ID:", seriesId);
+                                    return { statusCode: 404, body: 'Event not found.' };
+                                }
+                            } else {
+                                console.log("Child event has no Series ID");
+                                return { statusCode: 404, body: 'Event not found.' };
+                            }
+                        } else {
+                            console.log("Event not found after checking recurring info.");
+                            return { statusCode: 404, body: 'Event not found.' };
+                        }
                     }
                 }
             }

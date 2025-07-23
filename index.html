@@ -50,6 +50,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
+    <!-- Font Awesome -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
+    <!-- Custom Fonts and CSS -->
+    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
     <!-- Enhanced Structured Data -->
     <script type="application/ld+json">
     {
@@ -341,5 +353,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </button>
         </div>
     </div>
+    
+    <!-- JavaScript -->
+    <script src="/js/main.js"></script>
 </body>
 </html>
