@@ -1817,6 +1817,104 @@ async function analyzeDuplicateVenues() {
     }
 }
 
+// Automatically merge duplicate venues
+async function mergeDuplicateVenues() {
+    try {
+        console.log('Admin Edit Events: Starting automatic duplicate venue merge...');
+        
+        const confirmed = confirm(
+            'This will automatically merge duplicate venues:\n\n' +
+            '• Find exact duplicates and containment duplicates\n' +
+            '• Update all events to point to the primary venue\n' +
+            '• Delete duplicate venue records\n' +
+            '• Keep the venue with the most events or longest name\n\n' +
+            'This process cannot be undone. Continue?'
+        );
+        
+        if (!confirmed) {
+            return;
+        }
+        
+        const response = await fetch('/.netlify/functions/merge-duplicate-venues', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Admin Edit Events: Merge results:', result);
+            
+            // Display results in a modal or alert
+            let message = `Duplicate Venue Merge Complete!\n\n`;
+            message += `Total Merge Operations: ${result.summary.totalMergeOperations}\n`;
+            message += `Successful Merges: ${result.summary.successfulMerges}\n`;
+            message += `Events Updated: ${result.summary.totalEventsUpdated}\n`;
+            message += `Venues Deleted: ${result.summary.totalVenuesDeleted}\n`;
+            message += `Errors: ${result.summary.errors}\n\n`;
+            
+            if (result.results && result.results.length > 0) {
+                message += `Merge Operations:\n`;
+                result.results.slice(0, 5).forEach((merge, index) => {
+                    message += `${index + 1}. ${merge.reason}\n`;
+                    message += `   Primary: ${merge.primaryVenue.name} (${merge.primaryVenue.usage} events)\n`;
+                    message += `   Merged: ${merge.secondaryVenues.length} venues, ${merge.eventsUpdated} events updated\n\n`;
+                });
+                
+                if (result.results.length > 5) {
+                    message += `... and ${result.results.length - 5} more merge operations\n\n`;
+                }
+            }
+            
+            if (result.errors && result.errors.length > 0) {
+                message += `Errors occurred:\n`;
+                result.errors.slice(0, 3).forEach((error, index) => {
+                    message += `${index + 1}. ${error.operation}: ${error.error}\n`;
+                });
+                
+                if (result.errors.length > 3) {
+                    message += `... and ${result.errors.length - 3} more errors\n\n`;
+                }
+            }
+            
+            message += `\nCheck the browser console for detailed results.`;
+            
+            alert(message);
+            
+            // Log detailed results to console
+            if (result.results && result.results.length > 0) {
+                console.group('Detailed Merge Results:');
+                result.results.forEach((merge, index) => {
+                    console.group(`Merge ${index + 1}: ${merge.type}`);
+                    console.log('Reason:', merge.reason);
+                    console.log('Primary Venue:', merge.primaryVenue);
+                    console.log('Secondary Venues:', merge.secondaryVenues);
+                    console.log('Events Updated:', merge.eventsUpdated);
+                    console.groupEnd();
+                });
+                console.groupEnd();
+            }
+            
+            if (result.errors && result.errors.length > 0) {
+                console.group('Merge Errors:');
+                result.errors.forEach((error, index) => {
+                    console.error(`Error ${index + 1}:`, error);
+                });
+                console.groupEnd();
+            }
+            
+        } else {
+            const errorData = await response.text();
+            console.error('Admin Edit Events: Merge failed:', response.status, errorData);
+            alert(`Merge failed: ${response.status} - ${errorData}`);
+        }
+    } catch (error) {
+        console.error('Admin Edit Events: Error during merge:', error);
+        alert(`Merge error: ${error.message}`);
+    }
+}
+
 // Global functions for onclick handlers
 window.openEditModal = openEditModal;
 window.handleDeleteEvent = handleDeleteEvent;
@@ -1825,6 +1923,7 @@ window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
 window.validateEventVenueData = validateEventVenueData;
 window.analyzeDuplicateVenues = analyzeDuplicateVenues;
+window.mergeDuplicateVenues = mergeDuplicateVenues;
 
     // Fix venue data issues automatically
     window.fixVenueDataIssues = async function() {
