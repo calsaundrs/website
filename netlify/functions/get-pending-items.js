@@ -29,7 +29,7 @@ exports.handler = async (event) => {
         // First, let's get ALL events to see what statuses exist
         console.log('get-pending-items: Getting all events to check status values...');
         const allEventsCheck = await base('Events').select({
-            fields: ['Event Name', 'Status', 'Created Time']
+            fields: ['Event Name', 'Status']
         }).all();
         
         console.log(`get-pending-items: Total events in database: ${allEventsCheck.length}`);
@@ -42,6 +42,11 @@ exports.handler = async (event) => {
         });
         
         console.log('get-pending-items: Status counts:', statusCounts);
+        
+        // Show sample record structure
+        if (allEventsCheck.length > 0) {
+            console.log('get-pending-items: Sample record fields:', Object.keys(allEventsCheck[0].fields));
+        }
         
         // Try different possible status values
         const possibleStatuses = ['Pending Review', 'Pending', 'Review', 'Submitted'];

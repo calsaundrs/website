@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = isEvent ? fields['Event Name'] : fields.Name;
         const description = fields.Description || 'No description provided';
         const contactEmail = fields['Contact Email'] || fields['Submitter Email'] || 'No email provided';
-        const date = isEvent ? fields.Date : fields['Created Time'];
+        const date = isEvent ? fields.Date : (fields['Created Time'] || fields.Date);
         const formattedDate = date ? new Date(date).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'long',
