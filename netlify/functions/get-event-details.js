@@ -102,71 +102,56 @@ exports.handler = async function (event, context) {
             console.log("Date match found, searching for specific date:", dateFromSlug);
             eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${slug}", DATETIME_FORMAT(Date, 'YYYY-MM-DD') = '${dateFromSlug}')` }).firstPage();
         } else {
-            console.log("No date match, searching for standalone event with slug:", slug);
-            eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `{Slug} = "${slug}"` }).firstPage();
-            if (!eventRecords || eventRecords.length === 0) {
-                console.log("Standalone event not found, checking for recurring event.");
-                const escapedSlug = slug.replace(/"/g, '"');
-                console.log("Searching for recurring event with escaped slug:", escapedSlug);
-                eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${escapedSlug}", {Recurring Info})` }).firstPage();
-                if (!eventRecords || eventRecords.length === 0) {
-                    console.log("Recurring event not found with exact slug match, trying broader search");
+            console.log("No date match, searching for event with slug:", slug);
+            const escapedSlug = slug.replace(/"/g, '"');
+            
+            // First, try to find any event with this slug (parent or child)
+            eventRecords = await base('Events').select({ 
+                maxRecords: 10, 
+                filterByFormula: `{Slug} = "${escapedSlug}"`,
+                fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+            }).firstPage();
+            
+            if (eventRecords && eventRecords.length > 0) {
+                // If we found events, check if any is a parent (has Recurring Info)
+                const parentEvent = eventRecords.find(record => record.fields['Recurring Info']);
+                
+                if (parentEvent) {
+                    // Use the parent event
+                    console.log("Found parent recurring event:", parentEvent.fields['Event Name']);
+                    eventRecords = [parentEvent];
+                } else {
+                    // Check if any of the found events is a child with a Series ID
+                    const childEvent = eventRecords.find(record => record.fields['Series ID']);
                     
-                    // Extract the base name from the slug (remove date part if present)
-                    const baseName = slug.replace(/-\d{4}-\d{2}-\d{2}$/, '');
-                    console.log("Extracted base name from slug:", baseName);
-                    
-                    // Try to find a recurring event with a similar name
-                    eventRecords = await base('Events').select({ 
-                        maxRecords: 10, 
-                        filterByFormula: `AND({Recurring Info}, FIND("${baseName}", {Event Name}))`,
-                        fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
-                    }).firstPage();
-                    
-                    if (eventRecords && eventRecords.length > 0) {
-                        // Sort by date to get the earliest instance
-                        eventRecords.sort((a, b) => new Date(a.fields['Date']) - new Date(b.fields['Date']));
-                        console.log("Found matching recurring event:", eventRecords[0].fields['Event Name']);
-                        eventRecords = [eventRecords[0]];
-                    } else {
-                        // Try to find by Series ID if the slug might be a child event
-                        console.log("No recurring parent found, checking if this is a child event");
-                        const childEventRecords = await base('Events').select({ 
+                    if (childEvent) {
+                        const seriesId = childEvent.fields['Series ID'];
+                        console.log("Found child event with Series ID:", seriesId);
+                        
+                        // Find the parent event for this series
+                        const parentRecords = await base('Events').select({ 
                             maxRecords: 1, 
-                            filterByFormula: `{Slug} = "${escapedSlug}"`,
+                            filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
                             fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
                         }).firstPage();
                         
-                        if (childEventRecords && childEventRecords.length > 0) {
-                            const childEvent = childEventRecords[0];
-                            const seriesId = childEvent.fields['Series ID'];
-                            
-                            if (seriesId) {
-                                console.log("Found child event with Series ID:", seriesId);
-                                // Find the parent event (the one with Recurring Info and this Series ID)
-                                const parentRecords = await base('Events').select({ 
-                                    maxRecords: 1, 
-                                    filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
-                                    fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
-                                }).firstPage();
-                                
-                                if (parentRecords && parentRecords.length > 0) {
-                                    console.log("Found parent event:", parentRecords[0].fields['Event Name']);
-                                    eventRecords = [parentRecords[0]];
-                                } else {
-                                    console.log("No parent event found for Series ID:", seriesId);
-                                    return { statusCode: 404, body: 'Event not found.' };
-                                }
-                            } else {
-                                console.log("Child event has no Series ID");
-                                return { statusCode: 404, body: 'Event not found.' };
-                            }
+                        if (parentRecords && parentRecords.length > 0) {
+                            console.log("Found parent event:", parentRecords[0].fields['Event Name']);
+                            eventRecords = [parentRecords[0]];
                         } else {
-                            console.log("Event not found after checking recurring info.");
-                            return { statusCode: 404, body: 'Event not found.' };
+                            console.log("No parent event found for Series ID:", seriesId);
+                            // Use the first child event as fallback
+                            eventRecords = [childEvent];
                         }
+                    } else {
+                        // Use the first event found (standalone event)
+                        console.log("Using standalone event:", eventRecords[0].fields['Event Name']);
+                        eventRecords = [eventRecords[0]];
                     }
                 }
+            } else {
+                console.log("No event found with slug:", slug);
+                return { statusCode: 404, body: 'Event not found.' };
             }
         }
         console.log("Event records fetched. Count:", eventRecords.length);
@@ -200,12 +185,20 @@ exports.handler = async function (event, context) {
         
         
 
-        if (parentEventName) {
+        if (recurringInfo) {
+            // For recurring events, find all instances with the same Series ID
+            const seriesId = fields['Series ID'];
+            if (seriesId) {
+                filterFormula = `AND({Series ID} = "${seriesId}", IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`;
+            } else {
+                // Fallback to old method if no Series ID
+                const eventNameForQuery = eventName.replace(/"/g, '\"');
+                filterFormula = `AND({Event Name} = "${eventNameForQuery}", {Recurring Info}, IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`;
+            }
+        } else if (parentEventName) {
+            // Legacy support for Parent Event Name
             const parentNameForQuery = parentEventName.replace(/"/g, '\"');
-            filterFormula = `AND({Parent Event Name} = "${parentNameForQuery}", IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`
-        } else if (recurringInfo) {
-            const eventNameForQuery = eventName.replace(/"/g, '\"');
-            filterFormula = `AND({Event Name} = "${eventNameForQuery}", {Recurring Info}, IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`
+            filterFormula = `AND({Parent Event Name} = "${parentNameForQuery}", IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`;
         }
 
         if (filterFormula) {
