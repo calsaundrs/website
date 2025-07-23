@@ -243,13 +243,16 @@ function renderEvents(events) {
         const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
         const imageUrl = eventImage ? (Array.isArray(eventImage) ? eventImage[0].url : eventImage) : null;
         const imageHtml = imageUrl ? 
-            `<img src="${imageUrl}" alt="Event image" class="w-full h-32 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
-            `<div class="w-full h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
+            `<img src="${imageUrl}" alt="Event image" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
+            `<div class="w-full h-48 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
                 <i class="fas fa-image text-4xl text-gray-600"></i>
             </div>`;
 
         return `
             <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
+                <!-- Event Image - Moved to top for better visibility -->
+                ${imageHtml}
+                
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-3">
@@ -298,9 +301,6 @@ function renderEvents(events) {
                         </button>
                     </div>
                 </div>
-                
-                <!-- Event Image -->
-                ${imageHtml}
             </div>
         `;
     }).join('');
@@ -366,13 +366,16 @@ function renderRecurringEvents(events) {
         const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
         const imageUrl = eventImage ? (Array.isArray(eventImage) ? eventImage[0].url : eventImage) : null;
         const imageHtml = imageUrl ? 
-            `<img src="${imageUrl}" alt="Event image" class="w-full h-32 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
-            `<div class="w-full h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
+            `<img src="${imageUrl}" alt="Event image" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
+            `<div class="w-full h-48 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
                 <i class="fas fa-image text-4xl text-gray-600"></i>
             </div>`;
 
         return `
             <div class="event-card rounded-xl p-6 transition-all duration-300 ${!event.isActive ? 'opacity-75' : ''}">
+                <!-- Event Image - Moved to top for better visibility -->
+                ${imageHtml}
+                
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-3">
@@ -419,9 +422,6 @@ function renderRecurringEvents(events) {
                         </button>
                     </div>
                 </div>
-                
-                <!-- Event Image -->
-                ${imageHtml}
             </div>
         `;
     }).join('');

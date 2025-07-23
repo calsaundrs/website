@@ -861,6 +861,612 @@
                 </div>
             </div>
         </section>
+
+        <!-- Event & Venue Listing Components Section -->
+        <section class="ds-section">
+            <h2 class="font-anton text-4xl text-white mb-8">Event & Venue Listing Components</h2>
+            <div class="card-bg p-8 rounded-2xl">
+                <div class="space-y-12">
+                    <!-- Event Cards -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Event Cards</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Standard Event Card -->
+                            <div class="venue-card rounded-xl overflow-hidden">
+                                <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-gray-600"></i>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="status-badge approved">Approved</span>
+                                        <span class="text-sm text-gray-400">Jun 15, 2024</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Glittershit: The Summer Ball</h3>
+                                    <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                                    <p class="text-gray-300 text-sm mb-4 line-clamp-2">An epic summer celebration with drag performances, live music, and amazing vibes.</p>
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Club Night</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Details
+                                        </button>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-share"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Featured Event Card -->
+                            <div class="venue-card rounded-xl overflow-hidden relative">
+                                <div class="absolute top-4 left-4 z-10">
+                                    <span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                        <i class="fas fa-star mr-1"></i>Featured
+                                    </span>
+                                </div>
+                                <div class="aspect-video bg-gradient-to-br from-pink-600/20 to-purple-600/20 flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-gray-600"></i>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="status-badge approved">Approved</span>
+                                        <span class="text-sm text-gray-400">Jun 20, 2024</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Drag Race UK Viewing Party</h3>
+                                    <p class="text-gray-400 text-sm mb-3">The Village Inn</p>
+                                    <p class="text-gray-300 text-sm mb-4 line-clamp-2">Watch the latest episode with fellow drag race fans!</p>
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        <span class="inline-block bg-pink-100/20 text-pink-300 text-xs px-2 py-1 rounded-full">Viewing Party</span>
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Details
+                                        </button>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recurring Event Card -->
+                            <div class="venue-card rounded-xl overflow-hidden">
+                                <div class="aspect-video bg-gradient-to-br from-green-600/20 to-blue-600/20 flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-gray-600"></i>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="status-badge approved">Approved</span>
+                                        <span class="text-sm text-gray-400">Every Friday</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <i class="fas fa-redo text-green-400"></i>
+                                        <span class="text-sm text-green-400 font-semibold">Recurring Event</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-white mb-2">Karaoke Night</h3>
+                                    <p class="text-gray-400 text-sm mb-3">The Rainbow Bar</p>
+                                    <p class="text-gray-300 text-sm mb-4 line-clamp-2">Weekly karaoke night with prizes and great atmosphere.</p>
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">Karaoke</span>
+                                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Weekly</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Details
+                                        </button>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Venue Cards -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Venue Cards</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Standard Venue Card -->
+                            <div class="venue-card rounded-xl overflow-hidden">
+                                <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                                    <i class="fas fa-building text-4xl text-gray-600"></i>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-white mb-2">The Nightingale Club</h3>
+                                    <p class="text-gray-400 text-sm mb-3">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>Kent Street, Birmingham
+                                    </p>
+                                    <p class="text-gray-300 text-sm mb-4 line-clamp-2">Birmingham's premier LGBTQ+ venue with multiple floors and regular events.</p>
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Club</span>
+                                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Multi-floor</span>
+                                        <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Venue
+                                        </button>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-calendar"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Featured Venue Card -->
+                            <div class="venue-card rounded-xl overflow-hidden relative">
+                                <div class="absolute top-4 left-4 z-10">
+                                    <span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                        <i class="fas fa-star mr-1"></i>Popular
+                                    </span>
+                                </div>
+                                <div class="aspect-video bg-gradient-to-br from-pink-600/20 to-purple-600/20 flex items-center justify-center">
+                                    <i class="fas fa-building text-4xl text-gray-600"></i>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-white mb-2">The Village Inn</h3>
+                                    <p class="text-gray-400 text-sm mb-3">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>Hurst Street, Birmingham
+                                    </p>
+                                    <p class="text-gray-300 text-sm mb-4 line-clamp-2">Cozy pub with regular drag shows and community events.</p>
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        <span class="inline-block bg-pink-100/20 text-pink-300 text-xs px-2 py-1 rounded-full">Pub</span>
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Drag Shows</span>
+                                        <span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Venue
+                                        </button>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Grid Layouts -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Event Grid Layouts</h3>
+                        <div class="space-y-6">
+                            <!-- Compact Grid -->
+                            <div>
+                                <h4 class="text-gray-300 font-semibold mb-3">Compact Grid (3 columns)</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div class="venue-card p-4 rounded-lg">
+                                        <div class="h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-3 flex items-center justify-center">
+                                            <i class="fas fa-image text-2xl text-gray-600"></i>
+                                        </div>
+                                        <h4 class="font-bold text-white mb-1">Event Title</h4>
+                                        <p class="text-gray-400 text-sm mb-2">Venue Name</p>
+                                        <div class="flex justify-between items-center">
+                                            <span class="status-badge approved text-xs">Approved</span>
+                                            <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="venue-card p-4 rounded-lg">
+                                        <div class="h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-3 flex items-center justify-center">
+                                            <i class="fas fa-image text-2xl text-gray-600"></i>
+                                        </div>
+                                        <h4 class="font-bold text-white mb-1">Event Title</h4>
+                                        <p class="text-gray-400 text-sm mb-2">Venue Name</p>
+                                        <div class="flex justify-between items-center">
+                                            <span class="status-badge pending text-xs">Pending</span>
+                                            <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="venue-card p-4 rounded-lg">
+                                        <div class="h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-3 flex items-center justify-center">
+                                            <i class="fas fa-image text-2xl text-gray-600"></i>
+                                        </div>
+                                        <h4 class="font-bold text-white mb-1">Event Title</h4>
+                                        <p class="text-gray-400 text-sm mb-2">Venue Name</p>
+                                        <div class="flex justify-between items-center">
+                                            <span class="status-badge approved text-xs">Approved</span>
+                                            <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- List Layout -->
+                            <div>
+                                <h4 class="text-gray-300 font-semibold mb-3">List Layout</h4>
+                                <div class="space-y-4">
+                                    <div class="venue-card p-4 rounded-lg flex items-center gap-4">
+                                        <div class="w-24 h-24 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-image text-xl text-gray-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-white mb-1">Event Title</h4>
+                                            <p class="text-gray-400 text-sm mb-2">Venue Name • Jun 15, 2024</p>
+                                            <p class="text-gray-300 text-sm line-clamp-1">Event description goes here...</p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="status-badge approved text-xs">Approved</span>
+                                            <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="venue-card p-4 rounded-lg flex items-center gap-4">
+                                        <div class="w-24 h-24 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-image text-xl text-gray-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-white mb-1">Event Title</h4>
+                                            <p class="text-gray-400 text-sm mb-2">Venue Name • Jun 20, 2024</p>
+                                            <p class="text-gray-300 text-sm line-clamp-1">Event description goes here...</p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="status-badge pending text-xs">Pending</span>
+                                            <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event & Venue Details Components Section -->
+        <section class="ds-section">
+            <h2 class="font-anton text-4xl text-white mb-8">Event & Venue Details Components</h2>
+            <div class="card-bg p-8 rounded-2xl">
+                <div class="space-y-12">
+                    <!-- Event Details Page -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Event Details Page</h3>
+                        <div class="venue-card rounded-xl overflow-hidden">
+                            <!-- Hero Image -->
+                            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                                <i class="fas fa-image text-6xl text-gray-600"></i>
+                                <div class="absolute top-4 right-4">
+                                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                                        <i class="fas fa-share mr-1"></i>Share
+                                    </button>
+                                </div>
+                                <div class="absolute bottom-4 left-4">
+                                    <span class="status-badge approved">Approved</span>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8">
+                                <!-- Event Header -->
+                                <div class="mb-8">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="text-center w-20 flex-shrink-0">
+                                            <div class="text-4xl font-bold text-white">15</div>
+                                            <div class="text-sm text-gray-400">JUN</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h1 class="text-4xl font-bold text-white mb-2">Glittershit: The Summer Ball</h1>
+                                            <p class="text-xl text-gray-300 mb-2">
+                                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                                The Nightingale Club
+                                            </p>
+                                            <p class="text-gray-400">
+                                                <i class="fas fa-clock mr-2"></i>
+                                                Saturday, June 15, 2024 • 8:00 PM - 2:00 AM
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex flex-wrap gap-2 mb-6">
+                                        <span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">Drag</span>
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Club Night</span>
+                                        <span class="inline-block bg-green-100/20 text-green-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span>
+                                        <span class="inline-block bg-pink-100/20 text-pink-300 text-sm px-3 py-1 rounded-full">Live Music</span>
+                                    </div>
+                                </div>
+
+                                <!-- Event Content -->
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    <!-- Main Content -->
+                                    <div class="lg:col-span-2">
+                                        <div class="venue-card p-6 mb-6">
+                                            <h2 class="text-2xl font-bold text-white mb-4">
+                                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                                            </h2>
+                                            <p class="text-gray-300 leading-relaxed mb-4">
+                                                An epic summer celebration that brings together the best of Birmingham's LGBTQ+ scene. 
+                                                Featuring incredible drag performances, live music, and an atmosphere you won't forget.
+                                            </p>
+                                            <p class="text-gray-300 leading-relaxed">
+                                                Doors open at 8 PM with performances starting at 9 PM. Early bird tickets available 
+                                                until June 10th. Don't miss out on the biggest LGBTQ+ event of the summer!
+                                            </p>
+                                        </div>
+
+                                        <!-- Event Schedule -->
+                                        <div class="venue-card p-6 mb-6">
+                                            <h2 class="text-2xl font-bold text-white mb-4">
+                                                <i class="fas fa-calendar-alt mr-3 text-accent-color"></i>Event Schedule
+                                            </h2>
+                                            <div class="space-y-4">
+                                                <div class="flex items-center gap-4 p-3 bg-gray-800/50 rounded-lg">
+                                                    <div class="text-center w-16 flex-shrink-0">
+                                                        <div class="text-lg font-bold text-white">8:00</div>
+                                                        <div class="text-xs text-gray-400">PM</div>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Doors Open</h4>
+                                                        <p class="text-gray-400 text-sm">Welcome drinks and mingling</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-4 p-3 bg-gray-800/50 rounded-lg">
+                                                    <div class="text-center w-16 flex-shrink-0">
+                                                        <div class="text-lg font-bold text-white">9:00</div>
+                                                        <div class="text-xs text-gray-400">PM</div>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Drag Show</h4>
+                                                        <p class="text-gray-400 text-sm">Featuring local drag artists</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-4 p-3 bg-gray-800/50 rounded-lg">
+                                                    <div class="text-center w-16 flex-shrink-0">
+                                                        <div class="text-lg font-bold text-white">11:00</div>
+                                                        <div class="text-xs text-gray-400">PM</div>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Live Music</h4>
+                                                        <p class="text-gray-400 text-sm">DJ set and dancing</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sidebar -->
+                                    <div class="space-y-6">
+                                        <!-- Action Buttons -->
+                                        <div class="venue-card p-6">
+                                            <div class="space-y-3">
+                                                <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
+                                                </button>
+                                                <button class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-calendar-plus mr-2"></i>Add to Calendar
+                                                </button>
+                                                <button class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-heart mr-2"></i>Save Event
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Venue Info -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-building mr-2 text-accent-color"></i>Venue
+                                            </h3>
+                                            <div class="space-y-3">
+                                                <div>
+                                                    <h4 class="font-semibold text-white">The Nightingale Club</h4>
+                                                    <p class="text-gray-400 text-sm">Kent Street, Birmingham</p>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                                    <i class="fas fa-phone"></i>
+                                                    <span>0121 123 4567</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                                    <i class="fas fa-globe"></i>
+                                                    <a href="#" class="text-accent-color hover:underline">Visit Website</a>
+                                                </div>
+                                                <button class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm">
+                                                    <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Similar Events -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Similar Events
+                                            </h3>
+                                            <div class="space-y-3">
+                                                <div class="flex items-center gap-3 p-2 hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors">
+                                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-image text-gray-600"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white text-sm">Drag Race Viewing</h4>
+                                                        <p class="text-gray-400 text-xs">Jun 20, 2024</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-3 p-2 hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors">
+                                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-image text-gray-600"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white text-sm">Karaoke Night</h4>
+                                                        <p class="text-gray-400 text-xs">Every Friday</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Venue Details Page -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Venue Details Page</h3>
+                        <div class="venue-card rounded-xl overflow-hidden">
+                            <!-- Hero Image -->
+                            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                                <i class="fas fa-building text-6xl text-gray-600"></i>
+                                <div class="absolute top-4 right-4">
+                                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                                        <i class="fas fa-share mr-1"></i>Share
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8">
+                                <!-- Venue Header -->
+                                <div class="mb-8">
+                                    <h1 class="text-4xl font-bold text-white mb-4">The Nightingale Club</h1>
+                                    <p class="text-xl text-gray-300 mb-4">
+                                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                        Kent Street, Birmingham, B5 6RD
+                                    </p>
+                                    <div class="flex flex-wrap gap-2 mb-6">
+                                        <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Club</span>
+                                        <span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">Multi-floor</span>
+                                        <span class="inline-block bg-green-100/20 text-green-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span>
+                                        <span class="inline-block bg-pink-100/20 text-pink-300 text-sm px-3 py-1 rounded-full">Drag Shows</span>
+                                    </div>
+                                </div>
+
+                                <!-- Venue Content -->
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    <!-- Main Content -->
+                                    <div class="lg:col-span-2">
+                                        <div class="venue-card p-6 mb-6">
+                                            <h2 class="text-2xl font-bold text-white mb-4">
+                                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Venue
+                                            </h2>
+                                            <p class="text-gray-300 leading-relaxed mb-4">
+                                                Birmingham's premier LGBTQ+ venue, The Nightingale Club has been at the heart of the city's 
+                                                queer scene for over 30 years. With multiple floors, regular drag shows, and a welcoming 
+                                                atmosphere, it's the perfect place to celebrate and connect with the community.
+                                            </p>
+                                            <p class="text-gray-300 leading-relaxed">
+                                                The venue features a main dance floor, intimate bar areas, and regular themed nights. 
+                                                Whether you're looking for a night of dancing, drag entertainment, or just a friendly 
+                                                place to socialize, The Nightingale Club has something for everyone.
+                                            </p>
+                                        </div>
+
+                                        <!-- Upcoming Events -->
+                                        <div class="venue-card p-6">
+                                            <h2 class="text-2xl font-bold text-white mb-4">
+                                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Events
+                                            </h2>
+                                            <div class="space-y-4">
+                                                <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-image text-gray-600"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Glittershit: The Summer Ball</h4>
+                                                        <p class="text-gray-400 text-sm">Jun 15, 2024 • 8:00 PM</p>
+                                                        <p class="text-gray-300 text-sm">An epic summer celebration with drag performances</p>
+                                                    </div>
+                                                    <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                        <i class="fas fa-eye mr-1"></i>View
+                                                    </button>
+                                                </div>
+                                                <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-image text-gray-600"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Karaoke Night</h4>
+                                                        <p class="text-gray-400 text-sm">Every Friday • 9:00 PM</p>
+                                                        <p class="text-gray-300 text-sm">Weekly karaoke with prizes and great atmosphere</p>
+                                                    </div>
+                                                    <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                        <i class="fas fa-eye mr-1"></i>View
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sidebar -->
+                                    <div class="space-y-6">
+                                        <!-- Contact Info -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-address-card mr-2 text-accent-color"></i>Contact Information
+                                            </h3>
+                                            <div class="space-y-3">
+                                                <div class="flex items-center gap-3 text-gray-400">
+                                                    <i class="fas fa-phone w-5"></i>
+                                                    <span>0121 123 4567</span>
+                                                </div>
+                                                <div class="flex items-center gap-3 text-gray-400">
+                                                    <i class="fas fa-envelope w-5"></i>
+                                                    <span>info@nightingaleclub.co.uk</span>
+                                                </div>
+                                                <div class="flex items-center gap-3 text-gray-400">
+                                                    <i class="fas fa-globe w-5"></i>
+                                                    <a href="#" class="text-accent-color hover:underline">nightingaleclub.co.uk</a>
+                                                </div>
+                                                <div class="flex items-center gap-3 text-gray-400">
+                                                    <i class="fas fa-clock w-5"></i>
+                                                    <span>Open Daily 8 PM - 2 AM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="venue-card p-6">
+                                            <div class="space-y-3">
+                                                <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-map-marker-alt mr-2"></i>Get Directions
+                                                </button>
+                                                <button class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-phone mr-2"></i>Call Venue
+                                                </button>
+                                                <button class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                                    <i class="fas fa-heart mr-2"></i>Save Venue
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Venue Stats -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-chart-bar mr-2 text-accent-color"></i>Venue Stats
+                                            </h3>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-white">150+</div>
+                                                    <div class="text-gray-400 text-sm">Events</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-white">4.8</div>
+                                                    <div class="text-gray-400 text-sm">Rating</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-white">30+</div>
+                                                    <div class="text-gray-400 text-sm">Years</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-2xl font-bold text-white">500+</div>
+                                                    <div class="text-gray-400 text-sm">Capacity</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>
