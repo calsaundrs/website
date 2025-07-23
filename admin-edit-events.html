@@ -13,6 +13,25 @@
     <style>
         /* Existing styles from original code - PRESERVED */
         .tag-missing{display:inline-block;background-color:rgba(239,68,68,.1);color:#F87171;font-size:.75rem;font-weight:600;padding:.25rem .75rem;border-radius:9999px;margin-right:.5rem;margin-bottom:.5rem}.filter-button{padding:.5rem 1rem;border-radius:.5rem;font-weight:600;transition:background-color .2s,color .2s;background-color:rgba(255,255,255,.05);color:#d1d5db}.filter-button.active{background-color:#E83A99;color:#fff}.filter-button:hover:not(.active){background-color:rgba(255,255,255,.1)}
+        
+        /* Filter button styles */
+        .filter-btn {
+            background: rgba(75, 85, 99, 0.5);
+            color: #9CA3AF;
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(75, 85, 99, 0.7);
+            color: #D1D5DB;
+        }
+        
+        .filter-btn.active {
+            background: rgba(181, 100, 247, 0.2);
+            color: #E9D5FF;
+            border-color: rgba(181, 100, 247, 0.4);
+        }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
 </head>
@@ -105,6 +124,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                      <span id="migrate-loader" class="loader ml-3 w-5 h-5 border-2 hidden"></span>
                 </button>
                 <div id="status-message" class="text-green-400 mt-6 text-center hidden font-semibold"></div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button id="filter-all" class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                    All Events
+                </button>
+                <button id="filter-pending" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                    Pending
+                </button>
+                <button id="filter-approved" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                    Approved
+                </button>
+                <button id="filter-recurring" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                    Recurring Events
+                </button>
             </div>
 
             <div class="card-bg p-6 mb-8">
@@ -229,6 +264,124 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         let currentOffset = null;
         let isFetching = false;
         var currentFilter = 'all';
+
+        // Add filter button event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('filter-all').addEventListener('click', () => setFilter('all'));
+            document.getElementById('filter-pending').addEventListener('click', () => setFilter('pending'));
+            document.getElementById('filter-approved').addEventListener('click', () => setFilter('approved'));
+            document.getElementById('filter-recurring').addEventListener('click', () => setFilter('recurring'));
+        });
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`filter-${filter}`).classList.add('active');
+            
+            // Clear current events and fetch based on filter
+            allAdminEvents = [];
+            eventList.innerHTML = '';
+            
+            if (filter === 'recurring') {
+                fetchAndRenderRecurringEvents();
+            } else {
+                fetchAndRenderEvents(null);
+            }
+        }
+
+        async function fetchAndRenderRecurringEvents() {
+            if (isFetching) return;
+            isFetching = true;
+            
+            loadingState.style.display = 'block';
+            eventList.innerHTML = '';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-recurring-events');
+                if (!response.ok) throw new Error('Failed to fetch recurring events.');
+
+                const data = await response.json();
+                console.log('Recurring events data:', data);
+                
+                loadingState.style.display = 'none';
+                const recurringEvents = data.recurringEvents || [];
+
+                if (recurringEvents.length > 0) {
+                    recurringEvents.forEach(event => {
+                        eventList.appendChild(renderRecurringEvent(event));
+                    });
+                } else {
+                    eventList.innerHTML = `<p class="text-center text-gray-400">No recurring events found.</p>`;
+                }
+                
+                // Hide load more for recurring events
+                loadMoreContainer.style.display = 'none';
+                
+            } catch (error) {
+                loadingState.innerHTML = `<p class="text-red-400 text-center">${error.message}</p>`;
+            } finally {
+                isFetching = false;
+            }
+        }
+
+        function renderRecurringEvent(event) {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'card-bg p-6 mb-4';
+            
+            const isActive = event.isActive;
+            const statusColor = isActive ? 'text-green-400' : 'text-gray-400';
+            const statusText = isActive ? 'Active' : 'Ended';
+            
+            const nextInstanceText = event.nextInstance 
+                ? `Next: ${new Date(event.nextInstance.date).toLocaleDateString()}`
+                : 'No upcoming instances';
+            
+            const instancesText = event.totalInstances 
+                ? `${event.futureInstances} future, ${event.pastInstances} past`
+                : 'Single recurring event';
+            
+            eventDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-2">${event.name}</h3>
+                        <div class="flex items-center gap-4 text-sm">
+                            <span class="${statusColor}">${statusText}</span>
+                            <span class="text-gray-400">${nextInstanceText}</span>
+                            <span class="text-gray-400">${instancesText}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editRecurringEvent('${event.seriesId || event.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
+                        <button onclick="endRecurringSeries('${event.seriesId || event.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-sm">End Series</button>
+                    </div>
+                </div>
+                <div class="text-gray-300 mb-3">${event.description || 'No description'}</div>
+                <div class="text-sm text-gray-400">
+                    <div><strong>Venue:</strong> ${event.venue}</div>
+                    <div><strong>Pattern:</strong> ${event.recurringInfo}</div>
+                    <div><strong>Category:</strong> ${Array.isArray(event.category) ? event.category.join(', ') : event.category || 'None'}</div>
+                </div>
+            `;
+            
+            return eventDiv;
+        }
+
+        // Global functions for recurring event actions
+        window.editRecurringEvent = function(eventId) {
+            console.log('Edit recurring event:', eventId);
+            // TODO: Implement edit functionality
+            alert('Edit functionality for recurring events coming soon!');
+        };
+
+        window.endRecurringSeries = function(seriesId) {
+            console.log('End recurring series:', seriesId);
+            // TODO: Implement end series functionality
+            alert('End series functionality coming soon!');
+        };
 
         function renderEvent(item) {
             const fields = item.fields;
