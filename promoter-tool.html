@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud</title>
-                <meta name="description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
+    <title>Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud</title>
+    <meta name="description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,8 +14,80 @@
     <script src="/js/main.js" defer></script>
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
+    <style>
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .form-input {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        .form-input:focus {
+            border-color: #E83A99;
+            box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .accent-color {
+            color: #E83A99;
+        }
+        .accent-color-secondary {
+            color: #8B5CF6;
+        }
+        .loader {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #E83A99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .upload-area {
+            background: rgba(31, 41, 55, 0.3);
+            border: 2px dashed rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #E83A99;
+            background: rgba(232, 58, 153, 0.1);
+        }
+        .feature-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+    </style>
 </head>
-<body class="antialiased">
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -49,10 +121,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
             <!-- GET LISTED button styling reverted to original Tailwind classes -->
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
@@ -73,33 +145,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <main class="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative z-10">
         <section class="text-center mb-8">
-                                    <div class="text-center mb-16">
-                                        <h1 class="font-anton text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-none tracking-wider text-white">ADD <span class="accent-color">EVENT</span></h1>
-            <p class="mt-4 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
-                        </div>
+            <div class="text-center mb-16">
+                <h1 class="font-anton text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-none tracking-wider heading-gradient">ADD <span class="accent-color">EVENT</span></h1>
+                <p class="mt-4 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
+            </div>
 
-                                    <!-- Welcome Section -->
-                        <div class="card-bg p-4 sm:p-6 mb-6 sm:mb-8 max-w-4xl mx-auto">
-                            <h2 class="font-anton text-xl sm:text-2xl text-white mb-3 sm:mb-4">Welcome!</h2>
-                            <p class="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">This form will help you submit your event quickly and easily. Upload a poster and our system will attempt to fill in the details automatically. Don't worry if it doesn't work perfectly - you can always complete the form manually.</p>
+            <!-- Welcome Section -->
+            <div class="card-bg p-4 sm:p-6 mb-6 sm:mb-8 max-w-4xl mx-auto rounded-2xl">
+                <h2 class="font-anton text-xl sm:text-2xl text-white mb-3 sm:mb-4">
+                    <i class="fas fa-star mr-2 accent-color"></i>Welcome!
+                </h2>
+                <p class="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">This form will help you submit your event quickly and easily. Upload a poster and our system will attempt to fill in the details automatically. Don't worry if it doesn't work perfectly - you can always complete the form manually.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 text-sm">
-                    <div class="text-center">
+                    <div class="feature-card p-3 rounded-lg text-center">
                         <i class="fas fa-clock text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">Events reviewed within 24-48 hours</p>
                     </div>
-                    <div class="text-center">
+                    <div class="feature-card p-3 rounded-lg text-center">
                         <i class="fas fa-check-circle text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">All submissions reviewed by our team</p>
                     </div>
-                    <div class="text-center sm:col-span-2 md:col-span-1">
+                    <div class="feature-card p-3 rounded-lg text-center sm:col-span-2 md:col-span-1">
                         <i class="fas fa-users text-accent-color text-xl sm:text-2xl mb-2"></i>
                         <p class="text-gray-300">Reach Birmingham's LGBTQ+ community</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card-bg p-4 sm:p-6 md:p-8 lg:p-12">
-                <h2 class="font-anton text-2xl sm:text-3xl text-white mb-4 sm:mb-6">Event Submission Form</h2>
+            <div class="card-bg p-4 sm:p-6 md:p-8 lg:p-12 rounded-2xl">
+                <h2 class="font-anton text-2xl sm:text-3xl text-white mb-4 sm:mb-6">
+                    <i class="fas fa-calendar-plus mr-3 accent-color"></i>Event Submission Form
+                </h2>
                 
                 <form id="event-submission-form" class="space-y-6 sm:space-y-8">
                     <!-- Poster Upload Section -->
@@ -127,7 +203,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         
                         <!-- Upload Area -->
-                        <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-6 sm:p-8 text-center hover:border-accent-color transition-colors cursor-pointer">
+                        <div id="upload-area" class="upload-area rounded-lg p-6 sm:p-8 text-center cursor-pointer">
                             <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-gray-400 mb-3 sm:mb-4"></i>
                             <p class="text-base sm:text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
                             <p class="text-xs sm:text-sm text-gray-500">We'll attempt to extract event details automatically</p>
@@ -196,48 +272,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <!-- Event Name -->
                             <div class="md:col-span-2">
                                 <label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Name <span class="text-red-400">*</span>
+                                    <i class="fas fa-tag mr-1"></i>Event Name <span class="text-red-400">*</span>
                                 </label>
                                 <input type="text" id="event-name" name="event-name" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
                                        placeholder="Enter your event name">
                             </div>
 
                             <!-- Event Description -->
                             <div class="md:col-span-2">
                                 <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Description <span class="text-red-400">*</span>
+                                    <i class="fas fa-align-left mr-1"></i>Event Description <span class="text-red-400">*</span>
                                 </label>
                                 <textarea id="description" name="description" rows="4" required 
-                                          class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base resize-vertical"
+                                          class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base resize-vertical"
                                           placeholder="Describe your event in detail..."></textarea>
                             </div>
 
                             <!-- Event Date -->
                             <div>
                                 <label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Date <span class="text-red-400">*</span>
+                                    <i class="fas fa-calendar mr-1"></i>Event Date <span class="text-red-400">*</span>
                                 </label>
                                 <input type="date" id="date" name="date" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
                             </div>
 
                             <!-- Event Time -->
                             <div>
                                 <label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Time <span class="text-red-400">*</span>
+                                    <i class="fas fa-clock mr-1"></i>Event Time <span class="text-red-400">*</span>
                                 </label>
                                 <input type="time" id="start-time" name="start-time" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
                             </div>
 
                             <!-- Event Category -->
                             <div>
                                 <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Category <span class="text-red-400">*</span>
+                                    <i class="fas fa-tags mr-1"></i>Event Category <span class="text-red-400">*</span>
                                 </label>
                                 <select id="category-select" name="categoryIds" required 
-                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
+                                        class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
                                     <option value="">Select a category</option>
                                     <option value="Club Night">Club Night</option>
                                     <option value="Drag Show">Drag Show</option>
@@ -255,17 +331,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <!-- Event Price -->
                             <div>
                                 <label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Ticket Link (Optional)
+                                    <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                                 </label>
                                 <input type="url" id="link" name="link" 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
                                        placeholder="https://">
                             </div>
 
                             <!-- Recurrence Info -->
                             <div class="md:col-span-2">
                                 <div class="flex items-center mb-2">
-                                    <label class="text-sm font-semibold accent-color-secondary">Recurrence</label>
+                                    <label class="text-sm font-semibold accent-color-secondary">
+                                        <i class="fas fa-redo mr-1"></i>Recurrence
+                                    </label>
                                     <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors ml-2" id="recurrence-tips-toggle">
                                         <i class="fas fa-info-circle text-sm"></i>
                                     </button>
@@ -279,21 +357,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div>
+                                    <div class="feature-card p-3 rounded-lg">
                                         <label class="flex items-center">
                                             <input type="radio" name="recurrence" value="none" checked 
                                                    class="mr-2 text-accent-color focus:ring-accent-color">
                                             <span class="text-white">One-time event</span>
                                         </label>
                                     </div>
-                                    <div>
+                                    <div class="feature-card p-3 rounded-lg">
                                         <label class="flex items-center">
                                             <input type="radio" name="recurrence" value="weekly" 
                                                    class="mr-2 text-accent-color focus:ring-accent-color">
                                             <span class="text-white">Weekly</span>
                                         </label>
                                     </div>
-                                    <div>
+                                    <div class="feature-card p-3 rounded-lg">
                                         <label class="flex items-center">
                                             <input type="radio" name="recurrence" value="monthly" 
                                                    class="mr-2 text-accent-color focus:ring-accent-color">
@@ -315,10 +393,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <!-- Venue Selection -->
                             <div class="md:col-span-2">
                                 <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Venue <span class="text-red-400">*</span>
+                                    <i class="fas fa-map-marker-alt mr-1"></i>Venue <span class="text-red-400">*</span>
                                 </label>
                                 <select id="venue-select" name="venueId" required 
-                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
+                                        class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
                                     <option value="">Loading venues...</option>
                                 </select>
                                 <p class="text-xs text-gray-400 mt-1">Select an existing venue or choose "Create New Venue" below</p>
@@ -326,7 +404,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                             <!-- New Venue Fields (Hidden by default) -->
                             <div id="new-venue-fields" class="hidden md:col-span-2 space-y-4 transition-all duration-300">
-                                <div class="p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                                <div class="card-bg p-4 rounded-lg border border-blue-600/30">
                                     <h4 class="text-blue-300 font-semibold mb-3">
                                         <i class="fas fa-plus-circle mr-2"></i>Create New Venue
                                     </h4>
@@ -336,41 +414,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <!-- New Venue Name -->
                                         <div>
                                             <label for="new-venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                                Venue Name <span class="text-red-400">*</span>
+                                                <i class="fas fa-building mr-1"></i>Venue Name <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-name" name="new-venue-name" 
-                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
                                                    placeholder="Enter venue name">
                                         </div>
 
                                         <!-- New Venue Address -->
                                         <div>
                                             <label for="new-venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                                Venue Address <span class="text-red-400">*</span>
+                                                <i class="fas fa-map mr-1"></i>Venue Address <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-address" name="new-venue-address" 
-                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
                                                    placeholder="e.g., 123 Main Street, Birmingham">
                                         </div>
 
                                         <!-- New Venue Postcode -->
                                         <div>
                                             <label for="new-venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                                Postcode <span class="text-red-400">*</span>
+                                                <i class="fas fa-mail-bulk mr-1"></i>Postcode <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-postcode" name="new-venue-postcode" 
-                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
                                                    placeholder="e.g., B1 1AA">
                                         </div>
 
                                         <!-- New Venue Website -->
                                         <div>
                                             <label for="new-venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                                Venue Website
+                                                <i class="fas fa-globe mr-1"></i>Venue Website
                                             </label>
                                             <input type="url" id="new-venue-website" name="new-venue-website" 
-                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                                   placeholder="https://venue-website.com">
+                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                   placeholder="https://">
                                         </div>
                                     </div>
                                 </div>
@@ -378,60 +456,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                     </div>
 
-                    <!-- Contact Details Section -->
+                    <!-- Contact Information Section -->
                     <div class="space-y-6">
                         <h3 class="text-xl font-bold accent-color-secondary">
-                            <i class="fas fa-user mr-2"></i>Step 4: Contact Details
+                            <i class="fas fa-user mr-2"></i>Step 4: Contact Information
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                             <!-- Contact Name -->
                             <div>
                                 <label for="contact-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Contact Name <span class="text-red-400">*</span>
+                                    <i class="fas fa-user mr-1"></i>Contact Name <span class="text-red-400">*</span>
                                 </label>
                                 <input type="text" id="contact-name" name="contact-name" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="Your name">
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       placeholder="Your full name">
                             </div>
 
                             <!-- Contact Email -->
                             <div>
                                 <label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Contact Email <span class="text-red-400">*</span>
+                                    <i class="fas fa-envelope mr-1"></i>Contact Email <span class="text-red-400">*</span>
                                 </label>
                                 <input type="email" id="contact-email" name="contact-email" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="your@email.com">
-                            </div>
-
-                            <!-- Contact Phone -->
-                            <div>
-                                <label for="contact-phone" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Contact Phone
-                                </label>
-                                <input type="tel" id="contact-phone" name="contact-phone" 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="Your phone number">
-                            </div>
-
-                            <!-- Social Media -->
-                            <div>
-                                <label for="social-media" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Social Media
-                                </label>
-                                <input type="url" id="social-media" name="social-media" 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="Instagram, Facebook, etc.">
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       placeholder="your.email@example.com">
                             </div>
                         </div>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="text-center pt-6">
-                        <button type="submit" 
-                                class="bg-accent-color text-white font-bold py-4 px-8 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-lg w-full sm:w-auto">
-                            <i class="fas fa-paper-plane mr-2"></i>Submit Event
+                    <div class="pt-6">
+                        <button type="submit" class="btn-primary text-white font-bold py-4 px-8 rounded-lg transition-all w-full flex items-center justify-center text-lg">
+                            <span id="submit-text">
+                                <i class="fas fa-paper-plane mr-2"></i>Submit Event
+                            </span>
+                            <span id="submit-loader" class="loader ml-3 w-5 h-5 hidden"></span>
                         </button>
                     </div>
                 </form>

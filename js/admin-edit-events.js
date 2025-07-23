@@ -805,119 +805,145 @@ function closeRecurringModal() {
 
 // Form handling
 function populateEditForm(event) {
-    const nameInput = document.getElementById('edit-name');
-    const venueInput = document.getElementById('edit-venue');
-    const descriptionInput = document.getElementById('edit-description');
-    const dateInput = document.getElementById('edit-date');
-    const timeInput = document.getElementById('edit-time');
-    const statusSelect = document.getElementById('edit-status');
-    const categoriesContainer = document.getElementById('edit-categories');
+    if (!event) return;
     
-    if (event) {
-        // Editing existing event
-        nameInput.value = event.name || event['Event Name'] || '';
-        venueInput.value = event.venue || event.VenueText || event['Venue Name'] || '';
-        descriptionInput.value = event.description || event.Description || '';
-        
-        const eventDate = new Date(event.date || event.Date);
-        if (!isNaN(eventDate.getTime())) {
-            dateInput.value = eventDate.toISOString().split('T')[0];
-            timeInput.value = eventDate.toTimeString().slice(0, 5);
-        }
-        
-        statusSelect.value = event.status || event.Status || event['Status'] || 'Pending Review';
-        
-        // Show delete button for existing events
-        document.getElementById('delete-event-btn').classList.remove('hidden');
-    } else {
-        // Adding new event
-        nameInput.value = '';
-        venueInput.value = '';
-        descriptionInput.value = '';
-        dateInput.value = '';
-        timeInput.value = '';
-        statusSelect.value = 'Pending Review';
-        
-        // Hide delete button for new events
-        document.getElementById('delete-event-btn').classList.add('hidden');
+    // Populate basic fields
+    document.getElementById('edit-name').value = event.name || event['Event Name'] || '';
+    document.getElementById('edit-description').value = event.description || event.Description || '';
+    document.getElementById('edit-date').value = event.date || event.Date || '';
+    document.getElementById('edit-time').value = event.time || event.Time || '';
+    document.getElementById('edit-status').value = event.status || event.Status || 'Pending Review';
+    document.getElementById('edit-link').value = event.link || event.Link || '';
+    
+    // Populate venue select
+    const venueSelect = document.getElementById('edit-venue-select');
+    venueSelect.innerHTML = '<option value="">Select an existing venue...</option>';
+    
+    if (allVenues && allVenues.length > 0) {
+        allVenues.forEach(venue => {
+            const option = document.createElement('option');
+            option.value = venue.id;
+            option.textContent = venue.name;
+            
+            // Check if this venue matches the current event's venue
+            const currentVenueId = event.venueId || event.Venue;
+            const currentVenueName = event.venue || event.VenueText || event['Venue Name'];
+            if (currentVenueId === venue.id || currentVenueName === venue.name) {
+                option.selected = true;
+            }
+            
+            venueSelect.appendChild(option);
+        });
     }
     
+    // Add "Create New Venue" option
+    const newVenueOption = document.createElement('option');
+    newVenueOption.value = 'new';
+    newVenueOption.textContent = '➕ Create New Venue';
+    venueSelect.appendChild(newVenueOption);
+    
     // Populate categories
-    const currentCategories = event ? (event.category || event.Category || []) : [];
-    categoriesContainer.innerHTML = VALID_CATEGORIES.map(cat => `
-        <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" name="categories" value="${cat}" ${currentCategories.includes(cat) ? 'checked' : ''} 
-                   class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
-            <span class="text-gray-300 text-sm">${cat}</span>
-        </label>
-    `).join('');
+    const categoriesContainer = document.getElementById('edit-categories');
+    const eventCategories = event.categories || event.Categories || [];
+    const allCategories = ['Club Night', 'Drag Show', 'Live Music', 'Comedy', 'Theatre', 'Art Exhibition', 'Workshop', 'Social Event', 'Sports', 'Other'];
+    
+    categoriesContainer.innerHTML = allCategories.map(category => {
+        const isChecked = eventCategories.includes(category);
+        return `
+            <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" name="categories" value="${category}" ${isChecked ? 'checked' : ''} class="rounded text-accent-color focus:ring-accent-color">
+                <span class="text-sm text-gray-300">${category}</span>
+            </label>
+        `;
+    }).join('');
+    
+    // Populate current image
+    const currentImage = document.getElementById('edit-current-image');
+    if (event.imageUrl || event['Image URL']) {
+        currentImage.src = event.imageUrl || event['Image URL'];
+        currentImage.style.display = 'block';
+        currentImage.nextElementSibling.style.display = 'none';
+    } else {
+        currentImage.style.display = 'none';
+        currentImage.nextElementSibling.style.display = 'flex';
+    }
+    
+    // Setup venue change handler
+    const newVenueFields = document.getElementById('edit-new-venue-fields');
+    venueSelect.addEventListener('change', function() {
+        if (this.value === 'new') {
+            newVenueFields.classList.remove('hidden');
+        } else {
+            newVenueFields.classList.add('hidden');
+        }
+    });
 }
 
 async function handleEditFormSubmit(event) {
     event.preventDefault();
     
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
+    const formData = new FormData();
+    
+    // Basic event data
+    formData.append('name', document.getElementById('edit-name').value);
+    formData.append('description', document.getElementById('edit-description').value);
+    formData.append('date', document.getElementById('edit-date').value);
+    formData.append('time', document.getElementById('edit-time').value);
+    formData.append('status', document.getElementById('edit-status').value);
+    formData.append('link', document.getElementById('edit-link').value);
+    
+    // Categories
+    const selectedCategories = Array.from(document.querySelectorAll('#edit-categories input:checked')).map(cb => cb.value);
+    formData.append('categories', JSON.stringify(selectedCategories));
+    
+    // Venue handling
+    const venueSelect = document.getElementById('edit-venue-select');
+    if (venueSelect.value === 'new') {
+        const newVenueName = document.getElementById('edit-new-venue-name').value;
+        const newVenueAddress = document.getElementById('edit-new-venue-address').value;
+        const newVenuePostcode = document.getElementById('edit-new-venue-postcode').value;
+        const newVenueWebsite = document.getElementById('edit-new-venue-website').value;
+        
+        if (newVenueName && newVenueAddress) {
+            formData.append('newVenue', JSON.stringify({
+                name: newVenueName,
+                address: newVenueAddress,
+                postcode: newVenuePostcode,
+                website: newVenueWebsite
+            }));
+        }
+    } else if (venueSelect.value) {
+        formData.append('venueId', venueSelect.value);
+    }
+    
+    // Image handling
+    const imageFile = document.getElementById('edit-image').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+    
+    // Add event ID if editing
+    if (currentEventForEdit) {
+        formData.append('eventId', currentEventForEdit.id);
+    }
     
     try {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+        const response = await fetch('/.netlify/functions/update-event', {
+            method: 'POST',
+            body: formData
+        });
         
-        const formData = new FormData();
-        
-        // Add form fields
-        formData.append('Event Name', document.getElementById('edit-name').value);
-        formData.append('VenueText', document.getElementById('edit-venue').value);
-        formData.append('Description', document.getElementById('edit-description').value);
-        formData.append('date', document.getElementById('edit-date').value);
-        formData.append('time', document.getElementById('edit-time').value);
-        formData.append('Status', document.getElementById('edit-status').value);
-        
-        // Add categories
-        const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
-            .map(cb => cb.value);
-        formData.append('Category', JSON.stringify(selectedCategories));
-        
-        if (currentEventForEdit) {
-            // Updating existing event
-            formData.append('id', currentEventForEdit.id);
-            formData.append('type', 'Event');
-            
-            const response = await fetch('/.netlify/functions/update-submission', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to update event');
-            }
-            
+        if (response.ok) {
             showSuccess('Event updated successfully!');
+            closeEditModal();
+            await loadAllEvents(); // Refresh the events list
         } else {
-            // Creating new event
-            const response = await fetch('/.netlify/functions/create-approved-event', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to create event');
-            }
-            
-            showSuccess('Event created successfully!');
+            const errorData = await response.json();
+            showError(`Failed to update event: ${errorData.error || 'Unknown error'}`);
         }
-        
-        closeEditModal();
-        await loadAllEvents(); // Reload data
-        
     } catch (error) {
-        console.error('Error saving event:', error);
-        showError(`Error saving event: ${error.message}`);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
+        console.error('Error updating event:', error);
+        showError('Failed to update event. Please try again.');
     }
 }
 
