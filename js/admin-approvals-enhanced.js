@@ -171,65 +171,76 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeLabel = isEvent ? 'Event' : 'Venue';
         const typeColor = isEvent ? 'text-blue-400' : 'text-green-400';
         
+        // Check if description is long enough to be expandable
+        const isLongDescription = description.length > 150;
+        const descriptionClass = isLongDescription ? 'detail-value expandable' : 'detail-value';
+        
         return `
             <div class="approval-card" data-id="${item.id}" data-type="${item.type}">
                 <div class="approval-card-header">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl ${typeColor}">
+                    <div class="flex items-start space-x-3 flex-1 min-w-0">
+                        <div class="text-2xl ${typeColor} flex-shrink-0 mt-1">
                             <i class="${icon}"></i>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">${title}</h3>
-                            <span class="inline-block bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full">${typeLabel}</span>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-xl font-bold text-white truncate">${title}</h3>
+                            <span class="inline-block bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full mt-1">${typeLabel}</span>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-400">
+                    <div class="text-sm text-gray-400 flex-shrink-0">
                         Submitted: ${formattedDate}
                     </div>
                 </div>
                 
                 <div class="approval-card-details">
                     <div class="approval-card-detail-item">
-                        <p class="text-gray-400 text-xs uppercase tracking-wide">Description</p>
-                        <p class="text-white">${description}</p>
+                        <p class="detail-label">Description</p>
+                        <p class="${descriptionClass}" title="${isLongDescription ? 'Click to expand' : ''}">${description}</p>
                     </div>
                     
                     ${isEvent ? `
                         <div class="approval-card-detail-item">
-                            <p class="text-gray-400 text-xs uppercase tracking-wide">Event Date</p>
-                            <p class="text-white">${formattedDate}</p>
+                            <p class="detail-label">Event Date</p>
+                            <p class="detail-value">${formattedDate}</p>
                         </div>
                         
                         ${fields.Category ? `
                             <div class="approval-card-detail-item">
-                                <p class="text-gray-400 text-xs uppercase tracking-wide">Category</p>
-                                <p class="text-white">${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category}</p>
+                                <p class="detail-label">Category</p>
+                                <p class="detail-value">${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category}</p>
                             </div>
                         ` : ''}
                         
                         ${fields['Venue Name'] ? `
                             <div class="approval-card-detail-item">
-                                <p class="text-gray-400 text-xs uppercase tracking-wide">Venue</p>
-                                <p class="text-white">${Array.isArray(fields['Venue Name']) ? fields['Venue Name'][0] : fields['Venue Name']}</p>
+                                <p class="detail-label">Venue</p>
+                                <p class="detail-value">${Array.isArray(fields['Venue Name']) ? fields['Venue Name'][0] : fields['Venue Name']}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${fields['Recurring Info'] ? `
+                            <div class="approval-card-detail-item">
+                                <p class="detail-label">Recurring</p>
+                                <p class="detail-value">${fields['Recurring Info']}</p>
                             </div>
                         ` : ''}
                     ` : `
                         <div class="approval-card-detail-item">
-                            <p class="text-gray-400 text-xs uppercase tracking-wide">Address</p>
-                            <p class="text-white">${fields.Address || 'No address provided'}</p>
+                            <p class="detail-label">Address</p>
+                            <p class="detail-value">${fields.Address || 'No address provided'}</p>
                         </div>
                         
                         ${fields.Website ? `
                             <div class="approval-card-detail-item">
-                                <p class="text-gray-400 text-xs uppercase tracking-wide">Website</p>
-                                <p class="text-white">${fields.Website}</p>
+                                <p class="detail-label">Website</p>
+                                <p class="detail-value">${fields.Website}</p>
                             </div>
                         ` : ''}
                     `}
                     
                     <div class="approval-card-detail-item">
-                        <p class="text-gray-400 text-xs uppercase tracking-wide">Contact Email</p>
-                        <p class="text-white">${contactEmail}</p>
+                        <p class="detail-label">Contact Email</p>
+                        <p class="detail-value">${contactEmail}</p>
                     </div>
                 </div>
                 

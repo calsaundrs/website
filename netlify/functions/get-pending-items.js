@@ -127,7 +127,31 @@ exports.handler = async (event) => {
             };
         });
 
-        console.log(`get-pending-items: Successfully formatted ${formattedEvents.length} events`);
+        // Filter out individual recurring event instances
+        // Only show parent recurring events or standalone events
+        const filteredEvents = formattedEvents.filter(event => {
+            const fields = event.fields;
+            
+            // If it has a Parent Event Name, it's an individual instance - exclude it
+            if (fields['Parent Event Name']) {
+                console.log(`get-pending-items: Excluding recurring instance: ${fields['Event Name']} (Parent: ${fields['Parent Event Name']})`);
+                return false;
+            }
+            
+            // If it has Recurring Info but no Parent Event Name, it's a parent recurring event - include it
+            if (fields['Recurring Info']) {
+                console.log(`get-pending-items: Including parent recurring event: ${fields['Event Name']}`);
+                return true;
+            }
+            
+            // If it has no recurring info, it's a standalone event - include it
+            console.log(`get-pending-items: Including standalone event: ${fields['Event Name']}`);
+            return true;
+        });
+
+        console.log(`get-pending-items: After filtering recurring instances: ${filteredEvents.length} events (removed ${formattedEvents.length - filteredEvents.length} instances)`);
+
+        console.log(`get-pending-items: Successfully formatted ${filteredEvents.length} events`);
 
         return {
             statusCode: 200,
@@ -137,7 +161,7 @@ exports.handler = async (event) => {
                 'Expires': '0',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formattedEvents),
+            body: JSON.stringify(filteredEvents),
         };
     } catch (error) {
         console.error("get-pending-items: Critical error:", error);
