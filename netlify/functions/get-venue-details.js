@@ -207,6 +207,8 @@ exports.handler = async function (event, context) {
         const venueRecordId = venueRecord.id;
 
         let upcomingEventsHtml = '';
+        let recurringEventsHTML = '';
+        let oneOffEventsHTML = '';
         const eventRecordIds = venue['Events']; 
 
         if (eventRecordIds && eventRecordIds.length > 0) {
@@ -227,11 +229,11 @@ exports.handler = async function (event, context) {
                     const oneOffEvents = allEvents.filter(e => !e['Recurring Info']);
 
                     // --- UPDATED: Use the new card helper and wrap in a grid ---
-                    const recurringEventsHTML = recurringEvents.length > 0 
+                    recurringEventsHTML = recurringEvents.length > 0 
                         ? recurringEvents.slice(0, 4).map(createEventCardHtml).join('') 
                         : '';
 
-                    const oneOffEventsHTML = oneOffEvents.length > 0 
+                    oneOffEventsHTML = oneOffEvents.length > 0 
                         ? oneOffEvents.slice(0, 4).map(createEventCardHtml).join('') 
                         : '';
 
@@ -252,6 +254,8 @@ exports.handler = async function (event, context) {
             } catch (err) {
                 console.error("Error fetching linked events for venue:", err);
                 upcomingEventsHtml = '';
+                recurringEventsHTML = '';
+                oneOffEventsHTML = '';
             }
         }
         
