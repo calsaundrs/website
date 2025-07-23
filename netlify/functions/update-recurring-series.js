@@ -134,6 +134,11 @@ exports.handler = async (event) => {
         try {
             await base('Events').update(parentRecord.id, updateFields);
             console.log(`update-recurring-series: Updated parent record with fields:`, Object.keys(updateFields));
+            
+            // Verify the Series ID is still there after update
+            const updatedRecord = await base('Events').find(parentRecord.id);
+            console.log(`update-recurring-series: Parent record Series ID after update:`, updatedRecord.fields['Series ID']);
+            
         } catch (updateError) {
             console.error('update-recurring-series: Error updating parent record:', updateError);
             throw new Error(`Failed to update parent record: ${updateError.message}`);
@@ -142,37 +147,40 @@ exports.handler = async (event) => {
         // If recurrence rules changed, regenerate instances
         if (recurringInfo && instancesAhead) {
             try {
-                // Check if this is now a "none" recurrence type
-                if (recurringInfo.type === 'none') {
-                    console.log('update-recurring-series: Converting series to standalone event (no recurrence)');
-                    
-                    // Remove Series ID from parent record to make it standalone
-                    await base('Events').update(parentRecord.id, {
-                        'Series ID': null
-                    });
-                    
-                    // Delete all other instances in the series
-                    const allSeriesInstances = await base('Events').select({
-                        filterByFormula: `{Series ID} = '${seriesId}'`
-                    }).all();
-                    
-                    if (allSeriesInstances.length > 1) {
-                        const deleteIds = allSeriesInstances.map(record => record.id);
-                        await base('Events').destroy(deleteIds);
-                        console.log(`update-recurring-series: Deleted ${deleteIds.length} series instances (converting to standalone)`);
-                    }
-                } else {
-                    // Delete existing future instances
-                    const today = new Date().toISOString().split('T')[0];
-                    const existingInstances = await base('Events').select({
-                        filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
-                    }).all();
+                        // Check if this is now a "none" recurrence type
+        if (recurringInfo.type === 'none') {
+            console.log('update-recurring-series: Converting series to standalone event (no recurrence)');
+            
+            // Remove Series ID from parent record to make it standalone
+            await base('Events').update(parentRecord.id, {
+                'Series ID': null
+            });
+            
+            // Delete all other instances in the series
+            const allSeriesInstances = await base('Events').select({
+                filterByFormula: `{Series ID} = '${seriesId}'`
+            }).all();
+            
+            if (allSeriesInstances.length > 1) {
+                const deleteIds = allSeriesInstances.map(record => record.id);
+                await base('Events').destroy(deleteIds);
+                console.log(`update-recurring-series: Deleted ${deleteIds.length} series instances (converting to standalone)`);
+            }
+        } else {
+            console.log(`update-recurring-series: Regenerating instances for series ${seriesId} with type: ${recurringInfo.type}`);
+                                // Delete existing future instances
+            const today = new Date().toISOString().split('T')[0];
+            console.log(`update-recurring-series: Looking for existing instances with Series ID: ${seriesId}`);
+            const existingInstances = await base('Events').select({
+                filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
+            }).all();
 
-                    if (existingInstances.length > 0) {
-                        const deleteIds = existingInstances.map(record => record.id);
-                        await base('Events').destroy(deleteIds);
-                        console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
-                    }
+            console.log(`update-recurring-series: Found ${existingInstances.length} existing future instances`);
+            if (existingInstances.length > 0) {
+                const deleteIds = existingInstances.map(record => record.id);
+                await base('Events').destroy(deleteIds);
+                console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
+            }
 
                     // Generate new instances
                     const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
