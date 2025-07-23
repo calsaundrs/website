@@ -40,30 +40,47 @@ exports.handler = async (event) => {
             console.log('get-recurring-events: Sample record fields:', Object.keys(testQuery[0].fields));
         }
         
+        // Define the fields we want to try to access
+        const desiredFields = [
+            'Event Name', 
+            'Description', 
+            'Date',
+            'VenueText', 
+            'Venue', 
+            'Venue Name',
+            'Category', 
+            'Recurring Info', 
+            'Series ID',
+            'Status',
+            'Promo Image'
+        ];
+        
+        // Filter to only include fields that exist
+        const availableFields = desiredFields.filter(field => {
+            if (testQuery.length > 0) {
+                return testQuery[0].fields.hasOwnProperty(field);
+            }
+            return true; // If we can't check, assume all fields exist
+        });
+        
+        console.log('get-recurring-events: Available fields:', availableFields);
+        
         // Simple query to get all events with basic fields
         const allRecords = await base('Events').select({
-            fields: [
-                'Event Name', 
-                'Description', 
-                'Date',
-                'VenueText', 
-                'Venue', 
-                'Venue Name',
-                'Category', 
-                'Recurring Info', 
-                'Series ID',
-                'Status',
-                'Promo Image',
-                'Image URL'
-            ]
+            fields: availableFields
         }).all();
 
         console.log(`get-recurring-events: Found ${allRecords.length} total events`);
 
+        // Helper function to safely get field values
+        const getField = (fields, fieldName, defaultValue = null) => {
+            return fields.hasOwnProperty(fieldName) ? fields[fieldName] : defaultValue;
+        };
+
         // Check if we have any recurring events
         const recurringEvents = allRecords.filter(record => {
             const fields = record.fields;
-            return fields['Recurring Info'] || fields['Series ID'];
+            return getField(fields, 'Recurring Info') || getField(fields, 'Series ID');
         });
         
         console.log(`get-recurring-events: Found ${recurringEvents.length} events with recurring info`);
@@ -77,15 +94,15 @@ exports.handler = async (event) => {
                 const fields = record.fields;
                 
                 // If it has Series ID, it's part of a series
-                if (fields['Series ID']) {
-                    const seriesId = fields['Series ID'];
+                if (getField(fields, 'Series ID')) {
+                    const seriesId = getField(fields, 'Series ID');
                     if (!seriesMap.has(seriesId)) {
                         seriesMap.set(seriesId, []);
                     }
                     seriesMap.get(seriesId).push(record);
                 } 
                 // If it has Recurring Info but no Series ID, it's a standalone recurring event
-                else if (fields['Recurring Info']) {
+                else if (getField(fields, 'Recurring Info')) {
                     standaloneRecurring.push(record);
                 }
             });
@@ -101,21 +118,21 @@ exports.handler = async (event) => {
         
         seriesMap.forEach((instances, seriesId) => {
             // Sort instances by date
-            instances.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+            instances.sort((a, b) => new Date(getField(a.fields, 'Date')) - new Date(getField(b.fields, 'Date')));
             
             // Get the parent event (first instance or one with Recurring Info)
-            const parentEvent = instances.find(instance => instance.fields['Recurring Info']) || instances[0];
+            const parentEvent = instances.find(instance => getField(instance.fields, 'Recurring Info')) || instances[0];
             
             // Get future instances
             const now = new Date();
             const futureInstances = instances.filter(instance => {
-                const eventDate = new Date(instance.fields.Date);
+                const eventDate = new Date(getField(instance.fields, 'Date'));
                 return eventDate > now;
             });
             
             // Get past instances
             const pastInstances = instances.filter(instance => {
-                const eventDate = new Date(instance.fields.Date);
+                const eventDate = new Date(getField(instance.fields, 'Date'));
                 return eventDate <= now;
             });
             
@@ -130,32 +147,32 @@ exports.handler = async (event) => {
             
             const seriesData = {
                 seriesId: seriesId,
-                name: parentEvent.fields['Event Name'],
-                description: parentEvent.fields['Description'],
-                recurringInfo: parentEvent.fields['Recurring Info'],
-                venue: parentEvent.fields['VenueText'] || (parentEvent.fields['Venue Name'] ? parentEvent.fields['Venue Name'][0] : 'TBC'),
-                category: parentEvent.fields['Category'] || [],
-                status: parentEvent.fields['Status'],
-                image: parentEvent.fields['Promo Image'] || parentEvent.fields['Image URL'],
+                name: getField(parentEvent.fields, 'Event Name'),
+                description: getField(parentEvent.fields, 'Description'),
+                recurringInfo: getField(parentEvent.fields, 'Recurring Info'),
+                venue: getField(parentEvent.fields, 'VenueText') || (getField(parentEvent.fields, 'Venue Name') ? getField(parentEvent.fields, 'Venue Name')[0] : 'TBC'),
+                category: getField(parentEvent.fields, 'Category') || [],
+                status: getField(parentEvent.fields, 'Status'),
+                image: getField(parentEvent.fields, 'Promo Image'),
                 isActive: isActive,
                 totalInstances: instances.length,
                 futureInstances: futureInstances.length,
                 pastInstances: pastInstances.length,
                 nextInstance: nextInstance ? {
                     id: nextInstance.id,
-                    date: nextInstance.fields['Date'],
-                    status: nextInstance.fields['Status']
+                    date: getField(nextInstance.fields, 'Date'),
+                    status: getField(nextInstance.fields, 'Status')
                 } : null,
                 lastInstance: lastInstance ? {
                     id: lastInstance.id,
-                    date: lastInstance.fields['Date'],
-                    status: lastInstance.fields['Status']
+                    date: getField(lastInstance.fields, 'Date'),
+                    status: getField(lastInstance.fields, 'Status')
                 } : null,
                 instances: instances.map(instance => ({
                     id: instance.id,
-                    date: instance.fields['Date'],
-                    status: instance.fields['Status'],
-                    isPast: new Date(instance.fields['Date']) <= now
+                    date: getField(instance.fields, 'Date'),
+                    status: getField(instance.fields, 'Status'),
+                    isPast: new Date(getField(instance.fields, 'Date')) <= now
                 }))
             };
             
@@ -165,19 +182,19 @@ exports.handler = async (event) => {
         // Process standalone recurring events
         const standaloneRecurringEvents = standaloneRecurring.map(record => {
             const fields = record.fields;
-            const eventDate = new Date(fields['Date']);
+            const eventDate = new Date(getField(fields, 'Date'));
             const now = new Date();
             
             return {
                 id: record.id,
-                name: fields['Event Name'],
-                description: fields['Description'],
-                recurringInfo: fields['Recurring Info'],
-                venue: fields['VenueText'] || (fields['Venue Name'] ? fields['Venue Name'][0] : 'TBC'),
-                category: fields['Category'] || [],
-                status: fields['Status'],
-                date: fields['Date'],
-                image: fields['Promo Image'] || fields['Image URL'],
+                name: getField(fields, 'Event Name'),
+                description: getField(fields, 'Description'),
+                recurringInfo: getField(fields, 'Recurring Info'),
+                venue: getField(fields, 'VenueText') || (getField(fields, 'Venue Name') ? getField(fields, 'Venue Name')[0] : 'TBC'),
+                category: getField(fields, 'Category') || [],
+                status: getField(fields, 'Status'),
+                date: getField(fields, 'Date'),
+                image: getField(fields, 'Promo Image'),
                 isActive: eventDate > now,
                 isPast: eventDate <= now,
                 totalInstances: 1,
