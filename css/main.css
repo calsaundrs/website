@@ -7,6 +7,68 @@
     font-display: swap; /* Ensures text is visible during font loading */
 }
 
+/* Add additional font weights for Omnes Pro */
+@font-face {
+    font-family: 'Omnes Pro';
+    src: url('./fonts/Omnes Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Omnes Pro';
+    src: url('./fonts/Omnes Bold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Omnes Pro';
+    src: url('./fonts/Omnes Bold.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Enhanced Navigation Logo Styling */
+.nav-logo {
+    font-family: 'Omnes Pro', 'Anton', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FADCD9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-logo:hover {
+    background: linear-gradient(135deg, #B564F7 0%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transform: translateY(-1px);
+}
+
+.nav-logo .flag-icon {
+    height: 1.5rem;
+    width: auto;
+    border-radius: 0.25rem;
+    transition: transform 0.3s ease;
+}
+
+.nav-logo:hover .flag-icon {
+    transform: scale(1.1);
+}
+
 /* Critical CSS - Above the fold styles */
 body {
     background-color: #121212;
@@ -610,3 +672,192 @@ input[type="submit"]:disabled {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Responsive Navigation Logo */
+@media (max-width: 768px) {
+    .nav-logo {
+        font-size: 1.5rem;
+        letter-spacing: 0.1em;
+        gap: 0.5rem;
+    }
+    
+    .nav-logo .flag-icon {
+        height: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-logo {
+        font-size: 1.25rem;
+        letter-spacing: 0.05em;
+        gap: 0.375rem;
+    }
+    
+    .nav-logo .flag-icon {
+        height: 1rem;
+    }
+}
+
+/* Enhanced Sidebar Button Styles for Event Details */
+.sidebar-button {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.sidebar-button:hover::before {
+    left: 100%;
+}
+
+.sidebar-button:hover {
+    background: linear-gradient(135deg, rgba(181, 100, 247, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-color: rgba(181, 100, 247, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(181, 100, 247, 0.2);
+}
+
+.sidebar-button:focus-visible {
+    outline: 3px solid #B564F7;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(181, 100, 247, 0.2);
+}
+
+.sidebar-button.primary {
+    background: linear-gradient(135deg, #B564F7 0%, #8B5CF6 100%);
+    border-color: #B564F7;
+    color: white;
+    font-weight: 700;
+}
+
+.sidebar-button.primary:hover {
+    background: linear-gradient(135deg, #9F4FD8 0%, #7C3AED 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(181, 100, 247, 0.4);
+}
+
+.sidebar-button.secondary {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: #FADCD9;
+}
+
+.sidebar-button.secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.sidebar-button i {
+    font-size: 1.1em;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-button:hover i {
+    transform: scale(1.1);
+}
+
+/* Calendar link specific styling */
+.calendar-link {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.calendar-link:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Sidebar section styling */
+.sidebar-section {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-section h3 {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #FADCD9;
+    letter-spacing: 0.05em;
+}
+
+/* Responsive Sidebar Button Styles */
+@media (max-width: 768px) {
+    .sidebar-button {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9rem;
+        border-radius: 0.625rem;
+    }
+    
+    .sidebar-section {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .sidebar-section h3 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 0.5rem;
+    }
+    
+    .sidebar-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .sidebar-section h3 {
+        font-size: 0.95rem;
+    }
+}
+
+/* Enhanced focus styles for better accessibility */

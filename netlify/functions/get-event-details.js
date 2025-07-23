@@ -52,8 +52,14 @@ function generateAddToCalendarLinks(event) {
 
     // All href attributes are correctly quoted to prevent parsing errors.
     return `
-        <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="calendar-link google"><i class="fab fa-google mr-2"></i> Google Calendar</a>
-        <a href="${icalDataUri}" download="${safeTitle}.ics" class="calendar-link ical"><i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other</a>
+        <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="sidebar-button secondary">
+            <i class="fab fa-google"></i>
+            Google Calendar
+        </a>
+        <a href="${icalDataUri}" download="${safeTitle}.ics" class="sidebar-button secondary">
+            <i class="fas fa-calendar-plus"></i>
+            Apple/Outlook/Other
+        </a>
     `;
 }
 
@@ -302,16 +308,29 @@ exports.handler = async function (event, context) {
         .heading-gradient { background: linear-gradient(135deg, #b564fb 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .button-primary { background: linear-gradient(135deg, #b564fb 0%, #8b5cf6 100%); color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; display: inline-block; text-decoration: none; transition: all 0.3s ease; }
         .button-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(181, 100, 247, 0.4); }
-        .calendar-link { background: rgba(255,255,255,0.1); color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; transition: all 0.3s ease; }
-        .calendar-link:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+        .sidebar-button { width: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; font-weight: 600; padding: 1rem 1.5rem; border-radius: 0.75rem; text-decoration: none; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-align: center; font-size: 0.95rem; letter-spacing: 0.025em; position: relative; overflow: hidden; }
+        .sidebar-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.5s ease; }
+        .sidebar-button:hover::before { left: 100%; }
+        .sidebar-button:hover { background: linear-gradient(135deg, rgba(181, 100, 247, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%); border-color: rgba(181, 100, 247, 0.3); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(181, 100, 247, 0.2); }
+        .sidebar-button:focus-visible { outline: 3px solid #B564F7; outline-offset: 2px; box-shadow: 0 0 0 2px rgba(181, 100, 247, 0.2); }
+        .sidebar-button.primary { background: linear-gradient(135deg, #B564F7 0%, #8B5CF6 100%); border-color: #B564F7; color: white; font-weight: 700; }
+        .sidebar-button.primary:hover { background: linear-gradient(135deg, #9F4FD8 0%, #7C3AED 100%); transform: translateY(-3px); box-shadow: 0 12px 35px rgba(181, 100, 247, 0.4); }
+        .sidebar-button.secondary { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #FADCD9; }
+        .sidebar-button.secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white; }
+        .sidebar-button i { font-size: 1.1em; transition: transform 0.3s ease; }
+        .sidebar-button:hover i { transform: scale(1.1); }
+        .calendar-link { background: rgba(255,255,255,0.08); color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+        .calendar-link:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .sidebar-section { background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .sidebar-section h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; color: #FADCD9; letter-spacing: 0.05em; }
     </style>
 </head>
 <body class="antialiased bg-gray-900 text-white">
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+            <a href="/" class="nav-logo">
                 <span>Brum Outloud</span>
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="flag-icon">
             </a>
             <div class="hidden lg:flex items-center space-x-8">
                 <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
@@ -335,26 +354,33 @@ exports.handler = async function (event, context) {
                 <div class="prose prose-invert prose-lg max-w-none text-gray-300">{{{description}}}</div>
             </div>
             <div class="lg:col-span-1">
-                <div class="card-bg p-8 sticky top-8 space-y-6">
-                    <div>
-                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Date & Time</h3>
-                        <p class="text-2xl font-semibold">{{eventDateFormatted}}</p>
+                <div class="space-y-6 sticky top-8">
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-calendar-alt mr-2"></i>Date & Time</h3>
+                        <p class="text-2xl font-semibold text-white">{{eventDateFormatted}}</p>
                         <p class="text-xl text-gray-400">{{eventTimeFormatted}}</p>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Location</h3>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-map-marker-alt mr-2"></i>Location</h3>
                         {{{venueHtml}}}
                     </div>
-                    <div class="mt-4">
-                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Tags</h3>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-tags mr-2"></i>Tags</h3>
                         <div class="flex flex-wrap gap-2">{{{tagsHtml}}}</div>
                     </div>
+                    
                     {{#if ticketLink}}
-                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="button-primary">Get Tickets / Info</a>
+                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="sidebar-button primary">
+                        <i class="fas fa-ticket-alt"></i>
+                        Get Tickets / Info
+                    </a>
                     {{/if}}
-                    <div id="add-to-calendar-section">
-                        <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Add to Calendar</h3>
-                        <div class="calendar-links flex flex-wrap gap-4">
+                    
+                    <div class="sidebar-section" id="add-to-calendar-section">
+                        <h3><i class="fas fa-calendar-plus mr-2"></i>Add to Calendar</h3>
+                        <div class="space-y-3">
                             {{{calendarLinksHtml}}}
                         </div>
                     </div>
