@@ -69,12 +69,20 @@ exports.handler = async function (event, context) {
     // Improved slug extraction with better error handling
     let slug = '';
     try {
-        const pathParts = event.path.split("/");
-        slug = pathParts[pathParts.length - 1];
+        // Check for slug in query parameters first (Netlify function routing)
+        if (event.queryStringParameters && event.queryStringParameters.slug) {
+            slug = event.queryStringParameters.slug;
+            console.log("Slug from query parameters:", slug);
+        } else {
+            // Fallback to path extraction
+            const pathParts = event.path.split("/");
+            slug = pathParts[pathParts.length - 1];
+            console.log("Slug from path:", slug);
+        }
         
         // Handle edge cases where slug might be empty or undefined
         if (!slug || slug === 'event' || slug === '') {
-            console.log("Invalid slug extracted from path:", event.path);
+            console.log("Invalid slug extracted. Path:", event.path, "Query:", event.queryStringParameters);
             return { statusCode: 400, body: 'Error: Event slug not provided.' };
         }
         

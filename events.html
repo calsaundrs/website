@@ -445,12 +445,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <header class="p-8">
     <nav class="container mx-auto flex justify-between items-center">
-        <!-- Site name with consolidated flag image and fallback -->
-        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-           style="font-family: 'Omnes Pro', sans-serif;">
+        <!-- Site name with enhanced logo styling -->
+        <a href="/" class="nav-logo">
             <span>Brum Outloud</span>
-            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="flag-icon"
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
@@ -462,7 +460,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
+            <button id="menu-btn">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
