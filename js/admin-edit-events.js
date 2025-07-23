@@ -1747,6 +1747,76 @@ async function validateEventVenueData() {
     }
 }
 
+// Analyze duplicate venues
+async function analyzeDuplicateVenues() {
+    try {
+        console.log('Admin Edit Events: Starting duplicate venue analysis...');
+        
+        const response = await fetch('/.netlify/functions/cleanup-duplicate-venues', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Admin Edit Events: Duplicate analysis results:', result);
+            
+            // Display results in a modal or alert
+            let message = `Duplicate Venue Analysis Complete!\n\n`;
+            message += `Total Venues: ${result.summary.totalVenues}\n`;
+            message += `Exact Duplicates: ${result.summary.exactDuplicates}\n`;
+            message += `Potential Duplicates: ${result.summary.potentialDuplicates}\n`;
+            message += `Merge Recommendations: ${result.summary.mergeRecommendations}\n\n`;
+            
+            if (result.mergeRecommendations && result.mergeRecommendations.length > 0) {
+                message += `Top Recommendations:\n`;
+                result.mergeRecommendations.slice(0, 5).forEach((rec, index) => {
+                    message += `${index + 1}. ${rec.reason}\n`;
+                    message += `   Action: ${rec.action}\n\n`;
+                });
+                
+                if (result.mergeRecommendations.length > 5) {
+                    message += `... and ${result.mergeRecommendations.length - 5} more recommendations\n\n`;
+                }
+                
+                message += `Check the browser console for detailed analysis.`;
+            } else {
+                message += `✅ No duplicate venues found! All venues appear to be unique.`;
+            }
+            
+            alert(message);
+            
+            // Log detailed analysis to console
+            if (result.mergeRecommendations && result.mergeRecommendations.length > 0) {
+                console.group('Detailed Duplicate Analysis:');
+                result.mergeRecommendations.forEach((rec, index) => {
+                    console.group(`Recommendation ${index + 1}: ${rec.type}`);
+                    console.log('Reason:', rec.reason);
+                    console.log('Action:', rec.action);
+                    if (rec.primaryVenue) {
+                        console.log('Primary Venue:', rec.primaryVenue);
+                    }
+                    if (rec.secondaryVenues) {
+                        console.log('Secondary Venues:', rec.secondaryVenues);
+                    }
+                    console.groupEnd();
+                });
+                console.groupEnd();
+            }
+            
+        } else {
+            const errorData = await response.text();
+            console.error('Admin Edit Events: Duplicate analysis failed:', response.status, errorData);
+            alert(`Duplicate analysis failed: ${response.status} - ${errorData}`);
+        }
+    } catch (error) {
+        console.error('Admin Edit Events: Error during duplicate analysis:', error);
+        alert(`Duplicate analysis error: ${error.message}`);
+    }
+}
+
 // Global functions for onclick handlers
 window.openEditModal = openEditModal;
 window.handleDeleteEvent = handleDeleteEvent;
@@ -1754,6 +1824,7 @@ window.openRecurringModal = openRecurringModal;
 window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
 window.validateEventVenueData = validateEventVenueData;
+window.analyzeDuplicateVenues = analyzeDuplicateVenues;
 
     // Fix venue data issues automatically
     window.fixVenueDataIssues = async function() {

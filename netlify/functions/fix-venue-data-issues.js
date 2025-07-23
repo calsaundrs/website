@@ -1,5 +1,50 @@
 const Airtable = require('airtable');
 
+// Helper function to find the best matching venue
+function findBestVenueMatch(venueText, venueNameMap, venueMap) {
+    const normalizedText = venueText.toLowerCase().trim();
+    
+    // First try exact match
+    if (venueNameMap.has(normalizedText)) {
+        return venueNameMap.get(normalizedText);
+    }
+    
+    // Try partial matches (venue text is contained in existing venue name)
+    for (const [existingName, venueId] of venueNameMap) {
+        if (existingName.includes(normalizedText) || normalizedText.includes(existingName)) {
+            // Check if it's a reasonable match (not too different in length)
+            const lengthDiff = Math.abs(existingName.length - normalizedText.length);
+            const maxLength = Math.max(existingName.length, normalizedText.length);
+            const similarityRatio = 1 - (lengthDiff / maxLength);
+            
+            if (similarityRatio > 0.6) { // 60% similarity threshold
+                console.log(`Fix Venue Data: Found partial match "${normalizedText}" -> "${existingName}" (similarity: ${similarityRatio.toFixed(2)})`);
+                return venueId;
+            }
+        }
+    }
+    
+    // Try word-based matching for multi-word venues
+    const venueWords = normalizedText.split(/\s+/);
+    if (venueWords.length > 1) {
+        for (const [existingName, venueId] of venueNameMap) {
+            const existingWords = existingName.split(/\s+/);
+            const commonWords = venueWords.filter(word => 
+                existingWords.some(existingWord => 
+                    existingWord.includes(word) || word.includes(existingWord)
+                )
+            );
+            
+            if (commonWords.length >= Math.min(venueWords.length, existingWords.length) * 0.7) {
+                console.log(`Fix Venue Data: Found word-based match "${normalizedText}" -> "${existingName}" (common words: ${commonWords.join(', ')})`);
+                return venueId;
+            }
+        }
+    }
+    
+    return null;
+}
+
 exports.handler = async (event, context) => {
     // Enable CORS
     const headers = {
@@ -86,21 +131,22 @@ exports.handler = async (event, context) => {
 
             // Fix 2: Venue text exists but no venue record linked
             if (venueText && !venueRecord) {
-                const normalizedVenueText = venueText.toLowerCase().trim();
-                const matchingVenueId = venueNameMap.get(normalizedVenueText);
+                const matchingVenueId = findBestVenueMatch(venueText, venueNameMap, venueMap);
                 
                 if (matchingVenueId) {
                     // Found matching venue - link it
+                    const matchedVenueName = venueMap.get(matchingVenueId)?.Name;
                     updateFields['Venue'] = [matchingVenueId];
-                    updateFields['Venue Name'] = [venueText]; // Keep the original text
+                    updateFields['Venue Name'] = [matchedVenueName || venueText]; // Use the official venue name
                     needsUpdate = true;
                     
                     fixes.push({
                         eventId: eventRecord.id,
                         eventName,
                         issue: 'Venue text exists but no venue record linked',
-                        action: `Linked to venue: ${venueText}`,
-                        venueId: matchingVenueId
+                        action: `Linked to venue: ${matchedVenueName || venueText}`,
+                        venueId: matchingVenueId,
+                        originalText: venueText
                     });
                 } else {
                     // No matching venue found - create a new one
@@ -120,6 +166,10 @@ exports.handler = async (event, context) => {
                         updateFields['Venue'] = [newVenueId];
                         updateFields['Venue Name'] = [venueText];
                         needsUpdate = true;
+                        
+                        // Add to our maps for future reference
+                        venueMap.set(newVenueId, { Name: venueText, Address: 'Address to be added' });
+                        venueNameMap.set(venueText.toLowerCase().trim(), newVenueId);
                         
                         fixes.push({
                             eventId: eventRecord.id,
@@ -149,7 +199,7 @@ exports.handler = async (event, context) => {
                 
                 if (!venueExists) {
                     // Venue record doesn't exist - try to find matching venue by name
-                    const matchingVenueId = venueNameMap.get(venueName.toLowerCase().trim());
+                    const matchingVenueId = findBestVenueMatch(venueName, venueNameMap, venueMap);
                     if (matchingVenueId) {
                         updateFields['Venue'] = [matchingVenueId];
                         needsUpdate = true;
