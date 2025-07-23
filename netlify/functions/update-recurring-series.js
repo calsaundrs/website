@@ -56,7 +56,7 @@ exports.handler = async (event) => {
 
         // Get the series record (parent record with recurring info)
         const seriesRecords = await base('Events').select({
-            filterByFormula: `OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}')`
+            filterByFormula: `{Series ID} = '${seriesId}'`
         }).all();
 
         console.log(`update-recurring-series: Found ${seriesRecords.length} events in series ${seriesId}`);
@@ -135,7 +135,7 @@ exports.handler = async (event) => {
                 // Delete existing future instances
                 const today = new Date().toISOString().split('T')[0];
                 const existingInstances = await base('Events').select({
-                    filterByFormula: `AND(OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}'), {Date} >= '${today}')`
+                    filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
                 }).all();
 
                 if (existingInstances.length > 0) {
