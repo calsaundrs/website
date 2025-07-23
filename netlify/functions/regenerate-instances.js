@@ -157,7 +157,7 @@ exports.handler = async (event) => {
                 'Venue': parentRecord.fields['Venue'],
                 'Category': parentRecord.fields['Category'],
                 'Series ID': seriesId,
-                'Status': 'Pending Review'
+                'Status': 'Approved'
             }
         }));
 
