@@ -54,12 +54,53 @@ exports.handler = async (event) => {
 
         console.log(`update-recurring-series: Processing series ${seriesId}`);
 
-        // Get the series record (parent record with recurring info)
-        const seriesRecords = await base('Events').select({
+        // First, try to find records by Series ID
+        console.log(`update-recurring-series: Looking for series with ID: ${seriesId}`);
+        let seriesRecords = await base('Events').select({
             filterByFormula: `{Series ID} = '${seriesId}'`
         }).all();
 
         console.log(`update-recurring-series: Found ${seriesRecords.length} events in series ${seriesId}`);
+        
+        // If no records found by Series ID, try to find by event ID (in case frontend sent event ID instead)
+        if (seriesRecords.length === 0) {
+            console.log('update-recurring-series: No records found by Series ID, trying to find by event ID...');
+            try {
+                const eventRecord = await base('Events').find(seriesId);
+                console.log(`update-recurring-series: Found event by ID: ${eventRecord.fields['Event Name']}`);
+                
+                // Check if this event has a Series ID
+                if (eventRecord.fields['Series ID']) {
+                    console.log(`update-recurring-series: Event has Series ID: ${eventRecord.fields['Series ID']}`);
+                    // Now search for all records with this Series ID
+                    seriesRecords = await base('Events').select({
+                        filterByFormula: `{Series ID} = '${eventRecord.fields['Series ID']}'`
+                    }).all();
+                    seriesId = eventRecord.fields['Series ID']; // Update the seriesId variable
+                    console.log(`update-recurring-series: Found ${seriesRecords.length} events in series ${seriesId}`);
+                } else {
+                    console.log('update-recurring-series: Event has no Series ID, treating as standalone');
+                    seriesRecords = [eventRecord];
+                }
+            } catch (findError) {
+                console.log('update-recurring-series: Could not find event by ID either');
+            }
+        }
+        
+        // If still no records found, let's check what Series IDs actually exist
+        if (seriesRecords.length === 0) {
+            console.log('update-recurring-series: No records found with that Series ID, checking all records...');
+            const allRecords = await base('Events').select({
+                maxRecords: 10
+            }).all();
+            
+            console.log('update-recurring-series: Sample records with Series IDs:');
+            allRecords.forEach((record, index) => {
+                if (record.fields['Series ID']) {
+                    console.log(`  Record ${index}: ${record.fields['Event Name']} - Series ID: ${record.fields['Series ID']}`);
+                }
+            });
+        }
 
         if (seriesRecords.length === 0) {
             return {
