@@ -48,13 +48,28 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             // Load pending events
-            console.log('Fetching pending events...');
-            const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items');
-            if (!pendingEventsResponse.ok) {
-                throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
+            let pendingEvents = [];
+            try {
+                console.log('Fetching pending events...');
+                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items');
+                if (!pendingEventsResponse.ok) {
+                    throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
+                }
+                const eventsData = await pendingEventsResponse.json();
+                
+                // Ensure we have an array
+                if (!Array.isArray(eventsData)) {
+                    console.warn('Pending events is not an array:', eventsData);
+                    pendingEvents = [];
+                } else {
+                    pendingEvents = eventsData;
+                }
+                
+                console.log(`Loaded ${pendingEvents.length} pending events`);
+            } catch (error) {
+                console.error('Error loading pending events:', error);
+                pendingEvents = [];
             }
-            const pendingEvents = await pendingEventsResponse.json();
-            console.log(`Loaded ${pendingEvents.length} pending events`);
             
             // Load pending venues (with fallback)
             let pendingVenues = [];
@@ -63,9 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-venues');
                 if (pendingVenuesResponse.ok) {
                     pendingVenues = await pendingVenuesResponse.json();
+                    
+                    // Ensure we have an array
+                    if (!Array.isArray(pendingVenues)) {
+                        console.warn('Pending venues is not an array:', pendingVenues);
+                        pendingVenues = [];
+                    }
+                    
                     console.log(`Loaded ${pendingVenues.length} pending venues`);
                 } else {
                     console.warn('Pending venues function returned error:', pendingVenuesResponse.status);
+                    pendingVenues = [];
                 }
             } catch (error) {
                 console.warn('Pending venues function not available, using fallback:', error.message);

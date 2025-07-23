@@ -44,18 +44,43 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 const eventsResponse = await fetch('/.netlify/functions/get-pending-items');
-                events = await eventsResponse.json();
+                if (eventsResponse.ok) {
+                    events = await eventsResponse.json();
+                    console.log(`Loaded ${events.length} pending events`);
+                } else {
+                    console.error('Events response not ok:', eventsResponse.status);
+                    events = [];
+                }
             } catch (error) {
                 console.error('Error loading pending events:', error);
                 showNotification('Error loading pending events', 'error');
+                events = [];
             }
             
             try {
                 const venuesResponse = await fetch('/.netlify/functions/get-pending-venues');
-                venues = await venuesResponse.json();
+                if (venuesResponse.ok) {
+                    venues = await venuesResponse.json();
+                    console.log(`Loaded ${venues.length} pending venues`);
+                } else {
+                    console.error('Venues response not ok:', venuesResponse.status);
+                    venues = [];
+                }
             } catch (error) {
                 console.error('Error loading pending venues:', error);
                 showNotification('Error loading pending venues', 'error');
+                venues = [];
+            }
+            
+            // Ensure we have arrays before calling .map()
+            if (!Array.isArray(events)) {
+                console.warn('Events is not an array:', events);
+                events = [];
+            }
+            
+            if (!Array.isArray(venues)) {
+                console.warn('Venues is not an array:', venues);
+                venues = [];
             }
             
             // Combine and format items
