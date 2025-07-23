@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap | Future Features | Brum Outloud</title>
+    <meta name="description" content="Explore the future of Brum Outloud. See what features are planned and being considered for Birmingham's LGBTQ+ community platform.">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/roadmap.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/roadmap.html">
+    <meta property="og:title" content="Roadmap | Future Features | Brum Outloud">
+    <meta property="og:description" content="Explore the future of Brum Outloud. See what features are planned and being considered for Birmingham's LGBTQ+ community platform.">
+    <meta property="og:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.brumoutloud.co.uk/roadmap.html">
+    <meta name="twitter:title" content="Roadmap | Future Features | Brum Outloud">
+    <meta name="twitter:description" content="Explore the future of Brum Outloud. See what features are planned and being considered for Birmingham's LGBTQ+ community platform.">
+    <meta name="twitter:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    <meta name="twitter:creator" content="@brumoutloud">
+    <meta name="twitter:site" content="@brumoutloud">
+    
+    <!-- Additional SEO meta tags -->
+    <meta name="keywords" content="Brum Outloud roadmap, LGBTQ+ Birmingham features, queer community platform, Birmingham gay scene development">
+    <meta name="author" content="Brum Outloud">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Geo tags for local SEO -->
+    <meta name="geo.region" content="GB-WMD">
+    <meta name="geo.placename" content="Birmingham, UK">
+    <meta name="geo.position" content="52.4862;-1.8904">
+    <meta name="ICBM" content="52.4862, -1.8904">
+    
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Performance: Optimized external resource loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script src="/js/main.js" defer></script>
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <!-- Core brand styles are embedded directly to ensure accurate representation -->
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Roadmap Specific Styles */
+        .roadmap-timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E83A99 0%, #8B5CF6 100%);
+            transform: translateX(-50%);
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 3rem;
+            width: 100%;
+        }
+
+        .roadmap-item:nth-child(odd) {
+            padding-right: 50%;
+            padding-left: 2rem;
+        }
+
+        .roadmap-item:nth-child(even) {
+            padding-left: 50%;
+            padding-right: 2rem;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #E83A99;
+            border: 3px solid #8B5CF6;
+            z-index: 10;
+            transform: translateX(-50%);
+        }
+
+        .roadmap-item:nth-child(odd)::before {
+            right: -0.5rem;
+            transform: translateX(50%);
+        }
+
+        .roadmap-item:nth-child(even)::before {
+            left: -0.5rem;
+            transform: translateX(-50%);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-badge.live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-badge.rip {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6B7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+        
+        .status-badge.planned {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .status-badge.considering {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .feature-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+
+        .progress-bar {
+            background: rgba(75, 85, 99, 0.3);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E83A99 0%, #8B5CF6 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .roadmap-timeline::before {
+                left: 1rem;
+            }
+            
+            .roadmap-item:nth-child(odd),
+            .roadmap-item:nth-child(even) {
+                padding-left: 3rem;
+                padding-right: 1rem;
+            }
+            
+            .roadmap-item::before {
+                left: 0.5rem !important;
+                transform: translateX(-50%) !important;
+            }
+        }
+    </style>
+    
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body class="antialiased">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+    </div>
+
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-8 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-16">
+            <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">OUR <span class="accent-color">ROADMAP</span></h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-3xl mx-auto">Discover what's currently live, what's coming next, and what we're dreaming up for Birmingham's LGBTQ+ community platform.</p>
+        </section>
+
+        <!-- The Problem We're Solving -->
+        <section class="mb-20">
+            <h2 class="font-anton text-4xl text-white mb-8 text-center">🎯 The Problem We're Solving</h2>
+            <div class="card-bg p-8 rounded-2xl max-w-4xl mx-auto">
+                <p class="text-lg text-gray-300 mb-6">
+                    Birmingham's LGBTQ+ community deserves better than scattered event information, outdated listings, and a disconnected scene. 
+                    Finding queer events shouldn't be a challenge, and promoters shouldn't struggle to reach their audience.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-3">For Event-Goers</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• Hard to find up-to-date event information</li>
+                            <li>• No easy way to discover new venues</li>
+                            <li>• Missing out on events due to poor discoverability</li>
+                            <li>• No mobile-friendly way to browse the scene</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-3">For Promoters</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• Difficult to reach the right audience</li>
+                            <li>• Time-consuming event submission processes</li>
+                            <li>• No reliable platform to showcase their events</li>
+                            <li>• Limited tools to manage and promote events</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Solution -->
+        <section class="mb-20">
+            <h2 class="font-anton text-4xl text-white mb-8 text-center">✨ Our Solution</h2>
+            <div class="card-bg p-8 rounded-2xl max-w-4xl mx-auto">
+                <p class="text-lg text-gray-300 mb-6">
+                    We've built a modern platform that connects Birmingham's LGBTQ+ community with the events and venues they love. 
+                    From our humble beginnings with a basic Squarespace site, we've evolved into a comprehensive solution that serves both event-goers and promoters.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-4">For Event-Goers</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• Easy event discovery with smart filtering</li>
+                            <li>• Mobile-friendly experience that works like an app</li>
+                            <li>• Real-time updates so you never miss out</li>
+                            <li>• Comprehensive venue directory with detailed information</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-4">For Promoters</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• Simple event submission process</li>
+                            <li>• Reach the right audience easily</li>
+                            <li>• Better tools to showcase your events</li>
+                            <li>• Streamlined approval and management workflow</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Things We Want to Do Eventually -->
+        <section class="mb-20">
+            <h2 class="font-anton text-4xl text-white mb-8 text-center">🔮 Things We Want to Do Eventually</h2>
+            <p class="text-center text-gray-300 mb-12 max-w-3xl mx-auto">These are ideas we're exploring to make Brum Outloud even better for Birmingham's LGBTQ+ community.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Improved Discovery -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Improved Event Discovery</h3>
+                    <p class="text-gray-400 mb-4">Making it even easier to find the events you want to attend.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Better filtering and search</li>
+                        <li>• Personalized recommendations</li>
+                        <li>• Enhanced event details</li>
+                    </ul>
+                </div>
+
+                <!-- Enhanced Promoter Tools -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Enhanced Promoter Tools</h3>
+                    <p class="text-gray-400 mb-4">Better tools to help promoters reach their audience and manage events.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Improved submission process</li>
+                        <li>• Better event management</li>
+                        <li>• Enhanced promotion features</li>
+                    </ul>
+                </div>
+
+                <!-- Community Features -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Community Features</h3>
+                    <p class="text-gray-400 mb-4">Connect with the community and discover more than just events.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Sports teams and social groups</li>
+                        <li>• Queer-friendly businesses</li>
+                        <li>• Community news and content</li>
+                    </ul>
+                </div>
+
+                <!-- Social Features -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Social Features</h3>
+                    <p class="text-gray-400 mb-4">Connect with friends and see who's going to events.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• RSVP to events</li>
+                        <li>• See which friends are going</li>
+                        <li>• Share events with friends</li>
+                    </ul>
+                </div>
+
+                <!-- Direct Ticketing -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Direct Ticketing</h3>
+                    <p class="text-gray-400 mb-4">Purchase tickets directly through Brum Outloud.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Buy tickets instantly</li>
+                        <li>• Secure payment processing</li>
+                        <li>• Easy entry with QR codes</li>
+                    </ul>
+                </div>
+
+                <!-- Performer Features -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Performer Features</h3>
+                    <p class="text-gray-400 mb-4">Follow your favorite performers and get notified about their shows.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Performer profiles</li>
+                        <li>• Follow your favorites</li>
+                        <li>• Get notified about new shows</li>
+                    </ul>
+                </div>
+
+                <!-- Blog & Content Hub -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Blog & Content Hub</h3>
+                    <p class="text-gray-400 mb-4">Platform for articles, interviews, and community news.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Community interviews</li>
+                        <li>• Event reviews</li>
+                        <li>• Scene updates</li>
+                        <li>• Guest contributors</li>
+                    </ul>
+                </div>
+
+                <!-- Queer Creatives Directory -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Queer Creatives Directory</h3>
+                    <p class="text-gray-400 mb-4">Resource for promoters to find local LGBTQ+ talent.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Performer portfolios</li>
+                        <li>• Booking system</li>
+                        <li>• Reviews and ratings</li>
+                    </ul>
+                </div>
+
+                <!-- Themed Event Hubs -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Themed Event Hubs</h3>
+                    <p class="text-gray-400 mb-4">Dedicated pages for major community events.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Pride event hub</li>
+                        <li>• Festival guides</li>
+                        <li>• Special event coverage</li>
+                    </ul>
+                </div>
+
+                <!-- Enhanced Venue Pages -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Enhanced Venue Pages</h3>
+                    <p class="text-gray-400 mb-4">More dynamic content for venue listings.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Photo galleries</li>
+                        <li>• Social media integration</li>
+                        <li>• Virtual tours</li>
+                    </ul>
+                </div>
+
+                <!-- Promoter Portal -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Promoter Portal</h3>
+                    <p class="text-gray-400 mb-4">Login-based portal for promoters.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Content management</li>
+                        <li>• Analytics dashboard</li>
+                        <li>• Communication tools</li>
+                    </ul>
+                </div>
+
+                <!-- Monetization Features -->
+                <div class="feature-card p-6 rounded-2xl">
+                    <h3 class="text-white font-bold text-xl mb-3">Monetization Features</h3>
+                    <p class="text-gray-400 mb-4">Sustainable revenue streams for the platform.</p>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• Featured event banners</li>
+                        <li>• Promoted listings</li>
+                        <li>• Premium venue profiles</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Section -->
+        <section class="text-center">
+            <div class="card-bg p-8 rounded-2xl max-w-2xl mx-auto">
+                <h2 class="font-anton text-3xl text-white mb-4">Have Ideas?</h2>
+                <p class="text-gray-300 mb-6">We want to hear from you! What features would make Brum Outloud even better for Birmingham's LGBTQ+ community?</p>
+                <a href="/contact.html" class="btn-primary inline-block px-8 py-3 rounded-lg font-bold text-white">
+                    Share Your Ideas
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-20 py-12 border-t border-gray-800">
+        <div class="container mx-auto px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-bold mb-4">Brum Outloud</h3>
+                    <p class="text-gray-400 text-sm">Your essential guide to Birmingham's vibrant LGBTQ+ scene.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/events.html" class="text-gray-400 hover:text-white text-sm">Events</a></li>
+                        <li><a href="/all-venues.html" class="text-gray-400 hover:text-white text-sm">Venues</a></li>
+                        <li><a href="/community.html" class="text-gray-400 hover:text-white text-sm">Community</a></li>
+                        <li><a href="/contact.html" class="text-gray-400 hover:text-white text-sm">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">For Promoters</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/promoter-tool.html" class="text-gray-400 hover:text-white text-sm">Submit Event</a></li>
+                        <li><a href="/get-listed.html" class="text-gray-400 hover:text-white text-sm">Get Listed</a></li>
+                        <li><a href="/terms-of-submission.html" class="text-gray-400 hover:text-white text-sm">Terms</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy-policy.html" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a></li>
+                        <li><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white text-sm">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-400 text-sm">&copy; 2025 Brum Outloud. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu').classList.toggle('hidden');
+            document.getElementById('menu-btn').classList.toggle('open');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('#menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('menu').classList.add('hidden');
+                document.getElementById('menu-btn').classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
