@@ -26,30 +26,85 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize dashboard
     async function initializeDashboard() {
-        await loadDashboardStats();
-        await loadRecentActivity();
-        await loadSettings();
-        setupAutoRefresh();
-        setupNotifications();
+        console.log('Initializing admin dashboard...');
+        
+        try {
+            await loadDashboardStats();
+            await loadRecentActivity();
+            await loadSettings();
+            setupAutoRefresh();
+            setupNotifications();
+            
+            console.log('Admin dashboard initialized successfully');
+        } catch (error) {
+            console.error('Error initializing dashboard:', error);
+            showNotification('Error initializing dashboard. Some features may not work.', 'error');
+        }
     }
     
     // Load dashboard statistics
     async function loadDashboardStats() {
+        console.log('Loading dashboard statistics...');
+        
         try {
             // Load pending events
+            console.log('Fetching pending events...');
             const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items');
+            if (!pendingEventsResponse.ok) {
+                throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
+            }
             const pendingEvents = await pendingEventsResponse.json();
+            console.log(`Loaded ${pendingEvents.length} pending events`);
             
-            // Load pending venues
-            const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-venues');
-            const pendingVenues = await pendingVenuesResponse.json();
+            // Load pending venues (with fallback)
+            let pendingVenues = [];
+            try {
+                console.log('Fetching pending venues...');
+                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-venues');
+                if (pendingVenuesResponse.ok) {
+                    pendingVenues = await pendingVenuesResponse.json();
+                    console.log(`Loaded ${pendingVenues.length} pending venues`);
+                } else {
+                    console.warn('Pending venues function returned error:', pendingVenuesResponse.status);
+                }
+            } catch (error) {
+                console.warn('Pending venues function not available, using fallback:', error.message);
+                pendingVenues = [];
+            }
             
-            // Load total counts (we'll need to create these functions)
-            const totalEventsResponse = await fetch('/.netlify/functions/get-events-count');
-            const totalEvents = await totalEventsResponse.json();
+            // Load total counts (with fallbacks)
+            let totalEvents = { count: 0 };
+            let totalVenues = { count: 0 };
             
-            const totalVenuesResponse = await fetch('/.netlify/functions/get-venues-count');
-            const totalVenues = await totalVenuesResponse.json();
+            try {
+                console.log('Fetching events count...');
+                const totalEventsResponse = await fetch('/.netlify/functions/get-events-count');
+                if (totalEventsResponse.ok) {
+                    totalEvents = await totalEventsResponse.json();
+                    console.log(`Total events: ${totalEvents.count}`);
+                } else {
+                    console.warn('Events count function returned error:', totalEventsResponse.status);
+                    totalEvents = { count: pendingEvents.length };
+                }
+            } catch (error) {
+                console.warn('Events count function not available, using fallback:', error.message);
+                totalEvents = { count: pendingEvents.length };
+            }
+            
+            try {
+                console.log('Fetching venues count...');
+                const totalVenuesResponse = await fetch('/.netlify/functions/get-venues-count');
+                if (totalVenuesResponse.ok) {
+                    totalVenues = await totalVenuesResponse.json();
+                    console.log(`Total venues: ${totalVenues.count}`);
+                } else {
+                    console.warn('Venues count function returned error:', totalVenuesResponse.status);
+                    totalVenues = { count: pendingVenues.length };
+                }
+            } catch (error) {
+                console.warn('Venues count function not available, using fallback:', error.message);
+                totalVenues = { count: pendingVenues.length };
+            }
             
             // Update dashboard data
             dashboardData.pendingEvents = pendingEvents.length || 0;
@@ -61,8 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDashboardStats();
             updateNotificationBadges();
             
+            console.log('Dashboard statistics updated successfully');
+            
         } catch (error) {
             console.error('Error loading dashboard stats:', error);
+            showNotification('Error loading dashboard statistics. Check console for details.', 'error');
+            
             // Set fallback values
             pendingEventsCount.textContent = '?';
             pendingVenuesCount.textContent = '?';
@@ -134,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error loading recent activity:', error);
+            // Show fallback message
             displayRecentActivity([]);
         }
     }
@@ -231,6 +291,24 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error loading settings:', error);
+            // Set fallback values
+            const fallbackSettings = {
+                geminiModel: 'gemini-1.5-flash',
+                googlePlacesApiKey: '',
+                cloudinaryCloudName: '',
+                cloudinaryApiKey: '',
+                cloudinaryApiSecret: '',
+                airtablePersonalAccessToken: '',
+                airtableBaseId: ''
+            };
+            
+            Object.keys(fallbackSettings).forEach(key => {
+                const field = document.getElementById(key);
+                if (field) {
+                    field.value = fallbackSettings[key];
+                    field.placeholder = 'Error loading settings';
+                }
+            });
         }
     }
     

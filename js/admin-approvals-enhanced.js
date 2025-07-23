@@ -38,14 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
             approvalList.classList.add('hidden');
             noItemsMessage.classList.add('hidden');
             
-            // Load both events and venues
-            const [eventsResponse, venuesResponse] = await Promise.all([
-                fetch('/.netlify/functions/get-pending-items'),
-                fetch('/.netlify/functions/get-pending-venues')
-            ]);
+            // Load both events and venues with error handling
+            let events = [];
+            let venues = [];
             
-            const events = await eventsResponse.json();
-            const venues = await venuesResponse.json();
+            try {
+                const eventsResponse = await fetch('/.netlify/functions/get-pending-items');
+                events = await eventsResponse.json();
+            } catch (error) {
+                console.error('Error loading pending events:', error);
+                showNotification('Error loading pending events', 'error');
+            }
+            
+            try {
+                const venuesResponse = await fetch('/.netlify/functions/get-pending-venues');
+                venues = await venuesResponse.json();
+            } catch (error) {
+                console.error('Error loading pending venues:', error);
+                showNotification('Error loading pending venues', 'error');
+            }
             
             // Combine and format items
             allItems = [

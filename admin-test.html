@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test | Brum Out Loud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="antialiased bg-gray-900 text-white">
+    <div class="container mx-auto px-8 py-8">
+        <h1 class="text-3xl font-bold mb-8">Admin Functions Test</h1>
+        
+        <div class="space-y-6">
+            <div class="card-bg p-6">
+                <h2 class="text-xl font-bold mb-4">Test Functions</h2>
+                <div class="space-y-4">
+                    <button onclick="testFunction('get-pending-items')" class="bg-blue-600 px-4 py-2 rounded">Test get-pending-items</button>
+                    <button onclick="testFunction('get-pending-venues')" class="bg-blue-600 px-4 py-2 rounded">Test get-pending-venues</button>
+                    <button onclick="testFunction('get-events-count')" class="bg-blue-600 px-4 py-2 rounded">Test get-events-count</button>
+                    <button onclick="testFunction('get-venues-count')" class="bg-blue-600 px-4 py-2 rounded">Test get-venues-count</button>
+                    <button onclick="testFunction('get-recent-activity')" class="bg-blue-600 px-4 py-2 rounded">Test get-recent-activity</button>
+                    <button onclick="testFunction('get-settings')" class="bg-blue-600 px-4 py-2 rounded">Test get-settings</button>
+                </div>
+            </div>
+            
+            <div class="card-bg p-6">
+                <h2 class="text-xl font-bold mb-4">Results</h2>
+                <pre id="results" class="bg-gray-800 p-4 rounded text-sm overflow-auto max-h-96"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testFunction(functionName) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.textContent = `Testing ${functionName}...`;
+            
+            try {
+                const response = await fetch(`/.netlify/functions/${functionName}`);
+                const data = await response.json();
+                
+                resultsDiv.textContent = `${functionName} Response:\nStatus: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultsDiv.textContent = `${functionName} Error:\n${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
