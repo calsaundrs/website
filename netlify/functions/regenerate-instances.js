@@ -104,8 +104,20 @@ exports.handler = async (event) => {
 
         let recurringInfoObj;
         try {
-            recurringInfoObj = typeof recurringInfo === 'string' ? JSON.parse(recurringInfo) : recurringInfo;
+            if (typeof recurringInfo === 'string') {
+                // Try to parse as JSON first
+                if (recurringInfo.startsWith('{') || recurringInfo.startsWith('[')) {
+                    recurringInfoObj = JSON.parse(recurringInfo);
+                } else {
+                    // Handle plain text descriptions
+                    console.log('regenerate-instances: Converting text description to JSON format:', recurringInfo);
+                    recurringInfoObj = convertTextToRecurringInfo(recurringInfo);
+                }
+            } else {
+                recurringInfoObj = recurringInfo;
+            }
         } catch (e) {
+            console.error('regenerate-instances: Error parsing recurring info:', e);
             return {
                 statusCode: 400,
                 body: JSON.stringify({ 
@@ -239,4 +251,86 @@ function generateInstances(recurrenceRules, instancesAhead, endDate) {
     
     console.log(`generateInstances: Generated ${instances.length} instances for type: ${recurrenceRules.type}`);
     return instances;
+}
+
+function convertTextToRecurringInfo(text) {
+    if (!text || typeof text !== 'string') {
+        return { type: 'weekly', days: [], maxInstances: 10, instancesAhead: 12 };
+    }
+    
+    const lowerText = text.toLowerCase();
+    
+    // Default values
+    let type = 'weekly';
+    let days = [];
+    let maxInstances = 10;
+    let instancesAhead = 12;
+    
+    // Detect type
+    if (lowerText.includes('monthly')) {
+        type = 'monthly';
+        // Try to extract monthly details
+        if (lowerText.includes('first')) {
+            return {
+                type: 'monthly',
+                monthlyType: 'day',
+                week: 1,
+                dayOfWeek: getDayOfWeekFromText(text),
+                maxInstances: maxInstances,
+                instancesAhead: instancesAhead
+            };
+        } else if (lowerText.includes('last')) {
+            return {
+                type: 'monthly',
+                monthlyType: 'day',
+                week: -1,
+                dayOfWeek: getDayOfWeekFromText(text),
+                maxInstances: maxInstances,
+                instancesAhead: instancesAhead
+            };
+        } else {
+            return {
+                type: 'monthly',
+                monthlyType: 'date',
+                dayOfMonth: 1, // Default to 1st of month
+                maxInstances: maxInstances,
+                instancesAhead: instancesAhead
+            };
+        }
+    } else if (lowerText.includes('weekly') || getDayOfWeekFromText(text) !== null) {
+        // If it contains "weekly" or any day of the week, it's weekly
+        type = 'weekly';
+        const dayOfWeek = getDayOfWeekFromText(text);
+        if (dayOfWeek !== null) {
+            days = [dayOfWeek];
+        }
+    }
+    
+    return {
+        type: type,
+        days: days,
+        maxInstances: maxInstances,
+        instancesAhead: instancesAhead
+    };
+}
+
+function getDayOfWeekFromText(text) {
+    const lowerText = text.toLowerCase();
+    const dayMap = {
+        'monday': 1, 'mon': 1,
+        'tuesday': 2, 'tue': 2,
+        'wednesday': 3, 'wed': 3,
+        'thursday': 4, 'thu': 4,
+        'friday': 5, 'fri': 5,
+        'saturday': 6, 'sat': 6,
+        'sunday': 0, 'sun': 0
+    };
+    
+    for (const [day, value] of Object.entries(dayMap)) {
+        if (lowerText.includes(day)) {
+            return value;
+        }
+    }
+    
+    return null;
 }
