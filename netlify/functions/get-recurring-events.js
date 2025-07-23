@@ -47,7 +47,9 @@ exports.handler = async (event) => {
                 'Category', 
                 'Recurring Info', 
                 'Series ID',
-                'Status'
+                'Status',
+                'Promo Image',
+                'Image URL'
             ]
         }).all();
 
@@ -129,6 +131,7 @@ exports.handler = async (event) => {
                 venue: parentEvent.fields['VenueText'] || (parentEvent.fields['Venue Name'] ? parentEvent.fields['Venue Name'][0] : 'TBC'),
                 category: parentEvent.fields['Category'] || [],
                 status: parentEvent.fields['Status'],
+                image: parentEvent.fields['Promo Image'] || parentEvent.fields['Image URL'],
                 isActive: isActive,
                 totalInstances: instances.length,
                 futureInstances: futureInstances.length,
@@ -169,6 +172,7 @@ exports.handler = async (event) => {
                 category: fields['Category'] || [],
                 status: fields['Status'],
                 date: fields['Date'],
+                image: fields['Promo Image'] || fields['Image URL'],
                 isActive: eventDate > now,
                 isPast: eventDate <= now,
                 totalInstances: 1,

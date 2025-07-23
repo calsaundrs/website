@@ -6,32 +6,82 @@
     <title>Manage Venues | Admin Panel</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
     <style>
-        /* Styles for filter buttons (kept for consistency with other admin pages) */
-        .filter-button {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s, color 0.2s;
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #d1d5db;
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
         }
-        .filter-button.active {
-            background-color: #E83A99; /* Accent color */
-            color: white;
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
         }
-        .filter-button:hover:not(.active) {
-            background-color: rgba(255, 255, 255, 0.1);
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
         }
-        /* No specific styles needed here as they are applied directly in JS for dynamic elements */
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            transform: translateY(-1px);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .accent-color {
+            color: #E83A99;
+        }
+        .accent-color-secondary {
+            color: #8B5CF6;
+        }
+        .venue-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+        .form-input {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        .form-input:focus {
+            border-color: #E83A99;
+            box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
+        }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
 </head>
-<body class="antialiased">
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -61,10 +111,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+            <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
             <!-- GET LISTED button styling reverted to original Tailwind classes -->
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
@@ -84,59 +134,77 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
-        <section class="max-w-4xl mx-auto">
-            <!-- Breadcrumb Start -->
-            <nav class="flex mb-8" aria-label="Breadcrumb">
-                <ol role="list" class="flex items-center space-x-4">
-                    <li>
-                        <a href="admin-settings.html" class="text-sm font-medium text-gray-400 hover:text-white">Admin Panel</a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0" aria-hidden="true"></i>
-                            <span aria-current="page" class="ml-4 text-sm font-medium text-white">
-                                Manage Venues
-                            </span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-            <!-- Breadcrumb End -->
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol role="list" class="flex items-center space-x-4">
+                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <a href="/admin/settings" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <span class="ml-4 font-medium text-white">Manage Venues</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
-            <div class="text-center mb-8">
+        <section class="text-center mb-8">
+            <div class="text-center mb-16">
                 <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">MANAGE <span class="accent-color">VENUES</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Add, edit, and manage venues on the site.</p>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Add, edit, and manage venue information for your LGBTQ+ events platform.</p>
             </div>
             
-            <div class="card-bg p-6 mb-8 rounded-lg shadow-lg">
+            <div class="card-bg p-6 mb-8 rounded-2xl shadow-lg">
                 <div class="flex flex-wrap justify-end items-center gap-4">
-                     <button id="add-venue-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg whitespace-nowrap hover:bg-green-500 transition-colors flex-shrink-0 shadow-md">
+                     <button id="add-venue-btn" class="btn-success text-white font-bold py-3 px-6 rounded-lg whitespace-nowrap transition-all flex-shrink-0 shadow-md">
                         <i class="fas fa-plus mr-2"></i> Add New Venue
                     </button>
                 </div>
             </div>
 
             <div id="loading-state" class="text-center py-10">
-                <div class="loader inline-block"></div>
-                <p class="mt-4 text-gray-400">Loading approved venues...</p>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-color mx-auto"></div>
+                <p class="mt-4 text-gray-400">Loading venues...</p>
             </div>
 
             <div id="venue-list" class="space-y-4">
-                </div>
+                <!-- Venues will be populated here -->
+            </div>
 
             <div id="load-more-container" class="text-center mt-8 hidden">
-                <button id="load-more-btn" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600">Load More</button>
+                <button id="load-more-btn" class="btn-secondary text-white font-bold py-3 px-8 rounded-lg transition-all">
+                    <i class="fas fa-plus mr-2"></i>Load More
+                </button>
             </div>
         </section>
     </main>
 
+    <!-- Edit Venue Modal -->
     <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-        <form id="edit-form" class="card-bg p-8 w-full max-w-3xl space-y-4 max-h-[90vh] overflow-y-auto rounded-lg shadow-xl">
-             <h3 id="modal-title" class="font-anton text-3xl text-white mb-6">Edit Venue</h3>
-             <div id="edit-form-fields" class="space-y-4"></div>
-             <div class="flex justify-end gap-4 pt-4">
-                <button type="button" id="cancel-edit-btn" class="bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">Cancel</button>
-                <button type="submit" class="bg-accent-color text-white font-bold py-2 px-6 rounded-lg">Save Changes</button>
+        <form id="edit-form" class="card-bg p-8 w-full max-w-3xl space-y-6 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl">
+             <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="font-anton text-3xl text-white">
+                    <i class="fas fa-edit mr-3 accent-color"></i>Edit Venue
+                </h3>
+                <button type="button" id="cancel-edit-btn" class="text-gray-400 hover:text-white text-2xl transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+             </div>
+             <div id="edit-form-fields" class="space-y-6">
+                <!-- Form fields will be populated here -->
+             </div>
+             <div class="flex justify-end gap-4 pt-6 border-t border-gray-700">
+                <button type="button" id="cancel-edit-btn-2" class="btn-secondary text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+                <button type="submit" class="btn-primary text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    <i class="fas fa-save mr-2"></i>Save Changes
+                </button>
              </div>
         </form>
     </div>
