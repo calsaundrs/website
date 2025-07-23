@@ -275,6 +275,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
 
+            <!-- Debug Tools (Admin Only) -->
+            <div class="bg-yellow-900/20 backdrop-blur-sm rounded-lg p-4 mb-6 border border-yellow-700/50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-yellow-300 font-semibold mb-1">
+                            <i class="fas fa-bug mr-2"></i>Debug Tools
+                        </h3>
+                        <p class="text-yellow-200/70 text-sm">Test functions for troubleshooting recurring events</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="testRecurringEvents()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-play mr-1"></i>Test API
+                        </button>
+                        <button onclick="testAirtableFields()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-database mr-1"></i>Check Fields
+                        </button>
+                        <button onclick="refreshRecurringEvents()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-sync mr-1"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Error Message -->
             <div id="error-message" class="hidden bg-red-900/50 border border-red-700 text-red-200 px-6 py-4 rounded-lg mb-6 backdrop-blur-sm"></div>
 
