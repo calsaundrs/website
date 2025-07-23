@@ -3,6 +3,25 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }
 
 const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
+// Function to generate URL-friendly slugs
+const generateSlug = (eventName, date) => {
+    // Convert event name to URL-friendly slug
+    let slug = eventName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+        .trim();
+    
+    // Add date if provided
+    if (date) {
+        const dateStr = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD format
+        slug = `${slug}-${dateStr}`;
+    }
+    
+    return slug;
+};
+
 const getCloudinaryUrl = (publicId, width, height) => {
     if (!publicId || !cloudinaryCloudName) return null;
     return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
@@ -181,6 +200,12 @@ exports.handler = async (event, context) => {
                 
                 const venueInfo = resolveVenueInfo(fields);
 
+                // Generate proper slug for standalone events
+                let eventSlug = fields['Slug'];
+                if (!eventSlug || eventSlug.startsWith('#event-')) {
+                    eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                }
+
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
@@ -192,7 +217,7 @@ exports.handler = async (event, context) => {
                     image: imageUrl,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
-                    slug: fields['Slug'] || `#event-${record.id}`,
+                    slug: eventSlug,
                     category: fields['Category'] || [],
                     isFeatured: isFeatured,
                     isBoosted: isBoosted,
@@ -277,11 +302,24 @@ exports.handler = async (event, context) => {
                 
                 const venueInfo = resolveVenueInfo(fields);
 
-                // For recurring events, use the parent event's slug (the one with Recurring Info)
-                let eventSlug = fields['Slug'] || `#event-${record.id}`;
+                // For recurring events, generate proper slugs
+                let eventSlug = fields['Slug'];
+                
+                if (!eventSlug || eventSlug.startsWith('#event-')) {
+                    // Generate a proper slug for this event
+                    eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                }
+                
+                // For child instances, use the parent's slug (without date)
                 if (!fields['Recurring Info'] && parentEvent) {
-                    // This is a child instance, use the parent's slug
-                    eventSlug = parentEvent.fields['Slug'] || `#event-${parentEvent.id}`;
+                    const parentSlug = parentEvent.fields['Slug'];
+                    if (parentSlug && !parentSlug.startsWith('#event-')) {
+                        // Use parent's slug without date
+                        eventSlug = generateSlug(parentEvent.fields['Event Name']);
+                    } else {
+                        // Generate a proper slug for the parent
+                        eventSlug = generateSlug(parentEvent.fields['Event Name']);
+                    }
                 }
                 
                 events.push({
