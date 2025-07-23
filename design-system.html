@@ -3816,6 +3816,493 @@
                 </div>
             </div>
         </div>
+
+        <!-- User Authentication System -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6">User Authentication System</h2>
+            <p class="text-gray-400 mb-8">Complete user authentication and profile management system design.</p>
+            
+            <!-- Login/Register Pages -->
+            <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-sign-in-alt mr-3 text-accent-color"></i>Login & Registration
+                </h3>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Login Form -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-xl font-bold text-white mb-6">Login</h4>
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Email Address</label>
+                                <input type="email" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="your@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Password</label>
+                                <input type="password" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="••••••••">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-2">
+                                    <span class="text-sm text-gray-300">Remember me</span>
+                                </label>
+                                <a href="#" class="text-sm text-accent-color hover:underline">Forgot password?</a>
+                            </div>
+                            <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                                Sign In
+                            </button>
+                            <div class="text-center">
+                                <span class="text-gray-400 text-sm">Don't have an account? </span>
+                                <a href="#" class="text-accent-color hover:underline">Sign up</a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Registration Form -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-xl font-bold text-white mb-6">Create Account</h4>
+                        <form class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white mb-2">First Name</label>
+                                    <input type="text" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="John">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-white mb-2">Last Name</label>
+                                    <input type="text" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Email Address</label>
+                                <input type="email" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="your@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Password</label>
+                                <input type="password" class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none" placeholder="••••••••">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Pronouns</label>
+                                <select class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none">
+                                    <option>Prefer not to say</option>
+                                    <option>He/Him</option>
+                                    <option>She/Her</option>
+                                    <option>They/Them</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" class="mr-2" required>
+                                <span class="text-sm text-gray-300">I agree to the <a href="#" class="text-accent-color hover:underline">Terms of Service</a> and <a href="#" class="text-accent-color hover:underline">Privacy Policy</a></span>
+                            </div>
+                            <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                                Create Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Dashboard -->
+            <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-user-circle mr-3 text-accent-color"></i>User Dashboard
+                </h3>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Profile Section -->
+                    <div class="venue-card p-6">
+                        <div class="text-center mb-6">
+                            <div class="w-24 h-24 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user text-white text-3xl"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-white">John Doe</h4>
+                            <p class="text-gray-400">he/him • Birmingham</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar text-accent-color mr-3"></i>
+                                    <span class="text-white">Events Attended</span>
+                                </div>
+                                <span class="text-accent-color font-bold">12</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart text-accent-color mr-3"></i>
+                                    <span class="text-white">Favorites</span>
+                                </div>
+                                <span class="text-accent-color font-bold">8</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-star text-accent-color mr-3"></i>
+                                    <span class="text-white">Reviews</span>
+                                </div>
+                                <span class="text-accent-color font-bold">5</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-lg font-semibold text-white mb-4">Quick Actions</h4>
+                        <div class="space-y-3">
+                            <button class="w-full text-left p-3 bg-gray-800/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-plus text-accent-color mr-3"></i>
+                                    <span class="text-white">My Upcoming Events</span>
+                                </div>
+                            </button>
+                            <button class="w-full text-left p-3 bg-gray-800/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+                                <div class="flex items-center">
+                                    <i class="fas fa-ticket-alt text-accent-color mr-3"></i>
+                                    <span class="text-white">My Tickets</span>
+                                </div>
+                            </button>
+                            <button class="w-full text-left p-3 bg-gray-800/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+                                <div class="flex items-center">
+                                    <i class="fas fa-users text-accent-color mr-3"></i>
+                                    <span class="text-white">My Community Groups</span>
+                                </div>
+                            </button>
+                            <button class="w-full text-left p-3 bg-gray-800/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+                                <div class="flex items-center">
+                                    <i class="fas fa-cog text-accent-color mr-3"></i>
+                                    <span class="text-white">Account Settings</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-lg font-semibold text-white mb-4">Recent Activity</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-white text-sm font-medium">Booked ticket for Pride Night</span>
+                                    <span class="text-gray-400 text-xs">2 hours ago</span>
+                                </div>
+                                <p class="text-gray-400 text-xs">The Nightingale • June 15</p>
+                            </div>
+                            <div class="p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-white text-sm font-medium">Added review for Missing Bar</span>
+                                    <span class="text-gray-400 text-xs">1 day ago</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-white text-sm font-medium">Joined Birmingham Blaze FC</span>
+                                    <span class="text-gray-400 text-xs">3 days ago</span>
+                                </div>
+                                <p class="text-gray-400 text-xs">Sports Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ticketing System -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-6">Ticketing System</h2>
+            <p class="text-gray-400 mb-8">Complete ticketing system with QR codes, payment processing, and check-in management.</p>
+            
+            <!-- Ticket Purchase Flow -->
+            <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-ticket-alt mr-3 text-accent-color"></i>Ticket Purchase Flow
+                </h3>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Event with Tickets -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-xl font-bold text-white mb-4">Pride Night 2024</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 bg-gray-800/30 rounded-lg">
+                                <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-semibold text-white">General Admission</h5>
+                                    <p class="text-gray-400 text-sm">Standard entry to Pride Night</p>
+                                    <p class="text-gray-300 text-sm">Includes: Entry, Welcome drink</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-accent-color">£15</div>
+                                    <div class="text-gray-400 text-sm">45 remaining</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-4 p-4 bg-gray-800/30 rounded-lg">
+                                <div class="w-16 h-16 bg-gradient-to-br from-yellow-600/20 to-orange-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-crown text-yellow-400"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="font-semibold text-white">VIP Experience</h5>
+                                    <p class="text-gray-400 text-sm">Premium Pride Night experience</p>
+                                    <p class="text-gray-300 text-sm">Includes: Entry, Welcome drink, VIP area, Meet & greet</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-accent-color">£45</div>
+                                    <div class="text-gray-400 text-sm">12 remaining</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Purchase Form -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-xl font-bold text-white mb-4">Purchase Tickets</h4>
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Ticket Type</label>
+                                <select class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none">
+                                    <option>General Admission - £15</option>
+                                    <option>VIP Experience - £45</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-white mb-2">Quantity</label>
+                                <select class="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 focus:border-accent-color focus:outline-none">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div class="p-4 bg-gray-800/30 rounded-lg">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Ticket Price</span>
+                                    <span class="text-white">£15.00</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Quantity</span>
+                                    <span class="text-white">2</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Service Fee</span>
+                                    <span class="text-white">£1.50</span>
+                                </div>
+                                <hr class="border-gray-600 my-2">
+                                <div class="flex justify-between font-bold">
+                                    <span class="text-white">Total</span>
+                                    <span class="text-accent-color">£31.50</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                                <i class="fas fa-credit-card mr-2"></i>Proceed to Payment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Tickets -->
+            <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-qrcode mr-3 text-accent-color"></i>QR Code Tickets
+                </h3>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Ticket 1 -->
+                    <div class="venue-card p-6">
+                        <div class="text-center mb-4">
+                            <div class="w-32 h-32 bg-white rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">📱</div>
+                                    <div class="text-xs text-gray-600">QR Code</div>
+                                </div>
+                            </div>
+                            <h5 class="font-semibold text-white">General Admission</h5>
+                            <p class="text-gray-400 text-sm">Pride Night 2024</p>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Date:</span>
+                                <span class="text-white">June 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Time:</span>
+                                <span class="text-white">8:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Venue:</span>
+                                <span class="text-white">The Nightingale</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Ticket ID:</span>
+                                <span class="text-white font-mono">ABC123XYZ</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-600">
+                            <div class="flex items-center justify-between">
+                                <span class="text-green-400 text-sm">✓ Valid</span>
+                                <button class="text-accent-color text-sm hover:underline">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ticket 2 -->
+                    <div class="venue-card p-6">
+                        <div class="text-center mb-4">
+                            <div class="w-32 h-32 bg-white rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">📱</div>
+                                    <div class="text-xs text-gray-600">QR Code</div>
+                                </div>
+                            </div>
+                            <h5 class="font-semibold text-white">VIP Experience</h5>
+                            <p class="text-gray-400 text-sm">Pride Night 2024</p>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Date:</span>
+                                <span class="text-white">June 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Time:</span>
+                                <span class="text-white">8:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Venue:</span>
+                                <span class="text-white">The Nightingale</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Ticket ID:</span>
+                                <span class="text-white font-mono">DEF456UVW</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-600">
+                            <div class="flex items-center justify-between">
+                                <span class="text-green-400 text-sm">✓ Valid</span>
+                                <button class="text-accent-color text-sm hover:underline">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Check-in Status -->
+                    <div class="venue-card p-6">
+                        <h5 class="font-semibold text-white mb-4">Check-in Status</h5>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-white text-sm">General Admission</span>
+                                    <span class="text-green-400 text-xs">✓ Checked In</span>
+                                </div>
+                                <p class="text-gray-400 text-xs">Checked in at 8:15 PM</p>
+                            </div>
+                            <div class="p-3 bg-gray-800/30 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-white text-sm">VIP Experience</span>
+                                    <span class="text-yellow-400 text-xs">⏳ Pending</span>
+                                </div>
+                                <p class="text-gray-400 text-xs">Not yet checked in</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promoter Ticket Management -->
+            <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700">
+                <h3 class="text-2xl font-bold text-white mb-6">
+                    <i class="fas fa-chart-line mr-3 text-accent-color"></i>Promoter Ticket Management
+                </h3>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Sales Analytics -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-lg font-semibold text-white mb-4">Sales Analytics</h4>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center p-4 bg-gray-800/30 rounded-lg">
+                                    <div class="text-2xl font-bold text-accent-color">£1,245</div>
+                                    <div class="text-gray-400 text-sm">Total Revenue</div>
+                                </div>
+                                <div class="text-center p-4 bg-gray-800/30 rounded-lg">
+                                    <div class="text-2xl font-bold text-green-400">83</div>
+                                    <div class="text-gray-400 text-sm">Tickets Sold</div>
+                                </div>
+                                <div class="text-center p-4 bg-gray-800/30 rounded-lg">
+                                    <div class="text-2xl font-bold text-blue-400">17</div>
+                                    <div class="text-gray-400 text-sm">Remaining</div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-300">General Admission</span>
+                                    <span class="text-white">67 sold / 100 total</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 67%"></div>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-300">VIP Experience</span>
+                                    <span class="text-white">16 sold / 20 total</span>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Check-in Management -->
+                    <div class="venue-card p-6">
+                        <h4 class="text-lg font-semibold text-white mb-4">Check-in Management</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div>
+                                    <div class="text-white font-medium">John Doe</div>
+                                    <div class="text-gray-400 text-sm">General Admission • ABC123XYZ</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-green-400 text-sm">✓ Checked In</span>
+                                    <div class="text-gray-400 text-xs">8:15 PM</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div>
+                                    <div class="text-white font-medium">Jane Smith</div>
+                                    <div class="text-gray-400 text-sm">VIP Experience • DEF456UVW</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-yellow-400 text-sm">⏳ Pending</span>
+                                    <div class="text-gray-400 text-xs">Not checked in</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
+                                <div>
+                                    <div class="text-white font-medium">Alex Johnson</div>
+                                    <div class="text-gray-400 text-sm">General Admission • GHI789RST</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-green-400 text-sm">✓ Checked In</span>
+                                    <div class="text-gray-400 text-xs">8:30 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-600">
+                            <button class="w-full btn-primary text-white py-2 rounded-lg text-sm">
+                                <i class="fas fa-download mr-2"></i>Export Guest List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>
