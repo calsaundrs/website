@@ -50,8 +50,7 @@ exports.handler = async function(event, context) {
         const updates = records.map(record => ({
             id: record.id,
             fields: {
-                'Status': 'Ended',
-                'End Date': new Date().toISOString().split('T')[0]
+                'Status': 'Ended'
             }
         }));
 
@@ -74,8 +73,7 @@ exports.handler = async function(event, context) {
             await base('Events').update([{
                 id: seriesRecords[0].id,
                 fields: {
-                    'Is Active': false,
-                    'End Date': new Date().toISOString().split('T')[0]
+                    'Status': 'Ended'
                 }
             }]);
         }
