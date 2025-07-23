@@ -123,6 +123,8 @@
         /* Roadmap Specific Styles */
         .roadmap-timeline {
             position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .roadmap-timeline::before {
@@ -139,14 +141,17 @@
         .roadmap-item {
             position: relative;
             margin-bottom: 3rem;
+            width: 100%;
         }
 
         .roadmap-item:nth-child(odd) {
             padding-right: 50%;
+            padding-left: 2rem;
         }
 
         .roadmap-item:nth-child(even) {
             padding-left: 50%;
+            padding-right: 2rem;
         }
 
         .roadmap-item::before {
@@ -158,6 +163,7 @@
             border-radius: 50%;
             background: #E83A99;
             border: 3px solid #8B5CF6;
+            z-index: 10;
         }
 
         .roadmap-item:nth-child(odd)::before {
@@ -227,7 +233,7 @@
             .roadmap-item:nth-child(odd),
             .roadmap-item:nth-child(even) {
                 padding-left: 3rem;
-                padding-right: 0;
+                padding-right: 1rem;
             }
             
             .roadmap-item::before {
@@ -370,7 +376,46 @@
             </div>
         </section>
 
-        <!-- Roadmap Timeline -->
+        <!-- Version History -->
+        <section class="mb-20">
+            <h2 class="font-anton text-4xl text-white mb-12 text-center">📚 Version History</h2>
+            
+            <div class="roadmap-timeline">
+                <!-- V1: Basic Squarespace Site -->
+                <div class="roadmap-item">
+                    <div class="card-bg p-6 rounded-2xl">
+                        <div class="status-badge live">V1 - COMPLETED</div>
+                        <h3 class="text-white font-bold text-2xl mb-4">Basic Squarespace Site</h3>
+                        <p class="text-gray-400 mb-4">Our humble beginnings with a simple event listing platform.</p>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li>• Basic event listings</li>
+                            <li>• Simple venue information</li>
+                            <li>• Squarespace hosting</li>
+                            <li>• Manual content updates</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- V2: Current Platform -->
+                <div class="roadmap-item">
+                    <div class="card-bg p-6 rounded-2xl">
+                        <div class="status-badge live">V2 - CURRENT</div>
+                        <h3 class="text-white font-bold text-2xl mb-4">Modern Web Platform</h3>
+                        <p class="text-gray-400 mb-4">Full-featured platform with advanced functionality and community focus.</p>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li>• Advanced event filtering and search</li>
+                            <li>• Comprehensive venue directory</li>
+                            <li>• Event submission system</li>
+                            <li>• Admin management tools</li>
+                            <li>• Progressive web app features</li>
+                            <li>• Community FAQ section</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Development Roadmap -->
         <section class="mb-20">
             <h2 class="font-anton text-4xl text-white mb-12 text-center">🛣️ Development Roadmap</h2>
             
@@ -403,7 +448,7 @@
                 <!-- Phase 2: Event Lineups -->
                 <div class="roadmap-item">
                     <div class="card-bg p-6 rounded-2xl">
-                        <div class="status-badge planned">PHASE 2 - Q2 2024</div>
+                        <div class="status-badge planned">PHASE 2</div>
                         <h3 class="text-white font-bold text-2xl mb-4">Event Lineups System</h3>
                         <p class="text-gray-400 mb-4">Comprehensive performer management and lineup display for events.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
@@ -418,7 +463,7 @@
                 <!-- Phase 3: Community Features -->
                 <div class="roadmap-item">
                     <div class="card-bg p-6 rounded-2xl">
-                        <div class="status-badge planned">PHASE 3 - Q3 2024</div>
+                        <div class="status-badge planned">PHASE 3</div>
                         <h3 class="text-white font-bold text-2xl mb-4">Community Directory</h3>
                         <p class="text-gray-400 mb-4">Expanding beyond events to include sports teams, social groups, and queer businesses.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
@@ -430,17 +475,19 @@
                     </div>
                 </div>
 
-                <!-- Phase 4: User System -->
+                <!-- Phase 4: Enhanced User System -->
                 <div class="roadmap-item">
                     <div class="card-bg p-6 rounded-2xl">
-                        <div class="status-badge planned">PHASE 4 - Q4 2024</div>
-                        <h3 class="text-white font-bold text-2xl mb-4">User Authentication & Profiles</h3>
-                        <p class="text-gray-400 mb-4">Personalized experience with user accounts, favorites, and reviews.</p>
+                        <div class="status-badge planned">PHASE 4</div>
+                        <h3 class="text-white font-bold text-2xl mb-4">Enhanced User Profiles & Social Features</h3>
+                        <p class="text-gray-400 mb-4">Personalized experience with social features, RSVPs, and performer notifications.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
                             <li>• User registration and profiles</li>
+                            <li>• Event RSVP system</li>
+                            <li>• Friend connections and activity feed</li>
+                            <li>• Performer notifications and updates</li>
                             <li>• Favorites and saved events</li>
                             <li>• Review and rating system</li>
-                            <li>• Personalized recommendations</li>
                         </ul>
                     </div>
                 </div>
@@ -448,7 +495,7 @@
                 <!-- Phase 5: Ticketing -->
                 <div class="roadmap-item">
                     <div class="card-bg p-6 rounded-2xl">
-                        <div class="status-badge planned">PHASE 5 - Q1 2025</div>
+                        <div class="status-badge planned">PHASE 5</div>
                         <h3 class="text-white font-bold text-2xl mb-4">Integrated Ticketing System</h3>
                         <p class="text-gray-400 mb-4">Direct ticket purchases with QR codes and check-in system.</p>
                         <ul class="text-sm text-gray-300 space-y-2">
