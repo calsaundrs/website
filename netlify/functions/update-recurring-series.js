@@ -1,104 +1,83 @@
 const Airtable = require('airtable');
 
-exports.handler = async function(event, context) {
-    // Enable CORS
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-    };
+const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
-    // Handle preflight requests
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
-    }
-
+exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    console.log('update-recurring-series: Starting function execution');
+
+    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
+        console.error('update-recurring-series: Missing required environment variables');
         return {
-            statusCode: 405,
-            headers,
-            body: JSON.stringify({ error: 'Method not allowed' })
+            statusCode: 500,
+            body: JSON.stringify({ 
+                error: 'Missing Airtable configuration',
+                details: 'Environment variables not properly configured'
+            }),
         };
     }
+
+    const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
 
     try {
-        console.log('Update Recurring Series: Starting function');
-        console.log('Update Recurring Series: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
-        console.log('Update Recurring Series: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
-        
-        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
-            throw new Error('Missing required environment variables');
-        }
+        // Parse the request body
+        const requestBody = JSON.parse(event.body);
+        console.log('update-recurring-series: Request body:', requestBody);
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
-        
-        // Parse the request body - handle both JSON and form data
-        let data;
-        if (event.headers['content-type'] && event.headers['content-type'].includes('application/json')) {
-            data = JSON.parse(event.body);
-            console.log('Update Recurring Series: Parsed JSON data');
-        } else {
-            // For form data, we'll use a simpler approach
-            const formData = new URLSearchParams(event.body);
-            data = Object.fromEntries(formData);
-            console.log('Update Recurring Series: Parsed form data');
-            
-            // Parse JSON fields
-            if (data.recurringInfo) {
-                try {
-                    data.recurringInfo = JSON.parse(data.recurringInfo);
-                } catch (e) {
-                    data.recurringInfo = {};
-                }
-            }
-            if (data.categories) {
-                try {
-                    data.categories = JSON.parse(data.categories);
-                } catch (e) {
-                    data.categories = [];
-                }
-            }
-            if (data.newVenue) {
-                try {
-                    data.newVenue = JSON.parse(data.newVenue);
-                } catch (e) {
-                    data.newVenue = null;
-                }
-            }
-        }
-        
-        const { seriesId, name, description, venueId, newVenue, recurringInfo, instancesAhead, endDate, categories } = data;
-        
-        console.log('Update Recurring Series: Series ID:', seriesId);
-        console.log('Update Recurring Series: Data received:', { name, description, venueId, instancesAhead, endDate });
-        
+        const { 
+            seriesId, 
+            name,
+            description,
+            venueId,
+            newVenue,
+            recurringInfo,
+            instancesAhead,
+            endDate,
+            categories,
+            type
+        } = requestBody;
+
         if (!seriesId) {
             return {
                 statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: 'Series ID is required' })
+                body: JSON.stringify({ 
+                    error: 'Missing seriesId',
+                    details: 'Series ID is required for updating recurring series'
+                }),
             };
         }
 
-        // Get the series record
+        console.log(`update-recurring-series: Processing series ${seriesId}`);
+
+        // Get the series record (parent record with recurring info)
         const seriesRecords = await base('Events').select({
-            filterByFormula: `{Series ID} = '${seriesId}'`,
-            maxRecords: 1
+            filterByFormula: `OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}')`
         }).all();
+
+        console.log(`update-recurring-series: Found ${seriesRecords.length} events in series ${seriesId}`);
 
         if (seriesRecords.length === 0) {
             return {
                 statusCode: 404,
-                headers,
-                body: JSON.stringify({ error: 'Series not found' })
+                body: JSON.stringify({ 
+                    error: 'Series not found',
+                    details: `No events found with series ID: ${seriesId}`
+                }),
             };
         }
 
-        const seriesRecord = seriesRecords[0];
+        // Find the parent record (one with recurring info)
+        const parentRecord = seriesRecords.find(record => 
+            record.fields['Recurring Info'] || record.fields['recurringInfo']
+        ) || seriesRecords[0];
+
+        console.log(`update-recurring-series: Using parent record: ${parentRecord.id}`);
+
+        // Prepare update fields
         const updateFields = {};
 
         // Update basic information
@@ -107,7 +86,18 @@ exports.handler = async function(event, context) {
         if (instancesAhead) updateFields['Instances Ahead'] = parseInt(instancesAhead);
         if (endDate) updateFields['End Date'] = endDate;
         if (categories && Array.isArray(categories)) updateFields['Category'] = categories;
-        if (recurringInfo) updateFields['Recurring Info'] = JSON.stringify(recurringInfo);
+
+        // Handle recurring info
+        if (recurringInfo) {
+            // Convert recurring info to string format
+            let recurringInfoString = '';
+            if (typeof recurringInfo === 'object') {
+                recurringInfoString = JSON.stringify(recurringInfo);
+            } else {
+                recurringInfoString = recurringInfo.toString();
+            }
+            updateFields['Recurring Info'] = recurringInfoString;
+        }
 
         // Handle venue
         if (newVenue && newVenue.name && newVenue.address) {
@@ -129,35 +119,35 @@ exports.handler = async function(event, context) {
             updateFields['Venue'] = [venueId];
         }
 
-        // Update the series record
-        await base('Events').update([{
-            id: seriesRecord.id,
-            fields: updateFields
-        }]);
+        // Update the parent record
+        await base('Events').update(parentRecord.id, updateFields);
+
+        console.log(`update-recurring-series: Updated parent record with fields:`, Object.keys(updateFields));
 
         // If recurrence rules changed, regenerate instances
-        if (recurringInfo) {
+        if (recurringInfo && instancesAhead) {
             // Delete existing future instances
             const today = new Date().toISOString().split('T')[0];
             const existingInstances = await base('Events').select({
-                filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
+                filterByFormula: `AND(OR({Series ID} = '${seriesId}', {seriesId} = '${seriesId}'), {Date} >= '${today}')`
             }).all();
 
             if (existingInstances.length > 0) {
                 const deleteIds = existingInstances.map(record => record.id);
                 await base('Events').destroy(deleteIds);
+                console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
             }
 
             // Generate new instances
             const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
             const instanceRecords = newInstances.map(date => ({
                 fields: {
-                    'Event Name': name || seriesRecord.get('Event Name'),
-                    'Description': description || seriesRecord.get('Description'),
+                    'Event Name': name || parentRecord.fields['Event Name'],
+                    'Description': description || parentRecord.fields['Description'],
                     'Date': date,
-                    'Time': seriesRecord.get('Time'),
-                    'Venue': updateFields['Venue'] || seriesRecord.get('Venue'),
-                    'Category': categories || seriesRecord.get('Category'),
+                    'Time': parentRecord.fields['Time'],
+                    'Venue': updateFields['Venue'] || parentRecord.fields['Venue'],
+                    'Category': categories || parentRecord.fields['Category'],
                     'Series ID': seriesId,
                     'Status': 'Pending Review',
                     'Is Instance': true
@@ -166,27 +156,41 @@ exports.handler = async function(event, context) {
 
             if (instanceRecords.length > 0) {
                 await base('Events').create(instanceRecords);
+                console.log(`update-recurring-series: Created ${instanceRecords.length} new instances`);
             }
         }
 
+        const updatedCount = 1; // We updated the parent record
+
+        console.log(`update-recurring-series: Successfully processed ${updatedCount} records for series ${seriesId}`);
+
         return {
             statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                success: true, 
-                message: 'Recurring series updated successfully' 
-            })
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            },
+            body: JSON.stringify({
+                success: true,
+                message: `Successfully updated series ${seriesId}`,
+                action: action,
+                updatedCount: updatedCount,
+                seriesId: seriesId,
+                timestamp: new Date().toISOString()
+            }),
         };
 
     } catch (error) {
-        console.error('Error updating recurring series:', error);
+        console.error("update-recurring-series: Critical error:", error);
+        console.error("update-recurring-series: Error stack:", error.stack);
+        
         return {
             statusCode: 500,
-            headers,
             body: JSON.stringify({ 
-                error: 'Failed to update recurring series',
-                details: error.message 
-            })
+                error: 'Failed to update recurring series', 
+                details: error.toString(),
+                message: error.message 
+            }),
         };
     }
 };
