@@ -27,14 +27,14 @@ exports.handler = async function(event, context) {
 
     try {
         console.log('Update Recurring Series: Starting function');
-        console.log('Update Recurring Series: API Key exists:', !!process.env.AIRTABLE_API_KEY);
+        console.log('Update Recurring Series: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
         console.log('Update Recurring Series: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
         
-        if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
             throw new Error('Missing required environment variables');
         }
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
         
         // Parse the request body - handle both JSON and form data
         let data;
@@ -112,11 +112,17 @@ exports.handler = async function(event, context) {
         // Handle venue
         if (newVenue && newVenue.name && newVenue.address) {
             // Create new venue
+            const venueFields = {
+                'Name': newVenue.name,
+                'Address': newVenue.address
+            };
+            
+            // Add optional fields if provided
+            if (newVenue.postcode) venueFields['Postcode'] = newVenue.postcode;
+            if (newVenue.website) venueFields['Website'] = newVenue.website;
+            
             const venueRecord = await base('Venues').create([{
-                fields: {
-                    'Name': newVenue.name,
-                    'Address': newVenue.address
-                }
+                fields: venueFields
             }]);
             updateFields['Venue'] = [venueRecord[0].id];
         } else if (venueId) {

@@ -27,14 +27,14 @@ exports.handler = async function(event, context) {
 
     try {
         console.log('Venue List: Starting function');
-        console.log('Venue List: API Key exists:', !!process.env.AIRTABLE_API_KEY);
+        console.log('Venue List: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
         console.log('Venue List: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
         
-        if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
             throw new Error('Missing required environment variables');
         }
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
         
         console.log('Venue List: Fetching venues from Airtable');
         const records = await base('Venues').select({

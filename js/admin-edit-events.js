@@ -549,28 +549,42 @@ function openRecurringModal(seriesId) {
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Venue</label>
                         <select id="recurring-venue" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
-                            <option value="">-- Select Venue --</option>
-                            <option value="__CREATE_NEW__">-- Add New Venue --</option>
-                            ${allVenues && allVenues.length > 0 ? allVenues.map(venue => `
-                                <option value="${venue.id}" ${(recurringEvent.venueId || recurringEvent.Venue) === venue.id ? 'selected' : ''}>
-                                    ${venue.name}
-                                </option>
-                            `).join('') : '<option value="" disabled>No venues available</option>'}
+                            <option value="">Select an existing venue...</option>
+                            ${allVenues && allVenues.length > 0 ? allVenues.map(venue => {
+                                // Check if this venue matches the current event's venue
+                                const currentVenueId = recurringEvent.venueId || recurringEvent.Venue;
+                                const currentVenueName = recurringEvent.venue || recurringEvent.VenueText || recurringEvent['Venue Name'];
+                                const isSelected = currentVenueId === venue.id || currentVenueName === venue.name;
+                                return `<option value="${venue.id}" ${isSelected ? 'selected' : ''}>${venue.name}</option>`;
+                            }).join('') : ''}
+                            <option value="new">➕ Create New Venue</option>
                         </select>
+                        <p class="text-xs text-gray-400 mt-1">Select an existing venue or choose "Create New Venue" below</p>
                     </div>
                 </div>
                 
                 <!-- New Venue Fields (hidden by default) -->
-                <div id="new-venue-fields" class="hidden mt-4 p-4 bg-gray-700/50 rounded-lg">
-                    <h5 class="text-lg font-semibold text-white mb-3">New Venue Details</h5>
+                <div id="new-venue-fields" class="hidden mt-4 p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                    <h5 class="text-blue-300 font-semibold mb-3">
+                        <i class="fas fa-plus-circle mr-2"></i>Create New Venue
+                    </h5>
+                    <p class="text-sm text-blue-200 mb-4">Fill in the details for your new venue below.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Venue Name</label>
-                            <input type="text" id="new-venue-name" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                            <input type="text" id="new-venue-name" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue name">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Venue Address</label>
-                            <input type="text" id="new-venue-address" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                            <input type="text" id="new-venue-address" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue address">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Postcode</label>
+                            <input type="text" id="new-venue-postcode" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter postcode">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Website (Optional)</label>
+                            <input type="url" id="new-venue-website" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="https://">
                         </div>
                     </div>
                 </div>
@@ -949,7 +963,7 @@ function setupRecurringModalEventListeners() {
     
     if (venueSelect) {
         venueSelect.addEventListener('change', function() {
-            if (this.value === '__CREATE_NEW__') {
+            if (this.value === 'new') {
                 newVenueFields.classList.remove('hidden');
             } else {
                 newVenueFields.classList.add('hidden');
@@ -1027,13 +1041,18 @@ async function saveRecurringChanges(seriesId) {
         
         // Venue handling
         const venueSelect = document.getElementById('recurring-venue');
-        if (venueSelect.value === '__CREATE_NEW__') {
+        if (venueSelect.value === 'new') {
             const newVenueName = document.getElementById('new-venue-name').value;
             const newVenueAddress = document.getElementById('new-venue-address').value;
+            const newVenuePostcode = document.getElementById('new-venue-postcode').value;
+            const newVenueWebsite = document.getElementById('new-venue-website').value;
+
             if (newVenueName && newVenueAddress) {
                 data.newVenue = {
                     name: newVenueName,
-                    address: newVenueAddress
+                    address: newVenueAddress,
+                    postcode: newVenuePostcode,
+                    website: newVenueWebsite
                 };
             }
         } else if (venueSelect.value) {

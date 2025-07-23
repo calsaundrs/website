@@ -36,7 +36,7 @@ exports.handler = async function(event, context) {
             };
         }
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
         
         // Find all future instances of this series
         const today = new Date().toISOString().split('T')[0];
