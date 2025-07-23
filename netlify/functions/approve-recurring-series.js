@@ -99,15 +99,19 @@ exports.handler = async (event) => {
 
         console.log(`approve-recurring-series: Found ${allInstances.length} instances in series`);
 
-        // Filter to only pending future instances
+        // Get the number of instances to approve from settings
+        const instancesToApprove = parseInt(process.env.RECURRING_INSTANCES_TO_APPROVE) || 3;
+        console.log(`approve-recurring-series: Will approve up to ${instancesToApprove} future instances`);
+
+        // Filter to only pending future instances and limit to the configured number
         const now = new Date();
         const pendingFutureInstances = allInstances.filter(instance => {
             const eventDate = new Date(instance.fields.Date);
             const status = instance.fields.Status;
             return eventDate > now && status === 'Pending Review';
-        });
+        }).slice(0, instancesToApprove);
 
-        console.log(`approve-recurring-series: Found ${pendingFutureInstances.length} pending future instances`);
+        console.log(`approve-recurring-series: Found ${pendingFutureInstances.length} pending future instances to approve`);
 
         // Approve all pending future instances
         if (pendingFutureInstances.length > 0) {

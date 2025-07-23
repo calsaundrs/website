@@ -305,56 +305,56 @@ document.addEventListener('DOMContentLoaded', () => {
             const settings = await response.json();
             
             // Populate form fields
-            Object.keys(settings).forEach(key => {
-                const field = document.getElementById(key);
-                if (field) {
-                    field.value = settings[key] || '';
-                }
-            });
+            document.getElementById('gemini-model').value = settings.GEMINI_MODEL || '';
+            document.getElementById('google-places-api-key').value = settings.GOOGLE_PLACES_API_KEY || '';
+            document.getElementById('cloudinary-cloud-name').value = settings.CLOUDINARY_CLOUD_NAME || '';
+            document.getElementById('cloudinary-api-key').value = settings.CLOUDINARY_API_KEY || '';
+            document.getElementById('cloudinary-api-secret').value = settings.CLOUDINARY_API_SECRET || '';
+            document.getElementById('airtable-personal-access-token').value = settings.AIRTABLE_PERSONAL_ACCESS_TOKEN || '';
+            document.getElementById('airtable-base-id').value = settings.AIRTABLE_BASE_ID || '';
+            
+            // Populate recurring event settings
+            document.getElementById('recurring-instances-approve').value = settings.RECURRING_INSTANCES_TO_APPROVE || '3';
+            document.getElementById('recurring-instances-show').value = settings.RECURRING_INSTANCES_TO_SHOW || '6';
             
         } catch (error) {
             console.error('Error loading settings:', error);
-            // Set fallback values
-            const fallbackSettings = {
-                geminiModel: 'gemini-1.5-flash',
-                googlePlacesApiKey: '',
-                cloudinaryCloudName: '',
-                cloudinaryApiKey: '',
-                cloudinaryApiSecret: '',
-                airtablePersonalAccessToken: '',
-                airtableBaseId: ''
-            };
-            
-            Object.keys(fallbackSettings).forEach(key => {
-                const field = document.getElementById(key);
-                if (field) {
-                    field.value = fallbackSettings[key];
-                    field.placeholder = 'Error loading settings';
-                }
-            });
+            showNotification('Error loading settings', 'error');
         }
     }
     
     // Save settings
     async function saveSettings(formData) {
         try {
+            const settings = {
+                GEMINI_MODEL: formData.get('geminiModel'),
+                GOOGLE_PLACES_API_KEY: formData.get('googlePlacesApiKey'),
+                CLOUDINARY_CLOUD_NAME: formData.get('cloudinaryCloudName'),
+                CLOUDINARY_API_KEY: formData.get('cloudinaryApiKey'),
+                CLOUDINARY_API_SECRET: formData.get('cloudinaryApiSecret'),
+                AIRTABLE_PERSONAL_ACCESS_TOKEN: formData.get('airtablePersonalAccessToken'),
+                AIRTABLE_BASE_ID: formData.get('airtableBaseId'),
+                RECURRING_INSTANCES_TO_APPROVE: formData.get('RECURRING_INSTANCES_TO_APPROVE'),
+                RECURRING_INSTANCES_TO_SHOW: formData.get('RECURRING_INSTANCES_TO_SHOW')
+            };
+            
             const response = await fetch('/.netlify/functions/update-settings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(Object.fromEntries(formData))
+                body: JSON.stringify(settings)
             });
             
             if (response.ok) {
                 showNotification('Settings saved successfully!', 'success');
             } else {
-                throw new Error('Failed to save settings');
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to save settings');
             }
-            
         } catch (error) {
             console.error('Error saving settings:', error);
-            showNotification('Error saving settings', 'error');
+            showNotification('Error saving settings: ' + error.message, 'error');
         }
     }
     

@@ -13,13 +13,15 @@ exports.handler = async (event) => {
         // Get settings from Airtable (if you have a Settings table)
         // For now, return environment variables as settings
         const settings = {
-            geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
-            googlePlacesApiKey: process.env.GOOGLE_PLACES_API_KEY || '',
-            cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
-            cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || '',
-            cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || '',
-            airtablePersonalAccessToken: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN ? '***HIDDEN***' : '',
-            airtableBaseId: process.env.AIRTABLE_BASE_ID || ''
+            'AIRTABLE_PERSONAL_ACCESS_TOKEN': AIRTABLE_PERSONAL_ACCESS_TOKEN ? 'Set' : 'Not set',
+            'AIRTABLE_BASE_ID': AIRTABLE_BASE_ID ? 'Set' : 'Not set',
+            'GOOGLE_CALENDAR_API_KEY': process.env.GOOGLE_CALENDAR_API_KEY ? 'Set' : 'Not set',
+            'GEMINI_API_KEY': process.env.GEMINI_API_KEY ? 'Set' : 'Not set',
+            'CLOUDINARY_CLOUD_NAME': process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set',
+            'CLOUDINARY_API_KEY': process.env.CLOUDINARY_API_KEY ? 'Set' : 'Not set',
+            'CLOUDINARY_API_SECRET': process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Not set',
+            'RECURRING_INSTANCES_TO_APPROVE': process.env.RECURRING_INSTANCES_TO_APPROVE || '3',
+            'RECURRING_INSTANCES_TO_SHOW': process.env.RECURRING_INSTANCES_TO_SHOW || '6'
         };
 
         return {

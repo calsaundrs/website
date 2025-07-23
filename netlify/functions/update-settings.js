@@ -10,7 +10,43 @@ exports.handler = async (event) => {
     }
 
     try {
-        const settings = JSON.parse(event.body);
+        const { 
+            AIRTABLE_PERSONAL_ACCESS_TOKEN, 
+            AIRTABLE_BASE_ID,
+            GOOGLE_CALENDAR_API_KEY,
+            GEMINI_API_KEY,
+            CLOUDINARY_CLOUD_NAME,
+            CLOUDINARY_API_KEY,
+            CLOUDINARY_API_SECRET,
+            RECURRING_INSTANCES_TO_APPROVE,
+            RECURRING_INSTANCES_TO_SHOW
+        } = JSON.parse(event.body);
+
+        // Update environment variables (this would need to be done through Netlify dashboard or API)
+        // For now, we'll just validate and return success
+        const updates = {};
+        
+        if (RECURRING_INSTANCES_TO_APPROVE !== undefined) {
+            const instancesToApprove = parseInt(RECURRING_INSTANCES_TO_APPROVE);
+            if (isNaN(instancesToApprove) || instancesToApprove < 1 || instancesToApprove > 12) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({ error: 'RECURRING_INSTANCES_TO_APPROVE must be between 1 and 12' })
+                };
+            }
+            updates.RECURRING_INSTANCES_TO_APPROVE = instancesToApprove;
+        }
+        
+        if (RECURRING_INSTANCES_TO_SHOW !== undefined) {
+            const instancesToShow = parseInt(RECURRING_INSTANCES_TO_SHOW);
+            if (isNaN(instancesToShow) || instancesToShow < 1 || instancesToShow > 24) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({ error: 'RECURRING_INSTANCES_TO_SHOW must be between 1 and 24' })
+                };
+            }
+            updates.RECURRING_INSTANCES_TO_SHOW = instancesToShow;
+        }
         
         // For now, just log the settings (since we can't modify environment variables at runtime)
         // In a real implementation, you might store these in Airtable or another database
