@@ -537,4 +537,113 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
     };
+
+    // Validate event-venue data relationships
+    window.validateEventVenueData = async function() {
+        try {
+            console.log('Admin Dashboard: Starting event-venue data validation...');
+            
+            const response = await fetch('/.netlify/functions/validate-event-venue-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Admin Dashboard: Validation results:', result);
+                
+                // Display results in a modal or alert
+                let message = `Data Validation Complete!\n\n`;
+                message += `Total Events: ${result.summary.totalEvents}\n`;
+                message += `Total Venues: ${result.summary.totalVenues}\n`;
+                message += `Issues Found: ${result.summary.issuesFound}\n\n`;
+                
+                if (result.summary.issuesFound > 0) {
+                    message += `Issues by Severity:\n`;
+                    message += `- High: ${result.summary.issuesBySeverity.high}\n`;
+                    message += `- Medium: ${result.summary.issuesBySeverity.medium}\n`;
+                    message += `- Low: ${result.summary.issuesBySeverity.low}\n\n`;
+                    
+                    message += `Issues by Type:\n`;
+                    Object.entries(result.summary.issuesByType).forEach(([type, count]) => {
+                        message += `- ${type}: ${count}\n`;
+                    });
+                    
+                    message += `\nCheck the browser console for detailed issue information.`;
+                } else {
+                    message += `✅ No data issues found! All event-venue relationships are consistent.`;
+                }
+                
+                alert(message);
+                
+                // Log detailed issues to console
+                if (result.issues && result.issues.length > 0) {
+                    console.group('Detailed Validation Issues:');
+                    result.issues.forEach((issue, index) => {
+                        console.group(`Issue ${index + 1}: ${issue.issue}`);
+                        console.log('Event:', issue.eventName);
+                        console.log('Severity:', issue.severity);
+                        if (issue.details) {
+                            console.log('Details:', issue.details);
+                        }
+                        console.groupEnd();
+                    });
+                    console.groupEnd();
+                }
+                
+            } else {
+                const errorData = await response.text();
+                console.error('Admin Dashboard: Validation failed:', response.status, errorData);
+                alert(`Validation failed: ${response.status} - ${errorData}`);
+            }
+        } catch (error) {
+            console.error('Admin Dashboard: Error during validation:', error);
+            alert(`Validation error: ${error.message}`);
+        }
+    };
+
+    // Test image fix for recurring events
+    window.testImageFix = async function() {
+        console.log('Testing image fix for recurring events...');
+        try {
+            const response = await fetch('/.netlify/functions/test-image-fix');
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error Response:', errorText);
+                alert('Test failed: ' + errorText);
+                return null;
+            }
+            
+            const data = await response.json();
+            console.log('Image fix test results:', data);
+            
+            let message = `Image Fix Test Results:\n\n`;
+            message += `Total Events Tested: ${data.summary.totalEvents}\n`;
+            message += `Events With Images: ${data.summary.eventsWithImages}\n`;
+            message += `Events Without Images: ${data.summary.eventsWithoutImages}\n\n`;
+            
+            if (data.results && data.results.length > 0) {
+                message += `Detailed Results:\n`;
+                data.results.forEach((result, index) => {
+                    message += `${index + 1}. ${result.eventName}\n`;
+                    message += `   Has Image: ${result.hasImage ? '✅' : '❌'}\n`;
+                    if (result.finalImageUrl) {
+                        message += `   Image URL: ${result.finalImageUrl.substring(0, 50)}...\n`;
+                    }
+                    message += '\n';
+                });
+            }
+            
+            alert(message);
+            return data;
+        } catch (error) {
+            console.error('Error testing image fix:', error);
+            alert('Test error: ' + error.message);
+            return null;
+        }
+    };
 });
