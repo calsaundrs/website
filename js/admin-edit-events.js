@@ -116,9 +116,14 @@ function filterEvents(filter) {
             }
             break;
         case 'recurring':
+            console.log('Admin Edit Events: Rendering recurring events filter');
+            console.log('Admin Edit Events: Recurring container exists:', !!recurringContainer);
+            console.log('Admin Edit Events: Recurring events count:', recurringEvents.length);
             if (recurringContainer) {
                 recurringContainer.classList.remove('hidden');
                 renderRecurringEvents(recurringEvents);
+            } else {
+                console.error('Admin Edit Events: Recurring container not found!');
             }
             break;
     }
@@ -219,6 +224,13 @@ async function loadAllEvents() {
             console.warn('Admin Edit Events: Failed to load recurring events after all retries');
             recurringEvents = []; // Set empty array to prevent errors
         }
+        
+        // Debug: Log the final state of recurring events
+        console.log('Admin Edit Events: Final recurring events state:', {
+            loaded: recurringLoaded,
+            count: recurringEvents.length,
+            events: recurringEvents
+        });
         
         // Update stats
         updateStats();
@@ -357,10 +369,17 @@ function renderEvents(events) {
 
 // Render recurring events with modern cards
 function renderRecurringEvents(events) {
+    console.log('Admin Edit Events: renderRecurringEvents called with:', events);
     const container = document.getElementById('recurring-events-container');
-    if (!container) return;
+    console.log('Admin Edit Events: Recurring container found:', !!container);
+    
+    if (!container) {
+        console.error('Admin Edit Events: Recurring events container not found!');
+        return;
+    }
 
     if (!events || events.length === 0) {
+        console.log('Admin Edit Events: No recurring events to render');
         container.innerHTML = `
             <div class="text-center py-16">
                 <i class="fas fa-redo text-6xl text-gray-600 mb-4"></i>
@@ -370,6 +389,8 @@ function renderRecurringEvents(events) {
         `;
         return;
     }
+    
+    console.log('Admin Edit Events: Rendering', events.length, 'recurring events');
 
     const eventsHtml = events.map(event => {
         const status = event.status || event.Status || event['Status'] || 'Unknown';
@@ -1481,3 +1502,60 @@ window.handleDeleteEvent = handleDeleteEvent;
 window.openRecurringModal = openRecurringModal;
 window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
+
+// Debug function for testing recurring events
+window.testRecurringEvents = async function() {
+    console.log('Testing recurring events API...');
+    try {
+        const response = await fetch('/.netlify/functions/get-recurring-events');
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Recurring events data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error testing recurring events:', error);
+        return null;
+    }
+};
+
+// Debug function for testing Airtable fields
+window.testAirtableFields = async function() {
+    console.log('Testing Airtable fields...');
+    try {
+        const response = await fetch('/.netlify/functions/debug-airtable-fields');
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Airtable fields data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error testing Airtable fields:', error);
+        return null;
+    }
+};
+
+// Manual refresh function for recurring events
+window.refreshRecurringEvents = async function() {
+    console.log('Manually refreshing recurring events...');
+    try {
+        const response = await fetch('/.netlify/functions/get-recurring-events');
+        if (response.ok) {
+            const data = await response.json();
+            recurringEvents = data.recurringEvents || [];
+            console.log('Refreshed recurring events:', recurringEvents);
+            
+            // Update stats and re-render if currently on recurring filter
+            updateStats();
+            if (currentFilter === 'recurring') {
+                filterEvents('recurring');
+            }
+            
+            showSuccess(`Refreshed ${recurringEvents.length} recurring events`);
+        } else {
+            console.error('Failed to refresh recurring events:', response.status);
+            showError('Failed to refresh recurring events');
+        }
+    } catch (error) {
+        console.error('Error refreshing recurring events:', error);
+        showError('Error refreshing recurring events');
+    }
+};
