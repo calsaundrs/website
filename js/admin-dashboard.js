@@ -209,7 +209,25 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadRecentActivity() {
         try {
             const response = await fetch('/.netlify/functions/get-recent-activity');
+            console.log('Recent activity response status:', response.status);
+            
+            if (!response.ok) {
+                console.error('Recent activity API error:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('Recent activity error details:', errorText);
+                displayRecentActivity([]);
+                return;
+            }
+            
             const activity = await response.json();
+            console.log('Recent activity data received:', activity);
+            
+            // Check if activity is an array
+            if (!Array.isArray(activity)) {
+                console.error('Recent activity is not an array:', activity);
+                displayRecentActivity([]);
+                return;
+            }
             
             dashboardData.recentActivity = activity;
             displayRecentActivity(activity);
@@ -476,4 +494,47 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(refreshInterval);
         }
     });
+    
+    // Debug functions for troubleshooting
+    window.testRecurringEvents = async function() {
+        console.log('Testing recurring events API...');
+        try {
+            const response = await fetch('/.netlify/functions/get-recurring-events');
+            console.log('Response status:', response.status);
+            const data = await response.json();
+            console.log('Recurring events data:', data);
+            return data;
+        } catch (error) {
+            console.error('Error testing recurring events:', error);
+            return null;
+        }
+    };
+
+    window.testAirtableFields = async function() {
+        console.log('Testing Airtable fields...');
+        try {
+            const response = await fetch('/.netlify/functions/debug-airtable-fields');
+            console.log('Response status:', response.status);
+            const data = await response.json();
+            console.log('Airtable fields data:', data);
+            return data;
+        } catch (error) {
+            console.error('Error testing Airtable fields:', error);
+            return null;
+        }
+    };
+
+    window.testRecentActivity = async function() {
+        console.log('Testing recent activity API...');
+        try {
+            const response = await fetch('/.netlify/functions/get-recent-activity');
+            console.log('Response status:', response.status);
+            const data = await response.json();
+            console.log('Recent activity data:', data);
+            return data;
+        } catch (error) {
+            console.error('Error testing recent activity:', error);
+            return null;
+        }
+    };
 });
