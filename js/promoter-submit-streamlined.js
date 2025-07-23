@@ -214,7 +214,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fieldValue = extractedEventData[fieldKey];
                 
                 if (fieldValue && fieldValue !== 'null' && fieldValue !== null) {
-                    const targetField = document.getElementById(fieldKey.replace('event', 'event-').toLowerCase());
+                    // Map extracted field names to form field names
+                    let targetFieldId;
+                    switch (fieldKey) {
+                        case 'eventName':
+                            targetFieldId = 'event-name';
+                            break;
+                        case 'eventDescription':
+                            targetFieldId = 'description';
+                            break;
+                        case 'eventDate':
+                            targetFieldId = 'date';
+                            break;
+                        case 'eventTime':
+                            targetFieldId = 'start-time';
+                            break;
+                        case 'eventCategory':
+                            targetFieldId = 'category-select';
+                            break;
+                        case 'venueName':
+                            // Try to match venue name to venue dropdown
+                            const venueSelect = document.getElementById('venue-select');
+                            const extractedVenue = fieldValue.toLowerCase();
+                            
+                            for (let i = 0; i < venueSelect.options.length; i++) {
+                                const option = venueSelect.options[i];
+                                if (option.text.toLowerCase().includes(extractedVenue) || 
+                                    extractedVenue.includes(option.text.toLowerCase())) {
+                                    venueSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                            return; // Skip the general field assignment
+                        default:
+                            targetFieldId = fieldKey.replace('event', 'event-').toLowerCase();
+                    }
+                    
+                    const targetField = document.getElementById(targetFieldId);
                     if (targetField) {
                         targetField.value = fieldValue;
                     }
@@ -271,10 +307,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const errors = [];
         
         const eventName = document.getElementById('event-name').value.trim();
-        const eventDescription = document.getElementById('event-description').value.trim();
-        const eventDate = document.getElementById('event-date').value;
-        const eventTime = document.getElementById('event-time').value;
-        const eventCategory = document.getElementById('event-category').value;
+        const eventDescription = document.getElementById('description').value.trim();
+        const eventDate = document.getElementById('date').value;
+        const eventTime = document.getElementById('start-time').value;
+        const eventCategory = document.getElementById('category-select').value;
         const contactName = document.getElementById('contact-name').value.trim();
         const contactEmail = document.getElementById('contact-email').value.trim();
         
@@ -285,22 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!eventDescription) {
             errors.push('Event description is required.');
-            document.getElementById('event-description').classList.add('border-red-500');
+            document.getElementById('description').classList.add('border-red-500');
         }
         
         if (!eventDate) {
             errors.push('Event date is required.');
-            document.getElementById('event-date').classList.add('border-red-500');
+            document.getElementById('date').classList.add('border-red-500');
         }
         
         if (!eventTime) {
             errors.push('Event time is required.');
-            document.getElementById('event-time').classList.add('border-red-500');
+            document.getElementById('start-time').classList.add('border-red-500');
         }
         
         if (!eventCategory) {
             errors.push('Event category is required.');
-            document.getElementById('event-category').classList.add('border-red-500');
+            document.getElementById('category-select').classList.add('border-red-500');
         }
         
         if (!contactName) {
@@ -340,29 +376,55 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Build form data
-        const formData = new FormData(form);
-        
-        // Add poster if uploaded
-        if (posterUpload.files.length > 0) {
-            formData.append('poster', posterUpload.files[0]);
-        }
-        
-        // Add venue data
-        if (isCreatingNewVenue) {
-            formData.append('newVenueName', newVenueName.value.trim());
-            formData.append('newVenueAddress', newVenueAddress.value.trim());
-            formData.append('newVenuePostcode', newVenuePostcode.value.trim());
-            formData.append('newVenueWebsite', newVenueWebsite.value.trim());
-        } else {
-            formData.append('venueId', venueSelect.value);
-        }
-        
         // Submit form
         try {
-            const response = await fetch('/.netlify/functions/create-event', {
+            let finalVenueId = venueSelect.value;
+            
+            // If creating a new venue, create it first
+            if (isCreatingNewVenue) {
+                const venueFormData = new FormData();
+                venueFormData.append('venue-name', newVenueName.value.trim());
+                venueFormData.append('address', newVenueAddress.value.trim());
+                venueFormData.append('contact-email', contactEmail);
+                venueFormData.append('website', newVenueWebsite.value.trim());
+                venueFormData.append('description', `Venue created during event submission for: ${eventName}`);
+                
+                const venueResponse = await fetch('/.netlify/functions/venue-submission', {
+                    method: 'POST',
+                    body: venueFormData
+                });
+                
+                if (!venueResponse.ok) {
+                    throw new Error(`Venue creation failed: ${venueResponse.status}`);
+                }
+                
+                // For now, we'll need to find the venue by name to get its ID
+                // This is a limitation - ideally the venue submission would return the venue ID
+                const venuesResponse = await fetch('/.netlify/functions/get-venue-list');
+                const venues = await venuesResponse.json();
+                const newVenue = venues.find(v => v.name === newVenueName.value.trim());
+                
+                if (newVenue) {
+                    finalVenueId = newVenue.id;
+                } else {
+                    throw new Error('New venue was created but could not be found');
+                }
+            }
+            
+            // Now submit the event with the venue ID
+            const eventFormData = new FormData(form);
+            
+            // Add poster if uploaded
+            if (posterUpload.files.length > 0) {
+                eventFormData.append('promo-image', posterUpload.files[0]);
+            }
+            
+            // Add the venue ID
+            eventFormData.append('venueId', finalVenueId);
+            
+            const response = await fetch('/.netlify/functions/event-submission', {
                 method: 'POST',
-                body: formData
+                body: eventFormData
             });
             
             if (!response.ok) {

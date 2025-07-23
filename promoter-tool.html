@@ -205,38 +205,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                             <!-- Event Description -->
                             <div class="md:col-span-2">
-                                <label for="event-description" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     Event Description <span class="text-red-400">*</span>
                                 </label>
-                                <textarea id="event-description" name="event-description" rows="4" required 
+                                <textarea id="description" name="description" rows="4" required 
                                           class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base resize-vertical"
                                           placeholder="Describe your event in detail..."></textarea>
                             </div>
 
                             <!-- Event Date -->
                             <div>
-                                <label for="event-date" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     Event Date <span class="text-red-400">*</span>
                                 </label>
-                                <input type="date" id="event-date" name="event-date" required 
+                                <input type="date" id="date" name="date" required 
                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
                             </div>
 
                             <!-- Event Time -->
                             <div>
-                                <label for="event-time" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     Event Time <span class="text-red-400">*</span>
                                 </label>
-                                <input type="time" id="event-time" name="event-time" required 
+                                <input type="time" id="start-time" name="start-time" required 
                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
                             </div>
 
                             <!-- Event Category -->
                             <div>
-                                <label for="event-category" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     Event Category <span class="text-red-400">*</span>
                                 </label>
-                                <select id="event-category" name="event-category" required 
+                                <select id="category-select" name="categoryIds" required 
                                         class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
                                     <option value="">Select a category</option>
                                     <option value="Club Night">Club Night</option>
@@ -254,12 +254,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                             <!-- Event Price -->
                             <div>
-                                <label for="event-price" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Event Price
+                                <label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    Ticket Link (Optional)
                                 </label>
-                                <input type="text" id="event-price" name="event-price" 
+                                <input type="url" id="link" name="link" 
                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="e.g., £5, Free, £10-15">
+                                       placeholder="https://">
                             </div>
 
                             <!-- Recurrence Info -->
