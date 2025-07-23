@@ -411,7 +411,7 @@ exports.handler = async function(event, context) {
         
         const prompt = `Analyze this event poster and extract the following information in JSON format:
         {
-            "eventName": "Create a compelling, catchy event name that captures attention and excitement",
+            "eventName": "Extract the exact event name/title as shown on the poster",
             "date": "YYYY-MM-DD format (extract the event date, convert any date format to YYYY-MM-DD)",
             "time": "HH:MM format (24-hour, extract the start time)",
             "description": "Write a compelling, marketing-focused description that sells the event. Include: what makes it special, who should attend, what they'll experience, any unique features, dress codes, or highlights. Make it exciting and persuasive - this should make people want to come!",
@@ -428,8 +428,8 @@ exports.handler = async function(event, context) {
         }
         
         IMPORTANT INSTRUCTIONS:
-        - For eventName: Create an exciting, memorable name that captures the essence and energy of the event. Don't just copy the poster text - make it compelling!
-        - For description: Write a persuasive, marketing-focused description that sells the event. Include:
+        - For eventName: Extract the exact event name/title as it appears on the poster. Do not modify, interpret, or create a new name - use the actual title from the poster.
+        - For description: Write a compelling, marketing-focused description that sells the event. Include:
           * What makes this event special and unique
           * Who should attend and why they'll love it
           * What they'll experience and what to expect
@@ -447,11 +447,7 @@ exports.handler = async function(event, context) {
           * "Last Thursday" = monthly, week -1, day 4 (Thursday)
         - For categories: Extract relevant categories like "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
         - If any information is not found, use null for that field
-        - Make the event sound exciting and irresistible!
-        
-        EXAMPLES:
-        - Instead of "The Stiletto Prince: GONE WILD! Birthday Special for RAJ", use "GONE WILD! The Ultimate Birthday Bash with The Stiletto Prince"
-        - Instead of "A Jungle RNB party featuring performances...", use "Get ready for the wildest night of the year! Join us for an electrifying Jungle RNB experience featuring the legendary Stiletto Prince and the fierce Felines. Dress to impress in your best animal print and bring your wildest energy - this is RAJ's birthday celebration and it's going to be absolutely unforgettable! Expect jaw-dropping performances, killer beats, and a night of pure jungle magic that you won't want to miss!"`;
+        - Make the description exciting and irresistible while keeping the event name exactly as shown!`;
 
         const payload = {
             contents: [{
