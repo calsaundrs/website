@@ -149,30 +149,63 @@ exports.handler = async (event) => {
             };
         });
 
-        // Filter recurring events to show only one representative per series
-        // For pending events, we want to show one instance of each recurring series
-        const seriesMap = new Map(); // Track series by Series ID
-        const filteredEvents = formattedEvents.filter(event => {
-            const fields = event.fields;
-            
-            // If it's a standalone event (no Series ID), include it
-            if (!fields['Series ID']) {
-                console.log(`get-pending-items: Including standalone event: ${fields['Event Name']}`);
-                return true;
-            }
-            
-            // If it has a Series ID, check if we've already seen this series
-            const seriesId = fields['Series ID'];
-            if (seriesMap.has(seriesId)) {
-                console.log(`get-pending-items: Excluding duplicate recurring instance: ${fields['Event Name']} (Series ID: ${seriesId})`);
-                return false;
-            }
-            
-            // First time seeing this series, include it and mark the series as seen
-            seriesMap.set(seriesId, true);
-            console.log(`get-pending-items: Including recurring series representative: ${fields['Event Name']} (Series ID: ${seriesId})`);
-            return true;
+        // Filter recurring events to show only the next 2 upcoming instances per series
+        // This prevents overwhelming the admin with dozens of future instances
+        const seriesMap = new Map(); // Track series by Series ID, store array of instances
+        const filteredEvents = [];
+        
+        // First, separate standalone events from recurring events
+        const standaloneEvents = formattedEvents.filter(event => !event.fields['Series ID']);
+        const recurringEvents = formattedEvents.filter(event => event.fields['Series ID']);
+        
+        // Add all standalone events
+        standaloneEvents.forEach(event => {
+            console.log(`get-pending-items: Including standalone event: ${event.fields['Event Name']}`);
+            filteredEvents.push(event);
         });
+        
+        // Group recurring events by series and get next 2 upcoming instances
+        const seriesGroups = new Map();
+        
+        recurringEvents.forEach(event => {
+            const seriesId = event.fields['Series ID'];
+            if (!seriesGroups.has(seriesId)) {
+                seriesGroups.set(seriesId, []);
+            }
+            seriesGroups.get(seriesId).push(event);
+        });
+        
+        // For each series, get the next 2 upcoming instances
+        seriesGroups.forEach((instances, seriesId) => {
+            // Sort instances by date (earliest first)
+            instances.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+            
+            // Get current date
+            const now = new Date();
+            
+            // Filter to only future instances and get next 2
+            const futureInstances = instances.filter(instance => {
+                const eventDate = new Date(instance.fields.Date);
+                return eventDate > now;
+            });
+            
+            const nextInstances = futureInstances.slice(0, 2);
+            
+            if (nextInstances.length > 0) {
+                console.log(`get-pending-items: Including ${nextInstances.length} upcoming instances for series: ${nextInstances[0].fields['Event Name']} (Series ID: ${seriesId})`);
+                nextInstances.forEach(instance => {
+                    // Add metadata about the series
+                    instance.fields['Series Instance Count'] = futureInstances.length;
+                    instance.fields['Series Instance Number'] = futureInstances.indexOf(instance) + 1;
+                    filteredEvents.push(instance);
+                });
+            } else {
+                console.log(`get-pending-items: No future instances found for series: ${instances[0].fields['Event Name']} (Series ID: ${seriesId})`);
+            }
+        });
+        
+        // Sort all events by date (earliest first)
+        filteredEvents.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
 
         console.log(`get-pending-items: After filtering recurring series: ${filteredEvents.length} events (removed ${formattedEvents.length - filteredEvents.length} duplicate instances)`);
 

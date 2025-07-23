@@ -218,6 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         ` : ''}
                         
+                        ${fields['Series ID'] ? `
+                            <div class="approval-card-detail-item">
+                                <p class="detail-label">Series Info</p>
+                                <p class="detail-value">
+                                    ${fields['Series Instance Number'] ? `Instance ${fields['Series Instance Number']} of ${fields['Series Instance Count']}` : 'Series Event'}
+                                    ${fields['Series Instance Count'] > 2 ? ` (${fields['Series Instance Count'] - 2} more future instances)` : ''}
+                                </p>
+                            </div>
+                        ` : ''}
+                        
                         ${fields['Recurring Info'] ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Recurring Pattern</p>
@@ -297,6 +307,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function approveItem(id, type) {
         try {
+            // Check if this is a recurring event
+            const item = allItems.find(item => item.id === id && item.type === type);
+            
+            if (type === 'event' && item && item.fields['Series ID']) {
+                // Show recurring approval modal
+                openRecurringApprovalModal(id, type);
+                return;
+            }
+            
+            // Regular approval for non-recurring events or venues
             const endpoint = type === 'event' ? 'update-submission-status' : 'update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
@@ -316,10 +336,53 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 throw new Error('Failed to approve item');
             }
-            
         } catch (error) {
             console.error('Error approving item:', error);
             showNotification('Error approving item', 'error');
+        }
+    }
+
+    function openRecurringApprovalModal(id, type) {
+        const modal = document.getElementById('recurring-approval-modal');
+        modal.classList.remove('hidden');
+        
+        // Store the current item being approved
+        modal.dataset.itemId = id;
+        modal.dataset.itemType = type;
+        
+        // Reset radio buttons
+        document.getElementById('approve-series').checked = true;
+    }
+
+    async function handleRecurringApproval() {
+        const modal = document.getElementById('recurring-approval-modal');
+        const id = modal.dataset.itemId;
+        const type = modal.dataset.itemType;
+        const approvalType = document.querySelector('input[name="approval-type"]:checked').value;
+        
+        try {
+            const response = await fetch('/.netlify/functions/approve-recurring-series', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    eventId: id,
+                    approveFutureInstances: approvalType === 'series'
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                showNotification(result.message, 'success');
+                modal.classList.add('hidden');
+                await loadPendingItems(); // Refresh the list
+            } else {
+                throw new Error('Failed to approve recurring series');
+            }
+        } catch (error) {
+            console.error('Error approving recurring series:', error);
+            showNotification('Error approving recurring series', 'error');
         }
     }
     
@@ -519,6 +582,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.getElementById('cancel-rejection-btn').addEventListener('click', () => {
             document.getElementById('rejection-modal').classList.add('hidden');
+        });
+        
+        // Recurring approval modal
+        document.getElementById('cancel-recurring-approval-btn').addEventListener('click', () => {
+            document.getElementById('recurring-approval-modal').classList.add('hidden');
+        });
+        
+        document.getElementById('confirm-recurring-approval-btn').addEventListener('click', handleRecurringApproval);
+        
+        // Close modals when clicking outside
+        document.getElementById('recurring-approval-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.currentTarget.classList.add('hidden');
+            }
         });
     }
     
