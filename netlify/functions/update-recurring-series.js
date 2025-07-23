@@ -84,20 +84,30 @@ exports.handler = async (event) => {
         // Update basic information
         if (name) updateFields['Event Name'] = name;
         if (description) updateFields['Description'] = description;
-        if (instancesAhead) updateFields['Instances Ahead'] = parseInt(instancesAhead);
-        if (endDate) updateFields['End Date'] = endDate;
+        // Note: instancesAhead and endDate are stored in the recurringInfo JSON, not as separate fields
         if (categories && Array.isArray(categories)) updateFields['Category'] = categories;
 
         // Handle recurring info
         if (recurringInfo) {
-            // Convert recurring info to string format
-            let recurringInfoString = '';
-            if (typeof recurringInfo === 'object') {
-                recurringInfoString = JSON.stringify(recurringInfo);
-            } else {
-                recurringInfoString = recurringInfo.toString();
+            // Convert recurring info to string format and add instancesAhead/endDate
+            let recurringInfoObj = recurringInfo;
+            if (typeof recurringInfo === 'string') {
+                try {
+                    recurringInfoObj = JSON.parse(recurringInfo);
+                } catch (e) {
+                    recurringInfoObj = { description: recurringInfo };
+                }
             }
-            updateFields['Recurring Info'] = recurringInfoString;
+            
+            // Add instancesAhead and endDate to the recurring info
+            if (instancesAhead) {
+                recurringInfoObj.instancesAhead = parseInt(instancesAhead);
+            }
+            if (endDate) {
+                recurringInfoObj.endDate = endDate;
+            }
+            
+            updateFields['Recurring Info'] = JSON.stringify(recurringInfoObj);
         }
 
         // Handle venue
