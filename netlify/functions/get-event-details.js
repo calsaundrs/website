@@ -65,12 +65,24 @@ function generateAddToCalendarLinks(event) {
 
 exports.handler = async function (event, context) {
     const baseUrl = process.env.URL || 'https://www.brumoutloud.co.uk';
-    const slug = event.path.split("/").pop();
-    if (!slug) {
-        return { statusCode: 400, body: 'Error: Event slug not provided.' };
+    
+    // Improved slug extraction with better error handling
+    let slug = '';
+    try {
+        const pathParts = event.path.split("/");
+        slug = pathParts[pathParts.length - 1];
+        
+        // Handle edge cases where slug might be empty or undefined
+        if (!slug || slug === 'event' || slug === '') {
+            console.log("Invalid slug extracted from path:", event.path);
+            return { statusCode: 400, body: 'Error: Event slug not provided.' };
+        }
+        
+        console.log("Processing event details request for slug:", slug);
+    } catch (error) {
+        console.error("Error extracting slug from path:", error);
+        return { statusCode: 400, body: 'Error: Invalid event URL.' };
     }
-
-    console.log("Processing event details request for slug:", slug);
 
     try {
         const dateMatch = slug.match(/\d{4}-\d{2}-\d{2}$/);
