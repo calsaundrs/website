@@ -277,6 +277,13 @@ exports.handler = async (event, context) => {
                 
                 const venueInfo = resolveVenueInfo(fields);
 
+                // For recurring events, use the parent event's slug (the one with Recurring Info)
+                let eventSlug = fields['Slug'] || `#event-${record.id}`;
+                if (!fields['Recurring Info'] && parentEvent) {
+                    // This is a child instance, use the parent's slug
+                    eventSlug = parentEvent.fields['Slug'] || `#event-${parentEvent.id}`;
+                }
+                
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
@@ -288,7 +295,7 @@ exports.handler = async (event, context) => {
                     image: imageUrl,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
-                    slug: fields['Slug'] || `#event-${record.id}`,
+                    slug: eventSlug,
                     category: fields['Category'] || [],
                     isFeatured: isFeatured,
                     isBoosted: isBoosted,
