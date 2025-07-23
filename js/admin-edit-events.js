@@ -1273,6 +1273,18 @@ async function handleRegenerateInstances(seriesId) {
         if (response.ok) {
             showSuccess('Instances regenerated successfully');
             await loadAllEvents();
+            
+            // Refresh the modal content if it's open
+            const modal = document.getElementById('recurring-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                // Find the current recurring event data
+                const currentEvent = recurringEvents.find(event => 
+                    (event.seriesId || event.id) === seriesId
+                );
+                if (currentEvent) {
+                    openRecurringModal(seriesId); // Reopen the modal with fresh data
+                }
+            }
         } else {
             const error = await response.text();
             showError(`Failed to regenerate instances: ${error}`);
