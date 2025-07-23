@@ -604,6 +604,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Fix venue data issues automatically
+    window.fixVenueDataIssues = async function() {
+        try {
+            console.log('Starting automatic venue data fix...');
+            
+            const confirmed = confirm(
+                'This will automatically fix venue data issues:\n\n' +
+                '• Link events to existing venues where possible\n' +
+                '• Create new venues for unlinked venue text\n' +
+                '• Fix venue name mismatches\n\n' +
+                'This process may take a few minutes. Continue?'
+            );
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            const response = await fetch('/.netlify/functions/fix-venue-data-issues', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Venue data fix results:', result);
+                
+                let message = `Venue Data Fix Complete!\n\n`;
+                message += `Total Events Processed: ${result.summary.totalEvents}\n`;
+                message += `Fixes Applied: ${result.summary.fixesApplied}\n`;
+                message += `New Venues Created: ${result.summary.newVenuesCreated}\n`;
+                message += `Errors Found: ${result.summary.errorsFound}\n\n`;
+                
+                if (result.fixes && result.fixes.length > 0) {
+                    message += `Sample Fixes Applied:\n`;
+                    result.fixes.slice(0, 5).forEach((fix, index) => {
+                        message += `${index + 1}. ${fix.eventName}\n`;
+                        message += `   ${fix.action}\n\n`;
+                    });
+                    if (result.fixes.length > 5) {
+                        message += `... and ${result.fixes.length - 5} more fixes\n\n`;
+                    }
+                }
+                
+                if (result.errors && result.errors.length > 0) {
+                    message += `Events Requiring Manual Review: ${result.errors.length}\n`;
+                    message += `Check the browser console for details.\n\n`;
+                }
+                
+                message += `✅ Run validation again to confirm all issues are resolved!`;
+                
+                alert(message);
+                
+                // Log detailed results to console
+                if (result.fixes && result.fixes.length > 0) {
+                    console.group('Applied Fixes:');
+                    result.fixes.forEach((fix, index) => {
+                        console.log(`${index + 1}. ${fix.eventName}: ${fix.action}`);
+                    });
+                    console.groupEnd();
+                }
+                
+                if (result.errors && result.errors.length > 0) {
+                    console.group('Errors Requiring Manual Review:');
+                    result.errors.forEach((error, index) => {
+                        console.log(`${index + 1}. ${error.eventName}: ${error.issue}`);
+                    });
+                    console.groupEnd();
+                }
+                
+                return result;
+            } else {
+                const errorData = await response.text();
+                console.error('Venue data fix failed:', response.status, errorData);
+                alert(`Fix failed: ${response.status} - ${errorData}`);
+            }
+        } catch (error) {
+            console.error('Error during venue data fix:', error);
+            alert(`Fix error: ${error.message}`);
+        }
+    };
+
     // Test image fix for recurring events
     window.testImageFix = async function() {
         console.log('Testing image fix for recurring events...');
