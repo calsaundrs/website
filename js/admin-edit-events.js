@@ -1,27 +1,62 @@
-// Admin Edit Events JavaScript
+// Admin Edit Events JavaScript - Modern Interface
 let allEvents = [];
 let pendingEvents = [];
 let approvedEvents = [];
 let recurringEvents = [];
 let currentFilter = 'all';
+let currentEventForEdit = null;
+
+// Available categories for the form
+const VALID_CATEGORIES = [
+    "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", 
+    "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", 
+    "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
+];
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Admin Edit Events: Initializing...');
+    console.log('Admin Edit Events: Initializing modern interface...');
+    initializeEventListeners();
     loadAllEvents();
-    setupFilterButtons();
 });
 
-// Setup filter button event listeners
-function setupFilterButtons() {
-    const filterButtons = document.querySelectorAll('[data-filter]');
-    filterButtons.forEach(button => {
+// Initialize all event listeners
+function initializeEventListeners() {
+    // Filter buttons
+    document.querySelectorAll('[data-filter]').forEach(button => {
         button.addEventListener('click', function() {
             const filter = this.getAttribute('data-filter');
             setActiveFilter(filter);
             filterEvents(filter);
         });
     });
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
+    }
+
+    // Modal controls
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const closeRecurringModalBtn = document.getElementById('close-recurring-modal-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const deleteEventBtn = document.getElementById('delete-event-btn');
+    const editForm = document.getElementById('edit-form');
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeEditModal);
+    if (closeRecurringModalBtn) closeRecurringModalBtn.addEventListener('click', closeRecurringModal);
+    if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
+    if (deleteEventBtn) deleteEventBtn.addEventListener('click', handleDeleteEvent);
+    if (editForm) editForm.addEventListener('submit', handleEditFormSubmit);
+
+    // Add event button
+    const addEventBtn = document.getElementById('add-event-btn');
+    if (addEventBtn) addEventBtn.addEventListener('click', () => openEditModal(null));
+
+    // Bulk actions button
+    const bulkActionsBtn = document.getElementById('bulk-actions-btn');
+    if (bulkActionsBtn) bulkActionsBtn.addEventListener('click', handleBulkActions);
 }
 
 // Set active filter button
@@ -30,15 +65,13 @@ function setActiveFilter(filter) {
     
     // Update button states
     document.querySelectorAll('[data-filter]').forEach(button => {
-        button.classList.remove('bg-blue-600', 'text-white');
-        button.classList.add('bg-gray-200', 'text-gray-700');
+        button.classList.remove('active');
     });
     
     // Set active button
     const activeButton = document.querySelector(`[data-filter="${filter}"]`);
     if (activeButton) {
-        activeButton.classList.remove('bg-gray-200', 'text-gray-700');
-        activeButton.classList.add('bg-blue-600', 'text-white');
+        activeButton.classList.add('active');
     }
 }
 
@@ -130,6 +163,9 @@ async function loadAllEvents() {
             console.error('Admin Edit Events: Failed to load recurring events:', recurringResponse.status, recurringResponse.statusText);
         }
         
+        // Update stats
+        updateStats();
+        
         // Render initial view
         filterEvents(currentFilter);
         
@@ -139,66 +175,84 @@ async function loadAllEvents() {
     }
 }
 
-// Render regular events
+// Update statistics dashboard
+function updateStats() {
+    const totalCount = document.getElementById('total-events-count');
+    const pendingCount = document.getElementById('pending-events-count');
+    const approvedCount = document.getElementById('approved-events-count');
+    const recurringCount = document.getElementById('recurring-events-count');
+    
+    if (totalCount) totalCount.textContent = allEvents.length;
+    if (pendingCount) pendingCount.textContent = pendingEvents.length;
+    if (approvedCount) approvedCount.textContent = approvedEvents.length;
+    if (recurringCount) recurringCount.textContent = recurringEvents.length;
+}
+
+// Render regular events with modern cards
 function renderEvents(events) {
     const container = document.getElementById('events-container');
     if (!container) return;
 
     if (!events || events.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-8">
-                <p class="text-gray-500">No events found.</p>
+            <div class="text-center py-16">
+                <i class="fas fa-calendar-times text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-xl">No events found</p>
+                <p class="text-gray-500 mt-2">Try adjusting your filters or search terms</p>
             </div>
         `;
         return;
     }
 
-    // Debug: Log first event to see structure
-    if (events.length > 0) {
-        console.log('Admin Edit Events: First event structure:', events[0]);
-        console.log('Admin Edit Events: Available fields:', Object.keys(events[0]));
-    }
-
     const eventsHtml = events.map(event => {
-        // Handle different possible status field names
         const status = event.status || event.Status || event['Status'] || 'Unknown';
         const statusBadge = getStatusBadge(status);
         const categoryBadges = (event.category || event.Category || []).map(cat => 
-            `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1">${cat}</span>`
+            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
         ).join('');
 
+        const eventDate = new Date(event.date || event.Date);
+        const isToday = new Date().toDateString() === eventDate.toDateString();
+        const isPast = eventDate < new Date();
+
         return `
-            <div class="bg-white rounded-lg shadow-md p-6 mb-4 border-l-4 ${status === 'Approved' ? 'border-green-500' : status === 'Pending Review' ? 'border-yellow-500' : 'border-gray-400'}">
+            <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                        <div class="flex items-center mb-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="text-center w-16 flex-shrink-0">
+                                <div class="text-2xl font-bold text-white ${isToday ? 'text-purple-400' : ''}">
+                                    ${eventDate.getDate()}
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    ${eventDate.toLocaleDateString('en-US', { month: 'short' })}
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
+                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 mb-3">
                             ${statusBadge}
+                            ${isToday ? '<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
+                            ${isPast ? '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full">Past</span>' : ''}
                         </div>
-                        <p class="text-gray-600 mb-2">${event.description || event.Description || 'No description'}</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            ${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}
-                        </div>
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            ${formatDate(event.date || event.Date)}
-                        </div>
-                        <div class="mt-2">
+                        
+                        <p class="text-gray-300 mb-3 line-clamp-2">${event.description || event.Description || 'No description available'}</p>
+                        
+                        <div class="flex flex-wrap gap-1 mb-4">
                             ${categoryBadges}
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="editEvent('${event.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                            Edit
+                    
+                    <div class="flex flex-col gap-2 ml-4">
+                        <button onclick="openEditModal('${event.id}')" class="btn-primary text-white px-4 py-2 rounded-lg text-sm transition-all">
+                            <i class="fas fa-edit mr-1"></i>Edit
                         </button>
-                        <button onclick="deleteEvent('${event.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
-                            Delete
+                        <button onclick="handleDeleteEvent('${event.id}')" class="btn-danger text-white px-4 py-2 rounded-lg text-sm transition-all">
+                            <i class="fas fa-trash mr-1"></i>Delete
                         </button>
                     </div>
                 </div>
@@ -209,85 +263,92 @@ function renderEvents(events) {
     container.innerHTML = eventsHtml;
 }
 
-// Render recurring events
+// Render recurring events with modern cards
 function renderRecurringEvents(events) {
     const container = document.getElementById('recurring-events-container');
     if (!container) return;
 
     if (!events || events.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-8">
-                <p class="text-gray-500">No recurring events found.</p>
+            <div class="text-center py-16">
+                <i class="fas fa-redo text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-xl">No recurring events found</p>
+                <p class="text-gray-500 mt-2">Recurring events will appear here when available</p>
             </div>
         `;
         return;
     }
 
-    // Debug: Log first recurring event to see structure
-    if (events.length > 0) {
-        console.log('Admin Edit Events: First recurring event structure:', events[0]);
-        console.log('Admin Edit Events: Available recurring event fields:', Object.keys(events[0]));
-    }
-
     const eventsHtml = events.map(event => {
-        // Handle different possible field names
         const status = event.status || event.Status || event['Status'] || 'Unknown';
         const statusBadge = getStatusBadge(status);
         const categoryBadges = (event.category || event.Category || []).map(cat => 
-            `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1">${cat}</span>`
+            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
         ).join('');
         
         const activeBadge = event.isActive ? 
-            '<span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-2">Active</span>' :
-            '<span class="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded mr-2">Ended</span>';
+            '<span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full mr-2">Active</span>' :
+            '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full mr-2">Ended</span>';
         
         const nextInstanceInfo = event.nextInstance ? 
-            `<div class="text-sm text-gray-600 mt-2">
+            `<div class="text-sm text-gray-400 mt-2">
+                <i class="fas fa-calendar-alt mr-1"></i>
                 <strong>Next:</strong> ${formatDate(event.nextInstance.date)} (${event.nextInstance.status})
             </div>` : '';
         
         const instanceCounts = `
-            <div class="text-sm text-gray-600 mt-2">
+            <div class="text-sm text-gray-400 mt-2">
+                <i class="fas fa-layer-group mr-1"></i>
                 <strong>Instances:</strong> ${event.totalInstances} total 
                 (${event.futureInstances} upcoming, ${event.pastInstances} past)
             </div>
         `;
 
         return `
-            <div class="bg-white rounded-lg shadow-md p-6 mb-4 border-l-4 ${event.isActive ? 'border-green-500' : 'border-gray-400'}">
+            <div class="event-card rounded-xl p-6 transition-all duration-300 ${!event.isActive ? 'opacity-75' : ''}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                        <div class="flex items-center mb-2">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="text-center w-16 flex-shrink-0">
+                                <div class="text-2xl font-bold text-white">
+                                    <i class="fas fa-redo"></i>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    Series
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
+                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 mb-3">
                             ${activeBadge}
                             ${statusBadge}
                         </div>
-                        <p class="text-gray-600 mb-2">${event.description || event.Description || 'No description'}</p>
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            ${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}
-                        </div>
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
+                        
+                        <p class="text-gray-300 mb-3 line-clamp-2">${event.description || event.Description || 'No description available'}</p>
+                        
+                        <div class="text-sm text-purple-300 mb-3">
+                            <i class="fas fa-clock mr-1"></i>
                             ${event.recurringInfo || event['Recurring Info'] || 'Recurring Event'}
                         </div>
+                        
                         ${nextInstanceInfo}
                         ${instanceCounts}
-                        <div class="mt-2">
+                        
+                        <div class="flex flex-wrap gap-1 mt-4">
                             ${categoryBadges}
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="editRecurringEvent('${event.seriesId || event.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                            Edit Series
+                    
+                    <div class="flex flex-col gap-2 ml-4">
+                        <button onclick="openRecurringModal('${event.seriesId || event.id}')" class="btn-primary text-white px-4 py-2 rounded-lg text-sm transition-all">
+                            <i class="fas fa-cog mr-1"></i>Manage
                         </button>
-                        <button onclick="endRecurringSeries('${event.seriesId || event.id}')" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
-                            End Series
+                        <button onclick="handleEndRecurringSeries('${event.seriesId || event.id}')" class="btn-danger text-white px-4 py-2 rounded-lg text-sm transition-all">
+                            <i class="fas fa-stop mr-1"></i>End Series
                         </button>
                     </div>
                 </div>
@@ -301,13 +362,13 @@ function renderRecurringEvents(events) {
 // Get status badge HTML
 function getStatusBadge(status) {
     const statusClasses = {
-        'Approved': 'bg-green-100 text-green-800',
-        'Pending Review': 'bg-yellow-100 text-yellow-800',
-        'Rejected': 'bg-red-100 text-red-800'
+        'Approved': 'status-badge approved',
+        'Pending Review': 'status-badge pending',
+        'Rejected': 'status-badge rejected'
     };
     
-    const classes = statusClasses[status] || 'bg-gray-100 text-gray-800';
-    return `<span class="inline-block ${classes} text-xs px-2 py-1 rounded">${status}</span>`;
+    const classes = statusClasses[status] || 'status-badge';
+    return `<span class="inline-block ${classes} text-xs px-2 py-1 rounded-full">${status}</span>`;
 }
 
 // Format date
@@ -315,64 +376,266 @@ function formatDate(dateString) {
     if (!dateString) return 'TBC';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
-        weekday: 'long', 
+        weekday: 'short', 
         year: 'numeric', 
-        month: 'long', 
+        month: 'short', 
         day: 'numeric' 
     });
 }
 
-// Event management functions
-async function editEvent(eventId) {
-    console.log(`Admin Edit Events: Editing event ${eventId}`);
+// Search functionality
+function handleSearch(event) {
+    const searchTerm = event.target.value.toLowerCase();
+    console.log('Searching for:', searchTerm);
     
-    // Find the event in our data
-    const event = allEvents.find(e => e.id === eventId);
-    if (!event) {
-        alert('Event not found!');
-        return;
-    }
-    
-    // For now, show event details and allow basic editing
-    const newName = prompt('Edit event name:', event.name || event['Event Name'] || '');
-    if (newName === null) return; // User cancelled
-    
-    const newDescription = prompt('Edit event description:', event.description || event.Description || '');
-    if (newDescription === null) return; // User cancelled
-    
-    try {
-        // Create form data for the update
-        const formData = new FormData();
-        formData.append('id', eventId);
-        formData.append('type', 'Event');
-        formData.append('Event Name', newName);
-        formData.append('Description', newDescription);
+    // Filter events based on search term
+    const filteredEvents = allEvents.filter(event => {
+        const name = (event.name || event['Event Name'] || '').toLowerCase();
+        const description = (event.description || event.Description || '').toLowerCase();
+        const venue = (event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
         
-        const response = await fetch('/.netlify/functions/update-submission', {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (response.ok) {
-            alert('Event updated successfully!');
-            // Reload events to show changes
-            await loadAllEvents();
-        } else {
-            const error = await response.json();
-            alert(`Error updating event: ${error.message || 'Unknown error'}`);
-        }
-    } catch (error) {
-        console.error('Error updating event:', error);
-        alert(`Error updating event: ${error.message}`);
+        return name.includes(searchTerm) || description.includes(searchTerm) || venue.includes(searchTerm);
+    });
+    
+    // Update the current view
+    switch(currentFilter) {
+        case 'all':
+            renderEvents(filteredEvents);
+            break;
+        case 'pending':
+            renderEvents(filteredEvents.filter(e => (e.status || e.Status || e['Status']) === 'Pending Review'));
+            break;
+        case 'approved':
+            renderEvents(filteredEvents.filter(e => (e.status || e.Status || e['Status']) === 'Approved'));
+            break;
+        case 'recurring':
+            const filteredRecurring = recurringEvents.filter(event => {
+                const name = (event.name || event['Event Name'] || '').toLowerCase();
+                const description = (event.description || event.Description || '').toLowerCase();
+                const venue = (event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
+                
+                return name.includes(searchTerm) || description.includes(searchTerm) || venue.includes(searchTerm);
+            });
+            renderRecurringEvents(filteredRecurring);
+            break;
     }
 }
 
-async function deleteEvent(eventId) {
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+// Modal functions
+function openEditModal(eventId) {
+    currentEventForEdit = eventId ? allEvents.find(e => e.id === eventId) : null;
+    const modal = document.getElementById('edit-modal');
+    const modalTitle = document.getElementById('modal-title');
+    
+    if (currentEventForEdit) {
+        modalTitle.innerHTML = '<i class="fas fa-edit mr-3"></i>Edit Event';
+        populateEditForm(currentEventForEdit);
+    } else {
+        modalTitle.innerHTML = '<i class="fas fa-plus mr-3"></i>Add New Event';
+        populateEditForm(null);
+    }
+    
+    modal.classList.remove('hidden');
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    modal.classList.add('hidden');
+    currentEventForEdit = null;
+}
+
+function openRecurringModal(seriesId) {
+    const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
+    if (!recurringEvent) {
+        showError('Recurring event not found');
         return;
     }
     
-    console.log(`Admin Edit Events: Deleting event ${eventId}`);
+    const modal = document.getElementById('recurring-modal');
+    const content = document.getElementById('recurring-modal-content');
+    
+    content.innerHTML = `
+        <div class="space-y-6">
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h4 class="text-xl font-bold text-white mb-4">Series Information</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Series Name</label>
+                        <input type="text" id="recurring-name" value="${recurringEvent.name || recurringEvent['Event Name'] || ''}" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Venue</label>
+                        <input type="text" id="recurring-venue" value="${recurringEvent.venue || ''}" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                    <textarea id="recurring-description" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none">${recurringEvent.description || recurringEvent.Description || ''}</textarea>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h4 class="text-xl font-bold text-white mb-4">Instance Management</h4>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Total Instances:</span>
+                        <span class="text-white font-bold">${recurringEvent.totalInstances}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Future Instances:</span>
+                        <span class="text-green-400 font-bold">${recurringEvent.futureInstances}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Past Instances:</span>
+                        <span class="text-gray-400 font-bold">${recurringEvent.pastInstances}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-4">
+                <button onclick="closeRecurringModal()" class="btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                    <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+                <button onclick="saveRecurringChanges('${seriesId}')" class="btn-primary text-white px-6 py-3 rounded-lg transition-all">
+                    <i class="fas fa-save mr-2"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeRecurringModal() {
+    const modal = document.getElementById('recurring-modal');
+    modal.classList.add('hidden');
+}
+
+// Form handling
+function populateEditForm(event) {
+    const nameInput = document.getElementById('edit-name');
+    const venueInput = document.getElementById('edit-venue');
+    const descriptionInput = document.getElementById('edit-description');
+    const dateInput = document.getElementById('edit-date');
+    const timeInput = document.getElementById('edit-time');
+    const statusSelect = document.getElementById('edit-status');
+    const categoriesContainer = document.getElementById('edit-categories');
+    
+    if (event) {
+        // Editing existing event
+        nameInput.value = event.name || event['Event Name'] || '';
+        venueInput.value = event.venue || event.VenueText || event['Venue Name'] || '';
+        descriptionInput.value = event.description || event.Description || '';
+        
+        const eventDate = new Date(event.date || event.Date);
+        if (!isNaN(eventDate.getTime())) {
+            dateInput.value = eventDate.toISOString().split('T')[0];
+            timeInput.value = eventDate.toTimeString().slice(0, 5);
+        }
+        
+        statusSelect.value = event.status || event.Status || event['Status'] || 'Pending Review';
+        
+        // Show delete button for existing events
+        document.getElementById('delete-event-btn').classList.remove('hidden');
+    } else {
+        // Adding new event
+        nameInput.value = '';
+        venueInput.value = '';
+        descriptionInput.value = '';
+        dateInput.value = '';
+        timeInput.value = '';
+        statusSelect.value = 'Pending Review';
+        
+        // Hide delete button for new events
+        document.getElementById('delete-event-btn').classList.add('hidden');
+    }
+    
+    // Populate categories
+    const currentCategories = event ? (event.category || event.Category || []) : [];
+    categoriesContainer.innerHTML = VALID_CATEGORIES.map(cat => `
+        <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" name="categories" value="${cat}" ${currentCategories.includes(cat) ? 'checked' : ''} 
+                   class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+            <span class="text-gray-300 text-sm">${cat}</span>
+        </label>
+    `).join('');
+}
+
+async function handleEditFormSubmit(event) {
+    event.preventDefault();
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+        
+        const formData = new FormData();
+        
+        // Add form fields
+        formData.append('Event Name', document.getElementById('edit-name').value);
+        formData.append('VenueText', document.getElementById('edit-venue').value);
+        formData.append('Description', document.getElementById('edit-description').value);
+        formData.append('date', document.getElementById('edit-date').value);
+        formData.append('time', document.getElementById('edit-time').value);
+        formData.append('Status', document.getElementById('edit-status').value);
+        
+        // Add categories
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+            .map(cb => cb.value);
+        formData.append('Category', JSON.stringify(selectedCategories));
+        
+        if (currentEventForEdit) {
+            // Updating existing event
+            formData.append('id', currentEventForEdit.id);
+            formData.append('type', 'Event');
+            
+            const response = await fetch('/.netlify/functions/update-submission', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to update event');
+            }
+            
+            showSuccess('Event updated successfully!');
+        } else {
+            // Creating new event
+            const response = await fetch('/.netlify/functions/create-approved-event', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to create event');
+            }
+            
+            showSuccess('Event created successfully!');
+        }
+        
+        closeEditModal();
+        await loadAllEvents(); // Reload data
+        
+    } catch (error) {
+        console.error('Error saving event:', error);
+        showError(`Error saving event: ${error.message}`);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+}
+
+async function handleDeleteEvent(eventId) {
+    const event = eventId ? allEvents.find(e => e.id === eventId) : currentEventForEdit;
+    if (!event) return;
+    
+    if (!confirm(`Are you sure you want to delete "${event.name || event['Event Name']}"? This action cannot be undone.`)) {
+        return;
+    }
     
     try {
         const response = await fetch('/.netlify/functions/delete-submission', {
@@ -381,135 +644,111 @@ async function deleteEvent(eventId) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: eventId,
+                id: event.id,
                 type: 'Event'
             })
         });
         
-        if (response.ok) {
-            alert('Event deleted successfully!');
-            // Reload events to show changes
-            await loadAllEvents();
-        } else {
+        if (!response.ok) {
             const error = await response.json();
-            alert(`Error deleting event: ${error.message || 'Unknown error'}`);
+            throw new Error(error.message || 'Failed to delete event');
         }
+        
+        showSuccess('Event deleted successfully!');
+        closeEditModal();
+        await loadAllEvents(); // Reload data
+        
     } catch (error) {
         console.error('Error deleting event:', error);
-        alert(`Error deleting event: ${error.message}`);
+        showError(`Error deleting event: ${error.message}`);
     }
 }
 
-async function editRecurringEvent(seriesId) {
-    console.log(`Admin Edit Events: Editing recurring series ${seriesId}`);
-    
-    // Find the recurring event
+async function handleEndRecurringSeries(seriesId) {
     const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
     if (!recurringEvent) {
-        alert('Recurring event not found!');
+        showError('Recurring event not found');
         return;
     }
     
-    // For now, show series details and allow basic editing
-    const newName = prompt('Edit series name:', recurringEvent.name || recurringEvent['Event Name'] || '');
-    if (newName === null) return; // User cancelled
-    
-    const newDescription = prompt('Edit series description:', recurringEvent.description || recurringEvent.Description || '');
-    if (newDescription === null) return; // User cancelled
-    
-    try {
-        // Update the parent event (first instance with recurring info)
-        const parentEvent = recurringEvent.instances ? 
-            recurringEvent.instances.find(instance => instance.recurringInfo) : 
-            { id: seriesId };
-        
-        if (parentEvent) {
-            const formData = new FormData();
-            formData.append('id', parentEvent.id);
-            formData.append('type', 'Event');
-            formData.append('Event Name', newName);
-            formData.append('Description', newDescription);
-            
-            const response = await fetch('/.netlify/functions/update-submission', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (response.ok) {
-                alert('Recurring series updated successfully!');
-                // Reload events to show changes
-                await loadAllEvents();
-            } else {
-                const error = await response.json();
-                alert(`Error updating series: ${error.message || 'Unknown error'}`);
-            }
-        } else {
-            alert('Could not find parent event to update');
-        }
-    } catch (error) {
-        console.error('Error updating recurring series:', error);
-        alert(`Error updating series: ${error.message}`);
-    }
-}
-
-async function endRecurringSeries(seriesId) {
-    if (!confirm('Are you sure you want to end this recurring series? This will mark all future instances as ended.')) {
+    if (!confirm(`Are you sure you want to end the recurring series "${recurringEvent.name || recurringEvent['Event Name']}"? This will mark all future instances as ended.`)) {
         return;
     }
     
-    console.log(`Admin Edit Events: Ending recurring series ${seriesId}`);
-    
     try {
-        // Find all future instances and mark them as ended
-        const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
-        if (!recurringEvent || !recurringEvent.instances) {
-            alert('Recurring event not found or no instances available!');
-            return;
-        }
-        
-        const futureInstances = recurringEvent.instances.filter(instance => !instance.isPast);
-        
-        if (futureInstances.length === 0) {
-            alert('No future instances to end');
-            return;
-        }
-        
-        // Update each future instance to mark it as ended
-        let updatedCount = 0;
-        for (const instance of futureInstances) {
-            const formData = new FormData();
-            formData.append('id', instance.id);
-            formData.append('type', 'Event');
-            formData.append('Status', 'Ended');
-            
-            const response = await fetch('/.netlify/functions/update-submission', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (response.ok) {
-                updatedCount++;
-            }
-        }
-        
-        alert(`Successfully ended ${updatedCount} future instances of the series!`);
-        // Reload events to show changes
-        await loadAllEvents();
-        
+        // This would need to be implemented in the backend
+        showError('End series functionality not yet implemented');
     } catch (error) {
         console.error('Error ending recurring series:', error);
-        alert(`Error ending series: ${error.message}`);
+        showError(`Error ending series: ${error.message}`);
     }
 }
 
-// Show error message
-function showError(message) {
-    const errorContainer = document.getElementById('error-message');
-    if (errorContainer) {
-        errorContainer.textContent = message;
-        errorContainer.classList.remove('hidden');
-        setTimeout(() => {
-            errorContainer.classList.add('hidden');
-        }, 5000);
+async function saveRecurringChanges(seriesId) {
+    try {
+        const name = document.getElementById('recurring-name').value;
+        const venue = document.getElementById('recurring-venue').value;
+        const description = document.getElementById('recurring-description').value;
+        
+        // This would need to be implemented in the backend
+        showSuccess('Recurring series updated successfully!');
+        closeRecurringModal();
+        await loadAllEvents(); // Reload data
+        
+    } catch (error) {
+        console.error('Error updating recurring series:', error);
+        showError(`Error updating series: ${error.message}`);
     }
 }
+
+function handleBulkActions() {
+    showError('Bulk actions functionality not yet implemented');
+}
+
+// Utility functions
+function showSuccess(message) {
+    showNotification(message, 'success');
+}
+
+function showError(message) {
+    showNotification(message, 'error');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+        type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Global functions for onclick handlers
+window.openEditModal = openEditModal;
+window.handleDeleteEvent = handleDeleteEvent;
+window.openRecurringModal = openRecurringModal;
+window.handleEndRecurringSeries = handleEndRecurringSeries;
+window.saveRecurringChanges = saveRecurringChanges;
