@@ -404,7 +404,13 @@ function renderRecurringEvents(events) {
     
     console.log('Admin Edit Events: Rendering', events.length, 'recurring events');
 
-    const eventsHtml = events.map(event => {
+    // Separate active and ended events
+    const activeEvents = events.filter(event => event.isActive !== false);
+    const endedEvents = events.filter(event => event.isActive === false);
+    
+    console.log(`Admin Edit Events: ${activeEvents.length} active events, ${endedEvents.length} ended events`);
+
+    const renderEventCard = (event) => {
         const status = event.status || event.Status || event['Status'] || 'Unknown';
         const statusBadge = getStatusBadge(status);
         const categoryBadges = (event.category || event.Category || []).map(cat => 
@@ -491,9 +497,74 @@ function renderRecurringEvents(events) {
                 </div>
             </div>
         `;
-    }).join('');
+    };
 
-    container.innerHTML = eventsHtml;
+    // Build the HTML with active events first, then collapsed ended events
+    let html = '';
+    
+    // Active events section
+    if (activeEvents.length > 0) {
+        html += `
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <i class="fas fa-play-circle mr-2 text-green-400"></i>
+                    Active Recurring Events (${activeEvents.length})
+                </h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    ${activeEvents.map(renderEventCard).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Ended events section (collapsed by default)
+    if (endedEvents.length > 0) {
+        html += `
+            <div class="mt-8">
+                <button onclick="toggleEndedEvents()" class="w-full text-left p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:bg-gray-700/50 transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-stop-circle mr-2 text-red-400"></i>
+                            <span class="text-lg font-semibold text-white">Ended Recurring Events (${endedEvents.length})</span>
+                        </div>
+                        <i id="ended-events-toggle" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </div>
+                </button>
+                <div id="ended-events-content" class="hidden mt-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        ${endedEvents.map(renderEventCard).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // If no events at all
+    if (activeEvents.length === 0 && endedEvents.length === 0) {
+        html = `
+            <div class="text-center py-16">
+                <i class="fas fa-redo text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-xl">No recurring events found</p>
+                <p class="text-gray-500 mt-2">Recurring events will appear here when available</p>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+
+// Toggle ended events visibility
+function toggleEndedEvents() {
+    const content = document.getElementById('ended-events-content');
+    const toggle = document.getElementById('ended-events-toggle');
+    
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        toggle.style.transform = 'rotate(180deg)';
+    } else {
+        content.classList.add('hidden');
+        toggle.style.transform = 'rotate(0deg)';
+    }
 }
 
 // Get status badge HTML
