@@ -8,6 +8,20 @@ const getCloudinaryUrl = (publicId, width, height) => {
     return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
 };
 
+// Helper function to resolve venue information consistently
+const resolveVenueInfo = (fields) => {
+    // Priority order: Venue (linked record) > Venue Name > VenueText
+    const venueRecord = fields['Venue'] && fields['Venue'][0];
+    const venueName = fields['Venue Name'] && fields['Venue Name'][0];
+    const venueText = fields['VenueText'];
+    
+    return {
+        venueId: venueRecord || null,
+        venueName: venueName || venueText || 'TBC',
+        venueText: venueText || venueName || 'TBC'
+    };
+};
+
 console.log('AIRTABLE_PERSONAL_ACCESS_TOKEN:', process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN ? 'Loaded' : 'Not Loaded');
 console.log('AIRTABLE_BASE_ID:', process.env.AIRTABLE_BASE_ID ? 'Loaded' : 'Not Loaded');
 
@@ -53,14 +67,41 @@ exports.handler = async (event, context) => {
                     // This is a series parent (has Recurring Info)
                     const children = seriesChildren.get(record.id) || [];
                     children.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+                    
+                    const venueInfo = resolveVenueInfo(record.fields);
                     finalEvents.push({
                         id: record.id,
-                        fields: record.fields,
-                        seriesChildren: children.map(child => ({ id: child.id, fields: child.fields }))
+                        fields: {
+                            ...record.fields,
+                            venueId: venueInfo.venueId,
+                            venueName: venueInfo.venueName,
+                            venueText: venueInfo.venueText
+                        },
+                        seriesChildren: children.map(child => {
+                            const childVenueInfo = resolveVenueInfo(child.fields);
+                            return { 
+                                id: child.id, 
+                                fields: {
+                                    ...child.fields,
+                                    venueId: childVenueInfo.venueId,
+                                    venueName: childVenueInfo.venueName,
+                                    venueText: childVenueInfo.venueText
+                                }
+                            };
+                        })
                     });
                 } else if (!record.fields['Series ID']) {
                     // This is a single event (no Series ID, no Recurring Info)
-                    finalEvents.push({ id: record.id, fields: record.fields });
+                    const venueInfo = resolveVenueInfo(record.fields);
+                    finalEvents.push({ 
+                        id: record.id, 
+                        fields: {
+                            ...record.fields,
+                            venueId: venueInfo.venueId,
+                            venueName: venueInfo.venueName,
+                            venueText: venueInfo.venueText
+                        }
+                    });
                 }
                 // Events that are children (have Series ID but no Recurring Info, and Series ID != record.id) are implicitly handled by their parent and not added as top-level events.
             });
@@ -84,7 +125,7 @@ exports.handler = async (event, context) => {
             sort: [{ field: 'Date', direction: 'asc' }],
             fields: [
                 'Event Name', 'Description', 'Date', 'Promo Image', 'Slug', 
-                'Venue Name', 'VenueText', 'Category',
+                'Venue Name', 'VenueText', 'Venue', 'Category',
                 'Featured Banner Start Date', 'Featured Banner End Date',
                 'Boosted Listing Start Date', 'Boosted Listing End Date',
                 'Cloudinary Public ID', 'Recurring Info', 'Series ID'
@@ -126,14 +167,17 @@ exports.handler = async (event, context) => {
                 const cloudinaryPublicId = fields['Cloudinary Public ID'];
                 const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
                 const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
-                const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
+                
+                const venueInfo = resolveVenueInfo(fields);
 
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
                     description: fields['Description'],
                     date: fields['Date'],
-                    venue: venueName,
+                    venue: venueInfo.venueName,
+                    venueId: venueInfo.venueId,
+                    venueText: venueInfo.venueText,
                     image: promoImage ? promoImage.url : null,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
@@ -145,8 +189,11 @@ exports.handler = async (event, context) => {
                 });
 
                 // Populate uniqueVenues map
-                if (venueName && !uniqueVenues.has(venueName)) {
-                    uniqueVenues.set(venueName, { id: venueName, name: venueName });
+                if (venueInfo.venueName && !uniqueVenues.has(venueInfo.venueName)) {
+                    uniqueVenues.set(venueInfo.venueName, { 
+                        id: venueInfo.venueId || venueInfo.venueName, 
+                        name: venueInfo.venueName 
+                    });
                 }
             }
         });
@@ -180,14 +227,17 @@ exports.handler = async (event, context) => {
                 const cloudinaryPublicId = fields['Cloudinary Public ID'];
                 const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
                 const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
-                const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
+                
+                const venueInfo = resolveVenueInfo(fields);
 
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
                     description: fields['Description'],
                     date: fields['Date'],
-                    venue: venueName,
+                    venue: venueInfo.venueName,
+                    venueId: venueInfo.venueId,
+                    venueText: venueInfo.venueText,
                     image: promoImage ? promoImage.url : null,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
@@ -202,8 +252,11 @@ exports.handler = async (event, context) => {
                 });
 
                 // Populate uniqueVenues map
-                if (venueName && !uniqueVenues.has(venueName)) {
-                    uniqueVenues.set(venueName, { id: venueName, name: venueName });
+                if (venueInfo.venueName && !uniqueVenues.has(venueInfo.venueName)) {
+                    uniqueVenues.set(venueInfo.venueName, { 
+                        id: venueInfo.venueId || venueInfo.venueName, 
+                        name: venueInfo.venueName 
+                    });
                 }
             });
         });

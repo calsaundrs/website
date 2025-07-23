@@ -333,7 +333,7 @@ function renderEvents(events) {
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
+                                <p class="text-gray-400 text-sm">${event.venueName || event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
                             </div>
                         </div>
                         
@@ -462,7 +462,7 @@ function renderRecurringEvents(events) {
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
+                                <p class="text-gray-400 text-sm">${event.venueName || event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
                             </div>
                         </div>
                         
@@ -600,7 +600,7 @@ function handleSearch(event) {
     const filteredEvents = allEvents.filter(event => {
         const name = (event.name || event['Event Name'] || '').toLowerCase();
         const description = (event.description || event.Description || '').toLowerCase();
-        const venue = (event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
+        const venue = (event.venueName || event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
         
         return name.includes(searchTerm) || description.includes(searchTerm) || venue.includes(searchTerm);
     });
@@ -620,7 +620,7 @@ function handleSearch(event) {
             const filteredRecurring = recurringEvents.filter(event => {
                 const name = (event.name || event['Event Name'] || '').toLowerCase();
                 const description = (event.description || event.Description || '').toLowerCase();
-                const venue = (event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
+                const venue = (event.venueName || event.venue || event.VenueText || event['Venue Name'] || '').toLowerCase();
                 
                 return name.includes(searchTerm) || description.includes(searchTerm) || venue.includes(searchTerm);
             });
@@ -699,7 +699,7 @@ function openRecurringModal(seriesId) {
                             ${allVenues && allVenues.length > 0 ? allVenues.map(venue => {
                                 // Check if this venue matches the current event's venue
                                 const currentVenueId = recurringEvent.venueId || recurringEvent.Venue;
-                                const currentVenueName = recurringEvent.venue || recurringEvent.VenueText || recurringEvent['Venue Name'];
+                                const currentVenueName = recurringEvent.venueName || recurringEvent.venue || recurringEvent.VenueText || recurringEvent['Venue Name'];
                                 const isSelected = currentVenueId === venue.id || currentVenueName === venue.name;
                                 return `<option value="${venue.id}" ${isSelected ? 'selected' : ''}>${venue.name}</option>`;
                             }).join('') : ''}
@@ -971,10 +971,10 @@ function populateEditForm(event) {
             option.value = venue.id;
             option.textContent = venue.name;
             
-            // Check if this venue matches the current event's venue
-            const currentVenueId = event.venueId || event.Venue;
-            const currentVenueName = event.venue || event.VenueText || event['Venue Name'];
-            if (currentVenueId === venue.id || currentVenueName === venue.name) {
+                            // Check if this venue matches the current event's venue
+                const currentVenueId = event.venueId || event.Venue;
+                const currentVenueName = event.venueName || event.venue || event.VenueText || event['Venue Name'];
+                if (currentVenueId === venue.id || currentVenueName === venue.name) {
                 option.selected = true;
             }
             
@@ -1681,12 +1681,79 @@ function debounce(func, wait) {
     };
 }
 
+// Validate event-venue data relationships
+async function validateEventVenueData() {
+    try {
+        console.log('Admin Edit Events: Starting event-venue data validation...');
+        
+        const response = await fetch('/.netlify/functions/validate-event-venue-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Admin Edit Events: Validation results:', result);
+            
+            // Display results in a modal or alert
+            let message = `Data Validation Complete!\n\n`;
+            message += `Total Events: ${result.summary.totalEvents}\n`;
+            message += `Total Venues: ${result.summary.totalVenues}\n`;
+            message += `Issues Found: ${result.summary.issuesFound}\n\n`;
+            
+            if (result.summary.issuesFound > 0) {
+                message += `Issues by Severity:\n`;
+                message += `- High: ${result.summary.issuesBySeverity.high}\n`;
+                message += `- Medium: ${result.summary.issuesBySeverity.medium}\n`;
+                message += `- Low: ${result.summary.issuesBySeverity.low}\n\n`;
+                
+                message += `Issues by Type:\n`;
+                Object.entries(result.summary.issuesByType).forEach(([type, count]) => {
+                    message += `- ${type}: ${count}\n`;
+                });
+                
+                message += `\nCheck the browser console for detailed issue information.`;
+            } else {
+                message += `✅ No data issues found! All event-venue relationships are consistent.`;
+            }
+            
+            alert(message);
+            
+            // Log detailed issues to console
+            if (result.issues && result.issues.length > 0) {
+                console.group('Detailed Validation Issues:');
+                result.issues.forEach((issue, index) => {
+                    console.group(`Issue ${index + 1}: ${issue.issue}`);
+                    console.log('Event:', issue.eventName);
+                    console.log('Severity:', issue.severity);
+                    if (issue.details) {
+                        console.log('Details:', issue.details);
+                    }
+                    console.groupEnd();
+                });
+                console.groupEnd();
+            }
+            
+        } else {
+            const errorData = await response.text();
+            console.error('Admin Edit Events: Validation failed:', response.status, errorData);
+            alert(`Validation failed: ${response.status} - ${errorData}`);
+        }
+    } catch (error) {
+        console.error('Admin Edit Events: Error during validation:', error);
+        alert(`Validation error: ${error.message}`);
+    }
+}
+
 // Global functions for onclick handlers
 window.openEditModal = openEditModal;
 window.handleDeleteEvent = handleDeleteEvent;
 window.openRecurringModal = openRecurringModal;
 window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
+window.validateEventVenueData = validateEventVenueData;
 
 // Debug function for testing recurring events
 window.testRecurringEvents = async function() {
