@@ -12,60 +12,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadNote = document.getElementById('upload-note');
     const extractedData = document.getElementById('extracted-data');
     const extractedFields = document.getElementById('extracted-fields');
-    const useExtractedBtn = document.getElementById('use-extracted');
+    const useSelectedBtn = document.getElementById('use-selected');
     const ignoreExtractedBtn = document.getElementById('ignore-extracted');
     
     const venueSelect = document.getElementById('venue-select');
-    const categorySelect = document.getElementById('category-select');
-    const statusDiv = document.getElementById('form-status');
-    const submitButton = document.getElementById('submit-button');
-    const termsCheckbox = document.getElementById('terms-agree');
+    const newVenueFields = document.getElementById('new-venue-fields');
+    const newVenueName = document.getElementById('new-venue-name');
+    const newVenueAddress = document.getElementById('new-venue-address');
+    const newVenuePostcode = document.getElementById('new-venue-postcode');
+    const newVenueWebsite = document.getElementById('new-venue-website');
     
-    // Recurrence elements
-    const recurrenceOptions = document.getElementById('recurrence-options');
-    const weeklyOptions = document.getElementById('weekly-options');
-    const monthlyOptions = document.getElementById('monthly-options');
-    const monthlyByDateOptions = document.getElementById('monthly-by-date-options');
-    const monthlyByDayOptions = document.getElementById('monthly-by-day-options');
-    const datesPreviewSection = document.getElementById('dates-preview-section');
-    const datesPreview = document.getElementById('dates-preview');
-    const exceptionDatesList = document.getElementById('exception-dates-list');
-    const exceptionDateInput = document.getElementById('exception-date-input');
-    const addExceptionBtn = document.getElementById('add-exception-btn');
-    const recurringInfoHidden = document.getElementById('recurring-info-hidden');
+    // Tooltip elements
+    const uploadTipsToggle = document.getElementById('upload-tips-toggle');
+    const uploadTips = document.getElementById('upload-tips');
+    const recurrenceTipsToggle = document.getElementById('recurrence-tips-toggle');
+    const recurrenceTips = document.getElementById('recurrence-tips');
     
     // State variables
     let extractedEventData = null;
-    let exceptionDates = [];
-    let generatedDates = [];
+    let isCreatingNewVenue = false;
 
-    // Terms checkbox handler
-    termsCheckbox.addEventListener('change', () => {
-        submitButton.disabled = !termsCheckbox.checked;
-    });
-
-    // Description character counter
-    const descriptionTextarea = document.getElementById('description');
-    const descriptionCount = document.getElementById('description-count');
-    
-    if (descriptionTextarea && descriptionCount) {
-        descriptionTextarea.addEventListener('input', () => {
-            const length = descriptionTextarea.value.length;
-            descriptionCount.textContent = `${length}/500`;
-            
-            if (length > 450) {
-                descriptionCount.classList.add('text-yellow-400');
-            } else {
-                descriptionCount.classList.remove('text-yellow-400');
-            }
-            
-            if (length > 500) {
-                descriptionCount.classList.add('text-red-400');
-            } else {
-                descriptionCount.classList.remove('text-red-400');
-            }
+    // Tooltip functionality
+    function setupTooltip(toggleBtn, tooltip) {
+        if (!toggleBtn || !tooltip) return;
+        
+        toggleBtn.addEventListener('mouseenter', () => {
+            tooltip.classList.remove('opacity-0', 'pointer-events-none');
+        });
+        
+        toggleBtn.addEventListener('mouseleave', () => {
+            tooltip.classList.add('opacity-0', 'pointer-events-none');
+        });
+        
+        // Touch support for mobile
+        toggleBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            tooltip.classList.toggle('opacity-0');
+            tooltip.classList.toggle('pointer-events-none');
         });
     }
+
+    setupTooltip(uploadTipsToggle, uploadTips);
+    setupTooltip(recurrenceTipsToggle, recurrenceTips);
+
+    // Venue selection logic
+    venueSelect.addEventListener('change', () => {
+        const selectedValue = venueSelect.value;
+        
+        if (selectedValue === 'new') {
+            // Show new venue fields
+            newVenueFields.classList.remove('hidden');
+            isCreatingNewVenue = true;
+            
+            // Make new venue fields required
+            newVenueName.required = true;
+            newVenueAddress.required = true;
+            newVenuePostcode.required = true;
+        } else {
+            // Hide new venue fields
+            newVenueFields.classList.add('hidden');
+            isCreatingNewVenue = false;
+            
+            // Remove required from new venue fields
+            newVenueName.required = false;
+            newVenueAddress.required = false;
+            newVenuePostcode.required = false;
+        }
+    });
 
     // Poster upload functionality
     uploadArea.addEventListener('click', () => posterUpload.click());
@@ -92,6 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Remove poster functionality
+    if (removePosterBtn) {
+        removePosterBtn.addEventListener('click', () => {
+            posterUpload.value = '';
+            posterPreview.classList.add('hidden');
+            uploadArea.classList.remove('hidden');
+            extractedData.classList.add('hidden');
+        });
+    }
+
     // Poster Processing
     async function handlePosterUpload(file) {
         // Show poster preview
@@ -99,108 +122,75 @@ document.addEventListener('DOMContentLoaded', () => {
         posterPreview.classList.remove('hidden');
         uploadArea.classList.add('hidden');
         
-        // Show processing, hide other states
+        // Show processing status
         aiProcessing.classList.remove('hidden');
-        uploadNote.classList.add('hidden');
-        extractedData.classList.add('hidden');
+        
+        // Create FormData for upload
+        const formData = new FormData();
+        formData.append('poster', file);
         
         try {
-            // Create form data for processing
-            const formData = new FormData();
-            formData.append('poster', file);
-            
-            // Call processing function
             const response = await fetch('/.netlify/functions/process-poster', {
                 method: 'POST',
                 body: formData
             });
             
             if (!response.ok) {
-                throw new Error('Processing failed');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
             const result = await response.json();
-            console.log('Poster processing result:', result);
             
             if (result.success && result.data) {
                 extractedEventData = result.data;
-                console.log('Extracted data:', result.data);
                 showExtractedData(result.data);
             } else {
-                // No data extracted, just show success message
-                console.log('No data extracted or processing failed');
-                aiProcessing.classList.add('hidden');
                 showUploadSuccess();
             }
         } catch (error) {
-            console.error('Processing error:', error);
-            aiProcessing.classList.add('hidden');
+            console.error('Error processing poster:', error);
             showUploadSuccess();
+        } finally {
+            aiProcessing.classList.add('hidden');
         }
     }
 
     function showExtractedData(data) {
-        aiProcessing.classList.add('hidden');
-        uploadNote.classList.add('hidden');
-        
-        // Clear previous extracted fields
         extractedFields.innerHTML = '';
         
-        // Add extracted fields
+        // Create checkboxes for each extracted field
         const fields = [
             { key: 'eventName', label: 'Event Name', value: data.eventName },
-            { key: 'date', label: 'Date', value: data.date },
-            { key: 'time', label: 'Time', value: data.time },
-            { key: 'venue', label: 'Venue', value: data.venue },
-            { key: 'description', label: 'Description', value: data.description }
+            { key: 'eventDescription', label: 'Event Description', value: data.eventDescription },
+            { key: 'eventDate', label: 'Event Date', value: data.eventDate },
+            { key: 'eventTime', label: 'Event Time', value: data.eventTime },
+            { key: 'eventCategory', label: 'Event Category', value: data.eventCategory },
+            { key: 'eventPrice', label: 'Event Price', value: data.eventPrice },
+            { key: 'venueName', label: 'Venue Name', value: data.venueName },
+            { key: 'venueAddress', label: 'Venue Address', value: data.venueAddress }
         ];
         
-        // Add recurrence info if present
-        if (data.recurrence && data.recurrence.type !== 'none') {
-            let recurrenceText = '';
-            if (data.recurrence.type === 'weekly' && data.recurrence.weekly_days) {
-                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const days = data.recurrence.weekly_days.map(day => dayNames[day]).join(', ');
-                recurrenceText = `Weekly on ${days}`;
-            } else if (data.recurrence.type === 'monthly') {
-                if (data.recurrence.monthly_type === 'day') {
-                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                    const weekNames = ['', 'First', 'Second', 'Third', 'Fourth', 'Last'];
-                    const week = data.recurrence.monthly_week;
-                    const day = dayNames[data.recurrence.monthly_day_of_week];
-                    const weekName = week === -1 ? 'Last' : weekNames[week];
-                    recurrenceText = `Monthly on ${weekName} ${day}`;
-                } else if (data.recurrence.monthly_day_of_month) {
-                    recurrenceText = `Monthly on day ${data.recurrence.monthly_day_of_month}`;
-                }
-            }
-            
-            if (recurrenceText) {
-                fields.push({ key: 'recurrence', label: 'Recurrence', value: recurrenceText });
-            }
-        }
-        
-        // Add categories if present
-        if (data.categories && data.categories.length > 0) {
-            fields.push({ key: 'categories', label: 'Categories', value: data.categories.join(', ') });
-        }
-        
         fields.forEach(field => {
-            if (field.value && field.value !== null && field.value !== 'null') {
+            if (field.value && field.value !== 'null' && field.value !== null) {
                 const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'extracted-field bg-gray-800/50 rounded-lg p-3 border border-gray-600';
-                fieldDiv.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <input type="checkbox" class="extracted-checkbox h-4 w-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500" 
-                                   data-field="${field.key}" ${field.key === 'eventName' || field.key === 'date' ? 'checked' : ''}>
-                            <div>
-                                <span class="text-gray-300 font-medium">${field.label}:</span>
-                                <div class="text-white mt-1">${field.value}</div>
-                            </div>
-                        </div>
-                    </div>
+                fieldDiv.className = 'flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `extract-${field.key}`;
+                checkbox.className = 'text-green-500 focus:ring-green-500';
+                checkbox.checked = true;
+                
+                const label = document.createElement('label');
+                label.htmlFor = `extract-${field.key}`;
+                label.className = 'flex-1 text-sm';
+                label.innerHTML = `
+                    <span class="font-semibold text-green-300">${field.label}:</span>
+                    <span class="text-green-200 ml-2">${field.value}</span>
                 `;
+                
+                fieldDiv.appendChild(checkbox);
+                fieldDiv.appendChild(label);
                 extractedFields.appendChild(fieldDiv);
             }
         });
@@ -212,507 +202,61 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadNote.classList.remove('hidden');
     }
 
-    // Use selected extracted data
-    const useSelectedBtn = document.getElementById('use-selected');
-    useSelectedBtn.addEventListener('click', () => {
-        if (extractedEventData) {
-            // Get all checked checkboxes
-            const checkedBoxes = document.querySelectorAll('.extracted-checkbox:checked');
+    // Apply selected extracted data
+    if (useSelectedBtn) {
+        useSelectedBtn.addEventListener('click', () => {
+            if (!extractedEventData) return;
             
-            checkedBoxes.forEach(checkbox => {
-                const fieldKey = checkbox.dataset.field;
+            // Apply only checked fields
+            const checkedFields = extractedFields.querySelectorAll('input[type="checkbox"]:checked');
+            checkedFields.forEach(checkbox => {
+                const fieldKey = checkbox.id.replace('extract-', '');
                 const fieldValue = extractedEventData[fieldKey];
                 
-                if (fieldValue) {
-                    switch (fieldKey) {
-                        case 'eventName':
-                            document.getElementById('event-name').value = fieldValue;
-                            break;
-                        case 'date':
-                            document.getElementById('date').value = fieldValue;
-                            break;
-                        case 'time':
-                            document.getElementById('start-time').value = fieldValue;
-                            break;
-                        case 'venue':
-                            // Try to match venue name to venue dropdown
-                            const venueSelect = document.getElementById('venue-select');
-                            const extractedVenue = fieldValue.toLowerCase();
-                            
-                            for (let i = 0; i < venueSelect.options.length; i++) {
-                                const option = venueSelect.options[i];
-                                if (option.text.toLowerCase().includes(extractedVenue) || 
-                                    extractedVenue.includes(option.text.toLowerCase())) {
-                                    venueSelect.selectedIndex = i;
-                                    break;
-                                }
-                            }
-                            break;
-                        case 'description':
-                            document.getElementById('description').value = fieldValue;
-                            break;
-                        case 'recurrence':
-                            // Handle recurrence
-                            if (extractedEventData.recurrence && extractedEventData.recurrence.type !== 'none') {
-                                // Set recurrence type
-                                const recurrenceType = extractedEventData.recurrence.type;
-                                document.querySelector(`input[name="recurrence-type"][value="${recurrenceType}"]`).checked = true;
-                                updateRecurrenceVisibility();
-                                
-                                if (recurrenceType === 'weekly' && extractedEventData.recurrence.weekly_days) {
-                                    // Set weekly days
-                                    extractedEventData.recurrence.weekly_days.forEach(day => {
-                                        const checkbox = document.querySelector(`input[name="weekly_days"][value="${day}"]`);
-                                        if (checkbox) checkbox.checked = true;
-                                    });
-                                } else if (recurrenceType === 'monthly') {
-                                    if (extractedEventData.recurrence.monthly_type === 'day') {
-                                        // Set monthly by day
-                                        document.querySelector('input[name="monthly_type"][value="day"]').checked = true;
-                                        updateMonthlyOptionsVisibility();
-                                        
-                                        if (extractedEventData.recurrence.monthly_week) {
-                                            document.getElementById('monthly-week').value = extractedEventData.recurrence.monthly_week;
-                                        }
-                                        if (extractedEventData.recurrence.monthly_day_of_week) {
-                                            document.getElementById('monthly-day-of-week').value = extractedEventData.recurrence.monthly_day_of_week;
-                                        }
-                                    } else if (extractedEventData.recurrence.monthly_day_of_month) {
-                                        // Set monthly by date
-                                        document.querySelector('input[name="monthly_type"][value="date"]').checked = true;
-                                        updateMonthlyOptionsVisibility();
-                                        document.getElementById('monthly-day-of-month').value = extractedEventData.recurrence.monthly_day_of_month;
-                                    }
-                                }
-                                
-                                // Update preview
-                                updateDatesPreview();
-                            }
-                            break;
-                        case 'categories':
-                            // Handle categories
-                            if (extractedEventData.categories && extractedEventData.categories.length > 0) {
-                                const categorySelect = document.getElementById('category-select');
-                                const extractedCategories = extractedEventData.categories.map(cat => cat.toLowerCase());
-                                
-                                for (let i = 0; i < categorySelect.options.length; i++) {
-                                    const option = categorySelect.options[i];
-                                    if (extractedCategories.some(cat => option.text.toLowerCase().includes(cat))) {
-                                        option.selected = true;
-                                    }
-                                }
-                            }
-                            break;
+                if (fieldValue && fieldValue !== 'null' && fieldValue !== null) {
+                    const targetField = document.getElementById(fieldKey.replace('event', 'event-').toLowerCase());
+                    if (targetField) {
+                        targetField.value = fieldValue;
                     }
                 }
             });
             
             extractedData.classList.add('hidden');
-            showStatus('Selected data applied to form!', 'success');
-        }
-    });
-
-    // Ignore extracted data
-    ignoreExtractedBtn.addEventListener('click', () => {
-        extractedData.classList.add('hidden');
-        extractedEventData = null;
-    });
-
-    // Tooltip functionality
-    const uploadTipsToggle = document.getElementById('upload-tips-toggle');
-    const uploadTips = document.getElementById('upload-tips');
-    const recurrenceTipsToggle = document.getElementById('recurrence-tips-toggle');
-    const recurrenceTips = document.getElementById('recurrence-tips');
-
-    if (uploadTipsToggle && uploadTips) {
-        // Desktop hover
-        uploadTipsToggle.addEventListener('mouseenter', () => {
-            uploadTips.classList.remove('opacity-0', 'pointer-events-none');
-        });
-        
-        uploadTipsToggle.addEventListener('mouseleave', () => {
-            uploadTips.classList.add('opacity-0', 'pointer-events-none');
-        });
-
-        // Mobile touch
-        uploadTipsToggle.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            uploadTips.classList.remove('opacity-0', 'pointer-events-none');
-        });
-
-        uploadTipsToggle.addEventListener('touchend', () => {
-            setTimeout(() => {
-                uploadTips.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000); // Hide after 3 seconds on mobile
         });
     }
 
-    if (recurrenceTipsToggle && recurrenceTips) {
-        // Desktop hover
-        recurrenceTipsToggle.addEventListener('mouseenter', () => {
-            recurrenceTips.classList.remove('opacity-0', 'pointer-events-none');
-        });
-        
-        recurrenceTipsToggle.addEventListener('mouseleave', () => {
-            recurrenceTips.classList.add('opacity-0', 'pointer-events-none');
-        });
-
-        // Mobile touch
-        recurrenceTipsToggle.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            recurrenceTips.classList.remove('opacity-0', 'pointer-events-none');
-        });
-
-        recurrenceTipsToggle.addEventListener('touchend', () => {
-            setTimeout(() => {
-                recurrenceTips.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000); // Hide after 3 seconds on mobile
+    if (ignoreExtractedBtn) {
+        ignoreExtractedBtn.addEventListener('click', () => {
+            extractedData.classList.add('hidden');
         });
     }
 
-    // Remove poster
-    removePosterBtn.addEventListener('click', () => {
-        posterUpload.value = '';
-        posterPreview.classList.add('hidden');
-        uploadArea.classList.remove('hidden');
-        extractedData.classList.add('hidden');
-        extractedEventData = null;
-        aiProcessing.classList.add('hidden');
-        uploadNote.classList.add('hidden');
-    });
-
-    // Recurrence type handlers
-    document.querySelectorAll('input[name="recurrence-type"]').forEach(radio => {
-        radio.addEventListener('change', updateRecurrenceVisibility);
-    });
-
-    document.querySelectorAll('input[name="monthly_type"]').forEach(radio => {
-        radio.addEventListener('change', updateMonthlyOptionsVisibility);
-    });
-
-    function updateRecurrenceVisibility() {
-        const selectedType = document.querySelector('input[name="recurrence-type"]:checked').value;
-        
-        recurrenceOptions.classList.add('hidden');
-        weeklyOptions.classList.add('hidden');
-        monthlyOptions.classList.add('hidden');
-        datesPreviewSection.classList.add('hidden');
-        
-        if (selectedType !== 'none') {
-            recurrenceOptions.classList.remove('hidden');
+    // Load venues
+    async function loadVenues() {
+        try {
+            const response = await fetch('/.netlify/functions/get-venue-list');
+            const venues = await response.json();
             
-            if (selectedType === 'weekly') {
-                weeklyOptions.classList.remove('hidden');
-            } else if (selectedType === 'monthly') {
-                monthlyOptions.classList.remove('hidden');
-                updateMonthlyOptionsVisibility();
-            }
+            venueSelect.innerHTML = '<option value="">Select an existing venue...</option>';
             
-            updateDatesPreview();
-        }
-    }
-
-    function updateMonthlyOptionsVisibility() {
-        const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-        
-        monthlyByDateOptions.classList.add('hidden');
-        monthlyByDayOptions.classList.add('hidden');
-        
-        if (selectedMonthlyType === 'date') {
-            monthlyByDateOptions.classList.remove('hidden');
-        } else if (selectedMonthlyType === 'day') {
-            monthlyByDayOptions.classList.remove('hidden');
-        }
-        
-        updateDatesPreview();
-    }
-
-    // Date preview functionality
-    function updateDatesPreview() {
-        const selectedType = document.querySelector('input[name="recurrence-type"]:checked').value;
-        const startDate = document.getElementById('date').value;
-        const startTime = document.getElementById('start-time').value;
-        
-        if (selectedType === 'none' || !startDate) {
-            datesPreviewSection.classList.add('hidden');
-            return;
-        }
-        
-        let recurrenceData = null;
-        
-        if (selectedType === 'weekly') {
-            const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked'))
-                .map(cb => parseInt(cb.value, 10));
-            if (weeklyDays.length > 0) {
-                recurrenceData = { type: 'weekly', days: weeklyDays };
-            }
-        } else if (selectedType === 'monthly') {
-            const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-            if (monthlyType === 'date') {
-                const dayOfMonth = document.getElementById('monthly-day-of-month').value;
-                if (dayOfMonth) {
-                    recurrenceData = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(dayOfMonth, 10) };
-                }
-            } else if (monthlyType === 'day') {
-                const week = document.getElementById('monthly-week').value;
-                const dayOfWeek = document.getElementById('monthly-day-of-week').value;
-                if (week && dayOfWeek) {
-                    recurrenceData = { type: 'monthly', monthlyType: 'day', week: parseInt(week, 10), dayOfWeek: parseInt(dayOfWeek, 10) };
-                }
-            }
-        }
-        
-        if (recurrenceData) {
-            generatedDates = calculateRecurringDates(startDate, recurrenceData, 3);
-            // Filter out exception dates
-            generatedDates = generatedDates.filter(date => !exceptionDates.includes(date));
-            renderDatesPreview();
-            datesPreviewSection.classList.remove('hidden');
-        } else {
-            datesPreviewSection.classList.add('hidden');
-        }
-    }
-
-    function renderDatesPreview() {
-        datesPreview.innerHTML = '';
-        
-        generatedDates.forEach((date, index) => {
-            const dateDiv = document.createElement('div');
-            dateDiv.className = 'date-card flex items-center justify-between';
-            
-            const dateObj = new Date(date);
-            const formattedDate = dateObj.toLocaleDateString('en-GB', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long',
-                year: 'numeric'
-            });
-            
-            // Get current venue and time
-            const venueSelect = document.getElementById('venue-select');
-            const selectedVenue = venueSelect.options[venueSelect.selectedIndex];
-            const venueName = selectedVenue ? selectedVenue.textContent : 'No venue selected';
-            const startTime = document.getElementById('start-time').value || 'TBD';
-            
-            dateDiv.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-calendar-day text-accent-color mr-3"></i>
-                    <div>
-                        <div class="text-white">${formattedDate}</div>
-                        <div class="text-sm text-gray-400">${startTime} at ${venueName}</div>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button type="button" class="edit-date-btn text-blue-400 hover:text-blue-300" data-index="${index}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="remove-date-btn text-red-400 hover:text-red-300" data-index="${index}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            datesPreview.appendChild(dateDiv);
-        });
-        
-        // Add event listeners for edit/remove buttons
-        datesPreview.querySelectorAll('.edit-date-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('.edit-date-btn').dataset.index);
-                editDate(index);
-            });
-        });
-        
-        datesPreview.querySelectorAll('.remove-date-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.closest('.remove-date-btn').dataset.index);
-                removeDate(index);
-            });
-        });
-    }
-
-    function editDate(index) {
-        const date = generatedDates[index];
-        const newDate = prompt('Enter new date (YYYY-MM-DD):', date);
-        
-        if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            generatedDates[index] = newDate;
-            renderDatesPreview();
-        }
-    }
-
-    function removeDate(index) {
-        if (confirm('Remove this date from the series?')) {
-            generatedDates.splice(index, 1);
-            renderDatesPreview();
-        }
-    }
-
-    // Exception dates functionality
-    addExceptionBtn.addEventListener('click', () => {
-        const date = exceptionDateInput.value;
-        if (date && !exceptionDates.includes(date)) {
-            exceptionDates.push(date);
-            renderExceptionDates();
-            exceptionDateInput.value = '';
-            updateDatesPreview();
-        }
-    });
-
-    function renderExceptionDates() {
-        exceptionDatesList.innerHTML = '';
-        
-        exceptionDates.forEach(date => {
-            const dateDiv = document.createElement('div');
-            dateDiv.className = 'exception-date flex items-center justify-between';
-            
-            const dateObj = new Date(date);
-            const formattedDate = dateObj.toLocaleDateString('en-GB', { 
-                weekday: 'short', 
-                day: 'numeric', 
-                month: 'short' 
-            });
-            
-            dateDiv.innerHTML = `
-                <span class="text-red-300">${formattedDate}</span>
-                <button type="button" class="remove-exception-btn text-red-400 hover:text-red-300" data-date="${date}">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            exceptionDatesList.appendChild(dateDiv);
-        });
-        
-        // Add event listeners for remove buttons
-        exceptionDatesList.querySelectorAll('.remove-exception-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const date = e.target.closest('.remove-exception-btn').dataset.date;
-                removeExceptionDate(date);
-            });
-        });
-    }
-
-    function removeExceptionDate(date) {
-        exceptionDates = exceptionDates.filter(d => d !== date);
-        renderExceptionDates();
-        updateDatesPreview();
-    }
-
-    // Add event listeners for recurrence updates
-    document.querySelectorAll('input[name="weekly_days"]').forEach(checkbox => {
-        checkbox.addEventListener('change', updateDatesPreview);
-    });
-    
-    document.getElementById('monthly-day-of-month').addEventListener('input', updateDatesPreview);
-    document.getElementById('monthly-week').addEventListener('change', updateDatesPreview);
-    document.getElementById('monthly-day-of-week').addEventListener('change', updateDatesPreview);
-    document.getElementById('date').addEventListener('change', updateDatesPreview);
-    document.getElementById('start-time').addEventListener('change', updateDatesPreview);
-    
-    // Update preview when venue changes
-    venueSelect.addEventListener('change', () => {
-        if (datesPreviewSection.classList.contains('hidden') === false) {
-            renderDatesPreview();
-        }
-    });
-
-    // Date calculation functions
-    function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
-        const dates = [];
-        const start = new Date(startDate);
-        const endDate = new Date(start);
-        endDate.setMonth(endDate.getMonth() + monthsAhead);
-        
-        if (recurrenceData.type === 'weekly') {
-            const daysOfWeek = recurrenceData.days || [];
-            let currentDate = new Date(start);
-            
-            while (currentDate <= endDate) {
-                if (daysOfWeek.includes(currentDate.getDay())) {
-                    dates.push(currentDate.toISOString().split('T')[0]);
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-        } else if (recurrenceData.type === 'monthly') {
-            if (recurrenceData.monthlyType === 'date') {
-                const dayOfMonth = recurrenceData.dayOfMonth;
-                let currentDate = new Date(start);
-                
-                while (currentDate <= endDate) {
-                    const maxDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-                    const actualDay = Math.min(dayOfMonth, maxDay);
-                    
-                    const eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), actualDay);
-                    if (eventDate >= start) {
-                        dates.push(eventDate.toISOString().split('T')[0]);
-                    }
-                    
-                    currentDate.setMonth(currentDate.getMonth() + 1);
-                }
-            } else if (recurrenceData.monthlyType === 'day') {
-                const week = recurrenceData.week;
-                const dayOfWeek = recurrenceData.dayOfWeek;
-                let currentDate = new Date(start);
-                
-                while (currentDate <= endDate) {
-                    const eventDate = getNthWeekdayOfMonth(currentDate.getFullYear(), currentDate.getMonth(), week, dayOfWeek);
-                    if (eventDate && eventDate >= start) {
-                        dates.push(eventDate.toISOString().split('T')[0]);
-                    }
-                    currentDate.setMonth(currentDate.getMonth() + 1);
-                }
-            }
-        }
-        
-        return dates;
-    }
-
-    function getNthWeekdayOfMonth(year, month, week, dayOfWeek) {
-        const date = new Date(year, month, 1);
-        
-        if (week > 0) {
-            let day = date.getDay();
-            let diff = (dayOfWeek - day + 7) % 7;
-            date.setDate(date.getDate() + diff);
-            date.setDate(date.getDate() + (week - 1) * 7);
-        } else {
-            date.setMonth(date.getMonth() + 1);
-            date.setDate(0);
-            let day = date.getDay();
-            let diff = (dayOfWeek - day + 7) % 7;
-            date.setDate(date.getDate() - diff);
-        }
-        
-        if (date.getMonth() !== month) return null;
-        return date;
-    }
-
-    // Populate categories
-    const categories = ["Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"];
-    categorySelect.innerHTML = '';
-    categories.forEach(categoryName => {
-        const option = document.createElement('option');
-        option.value = categoryName;
-        option.textContent = categoryName;
-        categorySelect.appendChild(option);
-    });
-
-    // Fetch venues
-    fetch('/.netlify/functions/get-venue-list')
-        .then(response => response.json())
-        .then(venues => {
-            venueSelect.innerHTML = '<option value="" disabled selected>Select an existing venue...</option>';
             venues.forEach(venue => {
                 const option = document.createElement('option');
                 option.value = venue.id;
                 option.textContent = venue.name;
                 venueSelect.appendChild(option);
             });
-        })
-        .catch(error => {
+            
+            // Add "Create New Venue" option
+            const newVenueOption = document.createElement('option');
+            newVenueOption.value = 'new';
+            newVenueOption.textContent = '➕ Create New Venue';
+            venueSelect.appendChild(newVenueOption);
+            
+        } catch (error) {
             console.error('Error fetching venues:', error);
-            showStatus('Error loading venues. Please refresh the page.', 'error');
-        });
+            venueSelect.innerHTML = '<option value="">Error loading venues</option>';
+        }
+    }
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -726,13 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Validation
         const errors = [];
         
-        if (!termsCheckbox.checked) {
-            errors.push('You must agree to the Terms of Submission.');
-        }
-        
         const eventName = document.getElementById('event-name').value.trim();
-        const eventDate = document.getElementById('date').value;
-        const startTime = document.getElementById('start-time').value;
+        const eventDescription = document.getElementById('event-description').value.trim();
+        const eventDate = document.getElementById('event-date').value;
+        const eventTime = document.getElementById('event-time').value;
+        const eventCategory = document.getElementById('event-category').value;
+        const contactName = document.getElementById('contact-name').value.trim();
         const contactEmail = document.getElementById('contact-email').value.trim();
         
         if (!eventName) {
@@ -740,14 +283,29 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('event-name').classList.add('border-red-500');
         }
         
-        if (!eventDate) {
-            errors.push('Event date is required.');
-            document.getElementById('date').classList.add('border-red-500');
+        if (!eventDescription) {
+            errors.push('Event description is required.');
+            document.getElementById('event-description').classList.add('border-red-500');
         }
         
-        if (!startTime) {
-            errors.push('Start time is required.');
-            document.getElementById('start-time').classList.add('border-red-500');
+        if (!eventDate) {
+            errors.push('Event date is required.');
+            document.getElementById('event-date').classList.add('border-red-500');
+        }
+        
+        if (!eventTime) {
+            errors.push('Event time is required.');
+            document.getElementById('event-time').classList.add('border-red-500');
+        }
+        
+        if (!eventCategory) {
+            errors.push('Event category is required.');
+            document.getElementById('event-category').classList.add('border-red-500');
+        }
+        
+        if (!contactName) {
+            errors.push('Contact name is required.');
+            document.getElementById('contact-name').classList.add('border-red-500');
         }
         
         if (!contactEmail) {
@@ -760,130 +318,75 @@ document.addEventListener('DOMContentLoaded', () => {
             venueSelect.classList.add('border-red-500');
         }
         
-        const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
-        if (selectedCategories.length === 0) {
-            errors.push('Please select at least one category.');
-            categorySelect.classList.add('border-red-500');
+        // Validate new venue fields if creating new venue
+        if (isCreatingNewVenue) {
+            if (!newVenueName.value.trim()) {
+                errors.push('New venue name is required.');
+                newVenueName.classList.add('border-red-500');
+            }
+            if (!newVenueAddress.value.trim()) {
+                errors.push('New venue address is required.');
+                newVenueAddress.classList.add('border-red-500');
+            }
+            if (!newVenuePostcode.value.trim()) {
+                errors.push('New venue postcode is required.');
+                newVenuePostcode.classList.add('border-red-500');
+            }
         }
         
         // Show validation errors
         if (errors.length > 0) {
-            showStatus(`
-                <div class="text-red-400 font-semibold mb-2">Please fix the following issues:</div>
-                <ul class="list-disc list-inside text-left">
-                    ${errors.map(error => `<li>${error}</li>`).join('')}
-                </ul>
-            `, 'error');
+            alert('Please fix the following issues:\n' + errors.join('\n'));
             return;
         }
         
-        // Build recurrence data
-        const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
-        let recurrenceRule = null;
+        // Build form data
+        const formData = new FormData(form);
         
-        if (selectedRecurrenceType === 'weekly') {
-            const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked'))
-                .map(cb => parseInt(cb.value, 10));
-            if (weeklyDays.length > 0) {
-                recurrenceRule = { type: 'weekly', days: weeklyDays };
-            }
-        } else if (selectedRecurrenceType === 'monthly') {
-            const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-            if (monthlyType === 'date') {
-                const dayOfMonth = document.getElementById('monthly-day-of-month').value;
-                if (dayOfMonth) {
-                    recurrenceRule = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(dayOfMonth, 10) };
-                }
-            } else if (monthlyType === 'day') {
-                const week = document.getElementById('monthly-week').value;
-                const dayOfWeek = document.getElementById('monthly-day-of-week').value;
-                if (week && dayOfWeek) {
-                    recurrenceRule = { type: 'monthly', monthlyType: 'day', week: parseInt(week, 10), dayOfWeek: parseInt(dayOfWeek, 10) };
-                }
-            }
+        // Add poster if uploaded
+        if (posterUpload.files.length > 0) {
+            formData.append('poster', posterUpload.files[0]);
         }
         
-        // Add end date and exceptions to recurrence rule
-        if (recurrenceRule) {
-            const endDate = document.getElementById('recurrence-end-date').value;
-            if (endDate) {
-                recurrenceRule.endDate = endDate;
-            }
-            
-            if (exceptionDates.length > 0) {
-                recurrenceRule.exceptions = exceptionDates;
-            }
-            
-            recurringInfoHidden.value = JSON.stringify(recurrenceRule);
+        // Add venue data
+        if (isCreatingNewVenue) {
+            formData.append('newVenueName', newVenueName.value.trim());
+            formData.append('newVenueAddress', newVenueAddress.value.trim());
+            formData.append('newVenuePostcode', newVenuePostcode.value.trim());
+            formData.append('newVenueWebsite', newVenueWebsite.value.trim());
         } else {
-            recurringInfoHidden.value = '';
+            formData.append('venueId', venueSelect.value);
         }
         
-        // Disable submit button and show loading
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-        showStatus('Submitting your event, please wait...', 'info');
-        
-        // Submit event
+        // Submit form
         try {
-            const formData = new FormData(form);
-            
-            // Handle categories
-            formData.delete('categoryIds');
-            selectedCategories.forEach(categoryName => {
-                formData.append('categoryIds', categoryName);
-            });
-            
-            const response = await fetch('/.netlify/functions/event-submission', {
+            const response = await fetch('/.netlify/functions/create-event', {
                 method: 'POST',
                 body: formData
             });
             
             if (!response.ok) {
-                const errorResult = await response.json().catch(() => ({ message: 'Server error during event submission.' }));
-                throw new Error(errorResult.message || `Server responded with status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            showStatus('Success! Your event has been submitted for review. Our team will review it within 24-48 hours and you\'ll be notified once it\'s live.', 'success');
-            form.reset();
-            termsCheckbox.checked = false;
-            submitButton.disabled = true;
-            extractedData.classList.add('hidden');
-            posterPreview.classList.add('hidden');
-            uploadArea.classList.remove('hidden');
-            datesPreviewSection.classList.add('hidden');
-            generatedDates = [];
-            exceptionDates = [];
+            const result = await response.json();
             
+            if (result.success) {
+                alert('Event submitted successfully! We\'ll review it within 24-48 hours.');
+                form.reset();
+                posterPreview.classList.add('hidden');
+                uploadArea.classList.remove('hidden');
+                extractedData.classList.add('hidden');
+                newVenueFields.classList.add('hidden');
+            } else {
+                alert('Error submitting event: ' + (result.error || 'Unknown error'));
+            }
         } catch (error) {
-            showStatus(`Error: ${error.message}`, 'error');
-            submitButton.disabled = !termsCheckbox.checked;
-            submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Submit Event';
+            console.error('Error submitting form:', error);
+            alert('Error submitting event. Please try again.');
         }
     });
 
-    // Status message function
-    function showStatus(message, type = 'info') {
-        statusDiv.innerHTML = message;
-        statusDiv.className = 'mt-6 p-4 rounded-lg text-center';
-        
-        switch (type) {
-            case 'success':
-                statusDiv.classList.add('bg-green-800/20', 'border', 'border-green-500', 'text-green-300');
-                break;
-            case 'error':
-                statusDiv.classList.add('bg-red-800/20', 'border', 'border-red-500', 'text-red-300');
-                break;
-            case 'info':
-            default:
-                statusDiv.classList.add('bg-blue-800/20', 'border', 'border-blue-500', 'text-blue-300');
-                break;
-        }
-        
-        statusDiv.classList.remove('hidden');
-        
-        if (type === 'success') {
-            setTimeout(() => statusDiv.classList.add('hidden'), 5000);
-        }
-    }
+    // Initialize
+    loadVenues();
 });

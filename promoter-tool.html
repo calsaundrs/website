@@ -312,44 +312,68 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-6">
-                            <!-- Venue Name -->
-                            <div>
-                                <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Venue Name <span class="text-red-400">*</span>
+                            <!-- Venue Selection -->
+                            <div class="md:col-span-2">
+                                <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    Venue <span class="text-red-400">*</span>
                                 </label>
-                                <input type="text" id="venue-name" name="venue-name" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="Enter venue name">
+                                <select id="venue-select" name="venueId" required 
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base">
+                                    <option value="">Loading venues...</option>
+                                </select>
+                                <p class="text-xs text-gray-400 mt-1">Select an existing venue or choose "Create New Venue" below</p>
                             </div>
 
-                            <!-- Venue Address -->
-                            <div>
-                                <label for="venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Venue Address <span class="text-red-400">*</span>
-                                </label>
-                                <input type="text" id="venue-address" name="venue-address" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="Enter full address">
-                            </div>
+                            <!-- New Venue Fields (Hidden by default) -->
+                            <div id="new-venue-fields" class="hidden md:col-span-2 space-y-4 transition-all duration-300">
+                                <div class="p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                                    <h4 class="text-blue-300 font-semibold mb-3">
+                                        <i class="fas fa-plus-circle mr-2"></i>Create New Venue
+                                    </h4>
+                                    <p class="text-sm text-blue-200 mb-4">Fill in the details for your new venue below.</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- New Venue Name -->
+                                        <div>
+                                            <label for="new-venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                                Venue Name <span class="text-red-400">*</span>
+                                            </label>
+                                            <input type="text" id="new-venue-name" name="new-venue-name" 
+                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   placeholder="Enter venue name">
+                                        </div>
 
-                            <!-- Venue Postcode -->
-                            <div>
-                                <label for="venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Postcode <span class="text-red-400">*</span>
-                                </label>
-                                <input type="text" id="venue-postcode" name="venue-postcode" required 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="e.g., B1 1AA">
-                            </div>
+                                        <!-- New Venue Address -->
+                                        <div>
+                                            <label for="new-venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                                Venue Address <span class="text-red-400">*</span>
+                                            </label>
+                                            <input type="text" id="new-venue-address" name="new-venue-address" 
+                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   placeholder="e.g., 123 Main Street, Birmingham">
+                                        </div>
 
-                            <!-- Venue Website -->
-                            <div>
-                                <label for="venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                    Venue Website
-                                </label>
-                                <input type="url" id="venue-website" name="venue-website" 
-                                       class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
-                                       placeholder="https://venue-website.com">
+                                        <!-- New Venue Postcode -->
+                                        <div>
+                                            <label for="new-venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                                Postcode <span class="text-red-400">*</span>
+                                            </label>
+                                            <input type="text" id="new-venue-postcode" name="new-venue-postcode" 
+                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   placeholder="e.g., B1 1AA">
+                                        </div>
+
+                                        <!-- New Venue Website -->
+                                        <div>
+                                            <label for="new-venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                                Venue Website
+                                            </label>
+                                            <input type="url" id="new-venue-website" name="new-venue-website" 
+                                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-accent-color focus:ring-2 focus:ring-accent-color/20 transition-colors text-base"
+                                                   placeholder="https://venue-website.com">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
