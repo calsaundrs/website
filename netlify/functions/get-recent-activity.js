@@ -9,6 +9,19 @@ exports.handler = async (event) => {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
+    console.log('get-recent-activity: Starting function execution');
+
+    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
+        console.error('get-recent-activity: Missing required environment variables');
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ 
+                error: 'Missing Airtable configuration',
+                details: 'Environment variables not properly configured'
+            }),
+        };
+    }
+
     try {
         const now = new Date();
         const oneWeekAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));

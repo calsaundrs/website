@@ -158,12 +158,18 @@ async function cacheFirst(request, cacheName) {
     return cachedResponse;
   }
   
-  const networkResponse = await fetch(request);
-  if (networkResponse.ok) {
-    const cache = await caches.open(cacheName);
-    cache.put(request, networkResponse.clone());
+  try {
+    const networkResponse = await fetch(request);
+    // Only cache successful responses (not partial responses like 206)
+    if (networkResponse.ok && networkResponse.status !== 206) {
+      const cache = await caches.open(cacheName);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    console.error('Service Worker: Cache first failed:', error);
+    return new Response('Network error', { status: 503 });
   }
-  return networkResponse;
 }
 
 // Network First strategy - good for dynamic content
@@ -191,7 +197,7 @@ async function staleWhileRevalidate(request, cacheName) {
   
   // Start fetch in background
   const fetchPromise = fetch(request).then(networkResponse => {
-    if (networkResponse.ok) {
+    if (networkResponse.ok && networkResponse.status !== 206) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
