@@ -95,23 +95,39 @@ async function loadAllEvents() {
         
         // Load regular events
         const eventsResponse = await fetch('/.netlify/functions/get-events');
+        console.log('Admin Edit Events: Events response status:', eventsResponse.status);
+        
         if (eventsResponse.ok) {
             const eventsData = await eventsResponse.json();
+            console.log('Admin Edit Events: Events data received:', eventsData);
             allEvents = eventsData.events || [];
             
             // Separate pending and approved events
-            pendingEvents = allEvents.filter(event => event.status === 'Pending Review');
-            approvedEvents = allEvents.filter(event => event.status === 'Approved');
+            pendingEvents = allEvents.filter(event => {
+                const status = event.status || event.Status || event['Status'];
+                return status === 'Pending Review';
+            });
+            approvedEvents = allEvents.filter(event => {
+                const status = event.status || event.Status || event['Status'];
+                return status === 'Approved';
+            });
             
             console.log(`Admin Edit Events: Loaded ${allEvents.length} total events (${pendingEvents.length} pending, ${approvedEvents.length} approved)`);
+        } else {
+            console.error('Admin Edit Events: Failed to load events:', eventsResponse.status, eventsResponse.statusText);
         }
         
         // Load recurring events
         const recurringResponse = await fetch('/.netlify/functions/get-recurring-events');
+        console.log('Admin Edit Events: Recurring response status:', recurringResponse.status);
+        
         if (recurringResponse.ok) {
             const recurringData = await recurringResponse.json();
+            console.log('Admin Edit Events: Recurring data received:', recurringData);
             recurringEvents = recurringData.recurringEvents || [];
             console.log(`Admin Edit Events: Loaded ${recurringEvents.length} recurring events`);
+        } else {
+            console.error('Admin Edit Events: Failed to load recurring events:', recurringResponse.status, recurringResponse.statusText);
         }
         
         // Render initial view
@@ -137,33 +153,41 @@ function renderEvents(events) {
         return;
     }
 
+    // Debug: Log first event to see structure
+    if (events.length > 0) {
+        console.log('Admin Edit Events: First event structure:', events[0]);
+        console.log('Admin Edit Events: Available fields:', Object.keys(events[0]));
+    }
+
     const eventsHtml = events.map(event => {
-        const statusBadge = getStatusBadge(event.status);
-        const categoryBadges = (event.category || []).map(cat => 
+        // Handle different possible status field names
+        const status = event.status || event.Status || event['Status'] || 'Unknown';
+        const statusBadge = getStatusBadge(status);
+        const categoryBadges = (event.category || event.Category || []).map(cat => 
             `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1">${cat}</span>`
         ).join('');
 
         return `
-            <div class="bg-white rounded-lg shadow-md p-6 mb-4 border-l-4 ${event.status === 'Approved' ? 'border-green-500' : event.status === 'Pending Review' ? 'border-yellow-500' : 'border-gray-400'}">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-4 border-l-4 ${status === 'Approved' ? 'border-green-500' : status === 'Pending Review' ? 'border-yellow-500' : 'border-gray-400'}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name}</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
                         <div class="flex items-center mb-2">
                             ${statusBadge}
                         </div>
-                        <p class="text-gray-600 mb-2">${event.description || 'No description'}</p>
+                        <p class="text-gray-600 mb-2">${event.description || event.Description || 'No description'}</p>
                         <div class="flex items-center text-sm text-gray-500 mb-2">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            ${event.venue}
+                            ${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}
                         </div>
                         <div class="flex items-center text-sm text-gray-500 mb-2">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            ${formatDate(event.date)}
+                            ${formatDate(event.date || event.Date)}
                         </div>
                         <div class="mt-2">
                             ${categoryBadges}
@@ -199,9 +223,17 @@ function renderRecurringEvents(events) {
         return;
     }
 
+    // Debug: Log first recurring event to see structure
+    if (events.length > 0) {
+        console.log('Admin Edit Events: First recurring event structure:', events[0]);
+        console.log('Admin Edit Events: Available recurring event fields:', Object.keys(events[0]));
+    }
+
     const eventsHtml = events.map(event => {
-        const statusBadge = getStatusBadge(event.status);
-        const categoryBadges = (event.category || []).map(cat => 
+        // Handle different possible field names
+        const status = event.status || event.Status || event['Status'] || 'Unknown';
+        const statusBadge = getStatusBadge(status);
+        const categoryBadges = (event.category || event.Category || []).map(cat => 
             `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1">${cat}</span>`
         ).join('');
         
@@ -225,24 +257,24 @@ function renderRecurringEvents(events) {
             <div class="bg-white rounded-lg shadow-md p-6 mb-4 border-l-4 ${event.isActive ? 'border-green-500' : 'border-gray-400'}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name}</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
                         <div class="flex items-center mb-2">
                             ${activeBadge}
                             ${statusBadge}
                         </div>
-                        <p class="text-gray-600 mb-2">${event.description || 'No description'}</p>
+                        <p class="text-gray-600 mb-2">${event.description || event.Description || 'No description'}</p>
                         <div class="flex items-center text-sm text-gray-500 mb-2">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            ${event.venue}
+                            ${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}
                         </div>
                         <div class="flex items-center text-sm text-gray-500 mb-2">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            ${event.recurringInfo}
+                            ${event.recurringInfo || event['Recurring Info'] || 'Recurring Event'}
                         </div>
                         ${nextInstanceInfo}
                         ${instanceCounts}
@@ -291,23 +323,182 @@ function formatDate(dateString) {
 }
 
 // Event management functions
-function editEvent(eventId) {
-    alert(`Edit event ${eventId} - Functionality coming soon!`);
-}
-
-function deleteEvent(eventId) {
-    if (confirm('Are you sure you want to delete this event?')) {
-        alert(`Delete event ${eventId} - Functionality coming soon!`);
+async function editEvent(eventId) {
+    console.log(`Admin Edit Events: Editing event ${eventId}`);
+    
+    // Find the event in our data
+    const event = allEvents.find(e => e.id === eventId);
+    if (!event) {
+        alert('Event not found!');
+        return;
+    }
+    
+    // For now, show event details and allow basic editing
+    const newName = prompt('Edit event name:', event.name || event['Event Name'] || '');
+    if (newName === null) return; // User cancelled
+    
+    const newDescription = prompt('Edit event description:', event.description || event.Description || '');
+    if (newDescription === null) return; // User cancelled
+    
+    try {
+        // Create form data for the update
+        const formData = new FormData();
+        formData.append('id', eventId);
+        formData.append('type', 'Event');
+        formData.append('Event Name', newName);
+        formData.append('Description', newDescription);
+        
+        const response = await fetch('/.netlify/functions/update-submission', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            alert('Event updated successfully!');
+            // Reload events to show changes
+            await loadAllEvents();
+        } else {
+            const error = await response.json();
+            alert(`Error updating event: ${error.message || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error updating event:', error);
+        alert(`Error updating event: ${error.message}`);
     }
 }
 
-function editRecurringEvent(seriesId) {
-    alert(`Edit recurring series ${seriesId} - Functionality coming soon!`);
+async function deleteEvent(eventId) {
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+        return;
+    }
+    
+    console.log(`Admin Edit Events: Deleting event ${eventId}`);
+    
+    try {
+        const response = await fetch('/.netlify/functions/delete-submission', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: eventId,
+                type: 'Event'
+            })
+        });
+        
+        if (response.ok) {
+            alert('Event deleted successfully!');
+            // Reload events to show changes
+            await loadAllEvents();
+        } else {
+            const error = await response.json();
+            alert(`Error deleting event: ${error.message || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        alert(`Error deleting event: ${error.message}`);
+    }
 }
 
-function endRecurringSeries(seriesId) {
-    if (confirm('Are you sure you want to end this recurring series? This will mark all future instances as ended.')) {
-        alert(`End recurring series ${seriesId} - Functionality coming soon!`);
+async function editRecurringEvent(seriesId) {
+    console.log(`Admin Edit Events: Editing recurring series ${seriesId}`);
+    
+    // Find the recurring event
+    const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
+    if (!recurringEvent) {
+        alert('Recurring event not found!');
+        return;
+    }
+    
+    // For now, show series details and allow basic editing
+    const newName = prompt('Edit series name:', recurringEvent.name || recurringEvent['Event Name'] || '');
+    if (newName === null) return; // User cancelled
+    
+    const newDescription = prompt('Edit series description:', recurringEvent.description || recurringEvent.Description || '');
+    if (newDescription === null) return; // User cancelled
+    
+    try {
+        // Update the parent event (first instance with recurring info)
+        const parentEvent = recurringEvent.instances ? 
+            recurringEvent.instances.find(instance => instance.recurringInfo) : 
+            { id: seriesId };
+        
+        if (parentEvent) {
+            const formData = new FormData();
+            formData.append('id', parentEvent.id);
+            formData.append('type', 'Event');
+            formData.append('Event Name', newName);
+            formData.append('Description', newDescription);
+            
+            const response = await fetch('/.netlify/functions/update-submission', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                alert('Recurring series updated successfully!');
+                // Reload events to show changes
+                await loadAllEvents();
+            } else {
+                const error = await response.json();
+                alert(`Error updating series: ${error.message || 'Unknown error'}`);
+            }
+        } else {
+            alert('Could not find parent event to update');
+        }
+    } catch (error) {
+        console.error('Error updating recurring series:', error);
+        alert(`Error updating series: ${error.message}`);
+    }
+}
+
+async function endRecurringSeries(seriesId) {
+    if (!confirm('Are you sure you want to end this recurring series? This will mark all future instances as ended.')) {
+        return;
+    }
+    
+    console.log(`Admin Edit Events: Ending recurring series ${seriesId}`);
+    
+    try {
+        // Find all future instances and mark them as ended
+        const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
+        if (!recurringEvent || !recurringEvent.instances) {
+            alert('Recurring event not found or no instances available!');
+            return;
+        }
+        
+        const futureInstances = recurringEvent.instances.filter(instance => !instance.isPast);
+        
+        if (futureInstances.length === 0) {
+            alert('No future instances to end');
+            return;
+        }
+        
+        // Update each future instance to mark it as ended
+        let updatedCount = 0;
+        for (const instance of futureInstances) {
+            const formData = new FormData();
+            formData.append('id', instance.id);
+            formData.append('type', 'Event');
+            formData.append('Status', 'Ended');
+            
+            const response = await fetch('/.netlify/functions/update-submission', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                updatedCount++;
+            }
+        }
+        
+        alert(`Successfully ended ${updatedCount} future instances of the series!`);
+        // Reload events to show changes
+        await loadAllEvents();
+        
+    } catch (error) {
+        console.error('Error ending recurring series:', error);
+        alert(`Error ending series: ${error.message}`);
     }
 }
 
