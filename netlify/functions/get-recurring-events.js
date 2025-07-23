@@ -29,46 +29,10 @@ exports.handler = async (event) => {
         // Get all events that have recurring information
         console.log('get-recurring-events: Fetching recurring events from Airtable...');
         
-        // First, let's get ALL events to see what fields are available
-        console.log('get-recurring-events: Getting all events to check available fields...');
-        const testQuery = await base('Events').select({
-            maxRecords: 1,
-            fields: ['Event Name']
-        }).all();
-        
-        if (testQuery.length > 0) {
-            console.log('get-recurring-events: Sample record fields:', Object.keys(testQuery[0].fields));
-        }
-        
-        // Define the fields we want to try to access
-        const desiredFields = [
-            'Event Name', 
-            'Description', 
-            'Date',
-            'VenueText', 
-            'Venue', 
-            'Venue Name',
-            'Category', 
-            'Recurring Info', 
-            'Series ID',
-            'seriesId', // Add camelCase version
-            'Status',
-            'Promo Image'
-        ];
-        
-        // Filter to only include fields that exist
-        const availableFields = desiredFields.filter(field => {
-            if (testQuery.length > 0) {
-                return testQuery[0].fields.hasOwnProperty(field);
-            }
-            return true; // If we can't check, assume all fields exist
-        });
-        
-        console.log('get-recurring-events: Available fields:', availableFields);
-        
-        // Simple query to get all events with basic fields
+        // Get all events without field restrictions to ensure we capture all recurring fields
+        console.log('get-recurring-events: Fetching all events without field restrictions...');
         const allRecords = await base('Events').select({
-            fields: availableFields
+            maxRecords: 100 // Get more records to ensure we capture all recurring events
         }).all();
 
         console.log(`get-recurring-events: Found ${allRecords.length} total events`);
