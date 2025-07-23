@@ -1885,6 +1885,83 @@ async function previewVenueMerges() {
     }
 }
 
+// Preview fuzzy venue merges (very aggressive matching)
+async function previewFuzzyVenueMerges() {
+    try {
+        console.log('Admin Edit Events: Starting fuzzy venue merge preview...');
+        
+        const response = await fetch('/.netlify/functions/fuzzy-venue-merges', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Admin Edit Events: Fuzzy preview results:', result);
+            
+            if (result.mergePreviews && result.mergePreviews.length > 0) {
+                // Show detailed preview and ask for confirmation
+                let message = `Fuzzy Venue Merge Preview\n\n`;
+                message += `Found ${result.summary.fuzzyGroups} fuzzy venue groups\n`;
+                message += `Total events to update: ${result.summary.totalEventsToUpdate}\n`;
+                message += `Total venues to delete: ${result.summary.totalVenuesToDelete}\n\n`;
+                
+                message += `Merge Operations (sorted by impact):\n`;
+                result.mergePreviews.forEach((preview, index) => {
+                    message += `${index + 1}. ${preview.reason}\n`;
+                    message += `   Keep: ${preview.primaryVenue.name} (${preview.primaryVenue.usage} events)\n`;
+                    message += `   Delete: ${preview.secondaryVenues.map(v => `${v.name} (${v.usage} events)`).join(', ')}\n`;
+                    message += `   Events affected: ${preview.totalEventsAffected}\n`;
+                    
+                    // Show similarity scores
+                    if (preview.similarities && preview.similarities.length > 0) {
+                        message += `   Similarities: ${preview.similarities.map(s => `${s.venue.fields.Name} (${(s.similarity * 100).toFixed(0)}%)`).join(', ')}\n`;
+                    }
+                    message += `\n`;
+                });
+                
+                message += `\n⚠️  WARNING: Fuzzy matching may include false positives!\n`;
+                message += `Review each match carefully before proceeding.\n\n`;
+                message += `Would you like to proceed with these merges?`;
+                
+                const confirmed = confirm(message);
+                
+                if (confirmed) {
+                    // Execute the merges
+                    await executeVenueMerges(result.mergePreviews);
+                }
+            } else {
+                alert('No fuzzy venue matches found to merge!');
+            }
+            
+            // Log detailed preview to console
+            if (result.mergePreviews && result.mergePreviews.length > 0) {
+                console.group('Detailed Fuzzy Merge Preview:');
+                result.mergePreviews.forEach((preview, index) => {
+                    console.group(`Preview ${index + 1}: ${preview.type}`);
+                    console.log('Reason:', preview.reason);
+                    console.log('Primary Venue:', preview.primaryVenue);
+                    console.log('Secondary Venues:', preview.secondaryVenues);
+                    console.log('Similarities:', preview.similarities);
+                    console.log('Events to Update:', preview.eventsToUpdate);
+                    console.groupEnd();
+                });
+                console.groupEnd();
+            }
+            
+        } else {
+            const errorData = await response.text();
+            console.error('Admin Edit Events: Fuzzy preview failed:', response.status, errorData);
+            alert(`Fuzzy preview failed: ${response.status} - ${errorData}`);
+        }
+    } catch (error) {
+        console.error('Admin Edit Events: Error during fuzzy preview:', error);
+        alert(`Fuzzy preview error: ${error.message}`);
+    }
+}
+
 // Execute venue merges with specific operations
 async function executeVenueMerges(mergePreviews) {
     try {
@@ -1967,6 +2044,7 @@ window.saveRecurringChanges = saveRecurringChanges;
 window.validateEventVenueData = validateEventVenueData;
 window.analyzeDuplicateVenues = analyzeDuplicateVenues;
 window.previewVenueMerges = previewVenueMerges;
+window.previewFuzzyVenueMerges = previewFuzzyVenueMerges;
 window.executeVenueMerges = executeVenueMerges;
 
     // Fix venue data issues automatically
