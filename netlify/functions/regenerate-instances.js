@@ -162,8 +162,18 @@ exports.handler = async (event) => {
         }));
 
         if (instanceRecords.length > 0) {
-            await base('Events').create(instanceRecords);
-            console.log(`regenerate-instances: Created ${instanceRecords.length} new instances`);
+            // Create instances in batches of 10 (Airtable limit)
+            const batchSize = 10;
+            let totalCreated = 0;
+            
+            for (let i = 0; i < instanceRecords.length; i += batchSize) {
+                const batch = instanceRecords.slice(i, i + batchSize);
+                await base('Events').create(batch);
+                totalCreated += batch.length;
+                console.log(`regenerate-instances: Created batch ${Math.floor(i/batchSize) + 1} with ${batch.length} instances`);
+            }
+            
+            console.log(`regenerate-instances: Created ${totalCreated} total new instances`);
         }
 
         return {
