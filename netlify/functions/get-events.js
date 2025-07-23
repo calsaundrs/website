@@ -166,7 +166,18 @@ exports.handler = async (event, context) => {
 
                 const cloudinaryPublicId = fields['Cloudinary Public ID'];
                 const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
-                const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                let imageUrl = null;
+                
+                try {
+                    imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                    if (!imageUrl) {
+                        console.log("No image URL found for event:", fields['Event Name']);
+                        imageUrl = 'https://placehold.co/500x281/1e1e1e/EAEAEA?text=Event';
+                    }
+                } catch (imageError) {
+                    console.error("Error processing image for event:", fields['Event Name'], imageError);
+                    imageUrl = 'https://placehold.co/500x281/1e1e1e/EAEAEA?text=Event';
+                }
                 
                 const venueInfo = resolveVenueInfo(fields);
 
@@ -203,6 +214,21 @@ exports.handler = async (event, context) => {
             // Sort instances by date (earliest first)
             seriesInstances.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
             
+            // Find the parent event (the one with Recurring Info) to get the image
+            const parentEvent = seriesInstances.find(instance => instance.fields['Recurring Info']);
+            let parentImageUrl = null;
+            let parentPromoImage = null;
+            
+            if (parentEvent) {
+                const parentCloudinaryPublicId = parentEvent.fields['Cloudinary Public ID'];
+                parentPromoImage = parentEvent.fields['Promo Image'] && parentEvent.fields['Promo Image'][0] ? parentEvent.fields['Promo Image'][0] : null;
+                try {
+                    parentImageUrl = parentCloudinaryPublicId ? getCloudinaryUrl(parentCloudinaryPublicId, 500, 281) : (parentPromoImage ? parentPromoImage.url : null);
+                } catch (imageError) {
+                    console.error("Error processing parent event image:", imageError);
+                }
+            }
+            
             // Limit to configured number of instances
             const limitedInstances = seriesInstances.slice(0, instancesToShow);
             
@@ -224,9 +250,30 @@ exports.handler = async (event, context) => {
                     isBoosted = true;
                 }
 
+                // Try to get image from this instance first, then fall back to parent
                 const cloudinaryPublicId = fields['Cloudinary Public ID'];
                 const promoImage = fields['Promo Image'] && fields['Promo Image'][0] ? fields['Promo Image'][0] : null;
-                const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                let imageUrl = null;
+                
+                try {
+                    // First try this instance's image
+                    imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
+                    
+                    // If no image, try parent's image
+                    if (!imageUrl && parentImageUrl) {
+                        imageUrl = parentImageUrl;
+                        console.log("Using parent event image for recurring instance:", fields['Event Name']);
+                    }
+                    
+                    // If still no image, use placeholder
+                    if (!imageUrl) {
+                        console.log("No image URL found for recurring event:", fields['Event Name']);
+                        imageUrl = 'https://placehold.co/500x281/1e1e1e/EAEAEA?text=Event';
+                    }
+                } catch (imageError) {
+                    console.error("Error processing image for recurring event:", fields['Event Name'], imageError);
+                    imageUrl = 'https://placehold.co/500x281/1e1e1e/EAEAEA?text=Event';
+                }
                 
                 const venueInfo = resolveVenueInfo(fields);
 

@@ -70,6 +70,8 @@ exports.handler = async function (event, context) {
         return { statusCode: 400, body: 'Error: Event slug not provided.' };
     }
 
+    console.log("Processing event details request for slug:", slug);
+
     try {
         const dateMatch = slug.match(/\d{4}-\d{2}-\d{2}$/);
         let eventRecords = [];
@@ -77,16 +79,39 @@ exports.handler = async function (event, context) {
         console.log("Attempting to fetch event records from Airtable.");
         if (dateMatch) {
             const dateFromSlug = dateMatch[0];
+            console.log("Date match found, searching for specific date:", dateFromSlug);
             eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${slug}", DATETIME_FORMAT(Date, 'YYYY-MM-DD') = '${dateFromSlug}')` }).firstPage();
         } else {
+            console.log("No date match, searching for standalone event with slug:", slug);
             eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `{Slug} = "${slug}"` }).firstPage();
             if (!eventRecords || eventRecords.length === 0) {
                 console.log("Standalone event not found, checking for recurring event.");
                 const escapedSlug = slug.replace(/"/g, '"');
+                console.log("Searching for recurring event with escaped slug:", escapedSlug);
                 eventRecords = await base('Events').select({ maxRecords: 1, filterByFormula: `AND({Slug} = "${escapedSlug}", {Recurring Info})` }).firstPage();
                 if (!eventRecords || eventRecords.length === 0) {
-                    console.log("Event not found after checking recurring info.");
-                    return { statusCode: 404, body: 'Event not found.' };
+                    console.log("Recurring event not found with exact slug match, trying broader search");
+                    
+                    // Extract the base name from the slug (remove date part if present)
+                    const baseName = slug.replace(/-\d{4}-\d{2}-\d{2}$/, '');
+                    console.log("Extracted base name from slug:", baseName);
+                    
+                    // Try to find a recurring event with a similar name
+                    eventRecords = await base('Events').select({ 
+                        maxRecords: 10, 
+                        filterByFormula: `AND({Recurring Info}, FIND("${baseName}", {Event Name}))`,
+                        fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+                    }).firstPage();
+                    
+                    if (eventRecords && eventRecords.length > 0) {
+                        // Sort by date to get the earliest instance
+                        eventRecords.sort((a, b) => new Date(a.fields['Date']) - new Date(b.fields['Date']));
+                        console.log("Found matching recurring event:", eventRecords[0].fields['Event Name']);
+                        eventRecords = [eventRecords[0]];
+                    } else {
+                        console.log("Event not found after checking recurring info.");
+                        return { statusCode: 404, body: 'Event not found.' };
+                    }
                 }
             }
         }
@@ -97,6 +122,15 @@ exports.handler = async function (event, context) {
             console.log("Event record is null or undefined.");
             return { statusCode: 404, body: `Event '${slug}' not found.` };
         }
+        
+        console.log("Event record found:", {
+            id: eventRecord.id,
+            name: eventRecord.fields['Event Name'],
+            slug: eventRecord.fields['Slug'],
+            recurringInfo: eventRecord.fields['Recurring Info'],
+            seriesId: eventRecord.fields['Series ID']
+        });
+        
         const fields = eventRecord.fields;
         const eventName = fields['Event Name'];
         const recurringInfo = fields['Recurring Info'];
@@ -233,7 +267,20 @@ exports.handler = async function (event, context) {
         const eventDate = new Date(fields['Date']);
         const description = fields['Description'] || 'No description provided.';
         const pageUrl = `https://brumoutloud.co.uk${event.path}`;
-        const imageUrl = fields['Promo Image'] ? fields['Promo Image'][0].url : 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud';
+        
+        // Enhanced image URL handling with better error handling
+        let imageUrl = 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud';
+        try {
+            if (fields['Promo Image'] && fields['Promo Image'].length > 0) {
+                imageUrl = fields['Promo Image'][0].url;
+                console.log("Image URL found:", imageUrl);
+            } else {
+                console.log("No promo image found, using placeholder");
+            }
+        } catch (imageError) {
+            console.error("Error processing image URL:", imageError);
+            // Keep the placeholder URL
+        }
 
         const calendarData = {
             title: eventName,
