@@ -5,6 +5,8 @@ let approvedEvents = [];
 let recurringEvents = [];
 let currentFilter = 'all';
 let currentEventForEdit = null;
+let selectedEvents = new Set(); // For bulk actions
+let allVenues = []; // For venue picker
 
 // Available categories for the form
 const VALID_CATEGORIES = [
@@ -18,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin Edit Events: Initializing modern interface...');
     initializeEventListeners();
     loadAllEvents();
+    loadVenues();
 });
 
 // Initialize all event listeners
@@ -121,6 +124,19 @@ function filterEvents(filter) {
     }
 }
 
+// Load venues for the venue picker
+async function loadVenues() {
+    try {
+        const response = await fetch('/.netlify/functions/get-venue-list');
+        if (response.ok) {
+            allVenues = await response.json();
+            console.log(`Admin Edit Events: Loaded ${allVenues.length} venues`);
+        }
+    } catch (error) {
+        console.error('Admin Edit Events: Error loading venues:', error);
+    }
+}
+
 // Load all events data
 async function loadAllEvents() {
     try {
@@ -214,12 +230,22 @@ function renderEvents(events) {
         const eventDate = new Date(event.date || event.Date);
         const isToday = new Date().toDateString() === eventDate.toDateString();
         const isPast = eventDate < new Date();
+        const isSelected = selectedEvents.has(event.id);
 
         return `
-            <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''}">
+            <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                           class="bulk-select-checkbox form-checkbox h-5 w-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500" 
+                                           data-event-id="${event.id}"
+                                           ${isSelected ? 'checked' : ''}>
+                                    <span class="ml-2 text-gray-400 text-sm">Select</span>
+                                </label>
+                            </div>
                             <div class="text-center w-16 flex-shrink-0">
                                 <div class="text-2xl font-bold text-white ${isToday ? 'text-purple-400' : ''}">
                                     ${eventDate.getDate()}
@@ -261,6 +287,19 @@ function renderEvents(events) {
     }).join('');
 
     container.innerHTML = eventsHtml;
+    
+    // Add event listeners for bulk selection checkboxes
+    container.querySelectorAll('.bulk-select-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const eventId = this.getAttribute('data-event-id');
+            if (this.checked) {
+                selectedEvents.add(eventId);
+            } else {
+                selectedEvents.delete(eventId);
+            }
+            updateBulkActionsVisibility();
+        });
+    });
 }
 
 // Render recurring events with modern cards
@@ -702,7 +741,194 @@ async function saveRecurringChanges(seriesId) {
 }
 
 function handleBulkActions() {
-    showError('Bulk actions functionality not yet implemented');
+    if (selectedEvents.size === 0) {
+        showError('Please select at least one event for bulk actions');
+        return;
+    }
+    
+    openBulkActionsModal();
+}
+
+function updateBulkActionsVisibility() {
+    const bulkActionsBtn = document.getElementById('bulk-actions-btn');
+    if (bulkActionsBtn) {
+        if (selectedEvents.size > 0) {
+            bulkActionsBtn.innerHTML = `<i class="fas fa-tasks mr-2"></i>Bulk Actions (${selectedEvents.size})`;
+            bulkActionsBtn.classList.remove('btn-secondary');
+            bulkActionsBtn.classList.add('btn-primary');
+        } else {
+            bulkActionsBtn.innerHTML = `<i class="fas fa-tasks mr-2"></i>Bulk Actions`;
+            bulkActionsBtn.classList.remove('btn-primary');
+            bulkActionsBtn.classList.add('btn-secondary');
+        }
+    }
+}
+
+function openBulkActionsModal() {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50';
+    modal.innerHTML = `
+        <div class="modal-content rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-anton text-3xl text-white">
+                    <i class="fas fa-tasks mr-3"></i>Bulk Actions
+                </h3>
+                <button class="close-bulk-modal-btn text-gray-400 hover:text-white text-2xl transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="bg-gray-800/50 rounded-lg p-6">
+                    <h4 class="text-xl font-bold text-white mb-4">Selected Events (${selectedEvents.size})</h4>
+                    <div class="space-y-2 max-h-40 overflow-y-auto">
+                        ${Array.from(selectedEvents).map(eventId => {
+                            const event = allEvents.find(e => e.id === eventId);
+                            return event ? `
+                                <div class="flex items-center justify-between p-2 bg-gray-700/50 rounded">
+                                    <span class="text-gray-300">${event.name || event['Event Name'] || 'Untitled Event'}</span>
+                                    <span class="text-gray-400 text-sm">${event.status || event.Status || 'Unknown'}</span>
+                                </div>
+                            ` : '';
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800/50 rounded-lg p-6">
+                    <h4 class="text-xl font-bold text-white mb-4">Available Actions</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="handleBulkStatusChange('Approved')" class="btn-primary text-white p-4 rounded-lg transition-all text-left">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <div class="font-bold">Approve All</div>
+                            <div class="text-sm opacity-75">Mark all selected events as approved</div>
+                        </button>
+                        
+                        <button onclick="handleBulkStatusChange('Rejected')" class="btn-danger text-white p-4 rounded-lg transition-all text-left">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <div class="font-bold">Reject All</div>
+                            <div class="text-sm opacity-75">Mark all selected events as rejected</div>
+                        </button>
+                        
+                        <button onclick="handleBulkDelete()" class="bg-red-900/50 border border-red-700 text-red-300 p-4 rounded-lg transition-all text-left hover:bg-red-800/50">
+                            <i class="fas fa-trash mr-2"></i>
+                            <div class="font-bold">Delete All</div>
+                            <div class="text-sm opacity-75">Permanently delete all selected events</div>
+                        </button>
+                        
+                        <button onclick="handleBulkCategoryUpdate()" class="btn-secondary text-white p-4 rounded-lg transition-all text-left">
+                            <i class="fas fa-tags mr-2"></i>
+                            <div class="font-bold">Update Categories</div>
+                            <div class="text-sm opacity-75">Add/remove categories from all events</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-4">
+                    <button class="close-bulk-modal-btn btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Add event listeners
+    modal.querySelector('.close-bulk-modal-btn').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+async function handleBulkStatusChange(newStatus) {
+    if (!confirm(`Are you sure you want to mark all ${selectedEvents.size} selected events as "${newStatus}"?`)) {
+        return;
+    }
+    
+    try {
+        let successCount = 0;
+        const eventIds = Array.from(selectedEvents);
+        
+        for (const eventId of eventIds) {
+            const formData = new FormData();
+            formData.append('id', eventId);
+            formData.append('type', 'Event');
+            formData.append('Status', newStatus);
+            
+            const response = await fetch('/.netlify/functions/update-submission', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                successCount++;
+            }
+        }
+        
+        showSuccess(`Successfully updated ${successCount} out of ${eventIds.length} events`);
+        selectedEvents.clear();
+        updateBulkActionsVisibility();
+        await loadAllEvents();
+        
+        // Close modal
+        document.querySelector('.modal-backdrop').remove();
+        
+    } catch (error) {
+        console.error('Error in bulk status change:', error);
+        showError(`Error updating events: ${error.message}`);
+    }
+}
+
+async function handleBulkDelete() {
+    if (!confirm(`Are you sure you want to permanently delete all ${selectedEvents.size} selected events? This action cannot be undone.`)) {
+        return;
+    }
+    
+    try {
+        let successCount = 0;
+        const eventIds = Array.from(selectedEvents);
+        
+        for (const eventId of eventIds) {
+            const response = await fetch('/.netlify/functions/delete-submission', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: eventId,
+                    type: 'Event'
+                })
+            });
+            
+            if (response.ok) {
+                successCount++;
+            }
+        }
+        
+        showSuccess(`Successfully deleted ${successCount} out of ${eventIds.length} events`);
+        selectedEvents.clear();
+        updateBulkActionsVisibility();
+        await loadAllEvents();
+        
+        // Close modal
+        document.querySelector('.modal-backdrop').remove();
+        
+    } catch (error) {
+        console.error('Error in bulk delete:', error);
+        showError(`Error deleting events: ${error.message}`);
+    }
+}
+
+function handleBulkCategoryUpdate() {
+    // This would open a modal for category selection
+    showError('Bulk category update functionality not yet implemented');
 }
 
 // Utility functions
