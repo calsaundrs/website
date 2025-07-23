@@ -1548,9 +1548,9 @@ function convertTextToRecurringInfo(text) {
                 instancesAhead: instancesAhead
             };
         }
-    } else if (lowerText.includes('weekly')) {
+    } else if (lowerText.includes('weekly') || getDayOfWeekFromText(text) !== null) {
+        // If it contains "weekly" or any day of the week, it's weekly
         type = 'weekly';
-        // Try to extract day of week
         const dayOfWeek = getDayOfWeekFromText(text);
         if (dayOfWeek !== null) {
             days = [dayOfWeek];
