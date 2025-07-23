@@ -1559,6 +1559,28 @@ window.testAirtableFields = async function() {
     }
 };
 
+// Debug function for testing recurring detection
+window.testRecurringDetection = async function() {
+    console.log('Testing recurring detection...');
+    try {
+        const response = await fetch('/.netlify/functions/test-recurring-detection');
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Response:', errorText);
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log('Recurring detection test data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error testing recurring detection:', error);
+        return null;
+    }
+};
+
 // Manual refresh function for recurring events
 window.refreshRecurringEvents = async function() {
     console.log('Manually refreshing recurring events...');
