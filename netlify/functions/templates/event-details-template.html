@@ -43,8 +43,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
             <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
             <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            <!-- GET LISTED button using design system -->
+            <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
             <button id="menu-btn" class="text-white text-2xl">
@@ -57,10 +57,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
         <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center nav-cta text-2xl px-8 py-4">GET LISTED</a>
     </div>
 </header>
-    <main class="container mx-auto px-8 py-16">
+
+    <!-- Desktop Layout -->
+    <main class="container mx-auto px-8 py-16 hidden lg:block">
         <div class="grid lg:grid-cols-3 gap-16">
             <div class="lg:col-span-2">
                 <div class="hero-image-container mb-8">
@@ -96,7 +98,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <div class="flex flex-wrap gap-2">{{{tagsHtml}}}</div>
                     </div>
                     {{#if ticketLink}}
-                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="button-primary">Get Tickets / Info</a>
+                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white font-bold py-3 px-6 rounded-lg w-full text-center">
+                        <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
+                    </a>
                     {{/if}}
                     <div id="add-to-calendar-section">
                         <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Add to Calendar</h3>
@@ -106,7 +110,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                     <div class="mt-8">
                         <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Share This Event</h3>
-                        <button id="share-button" class="button-primary"><i class="fas fa-share-alt mr-2"></i> Share Event</button>
+                        <button id="share-button" class="btn-secondary text-white font-bold py-3 px-6 rounded-lg w-full">
+                            <i class="fas fa-share-alt mr-2"></i> Share Event
+                        </button>
                     </div>
                 </div>
             </div>
@@ -121,6 +127,140 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {{/if}}
         {{{suggestedEventsHtml}}}
     </main>
+
+    <!-- Mobile Layout -->
+    <main class="lg:hidden">
+        <!-- Mobile Hero Image -->
+        <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+            <img src="{{imageUrl}}" alt="{{eventName}}" class="w-full h-full object-cover">
+            <div class="absolute top-3 right-3">
+                <button class="btn-secondary text-white px-2 py-1 rounded text-xs">
+                    <i class="fas fa-share"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <!-- Mobile Event Header -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-white mb-2">{{eventName}}</h1>
+                <p class="text-gray-300 text-sm mb-3">
+                    <i class="fas fa-calendar mr-1 text-accent-color"></i>
+                    {{eventDateFormatted}} at {{eventTimeFormatted}}
+                </p>
+                <div class="flex flex-wrap gap-1 mb-4">
+                    {{{tagsHtml}}}
+                </div>
+            </div>
+
+            <!-- Mobile Action Buttons - Sticky Bottom -->
+            <div class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 p-4 z-50">
+                <div class="flex gap-2">
+                    {{#if ticketLink}}
+                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm">
+                        <i class="fas fa-ticket-alt mr-1"></i>Get Tickets
+                    </a>
+                    {{else}}
+                    <button class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm">
+                        <i class="fas fa-info-circle mr-1"></i>Event Info
+                    </button>
+                    {{/if}}
+                    <button class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm">
+                        <i class="fas fa-calendar-plus"></i>
+                    </button>
+                    <button class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm">
+                        <i class="fas fa-share"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Content Sections -->
+            <div class="space-y-6 pb-20">
+                <!-- About Section -->
+                <div class="venue-card p-4">
+                    <h2 class="text-xl font-bold text-white mb-3">
+                        <i class="fas fa-info-circle mr-2 text-accent-color"></i>About This Event
+                    </h2>
+                    <div class="text-gray-300 text-sm leading-relaxed">{{{description}}}</div>
+                </div>
+
+                <!-- Date & Time Card -->
+                <div class="venue-card p-4">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
+                    </h3>
+                    <p class="text-xl font-semibold text-white">{{eventDateFormatted}}</p>
+                    <p class="text-lg text-gray-400">{{eventTimeFormatted}}</p>
+                    {{#if recurringInfo}}
+                    <div class="mt-2">
+                        <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{recurringInfo}}</span>
+                    </div>
+                    {{/if}}
+                </div>
+
+                <!-- Location Card -->
+                <div class="venue-card p-4">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                    </h3>
+                    <div class="space-y-2">
+                        {{{venueHtml}}}
+                        {{#if addressHtml}}
+                        <p class="text-gray-400 text-sm">{{{addressHtml}}}</p>
+                        {{/if}}
+                        <button class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm">
+                            <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event Details Card -->
+                <div class="venue-card p-4">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
+                    </h3>
+                    <div class="space-y-2">
+                        {{#if ticketLink}}
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 text-sm">Tickets:</span>
+                            <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="text-accent-color font-semibold">Available</a>
+                        </div>
+                        {{/if}}
+                        <div class="flex justify-between">
+                            <span class="text-gray-400 text-sm">Category:</span>
+                            <span class="text-white font-semibold">Event</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add to Calendar Card -->
+                <div class="venue-card p-4">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                    </h3>
+                    <div class="calendar-links flex flex-wrap gap-2">
+                        {{{calendarLinksHtml}}}
+                    </div>
+                </div>
+
+                {{#if otherInstancesHTML}}
+                <!-- Other Events in Series -->
+                <div class="venue-card p-4">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <i class="fas fa-calendar mr-2 text-accent-color"></i>Other Events in this Series
+                    </h3>
+                    <div class="space-y-3">
+                        {{{otherInstancesHTML}}}
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Suggested Events -->
+                {{{suggestedEventsHtml}}}
+            </div>
+        </div>
+    </main>
+
     <footer class="border-t-2 border-gray-800 p-8">
     <div class="container mx-auto grid md:grid-cols-2">
         <div>
