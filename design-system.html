@@ -96,21 +96,30 @@
             box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
         }
 
-        .filter-button {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            color: #EAEAEA;
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
+            font-size: 0.875rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .filter-button.active {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border-color: rgba(232, 58, 153, 0.3);
+        
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
         }
-        .filter-button:hover:not(.active) {
-            background: rgba(75, 85, 99, 0.5);
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(181, 100, 247, 0.3) 0%, rgba(181, 100, 247, 0.1) 100%);
+            border-color: rgba(181, 100, 247, 0.5);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(181, 100, 247, 0.3);
         }
 
         .admin-link {
@@ -1534,10 +1543,45 @@
                                             </div>
                                         </div>
 
-                                        <!-- Upcoming Events -->
+                                        <!-- Regular Events -->
+                                        <div class="venue-card p-6 mb-6">
+                                            <h2 class="text-2xl font-bold text-white mb-4">
+                                                <i class="fas fa-redo mr-3 text-accent-color"></i>Regular Events
+                                            </h2>
+                                            <div class="space-y-4">
+                                                <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-green-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-redo text-green-400"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Karaoke Night</h4>
+                                                        <p class="text-gray-400 text-sm">Every Friday • 9:00 PM</p>
+                                                        <p class="text-gray-300 text-sm">Weekly karaoke with prizes and great atmosphere</p>
+                                                    </div>
+                                                    <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                        <i class="fas fa-eye mr-1"></i>View
+                                                    </button>
+                                                </div>
+                                                <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded flex items-center justify-center">
+                                                        <i class="fas fa-calendar-alt text-purple-400"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h4 class="font-semibold text-white">Bear Night</h4>
+                                                        <p class="text-gray-400 text-sm">First Saturday • 8:00 PM</p>
+                                                        <p class="text-gray-300 text-sm">Monthly bear community night with themed drinks</p>
+                                                    </div>
+                                                    <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                        <i class="fas fa-eye mr-1"></i>View
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Upcoming One-Off Events -->
                                         <div class="venue-card p-6">
                                             <h2 class="text-2xl font-bold text-white mb-4">
-                                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Events
+                                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Special Events
                                             </h2>
                                             <div class="space-y-4">
                                                 <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
@@ -1558,9 +1602,9 @@
                                                         <i class="fas fa-image text-gray-600"></i>
                                                     </div>
                                                     <div class="flex-1">
-                                                        <h4 class="font-semibold text-white">Karaoke Night</h4>
-                                                        <p class="text-gray-400 text-sm">Every Friday • 9:00 PM</p>
-                                                        <p class="text-gray-300 text-sm">Weekly karaoke with prizes and great atmosphere</p>
+                                                        <h4 class="font-semibold text-white">Drag Race UK Viewing Party</h4>
+                                                        <p class="text-gray-400 text-sm">Jun 20, 2024 • 8:00 PM</p>
+                                                        <p class="text-gray-300 text-sm">Watch the latest episode with fellow fans</p>
                                                     </div>
                                                     <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                                         <i class="fas fa-eye mr-1"></i>View
@@ -2170,21 +2214,70 @@
                                         </a>
                                     </div>
 
-                                    <!-- Upcoming Events -->
-                                    <div class="venue-card p-4">
-                                        <h3 class="text-lg font-bold text-white mb-3">
-                                            <i class="fas fa-calendar mr-2 text-accent-color"></i>Upcoming Events
-                                        </h3>
-                                        <div class="space-y-3">
-                                            <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                                                <div class="w-12 h-12 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                    <!-- Regular Events -->
+                                    <div class="venue-card p-6 mb-6">
+                                        <h2 class="text-2xl font-bold text-white mb-4">
+                                            <i class="fas fa-redo mr-3 text-accent-color"></i>Regular Events
+                                        </h2>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                <div class="w-16 h-16 bg-gradient-to-br from-green-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                    <i class="fas fa-redo text-green-400"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-white">Karaoke Night</h4>
+                                                    <p class="text-gray-400 text-sm">Every Friday • 9:00 PM</p>
+                                                    <p class="text-gray-300 text-sm">Weekly karaoke with prizes and great atmosphere</p>
+                                                </div>
+                                                <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                    <i class="fas fa-eye mr-1"></i>View
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded flex items-center justify-center">
+                                                    <i class="fas fa-calendar-alt text-purple-400"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-white">Bear Night</h4>
+                                                    <p class="text-gray-400 text-sm">First Saturday • 8:00 PM</p>
+                                                    <p class="text-gray-300 text-sm">Monthly bear community night with themed drinks</p>
+                                                </div>
+                                                <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                    <i class="fas fa-eye mr-1"></i>View
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upcoming One-Off Events -->
+                                    <div class="venue-card p-6">
+                                        <h2 class="text-2xl font-bold text-white mb-4">
+                                            <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Special Events
+                                        </h2>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
                                                     <i class="fas fa-image text-gray-600"></i>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <h4 class="font-semibold text-white text-sm">Glittershit: The Summer Ball</h4>
-                                                    <p class="text-gray-400 text-xs">Jun 15, 2024 • 8:00 PM</p>
+                                                    <h4 class="font-semibold text-white">Glittershit: The Summer Ball</h4>
+                                                    <p class="text-gray-400 text-sm">Jun 15, 2024 • 8:00 PM</p>
+                                                    <p class="text-gray-300 text-sm">An epic summer celebration with drag performances</p>
                                                 </div>
-                                                <button class="btn-primary text-white px-3 py-1 rounded text-xs">
+                                                <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                                    <i class="fas fa-eye mr-1"></i>View
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                                                <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                                    <i class="fas fa-image text-gray-600"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-white">Drag Race UK Viewing Party</h4>
+                                                    <p class="text-gray-400 text-sm">Jun 20, 2024 • 8:00 PM</p>
+                                                    <p class="text-gray-300 text-sm">Watch the latest episode with fellow fans</p>
+                                                </div>
+                                                <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                                     <i class="fas fa-eye mr-1"></i>View
                                                 </button>
                                             </div>
