@@ -108,16 +108,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster (Optional)
                         </h3>
                         
-                        <div class="bg-blue-900/20 border border-blue-600 rounded-lg p-4 mb-4">
-                            <h4 class="text-blue-300 font-semibold mb-2">
-                                <i class="fas fa-lightbulb mr-2"></i>Tips for Better Results
-                            </h4>
-                            <ul class="text-sm text-blue-200 space-y-1">
-                                <li>• Use clear, high-quality images with good contrast</li>
-                                <li>• Ensure text is readable and well-lit</li>
-                                <li>• Include event name, date, time, and venue if possible</li>
-                                <li>• Maximum file size: 10MB</li>
-                            </ul>
+                        <div class="relative inline-block mb-4">
+                            <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors" id="upload-tips-toggle">
+                                <i class="fas fa-info-circle text-lg"></i>
+                            </button>
+                            <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="upload-tips">
+                                <h4 class="text-blue-300 font-semibold mb-2">
+                                    <i class="fas fa-lightbulb mr-2"></i>Tips for Better Results
+                                </h4>
+                                <ul class="text-sm text-blue-200 space-y-1">
+                                    <li>• Use clear, high-quality images with good contrast</li>
+                                    <li>• Ensure text is readable and well-lit</li>
+                                    <li>• Include event name, date, time, and venue if possible</li>
+                                    <li>• Maximum file size: 10MB</li>
+                                </ul>
+                                <div class="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                            </div>
                         </div>
                         
                         <!-- Upload Area -->
@@ -165,12 +171,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <h4 class="text-green-300 font-semibold mb-3">
                                 <i class="fas fa-magic mr-2"></i>Extracted Information
                             </h4>
-                            <div id="extracted-fields" class="space-y-2 text-sm">
+                            <p class="text-sm text-green-200 mb-3">Select which information you'd like to use:</p>
+                            <div id="extracted-fields" class="space-y-3 text-sm">
                                 <!-- Extracted fields will be populated here -->
                             </div>
                             <div class="mt-4 flex space-x-3">
-                                <button type="button" id="use-extracted" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                                    <i class="fas fa-check mr-2"></i>Use Extracted Info
+                                <button type="button" id="use-selected" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                    <i class="fas fa-check mr-2"></i>Use Selected Info
                                 </button>
                                 <button type="button" id="ignore-extracted" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
                                     <i class="fas fa-times mr-2"></i>Fill Manually
@@ -283,11 +290,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <i class="fas fa-redo mr-2"></i>Step 3: Recurrence (Optional)
                         </h3>
                         
-                        <div class="bg-yellow-900/20 border border-yellow-600 rounded-lg p-4 mb-4">
-                            <h4 class="text-yellow-300 font-semibold mb-2">
-                                <i class="fas fa-info-circle mr-2"></i>Recurring Events
-                            </h4>
-                            <p class="text-sm text-yellow-200">Set up recurrence if your event happens regularly (weekly, monthly). You can edit or remove individual dates below.</p>
+                        <div class="relative inline-block mb-4">
+                            <button type="button" class="text-yellow-400 hover:text-yellow-300 transition-colors" id="recurrence-tips-toggle">
+                                <i class="fas fa-info-circle text-lg"></i>
+                            </button>
+                            <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
+                                <h4 class="text-yellow-300 font-semibold mb-2">
+                                    <i class="fas fa-redo mr-2"></i>Recurring Events
+                                </h4>
+                                <p class="text-sm text-yellow-200">Set up recurrence if your event happens regularly (weekly, monthly). You can edit or remove individual dates below.</p>
+                                <div class="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                            </div>
                         </div>
                         
                         <!-- Recurrence Type Selection -->

@@ -188,11 +188,17 @@ document.addEventListener('DOMContentLoaded', () => {
         fields.forEach(field => {
             if (field.value && field.value !== null && field.value !== 'null') {
                 const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'extracted-field';
+                fieldDiv.className = 'extracted-field bg-gray-800/50 rounded-lg p-3 border border-gray-600';
                 fieldDiv.innerHTML = `
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-300 font-medium">${field.label}:</span>
-                        <span class="text-white">${field.value}</span>
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" class="extracted-checkbox h-4 w-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500" 
+                                   data-field="${field.key}" ${field.key === 'eventName' || field.key === 'date' ? 'checked' : ''}>
+                            <div>
+                                <span class="text-gray-300 font-medium">${field.label}:</span>
+                                <div class="text-white mt-1">${field.value}</div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 extractedFields.appendChild(fieldDiv);
@@ -206,88 +212,103 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadNote.classList.remove('hidden');
     }
 
-    // Use extracted data
-    useExtractedBtn.addEventListener('click', () => {
+    // Use selected extracted data
+    const useSelectedBtn = document.getElementById('use-selected');
+    useSelectedBtn.addEventListener('click', () => {
         if (extractedEventData) {
-            if (extractedEventData.eventName) {
-                document.getElementById('event-name').value = extractedEventData.eventName;
-            }
-            if (extractedEventData.date) {
-                document.getElementById('date').value = extractedEventData.date;
-            }
-            if (extractedEventData.time) {
-                document.getElementById('start-time').value = extractedEventData.time;
-            }
-            if (extractedEventData.venue) {
-                // Try to match venue name to venue dropdown
-                const venueSelect = document.getElementById('venue-select');
-                const extractedVenue = extractedEventData.venue.toLowerCase();
-                
-                for (let i = 0; i < venueSelect.options.length; i++) {
-                    const option = venueSelect.options[i];
-                    if (option.text.toLowerCase().includes(extractedVenue) || 
-                        extractedVenue.includes(option.text.toLowerCase())) {
-                        venueSelect.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-            if (extractedEventData.description) {
-                document.getElementById('description').value = extractedEventData.description;
-            }
+            // Get all checked checkboxes
+            const checkedBoxes = document.querySelectorAll('.extracted-checkbox:checked');
             
-            // Handle recurrence
-            if (extractedEventData.recurrence && extractedEventData.recurrence.type !== 'none') {
-                // Set recurrence type
-                const recurrenceType = extractedEventData.recurrence.type;
-                document.querySelector(`input[name="recurrence-type"][value="${recurrenceType}"]`).checked = true;
-                updateRecurrenceVisibility();
+            checkedBoxes.forEach(checkbox => {
+                const fieldKey = checkbox.dataset.field;
+                const fieldValue = extractedEventData[fieldKey];
                 
-                if (recurrenceType === 'weekly' && extractedEventData.recurrence.weekly_days) {
-                    // Set weekly days
-                    extractedEventData.recurrence.weekly_days.forEach(day => {
-                        const checkbox = document.querySelector(`input[name="weekly_days"][value="${day}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                } else if (recurrenceType === 'monthly') {
-                    if (extractedEventData.recurrence.monthly_type === 'day') {
-                        // Set monthly by day
-                        document.querySelector('input[name="monthly_type"][value="day"]').checked = true;
-                        updateMonthlyOptionsVisibility();
-                        
-                        if (extractedEventData.recurrence.monthly_week) {
-                            document.getElementById('monthly-week').value = extractedEventData.recurrence.monthly_week;
-                        }
-                        if (extractedEventData.recurrence.monthly_day_of_week) {
-                            document.getElementById('monthly-day-of-week').value = extractedEventData.recurrence.monthly_day_of_week;
-                        }
-                    } else if (extractedEventData.recurrence.monthly_day_of_month) {
-                        // Set monthly by date
-                        document.querySelector('input[name="monthly_type"][value="date"]').checked = true;
-                        updateMonthlyOptionsVisibility();
-                        document.getElementById('monthly-day-of-month').value = extractedEventData.recurrence.monthly_day_of_month;
+                if (fieldValue) {
+                    switch (fieldKey) {
+                        case 'eventName':
+                            document.getElementById('event-name').value = fieldValue;
+                            break;
+                        case 'date':
+                            document.getElementById('date').value = fieldValue;
+                            break;
+                        case 'time':
+                            document.getElementById('start-time').value = fieldValue;
+                            break;
+                        case 'venue':
+                            // Try to match venue name to venue dropdown
+                            const venueSelect = document.getElementById('venue-select');
+                            const extractedVenue = fieldValue.toLowerCase();
+                            
+                            for (let i = 0; i < venueSelect.options.length; i++) {
+                                const option = venueSelect.options[i];
+                                if (option.text.toLowerCase().includes(extractedVenue) || 
+                                    extractedVenue.includes(option.text.toLowerCase())) {
+                                    venueSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                            break;
+                        case 'description':
+                            document.getElementById('description').value = fieldValue;
+                            break;
+                        case 'recurrence':
+                            // Handle recurrence
+                            if (extractedEventData.recurrence && extractedEventData.recurrence.type !== 'none') {
+                                // Set recurrence type
+                                const recurrenceType = extractedEventData.recurrence.type;
+                                document.querySelector(`input[name="recurrence-type"][value="${recurrenceType}"]`).checked = true;
+                                updateRecurrenceVisibility();
+                                
+                                if (recurrenceType === 'weekly' && extractedEventData.recurrence.weekly_days) {
+                                    // Set weekly days
+                                    extractedEventData.recurrence.weekly_days.forEach(day => {
+                                        const checkbox = document.querySelector(`input[name="weekly_days"][value="${day}"]`);
+                                        if (checkbox) checkbox.checked = true;
+                                    });
+                                } else if (recurrenceType === 'monthly') {
+                                    if (extractedEventData.recurrence.monthly_type === 'day') {
+                                        // Set monthly by day
+                                        document.querySelector('input[name="monthly_type"][value="day"]').checked = true;
+                                        updateMonthlyOptionsVisibility();
+                                        
+                                        if (extractedEventData.recurrence.monthly_week) {
+                                            document.getElementById('monthly-week').value = extractedEventData.recurrence.monthly_week;
+                                        }
+                                        if (extractedEventData.recurrence.monthly_day_of_week) {
+                                            document.getElementById('monthly-day-of-week').value = extractedEventData.recurrence.monthly_day_of_week;
+                                        }
+                                    } else if (extractedEventData.recurrence.monthly_day_of_month) {
+                                        // Set monthly by date
+                                        document.querySelector('input[name="monthly_type"][value="date"]').checked = true;
+                                        updateMonthlyOptionsVisibility();
+                                        document.getElementById('monthly-day-of-month').value = extractedEventData.recurrence.monthly_day_of_month;
+                                    }
+                                }
+                                
+                                // Update preview
+                                updateDatesPreview();
+                            }
+                            break;
+                        case 'categories':
+                            // Handle categories
+                            if (extractedEventData.categories && extractedEventData.categories.length > 0) {
+                                const categorySelect = document.getElementById('category-select');
+                                const extractedCategories = extractedEventData.categories.map(cat => cat.toLowerCase());
+                                
+                                for (let i = 0; i < categorySelect.options.length; i++) {
+                                    const option = categorySelect.options[i];
+                                    if (extractedCategories.some(cat => option.text.toLowerCase().includes(cat))) {
+                                        option.selected = true;
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
-                
-                // Update preview
-                updateDatesPreview();
-            }
-            
-            // Handle categories
-            if (extractedEventData.categories && extractedEventData.categories.length > 0) {
-                const categorySelect = document.getElementById('category-select');
-                const extractedCategories = extractedEventData.categories.map(cat => cat.toLowerCase());
-                
-                for (let i = 0; i < categorySelect.options.length; i++) {
-                    const option = categorySelect.options[i];
-                    if (extractedCategories.some(cat => option.text.toLowerCase().includes(cat))) {
-                        option.selected = true;
-                    }
-                }
-            }
+            });
             
             extractedData.classList.add('hidden');
-            showStatus('Extracted data applied to form!', 'success');
+            showStatus('Selected data applied to form!', 'success');
         }
     });
 
@@ -296,6 +317,32 @@ document.addEventListener('DOMContentLoaded', () => {
         extractedData.classList.add('hidden');
         extractedEventData = null;
     });
+
+    // Tooltip functionality
+    const uploadTipsToggle = document.getElementById('upload-tips-toggle');
+    const uploadTips = document.getElementById('upload-tips');
+    const recurrenceTipsToggle = document.getElementById('recurrence-tips-toggle');
+    const recurrenceTips = document.getElementById('recurrence-tips');
+
+    if (uploadTipsToggle && uploadTips) {
+        uploadTipsToggle.addEventListener('mouseenter', () => {
+            uploadTips.classList.remove('opacity-0', 'pointer-events-none');
+        });
+        
+        uploadTipsToggle.addEventListener('mouseleave', () => {
+            uploadTips.classList.add('opacity-0', 'pointer-events-none');
+        });
+    }
+
+    if (recurrenceTipsToggle && recurrenceTips) {
+        recurrenceTipsToggle.addEventListener('mouseenter', () => {
+            recurrenceTips.classList.remove('opacity-0', 'pointer-events-none');
+        });
+        
+        recurrenceTipsToggle.addEventListener('mouseleave', () => {
+            recurrenceTips.classList.add('opacity-0', 'pointer-events-none');
+        });
+    }
 
     // Remove poster
     removePosterBtn.addEventListener('click', () => {
