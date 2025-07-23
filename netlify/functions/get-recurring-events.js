@@ -129,7 +129,26 @@ exports.handler = async (event) => {
                 name: getField(allRecords[0].fields, 'Event Name'),
                 date: getField(allRecords[0].fields, 'Date'),
                 status: getField(allRecords[0].fields, 'Status'),
+                recurringInfo: getField(allRecords[0].fields, 'Recurring Info'),
+                seriesId: getField(allRecords[0].fields, 'Series ID'),
                 allFields: allRecords[0].fields
+            });
+            
+            // Log a few more records to see if any have recurring info
+            console.log('get-recurring-events: Checking first 5 records for recurring fields...');
+            allRecords.slice(0, 5).forEach((record, index) => {
+                const fields = record.fields;
+                console.log(`get-recurring-events: Record ${index + 1}:`, {
+                    id: record.id,
+                    name: getField(fields, 'Event Name'),
+                    hasRecurringInfo: !!getField(fields, 'Recurring Info'),
+                    hasSeriesId: !!getField(fields, 'Series ID'),
+                    hasRecurring: !!getField(fields, 'Recurring'),
+                    hasSeries: !!getField(fields, 'Series'),
+                    hasRepeat: !!getField(fields, 'Repeat'),
+                    recurringInfo: getField(fields, 'Recurring Info'),
+                    seriesId: getField(fields, 'Series ID')
+                });
             });
         }
 

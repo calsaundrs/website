@@ -28,8 +28,8 @@ exports.handler = async (event) => {
         
         // Get a few sample records to analyze the structure
         const sampleRecords = await base('Events').select({
-            maxRecords: 5,
-            fields: ['Event Name', 'Date'] // Just get basic fields first
+            maxRecords: 5
+            // Don't limit fields - get all available fields
         }).all();
 
         console.log(`debug-airtable-fields: Found ${sampleRecords.length} sample records`);
