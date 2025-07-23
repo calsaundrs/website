@@ -1755,6 +1755,49 @@ window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
 window.validateEventVenueData = validateEventVenueData;
 
+// Test image fix for recurring events
+window.testImageFix = async function() {
+    console.log('Testing image fix for recurring events...');
+    try {
+        const response = await fetch('/.netlify/functions/test-image-fix');
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Response:', errorText);
+            alert('Test failed: ' + errorText);
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log('Image fix test results:', data);
+        
+        let message = `Image Fix Test Results:\n\n`;
+        message += `Total Events Tested: ${data.summary.totalEvents}\n`;
+        message += `Events With Images: ${data.summary.eventsWithImages}\n`;
+        message += `Events Without Images: ${data.summary.eventsWithoutImages}\n\n`;
+        
+        if (data.results && data.results.length > 0) {
+            message += `Detailed Results:\n`;
+            data.results.forEach((result, index) => {
+                message += `${index + 1}. ${result.eventName}\n`;
+                message += `   Has Image: ${result.hasImage ? '✅' : '❌'}\n`;
+                if (result.finalImageUrl) {
+                    message += `   Image URL: ${result.finalImageUrl.substring(0, 50)}...\n`;
+                }
+                message += '\n';
+            });
+        }
+        
+        alert(message);
+        return data;
+    } catch (error) {
+        console.error('Error testing image fix:', error);
+        alert('Test error: ' + error.message);
+        return null;
+    }
+};
+
 // Debug function for testing recurring events
 window.testRecurringEvents = async function() {
     console.log('Testing recurring events API...');
