@@ -142,39 +142,60 @@ exports.handler = async (event) => {
         // If recurrence rules changed, regenerate instances
         if (recurringInfo && instancesAhead) {
             try {
-                // Delete existing future instances
-                const today = new Date().toISOString().split('T')[0];
-                const existingInstances = await base('Events').select({
-                    filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
-                }).all();
-
-                if (existingInstances.length > 0) {
-                    const deleteIds = existingInstances.map(record => record.id);
-                    await base('Events').destroy(deleteIds);
-                    console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
-                }
-
-                // Generate new instances
-                const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
-                console.log(`update-recurring-series: Generated ${newInstances.length} new instances`);
-                
-                const instanceRecords = newInstances.map(date => ({
-                    fields: {
-                        'Event Name': name || parentRecord.fields['Event Name'],
-                        'Description': description || parentRecord.fields['Description'],
-                        'Date': date,
-                        'Time': parentRecord.fields['Time'],
-                        'Venue': updateFields['Venue'] || parentRecord.fields['Venue'],
-                        'Category': categories || parentRecord.fields['Category'],
-                        'Series ID': seriesId,
-                        'Status': 'Pending Review',
-                        'Is Instance': true
+                // Check if this is now a "none" recurrence type
+                if (recurringInfo.type === 'none') {
+                    console.log('update-recurring-series: Converting series to standalone event (no recurrence)');
+                    
+                    // Remove Series ID from parent record to make it standalone
+                    await base('Events').update(parentRecord.id, {
+                        'Series ID': null
+                    });
+                    
+                    // Delete all other instances in the series
+                    const allSeriesInstances = await base('Events').select({
+                        filterByFormula: `{Series ID} = '${seriesId}'`
+                    }).all();
+                    
+                    if (allSeriesInstances.length > 1) {
+                        const deleteIds = allSeriesInstances.map(record => record.id);
+                        await base('Events').destroy(deleteIds);
+                        console.log(`update-recurring-series: Deleted ${deleteIds.length} series instances (converting to standalone)`);
                     }
-                }));
+                } else {
+                    // Delete existing future instances
+                    const today = new Date().toISOString().split('T')[0];
+                    const existingInstances = await base('Events').select({
+                        filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
+                    }).all();
 
-                if (instanceRecords.length > 0) {
-                    await base('Events').create(instanceRecords);
-                    console.log(`update-recurring-series: Created ${instanceRecords.length} new instances`);
+                    if (existingInstances.length > 0) {
+                        const deleteIds = existingInstances.map(record => record.id);
+                        await base('Events').destroy(deleteIds);
+                        console.log(`update-recurring-series: Deleted ${deleteIds.length} existing future instances`);
+                    }
+
+                    // Generate new instances
+                    const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
+                    console.log(`update-recurring-series: Generated ${newInstances.length} new instances`);
+                    
+                    const instanceRecords = newInstances.map(date => ({
+                        fields: {
+                            'Event Name': name || parentRecord.fields['Event Name'],
+                            'Description': description || parentRecord.fields['Description'],
+                            'Date': date,
+                            'Time': parentRecord.fields['Time'],
+                            'Venue': updateFields['Venue'] || parentRecord.fields['Venue'],
+                            'Category': categories || parentRecord.fields['Category'],
+                            'Series ID': seriesId,
+                            'Status': 'Pending Review',
+                            'Is Instance': true
+                        }
+                    }));
+
+                    if (instanceRecords.length > 0) {
+                        await base('Events').create(instanceRecords);
+                        console.log(`update-recurring-series: Created ${instanceRecords.length} new instances`);
+                    }
                 }
             } catch (instanceError) {
                 console.error('update-recurring-series: Error regenerating instances:', instanceError);
@@ -220,6 +241,13 @@ exports.handler = async (event) => {
 function generateInstances(recurrenceRules, instancesAhead, endDate) {
     const instances = [];
     const today = new Date();
+    
+    // Handle "none" recurrence type - don't generate any instances
+    if (!recurrenceRules || !recurrenceRules.type || recurrenceRules.type === 'none') {
+        console.log('generateInstances: No recurrence type specified, not generating instances');
+        return instances;
+    }
+    
     let currentDate = new Date(today);
     
     // Set end date if specified
@@ -263,5 +291,6 @@ function generateInstances(recurrenceRules, instancesAhead, endDate) {
         currentDate.setDate(currentDate.getDate() + 1);
     }
     
+    console.log(`generateInstances: Generated ${instances.length} instances for type: ${recurrenceRules.type}`);
     return instances;
 }
