@@ -26,6 +26,23 @@ exports.handler = async (event) => {
     try {
         console.log('get-pending-items: Fetching pending events from Airtable...');
         
+        // First, let's get ALL events to see what statuses exist
+        console.log('get-pending-items: Getting all events to check status values...');
+        const allEventsCheck = await base('Events').select({
+            fields: ['Event Name', 'Status', 'Created Time']
+        }).all();
+        
+        console.log(`get-pending-items: Total events in database: ${allEventsCheck.length}`);
+        
+        // Count status values
+        const statusCounts = {};
+        allEventsCheck.forEach(record => {
+            const status = record.fields.Status || 'No Status';
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        });
+        
+        console.log('get-pending-items: Status counts:', statusCounts);
+        
         // Try different possible status values
         const possibleStatuses = ['Pending Review', 'Pending', 'Review', 'Submitted'];
         let eventRecords = [];
