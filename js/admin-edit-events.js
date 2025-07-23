@@ -232,6 +232,15 @@ function renderEvents(events) {
         const isPast = eventDate < new Date();
         const isSelected = selectedEvents.has(event.id);
 
+        // Handle event image
+        const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
+        const imageUrl = eventImage ? (Array.isArray(eventImage) ? eventImage[0].url : eventImage) : null;
+        const imageHtml = imageUrl ? 
+            `<img src="${imageUrl}" alt="Event image" class="w-full h-32 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
+            `<div class="w-full h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
+                <i class="fas fa-image text-4xl text-gray-600"></i>
+            </div>`;
+
         return `
             <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
                 <div class="flex justify-between items-start mb-4">
@@ -282,6 +291,9 @@ function renderEvents(events) {
                         </button>
                     </div>
                 </div>
+                
+                <!-- Event Image -->
+                ${imageHtml}
             </div>
         `;
     }).join('');
@@ -343,6 +355,15 @@ function renderRecurringEvents(events) {
             </div>
         `;
 
+        // Handle event image
+        const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
+        const imageUrl = eventImage ? (Array.isArray(eventImage) ? eventImage[0].url : eventImage) : null;
+        const imageHtml = imageUrl ? 
+            `<img src="${imageUrl}" alt="Event image" class="w-full h-32 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
+            `<div class="w-full h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
+                <i class="fas fa-image text-4xl text-gray-600"></i>
+            </div>`;
+
         return `
             <div class="event-card rounded-xl p-6 transition-all duration-300 ${!event.isActive ? 'opacity-75' : ''}">
                 <div class="flex justify-between items-start mb-4">
@@ -391,6 +412,9 @@ function renderRecurringEvents(events) {
                         </button>
                     </div>
                 </div>
+                
+                <!-- Event Image -->
+                ${imageHtml}
             </div>
         `;
     }).join('');
@@ -493,10 +517,23 @@ function openRecurringModal(seriesId) {
     const modal = document.getElementById('recurring-modal');
     const content = document.getElementById('recurring-modal-content');
     
+    // Parse recurring info for form population
+    let recurringInfo = {};
+    try {
+        if (recurringEvent.recurringInfo || recurringEvent['Recurring Info']) {
+            recurringInfo = JSON.parse(recurringEvent.recurringInfo || recurringEvent['Recurring Info']);
+        }
+    } catch (e) {
+        console.log('Could not parse recurring info, using default');
+    }
+    
     content.innerHTML = `
         <div class="space-y-6">
+            <!-- Series Information -->
             <div class="bg-gray-800/50 rounded-lg p-6">
-                <h4 class="text-xl font-bold text-white mb-4">Series Information</h4>
+                <h4 class="text-xl font-bold text-white mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>Series Information
+                </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Series Name</label>
@@ -504,45 +541,240 @@ function openRecurringModal(seriesId) {
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Venue</label>
-                        <input type="text" id="recurring-venue" value="${recurringEvent.venue || ''}" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                        <select id="recurring-venue" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                            <option value="">-- Select Venue --</option>
+                            <option value="__CREATE_NEW__">-- Add New Venue --</option>
+                            ${allVenues.map(venue => `
+                                <option value="${venue.id}" ${(recurringEvent.venueId || recurringEvent.Venue) === venue.id ? 'selected' : ''}>
+                                    ${venue.name}
+                                </option>
+                            `).join('')}
+                        </select>
                     </div>
                 </div>
+                
+                <!-- New Venue Fields (hidden by default) -->
+                <div id="new-venue-fields" class="hidden mt-4 p-4 bg-gray-700/50 rounded-lg">
+                    <h5 class="text-lg font-semibold text-white mb-3">New Venue Details</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Venue Name</label>
+                            <input type="text" id="new-venue-name" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Venue Address</label>
+                            <input type="text" id="new-venue-address" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
                     <textarea id="recurring-description" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none">${recurringEvent.description || recurringEvent.Description || ''}</textarea>
                 </div>
             </div>
             
+            <!-- Image Upload -->
             <div class="bg-gray-800/50 rounded-lg p-6">
-                <h4 class="text-xl font-bold text-white mb-4">Instance Management</h4>
+                <h4 class="text-xl font-bold text-white mb-4">
+                    <i class="fas fa-image mr-2"></i>Event Image
+                </h4>
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">Total Instances:</span>
-                        <span class="text-white font-bold">${recurringEvent.totalInstances}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">Future Instances:</span>
-                        <span class="text-green-400 font-bold">${recurringEvent.futureInstances}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">Past Instances:</span>
-                        <span class="text-gray-400 font-bold">${recurringEvent.pastInstances}</span>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-24 h-24 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img id="current-image" src="${recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image'] ? (Array.isArray(recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image']) ? (recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image'])[0].url : (recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image'])) : ''}" 
+                                 alt="Current image" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <i class="fas fa-image text-2xl text-gray-500" style="display: ${recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image'] ? 'none' : 'flex'};"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="recurring-image" accept="image/*" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                            <p class="text-sm text-gray-400 mt-1">Upload a new image for the series</p>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="flex justify-end gap-4">
-                <button onclick="closeRecurringModal()" class="btn-secondary text-white px-6 py-3 rounded-lg transition-all">
-                    <i class="fas fa-times mr-2"></i>Cancel
-                </button>
-                <button onclick="saveRecurringChanges('${seriesId}')" class="btn-primary text-white px-6 py-3 rounded-lg transition-all">
-                    <i class="fas fa-save mr-2"></i>Save Changes
-                </button>
+            <!-- Recurrence Rules -->
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h4 class="text-xl font-bold text-white mb-4">
+                    <i class="fas fa-redo mr-2"></i>Recurrence Rules
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-6">
+                        <label class="flex items-center">
+                            <input type="radio" name="recurrence-type" value="none" ${(!recurringInfo.type || recurringInfo.type === 'none') ? 'checked' : ''} class="form-radio h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
+                            <span class="ml-2 text-gray-300">No Recurrence</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="recurrence-type" value="weekly" ${recurringInfo.type === 'weekly' ? 'checked' : ''} class="form-radio h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
+                            <span class="ml-2 text-gray-300">Weekly</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="recurrence-type" value="monthly" ${recurringInfo.type === 'monthly' ? 'checked' : ''} class="form-radio h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
+                            <span class="ml-2 text-gray-300">Monthly</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Weekly Options -->
+                    <div id="weekly-options" class="hidden space-y-3">
+                        <label class="block text-sm font-semibold text-gray-300">Repeat on:</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="1" ${(recurringInfo.days || []).includes(1) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Monday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="2" ${(recurringInfo.days || []).includes(2) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Tuesday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="3" ${(recurringInfo.days || []).includes(3) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Wednesday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="4" ${(recurringInfo.days || []).includes(4) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Thursday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="5" ${(recurringInfo.days || []).includes(5) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Friday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="6" ${(recurringInfo.days || []).includes(6) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Saturday</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="weekly-days" value="0" ${(recurringInfo.days || []).includes(0) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                                <span class="ml-2 text-gray-300 text-sm">Sunday</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly Options -->
+                    <div id="monthly-options" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Monthly Recurrence Type:</label>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center">
+                                    <input type="radio" name="monthly-type" value="date" ${(!recurringInfo.monthlyType || recurringInfo.monthlyType === 'date') ? 'checked' : ''} class="form-radio h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
+                                    <span class="ml-2 text-gray-300">By Date (e.g., 15th of every month)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="monthly-type" value="day" ${recurringInfo.monthlyType === 'day' ? 'checked' : ''} class="form-radio h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
+                                    <span class="ml-2 text-gray-300">By Day (e.g., 2nd Friday of every month)</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="monthly-by-date-options">
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Day of Month:</label>
+                            <input type="number" id="monthly-day-of-month" name="monthly-day-of-month" min="1" max="31" value="${recurringInfo.dayOfMonth || ''}" class="form-input w-32 px-4 py-3 rounded-lg text-white focus:outline-none">
+                        </div>
+                        
+                        <div id="monthly-by-day-options" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">Week of Month:</label>
+                                <select id="monthly-week" name="monthly-week" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                                    <option value="1" ${recurringInfo.week === 1 ? 'selected' : ''}>First</option>
+                                    <option value="2" ${recurringInfo.week === 2 ? 'selected' : ''}>Second</option>
+                                    <option value="3" ${recurringInfo.week === 3 ? 'selected' : ''}>Third</option>
+                                    <option value="4" ${recurringInfo.week === 4 ? 'selected' : ''}>Fourth</option>
+                                    <option value="-1" ${recurringInfo.week === -1 ? 'selected' : ''}>Last</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-300 mb-2">Day of Week:</label>
+                                <select id="monthly-day-of-week" name="monthly-day-of-week" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                                    <option value="0" ${recurringInfo.dayOfWeek === 0 ? 'selected' : ''}>Sunday</option>
+                                    <option value="1" ${recurringInfo.dayOfWeek === 1 ? 'selected' : ''}>Monday</option>
+                                    <option value="2" ${recurringInfo.dayOfWeek === 2 ? 'selected' : ''}>Tuesday</option>
+                                    <option value="3" ${recurringInfo.dayOfWeek === 3 ? 'selected' : ''}>Wednesday</option>
+                                    <option value="4" ${recurringInfo.dayOfWeek === 4 ? 'selected' : ''}>Thursday</option>
+                                    <option value="5" ${recurringInfo.dayOfWeek === 5 ? 'selected' : ''}>Friday</option>
+                                    <option value="6" ${recurringInfo.dayOfWeek === 6 ? 'selected' : ''}>Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Instance Management -->
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h4 class="text-xl font-bold text-white mb-4">
+                    <i class="fas fa-layer-group mr-2"></i>Instance Management
+                </h4>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-700/50 rounded">
+                            <span class="text-gray-300">Total Instances:</span>
+                            <span class="text-white font-bold">${recurringEvent.totalInstances}</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-700/50 rounded">
+                            <span class="text-gray-300">Future Instances:</span>
+                            <span class="text-green-400 font-bold">${recurringEvent.futureInstances}</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-700/50 rounded">
+                            <span class="text-gray-300">Past Instances:</span>
+                            <span class="text-gray-400 font-bold">${recurringEvent.pastInstances}</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Instances to Show in Advance</label>
+                        <input type="number" id="instances-ahead" min="1" max="52" value="${recurringEvent.instancesAhead || 12}" class="form-input w-32 px-4 py-3 rounded-lg text-white focus:outline-none">
+                        <p class="text-sm text-gray-400 mt-1">Number of future instances to automatically create and display</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Series End Date (Optional)</label>
+                        <input type="date" id="series-end-date" value="${recurringEvent.endDate || ''}" class="form-input w-64 px-4 py-3 rounded-lg text-white focus:outline-none">
+                        <p class="text-sm text-gray-400 mt-1">Leave empty for no end date</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Categories -->
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h4 class="text-xl font-bold text-white mb-4">
+                    <i class="fas fa-tags mr-2"></i>Categories
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    ${VALID_CATEGORIES.map(cat => `
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" name="recurring-categories" value="${cat}" ${(recurringEvent.category || recurringEvent.Category || []).includes(cat) ? 'checked' : ''} class="form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
+                            <span class="text-gray-300 text-sm">${cat}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-700">
+                <div class="flex gap-4">
+                    <button onclick="handleEndRecurringSeries('${seriesId}')" class="btn-danger text-white px-6 py-3 rounded-lg transition-all">
+                        <i class="fas fa-stop mr-2"></i>End Series
+                    </button>
+                    <button onclick="handleRegenerateInstances('${seriesId}')" class="bg-blue-900/50 border border-blue-700 text-blue-300 px-6 py-3 rounded-lg transition-all hover:bg-blue-800/50">
+                        <i class="fas fa-sync mr-2"></i>Regenerate Instances
+                    </button>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="closeRecurringModal()" class="btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                    <button onclick="saveRecurringChanges('${seriesId}')" class="btn-primary text-white px-8 py-3 rounded-lg transition-all">
+                        <i class="fas fa-save mr-2"></i>Save Changes
+                    </button>
+                </div>
             </div>
         </div>
     `;
     
     modal.classList.remove('hidden');
+    
+    // Add event listeners for form interactions
+    setupRecurringModalEventListeners();
 }
 
 function closeRecurringModal() {
@@ -703,40 +935,219 @@ async function handleDeleteEvent(eventId) {
     }
 }
 
-async function handleEndRecurringSeries(seriesId) {
-    const recurringEvent = recurringEvents.find(e => (e.seriesId || e.id) === seriesId);
-    if (!recurringEvent) {
-        showError('Recurring event not found');
-        return;
+function setupRecurringModalEventListeners() {
+    // Venue selection handling
+    const venueSelect = document.getElementById('recurring-venue');
+    const newVenueFields = document.getElementById('new-venue-fields');
+    
+    if (venueSelect) {
+        venueSelect.addEventListener('change', function() {
+            if (this.value === '__CREATE_NEW__') {
+                newVenueFields.classList.remove('hidden');
+            } else {
+                newVenueFields.classList.add('hidden');
+            }
+        });
     }
     
-    if (!confirm(`Are you sure you want to end the recurring series "${recurringEvent.name || recurringEvent['Event Name']}"? This will mark all future instances as ended.`)) {
+    // Recurrence type handling
+    const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
+    const weeklyOptions = document.getElementById('weekly-options');
+    const monthlyOptions = document.getElementById('monthly-options');
+    
+    recurrenceTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            weeklyOptions.classList.add('hidden');
+            monthlyOptions.classList.add('hidden');
+            
+            if (this.value === 'weekly') {
+                weeklyOptions.classList.remove('hidden');
+            } else if (this.value === 'monthly') {
+                monthlyOptions.classList.remove('hidden');
+            }
+        });
+    });
+    
+    // Monthly type handling
+    const monthlyTypeRadios = document.querySelectorAll('input[name="monthly-type"]');
+    const monthlyByDateOptions = document.getElementById('monthly-by-date-options');
+    const monthlyByDayOptions = document.getElementById('monthly-by-day-options');
+    
+    monthlyTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'date') {
+                monthlyByDateOptions.classList.remove('hidden');
+                monthlyByDayOptions.classList.add('hidden');
+            } else if (this.value === 'day') {
+                monthlyByDateOptions.classList.add('hidden');
+                monthlyByDayOptions.classList.remove('hidden');
+            }
+        });
+    });
+    
+    // Image preview
+    const imageInput = document.getElementById('recurring-image');
+    const currentImage = document.getElementById('current-image');
+    const imagePlaceholder = currentImage.nextElementSibling;
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage.src = e.target.result;
+                    currentImage.style.display = 'block';
+                    imagePlaceholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+}
+
+async function saveRecurringChanges(seriesId) {
+    try {
+        // Collect form data
+        const formData = new FormData();
+        formData.append('seriesId', seriesId);
+        formData.append('type', 'RecurringEvent');
+        
+        // Basic information
+        formData.append('name', document.getElementById('recurring-name').value);
+        formData.append('description', document.getElementById('recurring-description').value);
+        
+        // Venue handling
+        const venueSelect = document.getElementById('recurring-venue');
+        if (venueSelect.value === '__CREATE_NEW__') {
+            const newVenueName = document.getElementById('new-venue-name').value;
+            const newVenueAddress = document.getElementById('new-venue-address').value;
+            if (newVenueName && newVenueAddress) {
+                formData.append('newVenue', JSON.stringify({
+                    name: newVenueName,
+                    address: newVenueAddress
+                }));
+            }
+        } else if (venueSelect.value) {
+            formData.append('venueId', venueSelect.value);
+        }
+        
+        // Image handling
+        const imageInput = document.getElementById('recurring-image');
+        if (imageInput.files[0]) {
+            formData.append('image', imageInput.files[0]);
+        }
+        
+        // Recurrence rules
+        const recurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
+        const recurringInfo = { type: recurrenceType };
+        
+        if (recurrenceType === 'weekly') {
+            const selectedDays = Array.from(document.querySelectorAll('input[name="weekly-days"]:checked'))
+                .map(cb => parseInt(cb.value));
+            recurringInfo.days = selectedDays;
+        } else if (recurrenceType === 'monthly') {
+            const monthlyType = document.querySelector('input[name="monthly-type"]:checked').value;
+            recurringInfo.monthlyType = monthlyType;
+            
+            if (monthlyType === 'date') {
+                recurringInfo.dayOfMonth = parseInt(document.getElementById('monthly-day-of-month').value);
+            } else if (monthlyType === 'day') {
+                recurringInfo.week = parseInt(document.getElementById('monthly-week').value);
+                recurringInfo.dayOfWeek = parseInt(document.getElementById('monthly-day-of-week').value);
+            }
+        }
+        
+        formData.append('recurringInfo', JSON.stringify(recurringInfo));
+        
+        // Instance management
+        formData.append('instancesAhead', document.getElementById('instances-ahead').value);
+        formData.append('endDate', document.getElementById('series-end-date').value);
+        
+        // Categories
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="recurring-categories"]:checked'))
+            .map(cb => cb.value);
+        formData.append('categories', JSON.stringify(selectedCategories));
+        
+        // Send to backend
+        const response = await fetch('/.netlify/functions/update-recurring-series', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            showSuccess('Recurring series updated successfully');
+            closeRecurringModal();
+            await loadAllEvents();
+        } else {
+            const error = await response.text();
+            showError(`Failed to update series: ${error}`);
+        }
+        
+    } catch (error) {
+        console.error('Error saving recurring changes:', error);
+        showError(`Error saving changes: ${error.message}`);
+    }
+}
+
+async function handleEndRecurringSeries(seriesId) {
+    if (!confirm('Are you sure you want to end this recurring series? This will mark all future instances as cancelled.')) {
         return;
     }
     
     try {
-        // This would need to be implemented in the backend
-        showError('End series functionality not yet implemented');
+        const response = await fetch('/.netlify/functions/end-recurring-series', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                seriesId: seriesId
+            })
+        });
+        
+        if (response.ok) {
+            showSuccess('Recurring series ended successfully');
+            closeRecurringModal();
+            await loadAllEvents();
+        } else {
+            const error = await response.text();
+            showError(`Failed to end series: ${error}`);
+        }
+        
     } catch (error) {
         console.error('Error ending recurring series:', error);
         showError(`Error ending series: ${error.message}`);
     }
 }
 
-async function saveRecurringChanges(seriesId) {
+async function handleRegenerateInstances(seriesId) {
+    if (!confirm('This will regenerate all future instances based on the current recurrence rules. Continue?')) {
+        return;
+    }
+    
     try {
-        const name = document.getElementById('recurring-name').value;
-        const venue = document.getElementById('recurring-venue').value;
-        const description = document.getElementById('recurring-description').value;
+        const response = await fetch('/.netlify/functions/regenerate-instances', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                seriesId: seriesId
+            })
+        });
         
-        // This would need to be implemented in the backend
-        showSuccess('Recurring series updated successfully!');
-        closeRecurringModal();
-        await loadAllEvents(); // Reload data
+        if (response.ok) {
+            showSuccess('Instances regenerated successfully');
+            await loadAllEvents();
+        } else {
+            const error = await response.text();
+            showError(`Failed to regenerate instances: ${error}`);
+        }
         
     } catch (error) {
-        console.error('Error updating recurring series:', error);
-        showError(`Error updating series: ${error.message}`);
+        console.error('Error regenerating instances:', error);
+        showError(`Error regenerating instances: ${error.message}`);
     }
 }
 
