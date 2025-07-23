@@ -261,10 +261,126 @@ exports.handler = async function (event, context) {
             }
         }).filter(html => html !== '').join('');
 
-        const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
+        const templatePath = path.join(__dirname, 'templates', 'event-details-template.html');
         console.log("Attempting to read template file:", templatePath);
-        let htmlTemplate = await fs.readFile(templatePath, 'utf8');
-        console.log("Template file read successfully. Length:", htmlTemplate.length);
+        let htmlTemplate;
+        
+        try {
+            htmlTemplate = await fs.readFile(templatePath, 'utf8');
+            console.log("Template file read successfully. Length:", htmlTemplate.length);
+        } catch (templateReadError) {
+            console.error("Failed to read template file:", templateReadError);
+            // Fallback to inline template if file read fails
+            htmlTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{eventName}} | Brum Outloud</title>
+    <meta name="description" content="{{descriptionMeta}}">
+    <link rel="canonical" href="{{pageUrlCanonical}}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/main.js" defer></script>
+    <style>
+        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; }
+        .hero-image-container:hover .hero-image-bg { opacity: 1; }
+        .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; }
+        .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); }
+        .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); }
+        .suggested-carousel::-webkit-scrollbar { height: 4px; }
+        .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; }
+        .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; }
+        .card-bg { background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .accent-color { color: #b564fb; }
+        .accent-color-secondary { color: #8b5cf6; }
+        .heading-gradient { background: linear-gradient(135deg, #b564fb 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .button-primary { background: linear-gradient(135deg, #b564fb 0%, #8b5cf6 100%); color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; display: inline-block; text-decoration: none; transition: all 0.3s ease; }
+        .button-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(181, 100, 247, 0.4); }
+        .calendar-link { background: rgba(255,255,255,0.1); color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; transition: all 0.3s ease; }
+        .calendar-link:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="antialiased bg-gray-900 text-white">
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container mx-auto px-8 py-16">
+        <div class="grid lg:grid-cols-3 gap-16">
+            <div class="lg:col-span-2">
+                <div class="hero-image-container mb-8">
+                    <img src="{{imageUrl}}" alt="" class="hero-image-bg" aria-hidden="true">
+                    <img src="{{imageUrl}}" alt="{{eventName}}" class="hero-image-fg">
+                </div>
+                <p class="font-semibold accent-color mb-2">EVENT DETAILS</p>
+                <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">{{eventName}}</h1>
+                <div class="prose prose-invert prose-lg max-w-none text-gray-300">{{{description}}}</div>
+            </div>
+            <div class="lg:col-span-1">
+                <div class="card-bg p-8 sticky top-8 space-y-6">
+                    <div>
+                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Date & Time</h3>
+                        <p class="text-2xl font-semibold">{{eventDateFormatted}}</p>
+                        <p class="text-xl text-gray-400">{{eventTimeFormatted}}</p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Location</h3>
+                        {{{venueHtml}}}
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-bold text-lg accent-color-secondary mb-2">Tags</h3>
+                        <div class="flex flex-wrap gap-2">{{{tagsHtml}}}</div>
+                    </div>
+                    {{#if ticketLink}}
+                    <a href="{{ticketLink}}" target="_blank" rel="noopener noreferrer" class="button-primary">Get Tickets / Info</a>
+                    {{/if}}
+                    <div id="add-to-calendar-section">
+                        <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Add to Calendar</h3>
+                        <div class="calendar-links flex flex-wrap gap-4">
+                            {{{calendarLinksHtml}}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{#if otherInstancesHTML}}
+        <div class="mt-16">
+            <h2 class="font-anton text-4xl mb-8"><span class="accent-color">Other Events</span> in this Series</h2>
+            <div class="space-y-4">
+                {{{otherInstancesHTML}}}
+            </div>
+        </div>
+        {{/if}}
+        {{{suggestedEventsHtml}}}
+    </main>
+    
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto">
+            <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+        </div>
+    </footer>
+</body>
+</html>`;
+            console.log("Using fallback template. Length:", htmlTemplate.length);
+        }
 
         console.log("Preparing data for Handlebars template.");
         const data = {
