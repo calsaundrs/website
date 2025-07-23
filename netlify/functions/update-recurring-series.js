@@ -1,5 +1,4 @@
 const Airtable = require('airtable');
-const FormData = require('form-data');
 
 exports.handler = async function(event, context) {
     // Enable CORS
@@ -27,74 +26,55 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        console.log('Update Recurring Series: Starting function');
+        console.log('Update Recurring Series: API Key exists:', !!process.env.AIRTABLE_API_KEY);
+        console.log('Update Recurring Series: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
+        
+        if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+            throw new Error('Missing required environment variables');
+        }
+
         const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
         
-        // Parse multipart form data
-        const formData = new FormData();
-        const boundary = event.headers['content-type'].split('boundary=')[1];
-        const parts = event.body.split('--' + boundary);
-        
-        let seriesId, name, description, venueId, newVenue, imageFile, recurringInfo, instancesAhead, endDate, categories;
-        
-        for (const part of parts) {
-            if (part.includes('Content-Disposition: form-data')) {
-                const lines = part.split('\r\n');
-                let fieldName = null;
-                let fieldValue = null;
-                
-                for (const line of lines) {
-                    if (line.startsWith('Content-Disposition: form-data; name=')) {
-                        const match = line.match(/name="([^"]+)"/);
-                        if (match) fieldName = match[1];
-                    } else if (line.startsWith('Content-Disposition: form-data; filename=')) {
-                        const match = line.match(/filename="([^"]+)"/);
-                        if (match) {
-                            fieldName = 'image';
-                            // Extract file content
-                            const fileContent = part.split('\r\n\r\n')[1];
-                            fieldValue = fileContent;
-                        }
-                    } else if (line.trim() && !line.startsWith('Content-')) {
-                        fieldValue = line.trim();
-                    }
+        // Parse the request body - handle both JSON and form data
+        let data;
+        if (event.headers['content-type'] && event.headers['content-type'].includes('application/json')) {
+            data = JSON.parse(event.body);
+            console.log('Update Recurring Series: Parsed JSON data');
+        } else {
+            // For form data, we'll use a simpler approach
+            const formData = new URLSearchParams(event.body);
+            data = Object.fromEntries(formData);
+            console.log('Update Recurring Series: Parsed form data');
+            
+            // Parse JSON fields
+            if (data.recurringInfo) {
+                try {
+                    data.recurringInfo = JSON.parse(data.recurringInfo);
+                } catch (e) {
+                    data.recurringInfo = {};
                 }
-                
-                if (fieldName && fieldValue !== null) {
-                    switch (fieldName) {
-                        case 'seriesId':
-                            seriesId = fieldValue;
-                            break;
-                        case 'name':
-                            name = fieldValue;
-                            break;
-                        case 'description':
-                            description = fieldValue;
-                            break;
-                        case 'venueId':
-                            venueId = fieldValue;
-                            break;
-                        case 'newVenue':
-                            newVenue = JSON.parse(fieldValue);
-                            break;
-                        case 'image':
-                            imageFile = fieldValue;
-                            break;
-                        case 'recurringInfo':
-                            recurringInfo = JSON.parse(fieldValue);
-                            break;
-                        case 'instancesAhead':
-                            instancesAhead = parseInt(fieldValue);
-                            break;
-                        case 'endDate':
-                            endDate = fieldValue;
-                            break;
-                        case 'categories':
-                            categories = JSON.parse(fieldValue);
-                            break;
-                    }
+            }
+            if (data.categories) {
+                try {
+                    data.categories = JSON.parse(data.categories);
+                } catch (e) {
+                    data.categories = [];
+                }
+            }
+            if (data.newVenue) {
+                try {
+                    data.newVenue = JSON.parse(data.newVenue);
+                } catch (e) {
+                    data.newVenue = null;
                 }
             }
         }
+        
+        const { seriesId, name, description, venueId, newVenue, recurringInfo, instancesAhead, endDate, categories } = data;
+        
+        console.log('Update Recurring Series: Series ID:', seriesId);
+        console.log('Update Recurring Series: Data received:', { name, description, venueId, instancesAhead, endDate });
         
         if (!seriesId) {
             return {
@@ -124,13 +104,13 @@ exports.handler = async function(event, context) {
         // Update basic information
         if (name) updateFields['Event Name'] = name;
         if (description) updateFields['Description'] = description;
-        if (instancesAhead) updateFields['Instances Ahead'] = instancesAhead;
+        if (instancesAhead) updateFields['Instances Ahead'] = parseInt(instancesAhead);
         if (endDate) updateFields['End Date'] = endDate;
-        if (categories) updateFields['Category'] = categories;
+        if (categories && Array.isArray(categories)) updateFields['Category'] = categories;
         if (recurringInfo) updateFields['Recurring Info'] = JSON.stringify(recurringInfo);
 
         // Handle venue
-        if (newVenue) {
+        if (newVenue && newVenue.name && newVenue.address) {
             // Create new venue
             const venueRecord = await base('Venues').create([{
                 fields: {
@@ -141,15 +121,6 @@ exports.handler = async function(event, context) {
             updateFields['Venue'] = [venueRecord[0].id];
         } else if (venueId) {
             updateFields['Venue'] = [venueId];
-        }
-
-        // Handle image upload (if provided)
-        if (imageFile) {
-            // For now, we'll store the image data as a base64 string
-            // In a real implementation, you'd upload to a service like Cloudinary
-            updateFields['Promo Image'] = [{
-                url: `data:image/jpeg;base64,${Buffer.from(imageFile).toString('base64')}`
-            }];
         }
 
         // Update the series record
@@ -172,7 +143,7 @@ exports.handler = async function(event, context) {
             }
 
             // Generate new instances
-            const newInstances = generateInstances(recurringInfo, instancesAhead || 12, endDate);
+            const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
             const instanceRecords = newInstances.map(date => ({
                 fields: {
                     'Event Name': name || seriesRecord.get('Event Name'),

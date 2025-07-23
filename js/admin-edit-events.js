@@ -127,13 +127,20 @@ function filterEvents(filter) {
 // Load venues for the venue picker
 async function loadVenues() {
     try {
+        console.log('Admin Edit Events: Loading venues...');
         const response = await fetch('/.netlify/functions/get-venue-list');
+        
         if (response.ok) {
             allVenues = await response.json();
             console.log(`Admin Edit Events: Loaded ${allVenues.length} venues`);
+        } else {
+            console.error('Admin Edit Events: Venue list response not ok:', response.status, response.statusText);
+            allVenues = []; // Set empty array to prevent errors
         }
     } catch (error) {
         console.error('Admin Edit Events: Error loading venues:', error);
+        allVenues = []; // Set empty array to prevent errors
+        // Don't show error to user as this is not critical for basic functionality
     }
 }
 
@@ -544,11 +551,11 @@ function openRecurringModal(seriesId) {
                         <select id="recurring-venue" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
                             <option value="">-- Select Venue --</option>
                             <option value="__CREATE_NEW__">-- Add New Venue --</option>
-                            ${allVenues.map(venue => `
+                            ${allVenues && allVenues.length > 0 ? allVenues.map(venue => `
                                 <option value="${venue.id}" ${(recurringEvent.venueId || recurringEvent.Venue) === venue.id ? 'selected' : ''}>
                                     ${venue.name}
                                 </option>
-                            `).join('')}
+                            `).join('') : '<option value="" disabled>No venues available</option>'}
                         </select>
                     </div>
                 </div>
@@ -587,8 +594,8 @@ function openRecurringModal(seriesId) {
                             <i class="fas fa-image text-2xl text-gray-500" style="display: ${recurringEvent.image || recurringEvent.Image || recurringEvent['Promo Image'] ? 'none' : 'flex'};"></i>
                         </div>
                         <div class="flex-1">
-                            <input type="file" id="recurring-image" accept="image/*" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
-                            <p class="text-sm text-gray-400 mt-1">Upload a new image for the series</p>
+                            <input type="file" id="recurring-image" accept="image/*" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" disabled>
+                            <p class="text-sm text-gray-400 mt-1">Image upload functionality coming soon</p>
                         </div>
                     </div>
                 </div>
@@ -990,7 +997,7 @@ function setupRecurringModalEventListeners() {
     const currentImage = document.getElementById('current-image');
     const imagePlaceholder = currentImage.nextElementSibling;
     
-    if (imageInput) {
+    if (imageInput && !imageInput.disabled) {
         imageInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
@@ -1009,13 +1016,14 @@ function setupRecurringModalEventListeners() {
 async function saveRecurringChanges(seriesId) {
     try {
         // Collect form data
-        const formData = new FormData();
-        formData.append('seriesId', seriesId);
-        formData.append('type', 'RecurringEvent');
+        const data = {
+            seriesId: seriesId,
+            type: 'RecurringEvent'
+        };
         
         // Basic information
-        formData.append('name', document.getElementById('recurring-name').value);
-        formData.append('description', document.getElementById('recurring-description').value);
+        data.name = document.getElementById('recurring-name').value;
+        data.description = document.getElementById('recurring-description').value;
         
         // Venue handling
         const venueSelect = document.getElementById('recurring-venue');
@@ -1023,19 +1031,13 @@ async function saveRecurringChanges(seriesId) {
             const newVenueName = document.getElementById('new-venue-name').value;
             const newVenueAddress = document.getElementById('new-venue-address').value;
             if (newVenueName && newVenueAddress) {
-                formData.append('newVenue', JSON.stringify({
+                data.newVenue = {
                     name: newVenueName,
                     address: newVenueAddress
-                }));
+                };
             }
         } else if (venueSelect.value) {
-            formData.append('venueId', venueSelect.value);
-        }
-        
-        // Image handling
-        const imageInput = document.getElementById('recurring-image');
-        if (imageInput.files[0]) {
-            formData.append('image', imageInput.files[0]);
+            data.venueId = venueSelect.value;
         }
         
         // Recurrence rules
@@ -1058,21 +1060,24 @@ async function saveRecurringChanges(seriesId) {
             }
         }
         
-        formData.append('recurringInfo', JSON.stringify(recurringInfo));
+        data.recurringInfo = recurringInfo;
         
         // Instance management
-        formData.append('instancesAhead', document.getElementById('instances-ahead').value);
-        formData.append('endDate', document.getElementById('series-end-date').value);
+        data.instancesAhead = document.getElementById('instances-ahead').value;
+        data.endDate = document.getElementById('series-end-date').value;
         
         // Categories
         const selectedCategories = Array.from(document.querySelectorAll('input[name="recurring-categories"]:checked'))
             .map(cb => cb.value);
-        formData.append('categories', JSON.stringify(selectedCategories));
+        data.categories = selectedCategories;
         
-        // Send to backend
+        // Send to backend as JSON
         const response = await fetch('/.netlify/functions/update-recurring-series', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
         
         if (response.ok) {
@@ -1080,8 +1085,16 @@ async function saveRecurringChanges(seriesId) {
             closeRecurringModal();
             await loadAllEvents();
         } else {
-            const error = await response.text();
-            showError(`Failed to update series: ${error}`);
+            let errorMessage = `Failed to update series: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.details) {
+                    errorMessage = `Failed to update series: ${errorData.details}`;
+                }
+            } catch (e) {
+                // If we can't parse the error response, use the default message
+            }
+            showError(errorMessage);
         }
         
     } catch (error) {
