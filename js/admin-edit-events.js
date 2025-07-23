@@ -18,6 +18,7 @@ const VALID_CATEGORIES = [
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin Edit Events: Initializing modern interface...');
+    console.log('Admin Edit Events: Debug functions available: testRecurringEvents(), testAirtableFields(), refreshRecurringEvents()');
     initializeEventListeners();
     loadAllEvents();
     loadVenues();
@@ -1520,6 +1521,13 @@ window.testRecurringEvents = async function() {
     try {
         const response = await fetch('/.netlify/functions/get-recurring-events');
         console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Response:', errorText);
+            return null;
+        }
+        
         const data = await response.json();
         console.log('Recurring events data:', data);
         return data;
@@ -1535,6 +1543,13 @@ window.testAirtableFields = async function() {
     try {
         const response = await fetch('/.netlify/functions/debug-airtable-fields');
         console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error Response:', errorText);
+            return null;
+        }
+        
         const data = await response.json();
         console.log('Airtable fields data:', data);
         return data;
