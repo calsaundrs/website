@@ -334,51 +334,375 @@ exports.handler = async function (event, context) {
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/main.js" defer></script>
     <style>
-        .hero-image-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #1e1e1e; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); } .hero-image-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(24px) brightness(0.5); transform: scale(1.1); transition: opacity 0.4s ease; } .hero-image-container:hover .hero-image-bg { opacity: 1; } .hero-image-fg { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 10; transition: all 0.4s ease; } .hero-image-container:hover .hero-image-fg { object-fit: contain; transform: scale(0.9); } .suggested-card { border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background-color: #1e1e1e; transition: transform 0.3s ease, box-shadow 0.3s ease; } .suggested-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); } .suggested-carousel { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); } .suggested-carousel::-webkit-scrollbar { height: 4px; } .suggested-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 2px; } .suggested-carousel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; } 
-        .custom-lightbox { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 15px; }
-        .custom-lightbox.active { display: flex; }
-        .custom-lightbox-content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;}
-        .custom-lightbox-image { width: auto; height: auto; max-width: 95vw; max-height: 85vh; object-fit: contain; border-radius: 1rem; }
-        .custom-lightbox-close, .custom-lightbox-prev, .custom-lightbox-next { cursor: pointer; position: absolute; color: white; background-color: rgba(0,0,0,0.5); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 24px; user-select: none; transition: background-color 0.2s; z-index: 10000; }
-        .custom-lightbox-close:hover, .custom-lightbox-prev:hover, .custom-lightbox-next:hover { background-color: rgba(0,0,0,0.8); }
-        .custom-lightbox-close { top: 15px; right: 15px; }
-        .custom-lightbox-prev { left: 15px; top: 50%; transform: translateY(-50%); }
-        .custom-lightbox-next { right: 15px; top: 50%; transform: translateY(-50%); }
-        .custom-lightbox-title { text-align: center; color: white; padding: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; max-width: 80vw; }
+        /* Fixed hero image styles - removed light gradient effect */
+        .hero-image-container { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            background-color: #1e1e1e; 
+            overflow: hidden; 
+            border-radius: 1.25rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+        } 
+        .hero-image-bg { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            filter: blur(24px) brightness(0.3); 
+            transform: scale(1.1); 
+            transition: opacity 0.4s ease; 
+        } 
+        .hero-image-container:hover .hero-image-bg { 
+            opacity: 1; 
+        } 
+        .hero-image-fg { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            z-index: 10; 
+            transition: all 0.4s ease; 
+        } 
+        .hero-image-container:hover .hero-image-fg { 
+            object-fit: contain; 
+            transform: scale(0.9); 
+        } 
+        
+        /* Mobile-first responsive design */
+        @media (max-width: 768px) {
+            .hero-image-container {
+                aspect-ratio: 4 / 3;
+                border-radius: 0;
+                margin: 0 -1rem;
+                width: calc(100% + 2rem);
+            }
+            
+            .mobile-venue-header {
+                padding: 1rem;
+                margin: 0 -1rem;
+            }
+            
+            .mobile-content {
+                padding-bottom: 6rem; /* Space for sticky bottom bar */
+            }
+            
+            .sticky-bottom-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(17, 24, 39, 0.95);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(75, 85, 99, 0.5);
+                padding: 1rem;
+                z-index: 50;
+            }
+        }
+        
+        .suggested-card { 
+            border-radius: 1.25rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            background-color: #1e1e1e; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        } 
+        .suggested-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5); 
+        } 
+        .suggested-carousel { 
+            scroll-snap-type: x mandatory; 
+            -webkit-overflow-scrolling: touch; 
+            overflow-x: auto; 
+            padding-bottom: 1rem; 
+            scrollbar-width: thin; 
+            scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1); 
+        } 
+        .suggested-carousel::-webkit-scrollbar { 
+            height: 4px; 
+        } 
+        .suggested-carousel::-webkit-scrollbar-track { 
+            background: rgba(0, 0, 0, 0.1); 
+            border-radius: 2px; 
+        } 
+        .suggested-carousel::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.3); 
+            border-radius: 2px; 
+        } 
+        
+        .custom-lightbox { 
+            display: none; 
+            position: fixed; 
+            z-index: 9999; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.85); 
+            justify-content: center; 
+            align-items: center; 
+            padding: 15px; 
+        }
+        .custom-lightbox.active { 
+            display: flex; 
+        }
+        .custom-lightbox-content { 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            height: 100%;
+        }
+        .custom-lightbox-image { 
+            width: auto; 
+            height: auto; 
+            max-width: 95vw; 
+            max-height: 85vh; 
+            object-fit: contain; 
+            border-radius: 1rem; 
+        }
+        .custom-lightbox-close, .custom-lightbox-prev, .custom-lightbox-next { 
+            cursor: pointer; 
+            position: absolute; 
+            color: white; 
+            background-color: rgba(0,0,0,0.5); 
+            border-radius: 50%; 
+            width: 44px; 
+            height: 44px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 24px; 
+            user-select: none; 
+            transition: background-color 0.2s; 
+            z-index: 10000; 
+        }
+        .custom-lightbox-close:hover, .custom-lightbox-prev:hover, .custom-lightbox-next:hover { 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        .custom-lightbox-close { 
+            top: 15px; 
+            right: 15px; 
+        }
+        .custom-lightbox-prev { 
+            left: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+        }
+        .custom-lightbox-next { 
+            right: 15px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+        }
+        .custom-lightbox-title { 
+            text-align: center; 
+            color: white; 
+            padding: 10px; 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 0.9rem; 
+            max-width: 80vw; 
+        }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
 </head>
 <body class="antialiased">
     <div id="header-placeholder"></div>
-    <main class="container mx-auto px-8 py-16">
-        <div class="grid lg:grid-cols-3 gap-16">
-            <div class="lg:col-span-2">
-                <div class="hero-image-container mb-8"><img src="${mainPhoto}" alt="" class="hero-image-bg" aria-hidden="true"><img src="${mainPhoto}" alt="${venue.Name}" class="hero-image-fg"></div>
-                <p class="font-semibold accent-color mb-2">VENUE DETAILS</p>
-                <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">${venue.Name}</h1>
-                <div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}</div>
-                ${upcomingEventsHtml}
-                ${photoGalleryHtml}
-            </div>
-            <div class="lg:col-span-1">
-                <div class="card-bg p-8 sticky top-8 space-y-6">
-                    <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Current Status</h3>${openingStatus.html}</div>
-                    <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Location</h3><p class="text-2xl font-semibold">${venue.Address}</p><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-accent-color hover:underline">Get Directions</a></div>
-                    ${createSidebarSection('Opening Hours', openingHoursContent, 'fa-solid fa-clock')}
-                    ${createSidebarSection('The Vibe', vibeTagsHtml, 'fa-solid fa-martini-glass-citrus')}
-                    ${createSidebarSection('Venue Features', venueFeaturesHtml, 'fa-solid fa-star')}
-                    ${createSidebarSection('Accessibility', accessibilityHtml, 'fa-solid fa-universal-access')}
-                    ${googleRatingHtml}
-                    <div class="border-t border-gray-700 pt-6">
-                        <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Contact & Social</h3>
-                        <div class="grid grid-cols-1 gap-2">${venue.Website ? `<a href="${venue.Website}" target="_blank" class="social-button flex-grow"><i class="fas fa-globe mr-2"></i>Website</a>` : ''}${venue.Instagram ? `<a href="${venue.Instagram}" target="_blank" class="social-button flex-grow"><i class="fab fa-instagram mr-2"></i>Instagram</a>` : ''}${venue.Facebook ? `<a href="${venue.Facebook}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600">Facebook</a>` : ''}${venue.TikTok ? `<a href="${venue.TikTok}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600">TikTok</a>` : ''}</div>
+    
+    <!-- Desktop Layout -->
+    <div class="hidden lg:block">
+        <main class="container mx-auto px-8 py-16">
+            <div class="grid lg:grid-cols-3 gap-16">
+                <div class="lg:col-span-2">
+                    <div class="hero-image-container mb-8">
+                        <img src="${mainPhoto}" alt="" class="hero-image-bg" aria-hidden="true">
+                        <img src="${mainPhoto}" alt="${venue.Name}" class="hero-image-fg">
+                    </div>
+                    <p class="font-semibold accent-color mb-2">VENUE DETAILS</p>
+                    <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">${venue.Name}</h1>
+                    <div class="prose prose-invert prose-lg max-w-none text-gray-300">${description.replace(/\n/g, '<br>')}</div>
+                    ${upcomingEventsHtml}
+                    ${photoGalleryHtml}
+                </div>
+                <div class="lg:col-span-1">
+                    <div class="card-bg p-8 sticky top-8 space-y-6">
+                        <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Current Status</h3>${openingStatus.html}</div>
+                        <div><h3 class="font-bold text-lg accent-color-secondary mb-2">Location</h3><p class="text-2xl font-semibold">${venue.Address}</p><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="text-sm text-accent-color hover:underline">Get Directions</a></div>
+                        ${createSidebarSection('Opening Hours', openingHoursContent, 'fa-solid fa-clock')}
+                        ${createSidebarSection('The Vibe', vibeTagsHtml, 'fa-solid fa-martini-glass-citrus')}
+                        ${createSidebarSection('Venue Features', venueFeaturesHtml, 'fa-solid fa-star')}
+                        ${createSidebarSection('Accessibility', accessibilityHtml, 'fa-solid fa-universal-access')}
+                        ${googleRatingHtml}
+                        <div class="border-t border-gray-700 pt-6">
+                            <h3 class="font-bold text-lg accent-color-secondary mb-4 text-center">Contact & Social</h3>
+                            <div class="grid grid-cols-1 gap-2">${venue.Website ? `<a href="${venue.Website}" target="_blank" class="social-button flex-grow"><i class="fas fa-globe mr-2"></i>Website</a>` : ''}${venue.Instagram ? `<a href="${venue.Instagram}" target="_blank" class="social-button flex-grow"><i class="fab fa-instagram mr-2"></i>Instagram</a>` : ''}${venue.Facebook ? `<a href="${venue.Facebook}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600">Facebook</a>` : ''}${venue.TikTok ? `<a href="${venue.TikTok}" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-600">TikTok</a>` : ''}</div>
+                        </div>
                     </div>
                 </div>
             </div>
+            ${googleReviewsHtml}
+        </main>
+    </div>
+    
+    <!-- Mobile Layout -->
+    <div class="lg:hidden">
+        <!-- Mobile Hero Image -->
+        <div class="hero-image-container">
+            <img src="${mainPhoto}" alt="${venue.Name}" class="hero-image-fg">
+            <div class="absolute top-3 right-3">
+                <button class="btn-secondary text-white px-2 py-1 rounded text-xs">
+                    <i class="fas fa-share"></i>
+                </button>
+            </div>
         </div>
-        ${googleReviewsHtml}
-    </main>
+        
+        <!-- Mobile Venue Header -->
+        <div class="mobile-venue-header">
+            <h1 class="text-2xl font-bold text-white mb-2">${venue.Name}</h1>
+            <p class="text-gray-300 text-sm mb-3">
+                <i class="fas fa-map-marker-alt mr-1 text-accent-color"></i>
+                ${venue.Address}
+            </p>
+            <div class="flex flex-wrap gap-1 mb-4">
+                ${vibeTagsHtml ? vibeTagsHtml.replace(/<div class="flex flex-wrap gap-2">|<\/div>/g, '') : ''}
+                ${venueFeaturesHtml ? venueFeaturesHtml.replace(/<div class="flex flex-wrap gap-2">|<\/div>/g, '') : ''}
+            </div>
+        </div>
+        
+        <!-- Mobile Content Sections -->
+        <div class="mobile-content px-4 space-y-6">
+            <!-- Current Status Card -->
+            <div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                </h3>
+                ${openingStatus.html}
+            </div>
+            
+            <!-- About Section -->
+            <div class="venue-card p-4">
+                <h2 class="text-xl font-bold text-white mb-3">
+                    <i class="fas fa-info-circle mr-2 text-accent-color"></i>About This Venue
+                </h2>
+                <p class="text-gray-300 text-sm leading-relaxed">${description.replace(/\n/g, '<br>')}</p>
+            </div>
+            
+            <!-- Opening Hours Card -->
+            <div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                </h3>
+                <div class="prose prose-invert prose-sm max-w-none text-gray-300">${openingHoursContent}</div>
+            </div>
+            
+            <!-- The Vibe Card -->
+            ${vibeTagsHtml ? `<div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-martini-glass-citrus mr-2 text-accent-color"></i>The Vibe
+                </h3>
+                ${vibeTagsHtml}
+            </div>` : ''}
+            
+            <!-- Venue Features Card -->
+            ${venueFeaturesHtml ? `<div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-star mr-2 text-accent-color"></i>Venue Features
+                </h3>
+                ${venueFeaturesHtml}
+            </div>` : ''}
+            
+            <!-- Accessibility Card -->
+            <div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-universal-access mr-2 text-accent-color"></i>Accessibility
+                </h3>
+                <div class="prose prose-invert prose-sm max-w-none text-gray-300">${accessibilityHtml}</div>
+            </div>
+            
+            <!-- Google Rating Card -->
+            ${googleRatingHtml ? `<div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                </h3>
+                ${googleRatingHtml.replace(/<div class="border-t border-gray-700 pt-6">|<\/div>/g, '')}
+            </div>` : ''}
+            
+            <!-- Contact Info Card -->
+            <div class="venue-card p-4">
+                <h3 class="text-lg font-bold text-white mb-3">
+                    <i class="fas fa-address-card mr-2 text-accent-color"></i>Contact Information
+                </h3>
+                <div class="space-y-3">
+                    ${venue.Website ? `<div class="flex items-center gap-3 text-gray-400">
+                        <i class="fas fa-globe w-5"></i>
+                        <a href="${venue.Website}" target="_blank" class="text-accent-color hover:underline text-sm">${venue.Website.replace(/^https?:\/\//, '')}</a>
+                    </div>` : ''}
+                    ${venue.Instagram ? `<div class="flex items-center gap-3 text-gray-400">
+                        <i class="fab fa-instagram w-5"></i>
+                        <a href="${venue.Instagram}" target="_blank" class="text-accent-color hover:underline text-sm">Instagram</a>
+                    </div>` : ''}
+                    ${venue.Facebook ? `<div class="flex items-center gap-3 text-gray-400">
+                        <i class="fab fa-facebook w-5"></i>
+                        <a href="${venue.Facebook}" target="_blank" class="text-accent-color hover:underline text-sm">Facebook</a>
+                    </div>` : ''}
+                    ${venue.TikTok ? `<div class="flex items-center gap-3 text-gray-400">
+                        <i class="fab fa-tiktok w-5"></i>
+                        <a href="${venue.TikTok}" target="_blank" class="text-accent-color hover:underline text-sm">TikTok</a>
+                    </div>` : ''}
+                </div>
+            </div>
+            
+            <!-- Regular Events -->
+            ${recurringEventsHTML ? `<div class="venue-card p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-redo mr-3 text-accent-color"></i>Regular Events
+                </h2>
+                <div class="space-y-4">${recurringEventsHTML}</div>
+            </div>` : ''}
+            
+            <!-- Upcoming One-Off Events -->
+            ${oneOffEventsHTML ? `<div class="venue-card p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Special Events
+                </h2>
+                <div class="space-y-4">${oneOffEventsHTML}</div>
+            </div>` : ''}
+            
+            <!-- Gallery -->
+            ${photoGalleryHtml ? `<div class="venue-card p-4">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
+                </h2>
+                ${photoGalleryHtml.replace(/<div class="mt-16">|<\/div>/g, '')}
+            </div>` : ''}
+            
+            <!-- Google Reviews -->
+            ${googleReviewsHtml ? `<div class="venue-card p-4">
+                ${googleReviewsHtml.replace(/<div class="mt-24">|<\/div>/g, '')}
+            </div>` : ''}
+        </div>
+        
+        <!-- Mobile Action Buttons - Sticky Bottom -->
+        <div class="sticky-bottom-bar">
+            <div class="flex gap-2">
+                <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm">
+                    <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
+                </a>
+                ${venue.Website ? `<a href="${venue.Website}" target="_blank" class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm">
+                    <i class="fas fa-globe"></i>
+                </a>` : ''}
+                <button class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm">
+                    <i class="fas fa-heart"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <div id="footer-placeholder"></div>
 
     <div id="custom-lightbox" class="custom-lightbox">
@@ -392,6 +716,29 @@ exports.handler = async function (event, context) {
     </div>
 
     <script>
+    // Load header and footer
+    async function loadHeaderFooter() {
+        try {
+            const headerResponse = await fetch('/global/header.html');
+            const footerResponse = await fetch('/global/footer.html');
+            
+            if (headerResponse.ok) {
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header-placeholder').innerHTML = headerHtml;
+            }
+            
+            if (footerResponse.ok) {
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer-placeholder').innerHTML = footerHtml;
+            }
+        } catch (error) {
+            console.error('Error loading header/footer:', error);
+        }
+    }
+    
+    // Load header and footer when page loads
+    loadHeaderFooter();
+    
     document.addEventListener('DOMContentLoaded', () => {
         const galleryImages = ${googlePhotosData};
         if (galleryImages.length === 0) return;
