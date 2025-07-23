@@ -72,11 +72,29 @@ exports.handler = async (event) => {
         }
 
         // Find the parent record (one with recurring info)
-        const parentRecord = seriesRecords.find(record => 
+        let parentRecord = seriesRecords.find(record => 
             record.fields['Recurring Info'] || record.fields['recurringInfo']
         ) || seriesRecords[0];
 
         console.log(`update-recurring-series: Using parent record: ${parentRecord.id}`);
+        
+        // If no Series ID exists, create one
+        if (!parentRecord.fields['Series ID']) {
+            console.log('update-recurring-series: No Series ID found, creating new one');
+            const newSeriesId = `series_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            
+            // Update the parent record with the new Series ID
+            await base('Events').update(parentRecord.id, {
+                'Series ID': newSeriesId
+            });
+            
+            // Update the seriesId variable
+            seriesId = newSeriesId;
+            
+            // Refresh the parent record
+            parentRecord = await base('Events').find(parentRecord.id);
+            console.log(`update-recurring-series: Created new Series ID: ${newSeriesId}`);
+        }
 
         // Prepare update fields
         const updateFields = {};
