@@ -1530,6 +1530,65 @@
 
                                     <!-- Sidebar -->
                                     <div class="space-y-6">
+                                        <!-- Current Status -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                                            </h3>
+                                            <!-- Open Status -->
+                                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                                <p class="font-bold text-lg">Open</p>
+                                                <p class="text-sm">Open until 2:00 AM</p>
+                                            </div>
+                                            <!-- Closed Status (commented out for demo) -->
+                                            <!-- <div class="p-3 rounded-lg border text-center bg-red-500/10 text-red-400 border-red-500/30 mb-4">
+                                                <p class="font-bold text-lg">Closed</p>
+                                                <p class="text-sm">Currently Closed</p>
+                                            </div> -->
+                                            <!-- Opens Soon Status (commented out for demo) -->
+                                            <!-- <div class="p-3 rounded-lg border text-center bg-orange-500/10 text-orange-400 border-orange-500/30 mb-4">
+                                                <p class="font-bold text-lg">Opens Soon</p>
+                                                <p class="text-sm">Opens at 8:00 PM</p>
+                                            </div> -->
+                                        </div>
+
+                                        <!-- Opening Hours -->
+                                        <div class="venue-card p-6">
+                                            <h3 class="text-xl font-bold text-white mb-4">
+                                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                                            </h3>
+                                            <div class="space-y-2 text-gray-300 text-sm">
+                                                <div class="flex justify-between">
+                                                    <span>Monday</span>
+                                                    <span>Closed</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Tuesday</span>
+                                                    <span>Closed</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Wednesday</span>
+                                                    <span>8:00 PM - 2:00 AM</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Thursday</span>
+                                                    <span>8:00 PM - 2:00 AM</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Friday</span>
+                                                    <span>8:00 PM - 3:00 AM</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Saturday</span>
+                                                    <span>8:00 PM - 3:00 AM</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span>Sunday</span>
+                                                    <span>8:00 PM - 2:00 AM</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <!-- Google Rating -->
                                         <div class="venue-card p-6">
                                             <h3 class="text-xl font-bold text-white mb-4">
@@ -1630,6 +1689,139 @@
                                                     <i class="fas fa-heart mr-2"></i>Save Venue
                                                 </button>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opening Status System Section -->
+        <section class="ds-section">
+            <h2 class="font-anton text-4xl text-white mb-8">Opening Status System</h2>
+            <div class="card-bg p-8 rounded-2xl">
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Venue Opening Status States</h3>
+                        <p class="text-gray-300 mb-6">The opening status system automatically calculates and displays the current status of venues based on their opening hours and the current time.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Open Status -->
+                            <div class="venue-card p-6">
+                                <h4 class="text-lg font-bold text-white mb-4">Open Status</h4>
+                                <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                    <p class="font-bold text-lg">Open</p>
+                                    <p class="text-sm">Open until 2:00 AM</p>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    <p><strong>Color:</strong> Green (bg-green-500/10 text-green-400 border-green-500/30)</p>
+                                    <p><strong>Trigger:</strong> Current time is within opening hours</p>
+                                    <p><strong>Message:</strong> Shows closing time</p>
+                                </div>
+                            </div>
+
+                            <!-- Closed Status -->
+                            <div class="venue-card p-6">
+                                <h4 class="text-lg font-bold text-white mb-4">Closed Status</h4>
+                                <div class="p-3 rounded-lg border text-center bg-red-500/10 text-red-400 border-red-500/30 mb-4">
+                                    <p class="font-bold text-lg">Closed</p>
+                                    <p class="text-sm">Currently Closed</p>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    <p><strong>Color:</strong> Red (bg-red-500/10 text-red-400 border-red-500/30)</p>
+                                    <p><strong>Trigger:</strong> Current time is outside opening hours</p>
+                                    <p><strong>Message:</strong> "Currently Closed"</p>
+                                </div>
+                            </div>
+
+                            <!-- Opens Soon Status -->
+                            <div class="venue-card p-6">
+                                <h4 class="text-lg font-bold text-white mb-4">Opens Soon Status</h4>
+                                <div class="p-3 rounded-lg border text-center bg-orange-500/10 text-orange-400 border-orange-500/30 mb-4">
+                                    <p class="font-bold text-lg">Opens Soon</p>
+                                    <p class="text-sm">Opens at 8:00 PM</p>
+                                </div>
+                                <div class="text-sm text-gray-400">
+                                    <p><strong>Color:</strong> Orange (bg-orange-500/10 text-orange-400 border-orange-500/30)</p>
+                                    <p><strong>Trigger:</strong> Venue opens within 60 minutes</p>
+                                    <p><strong>Message:</strong> Shows opening time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opening Hours Display -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Opening Hours Display</h3>
+                        <div class="venue-card p-6 max-w-md">
+                            <h4 class="text-lg font-bold text-white mb-4">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h4>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Monday</span>
+                                    <span>Closed</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Tuesday</span>
+                                    <span>Closed</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Wednesday</span>
+                                    <span>8:00 PM - 2:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Thursday</span>
+                                    <span>8:00 PM - 2:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Friday</span>
+                                    <span>8:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Saturday</span>
+                                    <span>8:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Sunday</span>
+                                    <span>8:00 PM - 2:00 AM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Implementation Notes -->
+                    <div>
+                        <h3 class="text-white font-bold mb-6">Implementation Notes</h3>
+                        <div class="venue-card p-6">
+                            <div class="space-y-4 text-gray-300">
+                                <div>
+                                    <h4 class="text-white font-semibold mb-2">Status Calculation Logic</h4>
+                                    <ul class="list-disc list-inside space-y-1 text-sm">
+                                        <li>Uses London timezone (Europe/London)</li>
+                                        <li>Handles overnight hours (e.g., 11 PM - 2 AM)</li>
+                                        <li>Considers "Opens Soon" when venue opens within 60 minutes</li>
+                                        <li>Supports multiple time slots per day</li>
+                                        <li>Handles "Closed" days and "Not Available" data</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-semibold mb-2">CSS Classes Used</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                        <div>
+                                            <p class="font-semibold text-green-400">Open Status:</p>
+                                            <code class="text-xs">bg-green-500/10 text-green-400 border-green-500/30</code>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-red-400">Closed Status:</p>
+                                            <code class="text-xs">bg-red-500/10 text-red-400 border-red-500/30</code>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-orange-400">Opens Soon:</p>
+                                            <code class="text-xs">bg-orange-500/10 text-orange-400 border-orange-500/30</code>
                                         </div>
                                     </div>
                                 </div>
