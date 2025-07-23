@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 [![License](https://img.shields.io/badge/license-Private-red.svg)]()
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)]()
 
 > The definitive, bold, and unapologetic guide to Birmingham's LGBTQ+ scene
 
@@ -17,6 +17,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - **Calendar Integration** - Add events directly to your calendar (Google, Apple, Outlook)
 - **Mobile-First Design** - Optimized for all devices with Progressive Web App features
 - **Accessibility Focused** - Full keyboard navigation and screen reader support
+- **Real-time Updates** - Live event information with automatic refresh
 
 ### For Event Organizers
 - **Easy Event Submission** - Simple form-based event submission process
@@ -25,6 +26,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - **AI-Powered Tools** - Extract event information from posters and spreadsheets
 - **Venue Management** - Submit and manage venue information
 - **Status Tracking** - Track submission status and approval workflow
+- **Bulk Upload** - Process multiple events from spreadsheets
 
 ### For Administrators
 - **Approval Workflow** - Review and approve events and venues
@@ -32,6 +34,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - **AI Processing Tools** - Bulk process posters and spreadsheets
 - **Analytics Dashboard** - Monitor platform usage and performance
 - **User Management** - Firebase-based authentication and authorization
+- **Data Migration** - Tools for importing legacy event data
 
 ## 🏗️ Architecture
 
@@ -50,12 +53,14 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 │ • HTML pages with Tailwind CSS             │
 │ • Vanilla JavaScript for interactivity     │
 │ • Progressive Web App features             │
+│ • Responsive design with accessibility     │
 └─────────────────────────────────────────────┘
                       ↓
 ┌─ Serverless Functions ──────────────────────┐
-│ • 33 Netlify Functions (Node.js)           │
+│ • 33+ Netlify Functions (Node.js)          │
 │ • RESTful API endpoints                    │
 │ • Authentication middleware                │
+│ • AI processing integration                │
 └─────────────────────────────────────────────┘
                       ↓
 ┌─ External Services ─────────────────────────┐
@@ -74,10 +79,15 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - **[Functions Documentation](FUNCTIONS_DOCUMENTATION.md)** - Serverless functions reference
 - **[Developer Guide](DEVELOPER_GUIDE.md)** - Setup, development, and deployment guide
 
+### User Guides
+- **[User Journey Testing Report](USER_JOURNEY_TESTING_REPORT.md)** - Comprehensive testing results
+- **[Implementation Analysis](IMPLEMENTATION_ANALYSIS.md)** - Technical implementation details
+- **[Project Overview](GEMINI.md)** - Product vision and development roadmap
+
 ### Additional Resources
-- **[GEMINI.md](GEMINI.md)** - Project overview and development status
 - **[Netlify Configuration](netlify.toml)** - Deployment and build settings
 - **[Package Configuration](package.json)** - Dependencies and scripts
+- **[Design System](design-system.html)** - UI/UX reference (do not modify)
 
 ## 🚀 Quick Start
 
@@ -398,7 +408,7 @@ Our commitment extends beyond technology to actively supporting and uplifting Bi
 
 ---
 
-*Last updated: December 2024*
-*Platform Version: 1.0.0*
+*Last updated: July 2025*
+*Platform Version: 1.1.0*
 
 **Built with ❤️ for Birmingham's LGBTQ+ community**
