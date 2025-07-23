@@ -9,12 +9,13 @@
 
 /* Critical CSS - Above the fold styles */
 body {
-    background-color: #121212;
+    background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
     color: #EAEAEA;
     font-family: 'Poppins', system-ui, -apple-system, sans-serif; /* Added fallbacks */
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
 
 /* Prevent pride flag from flashing at full size - Universal fix */
@@ -203,46 +204,83 @@ select:focus-visible {
 }
 
 /* Core Colour Palette Classes */
-.accent-color { color: #B564F7; }
-.bg-accent-color { background-color: #B564F7; }
-.border-accent-color { border-color: #B564F7; }
-.accent-color-secondary { color: #FADCD9; }
-.bg-accent-color-secondary { background-color: #FADCD9; }
+/* Updated Core Colour Palette Classes */
+.accent-color { color: #E83A99; }
+.bg-accent-color { background-color: #E83A99; }
+.border-accent-color { border-color: #E83A99; }
+.accent-color-secondary { color: #8B5CF6; }
+.bg-accent-color-secondary { background-color: #8B5CF6; }
+
+/* Modern Glassmorphism Components */
+.card-bg {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+    border-radius: 1.25rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+    border: 1px solid rgba(232, 58, 153, 0.3);
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(75, 85, 99, 0.3);
+    border: 1px solid rgba(75, 85, 99, 0.5);
+    transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+    background: rgba(75, 85, 99, 0.5);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+}
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    transition: all 0.3s ease;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    transform: translateY(-1px);
+}
 
 /* Component Styles - Optimized for performance */
 .nav-cta {
-    background-color: #FADCD9; 
-    color: #333333; 
+    background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+    color: white;
     font-weight: bold;
-    padding: 0.75rem 1.5rem; 
-    border-radius: 0.5rem; 
-    transition: opacity 0.3s ease, transform 0.2s ease;
-    will-change: opacity; /* Optimize for transitions */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
 }
 .nav-cta:hover { 
-    opacity: 0.9;
     transform: translateY(-1px);
+    opacity: 0.9;
 }
 .nav-cta:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(181, 100, 247, 0.3);
-}
-
-.card-bg {
-    background-color: #1e1e1e; 
-    border: 1px solid #2e2e2e;
-    border-radius: 1.25rem; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    overflow: hidden;
-    will-change: transform; /* Optimize for hover effects */
+    outline: 3px solid #E83A99;
+    outline-offset: 2px;
 }
 
 .heading-gradient {
-    background: linear-gradient(180deg, #FFFFFF 50%, #d1c7b8 100%);
-    -webkit-background-clip: text; 
+    background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text; 
-    color: transparent; /* Fallback for unsupported browsers */
+    background-clip: text;
 }
 
 .filter-button {
@@ -272,8 +310,129 @@ select:focus-visible {
     border-color: #B564F7;
 }
 .filter-button:focus-visible {
-    border-color: #B564F7;
-    box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.3);
+    border-color: #E83A99;
+    box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.3);
+}
+
+/* Form Components */
+.form-input {
+    background: rgba(31, 41, 55, 0.8);
+    border: 1px solid rgba(75, 85, 99, 0.5);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.form-input:focus {
+    border-color: #E83A99;
+    box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
+}
+
+/* Filter Buttons */
+.filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, rgba(181, 100, 247, 0.3) 0%, rgba(181, 100, 247, 0.1) 100%);
+    border-color: rgba(181, 100, 247, 0.5);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(181, 100, 247, 0.3);
+}
+
+/* Admin and Card Components */
+.admin-link {
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+    transition: all 0.3s ease;
+}
+.admin-link:hover {
+    transform: translateY(-2px);
+    border-color: rgba(232, 58, 153, 0.3);
+    background: rgba(232, 58, 153, 0.1);
+}
+
+.venue-card, .submission-card, .result-card {
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+    transition: all 0.3s ease;
+}
+.venue-card:hover, .submission-card:hover, .result-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(232, 58, 153, 0.3);
+}
+
+/* Upload Area */
+.upload-area {
+    background: rgba(31, 41, 55, 0.3);
+    border: 2px dashed rgba(75, 85, 99, 0.5);
+    transition: all 0.3s ease;
+}
+.upload-area:hover, .upload-area.dragover {
+    border-color: #E83A99;
+    background: rgba(232, 58, 153, 0.1);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.status-badge.approved {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.status-badge.rejected {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Loading Spinner */
+.loader {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #E83A99;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animation Styles */
+.animate-fade-in {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Event/Venue Card Styles - Performance optimized */

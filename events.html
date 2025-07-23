@@ -458,8 +458,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
             <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
             <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            <!-- GET LISTED button using design system -->
+            <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
             <button id="menu-btn" class="text-white text-2xl">
@@ -472,7 +472,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
         <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center nav-cta text-2xl px-8 py-4">GET LISTED</a>
     </div>
 </header>
 
@@ -495,10 +495,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <div id="filter-bar-container" class="mb-6 flex flex-wrap items-center gap-3 md:gap-4">
 
-                <button class="filter-button active w-full" data-filter-type="date" data-filter-value="all">All Upcoming</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="today">Today</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
-                <div class="relative w-full"> <button id="custom-date-btn" class="filter-button w-full">Custom Date</button>
+                <button class="filter-btn active w-full" data-filter-type="date" data-filter-value="all">All Upcoming</button>
+                <button class="filter-btn w-full" data-filter-type="date" data-filter-value="today">Today</button>
+                <button class="filter-btn w-full" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
+                <div class="relative w-full"> <button id="custom-date-btn" class="filter-btn w-full">Custom Date</button>
                     <div id="custom-date-popover" class="popover">
                         <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
                         <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
@@ -507,7 +507,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
 
-                <div class="relative w-full"> <button id="category-btn" class="filter-button w-full">
+                <div class="relative w-full"> <button id="category-btn" class="filter-btn w-full">
                         <span>All Categories</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
@@ -516,7 +516,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
 
-                <div class="relative w-full"> <button id="venue-btn" class="filter-button w-full">
+                <div class="relative w-full"> <button id="venue-btn" class="filter-btn w-full">
                         <span>All Venues</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
@@ -525,7 +525,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
 
-                <div id="nsfw-toggle-container" class="filter-button flex items-center justify-between !p-3 w-full min-w-fit ml-auto order-last">
+                <div id="nsfw-toggle-container" class="filter-btn flex items-center justify-between !p-3 w-full min-w-fit ml-auto order-last">
                     <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer flex-grow">
                         <div class="relative flex-shrink-0">
                             <input type="checkbox" id="nsfw-toggle" class="sr-only"> <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
@@ -544,7 +544,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <p class="mt-2 text-gray-400">You are in SFW (Safe for Work) mode, which hides events categorized as "Kink".</p>
                 <p class="mt-1 text-gray-400">To view these events, please disable SFW mode using the toggle below.</p>
                 <div class="mt-6 flex items-center justify-center">
-                    <div class="filter-button flex items-center justify-between !p-3">
+                    <div class="filter-btn flex items-center justify-between !p-3">
                         <label for="nsfw-toggle-notice" class="flex items-center cursor-pointer">
                             <div class="relative flex-shrink-0">
                                 <input type="checkbox" id="nsfw-toggle-notice" class="sr-only">

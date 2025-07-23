@@ -208,8 +208,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
             <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
             <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            <!-- GET LISTED button using design system -->
+            <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
             <button id="menu-btn" class="text-white text-2xl">
@@ -222,7 +222,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
         <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center nav-cta text-2xl px-8 py-4">GET LISTED</a>
     </div>
 </header>
 
@@ -235,13 +235,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </section>
 
         <section class="grid md:grid-cols-2 gap-8">
-            <a href="/events.html" class="feature-card card-bg block group p-8 md:p-12 text-center">
+            <a href="/events.html" class="venue-card block group p-8 md:p-12 text-center">
                 <div class="spark-icon accent-color text-5xl mb-4">✦</div>
                 <h2 class="font-anton text-5xl md:text-6xl text-white mb-4 group-hover:heading-gradient">WHAT'S ON</h2>
                 <p class="text-lg text-gray-400 mb-6">Explore all the latest events, from club nights to theatre.</p>
                 <span class="font-bold text-accent-color text-lg">VIEW EVENTS →</span>
             </a>
-            <a href="/all-venues.html" class="feature-card card-bg block group p-8 md:p-12 text-center">
+            <a href="/all-venues.html" class="venue-card block group p-8 md:p-12 text-center">
                  <div class="spark-icon accent-color-secondary text-5xl mb-4">✦</div>
                  <h2 class="font-anton text-5xl md:text-6xl text-white mb-4 group-hover:heading-gradient">THE VENUES</h2>
                 <p class="text-lg text-gray-400 mb-6">Discover the best LGBTQ+ friendly spaces in Birmingham.</p>
@@ -292,7 +292,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <!-- Welcome Modal -->
     <div id="welcomeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 hidden">
-        <div class="card-bg w-full max-w-4xl text-center p-6 sm:p-8 md:p-12 animate-fade-in-up relative overflow-hidden">
+        <div class="card-bg w-full max-w-4xl text-center p-6 sm:p-8 md:p-12 animate-fade-in relative overflow-hidden">
             
             <!-- Close Button -->
             <button id="closeModalButton" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-gray-600 hover:text-white transition-colors z-10 p-2">
@@ -312,7 +312,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <!-- Interactive Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 my-6 sm:my-8">
                 <!-- Events Card -->
-                <a href="/events.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/events.html" class="venue-card group block p-4 sm:p-6 text-center">
                     <div class="text-center">
                         <i class="fas fa-calendar-days text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
                         <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">EVENTS</h3>
@@ -320,7 +320,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </a>
                 <!-- Venues Card -->
-                <a href="/all-venues.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/all-venues.html" class="venue-card group block p-4 sm:p-6 text-center">
                     <div class="text-center">
                         <i class="fas fa-map-location-dot text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
                         <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">VENUES</h3>
@@ -328,7 +328,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </a>
                 <!-- Promoter Tools Card -->
-                <a href="/promoter-tool.html" class="group block bg-gray-900/50 p-4 sm:p-6 rounded-xl border border-gray-700 hover:border-accent-color hover:bg-gray-900/80 transition-all duration-300 transform hover:-translate-y-2">
+                <a href="/promoter-tool.html" class="venue-card group block p-4 sm:p-6 text-center">
                     <div class="text-center">
                         <i class="fas fa-bullhorn text-2xl sm:text-3xl text-accent-color-secondary transition-transform duration-300 group-hover:scale-110"></i>
                         <h3 class="font-anton text-lg sm:text-2xl text-white mt-3 sm:mt-4">PROMOTERS</h3>

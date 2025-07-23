@@ -249,8 +249,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
             <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
             <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            <!-- GET LISTED button using design system -->
+            <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
             <button id="menu-btn" class="text-white text-2xl">
@@ -263,7 +263,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
         <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        <a href="/promoter-tool.html" class="block mt-4 text-center nav-cta text-2xl px-8 py-4">GET LISTED</a>
     </div>
 </header>
 
@@ -278,7 +278,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <div id="venue-filter-bar-container" class="mb-12 flex flex-wrap items-center gap-3 md:gap-4">
                 <div class="relative w-full md:w-auto">
-                    <button id="vibe-tags-btn" class="filter-button">
+                    <button id="vibe-tags-btn" class="filter-btn">
                         <span>All Vibes</span> <i class="fas fa-chevron-down text-xs"></i>
                     </button>
                     <div id="vibe-tags-popover" class="popover max-h-80 overflow-y-auto">
@@ -287,7 +287,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
 
                 <div class="relative w-full md:w-auto">
-                    <button id="venue-features-btn" class="filter-button">
+                    <button id="venue-features-btn" class="filter-btn">
                         <span>All Features</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
@@ -297,7 +297,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
 
                 <div class="relative w-full md:w-auto">
-                    <button id="accessibility-btn" class="filter-button">
+                    <button id="accessibility-btn" class="filter-btn">
                         <span>All Accessibility</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
@@ -306,7 +306,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
 
-                <button id="clear-venue-filters-btn" class="filter-button">Clear Filters</button>
+                <button id="clear-venue-filters-btn" class="filter-btn">Clear Filters</button>
             </div>
 
             <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -321,7 +321,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
                 <h3 class="mt-4 text-xl font-semibold text-white">No Venues Found</h3>
                 <p class="mt-2 text-gray-400">We couldn't find any venues at this time. Why not be the first to <a href="/get-listed.html" class="underline hover:text-white">get listed</a>?</p>
-                <button id="reset-venue-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+                <button id="reset-venue-filters-btn" class="mt-6 filter-btn active">Clear Filters</button>
             </div>
         </section>
     </main>
