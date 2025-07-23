@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         ${fields['Recurring Info'] ? `
                             <div class="approval-card-detail-item">
-                                <p class="detail-label">Recurring</p>
+                                <p class="detail-label">Recurring Pattern</p>
                                 <p class="detail-value">${fields['Recurring Info']}</p>
                             </div>
                         ` : ''}

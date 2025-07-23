@@ -144,29 +144,32 @@ exports.handler = async (event) => {
             };
         });
 
-        // Filter out individual recurring event instances
-        // Only show parent recurring events or standalone events
+        // Filter recurring events to show only one representative per series
+        // For pending events, we want to show one instance of each recurring series
+        const seriesMap = new Map(); // Track series by Series ID
         const filteredEvents = formattedEvents.filter(event => {
             const fields = event.fields;
             
-            // If it has a Series ID that's different from its own ID, it's an individual instance - exclude it
-            if (fields['Series ID'] && fields['Series ID'] !== event.id) {
-                console.log(`get-pending-items: Excluding recurring instance: ${fields['Event Name']} (Series ID: ${fields['Series ID']}, Event ID: ${event.id})`);
-                return false;
-            }
-            
-            // If it has Recurring Info but no Series ID (or Series ID equals its own ID), it's a parent recurring event - include it
-            if (fields['Recurring Info']) {
-                console.log(`get-pending-items: Including parent recurring event: ${fields['Event Name']}`);
+            // If it's a standalone event (no Series ID), include it
+            if (!fields['Series ID']) {
+                console.log(`get-pending-items: Including standalone event: ${fields['Event Name']}`);
                 return true;
             }
             
-            // If it has no recurring info, it's a standalone event - include it
-            console.log(`get-pending-items: Including standalone event: ${fields['Event Name']}`);
+            // If it has a Series ID, check if we've already seen this series
+            const seriesId = fields['Series ID'];
+            if (seriesMap.has(seriesId)) {
+                console.log(`get-pending-items: Excluding duplicate recurring instance: ${fields['Event Name']} (Series ID: ${seriesId})`);
+                return false;
+            }
+            
+            // First time seeing this series, include it and mark the series as seen
+            seriesMap.set(seriesId, true);
+            console.log(`get-pending-items: Including recurring series representative: ${fields['Event Name']} (Series ID: ${seriesId})`);
             return true;
         });
 
-        console.log(`get-pending-items: After filtering recurring instances: ${filteredEvents.length} events (removed ${formattedEvents.length - filteredEvents.length} instances)`);
+        console.log(`get-pending-items: After filtering recurring series: ${filteredEvents.length} events (removed ${formattedEvents.length - filteredEvents.length} duplicate instances)`);
 
         console.log(`get-pending-items: Successfully formatted ${filteredEvents.length} events`);
 
