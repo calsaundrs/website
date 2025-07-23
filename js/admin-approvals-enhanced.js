@@ -224,6 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <p class="detail-value">${fields['Recurring Info']}</p>
                             </div>
                         ` : ''}
+                        
+                        ${fields['Series ID'] ? `
+                            <div class="approval-card-detail-item">
+                                <p class="detail-label">Series ID</p>
+                                <p class="detail-value">${fields['Series ID']}</p>
+                            </div>
+                        ` : ''}
                     ` : `
                         <div class="approval-card-detail-item">
                             <p class="detail-label">Address</p>

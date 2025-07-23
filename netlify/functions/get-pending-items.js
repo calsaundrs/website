@@ -46,7 +46,7 @@ exports.handler = async (event) => {
                         'Recurring Info', 
                         'Category', 
                         'Promo Image', 
-                        'Parent Event Name',
+                        'Series ID',
                         'Status'
                     ]
                 }).all();
@@ -77,7 +77,7 @@ exports.handler = async (event) => {
                         'Recurring Info', 
                         'Category', 
                         'Promo Image', 
-                        'Parent Event Name',
+                        'Series ID',
                         'Status'
                     ]
                 }).all();
@@ -132,13 +132,13 @@ exports.handler = async (event) => {
         const filteredEvents = formattedEvents.filter(event => {
             const fields = event.fields;
             
-            // If it has a Parent Event Name, it's an individual instance - exclude it
-            if (fields['Parent Event Name']) {
-                console.log(`get-pending-items: Excluding recurring instance: ${fields['Event Name']} (Parent: ${fields['Parent Event Name']})`);
+            // If it has a Series ID that's different from its own ID, it's an individual instance - exclude it
+            if (fields['Series ID'] && fields['Series ID'] !== event.id) {
+                console.log(`get-pending-items: Excluding recurring instance: ${fields['Event Name']} (Series ID: ${fields['Series ID']}, Event ID: ${event.id})`);
                 return false;
             }
             
-            // If it has Recurring Info but no Parent Event Name, it's a parent recurring event - include it
+            // If it has Recurring Info but no Series ID (or Series ID equals its own ID), it's a parent recurring event - include it
             if (fields['Recurring Info']) {
                 console.log(`get-pending-items: Including parent recurring event: ${fields['Event Name']}`);
                 return true;
