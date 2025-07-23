@@ -456,11 +456,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Event listeners
-    settingsForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(settingsForm);
-        await saveSettings(formData);
-    });
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(settingsForm);
+            await saveSettings(formData);
+        });
+    }
     
     // Request notification permission on page load
     requestNotificationPermission();
