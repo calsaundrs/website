@@ -221,85 +221,40 @@ exports.handler = async function (event, context) {
             return `<a href="/event/${instance.Slug}" class="card-bg p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block"><div class="text-center w-20 flex-shrink-0"><p class="text-2xl font-bold text-white">${day}</p><p class="text-lg text-gray-400">${month}</p></div><div class="flex-grow"><h4 class="font-bold text-white text-xl">${instance['Event Name']}</h4><p class="text-sm text-gray-400">${d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p></div><div class="text-accent-color"><i class="fas fa-arrow-right"></i></div></a>`;
         }).join('');
 
-        const templatePath = path.resolve(__dirname, './templates/event-details-template.html');
-        console.log("Attempting to read template file:", templatePath);
-        let htmlTemplate = await fs.readFile(templatePath, 'utf8');
-        console.log("Template file read successfully. Length:", htmlTemplate.length);
+        // Return simple HTML for now
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${eventName} - Brum Outloud</title>
+    <meta name="description" content="${description.substring(0, 150).replace(/\n/g, ' ')}...">
+</head>
+<body style="font-family: Arial, sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 20px;">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h1 style="color: #B564F7;">${eventName}</h1>
+        <p><strong>Date:</strong> ${eventDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <p><strong>Time:</strong> ${eventDate.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' })}</p>
+        <p><strong>Venue:</strong> ${venueNameForDisplay}</p>
+        <div style="margin: 20px 0;">
+            <h2>Description</h2>
+            <p>${description.replace(/\n/g, '<br>')}</p>
+        </div>
+        <div style="margin: 20px 0;">
+            <h2>Categories</h2>
+            <p>${tagsHtml}</p>
+        </div>
+        <p><a href="/events" style="color: #B564F7;">← Back to Events</a></p>
+    </div>
+</body>
+</html>`;
 
-        console.log("Preparing data for Handlebars template.");
-        const data = {
-            eventName: eventName,
-            descriptionMeta: description.substring(0, 150).replace(/\n/g, ' ') + '...',
-            pageUrlCanonical: `${baseUrl}/event/${slug}`,
-            schemaMarkup: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Event",
-                "name": eventName,
-                "startDate": eventDate.toISOString(),
-                "endDate": new Date(eventDate.getTime() + 2 * 60 * 60 * 1000).toISOString(),
-                "eventStatus": "https://schema.org/EventScheduled",
-                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                "location": {
-                    "@type": "Place",
-                    "name": venueNameForDisplay,
-                    "address": {
-                        "@type": "PostalAddress",
-                        "addressLocality": "Birmingham",
-                        "addressRegion": "England",
-                        "addressCountry": "UK"
-                    }
-                },
-                "image": [imageUrl],
-                "description": description.replace(/\n/g, ' ').replace(/"/g, '"'),
-                "url": `${baseUrl}/event/${slug}`,
-                "offers": {
-                    "@type": "Offer",
-                    "url": `${baseUrl}/event/${slug}`,
-                    "price": "0",
-                    "priceCurrency": "GBP",
-                    "availability": "https://schema.org/InStock"
-                }
-            }),
-            imageUrl: imageUrl,
-            eventDateFormatted: eventDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
-            eventTimeFormatted: eventDate.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London' }),
-            venueHtml: venueHtml,
-            tagsHtml: tagsHtml,
-            description: description.replace(/\n/g, '<br>'),
-            ticketLink: null,
-            calendarLinksHtml: generateAddToCalendarLinks(calendarData),
-            otherInstancesHTML: otherInstancesHTML,
-            suggestedEventsHtml: suggestedEventsHtml,
-            venueNameForDisplay: venueNameForDisplay,
-            venueSlug: finalVenueSlug,
-            addressHtml: addressHtml,
-            priceHtml: priceHtml,
-            ageRestrictionHtml: ageRestrictionHtml,
-            linkHtml: linkHtml,
-            venueWebsiteHtml: venueWebsiteHtml,
-            venueSocialHtml: venueSocialHtml,
-            hasEventDetails: !!(addressHtml || priceHtml || ageRestrictionHtml || linkHtml)
-        };
-
-        try {
-            const template = Handlebars.compile(htmlTemplate);
-            htmlTemplate = template(data);
-        } catch (templateError) {
-            console.error("Error compiling or rendering Handlebars template:", templateError);
-            return { statusCode: 500, body: 'Server error rendering event details.' };
-        }
-
-        console.log("Final htmlTemplate length:", htmlTemplate.length);
-        const response = {
+        return {
             statusCode: 200,
-            headers: {
-                'Content-Type': 'text/html',
-                'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=60'
-            },
-            body: htmlTemplate
+            headers: { 'Content-Type': 'text/html' },
+            body: html
         };
-        console.log("Returning response:", response);
-        return response;
 
     } catch (error) {
         console.error("Caught error in handler:", error);
