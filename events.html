@@ -714,7 +714,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Rendering ---
         function renderEvents(events) {
-            if (events.length === 0) {
+            if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
+            
+            if (!events || events.length === 0) {
                 eventGrid.innerHTML = `
                     <div class="col-span-full text-center card-bg p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
@@ -751,6 +753,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderCategoryOptions() {
+            if (!categoryPopover || !eventStore) return; // Exit if elements don't exist yet
+            
             // Get categories from current events
             const categories = [...new Set(eventStore.state.events.flatMap(event => event.category))].filter(Boolean).sort();
             categoryPopover.innerHTML = '';
@@ -771,6 +775,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderVenueOptions(venues = []) {
+            if (!venuePopover) return; // Exit if element doesn't exist yet
+            
             venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -790,6 +796,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         function updateLoadingState(loading) {
             const loader = document.querySelector('.loader');
+            if (!loader) return; // Exit if loader doesn't exist yet
+            
             if (loading) {
                 loader.style.display = 'block';
             } else {
@@ -798,6 +806,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function updateErrorState(error) {
+            if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
+            
             if (error) {
                 eventGrid.innerHTML = `
                     <div class="col-span-full text-center card-bg p-12">
@@ -1007,10 +1017,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     updateFilterUI(state.filters);
                 });
 
-                // Load initial events
-                await eventStore.loadEvents(eventStore.state.filters);
-
-                // Load venues for filtering
+                // Load venues for filtering first
                 const venues = await eventStore.api.getVenues();
                 
                 setSfwMode(true);
@@ -1022,6 +1029,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 renderCategoryOptions();
                 renderVenueOptions(venues); 
                 setupEventListeners();
+                
+                // Load initial events after everything is set up
+                await eventStore.loadEvents(eventStore.state.filters);
+                
             } catch (error) {
                 console.error("Error initializing page:", error);
                 eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
