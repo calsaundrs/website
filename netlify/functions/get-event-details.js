@@ -75,7 +75,7 @@ exports.handler = async function (event, context) {
         eventRecords = await base('Events').select({
             maxRecords: 10,
             filterByFormula: `{Slug} = "${escapedSlug}"`,
-            fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date', 'Venue', 'Venue Name', 'VenueText', 'Category', 'Description', 'Address', 'Price', 'Age Restriction', 'Link', 'Parent Event Name']
+            fields: ['Event Name', 'Slug', 'Series ID', 'Date', 'Venue', 'Venue Name', 'Venue Slug', 'Category', 'Description', 'Status']
         }).firstPage();
 
         if (eventRecords && eventRecords.length > 0) {
@@ -98,7 +98,7 @@ exports.handler = async function (event, context) {
                     const parentRecords = await base('Events').select({
                         maxRecords: 1,
                         filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
-                        fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date', 'Venue', 'Venue Name', 'VenueText', 'Category', 'Description', 'Address', 'Price', 'Age Restriction', 'Link', 'Parent Event Name']
+                        fields: ['Event Name', 'Slug', 'Series ID', 'Date', 'Venue', 'Venue Name', 'Venue Slug', 'Category', 'Description', 'Status']
                     }).firstPage();
 
                     if (parentRecords && parentRecords.length > 0) {
@@ -128,11 +128,12 @@ exports.handler = async function (event, context) {
         }
         const fields = eventRecord.fields;
         const eventName = fields['Event Name'];
-        const recurringInfo = fields['Recurring Info'];
+        const seriesId = fields['Series ID'];
         const categoryTags = fields['Category'] || [];
         const tagsHtml = categoryTags.map(tag => `<span class="inline-block bg-gray-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-1 rounded-full">${tag}</span>`).join('');
 
-        let parentEventName = fields['Parent Event Name'];
+        // Check if this is a recurring event by looking for Series ID
+        const isRecurringEvent = !!seriesId;
         let filterFormula = null;
         let allFutureInstances = [];
         let finalVenueSlug = '';
@@ -141,12 +142,9 @@ exports.handler = async function (event, context) {
         
         
 
-        if (parentEventName) {
-            const parentNameForQuery = parentEventName.replace(/"/g, '\"');
-            filterFormula = `AND({Parent Event Name} = "${parentNameForQuery}", IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`
-        } else if (recurringInfo) {
+        if (isRecurringEvent) {
             const eventNameForQuery = eventName.replace(/"/g, '\"');
-            filterFormula = `AND({Event Name} = "${eventNameForQuery}", {Recurring Info}, IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`
+            filterFormula = `AND({Event Name} = "${eventNameForQuery}", {Series ID} = "${seriesId}", IS_AFTER({Date}, DATEADD(TODAY(),-1,'days')))`
         }
 
         if (filterFormula) {
@@ -157,7 +155,7 @@ exports.handler = async function (event, context) {
             allFutureInstances = futureInstanceRecords.map(rec => rec.fields);
         }
 
-        let venueNameForDisplay = fields['Venue Name'] ? fields['Venue Name'][0] : (fields['VenueText'] || 'TBC');
+        let venueNameForDisplay = fields['Venue Name'] ? fields['Venue Name'][0] : 'TBC';
         let venueHtml = `<p class="text-2xl font-semibold">${venueNameForDisplay}</p>`;
 
         const venueId = fields['Venue'] ? fields['Venue'][0] : null;
@@ -195,10 +193,11 @@ exports.handler = async function (event, context) {
             } catch (venueError) { console.error("Could not fetch linked venue, falling back to text.", venueError); }
         }
 
-        let addressHtml = fields['Address'] ? `<li><i class="fas fa-map-pin text-accent-color mr-3"></i> <strong>Address:</strong> ${fields['Address']}</li>` : '';
-        let priceHtml = fields['Price'] ? `<li><i class="fas fa-tag text-accent-color mr-3"></i> <strong>Price:</strong> ${fields['Price']}</li>` : '';
-        let ageRestrictionHtml = fields['Age Restriction'] ? `<li><i class="fas fa-user-friends text-accent-color mr-3"></i> <strong>Age:</strong> ${fields['Age Restriction']}</li>` : '';
-        let linkHtml = fields['Link'] ? `<li><i class="fas fa-link text-accent-color mr-3"></i> <strong>Link:</strong> <a href="${fields['Link']}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">More Info</a></li>` : '';
+        // These fields don't exist in the current database schema
+        let addressHtml = '';
+        let priceHtml = '';
+        let ageRestrictionHtml = '';
+        let linkHtml = '';
 
         let suggestedEventsHtml = '';
         const primaryEventCategories = fields['Category'] || [];
@@ -213,7 +212,7 @@ exports.handler = async function (event, context) {
                 filterByFormula: suggestedEventsFilter,
                 sort: [{ field: 'Date', direction: 'asc' }],
                 maxRecords: 6,
-                fields: ['Event Name', 'Date', 'Promo Image', 'Slug', 'Venue Name', 'VenueText']
+                fields: ['Event Name', 'Date', 'Slug', 'Venue Name']
             }).all();
 
             if (suggestedRecords.length > 0) {
