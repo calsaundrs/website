@@ -75,7 +75,7 @@ exports.handler = async function (event, context) {
         eventRecords = await base('Events').select({
             maxRecords: 10,
             filterByFormula: `{Slug} = "${escapedSlug}"`,
-            fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+            fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date', 'Venue', 'Venue Name', 'VenueText', 'Category', 'Description', 'Address', 'Price', 'Age Restriction', 'Link', 'Parent Event Name']
         }).firstPage();
 
         if (eventRecords && eventRecords.length > 0) {
@@ -98,7 +98,7 @@ exports.handler = async function (event, context) {
                     const parentRecords = await base('Events').select({
                         maxRecords: 1,
                         filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
-                        fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date']
+                        fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date', 'Venue', 'Venue Name', 'VenueText', 'Category', 'Description', 'Address', 'Price', 'Age Restriction', 'Link', 'Parent Event Name']
                     }).firstPage();
 
                     if (parentRecords && parentRecords.length > 0) {
