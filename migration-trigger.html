@@ -132,9 +132,14 @@
             </ul>
         </div>
 
-        <button id="migrateBtn" class="button" onclick="startMigration()">
-            🚀 Start Migration
-        </button>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="dryRunBtn" class="button" onclick="startMigration(true)" style="flex: 1; background-color: #ffd93d; color: #333;">
+                🔍 Test Migration (Dry Run)
+            </button>
+            <button id="migrateBtn" class="button" onclick="startMigration(false)" style="flex: 1;">
+                🚀 Start Real Migration
+            </button>
+        </div>
 
         <div id="status" class="status"></div>
         
@@ -162,7 +167,7 @@
     <script>
         let isRunning = false;
 
-        async function startMigration() {
+        async function startMigration(isDryRun = false) {
             if (isRunning) return;
             
             isRunning = true;
@@ -171,8 +176,17 @@
             const log = document.getElementById('log');
             
             // Reset UI
-            button.disabled = true;
-            button.textContent = '🔄 Migration Running...';
+            const dryRunBtn = document.getElementById('dryRunBtn');
+            const migrateBtn = document.getElementById('migrateBtn');
+            
+            dryRunBtn.disabled = true;
+            migrateBtn.disabled = true;
+            
+            if (isDryRun) {
+                dryRunBtn.textContent = '🔄 Test Running...';
+            } else {
+                migrateBtn.textContent = '🔄 Migration Running...';
+            }
             status.style.display = 'block';
             status.className = 'status loading';
             status.textContent = 'Starting migration...';
@@ -184,8 +198,13 @@
                 step.className = 'step';
             });
 
+            let totalProcessed = 0;
+            let totalErrors = 0;
+            let offset = 0;
+            let batchNumber = 1;
+
             try {
-                logMessage('Starting event data migration...');
+                logMessage('Starting chunked event data migration...');
                 updateStep(1, 'completed');
                 
                 logMessage('Connecting to database...');
@@ -195,20 +214,42 @@
                 updateStep(2, 'completed');
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Call the migration function
-                logMessage('Calling migration function...');
-                const response = await fetch('/.netlify/functions/migrate-event-data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                // Process batches until completion
+                while (true) {
+                    logMessage(`Processing batch ${batchNumber} (offset: ${offset})...`);
+                    
+                    const response = await fetch(`/.netlify/functions/migrate-event-data-chunked?offset=${offset}&batchSize=10&dryRun=${isDryRun}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const result = await response.json();
+                    
+                    totalProcessed += result.processed;
+                    totalErrors += result.errors;
+                    
+                    logMessage(`✅ Batch ${batchNumber} completed:`);
+                    logMessage(`   - Processed: ${result.processed} events`);
+                    logMessage(`   - Errors: ${result.errors} events`);
+                    logMessage(`   - Execution time: ${result.executionTime}ms`);
+                    
+                    if (result.completed) {
+                        logMessage('🎉 All batches completed!');
+                        break;
+                    }
+                    
+                    offset = result.nextOffset;
+                    batchNumber++;
+                    
+                    // Small delay between batches
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 }
-                
-                const result = await response.json();
                 
                 logMessage('Processing series events...');
                 updateStep(3, 'completed');
@@ -223,19 +264,27 @@
                 
                 // Success
                 status.className = 'status success';
+                const actionType = isDryRun ? 'Test' : 'Migration';
                 status.innerHTML = `
-                    <h3>✅ Migration Completed Successfully!</h3>
-                    <p><strong>Series processed:</strong> ${result.seriesProcessed}</p>
-                    <p><strong>Standalone events processed:</strong> ${result.standaloneProcessed}</p>
-                    <p><strong>Total events updated:</strong> ${result.seriesProcessed + result.standaloneProcessed}</p>
+                    <h3>✅ ${actionType} Completed Successfully!</h3>
+                    <p><strong>Total batches processed:</strong> ${batchNumber}</p>
+                    <p><strong>Total events processed:</strong> ${totalProcessed}</p>
+                    <p><strong>Total errors:</strong> ${totalErrors}</p>
+                    <p><strong>Success rate:</strong> ${totalProcessed > 0 ? Math.round(((totalProcessed - totalErrors) / totalProcessed) * 100) : 0}%</p>
+                    ${isDryRun ? '<p><em>This was a dry run - no data was actually changed.</em></p>' : ''}
                 `;
                 
-                logMessage(`✅ Migration completed successfully!`);
-                logMessage(`📊 Series processed: ${result.seriesProcessed}`);
-                logMessage(`📊 Standalone events processed: ${result.standaloneProcessed}`);
-                logMessage(`📊 Total events updated: ${result.seriesProcessed + result.standaloneProcessed}`);
+                logMessage(`✅ ${actionType} completed successfully!`);
+                logMessage(`📊 Total batches: ${batchNumber}`);
+                logMessage(`📊 Total events processed: ${totalProcessed}`);
+                logMessage(`📊 Total errors: ${totalErrors}`);
+                logMessage(`📊 Success rate: ${totalProcessed > 0 ? Math.round(((totalProcessed - totalErrors) / totalProcessed) * 100) : 0}%`);
                 
-                button.textContent = '✅ Migration Complete';
+                if (isDryRun) {
+                    dryRunBtn.textContent = '✅ Test Complete';
+                } else {
+                    migrateBtn.textContent = '✅ Migration Complete';
+                }
                 
             } catch (error) {
                 console.error('Migration failed:', error);
@@ -247,10 +296,15 @@
                     <p>Please check the console for more details and try again.</p>
                 `;
                 
-                logMessage(`❌ Migration failed: ${error.message}`);
+                logMessage(`❌ ${isDryRun ? 'Test' : 'Migration'} failed: ${error.message}`);
                 
-                button.textContent = '❌ Migration Failed - Try Again';
-                button.disabled = false;
+                if (isDryRun) {
+                    dryRunBtn.textContent = '❌ Test Failed - Try Again';
+                    dryRunBtn.disabled = false;
+                } else {
+                    migrateBtn.textContent = '❌ Migration Failed - Try Again';
+                    migrateBtn.disabled = false;
+                }
                 
                 // Mark current step as error
                 const currentStep = document.querySelector('.step:not(.completed)');
