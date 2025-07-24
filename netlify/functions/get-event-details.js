@@ -200,7 +200,7 @@ exports.handler = async function (event, context) {
         const eventDate = new Date(fields['Date']);
         const description = fields['Description'] || 'No description provided.';
         const pageUrl = `https://brumoutloud.co.uk${event.path}`;
-        const imageUrl = fields['Promo Image'] ? fields['Promo Image'][0].url : 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud';
+        const imageUrl = 'https://placehold.co/1200x675/1a1a1a/f5efe6?text=Brum+Out+Loud';
 
         const calendarData = {
             title: eventName,
@@ -208,7 +208,7 @@ exports.handler = async function (event, context) {
             location: venueNameForDisplay,
             startTime: eventDate.toISOString(),
             endTime: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000).toISOString(),
-            isRecurring: (parentEventName || recurringInfo) && allFutureInstances.length > 1,
+            isRecurring: isRecurringEvent && allFutureInstances.length > 1,
             recurringDates: allFutureInstances.map(i => i.Date)
         };
 
@@ -254,7 +254,7 @@ exports.handler = async function (event, context) {
                 "url": `${baseUrl}/event/${slug}`,
                 "offers": {
                     "@type": "Offer",
-                    "url": fields['Link'] || `${baseUrl}/event/${slug}`,
+                    "url": `${baseUrl}/event/${slug}`,
                     "price": "0",
                     "priceCurrency": "GBP",
                     "availability": "https://schema.org/InStock"
@@ -266,7 +266,7 @@ exports.handler = async function (event, context) {
             venueHtml: venueHtml,
             tagsHtml: tagsHtml,
             description: description.replace(/\n/g, '<br>'),
-            ticketLink: fields['Link'],
+            ticketLink: null,
             calendarLinksHtml: generateAddToCalendarLinks(calendarData),
             otherInstancesHTML: otherInstancesHTML,
             suggestedEventsHtml: suggestedEventsHtml,
