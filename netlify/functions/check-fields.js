@@ -7,8 +7,8 @@ exports.handler = async function (event, context) {
         
         // Get one record to see what fields are available
         const records = await base('Events').select({
-            maxRecords: 1,
-            fields: ['Event Name'] // Start with just one field
+            maxRecords: 1
+            // Don't specify fields to get all available fields
         }).firstPage();
         
         if (records.length === 0) {
