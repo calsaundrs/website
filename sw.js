@@ -157,7 +157,8 @@ async function cacheFirst(request, cacheName) {
   }
   
   const networkResponse = await fetch(request);
-  if (networkResponse.ok) {
+  // Only cache successful responses that are not partial (206)
+  if (networkResponse.ok && networkResponse.status !== 206) {
     const cache = await caches.open(cacheName);
     cache.put(request, networkResponse.clone());
   }
@@ -168,7 +169,8 @@ async function cacheFirst(request, cacheName) {
 async function networkFirst(request, cacheName) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+    // Only cache successful responses that are not partial (206)
+    if (networkResponse.ok && networkResponse.status !== 206) {
       const cache = await caches.open(cacheName);
       cache.put(request, networkResponse.clone());
     }
@@ -189,7 +191,8 @@ async function staleWhileRevalidate(request, cacheName) {
   
   // Start fetch in background
   const fetchPromise = fetch(request).then(networkResponse => {
-    if (networkResponse.ok) {
+    // Only cache successful responses that are not partial (206)
+    if (networkResponse.ok && networkResponse.status !== 206) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
