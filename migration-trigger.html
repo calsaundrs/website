@@ -136,6 +136,9 @@
             <button id="testBtn" class="button" onclick="testFunction()" style="flex: 1; background-color: #4ecdc4; color: #333;">
                 🧪 Test Function
             </button>
+            <button id="stopBtn" class="button" onclick="stopMigration()" style="flex: 1; background-color: #ff6b6b; color: white;">
+                🛑 Stop Migration
+            </button>
             <button id="dryRunBtn" class="button" onclick="startMigration(true)" style="flex: 1; background-color: #ffd93d; color: #333;">
                 🔍 Test Migration (Dry Run)
             </button>
@@ -169,11 +172,13 @@
 
     <script>
         let isRunning = false;
+        let shouldStop = false;
 
         async function startMigration(isDryRun = false) {
             if (isRunning) return;
             
             isRunning = true;
+            shouldStop = false;
             const button = document.getElementById('migrateBtn');
             const status = document.getElementById('status');
             const log = document.getElementById('log');
@@ -218,7 +223,7 @@
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // Process batches until completion
-                while (true) {
+                while (!shouldStop) {
                     logMessage(`Processing batch ${batchNumber} (offset: ${offset})...`);
                     
                     const response = await fetch(`/.netlify/functions/migrate-event-data-simple?offset=${offset}&batchSize=5&dryRun=${isDryRun}`, {
@@ -242,13 +247,25 @@
                     logMessage(`   - Errors: ${result.errors} events`);
                     logMessage(`   - Execution time: ${result.executionTime}ms`);
                     
-                    if (result.completed) {
+                    if (result.completed || !result.nextOffset) {
                         logMessage('🎉 All batches completed!');
                         break;
                     }
                     
                     offset = result.nextOffset;
                     batchNumber++;
+                    
+                    // Safety check - stop after 50 batches
+                    if (batchNumber > 50) {
+                        logMessage('⚠️ Safety limit reached - stopping migration');
+                        break;
+                    }
+                    
+                    // Check if user wants to stop
+                    if (shouldStop) {
+                        logMessage('🛑 Migration stopped by user');
+                        break;
+                    }
                     
                     // Small delay between batches
                     await new Promise(resolve => setTimeout(resolve, 500));
@@ -316,6 +333,7 @@
                 }
             } finally {
                 isRunning = false;
+                shouldStop = false;
             }
         }
 
@@ -384,6 +402,14 @@
                 `;
                 
                 logMessage(`❌ Function test failed: ${error.message}`);
+            }
+        }
+
+        // Stop migration function
+        function stopMigration() {
+            if (isRunning) {
+                shouldStop = true;
+                logMessage('🛑 Stopping migration...');
             }
         }
 

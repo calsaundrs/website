@@ -30,16 +30,20 @@ exports.handler = async (event, context) => {
     
     console.log(`Parameters: offset=${parsedOffset}, batchSize=${parsedBatchSize}, dryRun=${isDryRun}`);
     
-    // Simple query without pagination first
+    // Simple query with proper pagination
     const query = base('Events').select({
       fields: ['Event Name', 'Slug', 'Recurring Info', 'Series ID'],
-      maxRecords: parsedBatchSize
+      pageSize: parsedBatchSize
     });
     
     console.log('Query created, fetching records...');
     
     const records = await query.all();
     console.log(`Retrieved ${records.length} events`);
+    
+    // Check if we have more records
+    const hasMoreRecords = records.length === parsedBatchSize && records.offset;
+    const nextOffset = hasMoreRecords ? records.offset : null;
     
     // Simple processing - just count and return info
     let processed = 0;
@@ -64,6 +68,7 @@ exports.handler = async (event, context) => {
     });
     
     console.log(`Processing complete: ${processed} processed, ${errors} errors`);
+    console.log(`Has more records: ${hasMoreRecords}, Next offset: ${nextOffset}`);
     
     return {
       statusCode: 200,
@@ -75,14 +80,19 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({ 
         message: 'Simple migration test completed',
-        completed: records.length < parsedBatchSize,
+        completed: !hasMoreRecords,
         processed: processed,
         errors: errors,
-        nextOffset: records.length === parsedBatchSize ? (parsedOffset + parsedBatchSize) : null,
+        nextOffset: nextOffset,
         executionTime: Date.now(),
         batchSize: records.length,
         dryRun: isDryRun,
-        sampleEvents: eventInfo.slice(0, 3) // Show first 3 events for debugging
+        sampleEvents: eventInfo.slice(0, 3), // Show first 3 events for debugging
+        debug: {
+          hasMoreRecords,
+          offset: records.offset,
+          totalRecords: records.length
+        }
       })
     };
     
