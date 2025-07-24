@@ -3,6 +3,25 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }
 
 const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
+// Function to generate URL-friendly slugs
+const generateSlug = (eventName, date) => {
+    // Convert event name to URL-friendly slug
+    let slug = eventName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+        .trim();
+    
+    // Add date if provided
+    if (date) {
+        const dateStr = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD format
+        slug = `${slug}-${dateStr}`;
+    }
+    
+    return slug;
+};
+
 const getCloudinaryUrl = (publicId, width, height) => {
     if (!publicId || !cloudinaryCloudName) return null;
     return `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/f_auto,q_auto,w_${width},h_${height},c_limit/${publicId}`;
@@ -128,6 +147,13 @@ exports.handler = async (event, context) => {
                 const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
                 const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
 
+                // Generate proper slug for standalone events
+                let eventSlug = fields['Slug'];
+                if (!eventSlug || eventSlug.startsWith('#event-')) {
+                    // For standalone events, include the date
+                    eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                }
+
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
@@ -137,7 +163,7 @@ exports.handler = async (event, context) => {
                     image: promoImage ? promoImage.url : null,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
-                    slug: fields['Slug'] || `#event-${record.id}`,
+                    slug: eventSlug,
                     category: fields['Category'] || [],
                     isFeatured: isFeatured,
                     isBoosted: isBoosted,
@@ -182,6 +208,20 @@ exports.handler = async (event, context) => {
                 const imageUrl = cloudinaryPublicId ? getCloudinaryUrl(cloudinaryPublicId, 500, 281) : (promoImage ? promoImage.url : null);
                 const venueName = (fields['Venue Name'] ? fields['Venue Name'][0] : fields['VenueText']) || 'TBC';
 
+                // For recurring events, generate proper slugs (without dates)
+                let eventSlug = fields['Slug'];
+
+                if (!eventSlug || eventSlug.startsWith('#event-')) {
+                    // Generate a proper slug for this event (without date for recurring events)
+                    if (fields['Recurring Info'] || seriesId) {
+                        // This is a recurring event, don't include date
+                        eventSlug = generateSlug(fields['Event Name']);
+                    } else {
+                        // This is a standalone event, include date
+                        eventSlug = generateSlug(fields['Event Name'], fields['Date']);
+                    }
+                }
+
                 events.push({
                     id: record.id,
                     name: fields['Event Name'],
@@ -191,7 +231,7 @@ exports.handler = async (event, context) => {
                     image: promoImage ? promoImage.url : null,
                     imageWidth: promoImage?.width,
                     imageHeight: promoImage?.height,
-                    slug: fields['Slug'] || `#event-${record.id}`,
+                    slug: eventSlug,
                     category: fields['Category'] || [],
                     isFeatured: isFeatured,
                     isBoosted: isBoosted,
