@@ -79,42 +79,10 @@ exports.handler = async function (event, context) {
         }).firstPage();
 
         if (eventRecords && eventRecords.length > 0) {
-            // If we found events, check if any is a parent (has Recurring Info)
-            const parentEvent = eventRecords.find(record => record.fields['Recurring Info']);
-
-            if (parentEvent) {
-                // Use the parent event
-                console.log("Found parent recurring event:", parentEvent.fields['Event Name']);
-                eventRecords = [parentEvent];
-            } else {
-                // Check if any of the found events is a child with a Series ID
-                const childEvent = eventRecords.find(record => record.fields['Series ID']);
-
-                if (childEvent) {
-                    const seriesId = childEvent.fields['Series ID'];
-                    console.log("Found child event with Series ID:", seriesId);
-
-                    // Find the parent event for this series
-                    const parentRecords = await base('Events').select({
-                        maxRecords: 1,
-                        filterByFormula: `AND({Series ID} = "${seriesId}", {Recurring Info})`,
-                        fields: ['Event Name', 'Slug', 'Series ID', 'Date', 'Venue', 'Venue Name', 'Venue Slug', 'Category', 'Description', 'Status']
-                    }).firstPage();
-
-                    if (parentRecords && parentRecords.length > 0) {
-                        console.log("Found parent event:", parentRecords[0].fields['Event Name']);
-                        eventRecords = [parentRecords[0]];
-                    } else {
-                        console.log("No parent event found for Series ID:", seriesId);
-                        // Use the first child event as fallback
-                        eventRecords = [childEvent];
-                    }
-                } else {
-                    // Use the first event found (standalone event)
-                    console.log("Using standalone event:", eventRecords[0].fields['Event Name']);
-                    eventRecords = [eventRecords[0]];
-                }
-            }
+            // Since Recurring Info field doesn't exist, just use the first event found
+            // All events with the same slug are part of the same series
+            console.log("Using event:", eventRecords[0].fields['Event Name']);
+            eventRecords = [eventRecords[0]];
         } else {
             console.log("No event found with slug:", slug);
             return { statusCode: 404, body: 'Event not found.' };
