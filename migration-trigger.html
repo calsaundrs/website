@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Data Migration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background-color: #ff6b6b20;
+            border: 1px solid #ff6b6b;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .warning h3 {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+        .info {
+            background-color: #4ecdc420;
+            border: 1px solid #4ecdc4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .info h3 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        .button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #ff5252;
+        }
+        .button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success {
+            background-color: #4ecdc420;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        .status.error {
+            background-color: #ff6b6b20;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .status.loading {
+            background-color: #ffd93d20;
+            border: 1px solid #ffd93d;
+            color: #ffd93d;
+        }
+        .log {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            display: none;
+        }
+        .step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .step.completed {
+            background-color: #4ecdc420;
+            border-left: 4px solid #4ecdc4;
+        }
+        .step.error {
+            background-color: #ff6b6b20;
+            border-left: 4px solid #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Event Data Migration</h1>
+        
+        <div class="warning">
+            <h3>⚠️ Important Warning</h3>
+            <p>This migration will update your existing event data to work with the new robust system. The migration is safe and can be run multiple times, but please ensure you have a backup of your data before proceeding.</p>
+        </div>
+
+        <div class="info">
+            <h3>📋 What This Migration Does</h3>
+            <ul>
+                <li>Standardizes all event slugs for consistency</li>
+                <li>Fixes series relationships between recurring events</li>
+                <li>Ensures proper Series ID assignments</li>
+                <li>Validates and cleans up event data</li>
+                <li>Prepares data for the new robust system</li>
+            </ul>
+        </div>
+
+        <button id="migrateBtn" class="button" onclick="startMigration()">
+            🚀 Start Migration
+        </button>
+
+        <div id="status" class="status"></div>
+        
+        <div id="log" class="log"></div>
+
+        <div id="steps">
+            <div class="step" id="step1">
+                <strong>Step 1:</strong> Connecting to database...
+            </div>
+            <div class="step" id="step2">
+                <strong>Step 2:</strong> Loading existing events...
+            </div>
+            <div class="step" id="step3">
+                <strong>Step 3:</strong> Processing series events...
+            </div>
+            <div class="step" id="step4">
+                <strong>Step 4:</strong> Processing standalone events...
+            </div>
+            <div class="step" id="step5">
+                <strong>Step 5:</strong> Finalizing migration...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+
+        async function startMigration() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            const button = document.getElementById('migrateBtn');
+            const status = document.getElementById('status');
+            const log = document.getElementById('log');
+            
+            // Reset UI
+            button.disabled = true;
+            button.textContent = '🔄 Migration Running...';
+            status.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Starting migration...';
+            log.style.display = 'block';
+            log.innerHTML = '';
+            
+            // Reset steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.className = 'step';
+            });
+
+            try {
+                logMessage('Starting event data migration...');
+                updateStep(1, 'completed');
+                
+                logMessage('Connecting to database...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                logMessage('Loading existing events...');
+                updateStep(2, 'completed');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Call the migration function
+                logMessage('Calling migration function...');
+                const response = await fetch('/.netlify/functions/migrate-event-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                logMessage('Processing series events...');
+                updateStep(3, 'completed');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                logMessage('Processing standalone events...');
+                updateStep(4, 'completed');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                logMessage('Finalizing migration...');
+                updateStep(5, 'completed');
+                
+                // Success
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ Migration Completed Successfully!</h3>
+                    <p><strong>Series processed:</strong> ${result.seriesProcessed}</p>
+                    <p><strong>Standalone events processed:</strong> ${result.standaloneProcessed}</p>
+                    <p><strong>Total events updated:</strong> ${result.seriesProcessed + result.standaloneProcessed}</p>
+                `;
+                
+                logMessage(`✅ Migration completed successfully!`);
+                logMessage(`📊 Series processed: ${result.seriesProcessed}`);
+                logMessage(`📊 Standalone events processed: ${result.standaloneProcessed}`);
+                logMessage(`📊 Total events updated: ${result.seriesProcessed + result.standaloneProcessed}`);
+                
+                button.textContent = '✅ Migration Complete';
+                
+            } catch (error) {
+                console.error('Migration failed:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ Migration Failed</h3>
+                    <p>Error: ${error.message}</p>
+                    <p>Please check the console for more details and try again.</p>
+                `;
+                
+                logMessage(`❌ Migration failed: ${error.message}`);
+                
+                button.textContent = '❌ Migration Failed - Try Again';
+                button.disabled = false;
+                
+                // Mark current step as error
+                const currentStep = document.querySelector('.step:not(.completed)');
+                if (currentStep) {
+                    currentStep.className = 'step error';
+                }
+            } finally {
+                isRunning = false;
+            }
+        }
+
+        function logMessage(message) {
+            const log = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `[${timestamp}] ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStep(stepNumber, status) {
+            const step = document.getElementById(`step${stepNumber}`);
+            if (step) {
+                step.className = `step ${status}`;
+            }
+        }
+
+        // Add some helpful information
+        document.addEventListener('DOMContentLoaded', () => {
+            logMessage('Migration interface loaded');
+            logMessage('Ready to start migration...');
+        });
+    </script>
+</body>
+</html>
