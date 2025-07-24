@@ -57,7 +57,7 @@ exports.handler = async function (event, context) {
                 // Update parent event if slug is missing, is a fallback, or doesn't match
                 const currentParentSlug = parentEvent.fields['Slug'];
                 if (!currentParentSlug || currentParentSlug.startsWith('#event-') || currentParentSlug !== parentSlug) {
-                    console.log(`update-airtable-slugs: Updating parent event "${parentEvent.fields['Event Name']}" slug from "${currentParentSlug}" to "${parentSlug}"`);
+                    console.log(`update-airtable-slugs: Updating parent event "${parentEvent.fields['Event Name']}" slug from "${currentParentSlug || 'null'}" to "${parentSlug}"`);
                     updates.push({
                         id: parentEvent.id,
                         fields: { 'Slug': parentSlug }
@@ -69,7 +69,7 @@ exports.handler = async function (event, context) {
                     if (!instance.fields['Recurring Info']) { // This is a child
                         const currentChildSlug = instance.fields['Slug'];
                         if (!currentChildSlug || currentChildSlug.startsWith('#event-') || currentChildSlug !== parentSlug) {
-                            console.log(`update-airtable-slugs: Updating child event "${instance.fields['Event Name']}" slug from "${currentChildSlug}" to "${parentSlug}"`);
+                            console.log(`update-airtable-slugs: Updating child event "${instance.fields['Event Name']}" slug from "${currentChildSlug || 'null'}" to "${parentSlug}"`);
                             updates.push({
                                 id: instance.id,
                                 fields: { 'Slug': parentSlug }
@@ -87,7 +87,7 @@ exports.handler = async function (event, context) {
                 const newSlug = generateSlug(record.fields['Event Name'], record.fields['Date']);
                 
                 if (!currentSlug || currentSlug.startsWith('#event-') || currentSlug !== newSlug) {
-                    console.log(`update-airtable-slugs: Updating standalone event "${record.fields['Event Name']}" slug from "${currentSlug}" to "${newSlug}"`);
+                    console.log(`update-airtable-slugs: Updating standalone event "${record.fields['Event Name']}" slug from "${currentSlug || 'null'}" to "${newSlug}"`);
                     updates.push({
                         id: record.id,
                         fields: { 'Slug': newSlug }
