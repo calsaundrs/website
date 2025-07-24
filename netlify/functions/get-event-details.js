@@ -61,9 +61,15 @@ exports.handler = async function (event, context) {
     const baseUrl = process.env.URL || 'https://www.brumoutloud.co.uk';
     
     // Extract slug from path or query parameters
-    let slug = event.path.split("/").pop();
-    if (!slug && event.queryStringParameters && event.queryStringParameters.slug) {
+    let slug = null;
+    
+    // Try query parameters first
+    if (event.queryStringParameters && event.queryStringParameters.slug) {
         slug = event.queryStringParameters.slug;
+    } else {
+        // Extract from path
+        const pathParts = event.path.split("/");
+        slug = pathParts[pathParts.length - 1];
     }
     
     if (!slug) {
