@@ -180,7 +180,7 @@ exports.handler = async function (event, context) {
                 filterByFormula: suggestedEventsFilter,
                 sort: [{ field: 'Date', direction: 'asc' }],
                 maxRecords: 6,
-                fields: ['Event Name', 'Date', 'Slug', 'Venue Name']
+                fields: ['Event Name', 'Date', 'Slug', 'Venue Name', 'Category']
             }).all();
 
             if (suggestedRecords.length > 0) {
