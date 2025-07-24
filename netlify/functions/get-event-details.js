@@ -59,7 +59,13 @@ function generateAddToCalendarLinks(event) {
 
 exports.handler = async function (event, context) {
     const baseUrl = process.env.URL || 'https://www.brumoutloud.co.uk';
-    const slug = event.path.split("/").pop();
+    
+    // Extract slug from path or query parameters
+    let slug = event.path.split("/").pop();
+    if (!slug && event.queryStringParameters && event.queryStringParameters.slug) {
+        slug = event.queryStringParameters.slug;
+    }
+    
     if (!slug) {
         return { statusCode: 400, body: 'Error: Event slug not provided.' };
     }
