@@ -47,10 +47,13 @@ exports.handler = async function (event, context) {
         
         // Process recurring series
         seriesGroups.forEach((seriesInstances, seriesId) => {
+            console.log(`update-airtable-slugs: Processing series ${seriesId} with ${seriesInstances.length} instances`);
+            
             // Find the parent event (the one with Recurring Info)
             const parentEvent = seriesInstances.find(instance => instance.fields['Recurring Info']);
             
             if (parentEvent) {
+                console.log(`update-airtable-slugs: Found parent event "${parentEvent.fields['Event Name']}" for series ${seriesId}`);
                 // Generate slug for parent event (without date)
                 const parentSlug = generateSlug(parentEvent.fields['Event Name']);
                 
@@ -75,6 +78,23 @@ exports.handler = async function (event, context) {
                                 fields: { 'Slug': parentSlug }
                             });
                         }
+                    }
+                });
+            } else {
+                console.log(`update-airtable-slugs: No parent event found for series ${seriesId}, generating slug from first instance`);
+                // If no parent event found, use the first instance to generate a slug
+                const firstInstance = seriesInstances[0];
+                const seriesSlug = generateSlug(firstInstance.fields['Event Name']);
+                
+                // Update all instances to use the same slug
+                seriesInstances.forEach(instance => {
+                    const currentSlug = instance.fields['Slug'];
+                    if (!currentSlug || currentSlug.startsWith('#event-') || currentSlug !== seriesSlug) {
+                        console.log(`update-airtable-slugs: Updating series instance "${instance.fields['Event Name']}" slug from "${currentSlug || 'null'}" to "${seriesSlug}"`);
+                        updates.push({
+                            id: instance.id,
+                            fields: { 'Slug': seriesSlug }
+                        });
                     }
                 });
             }
