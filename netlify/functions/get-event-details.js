@@ -75,7 +75,7 @@ exports.handler = async function (event, context) {
         eventRecords = await base('Events').select({
             maxRecords: 10,
             filterByFormula: `{Slug} = "${escapedSlug}"`,
-            fields: ['Event Name', 'Slug', 'Series ID', 'Date', 'Venue', 'Venue Name', 'Venue Slug', 'Category', 'Description', 'Status']
+            fields: ['Event Name', 'Slug', 'Series ID', 'Date', 'Venue', 'Venue Name', 'Category', 'Description', 'Status']
         }).firstPage();
 
         if (eventRecords && eventRecords.length > 0) {
