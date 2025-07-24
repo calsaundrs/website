@@ -133,6 +133,9 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="testBtn" class="button" onclick="testFunction()" style="flex: 1; background-color: #4ecdc4; color: #333;">
+                🧪 Test Function
+            </button>
             <button id="dryRunBtn" class="button" onclick="startMigration(true)" style="flex: 1; background-color: #ffd93d; color: #333;">
                 🔍 Test Migration (Dry Run)
             </button>
@@ -218,7 +221,7 @@
                 while (true) {
                     logMessage(`Processing batch ${batchNumber} (offset: ${offset})...`);
                     
-                    const response = await fetch(`/.netlify/functions/migrate-event-data-chunked?offset=${offset}&batchSize=10&dryRun=${isDryRun}`, {
+                    const response = await fetch(`/.netlify/functions/migrate-event-data-simple?offset=${offset}&batchSize=5&dryRun=${isDryRun}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -327,6 +330,60 @@
             const step = document.getElementById(`step${stepNumber}`);
             if (step) {
                 step.className = `step ${status}`;
+            }
+        }
+
+        // Test function to check if the endpoint is working
+        async function testFunction() {
+            const status = document.getElementById('status');
+            const log = document.getElementById('log');
+            
+            status.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Testing function...';
+            log.style.display = 'block';
+            log.innerHTML = '';
+            
+            try {
+                logMessage('Testing simple migration function...');
+                const response = await fetch('/.netlify/functions/migrate-event-data-simple?batchSize=2&dryRun=true');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ Function Test Successful!</h3>
+                    <p><strong>Message:</strong> ${result.message}</p>
+                    <p><strong>Processed:</strong> ${result.processed} events</p>
+                    <p><strong>Errors:</strong> ${result.errors}</p>
+                    <p><strong>Execution time:</strong> ${result.executionTime}ms</p>
+                    <p><strong>Sample events:</strong> ${result.sampleEvents ? result.sampleEvents.length : 0} shown</p>
+                `;
+                
+                logMessage('✅ Function test successful!');
+                logMessage(`📊 Processed: ${result.processed} events`);
+                logMessage(`📊 Errors: ${result.errors}`);
+                if (result.sampleEvents) {
+                    result.sampleEvents.forEach((event, index) => {
+                        logMessage(`📋 Event ${index + 1}: ${event.name} (ID: ${event.id})`);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Function test failed:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ Function Test Failed</h3>
+                    <p>Error: ${error.message}</p>
+                    <p>This might indicate an issue with the function deployment or environment variables.</p>
+                `;
+                
+                logMessage(`❌ Function test failed: ${error.message}`);
             }
         }
 
