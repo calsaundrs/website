@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v7 - Added venue linking to approved venues
+// Version: 2025-07-25-v9 - Fixed ticket link condition with custom helper
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -547,7 +547,7 @@ exports.handler = async function (event, context) {
 
 
                         <!-- Action Buttons -->
-                        {{#if event.details.link}}
+                        {{#if (hasValidLink event.details.link)}}
                         <div class="venue-card p-6">
                             <div class="space-y-3">
                                 <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
@@ -852,6 +852,9 @@ exports.handler = async function (event, context) {
                 } catch (error) {
                     return '---';
                 }
+            },
+            hasValidLink: (link) => {
+                return link && link !== null && link !== '';
             }
         };
 
