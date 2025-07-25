@@ -61,7 +61,7 @@ class FirestoreEventService {
     try {
       const eventsRef = this.db.collection('events');
       const snapshot = await eventsRef
-        .where('slug', '==', slug)
+        .where('Slug', '==', slug)
         .limit(10)
         .get();
 
@@ -161,23 +161,49 @@ class FirestoreEventService {
   }
 
   processStandaloneEvent(eventData) {
-    return {
+    // Map Firestore field names to expected field names
+    const mappedData = {
       id: eventData.id,
-      name: eventData.name,
-      slug: eventData.slug,
-      description: eventData.description,
-      category: eventData.category || [],
-      date: eventData.date,
-      venue: this.extractVenueInfo(eventData),
-      image: this.extractImageInfo(eventData),
-      promotion: this.extractPromotionInfo(eventData),
+      name: eventData['Event Name'] || eventData.name,
+      slug: eventData['Slug'] || eventData.slug,
+      description: eventData['Description'] || eventData.description,
+      category: eventData['categories'] || eventData.category || [],
+      date: eventData['Date'] || eventData.date,
+      venueId: eventData['venueId'] || eventData.venueId,
+      venueName: eventData['Venue Name'] || eventData.venueName,
+      venueSlug: eventData['Venue Slug'] || eventData.venueSlug,
+      venueAddress: eventData['Venue Address'] || eventData.venueAddress,
+      venueLink: eventData['Venue Link'] || eventData.venueLink,
+      image: eventData['Promo Image'] || eventData.image,
+      cloudinaryPublicId: eventData['Cloudinary Public ID'] || eventData.cloudinaryPublicId,
+      price: eventData['Price'] || eventData.price,
+      ageRestriction: eventData['Age Restriction'] || eventData.ageRestriction,
+      link: eventData['Link'] || eventData.link,
+      ticketLink: eventData['Ticket Link'] || eventData.ticketLink,
+      seriesId: eventData['Series ID'] || eventData.seriesId,
+      featuredBannerStartDate: eventData['Featured Banner Start Date'] || eventData.featuredBannerStartDate,
+      featuredBannerEndDate: eventData['Featured Banner End Date'] || eventData.featuredBannerEndDate,
+      boostedListingStartDate: eventData['Boosted Listing Start Date'] || eventData.boostedListingStartDate,
+      boostedListingEndDate: eventData['Boosted Listing End Date'] || eventData.boostedListingEndDate
+    };
+
+    return {
+      id: mappedData.id,
+      name: mappedData.name,
+      slug: mappedData.slug,
+      description: mappedData.description,
+      category: mappedData.category,
+      date: mappedData.date,
+      venue: this.extractVenueInfo(mappedData),
+      image: this.extractImageInfo(mappedData),
+      promotion: this.extractPromotionInfo(mappedData),
       details: {
-        price: eventData.price,
-        ageRestriction: eventData.ageRestriction,
-        link: eventData.link || eventData.ticketLink
+        price: mappedData.price,
+        ageRestriction: mappedData.ageRestriction,
+        link: mappedData.link || mappedData.ticketLink
       },
-      series: eventData.seriesId ? {
-        id: eventData.seriesId,
+      series: mappedData.seriesId ? {
+        id: mappedData.seriesId,
         type: 'instance'
       } : null
     };
@@ -203,19 +229,25 @@ class FirestoreEventService {
   }
 
   extractImageInfo(eventData) {
-    if (eventData.image) {
-      return {
-        url: eventData.image.url,
-        publicId: eventData.image.publicId
-      };
-    }
+    const cloudinaryId = eventData.cloudinaryPublicId;
+    const promoImage = eventData.image;
     
-    // Fallback to image fields if image object doesn't exist
-    if (eventData.promoImage || eventData.cloudinaryPublicId) {
+    if (cloudinaryId) {
       return {
-        url: eventData.promoImage,
-        publicId: eventData.cloudinaryPublicId
+        url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
+        alt: eventData.name
       };
+    } else if (promoImage) {
+      // Handle both string URLs and array objects
+      const imageUrl = typeof promoImage === 'string' ? promoImage : 
+                      (promoImage.url || promoImage[0]?.url);
+      
+      if (imageUrl) {
+        return {
+          url: imageUrl,
+          alt: eventData.name
+        };
+      }
     }
     
     return null;
