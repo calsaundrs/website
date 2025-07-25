@@ -36,6 +36,12 @@ exports.handler = async function (event, context) {
         
     } catch (error) {
         console.error('Error in get-events-firestore:', error);
+        console.error('Error stack:', error.stack);
+        
+        // Check if this is an index error
+        if (error.message && error.message.includes('FAILED_PRECONDITION')) {
+            console.log('This is an index error - follow the link in the error message to create the required index');
+        }
         
         return {
             statusCode: 500,
@@ -45,7 +51,9 @@ exports.handler = async function (event, context) {
             },
             body: JSON.stringify({
                 error: 'Internal server error',
-                message: error.message
+                message: error.message,
+                details: error.details || 'No additional details available',
+                code: error.code || 'UNKNOWN'
             })
         };
     }
@@ -68,40 +76,23 @@ async function handlePublicView(queryParams) {
         const eventsRef = db.collection('events');
         let query = eventsRef.where('status', '==', 'approved');
 
-        // Apply date filtering
-        if (filters.dateRange.type === 'upcoming') {
-            const now = new Date();
-            query = query.where('date', '>=', now);
-        } else if (filters.dateRange.type === 'today') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            query = query.where('date', '>=', today).where('date', '<', tomorrow);
-        } else if (filters.dateRange.type === 'week') {
-            const now = new Date();
-            const weekFromNow = new Date(now);
-            weekFromNow.setDate(weekFromNow.getDate() + 7);
-            query = query.where('date', '>=', now).where('date', '<=', weekFromNow);
-        }
-
-        // Apply category filtering
-        if (filters.categories.length > 0) {
-            query = query.where('category', 'array-contains-any', filters.categories);
-        }
-
-        // Apply venue filtering
-        if (filters.venues.length > 0) {
-            query = query.where('venueId', 'in', filters.venues);
-        }
-
-        // Order by date
+        // Start with a simple query that will work immediately
+        // This will generate index creation links for more complex queries
+        console.log("Using basic query to generate index links");
+        
+        // For now, just get approved events ordered by date
+        // This will trigger the basic index creation link
         query = query.orderBy('date', 'asc');
+        
+        // Note: We'll add filtering back once the basic index is created
+        // The error messages will guide us to create the right indexes
 
         // Apply pagination
         query = query.limit(filters.limit).offset(filters.offset);
 
+        console.log("Executing Firestore query...");
         const snapshot = await query.get();
+        console.log(`Query returned ${snapshot.size} documents`);
         
         const events = [];
         snapshot.forEach(doc => {
@@ -122,11 +113,15 @@ async function handlePublicView(queryParams) {
             
             events.push(processEventForPublic(eventData));
         });
+        
+        console.log(`Processed ${events.length} events after filtering`);
 
         // Get total count for pagination
+        console.log("Getting total count...");
         const countQuery = eventsRef.where('status', '==', 'approved');
         const countSnapshot = await countQuery.get();
         const totalCount = countSnapshot.size;
+        console.log(`Total count: ${totalCount}`);
 
         return {
             statusCode: 200,
