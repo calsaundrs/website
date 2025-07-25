@@ -67,12 +67,24 @@ function recordToObject(record) {
     // Ensure createdAt is always a valid date string
     const createdAt = record.createdTime || new Date().toISOString();
     
-    return {
+    const result = {
         id: record.id,
         ...cleanFields,
         createdAt: createdAt,
         updatedAt: new Date().toISOString()
     };
+    
+    // Debug: Log the result for first few records
+    if (Object.keys(cleanFields).length < 5) {
+        console.log(`Debug - recordToObject result:`, {
+            id: result.id,
+            createdAt: result.createdAt,
+            updatedAt: result.updatedAt,
+            fieldCount: Object.keys(cleanFields).length
+        });
+    }
+    
+    return result;
 }
 
 // Migration function for Venues
@@ -114,6 +126,13 @@ async function migrateVenues() {
                     if (!venueData.Status) {
                         venueData.Status = 'Approved';
                     }
+                    
+                    // Remove any undefined values to prevent Firestore errors
+                    Object.keys(venueData).forEach(key => {
+                        if (venueData[key] === undefined) {
+                            delete venueData[key];
+                        }
+                    });
                     
                     // Create venue document
                     const venueRef = venuesCollection.doc(venueData.id);
@@ -218,6 +237,13 @@ async function migrateEvents() {
                         delete eventData.Category;
                     }
                     
+                    // Remove any undefined values to prevent Firestore errors
+                    Object.keys(eventData).forEach(key => {
+                        if (eventData[key] === undefined) {
+                            delete eventData[key];
+                        }
+                    });
+                    
                     // Create event document
                     const eventRef = eventsCollection.doc(eventData.id);
                     batch.set(eventRef, eventData);
@@ -273,6 +299,13 @@ async function migrateSystemNotifications() {
                     if (!notificationData.Status) {
                         notificationData.Status = 'Active';
                     }
+                    
+                    // Remove any undefined values to prevent Firestore errors
+                    Object.keys(notificationData).forEach(key => {
+                        if (notificationData[key] === undefined) {
+                            delete notificationData[key];
+                        }
+                    });
                     
                     // Create notification document
                     const notificationRef = notificationsCollection.doc(notificationData.id);
