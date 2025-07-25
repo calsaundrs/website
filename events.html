@@ -137,9 +137,11 @@
             border-radius: 0.75rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             padding: 1rem;
-            z-index: 20;
+            z-index: 1000;
             background-color: #1e1e1e;
             border: 1px solid #2e2e2e;
+            top: 100%;
+            left: 0;
         }
         .popover.show {
             display: block;
@@ -225,6 +227,11 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(75, 85, 99, 0.5);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
         }
 
         /* Enhanced loader */
@@ -555,13 +562,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  </div>
             </div>
 
-            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
+            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
                 <div class="flex flex-wrap gap-3 items-center">
                     <button class="filter-button active" data-filter-type="date" data-filter-value="all">All Upcoming</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
                     
-                    <div class="relative">
+                    <div class="relative z-20">
                         <button id="custom-date-btn" class="filter-button">
                             <span>Custom Date</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
@@ -574,7 +581,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                     </div>
 
-                    <div class="relative">
+                    <div class="relative z-20">
                         <button id="category-btn" class="filter-button">
                             <span>All Categories</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
@@ -584,7 +591,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                     </div>
 
-                    <div class="relative">
+                    <div class="relative z-20">
                         <button id="venue-btn" class="filter-button">
                             <span>All Venues</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
