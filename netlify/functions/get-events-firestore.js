@@ -285,12 +285,17 @@ async function handleVenuesView() {
                 // Look specifically for "Listing Status" field
                 console.log("Looking for 'Listing Status' field specifically...");
                 let foundListedVenues = 0;
+                let venuesWithListingStatus = 0;
                 
                 // Check all venues for "Listing Status" field
                 rawVenues.forEach(venue => {
+                    // Log all field names for debugging
+                    console.log(`Venue ${venue.id} fields:`, Object.keys(venue));
+                    
                     if (venue['Listing Status'] !== undefined) {
                         const listingStatus = venue['Listing Status'];
                         console.log(`Venue ${venue.id} has "Listing Status" = "${listingStatus}"`);
+                        venuesWithListingStatus++;
                         
                         if (listingStatus === 'Listed') {
                             venues.push(processVenueForPublic(venue));
@@ -298,9 +303,14 @@ async function handleVenuesView() {
                         }
                     } else {
                         console.log(`Venue ${venue.id} does NOT have "Listing Status" field`);
+                        // Log the first few venues' raw data for debugging
+                        if (venuesWithListingStatus === 0) {
+                            console.log(`Raw venue data for ${venue.id}:`, JSON.stringify(venue, null, 2));
+                        }
                     }
                 });
                 
+                console.log(`Found ${venuesWithListingStatus} venues with "Listing Status" field`);
                 console.log(`Found ${foundListedVenues} venues with "Listing Status" = "Listed"`);
             }
             
