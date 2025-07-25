@@ -21,10 +21,10 @@
   to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
   status = 200
 
-# Rule for individual VENUE pages
+# Rule for individual VENUE pages (Firestore-based)
 [[redirects]]
   from = "/venue/*"
-  to = "/.netlify/functions/get-venue-details?slug=:splat"
+  to = "/.netlify/functions/get-venue-details-firestore?slug=:splat"
   status = 200
 
 # Rule for the main EVENTS listing page
@@ -100,10 +100,10 @@
     to = "/admin-edit-events.html"
     status = 200
 
-# Rule for the dynamic sitemap
+# Rule for the dynamic sitemap (Firestore-based)
 [[redirects]]
   from = "/sitemap.xml"
-  to = "/.netlify/functions/sitemap"
+  to = "/.netlify/functions/sitemap-firestore"
   status = 200
   force = true
 

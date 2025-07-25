@@ -528,7 +528,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             if (loader) loader.style.display = 'flex';
 
             try {
-                const response = await fetch('/.netlify/functions/get-venues');
+                const response = await fetch('/.netlify/functions/get-events-firestore?view=venues');
                 if (!response.ok) throw new Error('Failed to fetch venues. Status: ' + response.status);
                 const fetchedVenues = await response.json();
                 
