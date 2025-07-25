@@ -15,10 +15,10 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages
+# Rule for individual EVENT pages (Firestore-based)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details?slug=:splat"
+  to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
   status = 200
 
 # Rule for individual VENUE pages
@@ -124,6 +124,9 @@
   CLOUDINARY_CLOUD_NAME = ""
   CLOUDINARY_API_KEY = ""
   CLOUDINARY_API_SECRET = ""
+  FIREBASE_PROJECT_ID = ""
+  FIREBASE_CLIENT_EMAIL = ""
+  FIREBASE_PRIVATE_KEY = ""
 
 [context.deploy-preview.environment]
   AIRTABLE_PERSONAL_ACCESS_TOKEN = ""
@@ -131,3 +134,6 @@
   CLOUDINARY_CLOUD_NAME = ""
   CLOUDINARY_API_KEY = ""
   CLOUDINARY_API_SECRET = ""
+  FIREBASE_PROJECT_ID = ""
+  FIREBASE_CLIENT_EMAIL = ""
+  FIREBASE_PRIVATE_KEY = ""
