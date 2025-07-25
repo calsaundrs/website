@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v9 - Fixed ticket link condition with custom helper
+// Version: 2025-07-25-v10 - Simplified ticket link condition, removed redundant sidebar cards
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -492,62 +492,13 @@ exports.handler = async function (event, context) {
                         {{/if}}
                     </div>
 
-                    <!-- Sidebar -->
+                                        <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Date & Time -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
-                            </h3>
-                            <p class="text-2xl font-semibold text-white">{{formatDateOnly event.date}}</p>
-                            <p class="text-xl text-gray-400">{{formatTime event.date}}</p>
-                            {{#if event.recurringInfo}}
-                            <div class="mt-2">
-                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
-                            </div>
-                            {{/if}}
-                        </div>
-
-                                                                         <!-- Location -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
-                            </h3>
-                            <div class="space-y-3">
-                                <div>
-                                    {{#if event.venue.isApprovedVenue}}
-                                    <a href="/venue/{{event.venue.slug}}" class="hover:text-accent-color transition-colors">
-                                        <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
-                                    </a>
-                                    {{else}}
-                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
-                                    {{/if}}
-                                    {{#if event.venue.address}}
-                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
-                                    {{/if}}
-                                </div>
-                                 {{#if event.venue.phone}}
-                                 <div class="flex items-center gap-2 text-gray-400 text-sm">
-                                     <i class="fas fa-phone"></i>
-                                     <span>{{event.venue.phone}}</span>
-                                 </div>
-                                 {{/if}}
-                                 {{#if event.venue.website}}
-                                 <div class="flex items-center gap-2 text-gray-400 text-sm">
-                                     <i class="fas fa-globe"></i>
-                                     <a href="{{event.venue.website}}" target="_blank" rel="noopener noreferrer" class="text-accent-color hover:underline">Visit Website</a>
-                                 </div>
-                                 {{/if}}
-                                 <button class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm" onclick="getDirections()">
-                                     <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
-                                 </button>
-                             </div>
-                         </div>
 
 
 
                         <!-- Action Buttons -->
-                        {{#if (hasValidLink event.details.link)}}
+                        {{#if event.details.link}}
                         <div class="venue-card p-6">
                             <div class="space-y-3">
                                 <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
