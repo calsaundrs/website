@@ -507,7 +507,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             // Update tests passed
             const testsPassed = document.getElementById('tests-passed');
-            if (status.totalTests > 0) {
+            if (status.hasRunTests && status.totalTests > 0) {
                 testsPassed.textContent = `${status.passedTests}/${status.totalTests}`;
             } else {
                 testsPassed.textContent = '--';

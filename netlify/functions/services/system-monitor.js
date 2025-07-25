@@ -11,6 +11,7 @@ class SystemMonitor {
     this.seriesManager = new SeriesManager();
     this.testResults = new Map();
     this.lastRun = null;
+    this.startTime = Date.now(); // Initialize start time
   }
 
   async runAllTests() {
@@ -430,8 +431,16 @@ class SystemMonitor {
 
     // Determine overall status
     let overallStatus = 'unknown';
+    let totalTests = 0;
+    let passedTests = 0;
+    let failedTests = 0;
+    
     if (recentResults.length > 0) {
       const latest = recentResults[0];
+      totalTests = latest.totalTests;
+      passedTests = latest.passed;
+      failedTests = latest.failed;
+      
       if (latest.failed === 0) {
         overallStatus = 'healthy';
       } else if (latest.failed < latest.totalTests) {
@@ -449,9 +458,10 @@ class SystemMonitor {
       lastRun: this.lastRun ? new Date(this.lastRun).toISOString() : null,
       recentResults,
       uptime,
-      totalTests: recentResults.length > 0 ? recentResults[0].totalTests : 0,
-      passedTests: recentResults.length > 0 ? recentResults[0].passed : 0,
-      failedTests: recentResults.length > 0 ? recentResults[0].failed : 0
+      totalTests,
+      passedTests,
+      failedTests,
+      hasRunTests: recentResults.length > 0
     };
   }
 
