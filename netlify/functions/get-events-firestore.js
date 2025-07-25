@@ -282,36 +282,67 @@ async function handleVenuesView() {
                     console.log(`Venue ${index + 1} (${venue.id}):`, JSON.stringify(venue, null, 2));
                 });
                 
-                // Look specifically for "Listing Status" field
-                console.log("Looking for 'Listing Status' field specifically...");
+                // Look for multiple possible listing status fields
+                console.log("Looking for listing status fields...");
                 let foundListedVenues = 0;
-                let venuesWithListingStatus = 0;
+                let venuesWithAnyStatusField = 0;
                 
-                // Check all venues for "Listing Status" field
+                // Check all venues for various listing status fields
                 rawVenues.forEach(venue => {
                     // Log all field names for debugging
                     console.log(`Venue ${venue.id} fields:`, Object.keys(venue));
                     
-                    if (venue['Listing Status'] !== undefined) {
-                        const listingStatus = venue['Listing Status'];
-                        console.log(`Venue ${venue.id} has "Listing Status" = "${listingStatus}"`);
-                        venuesWithListingStatus++;
+                    // Check multiple possible field names
+                    const possibleFields = [
+                        'Listing Status',
+                        'listingStatus', 
+                        'isListed',
+                        'listed',
+                        'status'
+                    ];
+                    
+                    let foundStatus = false;
+                    let statusValue = null;
+                    let statusField = null;
+                    
+                    for (const field of possibleFields) {
+                        if (venue[field] !== undefined) {
+                            statusField = field;
+                            statusValue = venue[field];
+                            foundStatus = true;
+                            console.log(`Venue ${venue.id} has "${field}" = "${statusValue}"`);
+                            break;
+                        }
+                    }
+                    
+                    if (foundStatus) {
+                        venuesWithAnyStatusField++;
                         
-                        if (listingStatus === 'Listed') {
+                        // Check if venue should be listed based on various possible values
+                        const shouldBeListed = 
+                            statusValue === 'Listed' || 
+                            statusValue === 'listed' || 
+                            statusValue === true || 
+                            statusValue === 'true';
+                        
+                        if (shouldBeListed) {
                             venues.push(processVenueForPublic(venue));
                             foundListedVenues++;
+                            console.log(`✓ Venue ${venue.id} (${venue.Name || venue.name}) is LISTED`);
+                        } else {
+                            console.log(`✗ Venue ${venue.id} (${venue.Name || venue.name}) is NOT listed (${statusField} = "${statusValue}")`);
                         }
                     } else {
-                        console.log(`Venue ${venue.id} does NOT have "Listing Status" field`);
+                        console.log(`Venue ${venue.id} does NOT have any listing status field`);
                         // Log the first few venues' raw data for debugging
-                        if (venuesWithListingStatus === 0) {
+                        if (venuesWithAnyStatusField === 0) {
                             console.log(`Raw venue data for ${venue.id}:`, JSON.stringify(venue, null, 2));
                         }
                     }
                 });
                 
-                console.log(`Found ${venuesWithListingStatus} venues with "Listing Status" field`);
-                console.log(`Found ${foundListedVenues} venues with "Listing Status" = "Listed"`);
+                console.log(`Found ${venuesWithAnyStatusField} venues with any status field`);
+                console.log(`Found ${foundListedVenues} venues that should be listed`);
             }
             
             console.log(`Total venues with Listing Status = Listed: ${venues.length}`);
