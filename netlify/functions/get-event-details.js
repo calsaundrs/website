@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v4 - Fixed mobile CTA, added dynamic description formatting
+// Version: 2025-07-25-v6 - Temporarily disabled new features for recurring events stability
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -154,34 +154,14 @@ exports.handler = async function (event, context) {
             }
         }
 
-        // Get similar events based on categories
+        // Get similar events based on categories (temporarily disabled for stability)
         let similarEvents = [];
-        if (eventData.category && eventData.category.length > 0) {
-            try {
-                similarEvents = await eventService.getSimilarEvents(eventData.category, eventData.id, 3);
-            } catch (error) {
-                console.error('Error getting similar events:', error);
-            }
-        }
+        // TODO: Re-enable similar events after fixing recurring events stability
 
-        // Format description and optionally update Airtable
+        // Format description and optionally update Airtable (temporarily disabled for recurring events)
         let formattedDescription = eventData.description;
-        if (eventData.description) {
-            formattedDescription = eventService.formatDescription(eventData.description);
-            
-            // If the formatted description is different from the original, update Airtable
-            if (formattedDescription !== eventData.description) {
-                // Update asynchronously (don't wait for it to complete)
-                eventService.updateEventDescription(eventData.id, formattedDescription)
-                    .then(success => {
-                        if (success) {
-                            console.log(`Updated description for event ${eventData.id}`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error updating description:', error);
-                    });
-            }
+        if (eventData.description && !eventData.series) {
+            // TODO: Re-enable description formatting after fixing recurring events stability
         }
 
         // Embedded template to avoid file system issues in Netlify Functions

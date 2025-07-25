@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v2 - Fixed Image URL field issue
+// Version: 2025-07-25-v3 - Fixed similar events for recurring events - Fixed Image URL field issue
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -684,10 +684,18 @@ class EventService {
       for (const record of records) {
         if (events.length >= limit) break;
         
-        const event = this.processStandaloneEvent(record, approvedVenues);
-        if (!seenIds.has(event.id)) {
-          seenIds.add(event.id);
-          events.push(event);
+        try {
+          // Only process standalone events for similar events
+          if (!record.fields['Series ID']) {
+            const event = this.processStandaloneEvent(record, approvedVenues);
+            if (event && !seenIds.has(event.id)) {
+              seenIds.add(event.id);
+              events.push(event);
+            }
+          }
+        } catch (error) {
+          console.error('Error processing similar event record:', error);
+          continue;
         }
       }
 
