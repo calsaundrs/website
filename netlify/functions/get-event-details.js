@@ -663,9 +663,35 @@ exports.handler = async function (event, context) {
                     url: window.location.href
                 });
             } else {
-                // Fallback: copy to clipboard
+                // Fallback: copy to clipboard with better UX
                 navigator.clipboard.writeText(window.location.href).then(() => {
-                    alert('Event link copied to clipboard!');
+                    // Create a mobile-friendly notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-4 left-4 right-4 bg-green-600 text-white py-3 px-4 rounded-lg font-bold text-center z-50';
+                    notification.textContent = 'Event link copied to clipboard!';
+                    document.body.appendChild(notification);
+                    
+                    // Remove notification after 3 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = window.location.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-4 left-4 right-4 bg-green-600 text-white py-3 px-4 rounded-lg font-bold text-center z-50';
+                    notification.textContent = 'Event link copied to clipboard!';
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
                 });
             }
         }
@@ -682,11 +708,36 @@ exports.handler = async function (event, context) {
             const googleLink = '{{calendarLinks.google}}';
             const icalLink = '{{calendarLinks.ical}}';
             
-            if (confirm('Choose calendar option:\\n\\nOK - Google Calendar\\nCancel - Download ICS file')) {
-                window.open(googleLink, '_blank');
-            } else {
-                window.location.href = icalLink;
-            }
+            // Create a simple mobile-friendly modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6 mx-4 max-w-sm w-full">
+                    <h3 class="text-white text-lg font-bold mb-4">Add to Calendar</h3>
+                    <div class="space-y-3">
+                        <button onclick="window.open('${googleLink}', '_blank'); this.closest('.fixed').remove();" 
+                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">
+                            <i class="fab fa-google mr-2"></i>Google Calendar
+                        </button>
+                        <button onclick="window.location.href='${icalLink}'; this.closest('.fixed').remove();" 
+                                class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">
+                            <i class="fas fa-calendar-plus mr-2"></i>Download ICS File
+                        </button>
+                        <button onclick="this.closest('.fixed').remove();" 
+                                class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-bold">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
 
         function contactOrganizer() {
