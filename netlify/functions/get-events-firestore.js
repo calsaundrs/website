@@ -110,7 +110,7 @@ async function handlePublicView(queryParams) {
                 venueId: rawData['venueId'] || rawData.venueId,
                 venueName: rawData['Venue Name'] || rawData.venueName,
                 venueSlug: rawData['Venue Slug'] || rawData.venueSlug,
-                image: rawData['Promo Image'] || rawData.image,
+                image: extractImageInfo(rawData),
                 link: rawData['Link'] || rawData.link,
                 ticketLink: rawData['Ticket Link'] || rawData.ticketLink,
                 recurringInfo: rawData['Recurring Info'] || rawData.recurringInfo,
@@ -123,7 +123,7 @@ async function handlePublicView(queryParams) {
                 approvedAt: rawData.approvedAt
             };
             
-            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date})`);
+            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, image: ${JSON.stringify(eventData.image)})`);
             
             // Apply date filtering client-side
             if (eventData.date) {
@@ -282,6 +282,32 @@ async function handleVenuesView() {
         console.error('Error fetching venues:', error);
         throw error;
     }
+}
+
+// Extract image information from Firestore data
+function extractImageInfo(fields) {
+    const cloudinaryId = fields['Cloudinary Public ID'];
+    const promoImage = fields['Promo Image'];
+    
+    if (cloudinaryId) {
+        return {
+            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
+            alt: fields['Event Name']
+        };
+    } else if (promoImage) {
+        // Handle both string URLs and array objects
+        const imageUrl = typeof promoImage === 'string' ? promoImage : 
+                        (promoImage.url || promoImage[0]?.url);
+        
+        if (imageUrl) {
+            return {
+                url: imageUrl,
+                alt: fields['Event Name']
+            };
+        }
+    }
+    
+    return null;
 }
 
 function processEventForPublic(eventData) {
