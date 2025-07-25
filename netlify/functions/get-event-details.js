@@ -355,7 +355,7 @@ exports.handler = async function (event, context) {
         <!-- Event Details Card -->
         <div class="venue-card rounded-xl overflow-hidden">
             <!-- Hero Image -->
-            <div class="h-48 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+            <div class="w-full bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative" style="aspect-ratio: 500/217;">
                 {{#if event.image}}
                 <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
                 {{else}}
