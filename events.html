@@ -730,9 +730,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             eventGrid.innerHTML = events.map(event => {
-                const tagsHTML = event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('');
-                const imageUrl = event.image ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
+                const tagsHTML = event.category && event.category.length > 0 ? 
+                    event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('') : '';
+                const imageUrl = event.image && event.image.url ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
                 const isBoosted = event.promotion && event.promotion.boosted;
+                const venueName = event.venue && event.venue.name ? event.venue.name : 'TBC';
 
                 return `
                     <a href="/event/${event.slug}" class="item-card card-bg block group animate-fade-in flex flex-row md:flex-col ${isBoosted ? 'boosted-listing' : ''}">
@@ -745,7 +747,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div class="mb-2 flex flex-wrap gap-2">${tagsHTML}</div>
                             <h3 class="font-bold text-xl text-white mb-2 group-hover:accent-color" title="${event.name}" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">${event.name}</h3>
                             <p class="text-gray-400 mb-1">${new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })}</p>
-                            <p class="text-gray-400">${event.venue.name}</p>
+                            <p class="text-gray-400">${venueName}</p>
                             ${event.recurringInfo ? `<p class="text-sm text-purple-300 mt-1">${event.recurringInfo}</p>` : ''}
                         </div>
                     </a>`;
