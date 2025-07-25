@@ -1,6 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
+// Version: 2025-07-25-v2 - Fixed Image URL field issue
 class EventService {
   constructor() {
     this.base = new Airtable({ 

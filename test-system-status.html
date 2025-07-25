@@ -95,6 +95,10 @@
             <button id="testAirtableQueryBtn" class="button" onclick="testAirtableQuery()">
                 🔍 Test Airtable Query
             </button>
+            
+            <button id="debugRecurringEventsBtn" class="button" onclick="debugRecurringEvents()">
+                🔍 Debug Recurring Events
+            </button>
         </div>
 
         <div id="status" class="status"></div>
@@ -123,6 +127,11 @@
         <div>
             <h3>Airtable Query Test:</h3>
             <pre id="airtableQueryResponse">Click "Test Airtable Query" to test the query directly...</pre>
+        </div>
+        
+        <div>
+            <h3>Recurring Events Debug:</h3>
+            <pre id="recurringEventsResponse">Click "Debug Recurring Events" to test the function directly...</pre>
         </div>
     </div>
 
@@ -438,6 +447,60 @@
                 status.className = 'status error';
                 status.innerHTML = `
                     <h3>❌ Airtable Query Test Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                
+                btn.textContent = '❌ Failed - Try Again';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function debugRecurringEvents() {
+            const btn = document.getElementById('debugRecurringEventsBtn');
+            const status = document.getElementById('status');
+            const response = document.getElementById('recurringEventsResponse');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Debugging...';
+            
+            status.style.display = 'block';
+            status.className = 'status error';
+            status.textContent = 'Debugging recurring events function...';
+            
+            try {
+                console.log('Debugging recurring events function...');
+                
+                const res = await fetch('/.netlify/functions/debug-recurring-events');
+                const responseText = await res.text();
+                
+                console.log('Recurring events debug response status:', res.status);
+                console.log('Recurring events debug response text:', responseText);
+                
+                response.textContent = `Status: ${res.status}\n\n${responseText}`;
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${responseText}`);
+                }
+                
+                const data = JSON.parse(responseText);
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ Recurring Events Debug Successful!</h3>
+                    <p><strong>Total Events:</strong> ${data.totalEvents || 0}</p>
+                    <p><strong>Recurring Events:</strong> ${data.recurringEvents || 0}</p>
+                    <p><strong>EventService Version:</strong> ${data.eventServiceVersion || 'Unknown'}</p>
+                `;
+                
+                btn.textContent = '✅ Debug Complete';
+                
+            } catch (error) {
+                console.error('Failed to debug recurring events:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ Recurring Events Debug Failed</h3>
                     <p><strong>Error:</strong> ${error.message}</p>
                 `;
                 
