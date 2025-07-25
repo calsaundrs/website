@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v6 - Temporarily disabled new features for recurring events stability
+// Version: 2025-07-25-v7 - Added venue linking to approved venues
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -378,7 +378,13 @@ exports.handler = async function (event, context) {
                             <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
                             <p class="text-xl text-gray-300 mb-2">
                                 <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                {{#if event.venue.isApprovedVenue}}
+                                <a href="/venue/{{event.venue.slug}}" class="hover:text-accent-color transition-colors">
+                                    {{event.venue.name}}
+                                </a>
+                                {{else}}
                                 {{event.venue.name}}
+                                {{/if}}
                             </p>
                             <p class="text-gray-400">
                                 <i class="fas fa-clock mr-2"></i>
@@ -426,7 +432,14 @@ exports.handler = async function (event, context) {
                                     </div>
                                     <div class="flex-grow">
                                         <h4 class="font-bold text-white text-xl">{{name}}</h4>
-                                        <p class="text-sm text-gray-400">{{formatTime date}} • {{venue.name}}</p>
+                                        <p class="text-sm text-gray-400">
+                                            {{formatTime date}} • 
+                                            {{#if venue.isApprovedVenue}}
+                                            <a href="/venue/{{venue.slug}}" class="hover:text-accent-color transition-colors">{{venue.name}}</a>
+                                            {{else}}
+                                            {{venue.name}}
+                                            {{/if}}
+                                        </p>
                                         <div class="flex flex-wrap gap-1 mt-2">
                                             {{#each category}}
                                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">{{this}}</span>
@@ -457,7 +470,17 @@ exports.handler = async function (event, context) {
                                     </div>
                                     <div class="flex-grow">
                                         <h4 class="font-bold text-white text-xl">{{name}}</h4>
-                                        <p class="text-sm text-gray-400">{{formatTime date}}</p>
+                                        <p class="text-sm text-gray-400">
+                                            {{formatTime date}}
+                                            {{#if venue.name}}
+                                            • 
+                                            {{#if venue.isApprovedVenue}}
+                                            <a href="/venue/{{venue.slug}}" class="hover:text-accent-color transition-colors" onclick="event.stopPropagation()">{{venue.name}}</a>
+                                            {{else}}
+                                            {{venue.name}}
+                                            {{/if}}
+                                            {{/if}}
+                                        </p>
                                     </div>
                                     <div class="text-accent-color">
                                         <i class="fas fa-arrow-right"></i>
@@ -485,18 +508,24 @@ exports.handler = async function (event, context) {
                             {{/if}}
                         </div>
 
-                                                 <!-- Location -->
-                         <div class="venue-card p-6">
-                             <h3 class="text-xl font-bold text-white mb-4">
-                                 <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
-                             </h3>
-                             <div class="space-y-3">
-                                 <div>
-                                     <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
-                                     {{#if event.venue.address}}
-                                     <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
-                                     {{/if}}
-                                 </div>
+                                                                         <!-- Location -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    {{#if event.venue.isApprovedVenue}}
+                                    <a href="/venue/{{event.venue.slug}}" class="hover:text-accent-color transition-colors">
+                                        <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                    </a>
+                                    {{else}}
+                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                    {{/if}}
+                                    {{#if event.venue.address}}
+                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
+                                    {{/if}}
+                                </div>
                                  {{#if event.venue.phone}}
                                  <div class="flex items-center gap-2 text-gray-400 text-sm">
                                      <i class="fas fa-phone"></i>
