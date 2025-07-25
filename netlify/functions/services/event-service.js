@@ -189,6 +189,9 @@ class EventService {
     const seriesGroups = new Map();
     const standaloneEvents = [];
 
+    // Get approved venues for linking
+    const approvedVenues = await this.getApprovedVenues();
+
     // Group events by series
     records.forEach(record => {
       const fields = record.fields;
@@ -206,7 +209,7 @@ class EventService {
 
     // Process standalone events
     standaloneEvents.forEach(record => {
-      events.push(this.processStandaloneEvent(record));
+      events.push(this.processStandaloneEvent(record, approvedVenues));
     });
 
     // Process series events (limit instances per series)
@@ -220,7 +223,7 @@ class EventService {
           .slice(0, instancesToShow);
         
         seriesInstances.forEach(record => {
-          events.push(this.processSeriesInstance(record, seriesId, seriesRecords.length));
+          events.push(this.processSeriesInstance(record, seriesId, seriesRecords.length, approvedVenues));
         });
       }
     }
@@ -287,7 +290,7 @@ class EventService {
     };
   }
 
-  processStandaloneEvent(record) {
+  processStandaloneEvent(record, approvedVenues = []) {
     const fields = record.fields;
     
     return {
@@ -297,7 +300,7 @@ class EventService {
       description: fields['Description'],
       date: fields['Date'],
       category: fields['Category'] || [],
-      venue: this.extractVenueInfo(fields),
+      venue: this.extractVenueInfo(fields, approvedVenues),
       image: this.extractImageInfo(fields),
       promotion: this.extractPromotionInfo(fields),
       status: fields['Status'] || 'Pending Review',
@@ -310,13 +313,34 @@ class EventService {
     };
   }
 
-  extractVenueInfo(fields) {
+  extractVenueInfo(fields, approvedVenues = []) {
     const venueName = fields['Venue Name'] ? 
       fields['Venue Name'][0] : 
       fields['VenueText'] || 'TBC';
     
+    // Try to find a matching approved venue
+    const matchingVenue = approvedVenues.find(venue => 
+      venue.name.toLowerCase() === venueName.toLowerCase()
+    );
+    
+    if (matchingVenue) {
+      return {
+        name: venueName,
+        id: matchingVenue.id,
+        slug: matchingVenue.slug,
+        address: matchingVenue.address,
+        postcode: matchingVenue.postcode,
+        website: matchingVenue.website,
+        phone: matchingVenue.phone,
+        description: matchingVenue.description,
+        photoUrl: matchingVenue.photoUrl,
+        isApprovedVenue: true
+      };
+    }
+    
     return {
-      name: venueName
+      name: venueName,
+      isApprovedVenue: false
     };
   }
 
@@ -485,6 +509,48 @@ class EventService {
       if (key.includes(`event:${eventId}`)) {
         this.cache.delete(key);
       }
+    }
+  }
+
+  async getApprovedVenues() {
+    const cacheKey = 'approved_venues';
+    
+    // Check cache first
+    const cached = this.cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      return cached.data;
+    }
+
+    try {
+      // Get approved venues from the Venues table
+      const records = await this.base('Venues').select({
+        filterByFormula: "{Status} = 'Approved'",
+        fields: ['Name', 'Address', 'Postcode', 'Website', 'Phone', 'Description', 'Slug', 'Photo URL']
+      }).all();
+
+      const venues = records.map(record => ({
+        id: record.id,
+        name: record.fields['Name'],
+        address: record.fields['Address'],
+        postcode: record.fields['Postcode'],
+        website: record.fields['Website'],
+        phone: record.fields['Phone'],
+        description: record.fields['Description'],
+        slug: record.fields['Slug'],
+        photoUrl: record.fields['Photo URL']
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      // Cache the result
+      this.cache.set(cacheKey, {
+        data: venues,
+        timestamp: Date.now()
+      });
+
+      return venues;
+
+    } catch (error) {
+      console.error('Error fetching approved venues:', error);
+      return [];
     }
   }
 
