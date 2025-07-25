@@ -500,11 +500,9 @@ exports.handler = async function (event, context) {
                         <!-- Action Buttons -->
                         {{#if event.details.link}}
                         <div class="venue-card p-6">
-                            <div class="space-y-3">
-                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                    <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
-                                </a>
-                            </div>
+                            <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
+                            </a>
                         </div>
                         {{/if}}
 
