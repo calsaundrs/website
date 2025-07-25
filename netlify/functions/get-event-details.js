@@ -563,7 +563,7 @@ exports.handler = async function (event, context) {
             <div class="flex gap-2">
                 {{#if event.details.link}}
                 <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm">
-                    <i class="fas fa-ticket-alt mr-1"></i>Get Tickets
+                    <i class="fas fa-ticket-alt mr-1"></i>Buy Tickets
                 </a>
                 {{else}}
                 <button class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm" onclick="shareEvent()">
