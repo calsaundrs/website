@@ -14,8 +14,9 @@ The system monitoring and testing system provides comprehensive health checks fo
 - **Environment variable** verification
 
 ### Push Notifications
-- **Slack integration** for instant alerts
-- **Discord webhook** support
+- **Browser push notifications** for admin users
+- **Automatic permission requests** when accessing admin pages
+- **Real-time polling** for new notifications
 - **Airtable storage** for notification history
 - **Severity levels** (high, medium, low)
 
@@ -68,10 +69,6 @@ AIRTABLE_BASE_ID=your_base_id
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
-
-# Optional (for notifications)
-SLACK_WEBHOOK_URL=your_slack_webhook
-DISCORD_WEBHOOK_URL=your_discord_webhook
 ```
 
 ### 2. Airtable Setup
@@ -133,18 +130,23 @@ Navigate to `/admin-system-status.html` in your admin panel.
 
 ## 🔔 Notification System
 
-### Slack Integration
+### Browser Push Notifications
 
-1. Create a Slack app in your workspace
-2. Add the "Incoming Webhooks" feature
-3. Copy the webhook URL
-4. Add to environment variables as `SLACK_WEBHOOK_URL`
+The system uses browser push notifications to alert admin users when issues are detected. This approach is simpler and more direct than external webhook services.
 
-### Discord Integration
+#### How It Works
 
-1. Create a webhook in your Discord server
-2. Copy the webhook URL
-3. Add to environment variables as `DISCORD_WEBHOOK_URL`
+1. **Automatic Permission Request**: When an admin visits any admin page, the system automatically requests notification permissions
+2. **Real-time Polling**: The system polls for new notifications every 30 seconds when admin is logged in
+3. **Instant Alerts**: When system issues are detected, browser notifications are sent immediately
+4. **Click to Navigate**: Clicking a notification takes you directly to the system status page
+
+#### Setup
+
+No additional setup required! The system will:
+- Request notification permissions automatically
+- Start polling when you visit admin pages
+- Send notifications when issues are detected
 
 ### Notification Types
 

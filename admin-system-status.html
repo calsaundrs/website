@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
+    <script src="/js/push-notifications.js"></script>
+    <script src="/js/admin-notification-poller.js"></script>
     <style>
         .status-card {
             background: rgba(17, 24, 39, 0.7);
@@ -150,6 +152,16 @@
                 <i class="fas fa-bell"></i>
                 View Notifications
             </button>
+            
+            <button id="test-notification-btn" class="btn-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                <i class="fas fa-paper-plane"></i>
+                Test Notification
+            </button>
+            
+            <button id="enable-notifications-btn" class="btn-success px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                <i class="fas fa-bell-slash"></i>
+                <span id="notification-status-text">Enable Notifications</span>
+            </button>
         </div>
 
         <!-- Test Results -->
@@ -249,6 +261,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadSystemStatus();
             setupEventListeners();
+            updateNotificationStatus();
         });
 
         function setupEventListeners() {
@@ -256,6 +269,8 @@
             document.getElementById('auto-refresh-btn').addEventListener('click', toggleAutoRefresh);
             document.getElementById('view-notifications-btn').addEventListener('click', showNotifications);
             document.getElementById('close-modal').addEventListener('click', hideNotifications);
+            document.getElementById('test-notification-btn').addEventListener('click', testNotification);
+            document.getElementById('enable-notifications-btn').addEventListener('click', toggleNotifications);
         }
 
         async function loadSystemStatus() {
@@ -547,6 +562,58 @@
         function showError(message) {
             // You can implement a toast notification here
             console.error('❌', message);
+        }
+
+        async function testNotification() {
+            try {
+                const success = await window.pushNotificationService.sendTestNotification();
+                if (success) {
+                    showSuccess('Test notification sent!');
+                } else {
+                    showError('Failed to send test notification');
+                }
+            } catch (error) {
+                showError('Error sending test notification: ' + error.message);
+            }
+        }
+
+        async function toggleNotifications() {
+            try {
+                if (window.pushNotificationService.isEnabled()) {
+                    // Notifications are enabled, show info
+                    showSuccess('Notifications are already enabled!');
+                } else {
+                    // Request permission
+                    const granted = await window.pushNotificationService.requestPermission();
+                    if (granted) {
+                        showSuccess('Notifications enabled!');
+                        updateNotificationStatus();
+                    } else {
+                        showError('Notification permission denied');
+                        updateNotificationStatus();
+                    }
+                }
+            } catch (error) {
+                showError('Error toggling notifications: ' + error.message);
+            }
+        }
+
+        function updateNotificationStatus() {
+            const btn = document.getElementById('enable-notifications-btn');
+            const text = document.getElementById('notification-status-text');
+            const icon = btn.querySelector('i');
+            
+            if (window.pushNotificationService.isEnabled()) {
+                text.textContent = 'Notifications Enabled';
+                icon.className = 'fas fa-bell';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-warning');
+            } else {
+                text.textContent = 'Enable Notifications';
+                icon.className = 'fas fa-bell-slash';
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-success');
+            }
         }
     </script>
 </body>

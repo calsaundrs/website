@@ -409,76 +409,9 @@ class SystemMonitor {
         }
       }]);
       
-      // If you have webhook URLs configured, send to them
-      if (process.env.SLACK_WEBHOOK_URL) {
-        await this.sendSlackNotification(notification);
-      }
-      
-      if (process.env.DISCORD_WEBHOOK_URL) {
-        await this.sendDiscordNotification(notification);
-      }
-      
-      console.log(`📢 Notification sent: ${notification.title}`);
+      console.log(`📢 Notification stored: ${notification.title}`);
     } catch (error) {
-      console.error('Failed to send notification:', error);
-    }
-  }
-
-  async sendSlackNotification(notification) {
-    try {
-      const message = {
-        text: notification.title,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `*${notification.title}*\n${notification.message}`
-            }
-          },
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `*Failed Tests:*\n${notification.details.map(d => `• ${d.name}: ${d.error}`).join('\n')}`
-            }
-          }
-        ]
-      };
-      
-      await fetch(process.env.SLACK_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message)
-      });
-    } catch (error) {
-      console.error('Failed to send Slack notification:', error);
-    }
-  }
-
-  async sendDiscordNotification(notification) {
-    try {
-      const message = {
-        embeds: [{
-          title: notification.title,
-          description: notification.message,
-          color: notification.severity === 'high' ? 0xff0000 : 0xffa500,
-          fields: notification.details.map(d => ({
-            name: d.name,
-            value: d.error,
-            inline: false
-          })),
-          timestamp: new Date().toISOString()
-        }]
-      };
-      
-      await fetch(process.env.DISCORD_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message)
-      });
-    } catch (error) {
-      console.error('Failed to send Discord notification:', error);
+      console.error('Failed to store notification:', error);
     }
   }
 
