@@ -28,7 +28,40 @@ exports.handler = async function (event, context) {
         // Handle different views
         if (view === 'venues') {
             console.log("=== VENUES VIEW REQUESTED ===");
-            // Temporarily return test data to see if function is working
+            // Extract venues from events
+            const eventsResult = await handlePublicView(queryParams);
+            const eventsData = JSON.parse(eventsResult.body);
+            
+            // Extract venues from events
+            const venueMap = new Map();
+            
+            console.log(`Processing ${eventsData.events.length} events for venue extraction`);
+            
+            eventsData.events.forEach((event, index) => {
+                if (event.venue && event.venue.name && event.venue.slug) {
+                    // Handle both string and array formats for venue name and slug
+                    const venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
+                    const venueSlug = Array.isArray(event.venue.slug) ? event.venue.slug[0] : event.venue.slug;
+                    const venueKey = venueSlug;
+                    
+                    if (venueName && venueSlug && !venueMap.has(venueKey)) {
+                        venueMap.set(venueKey, {
+                            id: event.venue.id || venueKey,
+                            name: venueName,
+                            slug: venueSlug,
+                            description: `Venue hosting ${event.name || 'events'}`,
+                            address: event.venue.address || 'Address TBC',
+                            type: 'venue',
+                            status: 'Approved',
+                            image: event.image
+                        });
+                    }
+                }
+            });
+            
+            const venues = Array.from(venueMap.values());
+            console.log(`Extracted ${venues.length} unique venues from events`);
+            
             return {
                 statusCode: 200,
                 headers: {
@@ -36,19 +69,8 @@ exports.handler = async function (event, context) {
                     'Cache-Control': 'public, max-age=600'
                 },
                 body: JSON.stringify({
-                    venues: [
-                        {
-                            id: 'test-venue-1',
-                            name: 'Test Venue 1',
-                            slug: 'test-venue-1',
-                            description: 'Test venue for debugging',
-                            address: 'Test Address',
-                            type: 'venue',
-                            status: 'Approved',
-                            image: null
-                        }
-                    ],
-                    totalCount: 1
+                    venues: venues,
+                    totalCount: venues.length
                 })
             };
         } else if (view === 'admin') {
