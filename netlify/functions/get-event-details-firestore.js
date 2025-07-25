@@ -415,19 +415,15 @@ exports.handler = async function (event, context) {
                     <div class="space-y-6">
 
                         <!-- Action Buttons -->
+                        {{#if event.details.link}}
                         <div class="venue-card p-6">
                             <div class="space-y-3">
-                                {{#if event.details.link}}
                                 <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
-                                    <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
+                                    <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
                                 </a>
-                                {{else}}
-                                <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                    <i class="fas fa-info-circle mr-2"></i>Event Info
-                                </button>
-                                {{/if}}
                             </div>
                         </div>
+                        {{/if}}
 
                         <!-- Add to Calendar -->
                         <div class="venue-card p-6">
@@ -452,27 +448,6 @@ exports.handler = async function (event, context) {
                             <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
                                 <i class="fas fa-share-alt mr-2"></i>Share Event
                             </button>
-                        </div>
-
-                        <!-- Event Details -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
-                            </h3>
-                            <div class="space-y-3">
-                                {{#if event.details.price}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Price:</span>
-                                    <span class="text-white font-semibold">{{event.details.price}}</span>
-                                </div>
-                                {{/if}}
-                                {{#if event.details.ageRestriction}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Age Restriction:</span>
-                                    <span class="text-white font-semibold">{{event.details.ageRestriction}}</span>
-                                </div>
-                                {{/if}}
-                            </div>
                         </div>
                     </div>
                 </div>
