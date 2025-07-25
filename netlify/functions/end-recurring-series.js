@@ -1,4 +1,8 @@
-const Airtable = require('airtable');
+const SeriesManager = require('./services/series-manager');
+const EventService = require('./services/event-service');
+
+const seriesManager = new SeriesManager();
+const eventService = new EventService();
 
 exports.handler = async function(event, context) {
     // Enable CORS
@@ -36,56 +40,19 @@ exports.handler = async function(event, context) {
             };
         }
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+        console.log(`Ending series ${seriesId}...`);
+
+        // Use SeriesManager to end the series
+        const result = await seriesManager.endSeries(seriesId);
         
-        // Find all future instances of this series
-        const today = new Date().toISOString().split('T')[0];
-        const records = await base('Events').select({
-            filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
-        }).all();
-
-        console.log(`Found ${records.length} future instances to end for series ${seriesId}`);
-
-        // Update all future instances to mark them as ended
-        const updates = records.map(record => ({
-            id: record.id,
-            fields: {
-                'Status': 'Ended',
-                'End Date': new Date().toISOString().split('T')[0]
-            }
-        }));
-
-        if (updates.length > 0) {
-            // Update in batches of 10 (Airtable limit)
-            const batchSize = 10;
-            for (let i = 0; i < updates.length; i += batchSize) {
-                const batch = updates.slice(i, i + batchSize);
-                await base('Events').update(batch);
-            }
-        }
-
-        // Also update the series record to mark it as inactive
-        const seriesRecords = await base('Events').select({
-            filterByFormula: `{Series ID} = '${seriesId}'`,
-            maxRecords: 1
-        }).all();
-
-        if (seriesRecords.length > 0) {
-            await base('Events').update([{
-                id: seriesRecords[0].id,
-                fields: {
-                    'Is Active': false,
-                    'End Date': new Date().toISOString().split('T')[0]
-                }
-            }]);
-        }
+        console.log(`Successfully ended series ${seriesId}: ${result.endedInstances} instances ended`);
 
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify({ 
                 success: true, 
-                message: `Successfully ended ${updates.length} future instances` 
+                message: `Successfully ended ${result.endedInstances} future instances` 
             })
         };
 

@@ -631,15 +631,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </footer>
 
+    <script src="/js/event-store.js"></script>
     <script>
         // --- Global State ---
-        let allEvents = [];
+        let eventStore;
         let featuredEvents = [];
+        
+        // Legacy filter state (will be replaced by store)
         let activeDateFilter = { type: 'all', from: null, to: null };
         let activeCategoryFilter = 'all';
         let activeVenueFilter = 'all';
         let isSfwMode = true;
-        let allVenuesForFilter = [];
 
         // --- DOM Elements ---
         const eventGrid = document.getElementById('event-grid');
@@ -699,78 +701,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Filtering Logic ---
         function applyFilters() {
-            let filteredEvents = [...allEvents];
-            const today = getToday();
-
-            // Date Filters
-            if (activeDateFilter.type !== 'all') {
-                filteredEvents = filteredEvents.filter(event => {
-                    const eventDate = new Date(event.date);
-                    eventDate.setHours(0, 0, 0, 0);
-                    switch (activeDateFilter.type) {
-                        case 'today': return eventDate.getTime() === today.getTime();
-                        case 'this-weekend':
-                            const dayOfWeek = today.getDay();
-                            const friday = new Date(today);
-                            friday.setDate(today.getDate() - dayOfWeek + 5);
-                            const sunday = new Date(friday);
-                            sunday.setDate(friday.getDate() + 2);
-                            return eventDate >= friday && eventDate <= sunday;
-                        case 'custom':
-                            const from = activeDateFilter.from ? new Date(activeDateFilter.from) : null;
-                            const to = activeDateFilter.to ? new Date(activeDateFilter.to) : null;
-                            if(from) from.setHours(0,0,0,0);
-                            if(to) to.setHours(0,0,0,0);
-                            if (from && to) return eventDate >= from && eventDate <= to;
-                            if (from) return eventDate >= from;
-                            if (to) return eventDate <= to;
-                            return true;
-                    }
-                    return false;
-                });
-            }
-
-            // Category Filter
-            if (activeCategoryFilter !== 'all') {
-                filteredEvents = filteredEvents.filter(e => e.category && e.category.includes(activeCategoryFilter));
-            }
+            // Use the store to update filters
+            const filters = {
+                dateRange: activeDateFilter,
+                categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
+                venues: activeVenueFilter !== 'all' ? [activeVenueFilter] : [],
+                sfwMode: isSfwMode
+            };
             
-            // Venue Filter
-            if (activeVenueFilter !== 'all') {
-                filteredEvents = filteredEvents.filter(e => e.venue === activeVenueFilter);
-            }
-
-            // NSFW Filter & Kink Notice
-            if (isSfwMode && activeCategoryFilter === 'Kink') {
-                eventGrid.innerHTML = '';
-                eventGrid.style.display = 'none';
-                noResultsMessage.style.display = 'none';
-                kinkSfwNotice.style.display = 'block';
-                return; 
-            } else {
-                kinkSfwNotice.style.display = 'none';
-            }
-
-            if (isSfwMode) {
-                filteredEvents = filteredEvents.filter(e => !(e.category && e.category.includes('Kink')));
-            }
-
-            renderEvents(filteredEvents);
+            eventStore.updateFilters(filters);
         }
 
         // --- Rendering ---
         function renderEvents(events) {
-            eventGrid.innerHTML = '';
-            eventGrid.style.display = events.length > 0 ? 'grid' : 'none';
-            noResultsMessage.style.display = events.length > 0 ? 'none' : 'block';
+            if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
+            
+            if (!events || events.length === 0) {
+                eventGrid.innerHTML = `
+                    <div class="col-span-full text-center card-bg p-12">
+                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
+                            <i class="fas fa-search fa-2x"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-white">No Events Found</h3>
+                        <p class="mt-2 text-gray-400">Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+                return;
+            }
 
-            events.forEach(event => {
-                const tagsHTML = event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('');
-                const imageUrl = event.image || getCloudinaryUrl('brumoutloud_events/placeholder', 400, 400);
+            eventGrid.innerHTML = events.map(event => {
+                const tagsHTML = event.category && event.category.length > 0 ? 
+                    event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('') : '';
+                const imageUrl = event.image && event.image.url ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
+                const isBoosted = event.promotion && event.promotion.boosted;
+                const venueName = event.venue && event.venue.name ? event.venue.name : 'TBC';
 
-                const isBoosted = event.isBoosted;
-
-                const eventCard = `
+                return `
                     <a href="/event/${event.slug}" class="item-card card-bg block group animate-fade-in flex flex-row md:flex-col ${isBoosted ? 'boosted-listing' : ''}">
                         ${isBoosted ? '<div class="boosted-listing-tag">BOOSTED</div>' : ''}
                         ${event.recurringInfo ? '<div class="recurring-event-tag">RECURRING</div>' : ''}
@@ -781,16 +747,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div class="mb-2 flex flex-wrap gap-2">${tagsHTML}</div>
                             <h3 class="font-bold text-xl text-white mb-2 group-hover:accent-color" title="${event.name}" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">${event.name}</h3>
                             <p class="text-gray-400 mb-1">${new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })}</p>
-                            <p class="text-gray-400">${event.venue}</p>
+                            <p class="text-gray-400">${venueName}</p>
                             ${event.recurringInfo ? `<p class="text-sm text-purple-300 mt-1">${event.recurringInfo}</p>` : ''}
                         </div>
                     </a>`;
-                eventGrid.insertAdjacentHTML('beforeend', eventCard);
-            });
+            }).join('');
         }
 
         function renderCategoryOptions() {
-            const categories = [...new Set(allEvents.flatMap(event => event.category))].filter(Boolean).sort();
+            if (!categoryPopover || !eventStore) return; // Exit if elements don't exist yet
+            
+            // Get categories from current events
+            const categories = [...new Set(eventStore.state.events.flatMap(event => event.category))].filter(Boolean).sort();
             categoryPopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -808,7 +776,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         }
 
-        function renderVenueOptions() {
+        function renderVenueOptions(venues = []) {
+            if (!venuePopover) return; // Exit if element doesn't exist yet
+            
             venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -817,13 +787,65 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             allButton.dataset.filterValue = 'all';
             venuePopover.appendChild(allButton);
 
-            allVenuesForFilter.forEach(venue => {
+            venues.forEach(venue => {
                 const button = document.createElement('button');
                 button.className = 'popover-option';
                 button.textContent = venue.name;
                 button.dataset.filterValue = venue.name;
                 venuePopover.appendChild(button);
             });
+        }
+
+        function updateLoadingState(loading) {
+            const loader = document.querySelector('.loader');
+            if (!loader) return; // Exit if loader doesn't exist yet
+            
+            if (loading) {
+                loader.style.display = 'block';
+            } else {
+                loader.style.display = 'none';
+            }
+        }
+
+        function updateErrorState(error) {
+            if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
+            
+            if (error) {
+                eventGrid.innerHTML = `
+                    <div class="col-span-full text-center card-bg p-12">
+                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-800 text-white">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-white">Error Loading Events</h3>
+                        <p class="mt-2 text-gray-400">${error}</p>
+                        <button onclick="location.reload()" class="mt-4 filter-button active">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateFilterUI(filters) {
+            // Update filter button states
+            document.querySelectorAll('.filter-button').forEach(button => {
+                const filterType = button.dataset.filterType;
+                const filterValue = button.dataset.filterValue;
+                
+                if (filterType === 'date' && filters.dateRange && filters.dateRange.type === filterValue) {
+                    button.classList.add('active');
+                } else if (filterType === 'category' && filters.categories && filters.categories.includes(filterValue)) {
+                    button.classList.add('active');
+                } else if (filterType === 'venue' && filters.venues && filters.venues.includes(filterValue)) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            // Update NSFW toggle
+            const nsfwToggle = document.getElementById('nsfw-toggle');
+            if (nsfwToggle) {
+                nsfwToggle.checked = filters.sfwMode !== false;
+            }
         }
 
 
@@ -986,11 +1008,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // --- Initial Data Fetch & Processing ---
         async function initializePage() {
             try {
-                const response = await fetch('/.netlify/functions/get-events');
-                const data = await response.json();
+                // Initialize event store
+                eventStore = new EventStore();
+                
+                // Subscribe to store changes
+                eventStore.subscribe((state) => {
+                    renderEvents(state.events);
+                    updateLoadingState(state.loading);
+                    updateErrorState(state.error);
+                    updateFilterUI(state.filters);
+                });
 
-                allEvents = data.events.sort((a, b) => new Date(a.date) - new Date(b.date));
-                allVenuesForFilter = data.venues;
+                // Load venues for filtering first
+                const venues = await eventStore.api.getVenues();
                 
                 setSfwMode(true);
 
@@ -999,11 +1029,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 createSlideshowElements(); 
 
                 renderCategoryOptions();
-                renderVenueOptions(); 
+                renderVenueOptions(venues); 
                 setupEventListeners();
-                applyFilters(); 
+                
+                // Load initial events after everything is set up
+                await eventStore.loadEvents(eventStore.state.filters);
+                
             } catch (error) {
-                console.error("Error fetching events:", error);
+                console.error("Error initializing page:", error);
                 eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
             }
         }

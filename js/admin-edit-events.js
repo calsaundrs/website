@@ -859,8 +859,8 @@ function populateEditForm(event) {
     
     // Populate current image
     const currentImage = document.getElementById('edit-current-image');
-    if (event.imageUrl || event['Image URL']) {
-        currentImage.src = event.imageUrl || event['Image URL'];
+    if (event.image?.url || event.imageUrl) {
+        currentImage.src = event.image?.url || event.imageUrl;
         currentImage.style.display = 'block';
         currentImage.nextElementSibling.style.display = 'none';
     } else {

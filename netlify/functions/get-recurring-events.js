@@ -1,116 +1,69 @@
-const Airtable = require('airtable');
+const EventService = require('./services/event-service');
 
-const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+const eventService = new EventService();
 
+// Version: 2025-07-25-v2 - Fixed Image URL field issue
 exports.handler = async (event) => {
     if (event.httpMethod !== 'GET') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    console.log('get-recurring-events: Starting function execution');
-
-    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
-        console.error('get-recurring-events: Missing required environment variables');
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Missing Airtable configuration' }),
-        };
-    }
-
-    const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
+    console.log('get-recurring-events: Starting function execution (v2)');
 
     try {
-        // Get all events that have recurring information
-        console.log('get-recurring-events: Fetching recurring events from Airtable...');
+        // Use EventService to get all events (admin mode)
+        console.log('get-recurring-events: Fetching all events from EventService...');
         
-        // First, let's get ALL events to see what fields are available
-        console.log('get-recurring-events: Getting all events to check available fields...');
-        const testQuery = await base('Events').select({
-            maxRecords: 1,
-            fields: ['Event Name']
-        }).all();
+        const allEvents = await eventService.getEvents({}, { admin: true });
         
-        if (testQuery.length > 0) {
-            console.log('get-recurring-events: Sample record fields:', Object.keys(testQuery[0].fields));
-        }
-        
-        // Simple query to get all events with basic fields
-        const allRecords = await base('Events').select({
-            fields: [
-                'Event Name', 
-                'Description', 
-                'Date',
-                'VenueText', 
-                'Venue', 
-                'Venue Name',
-                'Category', 
-                'Recurring Info', 
-                'Series ID',
-                'Status',
-                'Promo Image',
-                'Image URL'
-            ]
-        }).all();
+        console.log(`get-recurring-events: Found ${allEvents.length} total events`);
 
-        console.log(`get-recurring-events: Found ${allRecords.length} total events`);
-
-        // Check if we have any recurring events
-        const recurringEvents = allRecords.filter(record => {
-            const fields = record.fields;
-            return fields['Recurring Info'] || fields['Series ID'];
-        });
+        // Filter for recurring events
+        const recurringEvents = allEvents.filter(event => 
+            event.recurringInfo || event.series
+        );
         
-        console.log(`get-recurring-events: Found ${recurringEvents.length} events with recurring info`);
+        console.log(`get-recurring-events: Found ${recurringEvents.length} recurring events`);
 
-        // Group events by series
+        // Group by series
         const seriesMap = new Map();
         const standaloneRecurring = [];
 
-        try {
-            allRecords.forEach(record => {
-                const fields = record.fields;
-                
-                // If it has Series ID, it's part of a series
-                if (fields['Series ID']) {
-                    const seriesId = fields['Series ID'];
-                    if (!seriesMap.has(seriesId)) {
-                        seriesMap.set(seriesId, []);
-                    }
-                    seriesMap.get(seriesId).push(record);
-                } 
-                // If it has Recurring Info but no Series ID, it's a standalone recurring event
-                else if (fields['Recurring Info']) {
-                    standaloneRecurring.push(record);
+        recurringEvents.forEach(event => {
+            if (event.series && event.series.id) {
+                // Part of a series
+                if (!seriesMap.has(event.series.id)) {
+                    seriesMap.set(event.series.id, []);
                 }
-            });
+                seriesMap.get(event.series.id).push(event);
+            } else if (event.recurringInfo) {
+                // Standalone recurring event
+                standaloneRecurring.push(event);
+            }
+        });
 
-            console.log(`get-recurring-events: Found ${seriesMap.size} recurring series and ${standaloneRecurring.length} standalone recurring events`);
-        } catch (error) {
-            console.error('get-recurring-events: Error during grouping:', error);
-            throw error;
-        }
+        console.log(`get-recurring-events: Found ${seriesMap.size} recurring series and ${standaloneRecurring.length} standalone recurring events`);
 
         // Process each series
         const recurringSeries = [];
         
         seriesMap.forEach((instances, seriesId) => {
             // Sort instances by date
-            instances.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+            instances.sort((a, b) => new Date(a.date) - new Date(b.date));
             
             // Get the parent event (first instance or one with Recurring Info)
-            const parentEvent = instances.find(instance => instance.fields['Recurring Info']) || instances[0];
+            const parentEvent = instances.find(instance => instance.recurringInfo) || instances[0];
             
             // Get future instances
             const now = new Date();
             const futureInstances = instances.filter(instance => {
-                const eventDate = new Date(instance.fields.Date);
+                const eventDate = new Date(instance.date);
                 return eventDate > now;
             });
             
             // Get past instances
             const pastInstances = instances.filter(instance => {
-                const eventDate = new Date(instance.fields.Date);
+                const eventDate = new Date(instance.date);
                 return eventDate <= now;
             });
             
@@ -125,32 +78,32 @@ exports.handler = async (event) => {
             
             const seriesData = {
                 seriesId: seriesId,
-                name: parentEvent.fields['Event Name'],
-                description: parentEvent.fields['Description'],
-                recurringInfo: parentEvent.fields['Recurring Info'],
-                venue: parentEvent.fields['VenueText'] || (parentEvent.fields['Venue Name'] ? parentEvent.fields['Venue Name'][0] : 'TBC'),
-                category: parentEvent.fields['Category'] || [],
-                status: parentEvent.fields['Status'],
-                image: parentEvent.fields['Promo Image'] || parentEvent.fields['Image URL'],
+                name: parentEvent.name,
+                description: parentEvent.description,
+                recurringInfo: parentEvent.recurringInfo,
+                venue: parentEvent.venue?.name || 'TBC',
+                category: parentEvent.category || [],
+                status: parentEvent.status,
+                image: parentEvent.image?.url || null,
                 isActive: isActive,
                 totalInstances: instances.length,
                 futureInstances: futureInstances.length,
                 pastInstances: pastInstances.length,
                 nextInstance: nextInstance ? {
                     id: nextInstance.id,
-                    date: nextInstance.fields['Date'],
-                    status: nextInstance.fields['Status']
+                    date: nextInstance.date,
+                    status: nextInstance.status
                 } : null,
                 lastInstance: lastInstance ? {
                     id: lastInstance.id,
-                    date: lastInstance.fields['Date'],
-                    status: lastInstance.fields['Status']
+                    date: lastInstance.date,
+                    status: lastInstance.status
                 } : null,
                 instances: instances.map(instance => ({
                     id: instance.id,
-                    date: instance.fields['Date'],
-                    status: instance.fields['Status'],
-                    isPast: new Date(instance.fields['Date']) <= now
+                    date: instance.date,
+                    status: instance.status,
+                    isPast: new Date(instance.date) <= now
                 }))
             };
             
@@ -158,21 +111,20 @@ exports.handler = async (event) => {
         });
 
         // Process standalone recurring events
-        const standaloneRecurringEvents = standaloneRecurring.map(record => {
-            const fields = record.fields;
-            const eventDate = new Date(fields['Date']);
+        const standaloneRecurringEvents = standaloneRecurring.map(event => {
+            const eventDate = new Date(event.date);
             const now = new Date();
             
             return {
-                id: record.id,
-                name: fields['Event Name'],
-                description: fields['Description'],
-                recurringInfo: fields['Recurring Info'],
-                venue: fields['VenueText'] || (fields['Venue Name'] ? fields['Venue Name'][0] : 'TBC'),
-                category: fields['Category'] || [],
-                status: fields['Status'],
-                date: fields['Date'],
-                image: fields['Promo Image'] || fields['Image URL'],
+                id: event.id,
+                name: event.name,
+                description: event.description,
+                recurringInfo: event.recurringInfo,
+                venue: event.venue?.name || 'TBC',
+                category: event.category || [],
+                status: event.status,
+                date: event.date,
+                image: event.image?.url || null,
                 isActive: eventDate > now,
                 isPast: eventDate <= now,
                 totalInstances: 1,

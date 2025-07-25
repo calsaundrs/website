@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Events API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        .button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #ff5252;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #444;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #4ecdc4;
+        }
+        .error {
+            border-left: 4px solid #ff6b6b;
+        }
+        .loading {
+            border-left: 4px solid #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Events API</h1>
+        
+        <div class="test-section">
+            <h3>Test 1: Basic Events API Call</h3>
+            <button class="button" onclick="testBasicEvents()">Test Get Events</button>
+            <div id="basic-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: Events with Filters</h3>
+            <button class="button" onclick="testEventsWithFilters()">Test Events with Filters</button>
+            <div id="filters-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Get Venues</h3>
+            <button class="button" onclick="testGetVenues()">Test Get Venues</button>
+            <div id="venues-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 4: Event Store Integration</h3>
+            <button class="button" onclick="testEventStore()">Test Event Store</button>
+            <div id="store-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 5: Direct API Endpoints</h3>
+            <button class="button" onclick="testDirectEndpoints()">Test Direct Endpoints</button>
+            <div id="direct-result" class="result"></div>
+        </div>
+    </div>
+
+    <script src="/js/event-store.js"></script>
+    <script>
+        function logResult(elementId, message, type = 'success') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            element.className = `result ${type}`;
+            element.innerHTML = `[${timestamp}] ${message}`;
+        }
+
+        async function testBasicEvents() {
+            logResult('basic-result', 'Testing basic events API...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-events');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                logResult('basic-result', `
+✅ Basic Events API Test Successful!
+
+📊 Response Summary:
+- Events found: ${data.events ? data.events.length : 0}
+- Venues found: ${data.venues ? data.venues.length : 0}
+- Total: ${data.total || 'N/A'}
+
+📋 First 3 Events:
+${data.events && data.events.length > 0 ? 
+    data.events.slice(0, 3).map((event, i) => 
+        `${i + 1}. ${event.name} (${event.date}) - ${event.venue}`
+    ).join('\n') : 
+    'No events found'
+}
+
+🔧 Raw Response:
+${JSON.stringify(data, null, 2)}
+                `, 'success');
+                
+            } catch (error) {
+                logResult('basic-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEventsWithFilters() {
+            logResult('filters-result', 'Testing events with filters...', 'loading');
+            
+            try {
+                const filters = {
+                    dateRange: { type: 'all' },
+                    categories: [],
+                    venues: [],
+                    search: '',
+                    sfwMode: true,
+                    limit: 10
+                };
+                
+                const params = new URLSearchParams();
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value !== null && value !== undefined && value !== '') {
+                        if (Array.isArray(value)) {
+                            value.forEach(v => params.append(key, v));
+                        } else if (typeof value === 'object') {
+                            params.append(key, JSON.stringify(value));
+                        } else {
+                            params.append(key, value);
+                        }
+                    }
+                });
+
+                const response = await fetch(`/.netlify/functions/get-events?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                logResult('filters-result', `
+✅ Events with Filters Test Successful!
+
+📊 Response Summary:
+- Events found: ${data.events ? data.events.length : 0}
+- Venues found: ${data.venues ? data.venues.length : 0}
+- Filters applied: ${JSON.stringify(filters, null, 2)}
+
+🔧 Raw Response:
+${JSON.stringify(data, null, 2)}
+                `, 'success');
+                
+            } catch (error) {
+                logResult('filters-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetVenues() {
+            logResult('venues-result', 'Testing get venues...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-events');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                logResult('venues-result', `
+✅ Get Venues Test Successful!
+
+📊 Venues Found: ${data.venues ? data.venues.length : 0}
+
+📋 Venues List:
+${data.venues && data.venues.length > 0 ? 
+    data.venues.map((venue, i) => `${i + 1}. ${venue.name}`).join('\n') : 
+    'No venues found'
+}
+
+🔧 Raw Venues Data:
+${JSON.stringify(data.venues || [], null, 2)}
+                `, 'success');
+                
+            } catch (error) {
+                logResult('venues-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEventStore() {
+            logResult('store-result', 'Testing Event Store...', 'loading');
+            
+            try {
+                const eventStore = new EventStore();
+                
+                // Test loading events
+                await eventStore.loadEvents();
+                const state = eventStore.getState();
+                
+                logResult('store-result', `
+✅ Event Store Test Successful!
+
+📊 Store State:
+- Loading: ${state.loading}
+- Error: ${state.error || 'None'}
+- Events count: ${state.events ? state.events.length : 0}
+- Filters: ${JSON.stringify(state.filters, null, 2)}
+
+📋 First 3 Events from Store:
+${state.events && state.events.length > 0 ? 
+    state.events.slice(0, 3).map((event, i) => 
+        `${i + 1}. ${event.name} (${event.date}) - ${event.venue}`
+    ).join('\n') : 
+    'No events in store'
+}
+                `, 'success');
+                
+            } catch (error) {
+                logResult('store-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDirectEndpoints() {
+            logResult('direct-result', 'Testing direct endpoints...', 'loading');
+            
+            try {
+                // Test admin endpoint
+                const adminResponse = await fetch('/.netlify/functions/get-events?view=admin');
+                const adminData = await adminResponse.json();
+                
+                // Test public endpoint
+                const publicResponse = await fetch('/.netlify/functions/get-events');
+                const publicData = await publicResponse.json();
+                
+                logResult('direct-result', `
+✅ Direct Endpoints Test Successful!
+
+📊 Admin Endpoint:
+- Status: ${adminResponse.status}
+- Events: ${adminData.events ? adminData.events.length : 0}
+
+📊 Public Endpoint:
+- Status: ${publicResponse.status}
+- Events: ${publicData.events ? publicData.events.length : 0}
+- Venues: ${publicData.venues ? publicData.venues.length : 0}
+
+🔧 Admin Response Sample:
+${adminData.events && adminData.events.length > 0 ? 
+    JSON.stringify(adminData.events[0], null, 2) : 
+    'No events in admin response'
+}
+
+🔧 Public Response Sample:
+${publicData.events && publicData.events.length > 0 ? 
+    JSON.stringify(publicData.events[0], null, 2) : 
+    'No events in public response'
+}
+                `, 'success');
+                
+            } catch (error) {
+                logResult('direct-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
