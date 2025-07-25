@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v4 - Added Venue Link field fallback
+// Version: 2025-07-25-v5 - Debug link field extraction
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -310,6 +310,9 @@ class EventService {
         ageRestriction: fields['Age Restriction'] || null,
         link: fields['Link'] || fields['Venue Link'] || null
       }
+      
+      // Debug logging for link field
+      console.log(`Event: ${fields['Event Name']}, Link field: "${fields['Link']}", Venue Link field: "${fields['Venue Link']}"`);
     };
   }
 
