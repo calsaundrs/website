@@ -392,6 +392,155 @@ class SeriesManager {
   clearCache() {
     this.cache.clear();
   }
+
+  async endSeries(seriesId) {
+    try {
+      console.log(`Ending series ${seriesId}...`);
+      
+      // Get all future instances of this series
+      const today = new Date().toISOString().split('T')[0];
+      const records = await this.base('Events').select({
+        filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
+      }).all();
+
+      console.log(`Found ${records.length} future instances to end for series ${seriesId}`);
+
+      // Update all future instances to mark them as ended
+      const updates = records.map(record => ({
+        id: record.id,
+        fields: {
+          'Status': 'Ended',
+          'End Date': new Date().toISOString().split('T')[0]
+        }
+      }));
+
+      if (updates.length > 0) {
+        // Update in batches of 10 (Airtable limit)
+        const batchSize = 10;
+        for (let i = 0; i < updates.length; i += batchSize) {
+          const batch = updates.slice(i, i + batchSize);
+          await this.base('Events').update(batch);
+        }
+      }
+
+      // Also update the series record to mark it as inactive
+      const seriesRecords = await this.base('Events').select({
+        filterByFormula: `{Series ID} = '${seriesId}'`,
+        maxRecords: 1
+      }).all();
+
+      if (seriesRecords.length > 0) {
+        await this.base('Events').update([{
+          id: seriesRecords[0].id,
+          fields: {
+            'Is Active': false,
+            'End Date': new Date().toISOString().split('T')[0]
+          }
+        }]);
+      }
+
+      // Clear cache
+      this.clearSeriesCache(seriesId);
+
+      return {
+        endedInstances: updates.length,
+        seriesId: seriesId
+      };
+
+    } catch (error) {
+      console.error('Error ending series:', error);
+      throw new Error('Failed to end series');
+    }
+  }
+
+  async regenerateInstances(seriesId) {
+    try {
+      console.log(`Regenerating instances for series ${seriesId}...`);
+      
+      // Get the series template record
+      const seriesRecords = await this.base('Events').select({
+        filterByFormula: `{Series ID} = '${seriesId}'`,
+        maxRecords: 1
+      }).all();
+
+      if (seriesRecords.length === 0) {
+        throw new Error('Series not found');
+      }
+
+      const seriesRecord = seriesRecords[0];
+      const recurringInfo = seriesRecord.get('Recurring Info');
+      let recurrenceRules = {};
+      
+      try {
+        recurrenceRules = JSON.parse(recurringInfo);
+      } catch (e) {
+        throw new Error('Invalid recurrence rules');
+      }
+
+      // Delete existing future instances
+      const today = new Date().toISOString().split('T')[0];
+      const existingInstances = await this.base('Events').select({
+        filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
+      }).all();
+
+      if (existingInstances.length > 0) {
+        const deleteIds = existingInstances.map(record => record.id);
+        // Delete in batches of 10
+        const batchSize = 10;
+        for (let i = 0; i < deleteIds.length; i += batchSize) {
+          const batch = deleteIds.slice(i, i + batchSize);
+          await this.base('Events').destroy(batch);
+        }
+      }
+
+      // Generate new instances based on recurrence rules
+      const instancesAhead = seriesRecord.get('Instances Ahead') || 12;
+      const endDate = seriesRecord.get('End Date');
+      const newInstances = this.calculateRecurrenceDates(
+        new Date().toISOString().split('T')[0],
+        recurrenceRules,
+        instancesAhead
+      );
+
+      // Create new instances
+      const instanceRecords = newInstances.map(date => ({
+        fields: {
+          'Event Name': seriesRecord.get('Event Name'),
+          'Description': seriesRecord.get('Description'),
+          'Date': date,
+          'Time': seriesRecord.get('Time'),
+          'Venue': seriesRecord.get('Venue'),
+          'Category': seriesRecord.get('Category'),
+          'Series ID': seriesId,
+          'Status': 'Pending Review',
+          'Is Instance': true
+        }
+      }));
+
+      let generatedInstances = 0;
+      if (instanceRecords.length > 0) {
+        // Create in batches of 10
+        const batchSize = 10;
+        for (let i = 0; i < instanceRecords.length; i += batchSize) {
+          const batch = instanceRecords.slice(i, i + batchSize);
+          await this.base('Events').create(batch);
+          generatedInstances += batch.length;
+        }
+      }
+
+      // Clear cache
+      this.clearSeriesCache(seriesId);
+
+      return {
+        generatedInstances: generatedInstances,
+        seriesId: seriesId
+      };
+
+    } catch (error) {
+      console.error('Error regenerating instances:', error);
+      throw new Error('Failed to regenerate instances');
+    }
+  }
 }
 
 module.exports = SeriesManager;
