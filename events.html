@@ -428,8 +428,7 @@
         }
         /* When checked, make the dot move */
         input:checked ~ .toggle-dot {
-            transform: translateX(1.5rem); /* Move 1.5rem */
-            /* Removed background-color: white !important; */
+            transform: translateX(1.25rem); /* Move 1.25rem for smaller toggle */
         }
         /* When checked, also change the background of the track */
         input:checked ~ .block {
@@ -441,9 +440,6 @@
         @media (max-width: 767px) {
             #filter-bar-container {
                 padding: 1rem;
-            }
-            #filter-bar-container > div {
-                width: 100%;
             }
             #filter-bar-container .flex {
                 flex-direction: column;
@@ -554,12 +550,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  </div>
             </div>
 
-            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-                <!-- Date Filters Row -->
-                <div class="flex flex-wrap gap-3 mb-4">
+            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4">
+                <div class="flex flex-wrap gap-3 items-center">
                     <button class="filter-button active" data-filter-type="date" data-filter-value="all">All Upcoming</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
+                    
                     <div class="relative">
                         <button id="custom-date-btn" class="filter-button">
                             <span>Custom Date</span>
@@ -572,10 +568,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <input type="date" id="date-to" class="w-full p-2 bg-gray-800 rounded-md text-white">
                         </div>
                     </div>
-                </div>
 
-                <!-- Category, Venue, and SFW Row -->
-                <div class="flex flex-wrap gap-3 items-center">
                     <div class="relative">
                         <button id="category-btn" class="filter-button">
                             <span>All Categories</span>
@@ -597,15 +590,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
 
                     <!-- SFW Toggle -->
-                    <div id="nsfw-toggle-container" class="flex items-center bg-gray-800/50 border border-gray-600/50 rounded-lg px-4 py-2">
+                    <div id="nsfw-toggle-container" class="flex items-center bg-gray-800/50 border border-gray-600/50 rounded-lg px-3 py-2">
                         <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer">
                             <div class="relative flex-shrink-0">
                                 <input type="checkbox" id="nsfw-toggle" class="sr-only">
-                                <div class="block bg-gray-600 w-12 h-6 rounded-full"></div>
-                                <div class="toggle-dot absolute left-1 top-1 w-4 h-4 rounded-full bg-white"></div>
+                                <div class="block bg-gray-600 w-10 h-5 rounded-full"></div>
+                                <div class="toggle-dot absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
                             </div>
-                            <span id="nsfw-mode-text-mobile" class="ml-3 text-white font-medium text-sm">SFW Mode</span>
-                            <span id="nsfw-mode-text-desktop" class="ml-3 text-white font-medium text-sm">SFW Mode</span>
+                            <span id="nsfw-mode-text-mobile" class="ml-2 text-white font-medium text-sm">SFW</span>
+                            <span id="nsfw-mode-text-desktop" class="ml-2 text-white font-medium text-sm">SFW Mode</span>
                         </label>
                     </div>
                 </div>
@@ -821,7 +814,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="venue-card rounded-xl overflow-hidden relative flex flex-col h-full">
                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
                         ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
-                        <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                        <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
