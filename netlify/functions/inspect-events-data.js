@@ -35,19 +35,19 @@ exports.handler = async function (event, context) {
             const data = doc.data();
             const eventInfo = {
                 id: doc.id,
-                name: data.name || 'NO_NAME',
-                status: data.status || 'NO_STATUS',
-                date: data.date || 'NO_DATE',
-                hasVenue: !!data.venue,
+                name: data['Event Name'] || data.name || 'NO_NAME',
+                status: data['Status'] || data.status || 'NO_STATUS',
+                date: data['Date'] || data.date || 'NO_DATE',
+                hasVenue: !!data['Venue Name'],
                 hasVenueId: !!data.venueId,
-                hasCategory: !!data.category,
+                hasCategory: !!data.categories,
                 fields: Object.keys(data)
             };
             
             events.push(eventInfo);
             
             // Count statuses
-            const status = data.status || 'NO_STATUS';
+            const status = data['Status'] || data.status || 'NO_STATUS';
             statusCounts[status] = (statusCounts[status] || 0) + 1;
             
             // Analyze fields
