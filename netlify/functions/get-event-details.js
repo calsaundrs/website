@@ -192,7 +192,7 @@ exports.handler = async function (event, context) {
     <style>
         /* Base Styles */
         body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #0a0a0a 100%);
             color: #EAEAEA;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
