@@ -91,6 +91,10 @@
             <button id="debugEventServiceBtn" class="button" onclick="debugEventService()">
                 🔍 Debug EventService
             </button>
+            
+            <button id="testAirtableQueryBtn" class="button" onclick="testAirtableQuery()">
+                🔍 Test Airtable Query
+            </button>
         </div>
 
         <div id="status" class="status"></div>
@@ -114,6 +118,11 @@
         <div>
             <h3>EventService Debug:</h3>
             <pre id="eventServiceResponse">Click "Debug EventService" to test the service...</pre>
+        </div>
+        
+        <div>
+            <h3>Airtable Query Test:</h3>
+            <pre id="airtableQueryResponse">Click "Test Airtable Query" to test the query directly...</pre>
         </div>
     </div>
 
@@ -376,6 +385,59 @@
                 status.className = 'status error';
                 status.innerHTML = `
                     <h3>❌ EventService Debug Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                
+                btn.textContent = '❌ Failed - Try Again';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function testAirtableQuery() {
+            const btn = document.getElementById('testAirtableQueryBtn');
+            const status = document.getElementById('status');
+            const response = document.getElementById('airtableQueryResponse');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing...';
+            
+            status.style.display = 'block';
+            status.className = 'status error';
+            status.textContent = 'Testing Airtable query directly...';
+            
+            try {
+                console.log('Testing Airtable query directly...');
+                
+                const res = await fetch('/.netlify/functions/test-airtable-query');
+                const responseText = await res.text();
+                
+                console.log('Airtable query response status:', res.status);
+                console.log('Airtable query response text:', responseText);
+                
+                response.textContent = `Status: ${res.status}\n\n${responseText}`;
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${responseText}`);
+                }
+                
+                const data = JSON.parse(responseText);
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ Airtable Query Test Successful!</h3>
+                    <p><strong>EventService Query Records:</strong> ${data.eventServiceQuery?.recordCount || 0}</p>
+                    <p><strong>Available Fields:</strong> ${data.minimalQuery?.availableFields?.length || 0}</p>
+                `;
+                
+                btn.textContent = '✅ Test Complete';
+                
+            } catch (error) {
+                console.error('Failed to test Airtable query:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ Airtable Query Test Failed</h3>
                     <p><strong>Error:</strong> ${error.message}</p>
                 `;
                 
