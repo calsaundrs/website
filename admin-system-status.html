@@ -67,6 +67,16 @@
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
         
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+        
         .test-result {
             animation: slideIn 0.3s ease-out;
         }
@@ -98,6 +108,31 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
+        <!-- Breadcrumb Navigation -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol role="list" class="flex items-center space-x-4">
+                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <a href="/admin-settings.html" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <a href="/admin-settings.html#system-status" class="ml-4 text-gray-400 hover:text-white transition-colors">Dashboard</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <span class="ml-4 font-medium text-white">System Status</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -138,6 +173,11 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-4 mb-8 justify-center">
+            <a href="/admin-settings.html#system-status" class="btn-secondary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+            
             <button id="run-tests-btn" class="btn-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
                 <i class="fas fa-play"></i>
                 Run Health Check
