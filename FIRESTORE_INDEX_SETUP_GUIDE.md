@@ -9,87 +9,41 @@ FAILED_PRECONDITION: The query requires an index. You can create it here:
 https://console.firebase.google.com/v1/r/project/brumoutloud-3dd92/firestore/indexes?create_composite=...
 ```
 
-## Quick Fix (Temporary)
+## Firestore's Recommended Approach
 
-I've updated the `get-events-firestore.js` function to use client-side filtering as a temporary solution. This avoids the need for complex indexes but may not be optimal for large datasets.
+Firestore automatically generates error messages with direct links to create the missing indexes. This is the **official and recommended** way to handle index creation.
 
-## Permanent Solution: Set Up Proper Indexes
+## Step-by-Step Index Creation Process
 
-### 1. Access Firebase Console
+### 1. Trigger the Error (Generate Index Links)
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select your project: `brumoutloud-3dd92`
-3. Navigate to **Firestore Database** → **Indexes**
+1. **Deploy the updated function** that uses server-side filtering
+2. **Test the function** by visiting your site or calling the API
+3. **Check the function logs** for error messages with index creation links
 
-### 2. Required Composite Indexes
+### 2. Use Firestore's Auto-Generated Links
 
-#### For Events Collection
-
-**Index 1: Status + Date + __name__**
-- Collection: `events`
-- Fields:
-  - `status` (Ascending)
-  - `date` (Ascending)
-  - `__name__` (Ascending)
-- Query scope: Collection
-
-**Index 2: Status + Category + Date + __name__**
-- Collection: `events`
-- Fields:
-  - `status` (Ascending)
-  - `category` (Array contains)
-  - `date` (Ascending)
-  - `__name__` (Ascending)
-- Query scope: Collection
-
-**Index 3: Status + VenueId + Date + __name__**
-- Collection: `events`
-- Fields:
-  - `status` (Ascending)
-  - `venueId` (Ascending)
-  - `date` (Ascending)
-  - `__name__` (Ascending)
-- Query scope: Collection
-
-**Index 4: Status + Date + VenueId + __name__**
-- Collection: `events`
-- Fields:
-  - `status` (Ascending)
-  - `date` (Ascending)
-  - `venueId` (Ascending)
-  - `__name__` (Ascending)
-- Query scope: Collection
-
-#### For Venues Collection
-
-**Index 5: Status + Slug + __name__**
-- Collection: `venues`
-- Fields:
-  - `status` (Ascending)
-  - `slug` (Ascending)
-  - `__name__` (Ascending)
-- Query scope: Collection
-
-### 3. Creating Indexes via Firebase Console
-
-1. Click **"Create Index"**
-2. Select the collection (e.g., `events`)
-3. Add fields in the correct order
-4. Set the appropriate field types:
-   - Regular fields: Ascending/Descending
-   - Array fields: Array contains
-   - Always include `__name__` as the last field
-5. Click **"Create"**
-
-### 4. Creating Indexes via Direct Link
-
-You can also use the direct link from the error message:
-
+When you get an error like this:
 ```
-https://console.firebase.google.com/v1/r/project/brumoutloud-3dd92/firestore/indexes?create_composite=ClBwcm9qZWN0cy9icnVtb3V0bG91ZC0zZGQ5Mi9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvZXZlbnRzL2luZGV4ZXMvXxABGgoKBnN0YXR1cxABGggKBGRhdGUQARoMCghfX25hbWVfXxAB
+FAILED_PRECONDITION: The query requires an index. You can create it here: 
+https://console.firebase.google.com/v1/r/project/brumoutloud-3dd92/firestore/indexes?create_composite=...
 ```
 
-This will pre-populate the index creation form with the exact fields needed.
+1. **Click the link** in the error message
+2. **Review the pre-populated fields** in the Firebase Console
+3. **Click "Create"** to build the index
+
+### 3. Repeat for Each Query Pattern
+
+Different queries will generate different index requirements:
+
+- **Basic events query**: `status == 'approved' ORDER BY date`
+- **Events with date filter**: `status == 'approved' AND date >= now ORDER BY date`
+- **Events with categories**: `status == 'approved' AND category ARRAY_CONTAINS_ANY [...] ORDER BY date`
+- **Events with venues**: `status == 'approved' AND venueId IN [...] ORDER BY date`
+- **Venues query**: `status == 'approved' AND slug == '...'`
+
+Each will generate its own index creation link when first encountered.
 
 ### 5. Index Building Time
 
@@ -123,38 +77,9 @@ curl "https://your-site.netlify.app/.netlify/functions/get-events-firestore?date
 curl "https://your-site.netlify.app/.netlify/functions/get-events-firestore?view=venues"
 ```
 
-### 8. Reverting to Server-Side Filtering
+### 8. The Function is Already Optimized
 
-Once indexes are created, you can revert the `get-events-firestore.js` function to use server-side filtering for better performance:
-
-```javascript
-// Apply date filtering
-if (filters.dateRange.type === 'upcoming') {
-    const now = new Date();
-    query = query.where('date', '>=', now);
-} else if (filters.dateRange.type === 'today') {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    query = query.where('date', '>=', today).where('date', '<', tomorrow);
-} else if (filters.dateRange.type === 'week') {
-    const now = new Date();
-    const weekFromNow = new Date(now);
-    weekFromNow.setDate(weekFromNow.getDate() + 7);
-    query = query.where('date', '>=', now).where('date', '<=', weekFromNow);
-}
-
-// Apply category filtering
-if (filters.categories.length > 0) {
-    query = query.where('category', 'array-contains-any', filters.categories);
-}
-
-// Apply venue filtering
-if (filters.venues.length > 0) {
-    query = query.where('venueId', 'in', filters.venues);
-}
-```
+The `get-events-firestore.js` function is already using server-side filtering for optimal performance. Once the indexes are created, it will work efficiently without any code changes.
 
 ### 9. Index Cost Considerations
 
