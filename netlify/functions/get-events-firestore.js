@@ -27,52 +27,7 @@ exports.handler = async function (event, context) {
         
         // Handle different views
         if (view === 'venues') {
-            console.log("=== VENUES VIEW REQUESTED ===");
-            // Extract venues from events
-            const eventsResult = await handlePublicView(queryParams);
-            const eventsData = JSON.parse(eventsResult.body);
-            
-            // Extract venues from events
-            const venueMap = new Map();
-            
-            console.log(`Processing ${eventsData.events.length} events for venue extraction`);
-            
-            eventsData.events.forEach((event, index) => {
-                if (event.venue && event.venue.name && event.venue.slug) {
-                    // Handle both string and array formats for venue name and slug
-                    const venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
-                    const venueSlug = Array.isArray(event.venue.slug) ? event.venue.slug[0] : event.venue.slug;
-                    const venueKey = venueSlug;
-                    
-                    if (venueName && venueSlug && !venueMap.has(venueKey)) {
-                        venueMap.set(venueKey, {
-                            id: event.venue.id || venueKey,
-                            name: venueName,
-                            slug: venueSlug,
-                            description: `Venue hosting ${event.name || 'events'}`,
-                            address: event.venue.address || 'Address TBC',
-                            type: 'venue',
-                            status: 'Approved',
-                            image: event.image
-                        });
-                    }
-                }
-            });
-            
-            const venues = Array.from(venueMap.values());
-            console.log(`Extracted ${venues.length} unique venues from events`);
-            
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'public, max-age=600'
-                },
-                body: JSON.stringify({
-                    venues: venues,
-                    totalCount: venues.length
-                })
-            };
+            return await handleVenuesView();
         } else if (view === 'admin') {
             return await handleAdminView(queryParams);
         } else {
@@ -301,21 +256,48 @@ async function handleVenuesView() {
     try {
         let venues = [];
         
-        // First, try to get venues from the venues collection
+        // First, try to get venues from the venues collection with Listing Status = Listed
         try {
-            console.log("Attempting to fetch from venues collection...");
+            console.log("Attempting to fetch from venues collection with Listing Status = Listed...");
             const venuesRef = db.collection('venues');
-            const venuesSnapshot = await venuesRef.where('Status', '==', 'Approved').get();
             
-            console.log(`Found ${venuesSnapshot.size} venues in venues collection`);
+            // Try different field names for listing status
+            let venuesSnapshot;
+            try {
+                venuesSnapshot = await venuesRef.where('Listing Status', '==', 'Listed').get();
+                console.log(`Found ${venuesSnapshot.size} venues with 'Listing Status' = 'Listed'`);
+            } catch (error1) {
+                try {
+                    venuesSnapshot = await venuesRef.where('listingStatus', '==', 'Listed').get();
+                    console.log(`Found ${venuesSnapshot.size} venues with 'listingStatus' = 'Listed'`);
+                } catch (error2) {
+                    try {
+                        venuesSnapshot = await venuesRef.where('Status', '==', 'Listed').get();
+                        console.log(`Found ${venuesSnapshot.size} venues with 'Status' = 'Listed'`);
+                    } catch (error3) {
+                        // If all queries fail, try to get all venues and filter client-side
+                        console.log('All status field queries failed, getting all venues...');
+                        venuesSnapshot = await venuesRef.get();
+                        console.log(`Found ${venuesSnapshot.size} total venues in collection`);
+                    }
+                }
+            }
             
             venuesSnapshot.forEach(doc => {
-                const venueData = {
-                    id: doc.id,
-                    ...doc.data()
-                };
-                venues.push(processVenueForPublic(venueData));
+                const venueData = doc.data();
+                const listingStatus = venueData['Listing Status'] || venueData['listingStatus'] || venueData['Status'] || venueData['status'];
+                
+                // Only include venues with Listing Status = Listed
+                if (listingStatus === 'Listed' || listingStatus === 'listed') {
+                    venues.push(processVenueForPublic({
+                        id: doc.id,
+                        ...venueData
+                    }));
+                }
             });
+            
+            console.log(`Processed ${venuesSnapshot.size} venues, found ${venues.length} with Listing Status = Listed`);
+            
         } catch (venuesError) {
             console.log('No venues collection or error accessing it:', venuesError.message);
         }
@@ -533,19 +515,20 @@ function processEventForAdmin(eventData) {
 }
 
 function processVenueForPublic(venueData) {
-    // Handle both direct venue data and extracted venue data
+    // Handle venue data from venues collection
     const venue = {
         id: venueData.id,
-        name: venueData.name || venueData['Venue Name'],
-        slug: venueData.slug || venueData['Venue Slug'],
-        description: venueData.description || `Venue hosting events`,
-        address: venueData.address || venueData['Venue Address'] || 'Address TBC',
-        link: venueData.link || venueData['Venue Link'],
-        image: venueData.image,
-        category: venueData.category || venueData.tags || [],
-        type: venueData.type || 'venue',
-        status: venueData.status || venueData.Status || 'Approved',
-        openingHours: venueData.openingHours || venueData['Opening Hours']
+        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
+        description: venueData.description || venueData['Description'] || `Venue hosting events`,
+        address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
+        link: venueData.link || venueData['Venue Link'] || venueData['Link'],
+        image: venueData.image || venueData['Image'],
+        category: venueData.category || venueData.tags || venueData['Tags'] || [],
+        type: venueData.type || venueData['Type'] || 'venue',
+        status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
+        openingHours: venueData.openingHours || venueData['Opening Hours'],
+        popular: venueData.popular || venueData['Popular'] || false
     };
     
     // Add some default tags based on venue type if none exist
