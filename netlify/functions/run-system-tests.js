@@ -2,6 +2,8 @@ const SystemMonitor = require('./services/system-monitor');
 
 const systemMonitor = new SystemMonitor();
 
+// Version: 2025-07-25-v2 - Force redeploy for system tests
+
 exports.handler = async function(event, context) {
   // Enable CORS
   const headers = {

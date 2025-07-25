@@ -2,6 +2,8 @@ const EventService = require('./event-service');
 const SeriesManager = require('./series-manager');
 const Airtable = require('airtable');
 
+// Version: 2025-07-25-v2 - Force redeploy for system monitoring
+
 class SystemMonitor {
   constructor() {
     this.base = new Airtable({ 
