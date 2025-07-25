@@ -781,14 +781,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Filtering Logic ---
         function applyFilters() {
-            // Use the store to update filters
+            // Convert legacy filter format to store format
             const filters = {
                 dateRange: activeDateFilter,
                 categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
                 venues: activeVenueFilter !== 'all' ? [activeVenueFilter] : [],
-                sfwMode: isSfwMode
+                sfwMode: isSfwMode,
+                limit: 50
             };
             
+            console.log('Applying filters:', filters);
             eventStore.updateFilters(filters);
         }
 
@@ -975,9 +977,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     document.querySelectorAll('#filter-bar-container .filter-button[data-filter-type="date"]').forEach(b => b.classList.remove('active'));
                     button.classList.add('active');
 
-                    activeDateFilter.type = button.dataset.filterValue;
-                    activeDateFilter.from = null;
-                    activeDateFilter.to = null;
+                    const filterValue = button.dataset.filterValue;
+                    
+                    if (filterValue === 'today') {
+                        const today = new Date();
+                        activeDateFilter = {
+                            type: 'custom',
+                            from: today.toISOString().split('T')[0],
+                            to: today.toISOString().split('T')[0]
+                        };
+                    } else if (filterValue === 'this-weekend') {
+                        const today = new Date();
+                        const dayOfWeek = today.getDay();
+                        const daysUntilSaturday = 6 - dayOfWeek;
+                        const saturday = new Date(today);
+                        saturday.setDate(today.getDate() + daysUntilSaturday);
+                        const sunday = new Date(saturday);
+                        sunday.setDate(saturday.getDate() + 1);
+                        
+                        activeDateFilter = {
+                            type: 'custom',
+                            from: saturday.toISOString().split('T')[0],
+                            to: sunday.toISOString().split('T')[0]
+                        };
+                    } else {
+                        activeDateFilter = {
+                            type: filterValue,
+                            from: null,
+                            to: null
+                        };
+                    }
+                    
+                    console.log('Date filter changed:', activeDateFilter);
                     applyFilters();
                 }
             });
@@ -1005,6 +1036,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 activeCategoryFilter = button.dataset.filterValue;
                 categoryBtn.querySelector('span').textContent = button.textContent;
                 categoryPopover.classList.remove('show');
+                console.log('Category filter changed:', activeCategoryFilter);
                 applyFilters();
             });
 
@@ -1014,6 +1046,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 activeVenueFilter = button.dataset.filterValue;
                 venueBtn.querySelector('span').textContent = button.textContent;
                 venuePopover.classList.remove('show');
+                console.log('Venue filter changed:', activeVenueFilter);
                 applyFilters();
             });
 
@@ -1110,6 +1143,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 // Subscribe to store changes
                 eventStore.subscribe((state) => {
+                    console.log('Event store state updated:', state);
                     renderEvents(state.events);
                     updateLoadingState(state.loading);
                     updateErrorState(state.error);
