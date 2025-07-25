@@ -123,7 +123,22 @@ async function handlePublicView(queryParams) {
                 approvedAt: rawData.approvedAt
             };
             
-            console.log(`Processing event: ${eventData.name} (status: ${eventData.status})`);
+            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date})`);
+            
+            // Apply date filtering client-side
+            if (eventData.date) {
+                const eventDate = new Date(eventData.date);
+                const now = new Date();
+                
+                console.log(`Date comparison for ${eventData.name}: eventDate=${eventDate.toISOString()}, now=${now.toISOString()}, isPast=${eventDate < now}`);
+                
+                // Filter out past events (events before today)
+                if (eventDate < now) {
+                    console.log(`Skipping past event ${eventData.name} (date: ${eventDate.toISOString()})`);
+                    skippedCount++;
+                    return; // Skip this event
+                }
+            }
             
             // Apply search filtering client-side (Firestore doesn't support full-text search)
             if (filters.search) {
