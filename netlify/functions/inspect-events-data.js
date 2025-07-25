@@ -58,7 +58,7 @@ exports.handler = async function (event, context) {
         
         // Test the specific query we're using
         console.log("Testing the exact query from get-events-firestore...");
-        const approvedQuery = eventsRef.where('status', '==', 'approved');
+        const approvedQuery = eventsRef.where('Status', '==', 'approved');
         const approvedSnapshot = await approvedQuery.limit(5).get();
         console.log(`Approved events query returned ${approvedSnapshot.size} documents`);
         
@@ -67,12 +67,12 @@ exports.handler = async function (event, context) {
             const data = doc.data();
             approvedEvents.push({
                 id: doc.id,
-                name: data.name,
-                status: data.status,
-                date: data.date,
-                venue: data.venue,
+                name: data['Event Name'],
+                status: data['Status'],
+                date: data['Date'],
+                venueName: data['Venue Name'],
                 venueId: data.venueId,
-                category: data.category
+                category: data.categories
             });
         });
         
@@ -94,7 +94,7 @@ exports.handler = async function (event, context) {
                 sampleEvents: events,
                 approvedEvents: approvedEvents,
                 queryTest: {
-                    query: 'status == "approved"',
+                    query: 'Status == "approved"',
                     result: `${approvedSnapshot.size} events found`
                 }
             })

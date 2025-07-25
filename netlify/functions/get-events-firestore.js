@@ -72,9 +72,9 @@ async function handlePublicView(queryParams) {
 
     console.log("Public view filters:", filters);
 
-    try {
-        const eventsRef = db.collection('events');
-        let query = eventsRef.where('status', '==', 'approved');
+            try {
+            const eventsRef = db.collection('events');
+            let query = eventsRef.where('Status', '==', 'approved');
 
         // Start with a simple query that will work immediately
         // This will generate index creation links for more complex queries
@@ -82,7 +82,7 @@ async function handlePublicView(queryParams) {
         
         // For now, just get approved events ordered by date
         // This will trigger the basic index creation link
-        query = query.orderBy('date', 'asc');
+        query = query.orderBy('Date', 'asc');
         
         // Note: We'll add filtering back once the basic index is created
         // The error messages will guide us to create the right indexes
@@ -99,9 +99,31 @@ async function handlePublicView(queryParams) {
         let skippedCount = 0;
         
         snapshot.forEach(doc => {
+            const rawData = doc.data();
+            
+            // Map Firestore field names to expected field names
             const eventData = {
                 id: doc.id,
-                ...doc.data()
+                name: rawData['Event Name'] || rawData.name,
+                description: rawData['Description'] || rawData.description,
+                date: rawData['Date'] || rawData.date,
+                status: rawData['Status'] || rawData.status,
+                slug: rawData['Slug'] || rawData.slug,
+                category: rawData['categories'] || rawData.category || [],
+                venueId: rawData['venueId'] || rawData.venueId,
+                venueName: rawData['Venue Name'] || rawData.venueName,
+                venueSlug: rawData['Venue Slug'] || rawData.venueSlug,
+                image: rawData['Promo Image'] || rawData.image,
+                link: rawData['Link'] || rawData.link,
+                ticketLink: rawData['Ticket Link'] || rawData.ticketLink,
+                recurringInfo: rawData['Recurring Info'] || rawData.recurringInfo,
+                series: rawData['Series ID'] || rawData.series,
+                promotion: rawData.promotion || {},
+                createdAt: rawData.createdAt,
+                updatedAt: rawData.updatedAt,
+                submittedBy: rawData['Submitter Email'] || rawData.submittedBy,
+                approvedBy: rawData.approvedBy,
+                approvedAt: rawData.approvedAt
             };
             
             console.log(`Processing event: ${eventData.name} (status: ${eventData.status})`);
@@ -125,12 +147,12 @@ async function handlePublicView(queryParams) {
         
         console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
 
-        // Get total count for pagination
-        console.log("Getting total count...");
-        const countQuery = eventsRef.where('status', '==', 'approved');
-        const countSnapshot = await countQuery.get();
-        const totalCount = countSnapshot.size;
-        console.log(`Total count: ${totalCount}`);
+                    // Get total count for pagination
+            console.log("Getting total count...");
+            const countQuery = eventsRef.where('Status', '==', 'approved');
+            const countSnapshot = await countQuery.get();
+            const totalCount = countSnapshot.size;
+            console.log(`Total count: ${totalCount}`);
 
         return {
             statusCode: 200,
@@ -250,9 +272,10 @@ function processEventForPublic(eventData) {
         date: eventData.date,
         category: eventData.category || [],
         venue: {
-            id: eventData.venue?.id || eventData.venueId,
-            name: eventData.venue?.name || eventData.venueName,
-            address: eventData.venue?.address || eventData.venueAddress
+            id: eventData.venueId,
+            name: eventData.venueName,
+            slug: eventData.venueSlug,
+            address: eventData.venueAddress
         },
         image: eventData.image,
         price: eventData.price,
@@ -274,9 +297,10 @@ function processEventForAdmin(eventData) {
         date: eventData.date,
         category: eventData.category || [],
         venue: {
-            id: eventData.venue?.id || eventData.venueId,
-            name: eventData.venue?.name || eventData.venueName,
-            address: eventData.venue?.address || eventData.venueAddress
+            id: eventData.venueId,
+            name: eventData.venueName,
+            slug: eventData.venueSlug,
+            address: eventData.venueAddress
         },
         image: eventData.image,
         price: eventData.price,
