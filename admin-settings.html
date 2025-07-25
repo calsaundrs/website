@@ -410,6 +410,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <i class="fas fa-heartbeat"></i>
                         Quick Health Check
                     </button>
+                    <button id="refresh-status" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Status
+                    </button>
                     <button id="test-notification" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-bell"></i>
                         Test Notification
@@ -425,22 +429,57 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script>
         // System Status Dashboard
         async function loadSystemStatus() {
+            console.log('Loading system status...');
+            
+            // Show loading state
+            const refreshBtn = document.getElementById('refresh-status');
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            
             try {
                 const response = await fetch('/.netlify/functions/get-system-status');
-                const data = await response.json();
+                console.log('System status response:', response.status);
                 
-                if (data.success) {
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('System status response error:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log('System status data:', data);
+                
+                if (data.success && data.data) {
                     updateSystemStatus(data.data);
                 } else {
-                    showError('Failed to load system status');
+                    console.error('System status data invalid:', data);
+                    showError('Failed to load system status: Invalid data');
                 }
             } catch (error) {
                 console.error('Error loading system status:', error);
-                showError('Failed to load system status');
+                showError('Failed to load system status: ' + error.message);
+                
+                // Set unknown status
+                const overallStatus = document.getElementById('overall-status');
+                overallStatus.textContent = '❓';
+                overallStatus.className = 'text-2xl font-bold text-gray-400 mb-1';
+                
+                const lastCheck = document.getElementById('last-check');
+                lastCheck.textContent = 'Error';
+                
+                const testsPassed = document.getElementById('tests-passed');
+                testsPassed.textContent = '--';
+            } finally {
+                // Restore button state
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = originalText;
             }
         }
 
         function updateSystemStatus(status) {
+            console.log('Updating system status with:', status);
+            
             // Update overall status
             const overallStatus = document.getElementById('overall-status');
             if (status.overallStatus === 'healthy') {
@@ -449,9 +488,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             } else if (status.overallStatus === 'degraded') {
                 overallStatus.textContent = '⚠️';
                 overallStatus.className = 'text-2xl font-bold text-yellow-400 mb-1';
-            } else {
+            } else if (status.overallStatus === 'critical') {
                 overallStatus.textContent = '❌';
                 overallStatus.className = 'text-2xl font-bold text-red-400 mb-1';
+            } else {
+                overallStatus.textContent = '❓';
+                overallStatus.className = 'text-2xl font-bold text-gray-400 mb-1';
             }
 
             // Update last check
@@ -465,9 +507,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             // Update tests passed
             const testsPassed = document.getElementById('tests-passed');
-            if (status.recentResults && status.recentResults.length > 0) {
-                const latest = status.recentResults[0];
-                testsPassed.textContent = `${latest.passed}/${latest.totalTests}`;
+            if (status.totalTests > 0) {
+                testsPassed.textContent = `${status.passedTests}/${status.totalTests}`;
             } else {
                 testsPassed.textContent = '--';
             }
@@ -615,14 +656,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin dashboard initializing...');
+            
+            // Load initial status
             loadSystemStatus();
             
             // Set up event listeners
             document.getElementById('quick-health-check').addEventListener('click', runQuickHealthCheck);
+            document.getElementById('refresh-status').addEventListener('click', loadSystemStatus);
             document.getElementById('test-notification').addEventListener('click', testNotification);
             
             // Auto-refresh status every 2 minutes
-            setInterval(loadSystemStatus, 120000);
+            const refreshInterval = setInterval(loadSystemStatus, 120000);
+            console.log('Auto-refresh interval set to 2 minutes');
+            
+            // Store interval ID for cleanup
+            window.systemStatusInterval = refreshInterval;
         });
     </script>
 </body>

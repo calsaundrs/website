@@ -428,22 +428,56 @@ class SystemMonitor {
       }))
       .reverse();
 
-    const overallStatus = recentResults.length > 0 ? 
-      (recentResults[0].failed === 0 ? 'healthy' : 'degraded') : 'unknown';
+    // Determine overall status
+    let overallStatus = 'unknown';
+    if (recentResults.length > 0) {
+      const latest = recentResults[0];
+      if (latest.failed === 0) {
+        overallStatus = 'healthy';
+      } else if (latest.failed < latest.totalTests) {
+        overallStatus = 'degraded';
+      } else {
+        overallStatus = 'critical';
+      }
+    }
+
+    // Calculate actual uptime
+    const uptime = this.getUptime();
 
     return {
       overallStatus,
-      lastRun: this.lastRun,
+      lastRun: this.lastRun ? new Date(this.lastRun).toISOString() : null,
       recentResults,
-      uptime: this.getUptime()
+      uptime,
+      totalTests: recentResults.length > 0 ? recentResults[0].totalTests : 0,
+      passedTests: recentResults.length > 0 ? recentResults[0].passed : 0,
+      failedTests: recentResults.length > 0 ? recentResults[0].failed : 0
     };
   }
 
   getUptime() {
-    // This would need to be implemented with actual uptime tracking
+    if (!this.startTime) {
+      this.startTime = Date.now();
+    }
+    
+    const now = Date.now();
+    const uptimeMs = now - this.startTime;
+    
+    const days = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((uptimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+    
+    let uptimeString = '';
+    if (days > 0) uptimeString += `${days}d `;
+    if (hours > 0) uptimeString += `${hours}h `;
+    if (minutes > 0) uptimeString += `${minutes}m `;
+    uptimeString += `${seconds}s`;
+    
     return {
-      startTime: new Date(Date.now() - 24 * 60 * 60 * 1000), // Mock 24 hours
-      uptime: '24h 0m 0s'
+      startTime: new Date(this.startTime).toISOString(),
+      uptime: uptimeString,
+      uptimeMs: uptimeMs
     };
   }
 }
