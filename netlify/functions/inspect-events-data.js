@@ -58,7 +58,7 @@ exports.handler = async function (event, context) {
         
         // Test the specific query we're using
         console.log("Testing the exact query from get-events-firestore...");
-        const approvedQuery = eventsRef.where('Status', '==', 'approved');
+        const approvedQuery = eventsRef.where('Status', '==', 'Approved');
         const approvedSnapshot = await approvedQuery.limit(5).get();
         console.log(`Approved events query returned ${approvedSnapshot.size} documents`);
         
@@ -94,7 +94,7 @@ exports.handler = async function (event, context) {
                 sampleEvents: events,
                 approvedEvents: approvedEvents,
                 queryTest: {
-                    query: 'Status == "approved"',
+                    query: 'Status == "Approved"',
                     result: `${approvedSnapshot.size} events found`
                 }
             })

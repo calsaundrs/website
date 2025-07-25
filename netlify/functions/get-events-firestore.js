@@ -74,7 +74,7 @@ async function handlePublicView(queryParams) {
 
             try {
             const eventsRef = db.collection('events');
-            let query = eventsRef.where('Status', '==', 'approved');
+            let query = eventsRef.where('Status', '==', 'Approved');
 
         // Start with a simple query that will work immediately
         // This will generate index creation links for more complex queries
@@ -149,7 +149,7 @@ async function handlePublicView(queryParams) {
 
                     // Get total count for pagination
             console.log("Getting total count...");
-            const countQuery = eventsRef.where('Status', '==', 'approved');
+            const countQuery = eventsRef.where('Status', '==', 'Approved');
             const countSnapshot = await countQuery.get();
             const totalCount = countSnapshot.size;
             console.log(`Total count: ${totalCount}`);
