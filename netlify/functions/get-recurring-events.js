@@ -2,12 +2,13 @@ const EventService = require('./services/event-service');
 
 const eventService = new EventService();
 
+// Version: 2025-07-25-v2 - Fixed Image URL field issue
 exports.handler = async (event) => {
     if (event.httpMethod !== 'GET') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    console.log('get-recurring-events: Starting function execution');
+    console.log('get-recurring-events: Starting function execution (v2)');
 
     try {
         // Use EventService to get all events (admin mode)
