@@ -139,44 +139,10 @@ class EventService {
   buildEventQuery(filters) {
     const { dateRange, categories, venues, search, sfwMode } = filters;
     
+    // Start with a simple filter - just approved events
     let filterFormula = "{Status} = 'Approved'";
     
-    // Date filtering
-    if (dateRange && dateRange.type !== 'all') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      switch (dateRange.type) {
-        case 'today':
-          filterFormula += ` AND IS_SAME({Date}, TODAY())`;
-          break;
-        case 'this-weekend':
-          const dayOfWeek = today.getDay();
-          const friday = new Date(today);
-          friday.setDate(today.getDate() - dayOfWeek + 5);
-          const sunday = new Date(friday);
-          sunday.setDate(friday.getDate() + 2);
-          filterFormula += ` AND IS_BETWEEN({Date}, "${friday.toISOString().split('T')[0]}", "${sunday.toISOString().split('T')[0]}")`;
-          break;
-        case 'custom':
-          if (dateRange.from) {
-            filterFormula += ` AND IS_AFTER({Date}, "${dateRange.from}")`;
-          }
-          if (dateRange.to) {
-            filterFormula += ` AND IS_BEFORE({Date}, "${dateRange.to}")`;
-          }
-          break;
-        default:
-          filterFormula += ` AND IS_AFTER({Date}, DATEADD(TODAY(), -1, 'days'))`;
-      }
-    } else {
-      filterFormula += ` AND IS_AFTER({Date}, DATEADD(TODAY(), -1, 'days'))`;
-    }
-    
-    // SFW mode filtering
-    if (sfwMode) {
-      filterFormula += ` AND NOT(FIND("Kink", ARRAYJOIN({Category}, ",")))`;
-    }
+    console.log('Generated filter formula:', filterFormula);
     
     return {
       filterByFormula: filterFormula,
@@ -367,34 +333,78 @@ class EventService {
   }
 
   applyPostQueryFilters(events, filters) {
-    let filteredEvents = [...events];
+    const { dateRange, categories, venues, search, sfwMode } = filters;
     
-    // Category filtering
-    if (filters.categories && filters.categories.length > 0) {
-      filteredEvents = filteredEvents.filter(event => 
-        event.category.some(cat => filters.categories.includes(cat))
-      );
-    }
-    
-    // Venue filtering
-    if (filters.venues && filters.venues.length > 0) {
-      filteredEvents = filteredEvents.filter(event => 
-        filters.venues.includes(event.venue.name)
-      );
-    }
-    
-    // Search filtering
-    if (filters.search) {
-      const searchTerm = filters.search.toLowerCase();
-      filteredEvents = filteredEvents.filter(event =>
-        event.name.toLowerCase().includes(searchTerm) ||
-        event.description.toLowerCase().includes(searchTerm) ||
-        event.venue.name.toLowerCase().includes(searchTerm)
-      );
-    }
-    
-    return filteredEvents;
+    return events.filter(event => {
+      // Date filtering
+      if (dateRange && dateRange.type !== 'all') {
+        const eventDate = new Date(event.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        switch (dateRange.type) {
+          case 'today':
+            const eventDay = new Date(eventDate);
+            eventDay.setHours(0, 0, 0, 0);
+            if (eventDay.getTime() !== today.getTime()) return false;
+            break;
+          case 'this-weekend':
+            const dayOfWeek = today.getDay();
+            const friday = new Date(today);
+            friday.setDate(today.getDate() - dayOfWeek + 5);
+            const sunday = new Date(friday);
+            sunday.setDate(friday.getDate() + 2);
+            if (eventDate < friday || eventDate > sunday) return false;
+            break;
+          case 'custom':
+            if (dateRange.from && eventDate < new Date(dateRange.from)) return false;
+            if (dateRange.to && eventDate > new Date(dateRange.to)) return false;
+            break;
+          default:
+            if (eventDate < today) return false;
+        }
+      } else {
+        // Default: only future events
+        if (new Date(event.date) < new Date()) return false;
+      }
+      
+      // Category filtering
+      if (categories && categories.length > 0) {
+        const eventCategories = event.category || [];
+        if (!categories.some(cat => eventCategories.includes(cat))) return false;
+      }
+      
+      // Venue filtering
+      if (venues && venues.length > 0) {
+        const eventVenue = event.venue ? event.venue.name : '';
+        if (!venues.includes(eventVenue)) return false;
+      }
+      
+      // Search filtering
+      if (search) {
+        const searchLower = search.toLowerCase();
+        const eventName = event.name.toLowerCase();
+        const eventDescription = (event.description || '').toLowerCase();
+        const eventVenue = event.venue ? event.venue.name.toLowerCase() : '';
+        
+        if (!eventName.includes(searchLower) && 
+            !eventDescription.includes(searchLower) && 
+            !eventVenue.includes(searchLower)) {
+          return false;
+        }
+      }
+      
+      // SFW mode filtering
+      if (sfwMode) {
+        const eventCategories = event.category || [];
+        if (eventCategories.includes('Kink')) return false;
+      }
+      
+      return true;
+    });
   }
+
+
 
   sortAndPaginate(events, sortBy, sortOrder, limit, offset) {
     // Sort events
