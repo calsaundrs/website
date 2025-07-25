@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Data Migration - Airtable to Firestore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background-color: #ff6b6b20;
+            border: 1px solid #ff6b6b;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .warning h3 {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+        .info {
+            background-color: #4ecdc420;
+            border: 1px solid #4ecdc4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .info h3 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        .button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #ff5252;
+        }
+        .button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success {
+            background-color: #4ecdc420;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        .status.error {
+            background-color: #ff6b6b20;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .status.loading {
+            background-color: #ffd93d20;
+            border: 1px solid #ffd93d;
+            color: #ffd93d;
+        }
+        .progress {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #4ecdc4;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+        }
+        .results {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .results h3 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        .result-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 5px;
+        }
+        .result-item h4 {
+            margin: 0 0 10px 0;
+            color: #ffd93d;
+        }
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .stat {
+            background-color: #555;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        .log {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            display: none;
+        }
+        .step {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .step.success {
+            background-color: #4ecdc420;
+            color: #4ecdc4;
+        }
+        .step.error {
+            background-color: #ff6b6b20;
+            color: #ff6b6b;
+        }
+        .step.loading {
+            background-color: #ffd93d20;
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Full Data Migration</h1>
+        <h2 style="text-align: center; color: #ffd93d; margin-bottom: 30px;">Airtable → Firestore</h2>
+        
+        <div class="warning">
+            <h3>⚠️ Important Warning</h3>
+            <p>This migration will:</p>
+            <ul>
+                <li>Migrate ALL data from Airtable to Firestore</li>
+                <li>Create new collections: <code>venues</code>, <code>events</code>, <code>systemNotifications</code></li>
+                <li>Preserve all relationships between data</li>
+                <li>Generate slugs for SEO-friendly URLs</li>
+                <li>This is a ONE-TIME operation - do not run multiple times!</li>
+            </ul>
+        </div>
+        
+        <div class="info">
+            <h3>📋 Migration Details</h3>
+            <p><strong>Tables to migrate:</strong></p>
+            <ul>
+                <li><strong>Venues</strong> → <code>venues</code> collection</li>
+                <li><strong>Events</strong> → <code>events</code> collection</li>
+                <li><strong>System Notifications</strong> → <code>systemNotifications</code> collection</li>
+            </ul>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Rate limiting (250ms between API calls)</li>
+                <li>Batch processing (10 records per batch)</li>
+                <li>Automatic slug generation</li>
+                <li>Relationship linking</li>
+                <li>Error handling and reporting</li>
+            </ul>
+        </div>
+        
+        <button id="startMigration" class="button">🚀 Start Full Migration</button>
+        
+        <div id="progress" class="progress">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="progressText" class="progress-text">Preparing migration...</div>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div id="results" class="results">
+            <h3>Migration Results</h3>
+            <div id="resultsContent"></div>
+        </div>
+        
+        <div id="log" class="log">
+            <h3>Migration Log</h3>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const startButton = document.getElementById('startMigration');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const status = document.getElementById('status');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const log = document.getElementById('log');
+        const logContent = document.getElementById('logContent');
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+
+        function updateProgress(percent, text) {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = text;
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const step = document.createElement('div');
+            step.className = `step ${type}`;
+            step.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContent.appendChild(step);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function displayResults(data) {
+            resultsContent.innerHTML = '';
+            
+            // Overall stats
+            const overallStats = document.createElement('div');
+            overallStats.className = 'result-item';
+            overallStats.innerHTML = `
+                <h4>Overall Migration</h4>
+                <div class="result-stats">
+                    <div class="stat">
+                        <div class="stat-label">Total Time</div>
+                        <div class="stat-value">${Math.round(data.totalTime / 1000)}s</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Status</div>
+                        <div class="stat-value">${data.success ? '✅ Success' : '❌ Failed'}</div>
+                    </div>
+                </div>
+            `;
+            resultsContent.appendChild(overallStats);
+            
+            // Migration results
+            if (data.migrations) {
+                Object.entries(data.migrations).forEach(([collection, stats]) => {
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.innerHTML = `
+                        <h4>${collection.charAt(0).toUpperCase() + collection.slice(1)} Collection</h4>
+                        <div class="result-stats">
+                            <div class="stat">
+                                <div class="stat-label">Processed</div>
+                                <div class="stat-value">${stats.processedCount}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Errors</div>
+                                <div class="stat-value">${stats.errorCount}</div>
+                            </div>
+                        </div>
+                    `;
+                    resultsContent.appendChild(item);
+                });
+            }
+            
+            // Relationship results
+            if (data.relationships) {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <h4>Relationships</h4>
+                    <div class="result-stats">
+                        <div class="stat">
+                            <div class="stat-label">Linked</div>
+                            <div class="stat-value">${data.relationships.linkedCount}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Unlinked</div>
+                            <div class="stat-value">${data.relationships.unlinkedCount}</div>
+                        </div>
+                    </div>
+                `;
+                resultsContent.appendChild(item);
+            }
+            
+            results.style.display = 'block';
+        }
+
+        startButton.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to start the full migration? This will migrate ALL data from Airtable to Firestore.')) {
+                return;
+            }
+            
+            startButton.disabled = true;
+            progress.style.display = 'block';
+            log.style.display = 'block';
+            status.style.display = 'none';
+            results.style.display = 'none';
+            
+            logContent.innerHTML = '';
+            addLogEntry('Starting full migration...', 'loading');
+            updateProgress(0, 'Initializing...');
+            
+            try {
+                // You'll need to set up authentication - this is a placeholder
+                const token = prompt('Enter your migration token:');
+                if (!token) {
+                    throw new Error('No token provided');
+                }
+                
+                addLogEntry('Sending migration request...', 'loading');
+                updateProgress(10, 'Sending request...');
+                
+                const response = await fetch('/.netlify/functions/full-migration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                updateProgress(50, 'Processing migration...');
+                addLogEntry('Migration in progress...', 'loading');
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                updateProgress(100, 'Migration complete!');
+                addLogEntry('Migration completed successfully!', 'success');
+                
+                if (data.success) {
+                    showStatus('Migration completed successfully!', 'success');
+                    displayResults(data);
+                    
+                    // Log detailed results
+                    addLogEntry(`Total time: ${Math.round(data.totalTime / 1000)}s`, 'success');
+                    if (data.migrations) {
+                        Object.entries(data.migrations).forEach(([collection, stats]) => {
+                            addLogEntry(`${collection}: ${stats.processedCount} processed, ${stats.errorCount} errors`, 
+                                stats.errorCount > 0 ? 'error' : 'success');
+                        });
+                    }
+                    if (data.relationships) {
+                        addLogEntry(`Relationships: ${data.relationships.linkedCount} linked, ${data.relationships.unlinkedCount} unlinked`, 
+                            data.relationships.unlinkedCount > 0 ? 'error' : 'success');
+                    }
+                } else {
+                    showStatus(`Migration failed: ${data.error}`, 'error');
+                    addLogEntry(`Migration failed: ${data.error}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Migration error:', error);
+                showStatus(`Migration failed: ${error.message}`, 'error');
+                addLogEntry(`Error: ${error.message}`, 'error');
+                updateProgress(0, 'Migration failed');
+            } finally {
+                startButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

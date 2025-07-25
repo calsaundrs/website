@@ -107,6 +107,12 @@
   status = 200
   force = true
 
+# Rule for the full migration trigger page
+[[redirects]]
+  from = "/admin/migration"
+  to = "/full-migration-trigger.html"
+  status = 200
+
 # Custom 404 page
 [[redirects]]
   from = "/*"
