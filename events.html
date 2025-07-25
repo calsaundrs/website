@@ -185,9 +185,10 @@
             background: rgba(31, 41, 55, 0.8);
             border: 1px solid rgba(75, 85, 99, 0.5);
             color: #D1D5DB;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border-radius: 0.75rem;
             font-weight: 600;
+            font-size: 0.875rem;
             transition: all 0.3s ease;
             cursor: pointer;
             display: flex;
@@ -195,6 +196,8 @@
             justify-content: center;
             gap: 0.5rem;
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            min-width: fit-content;
         }
         .filter-button:hover {
             background: rgba(55, 65, 81, 0.8);
@@ -430,47 +433,39 @@
         }
         /* When checked, also change the background of the track */
         input:checked ~ .block {
-             background-color: #B564F7; /* Primary accent color for track when active */
+             background-color: #E83A99; /* Primary accent color for track when active */
         }
 
         /* Custom styles for filter bar layout */
-        /* Ensure filter buttons stretch to full width on mobile for better touch target */
+        /* Mobile responsive adjustments */
         @media (max-width: 767px) {
             #filter-bar-container {
-                display: grid; /* Changed to grid for 2 columns */
-                grid-template-columns: repeat(2, 1fr); /* Two equal columns */
-                gap: 0.75rem; /* Consistent gap */
-                align-items: center; /* Vertically align items in grid */
+                padding: 1rem;
             }
-            /* Apply to all direct children of the filter bar for equal column distribution */
-            #filter-bar-container > * {
-                width: 100%; /* Fill the grid column */
-                margin-left: 0 !important; /* Override any ml-auto */
+            #filter-bar-container > div {
+                width: 100%;
             }
-            /* Specific style for the NSFW toggle container to place it correctly */
+            #filter-bar-container .flex {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .filter-button {
+                width: 100%;
+                justify-content: center;
+            }
             #nsfw-toggle-container {
-                 grid-column: span 2; /* Make it span both columns on mobile */
-                 order: 99; /* Push to the end of the flex container (now grid) so it wraps cleanly */
-                 margin-top: 0.75rem; /* Add some space above it if it wraps */
-                 width: 100%; /* Ensure it spans fully */
-                 justify-content: space-between; /* Space out toggle and text */
-            }
-            /* Filter buttons inside grid should also fill their column */
-            #filter-bar-container .filter-button {
-                justify-content: center; /* Center text within buttons */
+                width: 100%;
+                justify-content: center;
             }
             /* Popover width adjustment for mobile */
             .popover {
-                width: calc(100% - 2rem);
-                left: 1rem; right: 1rem;
+                width: calc(100vw - 2rem);
+                left: 1rem;
+                right: 1rem;
             }
             /* Text labels for NSFW toggle on mobile */
-            #nsfw-toggle-label {
-                 justify-content: space-between;
-            }
             #nsfw-mode-text-mobile {
-                display: block; flex-grow: 1; text-align: right; padding-right: 0.5rem;
-                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                display: block;
             }
             #nsfw-mode-text-desktop {
                 display: none;
@@ -478,33 +473,6 @@
         }
         /* Desktop specific layout adjustments */
         @media (min-width: 768px) {
-            #filter-bar-container {
-                display: flex; /* Back to flex on desktop */
-                flex-direction: row; flex-wrap: wrap; align-items: center;
-                gap: 1rem; /* md:gap-4 from HTML */
-            }
-            /* Apply to all direct children for desktop flex distribution */
-            #filter-bar-container > * {
-                width: auto; /* Revert to auto width */
-            }
-            /* For the filter buttons, allow them to grow and enforce some base styling */
-            #filter-bar-container .filter-button {
-                flex-grow: 1; /* Allow to grow and take equal space */
-                min-width: 120px; /* Optional: minimum width for aesthetic consistency */
-                justify-content: center; /* Center text for equal distribution */
-            }
-            /* Specific adjustments for popover buttons as they contain spans/icons */
-            #category-btn, #venue-btn, #custom-date-btn {
-                min-width: 150px; /* Adjust as needed for content */
-            }
-            /* NSFW toggle for desktop */
-            #nsfw-toggle-container {
-                order: auto; margin-top: 0; margin-left: auto; width: auto;
-                flex-grow: 0; /* Don't grow, maintain explicit width */
-            }
-            #nsfw-toggle-label {
-                 justify-content: flex-start;
-            }
             #nsfw-mode-text-mobile {
                 display: none;
             }
@@ -586,46 +554,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  </div>
             </div>
 
-            <div id="filter-bar-container" class="mb-8 flex flex-wrap items-center gap-4 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
-
-                <button class="filter-button active w-full" data-filter-type="date" data-filter-value="all">All Upcoming</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="today">Today</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
-                <div class="relative w-full"> <button id="custom-date-btn" class="filter-button w-full">Custom Date</button>
-                    <div id="custom-date-popover" class="popover">
-                        <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
-                        <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
-                        <label for="date-to" class="block text-sm font-semibold mb-1 text-gray-400">To</label>
-                        <input type="date" id="date-to" class="w-full p-2 bg-gray-800 rounded-md text-white">
+            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
+                <!-- Date Filters Row -->
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <button class="filter-button active" data-filter-type="date" data-filter-value="all">All Upcoming</button>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
+                    <div class="relative">
+                        <button id="custom-date-btn" class="filter-button">
+                            <span>Custom Date</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="custom-date-popover" class="popover">
+                            <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
+                            <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
+                            <label for="date-to" class="block text-sm font-semibold mb-1 text-gray-400">To</label>
+                            <input type="date" id="date-to" class="w-full p-2 bg-gray-800 rounded-md text-white">
+                        </div>
                     </div>
                 </div>
 
-                <div class="relative w-full"> <button id="category-btn" class="filter-button w-full">
-                        <span>All Categories</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="category-popover" class="popover max-h-80 overflow-y-auto">
-                           <p class="text-gray-400">Loading categories...</p>
+                <!-- Category, Venue, and SFW Row -->
+                <div class="flex flex-wrap gap-3 items-center">
+                    <div class="relative">
+                        <button id="category-btn" class="filter-button">
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="category-popover" class="popover max-h-80 overflow-y-auto">
+                            <p class="text-gray-400">Loading categories...</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="relative w-full"> <button id="venue-btn" class="filter-button w-full">
-                        <span>All Venues</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="venue-popover" class="popover max-h-80 overflow-y-auto">
-                        <p class="text-gray-400">Loading venues...</p>
+                    <div class="relative">
+                        <button id="venue-btn" class="filter-button">
+                            <span>All Venues</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="venue-popover" class="popover max-h-80 overflow-y-auto">
+                            <p class="text-gray-400">Loading venues...</p>
+                        </div>
                     </div>
-                </div>
 
-                <div id="nsfw-toggle-container" class="filter-button flex items-center justify-between !p-3 w-full min-w-fit ml-auto order-last">
-                    <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer flex-grow">
-                        <div class="relative flex-shrink-0">
-                            <input type="checkbox" id="nsfw-toggle" class="sr-only"> <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                            <div class="toggle-dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white"></div> </div>
-                        <span id="nsfw-mode-text-mobile" class="ml-3 text-white font-medium">SFW Mode</span>
-                        <span id="nsfw-mode-text-desktop" class="ml-3 text-white font-medium">SFW Mode</span>
-                    </label>
+                    <!-- SFW Toggle -->
+                    <div id="nsfw-toggle-container" class="flex items-center bg-gray-800/50 border border-gray-600/50 rounded-lg px-4 py-2">
+                        <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer">
+                            <div class="relative flex-shrink-0">
+                                <input type="checkbox" id="nsfw-toggle" class="sr-only">
+                                <div class="block bg-gray-600 w-12 h-6 rounded-full"></div>
+                                <div class="toggle-dot absolute left-1 top-1 w-4 h-4 rounded-full bg-white"></div>
+                            </div>
+                            <span id="nsfw-mode-text-mobile" class="ml-3 text-white font-medium text-sm">SFW Mode</span>
+                            <span id="nsfw-mode-text-desktop" class="ml-3 text-white font-medium text-sm">SFW Mode</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -836,23 +818,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 });
 
                 return `
-                    <div class="venue-card rounded-xl overflow-hidden relative">
+                    <div class="venue-card rounded-xl overflow-hidden relative flex flex-col h-full">
                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
                         ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
                         <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
                         </div>
-                        <div class="p-6">
+                        <div class="p-6 flex flex-col flex-grow">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-sm text-gray-400">${formattedDate}</span>
                             </div>
-                            <h3 class="text-xl font-bold text-white mb-2">${event.name}</h3>
-                            <p class="text-gray-400 text-sm mb-3">${venueName}</p>
-                            ${event.description ? `<p class="text-gray-300 text-sm mb-4 line-clamp-2">${event.description}</p>` : ''}
+                            <h3 class="text-xl font-bold text-white mb-2 text-left">${event.name}</h3>
+                            <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
+                            ${event.description ? `<p class="text-gray-300 text-sm mb-4 line-clamp-2 text-left">${event.description}</p>` : ''}
                             <div class="flex flex-wrap gap-1 mb-4">
                                 ${tagsHTML}
                             </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center mt-auto">
                                 <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                     <i class="fas fa-eye mr-1"></i>View Details
                                 </a>
