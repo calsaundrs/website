@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v7 - Added Link field to queries
+// Version: 2025-07-25-v12 - Added URL and Website fields as additional fallbacks
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -57,7 +57,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status', 'Link', 'Price', 'Age Restriction',
+        'Status', 'Link', 'Venue Link', 'URL', 'Website',
         'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date'
@@ -97,7 +97,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status', 'Link', 'Price', 'Age Restriction'
+        'Status', 'Link', 'Venue Link', 'URL', 'Website'
       ]
     }).firstPage();
 
@@ -177,7 +177,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
+        'Link', 'Venue Link', 'URL', 'Website', 'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date', 'Status', 'Submitter Email'
       ]
@@ -293,6 +293,11 @@ class EventService {
   processStandaloneEvent(record, approvedVenues = []) {
     const fields = record.fields;
     
+    // Debug: Log the Link field value
+    console.log(`DEBUG: Event "${fields['Event Name']}" - Link field:`, fields['Link']);
+    console.log(`DEBUG: Event "${fields['Event Name']}" - Link field type:`, typeof fields['Link']);
+    console.log(`DEBUG: Event "${fields['Event Name']}" - All available fields:`, Object.keys(fields));
+    
     return {
       id: record.id,
       name: fields['Event Name'],
@@ -306,9 +311,7 @@ class EventService {
       status: fields['Status'] || 'Pending Review',
       submitterEmail: fields['Submitter Email'] || null,
       details: {
-        price: fields['Price'] || null,
-        ageRestriction: fields['Age Restriction'] || null,
-        link: fields['Link'] || null
+        link: fields['Link'] || fields['Venue Link'] || fields['URL'] || fields['Website'] || null
       }
     };
   }
