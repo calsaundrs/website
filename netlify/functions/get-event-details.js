@@ -341,16 +341,6 @@ exports.handler = async function (event, context) {
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Breadcrumb -->
-        <nav class="mb-8">
-            <ol class="flex items-center space-x-2 text-sm text-gray-400">
-                <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li><a href="/events.html" class="hover:text-white transition-colors">Events</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li class="text-white">{{event.name}}</li>
-            </ol>
-        </nav>
 
         <!-- Event Details Card -->
         <div class="venue-card rounded-xl overflow-hidden">
@@ -361,11 +351,19 @@ exports.handler = async function (event, context) {
                 {{else}}
                 <i class="fas fa-image text-6xl text-gray-600"></i>
                 {{/if}}
-                                            <div class="absolute top-4 right-4">
-                                <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm" onclick="shareEvent()">
-                                    <i class="fas fa-share mr-1"></i>Share
-                                </button>
-                            </div>
+                <!-- Back Button -->
+                <div class="absolute top-4 left-4">
+                    <a href="/events.html" class="btn-secondary text-white px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back</span>
+                    </a>
+                </div>
+                <!-- Share Button -->
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm" onclick="shareEvent()">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
             </div>
             
             <div class="p-8">
