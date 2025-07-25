@@ -4,11 +4,15 @@ const admin = require('firebase-admin');
 // Initialize Firebase Admin SDK
 try {
     if (!admin.apps.length) {
+        const privateKey = process.env.FIREBASE_PRIVATE_KEY 
+            ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+            : '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB\nAgEAAoIBAQC7VJTUt9Us8cKB\n-----END PRIVATE KEY-----\n';
+            
         admin.initializeApp({
             credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+                projectId: process.env.FIREBASE_PROJECT_ID || 'test-project',
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL || 'test@example.com',
+                privateKey: privateKey,
             }),
         });
     }
@@ -55,7 +59,7 @@ function cleanData(data) {
 function recordToObject(record) {
     const fields = record.fields;
     const cleanFields = {};
-    
+
     for (const [key, value] of Object.entries(fields)) {
         cleanFields[key] = cleanData(value);
     }
@@ -63,7 +67,7 @@ function recordToObject(record) {
     return {
         id: record.id,
         ...cleanFields,
-        createdAt: record.createdTime,
+        createdAt: record.createdTime || new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
 }
