@@ -88,9 +88,22 @@ function generateCalendarLinks(eventData) {
 }
 
 exports.handler = async function (event, context) {
-    const slug = event.path.split("/").pop();
+    console.log("get-event-details function called");
+    console.log("Event path:", event.path);
+    console.log("Event queryStringParameters:", event.queryStringParameters);
+    
+    // Extract slug from query parameters (as configured in netlify.toml)
+    let slug = event.queryStringParameters?.slug;
+    
+    // Fallback: try to extract from path if not in query params
+    if (!slug) {
+        slug = event.path.split("/").pop();
+    }
+    
+    console.log("Extracted slug:", slug);
     
     if (!slug) {
+        console.log("No slug provided");
         return { 
             statusCode: 400, 
             body: 'Error: Event slug not provided.' 
@@ -113,6 +126,15 @@ exports.handler = async function (event, context) {
 
         console.log("Event found:", eventData.name);
         console.log("Event date:", eventData.date, "Type:", typeof eventData.date);
+        console.log("Event data structure:", JSON.stringify({
+          id: eventData.id,
+          name: eventData.name,
+          slug: eventData.slug,
+          hasDate: !!eventData.date,
+          hasSeries: !!eventData.series,
+          seriesType: eventData.series?.type,
+          venue: eventData.venue?.name
+        }, null, 2));
 
         // Get other instances if this is a series event
         let otherInstances = [];

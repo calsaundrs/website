@@ -210,11 +210,15 @@ class EventService {
       .filter(record => new Date(record.fields.Date) > new Date())
       .sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
 
+    // Use the next instance date as the main date for the series
+    const nextInstanceDate = futureInstances[0] ? futureInstances[0].fields.Date : fields['Date'];
+
     return {
       id: parentRecord.id,
       name: fields['Event Name'],
       slug: fields['Slug'],
       description: fields['Description'],
+      date: nextInstanceDate, // Add the date field
       recurringInfo: fields['Recurring Info'],
       category: fields['Category'] || [],
       venue: this.extractVenueInfo(fields),
