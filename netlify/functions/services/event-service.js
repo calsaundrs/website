@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v13 - Added Ticket Link field as primary link source
+// Version: 2025-07-25-v14 - Removed non-existent URL and Website fields
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -57,7 +57,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status', 'Ticket Link', 'Link', 'Venue Link', 'URL', 'Website',
+        'Status', 'Ticket Link', 'Link', 'Venue Link',
         'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date'
@@ -97,7 +97,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status', 'Ticket Link', 'Link', 'Venue Link', 'URL', 'Website'
+        'Status', 'Ticket Link', 'Link', 'Venue Link'
       ]
     }).firstPage();
 
@@ -177,7 +177,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Ticket Link', 'Link', 'Venue Link', 'URL', 'Website', 'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
+        'Ticket Link', 'Link', 'Venue Link', 'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date', 'Status', 'Submitter Email'
       ]
@@ -311,7 +311,7 @@ class EventService {
       status: fields['Status'] || 'Pending Review',
       submitterEmail: fields['Submitter Email'] || null,
       details: {
-        link: fields['Ticket Link'] || fields['Link'] || fields['Venue Link'] || fields['URL'] || fields['Website'] || null
+        link: fields['Ticket Link'] || fields['Link'] || fields['Venue Link'] || null
       }
     };
   }
