@@ -1,8 +1,6 @@
 const SystemMonitor = require('./services/system-monitor');
 
-const systemMonitor = new SystemMonitor();
-
-// Version: 2025-07-25-v2 - Force redeploy for system status
+// Version: 2025-07-25-v6 - Always run tests for fresh status
 
 exports.handler = async function(event, context) {
   // Enable CORS
@@ -32,8 +30,13 @@ exports.handler = async function(event, context) {
   try {
     console.log('📊 Getting system status...');
     
-    // Get current system status
-    const status = systemMonitor.getSystemStatus();
+    // Create a new monitor instance and run tests
+    const monitor = new SystemMonitor();
+    console.log('Running system health check...');
+    const results = await monitor.runAllTests();
+    
+    // Get the status after running tests
+    const status = monitor.getSystemStatus();
     
     return {
       statusCode: 200,

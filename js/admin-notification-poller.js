@@ -99,24 +99,27 @@ class AdminNotificationPoller {
   }
 }
 
-// Create global instance
-window.adminNotificationPoller = new AdminNotificationPoller();
+// Create global instance when script loads
+if (typeof window !== 'undefined') {
+  window.AdminNotificationPoller = AdminNotificationPoller;
+  
+  // Auto-start when DOM is loaded (only on admin pages)
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('admin')) {
+      if (!window.adminNotificationPoller) {
+        window.adminNotificationPoller = new AdminNotificationPoller();
+      }
+      // Start polling after a short delay to ensure push notifications are initialized
+      setTimeout(() => {
+        window.adminNotificationPoller.start();
+      }, 2000);
+    }
+  });
 
-// Auto-start when DOM is loaded (only on admin pages)
-document.addEventListener('DOMContentLoaded', function() {
-  if (window.location.pathname.includes('admin')) {
-    // Start polling after a short delay to ensure push notifications are initialized
-    setTimeout(() => {
-      window.adminNotificationPoller.start();
-    }, 2000);
-  }
-});
-
-// Stop polling when page is unloaded
-window.addEventListener('beforeunload', function() {
-  if (window.adminNotificationPoller) {
-    window.adminNotificationPoller.stop();
-  }
-});
-
-export default AdminNotificationPoller;
+  // Stop polling when page is unloaded
+  window.addEventListener('beforeunload', function() {
+    if (window.adminNotificationPoller) {
+      window.adminNotificationPoller.stop();
+    }
+  });
+}

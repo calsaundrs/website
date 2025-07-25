@@ -1,8 +1,16 @@
 const SystemMonitor = require('./services/system-monitor');
 
-const systemMonitor = new SystemMonitor();
+// Use a singleton pattern to maintain state across function calls
+let systemMonitor = null;
 
-// Version: 2025-07-25-v2 - Force redeploy for system tests
+function getSystemMonitor() {
+  if (!systemMonitor) {
+    systemMonitor = new SystemMonitor();
+  }
+  return systemMonitor;
+}
+
+// Version: 2025-07-25-v3 - Fixed singleton pattern for system monitor
 
 exports.handler = async function(event, context) {
   // Enable CORS
@@ -25,7 +33,8 @@ exports.handler = async function(event, context) {
     console.log('🚀 Running system health check...');
     
     // Run all tests
-    const results = await systemMonitor.runAllTests();
+    const monitor = getSystemMonitor();
+    const results = await monitor.runAllTests();
     
     console.log(`✅ Health check completed: ${results.passed}/${results.totalTests} tests passed`);
     

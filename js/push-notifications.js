@@ -132,15 +132,18 @@ class PushNotificationService {
   }
 }
 
-// Create global instance
-window.pushNotificationService = new PushNotificationService();
-
-// Auto-initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Only initialize if we're on an admin page
-  if (window.location.pathname.includes('admin')) {
-    window.pushNotificationService.initialize();
-  }
-});
-
-export default PushNotificationService;
+// Create global instance when script loads
+if (typeof window !== 'undefined') {
+  window.PushNotificationService = PushNotificationService;
+  
+  // Auto-initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on an admin page
+    if (window.location.pathname.includes('admin')) {
+      if (!window.pushNotificationService) {
+        window.pushNotificationService = new PushNotificationService();
+      }
+      window.pushNotificationService.initialize();
+    }
+  });
+}

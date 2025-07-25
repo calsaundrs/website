@@ -2,7 +2,7 @@ const EventService = require('./event-service');
 const SeriesManager = require('./series-manager');
 const Airtable = require('airtable');
 
-// Version: 2025-07-25-v5 - Temporarily disabled recurring events test
+// Version: 2025-07-25-v6 - Fixed async getSystemStatus and auto-run tests
 
 class SystemMonitor {
   constructor() {
@@ -424,7 +424,15 @@ class SystemMonitor {
     }
   }
 
-  getSystemStatus() {
+  async getSystemStatus() {
+    console.log('📊 Getting system status...');
+    
+    // If no tests have been run, run them now
+    if (this.testResults.size === 0) {
+      console.log('No tests run yet, running initial health check...');
+      await this.runAllTests();
+    }
+    
     const recentResults = Array.from(this.testResults.entries())
       .slice(-5) // Get last 5 test runs
       .map(([timestamp, results]) => ({
