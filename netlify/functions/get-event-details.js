@@ -559,26 +559,26 @@ exports.handler = async function (event, context) {
                             </button>
                         </div>
 
-                        <!-- Event Details -->
+                                                <!-- Event Details -->
+                        {{#if event.details.price}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
                             </h3>
-                                                         <div class="space-y-3">
-                                 {{#if event.details.price}}
-                                 <div class="flex items-center justify-between">
-                                     <span class="text-gray-400">Price:</span>
-                                     <span class="text-white font-semibold">{{event.details.price}}</span>
-                                 </div>
-                                 {{/if}}
-                                 {{#if event.details.ageRestriction}}
-                                 <div class="flex items-center justify-between">
-                                     <span class="text-gray-400">Age Restriction:</span>
-                                     <span class="text-white font-semibold">{{event.details.ageRestriction}}</span>
-                                 </div>
-                                 {{/if}}
-                             </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Price:</span>
+                                    <span class="text-white font-semibold">{{event.details.price}}</span>
+                                </div>
+                                {{#if event.details.ageRestriction}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Age Restriction:</span>
+                                    <span class="text-white font-semibold">{{event.details.ageRestriction}}</span>
+                                </div>
+                                {{/if}}
+                            </div>
                         </div>
+                        {{/if}}
                     </div>
                 </div>
             </div>
