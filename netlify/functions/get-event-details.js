@@ -81,7 +81,7 @@ function generateCalendarLinks(eventData) {
         return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     };
     
-    const googleLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(name)}&dates=${formatDateForGoogle(eventDate)}/${formatDateForGoogle(endDate)}&details=${encodeURIComponent(description || '')}&location=${encodeURIComponent(venue.name)}`;
+    const googleLink = 'https://www.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(name) + '&dates=' + formatDateForGoogle(eventDate) + '/' + formatDateForGoogle(endDate) + '&details=' + encodeURIComponent(description || '') + '&location=' + encodeURIComponent(venue.name);
     
     return {
         google: googleLink,
@@ -781,7 +781,7 @@ exports.handler = async function (event, context) {
             hasSimilarEvents: similarEvents.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
             categoryTags: (eventData.category || []).map(tag => 
-                `<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">${tag}</span>`
+                '<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">' + tag + '</span>'
             ).join(''),
             formatDate: (dateString) => {
                 try {
