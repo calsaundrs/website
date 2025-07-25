@@ -68,42 +68,15 @@ async function handlePublicView(queryParams) {
         const eventsRef = db.collection('events');
         let query = eventsRef.where('status', '==', 'approved');
 
-        // Apply date filtering
-        if (filters.dateRange.type === 'upcoming') {
-            const now = new Date();
-            query = query.where('date', '>=', now);
-        } else if (filters.dateRange.type === 'today') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            query = query.where('date', '>=', today).where('date', '<', tomorrow);
-        } else if (filters.dateRange.type === 'week') {
-            const now = new Date();
-            const weekFromNow = new Date(now);
-            weekFromNow.setDate(weekFromNow.getDate() + 7);
-            query = query.where('date', '>=', now).where('date', '<=', weekFromNow);
-        }
-
-        // Apply category filtering
-        if (filters.categories.length > 0) {
-            query = query.where('category', 'array-contains-any', filters.categories);
-        }
-
-        // Apply venue filtering
-        if (filters.venues.length > 0) {
-            query = query.where('venueId', 'in', filters.venues);
-        }
-
-        // Apply search filtering
-        if (filters.search) {
-            // Firestore doesn't support full-text search, so we'll filter client-side
-            // For now, we'll get all events and filter by name/description
-        }
-
-        // Order by date
+        // For now, let's use a simpler approach to avoid complex indexes
+        // We'll get all approved events and filter client-side
+        // This is a temporary solution until we set up proper indexes
+        
+        console.log("Using simplified query to avoid index requirements");
+        
+        // Get all approved events (simple query)
         query = query.orderBy('date', 'asc');
-
+        
         // Apply pagination
         query = query.limit(filters.limit).offset(filters.offset);
 
@@ -116,23 +89,123 @@ async function handlePublicView(queryParams) {
                 ...doc.data()
             };
             
-            // Apply search filter client-side if needed
-            if (filters.search) {
+            // Apply all filters client-side
+            let shouldInclude = true;
+            
+            // Apply date filtering
+            if (filters.dateRange.type === 'upcoming') {
+                const now = new Date();
+                if (new Date(eventData.date) < now) {
+                    shouldInclude = false;
+                }
+            } else if (filters.dateRange.type === 'today') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const eventDate = new Date(eventData.date);
+                if (eventDate < today || eventDate >= tomorrow) {
+                    shouldInclude = false;
+                }
+            } else if (filters.dateRange.type === 'week') {
+                const now = new Date();
+                const weekFromNow = new Date(now);
+                weekFromNow.setDate(weekFromNow.getDate() + 7);
+                const eventDate = new Date(eventData.date);
+                if (eventDate < now || eventDate > weekFromNow) {
+                    shouldInclude = false;
+                }
+            }
+            
+            // Apply category filtering
+            if (shouldInclude && filters.categories.length > 0) {
+                const eventCategories = eventData.category || [];
+                const hasMatchingCategory = filters.categories.some(cat => 
+                    eventCategories.includes(cat)
+                );
+                if (!hasMatchingCategory) {
+                    shouldInclude = false;
+                }
+            }
+            
+            // Apply venue filtering
+            if (shouldInclude && filters.venues.length > 0) {
+                const eventVenueId = eventData.venueId || eventData.venue?.id;
+                if (!eventVenueId || !filters.venues.includes(eventVenueId)) {
+                    shouldInclude = false;
+                }
+            }
+            
+            // Apply search filtering
+            if (shouldInclude && filters.search) {
                 const searchLower = filters.search.toLowerCase();
                 const nameMatch = eventData.name && eventData.name.toLowerCase().includes(searchLower);
                 const descMatch = eventData.description && eventData.description.toLowerCase().includes(searchLower);
                 if (!nameMatch && !descMatch) {
-                    return; // Skip this event
+                    shouldInclude = false;
                 }
             }
             
-            events.push(processEventForPublic(eventData));
+            if (shouldInclude) {
+                events.push(processEventForPublic(eventData));
+            }
         });
 
-        // Get total count for pagination
+        // Since we're filtering client-side, we need to get all events for accurate count
+        // This is a temporary solution - in production, we should set up proper indexes
         const countQuery = eventsRef.where('status', '==', 'approved');
         const countSnapshot = await countQuery.get();
-        const totalCount = countSnapshot.size;
+        const allEvents = [];
+        countSnapshot.forEach(doc => {
+            const eventData = { id: doc.id, ...doc.data() };
+            
+            // Apply the same filtering logic for count
+            let shouldInclude = true;
+            
+            if (filters.dateRange.type === 'upcoming') {
+                const now = new Date();
+                if (new Date(eventData.date) < now) shouldInclude = false;
+            } else if (filters.dateRange.type === 'today') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const eventDate = new Date(eventData.date);
+                if (eventDate < today || eventDate >= tomorrow) shouldInclude = false;
+            } else if (filters.dateRange.type === 'week') {
+                const now = new Date();
+                const weekFromNow = new Date(now);
+                weekFromNow.setDate(weekFromNow.getDate() + 7);
+                const eventDate = new Date(eventData.date);
+                if (eventDate < now || eventDate > weekFromNow) shouldInclude = false;
+            }
+            
+            if (shouldInclude && filters.categories.length > 0) {
+                const eventCategories = eventData.category || [];
+                const hasMatchingCategory = filters.categories.some(cat => 
+                    eventCategories.includes(cat)
+                );
+                if (!hasMatchingCategory) shouldInclude = false;
+            }
+            
+            if (shouldInclude && filters.venues.length > 0) {
+                const eventVenueId = eventData.venueId || eventData.venue?.id;
+                if (!eventVenueId || !filters.venues.includes(eventVenueId)) shouldInclude = false;
+            }
+            
+            if (shouldInclude && filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                const nameMatch = eventData.name && eventData.name.toLowerCase().includes(searchLower);
+                const descMatch = eventData.description && eventData.description.toLowerCase().includes(searchLower);
+                if (!nameMatch && !descMatch) shouldInclude = false;
+            }
+            
+            if (shouldInclude) {
+                allEvents.push(eventData);
+            }
+        });
+        
+        const totalCount = allEvents.length;
 
         return {
             statusCode: 200,
