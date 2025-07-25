@@ -95,11 +95,16 @@ async function handlePublicView(queryParams) {
         console.log(`Query returned ${snapshot.size} documents`);
         
         const events = [];
+        let processedCount = 0;
+        let skippedCount = 0;
+        
         snapshot.forEach(doc => {
             const eventData = {
                 id: doc.id,
                 ...doc.data()
             };
+            
+            console.log(`Processing event: ${eventData.name} (status: ${eventData.status})`);
             
             // Apply search filtering client-side (Firestore doesn't support full-text search)
             if (filters.search) {
@@ -107,14 +112,18 @@ async function handlePublicView(queryParams) {
                 const nameMatch = eventData.name && eventData.name.toLowerCase().includes(searchLower);
                 const descMatch = eventData.description && eventData.description.toLowerCase().includes(searchLower);
                 if (!nameMatch && !descMatch) {
+                    console.log(`Skipping event ${eventData.name} due to search filter`);
+                    skippedCount++;
                     return; // Skip this event
                 }
             }
             
-            events.push(processEventForPublic(eventData));
+            const processedEvent = processEventForPublic(eventData);
+            events.push(processedEvent);
+            processedCount++;
         });
         
-        console.log(`Processed ${events.length} events after filtering`);
+        console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
 
         // Get total count for pagination
         console.log("Getting total count...");
