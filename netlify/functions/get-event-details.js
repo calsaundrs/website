@@ -517,15 +517,7 @@ exports.handler = async function (event, context) {
                              </div>
                          </div>
 
-                        <!-- Tags -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
-                            </h3>
-                            <div class="flex flex-wrap gap-2">
-                                {{{categoryTags}}}
-                            </div>
-                        </div>
+
 
                         <!-- Action Buttons -->
                         <div class="venue-card p-6">
