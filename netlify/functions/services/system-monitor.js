@@ -211,7 +211,8 @@ class SystemMonitor {
       const response = await fetch(`${process.env.URL || 'http://localhost:8888'}/.netlify/functions/get-recurring-events`);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
       }
       
       const data = await response.json();

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Recurring Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #ff5252;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success {
+            background-color: #4ecdc420;
+            border: 1px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        .status.error {
+            background-color: #ff6b6b20;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        pre {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Recurring Events API</h1>
+        
+        <button id="testBtn" class="button" onclick="testRecurringEvents()">
+            🧪 Test get-recurring-events API
+        </button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        async function testRecurringEvents() {
+            const testBtn = document.getElementById('testBtn');
+            const status = document.getElementById('status');
+            
+            // Disable button
+            testBtn.disabled = true;
+            testBtn.textContent = '🔄 Testing...';
+            
+            status.style.display = 'block';
+            status.className = 'status error';
+            status.textContent = 'Testing get-recurring-events API...';
+            
+            try {
+                console.log('Testing get-recurring-events API...');
+                
+                const response = await fetch('/.netlify/functions/get-recurring-events');
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}\n\nResponse: ${responseText}`);
+                }
+                
+                const data = JSON.parse(responseText);
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ API Test Successful!</h3>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Recurring Events:</strong> ${data.recurringEvents?.length || 0}</p>
+                    <p><strong>Total Series:</strong> ${data.totalSeries || 0}</p>
+                    <p><strong>Active Events:</strong> ${data.activeEvents || 0}</p>
+                    <details>
+                        <summary>Full Response</summary>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </details>
+                `;
+                
+                testBtn.textContent = '✅ Test Complete';
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ API Test Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <details>
+                        <summary>Error Details</summary>
+                        <pre>${error.stack || error.message}</pre>
+                    </details>
+                `;
+                
+                testBtn.textContent = '❌ Test Failed - Try Again';
+                testBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

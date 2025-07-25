@@ -349,18 +349,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <!-- System Status -->
             <div class="card-bg p-8 md:p-12 rounded-2xl">
-                <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
-                    <i class="fas fa-server mr-3 accent-color"></i>System Status
-                </h2>
+                <div class="flex items-center justify-between mb-6 border-b border-gray-700 pb-2">
+                    <h2 class="font-anton text-3xl text-white">
+                        <i class="fas fa-server mr-3 accent-color"></i>System Status
+                    </h2>
+                    <a href="/admin-system-status.html" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        <i class="fas fa-chart-line"></i>
+                        Detailed View
+                    </a>
+                </div>
                 <p class="text-gray-400 mb-8">Monitor the health and performance of your platform.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="admin-link rounded-xl p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-bold text-white">API Status</h3>
                             <div class="flex items-center space-x-2">
-                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-green-400 text-sm">Online</span>
+                                <div id="api-status-indicator" class="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                <span id="api-status-text" class="text-gray-400 text-sm">Checking...</span>
                             </div>
                         </div>
                         <p class="text-gray-400 text-sm">All backend services are running normally</p>
@@ -370,17 +376,254 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-bold text-white">Database</h3>
                             <div class="flex items-center space-x-2">
-                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-green-400 text-sm">Connected</span>
+                                <div id="db-status-indicator" class="w-3 h-3 bg-gray-500 rounded-full"></div>
+                                <span id="db-status-text" class="text-gray-400 text-sm">Checking...</span>
                             </div>
                         </div>
                         <p class="text-gray-400 text-sm">Airtable connection is stable and responsive</p>
                     </div>
+                </div>
+
+                <!-- Quick Status Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="stats-card rounded-lg p-4 text-center">
+                        <div id="overall-status" class="text-2xl font-bold text-gray-400 mb-1">--</div>
+                        <div class="text-xs text-gray-500">Overall Status</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-4 text-center">
+                        <div id="last-check" class="text-2xl font-bold text-gray-400 mb-1">--</div>
+                        <div class="text-xs text-gray-500">Last Check</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-4 text-center">
+                        <div id="tests-passed" class="text-2xl font-bold text-gray-400 mb-1">--</div>
+                        <div class="text-xs text-gray-500">Tests Passed</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-4 text-center">
+                        <div id="notifications" class="text-2xl font-bold text-gray-400 mb-1">--</div>
+                        <div class="text-xs text-gray-500">Notifications</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <button id="quick-health-check" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        <i class="fas fa-heartbeat"></i>
+                        Quick Health Check
+                    </button>
+                    <button id="test-notification" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        <i class="fas fa-bell"></i>
+                        Test Notification
+                    </button>
                 </div>
             </div>
         </section>
     </main>
 
     <script src="/js/admin-dashboard.js"></script>
+    <script src="/js/push-notifications.js"></script>
+    <script src="/js/admin-notification-poller.js"></script>
+    <script>
+        // System Status Dashboard
+        async function loadSystemStatus() {
+            try {
+                const response = await fetch('/.netlify/functions/get-system-status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateSystemStatus(data.data);
+                } else {
+                    showError('Failed to load system status');
+                }
+            } catch (error) {
+                console.error('Error loading system status:', error);
+                showError('Failed to load system status');
+            }
+        }
+
+        function updateSystemStatus(status) {
+            // Update overall status
+            const overallStatus = document.getElementById('overall-status');
+            if (status.overallStatus === 'healthy') {
+                overallStatus.textContent = '✅';
+                overallStatus.className = 'text-2xl font-bold text-green-400 mb-1';
+            } else if (status.overallStatus === 'degraded') {
+                overallStatus.textContent = '⚠️';
+                overallStatus.className = 'text-2xl font-bold text-yellow-400 mb-1';
+            } else {
+                overallStatus.textContent = '❌';
+                overallStatus.className = 'text-2xl font-bold text-red-400 mb-1';
+            }
+
+            // Update last check
+            const lastCheck = document.getElementById('last-check');
+            if (status.lastRun) {
+                const timeAgo = getTimeAgo(new Date(status.lastRun));
+                lastCheck.textContent = timeAgo;
+            } else {
+                lastCheck.textContent = 'Never';
+            }
+
+            // Update tests passed
+            const testsPassed = document.getElementById('tests-passed');
+            if (status.recentResults && status.recentResults.length > 0) {
+                const latest = status.recentResults[0];
+                testsPassed.textContent = `${latest.passed}/${latest.totalTests}`;
+            } else {
+                testsPassed.textContent = '--';
+            }
+
+            // Update API and DB status
+            updateServiceStatus();
+        }
+
+        async function updateServiceStatus() {
+            try {
+                // Test API status
+                const apiResponse = await fetch('/.netlify/functions/get-events');
+                const apiIndicator = document.getElementById('api-status-indicator');
+                const apiText = document.getElementById('api-status-text');
+                
+                if (apiResponse.ok) {
+                    apiIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
+                    apiText.textContent = 'Online';
+                    apiText.className = 'text-green-400 text-sm';
+                } else {
+                    apiIndicator.className = 'w-3 h-3 bg-red-500 rounded-full';
+                    apiText.textContent = 'Error';
+                    apiText.className = 'text-red-400 text-sm';
+                }
+
+                // Test DB status (using a simple endpoint)
+                const dbResponse = await fetch('/.netlify/functions/get-pending-events');
+                const dbIndicator = document.getElementById('db-status-indicator');
+                const dbText = document.getElementById('db-status-text');
+                
+                if (dbResponse.ok) {
+                    dbIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
+                    dbText.textContent = 'Connected';
+                    dbText.className = 'text-green-400 text-sm';
+                } else {
+                    dbIndicator.className = 'w-3 h-3 bg-red-500 rounded-full';
+                    dbText.textContent = 'Error';
+                    dbText.className = 'text-red-400 text-sm';
+                }
+
+                // Update notifications count
+                const notificationsResponse = await fetch('/.netlify/functions/get-notifications');
+                const notificationsElement = document.getElementById('notifications');
+                
+                if (notificationsResponse.ok) {
+                    const data = await notificationsResponse.json();
+                    if (data.success) {
+                        const recentNotifications = data.data.filter(n => {
+                            const notificationTime = new Date(n.timestamp);
+                            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+                            return notificationTime > oneHourAgo;
+                        });
+                        notificationsElement.textContent = recentNotifications.length;
+                    } else {
+                        notificationsElement.textContent = '--';
+                    }
+                } else {
+                    notificationsElement.textContent = '--';
+                }
+
+            } catch (error) {
+                console.error('Error updating service status:', error);
+                
+                // Set error state
+                document.getElementById('api-status-indicator').className = 'w-3 h-3 bg-red-500 rounded-full';
+                document.getElementById('api-status-text').textContent = 'Error';
+                document.getElementById('api-status-text').className = 'text-red-400 text-sm';
+                
+                document.getElementById('db-status-indicator').className = 'w-3 h-3 bg-red-500 rounded-full';
+                document.getElementById('db-status-text').textContent = 'Error';
+                document.getElementById('db-status-text').className = 'text-red-400 text-sm';
+            }
+        }
+
+        async function runQuickHealthCheck() {
+            const btn = document.getElementById('quick-health-check');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/run-system-tests', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`Health check completed: ${data.data.passed}/${data.data.totalTests} tests passed`);
+                    loadSystemStatus(); // Refresh the status
+                } else {
+                    showError('Health check failed');
+                }
+            } catch (error) {
+                console.error('Error running health check:', error);
+                showError('Health check failed');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function testNotification() {
+            try {
+                if (window.pushNotificationService && window.pushNotificationService.isEnabled()) {
+                    const success = await window.pushNotificationService.sendTestNotification();
+                    if (success) {
+                        showSuccess('Test notification sent!');
+                    } else {
+                        showError('Failed to send test notification');
+                    }
+                } else {
+                    showError('Push notifications not enabled. Please enable them first.');
+                }
+            } catch (error) {
+                showError('Error sending test notification: ' + error.message);
+            }
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'Just now';
+        }
+
+        function showSuccess(message) {
+            // Simple success message (you can enhance this with a toast)
+            console.log('✅', message);
+            alert('Success: ' + message);
+        }
+
+        function showError(message) {
+            // Simple error message (you can enhance this with a toast)
+            console.error('❌', message);
+            alert('Error: ' + message);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSystemStatus();
+            
+            // Set up event listeners
+            document.getElementById('quick-health-check').addEventListener('click', runQuickHealthCheck);
+            document.getElementById('test-notification').addEventListener('click', testNotification);
+            
+            // Auto-refresh status every 2 minutes
+            setInterval(loadSystemStatus, 120000);
+        });
+    </script>
 </body>
 </html>
