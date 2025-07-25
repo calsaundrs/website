@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v12 - Fixed ticket link field extraction
+// Version: 2025-07-25-v15 - Resolved merge conflicts, kept EventService version
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -492,10 +492,8 @@ exports.handler = async function (event, context) {
                         {{/if}}
                     </div>
 
-                                        <!-- Sidebar -->
+                    <!-- Sidebar -->
                     <div class="space-y-6">
-
-
 
                         <!-- Action Buttons -->
                         {{#if event.details.link}}
@@ -531,7 +529,7 @@ exports.handler = async function (event, context) {
                             </button>
                         </div>
 
-                                                <!-- Event Details -->
+                        <!-- Event Details -->
                         {{#if event.details.price}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4">
@@ -711,25 +709,18 @@ exports.handler = async function (event, context) {
             // Create a simple mobile-friendly modal
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            modal.innerHTML = `
-                <div class="bg-gray-800 rounded-lg p-6 mx-4 max-w-sm w-full">
-                    <h3 class="text-white text-lg font-bold mb-4">Add to Calendar</h3>
-                    <div class="space-y-3">
-                        <button onclick="window.open('${googleLink}', '_blank'); this.closest('.fixed').remove();" 
-                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">
-                            <i class="fab fa-google mr-2"></i>Google Calendar
-                        </button>
-                        <button onclick="window.location.href='${icalLink}'; this.closest('.fixed').remove();" 
-                                class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">
-                            <i class="fas fa-calendar-plus mr-2"></i>Download ICS File
-                        </button>
-                        <button onclick="this.closest('.fixed').remove();" 
-                                class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-bold">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            `;
+            modal.innerHTML = '<div class="bg-gray-800 rounded-lg p-6 mx-4 max-w-sm w-full">' +
+                '<h3 class="text-white text-lg font-bold mb-4">Add to Calendar</h3>' +
+                '<div class="space-y-3">' +
+                '<button onclick="window.open(\'' + googleLink + '\', \'_blank\'); this.closest(\'.fixed\').remove();" ' +
+                'class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">' +
+                '<i class="fab fa-google mr-2"></i>Google Calendar</button>' +
+                '<button onclick="window.location.href=\'' + icalLink + '\'; this.closest(\'.fixed\').remove();" ' +
+                'class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-bold flex items-center justify-center">' +
+                '<i class="fas fa-calendar-plus mr-2"></i>Download ICS File</button>' +
+                '<button onclick="this.closest(\'.fixed\').remove();" ' +
+                'class="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-bold">Cancel</button>' +
+                '</div></div>';
             document.body.appendChild(modal);
             
             // Close modal when clicking outside
