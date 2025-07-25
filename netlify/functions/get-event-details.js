@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v2 - Added error handling for date formatting
+// Version: 2025-07-25-v3 - Added similar events, updated header, removed approved tag
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -154,6 +154,16 @@ exports.handler = async function (event, context) {
             }
         }
 
+        // Get similar events based on categories
+        let similarEvents = [];
+        if (eventData.category && eventData.category.length > 0) {
+            try {
+                similarEvents = await eventService.getSimilarEvents(eventData.category, eventData.id, 3);
+            } catch (error) {
+                console.error('Error getting similar events:', error);
+            }
+        }
+
         // Embedded template to avoid file system issues in Netlify Functions
         const templateContent = `<!DOCTYPE html>
 <html lang="en">
@@ -296,18 +306,36 @@ exports.handler = async function (event, context) {
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <!-- Header -->
-    <header class="border-b-2 border-gray-800">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex justify-between items-center">
-                <a href="/" class="font-anton text-4xl heading-gradient">
-                    BRUM<span class="accent-color">OUT</span>LOUD
-                </a>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">Events</a>
-                    <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">Venues</a>
-                    <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">Community</a>
-                </nav>
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
@@ -333,14 +361,11 @@ exports.handler = async function (event, context) {
                 {{else}}
                 <i class="fas fa-image text-6xl text-gray-600"></i>
                 {{/if}}
-                <div class="absolute top-4 right-4">
-                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm" onclick="shareEvent()">
-                        <i class="fas fa-share mr-1"></i>Share
-                    </button>
-                </div>
-                <div class="absolute bottom-4 left-4">
-                    <span class="status-badge approved">Approved</span>
-                </div>
+                                            <div class="absolute top-4 right-4">
+                                <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm" onclick="shareEvent()">
+                                    <i class="fas fa-share mr-1"></i>Share
+                                </button>
+                            </div>
             </div>
             
             <div class="p-8">
@@ -387,6 +412,37 @@ exports.handler = async function (event, context) {
                                 {{event.description}}
                             </p>
                         </div>
+
+                        <!-- You Might Like Events -->
+                        {{#if hasSimilarEvents}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-heart mr-3 text-accent-color"></i>You Might Like
+                            </h2>
+                            <div class="space-y-4">
+                                {{#each similarEvents}}
+                                <a href="/event/{{slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                    <div class="text-center w-20 flex-shrink-0">
+                                        <p class="text-2xl font-bold text-white">{{formatDay date}}</p>
+                                        <p class="text-lg text-gray-400">{{formatMonth date}}</p>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="font-bold text-white text-xl">{{name}}</h4>
+                                        <p class="text-sm text-gray-400">{{formatTime date}} • {{venue.name}}</p>
+                                        <div class="flex flex-wrap gap-1 mt-2">
+                                            {{#each category}}
+                                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">{{this}}</span>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                </a>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
 
                         <!-- Other Events in Series -->
                         {{#if hasOtherInstances}}
@@ -672,8 +728,19 @@ exports.handler = async function (event, context) {
             alert('Contact organizer functionality will be implemented soon!');
         }
 
-        // Format all dates on the page
+        // Mobile menu functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menu-btn');
+            const menu = document.getElementById('menu');
+            
+            if (menuBtn && menu) {
+                menuBtn.addEventListener('click', function() {
+                    menu.classList.toggle('hidden');
+                    menu.classList.toggle('flex');
+                });
+            }
+
+            // Format all dates on the page
             const dateElements = document.querySelectorAll('[data-date]');
             dateElements.forEach(element => {
                 const dateString = element.getAttribute('data-date');
@@ -690,6 +757,8 @@ exports.handler = async function (event, context) {
             event: eventData,
             otherInstances: otherInstances,
             hasOtherInstances: otherInstances.length > 0,
+            similarEvents: similarEvents,
+            hasSimilarEvents: similarEvents.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
             categoryTags: (eventData.category || []).map(tag => 
                 `<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">${tag}</span>`

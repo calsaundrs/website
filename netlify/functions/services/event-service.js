@@ -350,7 +350,7 @@ class EventService {
     
     if (cloudinaryId) {
       return {
-        url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_500,h_281,c_limit/${cloudinaryId}`,
+        url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
         alt: fields['Event Name']
       };
     } else if (promoImage) {
@@ -647,6 +647,55 @@ class EventService {
     } catch (error) {
       console.error('Error creating venue:', error);
       throw error;
+    }
+  }
+
+  async getSimilarEvents(eventCategories, currentEventId, limit = 3) {
+    if (!eventCategories || eventCategories.length === 0) {
+      return [];
+    }
+
+    try {
+      // Build filter for events with similar categories
+      const categoryFilters = eventCategories.map(category => 
+        `SEARCH('${category}', ARRAYJOIN({Category}))`
+      ).join(', ');
+      
+      const filterFormula = `AND(
+        {Status} = 'Approved',
+        {Date} > '${new Date().toISOString()}',
+        RECORD_ID() != '${currentEventId}',
+        OR(${categoryFilters})
+      )`;
+
+      const records = await this.base('Events').select({
+        filterByFormula: filterFormula,
+        sort: [{ field: 'Date', direction: 'asc' }],
+        maxRecords: limit * 2 // Get more to filter out duplicates
+      }).all();
+
+      // Get approved venues for linking
+      const approvedVenues = await this.getApprovedVenues();
+
+      // Process records and filter out duplicates
+      const events = [];
+      const seenIds = new Set();
+      
+      for (const record of records) {
+        if (events.length >= limit) break;
+        
+        const event = this.processStandaloneEvent(record, approvedVenues);
+        if (!seenIds.has(event.id)) {
+          seenIds.add(event.id);
+          events.push(event);
+        }
+      }
+
+      return events;
+
+    } catch (error) {
+      console.error('Error fetching similar events:', error);
+      return [];
     }
   }
 }
