@@ -282,74 +282,56 @@ async function handleVenuesView() {
                     console.log(`Venue ${index + 1} (${venue.id}):`, JSON.stringify(venue, null, 2));
                 });
                 
-                // Look for multiple possible listing status fields
-                console.log("Looking for listing status fields...");
-                let foundListedVenues = 0;
-                let venuesWithAnyStatusField = 0;
+                // Look for venues with images
+                console.log("Looking for venues with images...");
+                let venuesWithImages = 0;
                 
-                // Check all venues for various listing status fields
+                // Check all venues for images
                 rawVenues.forEach(venue => {
                     // Log all field names for debugging
                     console.log(`Venue ${venue.id} fields:`, Object.keys(venue));
                     
-                    // Check multiple possible field names
-                    const possibleFields = [
-                        'Listing Status',
-                        'listingStatus', 
-                        'isListed',
-                        'listed',
-                        'status'
+                    // Check for various possible image fields
+                    const possibleImageFields = [
+                        'Photo',
+                        'Photo URL',
+                        'Photo Medium URL',
+                        'Photo Thumbnail URL',
+                        'image',
+                        'Image'
                     ];
                     
-                    let foundStatus = false;
-                    let statusValue = null;
-                    let statusField = null;
+                    let hasImage = false;
+                    let imageField = null;
+                    let imageValue = null;
                     
-                    for (const field of possibleFields) {
-                        if (venue[field] !== undefined) {
-                            statusField = field;
-                            statusValue = venue[field];
-                            foundStatus = true;
-                            console.log(`Venue ${venue.id} has "${field}" = "${statusValue}"`);
+                    for (const field of possibleImageFields) {
+                        if (venue[field] !== undefined && venue[field] !== null && venue[field] !== '') {
+                            imageField = field;
+                            imageValue = venue[field];
+                            hasImage = true;
+                            console.log(`Venue ${venue.id} has "${field}" = "${imageValue}"`);
                             break;
                         }
                     }
                     
-                    if (foundStatus) {
-                        venuesWithAnyStatusField++;
-                        
-                        // Check if venue should be listed based on various possible values
-                        const shouldBeListed = 
-                            statusValue === 'Listed' || 
-                            statusValue === 'listed' || 
-                            statusValue === true || 
-                            statusValue === 'true';
-                        
-                        if (shouldBeListed) {
-                            venues.push(processVenueForPublic(venue));
-                            foundListedVenues++;
-                            console.log(`✓ Venue ${venue.id} (${venue.Name || venue.name}) is LISTED`);
-                        } else {
-                            console.log(`✗ Venue ${venue.id} (${venue.Name || venue.name}) is NOT listed (${statusField} = "${statusValue}")`);
-                        }
+                    if (hasImage) {
+                        venuesWithImages++;
+                        venues.push(processVenueForPublic(venue));
+                        console.log(`✓ Venue ${venue.id} (${venue.Name || venue.name}) has IMAGE`);
                     } else {
-                        console.log(`Venue ${venue.id} does NOT have any listing status field`);
-                        // Log the first few venues' raw data for debugging
-                        if (venuesWithAnyStatusField === 0) {
-                            console.log(`Raw venue data for ${venue.id}:`, JSON.stringify(venue, null, 2));
-                        }
+                        console.log(`✗ Venue ${venue.id} (${venue.Name || venue.name}) has NO image`);
                     }
                 });
                 
-                console.log(`Found ${venuesWithAnyStatusField} venues with any status field`);
-                console.log(`Found ${foundListedVenues} venues that should be listed`);
+                console.log(`Found ${venuesWithImages} venues with images`);
             }
             
-            console.log(`Total venues with Listing Status = Listed: ${venues.length}`);
+            console.log(`Total venues with images: ${venues.length}`);
             
-            // If no venues found with Listing Status = Listed, return raw data for debugging
+            // If no venues found with images, return raw data for debugging
             if (venues.length === 0) {
-                console.log("No venues found with Listing Status = Listed, returning raw data for debugging");
+                console.log("No venues found with images, returning raw data for debugging");
                 return {
                     statusCode: 200,
                     headers: {
@@ -360,7 +342,7 @@ async function handleVenuesView() {
                         venues: rawVenues.slice(0, 3), // Return first 3 venues for inspection
                         totalCount: rawVenues.length,
                         debug: {
-                            message: "No venues found with 'Listing Status' = 'Listed'. Returning raw data for inspection.",
+                            message: "No venues found with images. Returning raw data for inspection.",
                             sampleVenues: rawVenues.slice(0, 3)
                         }
                     })
