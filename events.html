@@ -108,6 +108,14 @@
     <meta name="theme-color" content="#8a2be2">
     
     <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
         /* Critical CSS to prevent pride flag flashing */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -171,6 +179,64 @@
         }
         .btn-secondary:hover {
             background: rgba(75, 85, 99, 0.5);
+        }
+
+        .filter-button {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            color: #D1D5DB;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+        .filter-button:hover {
+            background: rgba(55, 65, 81, 0.8);
+            border-color: rgba(75, 85, 99, 0.7);
+            transform: translateY(-1px);
+        }
+        .filter-button.active {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border-color: rgba(232, 58, 153, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(232, 58, 153, 0.3);
+        }
+
+        /* Enhanced visual hierarchy */
+        .heading-gradient {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Improved popover styling */
+        .popover {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Enhanced loader */
+        .loader {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(75, 85, 99, 0.3);
+            border-top: 3px solid #E83A99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .category-tag {
@@ -476,8 +542,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            style="font-family: 'Omnes Pro', sans-serif;">
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                 onload="document.body.classList.add('flag-loaded')">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
             <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
@@ -502,13 +569,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <section class="text-center mb-8">
-            <div class="text-center mb-4">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-                LGBTQ+ <span class="accent-color">EVENTS</span> IN BIRMINGHAM
-            </h1>
-                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Your guide to queer club nights, social gatherings, and cultural events.</h2>
+    <main class="container mx-auto px-8 py-12 relative z-10">
+        <section class="text-center mb-12">
+            <div class="text-center mb-8">
+                <h1 class="font-anton text-6xl md:text-7xl lg:text-8xl leading-none tracking-wider text-white mb-4">
+                    LGBTQ+ <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">EVENTS</span> IN BIRMINGHAM
+                </h1>
+                <h2 class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Your guide to queer club nights, social gatherings, and cultural events in the heart of the Midlands.</h2>
             </div>
 
             <div class="mb-12 hidden" id="featured-events-section">
@@ -519,7 +586,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  </div>
             </div>
 
-            <div id="filter-bar-container" class="mb-6 flex flex-wrap items-center gap-3 md:gap-4">
+            <div id="filter-bar-container" class="mb-8 flex flex-wrap items-center gap-4 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6">
 
                 <button class="filter-button active w-full" data-filter-type="date" data-filter-value="all">All Upcoming</button>
                 <button class="filter-button w-full" data-filter-type="date" data-filter-value="today">Today</button>
@@ -562,8 +629,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
 
-            <div id="kink-sfw-notice" class="hidden text-center card-bg p-8 md:p-12 col-span-full mb-6">
-                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
+            <div id="kink-sfw-notice" class="hidden text-center venue-card p-8 md:p-12 col-span-full mb-6">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400">
                     <i class="fas fa-eye-slash fa-2x"></i>
                 </div>
                 <h3 class="mt-4 text-xl font-semibold text-white">"Kink" Events Hidden</h3>
@@ -583,20 +650,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
 
-            <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4">
+            <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                <div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4 py-12">
                     <div class="loader"></div>
-                    <span>Loading events...</span>
+                    <span class="text-lg">Loading events...</span>
                 </div>
             </div>
-               <div id="no-results-message" class="hidden text-center card-bg p-12 col-span-full">
-                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
-                        <i class="fas fa-search fa-2x"></i>
-                    </div>
-                    <h3 class="mt-4 text-xl font-semibold text-white">No Results Found</h3>
-                    <p class="mt-2 text-gray-400">We couldn't find any events matching your filters. Try adjusting your search.</p>
-                    <button id="clear-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+            <div id="no-results-message" class="hidden text-center venue-card p-12 col-span-full">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400">
+                    <i class="fas fa-search fa-2x"></i>
                 </div>
+                <h3 class="mt-4 text-xl font-semibold text-white">No Results Found</h3>
+                <p class="mt-2 text-gray-400">We couldn't find any events matching your filters. Try adjusting your search.</p>
+                <button id="clear-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+            </div>
         </section>
     </main>
 
@@ -627,35 +694,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 
     <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+        <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <script src="/js/event-store.js"></script>
     <script>
@@ -856,7 +923,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             if (error) {
                 eventGrid.innerHTML = `
-                    <div class="col-span-full text-center card-bg p-12">
+                    <div class="col-span-full text-center venue-card p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-800 text-white">
                             <i class="fas fa-exclamation-triangle fa-2x"></i>
                         </div>
