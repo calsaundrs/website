@@ -38,6 +38,7 @@ exports.handler = async function (event, context) {
                 name: data['Event Name'] || data.name || 'NO_NAME',
                 status: data['Status'] || data.status || 'NO_STATUS',
                 date: data['Date'] || data.date || 'NO_DATE',
+                slug: data['Slug'] || data.slug || 'NO_SLUG',
                 hasVenue: !!data['Venue Name'],
                 hasVenueId: !!data.venueId,
                 hasCategory: !!data.categories,
@@ -73,7 +74,8 @@ exports.handler = async function (event, context) {
                 venueName: data['Venue Name'],
                 venueId: data.venueId,
                 category: data.categories,
-                slug: data['Slug'] || data.slug
+                slug: data['Slug'] || data.slug,
+                slugValue: data['Slug'] || data.slug || 'NO_SLUG'
             });
         });
         
