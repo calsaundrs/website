@@ -339,75 +339,19 @@ async function handleVenuesView() {
         } catch (venuesError) {
             console.log('Error accessing venues collection:', venuesError.message);
             console.log('Error stack:', venuesError.stack);
-        }
-        
-        // If no venues found, try to extract venue information from events
-        if (venues.length === 0) {
-            console.log("No venues found in venues collection, extracting from events...");
-            
-            const eventsRef = db.collection('events');
-            const eventsSnapshot = await eventsRef.where('Status', '==', 'Approved').get();
-            
-            console.log(`Found ${eventsSnapshot.size} approved events to extract venues from`);
-            
-            const venueMap = new Map();
-            let processedCount = 0;
-            let venueFoundCount = 0;
-            
-            eventsSnapshot.forEach(doc => {
-                const rawEventData = doc.data();
-                processedCount++;
-                
-                // Debug: Log the first few events to see the structure
-                if (processedCount <= 3) {
-                    console.log(`Event ${processedCount} raw data:`, {
-                        id: doc.id,
-                        eventName: rawEventData['Event Name'],
-                        venueName: rawEventData['Venue Name'],
-                        venueSlug: rawEventData['Venue Slug'],
-                        venue: rawEventData.venue
-                    });
-                }
-                
-                // Process the event data to get the standardized venue structure
-                const eventData = {
-                    id: doc.id,
-                    ...rawEventData
-                };
-                
-                // Use the same processing logic as processEventForPublic
-                const processedEvent = processEventForPublic(eventData);
-                
-                // Debug: Log the processed event venue data
-                if (processedCount <= 3) {
-                    console.log(`Event ${processedCount} processed venue:`, processedEvent.venue);
-                }
-                
-                // Extract venue information from processed event
-                if (processedEvent.venue && processedEvent.venue.name && processedEvent.venue.slug) {
-                    // Handle both string and array formats for venue name and slug
-                    const venueName = Array.isArray(processedEvent.venue.name) ? processedEvent.venue.name[0] : processedEvent.venue.name;
-                    const venueSlug = Array.isArray(processedEvent.venue.slug) ? processedEvent.venue.slug[0] : processedEvent.venue.slug;
-                    const venueKey = venueSlug;
-                    
-                    if (venueName && venueSlug && !venueMap.has(venueKey)) {
-                        venueFoundCount++;
-                        venueMap.set(venueKey, {
-                            id: processedEvent.venue.id || venueKey,
-                            name: venueName,
-                            slug: venueSlug,
-                            description: `Venue hosting ${processedEvent.name || 'events'}`,
-                            address: processedEvent.venue.address || 'Address TBC',
-                            type: 'venue',
-                            status: 'Approved',
-                            image: processedEvent.image
-                        });
-                    }
-                }
-            });
-            
-            venues = Array.from(venueMap.values());
-            console.log(`Processed ${processedCount} events, found ${venueFoundCount} venues, extracted ${venues.length} unique venues from events`);
+            // Don't fall back to events - return empty array
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                body: JSON.stringify({
+                    venues: [],
+                    totalCount: 0,
+                    error: "Error accessing venues collection"
+                })
+            };
         }
 
         console.log(`=== VENUES FUNCTION COMPLETE ===`);
