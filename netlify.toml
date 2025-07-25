@@ -3,12 +3,14 @@
 # Specifies build settings for Netlify
 [build]
   # Directory that contains the deploy-ready HTML files and assets.
-  publish = "/"
+  publish = "."
+  functions = "netlify/functions"
 
 # Specifies how serverless functions are handled
 [functions]
   # Main directory for all serverless functions
   directory = "netlify/functions/"
+  node_bundler = "esbuild"
 
 
 # --- Page Redirect and Rewrite Rules ---
@@ -66,7 +68,7 @@
 # Directs users to the login page
 [[redirects]]
     from = "/admin"
-    to = "/admin-login.html"
+    to = "/admin-dashboard.html"
     status = 200
     
 [[redirects]]
@@ -110,3 +112,24 @@
   from = "/*"
   to = "/404.html"
   status = 404
+
+# Scheduled Functions
+[functions."scheduled-health-check"]
+  schedule = "0 */15 * * *"  # Every 15 minutes
+
+# Environment Variables (add these to your Netlify dashboard)
+[context.production.environment]
+  AIRTABLE_PERSONAL_ACCESS_TOKEN = ""
+  AIRTABLE_BASE_ID = ""
+  CLOUDINARY_CLOUD_NAME = ""
+  CLOUDINARY_API_KEY = ""
+  CLOUDINARY_API_SECRET = ""
+  SLACK_WEBHOOK_URL = ""
+  DISCORD_WEBHOOK_URL = ""
+
+[context.deploy-preview.environment]
+  AIRTABLE_PERSONAL_ACCESS_TOKEN = ""
+  AIRTABLE_BASE_ID = ""
+  CLOUDINARY_CLOUD_NAME = ""
+  CLOUDINARY_API_KEY = ""
+  CLOUDINARY_API_SECRET = ""
