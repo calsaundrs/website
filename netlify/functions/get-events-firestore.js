@@ -27,7 +27,30 @@ exports.handler = async function (event, context) {
         
         // Handle different views
         if (view === 'venues') {
-            return await handleVenuesView();
+            console.log("=== VENUES VIEW REQUESTED ===");
+            // Temporarily return test data to see if function is working
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'public, max-age=600'
+                },
+                body: JSON.stringify({
+                    venues: [
+                        {
+                            id: 'test-venue-1',
+                            name: 'Test Venue 1',
+                            slug: 'test-venue-1',
+                            description: 'Test venue for debugging',
+                            address: 'Test Address',
+                            type: 'venue',
+                            status: 'Approved',
+                            image: null
+                        }
+                    ],
+                    totalCount: 1
+                })
+            };
         } else if (view === 'admin') {
             return await handleAdminView(queryParams);
         } else {
@@ -251,21 +274,103 @@ async function handleAdminView(queryParams) {
 }
 
 async function handleVenuesView() {
-    console.log("Venues view requested");
+    console.log("=== VENUES VIEW REQUESTED ===");
 
     try {
-        const venuesRef = db.collection('venues');
-        const snapshot = await venuesRef.where('status', '==', 'approved').get();
+        let venues = [];
         
-        const venues = [];
-        snapshot.forEach(doc => {
-            const venueData = {
-                id: doc.id,
-                ...doc.data()
-            };
-            venues.push(processVenueForPublic(venueData));
-        });
+        // First, try to get venues from the venues collection
+        try {
+            console.log("Attempting to fetch from venues collection...");
+            const venuesRef = db.collection('venues');
+            const venuesSnapshot = await venuesRef.where('Status', '==', 'Approved').get();
+            
+            console.log(`Found ${venuesSnapshot.size} venues in venues collection`);
+            
+            venuesSnapshot.forEach(doc => {
+                const venueData = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                venues.push(processVenueForPublic(venueData));
+            });
+        } catch (venuesError) {
+            console.log('No venues collection or error accessing it:', venuesError.message);
+        }
+        
+        // If no venues found, try to extract venue information from events
+        if (venues.length === 0) {
+            console.log("No venues found in venues collection, extracting from events...");
+            
+            const eventsRef = db.collection('events');
+            const eventsSnapshot = await eventsRef.where('Status', '==', 'Approved').get();
+            
+            console.log(`Found ${eventsSnapshot.size} approved events to extract venues from`);
+            
+            const venueMap = new Map();
+            let processedCount = 0;
+            let venueFoundCount = 0;
+            
+            eventsSnapshot.forEach(doc => {
+                const rawEventData = doc.data();
+                processedCount++;
+                
+                // Debug: Log the first few events to see the structure
+                if (processedCount <= 3) {
+                    console.log(`Event ${processedCount} raw data:`, {
+                        id: doc.id,
+                        eventName: rawEventData['Event Name'],
+                        venueName: rawEventData['Venue Name'],
+                        venueSlug: rawEventData['Venue Slug'],
+                        venue: rawEventData.venue
+                    });
+                }
+                
+                // Process the event data to get the standardized venue structure
+                const eventData = {
+                    id: doc.id,
+                    ...rawEventData
+                };
+                
+                // Use the same processing logic as processEventForPublic
+                const processedEvent = processEventForPublic(eventData);
+                
+                // Debug: Log the processed event venue data
+                if (processedCount <= 3) {
+                    console.log(`Event ${processedCount} processed venue:`, processedEvent.venue);
+                }
+                
+                // Extract venue information from processed event
+                if (processedEvent.venue && processedEvent.venue.name && processedEvent.venue.slug) {
+                    // Handle both string and array formats for venue name and slug
+                    const venueName = Array.isArray(processedEvent.venue.name) ? processedEvent.venue.name[0] : processedEvent.venue.name;
+                    const venueSlug = Array.isArray(processedEvent.venue.slug) ? processedEvent.venue.slug[0] : processedEvent.venue.slug;
+                    const venueKey = venueSlug;
+                    
+                    if (venueName && venueSlug && !venueMap.has(venueKey)) {
+                        venueFoundCount++;
+                        venueMap.set(venueKey, {
+                            id: processedEvent.venue.id || venueKey,
+                            name: venueName,
+                            slug: venueSlug,
+                            description: `Venue hosting ${processedEvent.name || 'events'}`,
+                            address: processedEvent.venue.address || 'Address TBC',
+                            type: 'venue',
+                            status: 'Approved',
+                            image: processedEvent.image
+                        });
+                    }
+                }
+            });
+            
+            venues = Array.from(venueMap.values());
+            console.log(`Processed ${processedCount} events, found ${venueFoundCount} venues, extracted ${venues.length} unique venues from events`);
+        }
 
+        console.log(`=== VENUES FUNCTION COMPLETE ===`);
+        console.log(`Returning ${venues.length} venues`);
+        console.log(`Venues:`, venues.map(v => ({ id: v.id, name: v.name, slug: v.slug })));
+        
         return {
             statusCode: 200,
             headers: {
@@ -311,27 +416,67 @@ function extractImageInfo(fields) {
 }
 
 function processEventForPublic(eventData) {
-    return {
+    // Map Firestore field names to expected field names (same as service)
+    const mappedData = {
         id: eventData.id,
-        name: eventData.name,
-        slug: eventData.slug,
-        description: eventData.description,
-        date: eventData.date,
-        category: eventData.category || [],
-        venue: {
-            id: eventData.venueId,
-            name: eventData.venueName,
-            slug: eventData.venueSlug,
-            address: eventData.venueAddress
-        },
-        image: eventData.image,
-        price: eventData.price,
-        ageRestriction: eventData.ageRestriction,
-        link: eventData.link || eventData.ticketLink,
-        recurringInfo: eventData.recurringInfo,
-        series: eventData.series,
-        promotion: eventData.promotion || {},
-        status: eventData.status
+        name: eventData['Event Name'] || eventData.name,
+        slug: eventData['Slug'] || eventData.slug,
+        description: eventData['Description'] || eventData.description,
+        category: eventData['categories'] || eventData.category || [],
+        date: eventData['Date'] || eventData.date,
+        venueId: eventData['venueId'] || eventData.venueId,
+        venueName: eventData['Venue Name'] || eventData.venueName,
+        venueSlug: eventData['Venue Slug'] || eventData.venueSlug,
+        venueAddress: eventData['Venue Address'] || eventData.venueAddress,
+        venueLink: eventData['Venue Link'] || eventData.venueLink,
+        image: eventData['Promo Image'] || eventData.image,
+        cloudinaryPublicId: eventData['Cloudinary Public ID'] || eventData.cloudinaryPublicId,
+        price: eventData['Price'] || eventData.price,
+        ageRestriction: eventData['Age Restriction'] || eventData.ageRestriction,
+        link: eventData['Link'] || eventData.link,
+        ticketLink: eventData['Ticket Link'] || eventData.ticketLink,
+        seriesId: eventData['Series ID'] || eventData.seriesId,
+        status: eventData['Status'] || eventData.status,
+        recurringInfo: eventData['Recurring Info'] || eventData.recurringInfo
+    };
+
+    // Handle venue data - check for venue object first, then fallback to individual fields
+    let venueData = null;
+    
+    if (eventData.venue && eventData.venue.name && eventData.venue.slug) {
+        // New format: venue object with arrays
+        venueData = {
+            id: eventData.venue.id,
+            name: Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name,
+            slug: Array.isArray(eventData.venue.slug) ? eventData.venue.slug[0] : eventData.venue.slug,
+            address: eventData.venue.address || mappedData.venueAddress
+        };
+    } else if (mappedData.venueName && mappedData.venueSlug) {
+        // Old format: individual venue fields
+        venueData = {
+            id: mappedData.venueId,
+            name: mappedData.venueName,
+            slug: mappedData.venueSlug,
+            address: mappedData.venueAddress
+        };
+    }
+
+    return {
+        id: mappedData.id,
+        name: mappedData.name,
+        slug: mappedData.slug,
+        description: mappedData.description,
+        date: mappedData.date,
+        category: mappedData.category,
+        venue: venueData,
+        image: extractImageInfo(mappedData),
+        price: mappedData.price,
+        ageRestriction: mappedData.ageRestriction,
+        link: mappedData.link || mappedData.ticketLink,
+        recurringInfo: mappedData.recurringInfo,
+        series: mappedData.seriesId ? { id: mappedData.seriesId, type: 'instance' } : null,
+        promotion: {},
+        status: mappedData.status
     };
 }
 
@@ -366,16 +511,25 @@ function processEventForAdmin(eventData) {
 }
 
 function processVenueForPublic(venueData) {
-    return {
+    // Handle both direct venue data and extracted venue data
+    const venue = {
         id: venueData.id,
-        name: venueData.name,
-        slug: venueData.slug,
-        description: venueData.description,
-        address: venueData.address,
-        link: venueData.link,
+        name: venueData.name || venueData['Venue Name'],
+        slug: venueData.slug || venueData['Venue Slug'],
+        description: venueData.description || `Venue hosting events`,
+        address: venueData.address || venueData['Venue Address'] || 'Address TBC',
+        link: venueData.link || venueData['Venue Link'],
         image: venueData.image,
-        category: venueData.category || [],
-        openingHours: venueData.openingHours,
-        status: venueData.status
+        category: venueData.category || venueData.tags || [],
+        type: venueData.type || 'venue',
+        status: venueData.status || venueData.Status || 'Approved',
+        openingHours: venueData.openingHours || venueData['Opening Hours']
     };
+    
+    // Add some default tags based on venue type if none exist
+    if (!venue.category || venue.category.length === 0) {
+        venue.category = ['LGBTQ+', 'Venue'];
+    }
+    
+    return venue;
 }
