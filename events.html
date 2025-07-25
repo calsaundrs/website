@@ -804,7 +804,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             eventGrid.innerHTML = events.map(event => {
                 const tagsHTML = event.category && event.category.length > 0 ? 
-                    event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`).join('') : '';
+                    event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
                 const imageUrl = event.image && event.image.url ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
                 const isBoosted = event.promotion && event.promotion.boosted;
                 const venueName = event.venue && event.venue.name ? event.venue.name : 'TBC';
@@ -828,7 +828,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
                             <h3 class="text-xl font-bold text-white mb-2 text-left">${event.name}</h3>
                             <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
-                            <div class="flex flex-wrap gap-1 mb-4">
+                            <div class="flex gap-1 mb-4 overflow-hidden">
                                 ${tagsHTML}
                             </div>
                             <div class="flex justify-between items-center">
