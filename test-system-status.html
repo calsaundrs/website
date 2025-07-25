@@ -83,6 +83,10 @@
             <button id="testRecurringBtn" class="button" onclick="testRecurringEvents()">
                 🔄 Test Recurring Events
             </button>
+            
+            <button id="testFieldsBtn" class="button" onclick="testAirtableFields()">
+                📋 Test Airtable Fields
+            </button>
         </div>
 
         <div id="status" class="status"></div>
@@ -96,6 +100,11 @@
                 <h3>Test Results:</h3>
                 <pre id="testResponse">Click "Run System Tests" to see results...</pre>
             </div>
+        </div>
+        
+        <div>
+            <h3>Airtable Fields Test:</h3>
+            <pre id="fieldsResponse">Click "Test Airtable Fields" to see available fields...</pre>
         </div>
     </div>
 
@@ -251,6 +260,59 @@
                 status.className = 'status error';
                 status.innerHTML = `
                     <h3>❌ Recurring Events API Test Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                
+                btn.textContent = '❌ Failed - Try Again';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function testAirtableFields() {
+            const btn = document.getElementById('testFieldsBtn');
+            const status = document.getElementById('status');
+            const response = document.getElementById('fieldsResponse');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing...';
+            
+            status.style.display = 'block';
+            status.className = 'status error';
+            status.textContent = 'Testing Airtable fields...';
+            
+            try {
+                console.log('Testing Airtable fields...');
+                
+                const res = await fetch('/.netlify/functions/test-airtable-fields');
+                const responseText = await res.text();
+                
+                console.log('Fields response status:', res.status);
+                console.log('Fields response text:', responseText);
+                
+                response.textContent = `Status: ${res.status}\n\n${responseText}`;
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${responseText}`);
+                }
+                
+                const data = JSON.parse(responseText);
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ Airtable Fields Test Successful!</h3>
+                    <p><strong>Available Fields:</strong> ${data.availableFields?.length || 0}</p>
+                    <p><strong>Sample Event:</strong> ${data.sampleRecord?.eventName || 'None'}</p>
+                `;
+                
+                btn.textContent = '✅ Test Complete';
+                
+            } catch (error) {
+                console.error('Failed to test Airtable fields:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ Airtable Fields Test Failed</h3>
                     <p><strong>Error:</strong> ${error.message}</p>
                 `;
                 
