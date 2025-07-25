@@ -64,10 +64,13 @@ function recordToObject(record) {
         cleanFields[key] = cleanData(value);
     }
     
+    // Ensure createdAt is always a valid date string
+    const createdAt = record.createdTime || new Date().toISOString();
+    
     return {
         id: record.id,
         ...cleanFields,
-        createdAt: record.createdTime || new Date().toISOString(),
+        createdAt: createdAt,
         updatedAt: new Date().toISOString()
     };
 }
@@ -91,6 +94,15 @@ async function migrateVenues() {
             
             for (const record of chunk) {
                 try {
+                    // Debug: Log record structure for first few records
+                    if (processedCount < 3) {
+                        console.log(`Debug - Record ${record.id}:`, {
+                            id: record.id,
+                            createdTime: record.createdTime,
+                            fields: Object.keys(record.fields)
+                        });
+                    }
+                    
                     const venueData = recordToObject(record);
                     
                     // Generate slug if not present
