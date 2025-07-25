@@ -80,12 +80,9 @@ async function handlePublicView(queryParams) {
         // This will generate index creation links for more complex queries
         console.log("Using basic query to generate index links");
         
-        // For now, just get approved events ordered by date
-        // This will trigger the basic index creation link
-        query = query.orderBy('Date', 'asc');
-        
-        // Note: We'll add filtering back once the basic index is created
-        // The error messages will guide us to create the right indexes
+        // For now, get approved events without ordering to avoid index requirements
+        // We'll add ordering back once the basic index is created
+        console.log("Using simple query without ordering to avoid index requirements");
 
         // Apply pagination
         query = query.limit(filters.limit).offset(filters.offset);
@@ -147,12 +144,21 @@ async function handlePublicView(queryParams) {
         
         console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
 
-                    // Get total count for pagination
-            console.log("Getting total count...");
-            const countQuery = eventsRef.where('Status', '==', 'Approved');
-            const countSnapshot = await countQuery.get();
-            const totalCount = countSnapshot.size;
-            console.log(`Total count: ${totalCount}`);
+        // Sort events by date (client-side since we can't orderBy in Firestore yet)
+        events.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateA - dateB;
+        });
+
+        console.log(`Sorted ${events.length} events by date`);
+
+        // Get total count for pagination
+        console.log("Getting total count...");
+        const countQuery = eventsRef.where('Status', '==', 'Approved');
+        const countSnapshot = await countQuery.get();
+        const totalCount = countSnapshot.size;
+        console.log(`Total count: ${totalCount}`);
 
         return {
             statusCode: 200,
