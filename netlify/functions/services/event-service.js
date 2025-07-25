@@ -65,10 +65,22 @@ class EventService {
 
     if (records.length === 0) return null;
 
-    // Handle series events
+    // Handle series events - find the parent event (has Recurring Info)
     const parentEvent = records.find(record => record.fields['Recurring Info']);
     if (parentEvent) {
+      console.log(`Found series event: ${parentEvent.fields['Event Name']} with ${records.length} instances`);
       return this.processSeriesEvent(parentEvent, records);
+    }
+
+    // If no parent event found but we have multiple records with same slug,
+    // this might be a series where the parent doesn't have Recurring Info
+    if (records.length > 1) {
+      console.log(`Multiple events found with same slug: ${slug}, returning first one`);
+      // Sort by date and return the earliest future event
+      const sortedRecords = records.sort((a, b) => new Date(a.fields.Date) - new Date(b.fields.Date));
+      const futureEvents = sortedRecords.filter(record => new Date(record.fields.Date) > new Date());
+      const eventToReturn = futureEvents.length > 0 ? futureEvents[0] : sortedRecords[0];
+      return this.processStandaloneEvent(eventToReturn);
     }
 
     // Handle standalone events
