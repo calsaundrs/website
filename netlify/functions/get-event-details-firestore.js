@@ -214,7 +214,7 @@ exports.handler = async function (event, context) {
     <style>
         /* Base Styles */
         body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
             color: #EAEAEA;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
@@ -287,33 +287,42 @@ exports.handler = async function (event, context) {
 </head>
 <body>
     <!-- Header -->
-    <header class="border-b-2 border-gray-800">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex justify-between items-center">
-                <a href="/" class="font-anton text-4xl heading-gradient">
-                    BRUM<span class="accent-color">OUT</span>LOUD
-                </a>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">Events</a>
-                    <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">Venues</a>
-                    <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">Community</a>
-                </nav>
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                     onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Breadcrumb -->
-        <nav class="mb-8">
-            <ol class="flex items-center space-x-2 text-sm text-gray-400">
-                <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li><a href="/events.html" class="hover:text-white transition-colors">Events</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li class="text-white">{{event.name}}</li>
-            </ol>
-        </nav>
 
         <!-- Event Details -->
         <div class="venue-card rounded-xl overflow-hidden">
@@ -324,13 +333,15 @@ exports.handler = async function (event, context) {
                 {{else}}
                 <i class="fas fa-image text-6xl text-gray-600"></i>
                 {{/if}}
+                <div class="absolute top-4 left-4">
+                    <a href="/events.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back
+                    </a>
+                </div>
                 <div class="absolute top-4 right-4">
                     <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
                         <i class="fas fa-share mr-1"></i>Share
                     </button>
-                </div>
-                <div class="absolute bottom-4 left-4">
-                    <span class="status-badge approved">Approved</span>
                 </div>
             </div>
             
@@ -402,53 +413,6 @@ exports.handler = async function (event, context) {
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Date & Time -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
-                            </h3>
-                            <p class="text-2xl font-semibold text-white">{{formatDateOnly event.date}}</p>
-                            <p class="text-xl text-gray-400">{{formatTime event.date}}</p>
-                            {{#if event.recurringInfo}}
-                            <div class="mt-2">
-                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
-                            </div>
-                            {{/if}}
-                        </div>
-
-                        <!-- Location -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
-                            </h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
-                                    {{#if event.venue.address}}
-                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
-                                    {{/if}}
-                                </div>
-                                {{#if event.venue.link}}
-                                <div class="flex items-center gap-2 text-gray-400 text-sm">
-                                    <i class="fas fa-globe"></i>
-                                    <a href="{{event.venue.link}}" target="_blank" class="text-accent-color hover:underline">Visit Website</a>
-                                </div>
-                                {{/if}}
-                                <button class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm">
-                                    <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Tags -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
-                            </h3>
-                            <div class="flex flex-wrap gap-2">
-                                {{{categoryTags}}}
-                            </div>
-                        </div>
 
                         <!-- Action Buttons -->
                         <div class="venue-card p-6">
@@ -517,13 +481,13 @@ exports.handler = async function (event, context) {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+    <footer class="border-t-2 border-gray-800 p-8">
         <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
                     <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                </div>
+                 </div>
             </div>
             <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
@@ -535,7 +499,7 @@ exports.handler = async function (event, context) {
                         <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
                     </ul>
                 </div>
-                <div>
+                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                     <ul>
                         <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
