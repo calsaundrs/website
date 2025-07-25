@@ -21,7 +21,20 @@ function toICSDate(date) {
  */
 function generateIcsDataURI(eventData) {
     const { name, description, venue, date } = eventData;
-    const eventDate = new Date(date);
+    
+    // Validate date and provide fallback
+    let eventDate;
+    try {
+        eventDate = new Date(date);
+        if (isNaN(eventDate.getTime())) {
+            console.warn('Invalid date for event in ICS:', name, 'date:', date);
+            eventDate = new Date(); // Fallback to current date
+        }
+    } catch (error) {
+        console.warn('Error parsing date for event in ICS:', name, 'date:', date, 'error:', error.message);
+        eventDate = new Date(); // Fallback to current date
+    }
+    
     const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
     
     let icsContent = [
@@ -45,10 +58,28 @@ function generateIcsDataURI(eventData) {
 
 function generateCalendarLinks(eventData) {
     const { name, description, venue, date } = eventData;
-    const eventDate = new Date(date);
+    
+    // Validate date and provide fallback
+    let eventDate;
+    try {
+        eventDate = new Date(date);
+        if (isNaN(eventDate.getTime())) {
+            console.warn('Invalid date for event:', name, 'date:', date);
+            eventDate = new Date(); // Fallback to current date
+        }
+    } catch (error) {
+        console.warn('Error parsing date for event:', name, 'date:', date, 'error:', error.message);
+        eventDate = new Date(); // Fallback to current date
+    }
+    
     const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
     
-    const googleLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(name)}&dates=${eventDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&details=${encodeURIComponent(description || '')}&location=${encodeURIComponent(venue.name)}`;
+    // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ format)
+    const formatDateForGoogle = (date) => {
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+    
+    const googleLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(name)}&dates=${formatDateForGoogle(eventDate)}/${formatDateForGoogle(endDate)}&details=${encodeURIComponent(description || '')}&location=${encodeURIComponent(venue.name)}`;
     
     return {
         google: googleLink,
@@ -81,6 +112,7 @@ exports.handler = async function (event, context) {
         }
 
         console.log("Event found:", eventData.name);
+        console.log("Event date:", eventData.date, "Type:", typeof eventData.date);
 
         // Get other instances if this is a series event
         let otherInstances = [];
