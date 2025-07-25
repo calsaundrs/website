@@ -176,7 +176,7 @@ exports.handler = async function (event, context) {
             // TODO: Add description formatting if needed
         }
 
-                // Use embedded template (Netlify Functions file system access can be unreliable)
+                // Use embedded template matching the design system
         const templateContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -207,101 +207,85 @@ exports.handler = async function (event, context) {
     
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
     
     <style>
-        :root {
-            --accent-color: #ff6b6b;
-            --accent-color-secondary: #4ecdc4;
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
         }
-        
-        .accent-color { color: var(--accent-color); }
-        .accent-color-secondary { color: var(--accent-color-secondary); }
-        .bg-accent-color { background-color: var(--accent-color); }
-        .bg-accent-color-secondary { background-color: var(--accent-color-secondary); }
-        
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
         .heading-gradient {
-            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .card-bg {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            border: 1px solid #333;
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .category-tag {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-            color: white;
+
+        .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
             display: inline-block;
-            margin: 0.125rem;
         }
-        
-        .recurring-event-tag {
-            background: linear-gradient(135deg, #4ecdc4 0%, #6ee7df 100%);
+        .status-badge.approved {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin: 0.125rem;
-        }
-        
-        .boosted-listing-tag {
-            background: linear-gradient(135deg, #ffd93d 0%, #ffe066 100%);
-            color: #333;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin: 0.125rem;
-        }
-        
-        .calendar-link {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #4ecdc4 0%, #6ee7df 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            margin: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .calendar-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
-        }
-        
-        .calendar-link.google {
-            background: linear-gradient(135deg, #4285f4 0%, #5a9eff 100%);
-        }
-        
-        .calendar-link.ical {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
+<body>
     <!-- Header -->
     <header class="border-b-2 border-gray-800">
         <div class="container mx-auto px-4 py-6">
@@ -332,128 +316,200 @@ exports.handler = async function (event, context) {
         </nav>
 
         <!-- Event Details -->
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Main Event Info -->
-            <div class="lg:col-span-2">
-                <div class="card-bg rounded-lg p-8 mb-8">
-                    <!-- Event Header -->
-                    <div class="mb-6">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            {{{categoryTags}}}
-                            {{#if event.recurringInfo}}
-                            <span class="recurring-event-tag">RECURRING</span>
-                            {{/if}}
-                            {{#if event.promotion.boosted}}
-                            <span class="boosted-listing-tag">BOOSTED</span>
-                            {{/if}}
-                        </div>
-                        
-                        <h1 class="text-4xl font-bold text-white mb-4">{{event.name}}</h1>
-                        
-                        <div class="flex items-center text-gray-400 mb-4">
-                            <i class="fas fa-calendar-alt mr-2"></i>
-                            <span>{{formatDate event.date}}</span>
-                        </div>
-                        
-                        <div class="flex items-center text-gray-400 mb-6">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span>{{event.venue.name}}</span>
-                        </div>
-                    </div>
-
-                    <!-- Event Image -->
-                    {{#if event.image}}
-                    <div class="mb-6">
-                        <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-64 object-cover rounded-lg">
-                    </div>
-                    {{/if}}
-
-                    <!-- Event Description -->
-                    {{#if event.description}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">About This Event</h2>
-                        <p class="text-gray-300 leading-relaxed">{{event.description}}</p>
-                    </div>
-                    {{/if}}
-
-                    <!-- Calendar Links -->
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Add to Calendar</h2>
-                        <div class="flex flex-wrap">
-                            <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
-                                <i class="fab fa-google mr-2"></i> Google Calendar
-                            </a>
-                            <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="calendar-link ical">
-                                <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Event Link -->
-                    {{#if event.details.link}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Event Link</h2>
-                        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-accent-color text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-external-link-alt mr-2"></i>
-                            Visit Event Page
-                        </a>
-                    </div>
-                    {{/if}}
-                </div>
-
-                <!-- Other Instances (for recurring events) -->
-                {{#if hasOtherInstances}}
-                <div class="card-bg rounded-lg p-8">
-                    <h2 class="text-2xl font-bold text-white mb-6">Other Instances</h2>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        {{#each otherInstances}}
-                        <div class="bg-gray-800 rounded-lg p-4">
-                            <h3 class="font-semibold text-white mb-2">{{name}}</h3>
-                            <p class="text-gray-400 text-sm">{{formatDate date}}</p>
-                            <p class="text-gray-400 text-sm">{{venue.name}}</p>
-                        </div>
-                        {{/each}}
-                    </div>
-                </div>
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                {{#if event.image}}
+                <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
+                {{else}}
+                <i class="fas fa-image text-6xl text-gray-600"></i>
                 {{/if}}
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+                <div class="absolute bottom-4 left-4">
+                    <span class="status-badge approved">Approved</span>
+                </div>
             </div>
-
-            <!-- Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="card-bg rounded-lg p-6 sticky top-8">
-                    <h2 class="text-xl font-bold text-white mb-4">Event Details</h2>
+            
+            <div class="p-8">
+                <!-- Event Header -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-center w-20 flex-shrink-0">
+                            <div class="text-4xl font-bold text-white">{{formatDay event.date}}</div>
+                            <div class="text-sm text-gray-400">{{formatMonth event.date}}</div>
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
+                            <p class="text-xl text-gray-300 mb-2">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                {{event.venue.name}}
+                            </p>
+                            <p class="text-gray-400">
+                                <i class="fas fa-clock mr-2"></i>
+                                {{formatDate event.date}}
+                            </p>
+                        </div>
+                    </div>
                     
-                    <div class="space-y-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Date & Time</h3>
-                            <p class="text-white">{{formatDate event.date}}</p>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Venue</h3>
-                            <p class="text-white">{{event.venue.name}}</p>
-                        </div>
-                        
-                        {{#if event.details.price}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Price</h3>
-                            <p class="text-white">{{event.details.price}}</p>
-                        </div>
-                        {{/if}}
-                        
-                        {{#if event.details.ageRestriction}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Age Restriction</h3>
-                            <p class="text-white">{{event.details.ageRestriction}}</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {{{categoryTags}}}
+                    </div>
+                </div>
+
+                <!-- Event Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        {{#if event.description}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">{{event.description}}</p>
                         </div>
                         {{/if}}
-                        
-                        {{#if event.recurringInfo}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Recurring Info</h3>
-                            <p class="text-white">{{event.recurringInfo}}</p>
+
+                        <!-- Other Events in Series -->
+                        {{#if hasOtherInstances}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Other Events in this Series
+                            </h2>
+                            <div class="space-y-4">
+                                {{#each otherInstances}}
+                                <a href="/event/{{slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                    <div class="text-center w-20 flex-shrink-0">
+                                        <p class="text-2xl font-bold text-white">{{formatDay date}}</p>
+                                        <p class="text-lg text-gray-400">{{formatMonth date}}</p>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="font-bold text-white text-xl">{{name}}</h4>
+                                        <p class="text-sm text-gray-400">{{formatTime date}}</p>
+                                    </div>
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                </a>
+                                {{/each}}
+                            </div>
                         </div>
                         {{/if}}
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Date & Time -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
+                            </h3>
+                            <p class="text-2xl font-semibold text-white">{{formatDateOnly event.date}}</p>
+                            <p class="text-xl text-gray-400">{{formatTime event.date}}</p>
+                            {{#if event.recurringInfo}}
+                            <div class="mt-2">
+                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
+                            </div>
+                            {{/if}}
+                        </div>
+
+                        <!-- Location -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                    {{#if event.venue.address}}
+                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
+                                    {{/if}}
+                                </div>
+                                {{#if event.venue.link}}
+                                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                    <i class="fas fa-globe"></i>
+                                    <a href="{{event.venue.link}}" target="_blank" class="text-accent-color hover:underline">Visit Website</a>
+                                </div>
+                                {{/if}}
+                                <button class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>Get Directions
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {{{categoryTags}}}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="venue-card p-6">
+                            <div class="space-y-3">
+                                {{#if event.details.link}}
+                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                                    <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
+                                </a>
+                                {{else}}
+                                <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                    <i class="fas fa-info-circle mr-2"></i>Event Info
+                                </button>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Add to Calendar -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                            </h3>
+                            <div class="space-y-3">
+                                <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fab fa-google mr-2"></i>Google Calendar
+                                </a>
+                                <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Apple/Outlook/Other
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Share Event -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Event
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Event
+                            </button>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if event.details.price}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Price:</span>
+                                    <span class="text-white font-semibold">{{event.details.price}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.details.ageRestriction}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Age Restriction:</span>
+                                    <span class="text-white font-semibold">{{event.details.ageRestriction}}</span>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -491,30 +547,6 @@ exports.handler = async function (event, context) {
             </div>
         </div>
     </footer>
-
-    <script>
-        // Helper function to format dates
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-GB', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-        }
-        
-        // Format all dates on the page
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateElements = document.querySelectorAll('[data-date]');
-            dateElements.forEach(element => {
-                const dateString = element.getAttribute('data-date');
-                element.textContent = formatDate(dateString);
-            });
-        });
-    </script>
 </body>
 </html>`;
 
