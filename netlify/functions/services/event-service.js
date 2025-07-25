@@ -698,6 +698,56 @@ class EventService {
       return [];
     }
   }
+
+  formatDescription(description) {
+    if (!description || typeof description !== 'string') {
+      return description;
+    }
+
+    let formatted = description.trim();
+
+    // Split by common paragraph separators
+    const paragraphs = formatted.split(/\n\s*\n|\r\n\s*\r\n/);
+    
+    // Process each paragraph
+    const processedParagraphs = paragraphs.map(paragraph => {
+      let processed = paragraph.trim();
+      
+      // Add line breaks for bullet points or numbered lists
+      if (processed.match(/^[\-\*•]\s/)) {
+        // Convert to proper bullet points
+        processed = processed.replace(/^[\-\*•]\s/, '• ');
+      } else if (processed.match(/^\d+\.\s/)) {
+        // Keep numbered lists as is
+        processed = processed;
+      } else if (processed.match(/^[A-Z][A-Z\s]+:/)) {
+        // Format section headers (e.g., "VENUE:", "PRICE:", "AGE:")
+        processed = `<strong>${processed}</strong>`;
+      }
+      
+      return processed;
+    });
+
+    // Join paragraphs with proper spacing
+    return processedParagraphs.filter(p => p.length > 0).join('\n\n');
+  }
+
+  async updateEventDescription(eventId, formattedDescription) {
+    try {
+      await this.base('Events').update([{
+        id: eventId,
+        fields: {
+          'Description': formattedDescription
+        }
+      }]);
+      
+      console.log(`Updated description for event ${eventId}`);
+      return true;
+    } catch (error) {
+      console.error('Error updating event description:', error);
+      return false;
+    }
+  }
 }
 
 module.exports = EventService;

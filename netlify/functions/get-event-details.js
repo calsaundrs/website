@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v3 - Added similar events, updated header, removed approved tag
+// Version: 2025-07-25-v4 - Fixed mobile CTA, added dynamic description formatting
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();
@@ -161,6 +161,26 @@ exports.handler = async function (event, context) {
                 similarEvents = await eventService.getSimilarEvents(eventData.category, eventData.id, 3);
             } catch (error) {
                 console.error('Error getting similar events:', error);
+            }
+        }
+
+        // Format description and optionally update Airtable
+        let formattedDescription = eventData.description;
+        if (eventData.description) {
+            formattedDescription = eventService.formatDescription(eventData.description);
+            
+            // If the formatted description is different from the original, update Airtable
+            if (formattedDescription !== eventData.description) {
+                // Update asynchronously (don't wait for it to complete)
+                eventService.updateEventDescription(eventData.id, formattedDescription)
+                    .then(success => {
+                        if (success) {
+                            console.log(`Updated description for event ${eventData.id}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating description:', error);
+                    });
             }
         }
 
@@ -408,9 +428,9 @@ exports.handler = async function (event, context) {
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
                             </h2>
-                            <p class="text-gray-300 leading-relaxed mb-4">
-                                {{event.description}}
-                            </p>
+                            <div class="text-gray-300 leading-relaxed mb-4 whitespace-pre-line">
+                                {{{event.description}}}
+                            </div>
                         </div>
 
                         <!-- You Might Like Events -->
@@ -592,16 +612,18 @@ exports.handler = async function (event, context) {
                     <i class="fas fa-ticket-alt mr-1"></i>Get Tickets
                 </a>
                 {{else}}
-                <button class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm" onclick="contactOrganizer()">
-                    <i class="fas fa-envelope mr-1"></i>Contact
+                <button class="btn-primary text-white flex-1 py-3 px-4 rounded-lg font-bold text-sm" onclick="shareEvent()">
+                    <i class="fas fa-share mr-1"></i>Share Event
                 </button>
                 {{/if}}
                 <button class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm" onclick="addToCalendar()">
                     <i class="fas fa-calendar-plus"></i>
                 </button>
+                {{#if event.details.link}}
                 <button class="btn-secondary text-white px-4 py-3 rounded-lg font-bold text-sm" onclick="shareEvent()">
                     <i class="fas fa-share"></i>
                 </button>
+                {{/if}}
             </div>
         </div>
     </main>
@@ -746,7 +768,10 @@ exports.handler = async function (event, context) {
 
         // Prepare template data
         const templateData = {
-            event: eventData,
+            event: {
+                ...eventData,
+                description: formattedDescription
+            },
             otherInstances: otherInstances,
             hasOtherInstances: otherInstances.length > 0,
             similarEvents: similarEvents,
