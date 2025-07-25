@@ -261,49 +261,61 @@ async function handleVenuesView() {
             console.log("Attempting to fetch from venues collection with Listing Status = Listed...");
             const venuesRef = db.collection('venues');
             
-            // First, get all venues to see what fields exist
-            console.log("Getting all venues to inspect field names...");
-            const allVenuesSnapshot = await venuesRef.limit(5).get();
-            console.log(`Found ${allVenuesSnapshot.size} venues in collection`);
+            // Get ALL venues to inspect and filter
+            console.log("Getting all venues to inspect and filter...");
+            const allVenuesSnapshot = await venuesRef.get();
+            console.log(`Found ${allVenuesSnapshot.size} total venues in collection`);
             
             if (allVenuesSnapshot.size > 0) {
-                const sampleVenue = allVenuesSnapshot.docs[0].data();
-                console.log("Sample venue fields:", Object.keys(sampleVenue));
-                console.log("Sample venue data:", sampleVenue);
+                // Return raw venue data for inspection
+                const rawVenues = [];
+                allVenuesSnapshot.forEach(doc => {
+                    const venueData = doc.data();
+                    rawVenues.push({
+                        id: doc.id,
+                        ...venueData
+                    });
+                });
                 
-                // Look for listing status field
+                console.log("Raw venue data for first 3 venues:");
+                rawVenues.slice(0, 3).forEach((venue, index) => {
+                    console.log(`Venue ${index + 1} (${venue.id}):`, JSON.stringify(venue, null, 2));
+                });
+                
+                // Look for listing status field in all venues
                 const possibleStatusFields = ['Listing Status', 'listingStatus', 'Status', 'status', 'ListingStatus'];
                 let foundStatusField = null;
-                let foundStatusValue = null;
+                let foundStatusValues = new Set();
                 
-                for (const field of possibleStatusFields) {
-                    if (sampleVenue[field] !== undefined) {
-                        foundStatusField = field;
-                        foundStatusValue = sampleVenue[field];
-                        console.log(`Found status field: "${field}" with value: "${foundStatusValue}"`);
-                        break;
+                // Check all venues for status fields
+                rawVenues.forEach(venue => {
+                    for (const field of possibleStatusFields) {
+                        if (venue[field] !== undefined) {
+                            foundStatusField = field;
+                            foundStatusValues.add(venue[field]);
+                            console.log(`Found status field: "${field}" with value: "${venue[field]}" in venue ${venue.id}`);
+                        }
                     }
-                }
+                });
+                
+                console.log(`All found status values:`, Array.from(foundStatusValues));
                 
                 if (foundStatusField) {
-                    // Query using the found field name
-                    console.log(`Querying venues with "${foundStatusField}" = "Listed"...`);
-                    const venuesSnapshot = await venuesRef.where(foundStatusField, '==', 'Listed').get();
-                    console.log(`Found ${venuesSnapshot.size} venues with "${foundStatusField}" = "Listed"`);
-                    
-                    venuesSnapshot.forEach(doc => {
-                        const venueData = doc.data();
-                        venues.push(processVenueForPublic({
-                            id: doc.id,
-                            ...venueData
-                        }));
+                    // Filter venues with Listing Status = Listed
+                    rawVenues.forEach(venue => {
+                        const listingStatus = venue[foundStatusField];
+                        console.log(`Venue ${venue.id} has ${foundStatusField} = "${listingStatus}"`);
+                        
+                        if (listingStatus === 'Listed' || listingStatus === 'listed') {
+                            venues.push(processVenueForPublic(venue));
+                        }
                     });
                 } else {
-                    console.log("No status field found in venue data");
+                    console.log("No status field found in any venue data");
                 }
             }
             
-            console.log(`Total venues found: ${venues.length}`);
+            console.log(`Total venues with Listing Status = Listed: ${venues.length}`);
             
         } catch (venuesError) {
             console.log('Error accessing venues collection:', venuesError.message);
