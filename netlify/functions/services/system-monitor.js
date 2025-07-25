@@ -211,6 +211,7 @@ class SystemMonitor {
     const startTime = Date.now();
     
     try {
+      // Version: 2025-07-25-v2 - Force fresh test
       const response = await fetch(`${process.env.URL || 'http://localhost:8888'}/.netlify/functions/get-recurring-events`);
       
       if (!response.ok) {
