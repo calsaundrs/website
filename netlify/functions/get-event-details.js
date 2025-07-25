@@ -111,9 +111,20 @@ exports.handler = async function (event, context) {
             otherInstances: otherInstances,
             hasOtherInstances: otherInstances.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
-            categoryTags: eventData.category.map(tag => 
-                `<span class="inline-block bg-gray-700 text-gray-300 text-xs font-semibold mr-2 px-2.5 py-1 rounded-full">${tag}</span>`
-            ).join('')
+            categoryTags: (eventData.category || []).map(tag => 
+                `<span class="category-tag">${tag}</span>`
+            ).join(''),
+            formatDate: (dateString) => {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-GB', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            }
         };
 
         // Render the page
