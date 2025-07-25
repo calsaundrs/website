@@ -2,7 +2,7 @@ const EventService = require('./services/event-service');
 const SeriesManager = require('./services/series-manager');
 const Handlebars = require('handlebars');
 
-// Version: 2025-07-25-v10 - Simplified ticket link condition, removed redundant sidebar cards
+// Version: 2025-07-25-v12 - Fixed ticket link field extraction
 
 const eventService = new EventService();
 const seriesManager = new SeriesManager();

@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v3 - Fixed similar events for recurring events - Fixed Image URL field issue
+// Version: 2025-07-25-v4 - Added Venue Link field fallback
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -308,7 +308,7 @@ class EventService {
       details: {
         price: fields['Price'] || null,
         ageRestriction: fields['Age Restriction'] || null,
-        link: fields['Link'] || null
+        link: fields['Link'] || fields['Venue Link'] || null
       }
     };
   }
