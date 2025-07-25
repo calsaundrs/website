@@ -87,6 +87,10 @@
             <button id="testFieldsBtn" class="button" onclick="testAirtableFields()">
                 📋 Test Airtable Fields
             </button>
+            
+            <button id="debugEventServiceBtn" class="button" onclick="debugEventService()">
+                🔍 Debug EventService
+            </button>
         </div>
 
         <div id="status" class="status"></div>
@@ -105,6 +109,11 @@
         <div>
             <h3>Airtable Fields Test:</h3>
             <pre id="fieldsResponse">Click "Test Airtable Fields" to see available fields...</pre>
+        </div>
+        
+        <div>
+            <h3>EventService Debug:</h3>
+            <pre id="eventServiceResponse">Click "Debug EventService" to test the service...</pre>
         </div>
     </div>
 
@@ -313,6 +322,60 @@
                 status.className = 'status error';
                 status.innerHTML = `
                     <h3>❌ Airtable Fields Test Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                
+                btn.textContent = '❌ Failed - Try Again';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function debugEventService() {
+            const btn = document.getElementById('debugEventServiceBtn');
+            const status = document.getElementById('status');
+            const response = document.getElementById('eventServiceResponse');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Debugging...';
+            
+            status.style.display = 'block';
+            status.className = 'status error';
+            status.textContent = 'Debugging EventService...';
+            
+            try {
+                console.log('Debugging EventService...');
+                
+                const res = await fetch('/.netlify/functions/debug-event-service');
+                const responseText = await res.text();
+                
+                console.log('EventService debug response status:', res.status);
+                console.log('EventService debug response text:', responseText);
+                
+                response.textContent = `Status: ${res.status}\n\n${responseText}`;
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${responseText}`);
+                }
+                
+                const data = JSON.parse(responseText);
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    <h3>✅ EventService Debug Successful!</h3>
+                    <p><strong>Total Events:</strong> ${data.totalEvents || 0}</p>
+                    <p><strong>Recurring Events:</strong> ${data.recurringEvents || 0}</p>
+                    <p><strong>Sample Event:</strong> ${data.sampleEvent?.name || 'None'}</p>
+                `;
+                
+                btn.textContent = '✅ Debug Complete';
+                
+            } catch (error) {
+                console.error('Failed to debug EventService:', error);
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>❌ EventService Debug Failed</h3>
                     <p><strong>Error:</strong> ${error.message}</p>
                 `;
                 
