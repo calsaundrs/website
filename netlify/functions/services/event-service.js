@@ -56,7 +56,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Address', 'Price', 'Age Restriction', 'Link', 'Status',
+        'Status',
         'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date'
@@ -270,9 +270,9 @@ class EventService {
       image: this.extractImageInfo(fields),
       promotion: this.extractPromotionInfo(fields),
       details: {
-        price: fields['Price'],
-        ageRestriction: fields['Age Restriction'],
-        link: fields['Link']
+        price: fields['Price'] || null,
+        ageRestriction: fields['Age Restriction'] || null,
+        link: fields['Link'] || null
       }
     };
   }
@@ -283,8 +283,7 @@ class EventService {
       fields['VenueText'] || 'TBC';
     
     return {
-      name: venueName,
-      address: fields['Address']
+      name: venueName
     };
   }
 
