@@ -696,12 +696,12 @@ exports.handler = async function (event, context) {
             }
         }
 
-                 function getDirections() {
-             const venue = '{{event.venue.name}}';
-             const address = '{{event.venue.address}}' || '';
-             const query = encodeURIComponent(venue + ' ' + address);
-             window.open(\`https://www.google.com/maps/search/?api=1&query=\${query}\`, '_blank');
-         }
+        function getDirections() {
+            const venue = '{{event.venue.name}}';
+            const address = '{{event.venue.address}}' || '';
+            const query = encodeURIComponent(venue + ' ' + address);
+            window.open('https://www.google.com/maps/search/?api=1&query=' + query, '_blank');
+        }
 
         function addToCalendar() {
             // Open calendar options
