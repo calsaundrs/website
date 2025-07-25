@@ -126,7 +126,7 @@ class EventService {
 
     try {
       // Build query with proper error handling
-      const query = this.buildEventQuery(filters);
+      const query = this.buildEventQuery(filters, options);
       const records = await this.base('Events').select(query).all();
       
       // Process events
@@ -148,11 +148,25 @@ class EventService {
     }
   }
 
-  buildEventQuery(filters) {
-    const { dateRange, categories, venues, search, sfwMode } = filters;
+  buildEventQuery(filters, options = {}) {
+    const { dateRange, categories, venues, search, sfwMode, status } = filters;
+    const { admin = false } = options;
     
-    // Start with a simple filter - just approved events
-    let filterFormula = "{Status} = 'Approved'";
+    // Build filter formula based on admin mode and status
+    let filterFormula = "";
+    
+    if (admin) {
+      // Admin mode - can filter by specific status
+      if (status) {
+        filterFormula = `{Status} = '${status}'`;
+      } else {
+        // Admin mode without status filter - get all events
+        filterFormula = "RECORD_ID() != ''";
+      }
+    } else {
+      // Public mode - only approved events
+      filterFormula = "{Status} = 'Approved'";
+    }
     
     console.log('Generated filter formula:', filterFormula);
     
@@ -164,7 +178,7 @@ class EventService {
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
         'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
-        'Boosted Listing End Date', 'Status'
+        'Boosted Listing End Date', 'Status', 'Submitter Email'
       ]
     };
   }
@@ -285,6 +299,8 @@ class EventService {
       venue: this.extractVenueInfo(fields),
       image: this.extractImageInfo(fields),
       promotion: this.extractPromotionInfo(fields),
+      status: fields['Status'] || 'Pending Review',
+      submitterEmail: fields['Submitter Email'] || null,
       details: {
         price: fields['Price'] || null,
         ageRestriction: fields['Age Restriction'] || null,
@@ -515,6 +531,55 @@ class EventService {
     } catch (error) {
       console.error('Error fetching venues:', error);
       return [];
+    }
+  }
+
+  async updateEvent(eventId, updateFields) {
+    try {
+      const updatedRecord = await this.base('Events').update([{
+        id: eventId,
+        fields: updateFields
+      }]);
+      
+      // Clear cache for this event
+      this.clearEventCache(eventId);
+      
+      return updatedRecord[0];
+    } catch (error) {
+      console.error('Error updating event:', error);
+      throw error;
+    }
+  }
+
+  async deleteEvents(eventIds) {
+    try {
+      await this.base('Events').destroy(eventIds);
+      
+      // Clear cache for these events
+      eventIds.forEach(id => this.clearEventCache(id));
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting events:', error);
+      throw error;
+    }
+  }
+
+  async createVenue(venueData) {
+    try {
+      const venueRecord = await this.base('Venues').create([{
+        fields: {
+          'Name': venueData.name,
+          'Address': venueData.address,
+          'Postcode': venueData.postcode || '',
+          'Website': venueData.website || ''
+        }
+      }]);
+      
+      return venueRecord[0];
+    } catch (error) {
+      console.error('Error creating venue:', error);
+      throw error;
     }
   }
 }

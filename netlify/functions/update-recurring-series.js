@@ -1,4 +1,8 @@
-const Airtable = require('airtable');
+const SeriesManager = require('./services/series-manager');
+const EventService = require('./services/event-service');
+
+const seriesManager = new SeriesManager();
+const eventService = new EventService();
 
 exports.handler = async function(event, context) {
     // Enable CORS
@@ -27,14 +31,6 @@ exports.handler = async function(event, context) {
 
     try {
         console.log('Update Recurring Series: Starting function');
-        console.log('Update Recurring Series: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
-        console.log('Update Recurring Series: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
-        
-        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
-            throw new Error('Missing required environment variables');
-        }
-
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
         
         // Parse the request body - handle both JSON and form data
         let data;
@@ -84,13 +80,10 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // Get the series record
-        const seriesRecords = await base('Events').select({
-            filterByFormula: `{Series ID} = '${seriesId}'`,
-            maxRecords: 1
-        }).all();
-
-        if (seriesRecords.length === 0) {
+        // Get the series using SeriesManager
+        const series = await seriesManager.getSeriesWithInstances(seriesId);
+        
+        if (!series) {
             return {
                 statusCode: 404,
                 headers,
@@ -98,75 +91,50 @@ exports.handler = async function(event, context) {
             };
         }
 
-        const seriesRecord = seriesRecords[0];
+        const parentEvent = series.parent;
         const updateFields = {};
 
         // Update basic information
         if (name) updateFields['Event Name'] = name;
         if (description) updateFields['Description'] = description;
-        if (instancesAhead) updateFields['Instances Ahead'] = parseInt(instancesAhead);
-        if (endDate) updateFields['End Date'] = endDate;
         if (categories && Array.isArray(categories)) updateFields['Category'] = categories;
         if (recurringInfo) updateFields['Recurring Info'] = JSON.stringify(recurringInfo);
 
         // Handle venue
         if (newVenue && newVenue.name && newVenue.address) {
-            // Create new venue
-            const venueFields = {
-                'Name': newVenue.name,
-                'Address': newVenue.address
+            // Create new venue using EventService
+            const venueData = {
+                name: newVenue.name,
+                address: newVenue.address,
+                postcode: newVenue.postcode,
+                website: newVenue.website
             };
             
-            // Add optional fields if provided
-            if (newVenue.postcode) venueFields['Postcode'] = newVenue.postcode;
-            if (newVenue.website) venueFields['Website'] = newVenue.website;
-            
-            const venueRecord = await base('Venues').create([{
-                fields: venueFields
-            }]);
-            updateFields['Venue'] = [venueRecord[0].id];
+            const newVenueRecord = await eventService.createVenue(venueData);
+            updateFields['Venue'] = [newVenueRecord.id];
         } else if (venueId) {
             updateFields['Venue'] = [venueId];
         }
 
-        // Update the series record
-        await base('Events').update([{
-            id: seriesRecord.id,
-            fields: updateFields
-        }]);
+        // Update the parent event record
+        await eventService.updateEvent(parentEvent.id, updateFields);
 
         // If recurrence rules changed, regenerate instances
         if (recurringInfo) {
             // Delete existing future instances
             const today = new Date().toISOString().split('T')[0];
-            const existingInstances = await base('Events').select({
-                filterByFormula: `AND({Series ID} = '${seriesId}', {Date} >= '${today}')`
-            }).all();
-
-            if (existingInstances.length > 0) {
-                const deleteIds = existingInstances.map(record => record.id);
-                await base('Events').destroy(deleteIds);
+            const futureInstances = series.instances.filter(instance => 
+                new Date(instance.date) >= new Date(today)
+            );
+            
+            if (futureInstances.length > 0) {
+                const deleteIds = futureInstances.map(instance => instance.id);
+                await eventService.deleteEvents(deleteIds);
             }
 
-            // Generate new instances
-            const newInstances = generateInstances(recurringInfo, parseInt(instancesAhead) || 12, endDate);
-            const instanceRecords = newInstances.map(date => ({
-                fields: {
-                    'Event Name': name || seriesRecord.get('Event Name'),
-                    'Description': description || seriesRecord.get('Description'),
-                    'Date': date,
-                    'Time': seriesRecord.get('Time'),
-                    'Venue': updateFields['Venue'] || seriesRecord.get('Venue'),
-                    'Category': categories || seriesRecord.get('Category'),
-                    'Series ID': seriesId,
-                    'Status': 'Pending Review',
-                    'Is Instance': true
-                }
-            }));
-
-            if (instanceRecords.length > 0) {
-                await base('Events').create(instanceRecords);
-            }
+            // Generate new instances using SeriesManager
+            const instancesAhead = parseInt(instancesAhead) || 12;
+            await seriesManager.generateInstances(seriesId, recurringInfo, instancesAhead, endDate);
         }
 
         return {
