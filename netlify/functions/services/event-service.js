@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 const SlugGenerator = require('../utils/slug-generator');
 
-// Version: 2025-07-25-v5 - Debug link field extraction
+// Version: 2025-07-25-v7 - Added Link field to queries
 class EventService {
   constructor() {
     this.base = new Airtable({ 
@@ -57,7 +57,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status',
+        'Status', 'Link', 'Price', 'Age Restriction',
         'Promo Image', 'Cloudinary Public ID', 'Featured Banner Start Date',
         'Featured Banner End Date', 'Boosted Listing Start Date',
         'Boosted Listing End Date'
@@ -97,7 +97,7 @@ class EventService {
       fields: [
         'Event Name', 'Slug', 'Recurring Info', 'Series ID', 'Date',
         'Venue', 'Venue Name', 'VenueText', 'Category', 'Description',
-        'Status'
+        'Status', 'Link', 'Price', 'Age Restriction'
       ]
     }).firstPage();
 
@@ -308,11 +308,8 @@ class EventService {
       details: {
         price: fields['Price'] || null,
         ageRestriction: fields['Age Restriction'] || null,
-        link: fields['Link'] || fields['Venue Link'] || null
+        link: fields['Link'] || null
       }
-      
-      // Debug logging for link field
-      console.log(`Event: ${fields['Event Name']}, Link field: "${fields['Link']}", Venue Link field: "${fields['Venue Link']}"`);
     };
   }
 
