@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 exports.handler = async (event, context) => {
-    console.log("=== VENUES FUNCTION CALLED ===");
+    console.log("=== VENUES FUNCTION CALLED - TRIGGER NEW DEPLOY ===");
     
     try {
         const venuesRef = db.collection('venues');
