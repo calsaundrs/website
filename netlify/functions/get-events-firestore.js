@@ -251,7 +251,7 @@ async function handleAdminView(queryParams) {
 }
 
 async function handleVenuesView() {
-    console.log("=== VENUES VIEW REQUESTED - v3 - NO AIRTABLE URLS ===");
+    console.log("=== VENUES VIEW REQUESTED - v4 - CLOUDINARY ONLY ===");
 
     try {
         const venuesRef = db.collection('venues');
@@ -264,17 +264,25 @@ async function handleVenuesView() {
         snapshot.forEach(doc => {
             const venueData = doc.data();
             
-            // Process all venues - let processVenueForPublic handle image logic
-            const processedVenue = processVenueForPublic({
-                id: doc.id,
-                ...venueData
-            });
-            
-            // Only include venues that have some form of image (Cloudinary or will use placeholder)
-            if (processedVenue.image || processedVenue.name) {
-                console.log(`Processed venue ${processedVenue.name} image:`, processedVenue.image);
-                venues.push(processedVenue);
-            }
+                            // Process all venues - let processVenueForPublic handle image logic
+                const processedVenue = processVenueForPublic({
+                    id: doc.id,
+                    ...venueData
+                });
+                
+                // Debug: Log raw venue data to see what fields exist
+                console.log(`Raw venue data for ${processedVenue.name}:`, {
+                    id: doc.id,
+                    hasImageField: !!venueData.image,
+                    hasPhotoField: !!venueData.Photo,
+                    hasCloudinaryId: !!venueData['Cloudinary Public ID'],
+                    processedImage: processedVenue.image
+                });
+                
+                // Only include venues that have some form of image (Cloudinary or will use placeholder)
+                if (processedVenue.image || processedVenue.name) {
+                    venues.push(processedVenue);
+                }
         });
         
         console.log(`Found ${venues.length} venues to display - NO AIRTABLE URLS`);
