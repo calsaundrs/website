@@ -87,7 +87,7 @@ function processVenueForPublic(venueData) {
     // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${cloudinaryId}`;
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${cloudinaryId}`;
     } else {
         // 2. Try to find any image field that might contain a Cloudinary URL
         const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
