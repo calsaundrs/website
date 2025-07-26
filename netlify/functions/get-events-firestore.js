@@ -254,128 +254,50 @@ async function handleVenuesView() {
     console.log("=== VENUES VIEW REQUESTED ===");
 
     try {
-        let venues = [];
+        const venuesRef = db.collection('venues');
+        const snapshot = await venuesRef.get();
         
-        // First, try to get venues from the venues collection with Listing Status = Listed
-        try {
-            console.log("Attempting to fetch from venues collection with Listing Status = Listed...");
-            const venuesRef = db.collection('venues');
+        console.log(`Found ${snapshot.size} total venues in collection`);
+        
+        const venues = [];
+        
+        snapshot.forEach(doc => {
+            const venueData = doc.data();
             
-            // Get ALL venues to inspect and filter
-            console.log("Getting all venues to inspect and filter...");
-            const allVenuesSnapshot = await venuesRef.get();
-            console.log(`Found ${allVenuesSnapshot.size} total venues in collection`);
+            // Check for various possible image fields
+            const possibleImageFields = [
+                'Photo',
+                'Photo URL',
+                'Photo Medium URL',
+                'Photo Thumbnail URL',
+                'image',
+                'Image'
+            ];
             
-            if (allVenuesSnapshot.size > 0) {
-                // Return raw venue data for inspection
-                const rawVenues = [];
-                allVenuesSnapshot.forEach(doc => {
-                    const venueData = doc.data();
-                    rawVenues.push({
-                        id: doc.id,
-                        ...venueData
-                    });
-                });
-                
-                console.log("Raw venue data for first 3 venues:");
-                rawVenues.slice(0, 3).forEach((venue, index) => {
-                    console.log(`Venue ${index + 1} (${venue.id}):`, JSON.stringify(venue, null, 2));
-                });
-                
-                // Look for venues with images
-                console.log("Looking for venues with images...");
-                let venuesWithImages = 0;
-                
-                // Check all venues for images
-                rawVenues.forEach(venue => {
-                    // Log all field names for debugging
-                    console.log(`Venue ${venue.id} fields:`, Object.keys(venue));
-                    
-                    // Check for various possible image fields
-                    const possibleImageFields = [
-                        'Photo',
-                        'Photo URL',
-                        'Photo Medium URL',
-                        'Photo Thumbnail URL',
-                        'image',
-                        'Image'
-                    ];
-                    
-                    let hasImage = false;
-                    let imageField = null;
-                    let imageValue = null;
-                    
-                    for (const field of possibleImageFields) {
-                        if (venue[field] !== undefined && venue[field] !== null && venue[field] !== '') {
-                            imageField = field;
-                            imageValue = venue[field];
-                            hasImage = true;
-                            console.log(`Venue ${venue.id} has "${field}" = "${imageValue}"`);
-                            break;
-                        }
-                    }
-                    
-                    if (hasImage) {
-                        venuesWithImages++;
-                        venues.push(processVenueForPublic(venue));
-                        console.log(`✓ Venue ${venue.id} (${venue.Name || venue.name}) has IMAGE`);
-                    } else {
-                        console.log(`✗ Venue ${venue.id} (${venue.Name || venue.name}) has NO image`);
-                    }
-                });
-                
-                console.log(`Found ${venuesWithImages} venues with images`);
+            let hasImage = false;
+            
+            for (const field of possibleImageFields) {
+                if (venueData[field] !== undefined && venueData[field] !== null && venueData[field] !== '') {
+                    hasImage = true;
+                    break;
+                }
             }
             
-            console.log(`Total venues with images: ${venues.length}`);
-            
-            // If no venues found with images, return raw data for debugging
-            if (venues.length === 0) {
-                console.log("No venues found with images, returning raw data for debugging");
-                return {
-                    statusCode: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache'
-                    },
-                    body: JSON.stringify({
-                        venues: rawVenues.slice(0, 3), // Return first 3 venues for inspection
-                        totalCount: rawVenues.length,
-                        debug: {
-                            message: "No venues found with images. Returning raw data for inspection.",
-                            sampleVenues: rawVenues.slice(0, 3)
-                        }
-                    })
-                };
+            if (hasImage) {
+                venues.push(processVenueForPublic({
+                    id: doc.id,
+                    ...venueData
+                }));
             }
-            
-        } catch (venuesError) {
-            console.log('Error accessing venues collection:', venuesError.message);
-            console.log('Error stack:', venuesError.stack);
-            // Don't fall back to events - return empty array
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
-                body: JSON.stringify({
-                    venues: [],
-                    totalCount: 0,
-                    error: "Error accessing venues collection"
-                })
-            };
-        }
-
-        console.log(`=== VENUES FUNCTION COMPLETE ===`);
-        console.log(`Returning ${venues.length} venues`);
-        console.log(`Venues:`, venues.map(v => ({ id: v.id, name: v.name, slug: v.slug })));
+        });
+        
+        console.log(`Found ${venues.length} venues with images`);
         
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'public, max-age=600' // Cache for 10 minutes
+                'Cache-Control': 'public, max-age=300' // 5 minutes cache
             },
             body: JSON.stringify({
                 venues: venues,
@@ -385,8 +307,41 @@ async function handleVenuesView() {
         
     } catch (error) {
         console.error('Error fetching venues:', error);
-        throw error;
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                error: 'Failed to fetch venues',
+                message: error.message
+            })
+        };
     }
+}
+
+function processVenueForPublic(venueData) {
+    const venue = {
+        id: venueData.id,
+        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
+        description: venueData.description || venueData['Description'] || `Venue hosting events`,
+        address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
+        link: venueData.link || venueData['Venue Link'] || venueData['Link'],
+        image: venueData.image || venueData['Image'] || venueData['Photo'] || venueData['Photo URL'],
+        category: venueData.category || venueData.tags || venueData['Tags'] || [],
+        type: venueData.type || venueData['Type'] || 'venue',
+        status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
+        openingHours: venueData.openingHours || venueData['Opening Hours'],
+        popular: venueData.popular || venueData['Popular'] || false
+    };
+    
+    // Add some default tags based on venue type if none exist
+    if (!venue.category || venue.category.length === 0) {
+        venue.category = ['LGBTQ+', 'Venue'];
+    }
+    
+    return venue;
 }
 
 // Extract image information from Firestore data
@@ -510,27 +465,3 @@ function processEventForAdmin(eventData) {
     };
 }
 
-function processVenueForPublic(venueData) {
-    // Handle venue data from venues collection
-    const venue = {
-        id: venueData.id,
-        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
-        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
-        description: venueData.description || venueData['Description'] || `Venue hosting events`,
-        address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
-        link: venueData.link || venueData['Venue Link'] || venueData['Link'],
-        image: venueData.image || venueData['Image'],
-        category: venueData.category || venueData.tags || venueData['Tags'] || [],
-        type: venueData.type || venueData['Type'] || 'venue',
-        status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
-        openingHours: venueData.openingHours || venueData['Opening Hours'],
-        popular: venueData.popular || venueData['Popular'] || false
-    };
-    
-    // Add some default tags based on venue type if none exist
-    if (!venue.category || venue.category.length === 0) {
-        venue.category = ['LGBTQ+', 'Venue'];
-    }
-    
-    return venue;
-}
