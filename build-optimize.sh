@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# Brum Outloud - Production Build & Optimization Script
-# This script optimizes the site for production deployment
+# Enhanced Build and Optimization Script for Brum Outloud
+# This script handles CSS building, venue SSG, and optimization
 
-echo "🏳️‍🌈 Brum Outloud - Starting production build optimization..."
+set -e  # Exit on any error
+
+echo "🚀 Starting Brum Outloud build process..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -29,233 +31,191 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if required tools are installed
-check_dependencies() {
-    print_status "Checking dependencies..."
-    
-    # Check for Node.js
-    if ! command -v node &> /dev/null; then
-        print_error "Node.js is required but not installed."
-        exit 1
-    fi
-    
-    # Check for npm
-    if ! command -v npm &> /dev/null; then
-        print_error "npm is required but not installed."
-        exit 1
-    fi
-    
-    print_success "All dependencies found!"
-}
+# Check if Node.js is installed
+if ! command -v node &> /dev/null; then
+    print_error "Node.js is not installed. Please install Node.js first."
+    exit 1
+fi
 
-# Install dependencies
-install_dependencies() {
-    print_status "Installing dependencies..."
-    npm install
-    print_success "Dependencies installed!"
-}
+# Check if npm is installed
+if ! command -v npm &> /dev/null; then
+    print_error "npm is not installed. Please install npm first."
+    exit 1
+fi
 
-# Build Tailwind CSS
-build_css() {
-    print_status "Building optimized CSS..."
-    
-    # Build Tailwind CSS with purge for production
-    npx tailwindcss build -o css/tailwind.css --minify
-    
-    if [ $? -eq 0 ]; then
-        print_success "CSS built successfully!"
-    else
-        print_error "CSS build failed!"
-        exit 1
-    fi
-}
+# Check if required environment variables are set
+print_status "Checking environment variables..."
 
-# Optimize images (if imagemin-cli is available)
-optimize_images() {
-    print_status "Checking for image optimization tools..."
-    
-    if command -v imagemin &> /dev/null; then
-        print_status "Optimizing images..."
-        
-        # Create optimized images directory
-        mkdir -p images/optimized
-        
-        # Optimize PNG files
-        find . -name "*.png" -not -path "./images/optimized/*" -not -path "./node_modules/*" | while read img; do
-            imagemin "$img" --out-dir="images/optimized" --plugin=imagemin-pngquant
-        done
-        
-        # Optimize JPEG files
-        find . -name "*.jpg" -o -name "*.jpeg" -not -path "./images/optimized/*" -not -path "./node_modules/*" | while read img; do
-            imagemin "$img" --out-dir="images/optimized" --plugin=imagemin-mozjpeg
-        done
-        
-        print_success "Images optimized!"
-    else
-        print_warning "imagemin-cli not found. Skipping image optimization."
-        print_warning "Install with: npm install -g imagemin-cli imagemin-pngquant imagemin-mozjpeg"
-    fi
-}
+REQUIRED_VARS=(
+    "FIREBASE_PROJECT_ID"
+    "FIREBASE_CLIENT_EMAIL"
+    "FIREBASE_PRIVATE_KEY"
+    "CLOUDINARY_CLOUD_NAME"
+)
 
-# Generate service worker cache manifest
-update_service_worker() {
-    print_status "Updating service worker cache..."
-    
-    # Update cache version in service worker
-    TIMESTAMP=$(date +%s)
-    sed -i.bak "s/cache-v[0-9]*/cache-v$TIMESTAMP/g" sw.js
-    rm sw.js.bak
-    
-    print_success "Service worker updated with new cache version!"
-}
+MISSING_VARS=()
 
-# Validate HTML files
-validate_html() {
-    print_status "Validating HTML files..."
-    
-    # Basic HTML validation (check for common issues)
-    find . -name "*.html" -not -path "./node_modules/*" | while read html_file; do
-        # Check for missing alt attributes
-grep -io '<img[^>]*>' "$html_file" | while read -r img_tag; do
-    if ! echo "$img_tag" | grep -iq 'alt='; then
-        print_warning "Missing alt attribute in $html_file: $img_tag"
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!var}" ]; then
+        MISSING_VARS+=("$var")
     fi
 done
-        
-        # Check for missing meta description
-        if ! grep -q 'meta name="description"' "$html_file"; then
-            print_warning "Missing meta description in $html_file"
-        fi
-        
-        # Check for title tag
-        if ! grep -q '<title>' "$html_file"; then
-            print_warning "Missing title tag in $html_file"
-        fi
-    done
-    
-    print_success "HTML validation complete!"
-}
 
-# Check for performance issues
-performance_check() {
-    print_status "Running performance checks..."
-    
-    # Check for large files
-    print_status "Checking for large files..."
-    find . -type f -size +1M -not -path "./node_modules/*" -not -path "./.git/*" | while read large_file; do
-        size=$(du -h "$large_file" | cut -f1)
-        print_warning "Large file found: $large_file ($size)"
+if [ ${#MISSING_VARS[@]} -ne 0 ]; then
+    print_warning "Some environment variables are not set:"
+    for var in "${MISSING_VARS[@]}"; do
+        echo "  - $var"
     done
-    
-    # Check for unoptimized images
-    print_status "Checking for unoptimized images..."
-    find . -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | while read img; do
-        size=$(du -k "$img" | cut -f1)
-        if [ "$size" -gt 500 ]; then
-            print_warning "Large image file: $img (${size}KB)"
-        fi
-    done
-    
-    print_success "Performance check complete!"
-}
+    print_warning "Venue SSG may not work correctly without these variables."
+    echo ""
+fi
 
-# Generate sitemap
-generate_sitemap() {
-    print_status "Checking sitemap configuration..."
-    
-    if [ -f "netlify/functions/sitemap.js" ]; then
-        print_success "Dynamic sitemap function found!"
+# Install dependencies if node_modules doesn't exist
+if [ ! -d "node_modules" ]; then
+    print_status "Installing dependencies..."
+    npm install
+    print_success "Dependencies installed successfully"
+else
+    print_status "Dependencies already installed"
+fi
+
+# Build CSS
+print_status "Building CSS..."
+if npm run build:css; then
+    print_success "CSS built successfully"
+else
+    print_error "CSS build failed"
+    exit 1
+fi
+
+# Generate venue pages (SSG)
+print_status "Generating venue pages (SSG)..."
+if npm run build:venues; then
+    print_success "Venue pages generated successfully"
+else
+    print_warning "Venue SSG failed - this may be due to missing environment variables"
+    print_warning "Continuing with build process..."
+fi
+
+# Check if venue directory was created
+if [ -d "venue" ]; then
+    VENUE_COUNT=$(find venue -name "*.html" | wc -l)
+    print_success "Generated $VENUE_COUNT venue pages"
+else
+    print_warning "No venue directory found - SSG may have failed"
+fi
+
+# Optimize images (if ImageOptim CLI is available)
+if command -v imageoptim &> /dev/null; then
+    print_status "Optimizing images..."
+    if [ -d "images" ]; then
+        imageoptim images/
+        print_success "Images optimized"
     else
-        print_warning "No sitemap function found. Consider implementing dynamic sitemap generation."
+        print_status "No images directory found, skipping image optimization"
     fi
-}
+else
+    print_warning "ImageOptim CLI not found. Install it for automatic image optimization."
+fi
 
-# Security checks
-security_check() {
-    print_status "Running security checks..."
+# Check for common issues
+print_status "Running health checks..."
+
+# Check for broken links in generated venue pages
+if [ -d "venue" ]; then
+    print_status "Checking venue pages for common issues..."
     
-    # Check for exposed sensitive files
-    sensitive_files=(".env" "config.js" ".htpasswd" "wp-config.php")
-    for file in "${sensitive_files[@]}"; do
+    # Count total venue pages
+    TOTAL_VENUES=$(find venue -name "*.html" | wc -l)
+    print_success "Found $TOTAL_VENUES venue pages"
+    
+    # Check for pages with missing images
+    PAGES_WITH_PLACEHOLDERS=$(grep -r "placehold.co" venue/ | wc -l || echo "0")
+    if [ "$PAGES_WITH_PLACEHOLDERS" -gt 0 ]; then
+        print_warning "Found $PAGES_WITH_PLACEHOLDERS venue pages with placeholder images"
+    fi
+fi
+
+# Check file sizes
+print_status "Checking file sizes..."
+LARGE_FILES=$(find . -name "*.html" -size +1M 2>/dev/null || true)
+if [ -n "$LARGE_FILES" ]; then
+    print_warning "Found large HTML files:"
+    echo "$LARGE_FILES"
+fi
+
+# Validate HTML structure
+print_status "Validating HTML structure..."
+if command -v tidy &> /dev/null; then
+    for file in venue/*.html; do
         if [ -f "$file" ]; then
-            print_warning "Sensitive file found: $file (ensure it's not publicly accessible)"
+            if ! tidy -q -e "$file" > /dev/null 2>&1; then
+                print_warning "HTML validation issues found in $file"
+            fi
         fi
     done
-    
-    # Check .htaccess security headers
-    if [ -f ".htaccess" ]; then
-        if grep -q "X-Content-Type-Options" .htaccess; then
-            print_success "Security headers found in .htaccess"
+else
+    print_status "HTML Tidy not found, skipping HTML validation"
+fi
+
+# Create build summary
+print_status "Creating build summary..."
+
+BUILD_SUMMARY="build-summary-$(date +%Y%m%d-%H%M%S).txt"
+
+{
+    echo "Brum Outloud Build Summary"
+    echo "=========================="
+    echo "Build Date: $(date)"
+    echo "Build Time: $(date +%H:%M:%S)"
+    echo ""
+    echo "Environment Variables:"
+    for var in "${REQUIRED_VARS[@]}"; do
+        if [ -n "${!var}" ]; then
+            echo "  ✓ $var: Set"
         else
-            print_warning "Consider adding security headers to .htaccess"
+            echo "  ✗ $var: Not set"
         fi
+    done
+    echo ""
+    echo "Generated Files:"
+    if [ -d "venue" ]; then
+        echo "  Venue pages: $(find venue -name "*.html" | wc -l)"
+        echo "  Venue directory: $(du -sh venue 2>/dev/null | cut -f1 || echo "N/A")"
+    else
+        echo "  Venue pages: 0 (directory not found)"
     fi
-    
-    print_success "Security check complete!"
-}
-
-# Create production summary
-create_summary() {
-    print_status "Creating build summary..."
-    
-    echo "# Brum Outloud - Production Build Summary" > build-summary.md
-    echo "Generated on: $(date)" >> build-summary.md
-    echo "" >> build-summary.md
-    echo "## Optimizations Applied" >> build-summary.md
-    echo "- ✅ CSS minified and optimized" >> build-summary.md
-    echo "- ✅ Service worker cache updated" >> build-summary.md
-    echo "- ✅ HTML validated" >> build-summary.md
-    echo "- ✅ Performance checks completed" >> build-summary.md
-    echo "- ✅ Security checks completed" >> build-summary.md
-    echo "" >> build-summary.md
-    echo "## File Sizes" >> build-summary.md
-    echo "\`\`\`" >> build-summary.md
-    du -h css/main.css css/tailwind.css js/main.js 2>/dev/null >> build-summary.md
-    echo "\`\`\`" >> build-summary.md
-    
-    print_success "Build summary created: build-summary.md"
-}
-
-# Cleanup temporary files
-cleanup() {
-    print_status "Cleaning up temporary files..."
-    
-    # Remove any temporary files created during build
-    find . -name "*.bak" -delete 2>/dev/null
-    find . -name "*.tmp" -delete 2>/dev/null
-    
-    print_success "Cleanup complete!"
-}
-
-# Main execution
-main() {
-    echo "🏳️‍🌈 Starting Brum Outloud production optimization..."
-    echo "=================================================="
-    
-    check_dependencies
-    install_dependencies
-    build_css
-    optimize_images
-    update_service_worker
-    validate_html
-    performance_check
-    generate_sitemap
-    security_check
-    create_summary
-    cleanup
-    
-    echo "=================================================="
-    print_success "🎉 Build optimization complete!"
-    print_status "Your site is ready for production deployment."
     echo ""
-    print_status "Next steps:"
-    echo "1. Review build-summary.md for details"
-    echo "2. Test the site locally"
-    echo "3. Deploy to your hosting platform"
-    echo "4. Run performance tests (e.g., Lighthouse)"
+    echo "CSS Files:"
+    if [ -f "css/tailwind.css" ]; then
+        echo "  Tailwind CSS: $(du -sh css/tailwind.css | cut -f1)"
+    else
+        echo "  Tailwind CSS: Not found"
+    fi
     echo ""
-    print_success "Happy deploying! 🏳️‍🌈"
-}
+    echo "Build Status: SUCCESS"
+} > "$BUILD_SUMMARY"
 
-# Run the main function
-main
+print_success "Build summary saved to $BUILD_SUMMARY"
+
+# Final status
+echo ""
+print_success "🎉 Build process completed successfully!"
+echo ""
+echo "Next steps:"
+echo "  1. Test the site locally: npx serve ."
+echo "  2. Deploy to Netlify: git push"
+echo "  3. Check the build summary: cat $BUILD_SUMMARY"
+echo ""
+
+# Optional: Start local server for testing
+if [ "$1" = "--serve" ]; then
+    print_status "Starting local server for testing..."
+    if command -v npx &> /dev/null; then
+        npx serve . -p 3000
+    else
+        print_warning "npx not found. Install serve manually: npm install -g serve"
+    fi
+fi
+
+print_success "Build script completed!"

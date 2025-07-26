@@ -2,7 +2,9 @@
   "name": "brumoutloud-site",
   "version": "1.0.0",
   "scripts": {
-    "build:css": "npx tailwindcss build -o css/tailwind.css"
+    "build:css": "npx tailwindcss build -o css/tailwind.css",
+    "build:venues": "node build-venues-ssg.js",
+    "build": "npm run build:css && npm run build:venues"
   },
   "dependencies": {
     "airtable": "^0.12.2",
