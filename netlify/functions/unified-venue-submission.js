@@ -1,29 +1,96 @@
 const Airtable = require('airtable');
-const admin = require('firebase-admin');
 const parser = require('lambda-multipart-parser');
-const cloudinary = require('cloudinary').v2;
 
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        }),
-    });
+// Check if required environment variables are available
+function checkEnvironmentVariables() {
+    const required = [
+        'AIRTABLE_PERSONAL_ACCESS_TOKEN',
+        'AIRTABLE_BASE_ID',
+        'FIREBASE_PROJECT_ID',
+        'FIREBASE_CLIENT_EMAIL',
+        'FIREBASE_PRIVATE_KEY',
+        'CLOUDINARY_CLOUD_NAME',
+        'CLOUDINARY_API_KEY',
+        'CLOUDINARY_API_SECRET'
+    ];
+    
+    const missing = required.filter(varName => !process.env[varName]);
+    
+    if (missing.length > 0) {
+        return {
+            success: false,
+            missing: missing,
+            message: `Missing environment variables: ${missing.join(', ')}`
+        };
+    }
+    
+    return { success: true };
 }
 
-const db = admin.firestore();
-const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+// Initialize Firebase Admin with error handling
+function initializeFirebase() {
+    try {
+        const admin = require('firebase-admin');
+        
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+                }),
+            });
+        }
+        
+        return { success: true, db: admin.firestore() };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message,
+            message: 'Failed to initialize Firebase Admin'
+        };
+    }
+}
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Initialize Airtable with error handling
+function initializeAirtable() {
+    try {
+        const base = new Airtable({ 
+            apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
+        }).base(process.env.AIRTABLE_BASE_ID);
+        
+        return { success: true, base: base };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message,
+            message: 'Failed to initialize Airtable'
+        };
+    }
+}
 
-async function uploadImage(file) {
+// Initialize Cloudinary with error handling
+function initializeCloudinary() {
+    try {
+        const cloudinary = require('cloudinary').v2;
+        
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET,
+        });
+        
+        return { success: true, cloudinary: cloudinary };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message,
+            message: 'Failed to initialize Cloudinary'
+        };
+    }
+}
+
+async function uploadImage(file, cloudinary) {
     if (!file) return null;
     
     try {
@@ -66,18 +133,82 @@ function generateSlug(venueName) {
 exports.handler = async function (event, context) {
     console.log('Unified venue submission handler called');
     
-    let submission;
     try {
-        submission = await parser.parse(event);
-    } catch (error) {
-        console.error('Error parsing form data:', error);
-        return { statusCode: 400, body: 'Error processing form data.' };
-    }
-    
-    try {
+        // Check environment variables
+        const envCheck = checkEnvironmentVariables();
+        if (!envCheck.success) {
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Environment configuration error',
+                    message: envCheck.message,
+                    missing: envCheck.missing
+                })
+            };
+        }
+        
+        // Initialize services
+        const firebaseInit = initializeFirebase();
+        const airtableInit = initializeAirtable();
+        const cloudinaryInit = initializeCloudinary();
+        
+        if (!firebaseInit.success) {
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Firebase initialization error',
+                    message: firebaseInit.message,
+                    details: firebaseInit.error
+                })
+            };
+        }
+        
+        if (!airtableInit.success) {
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Airtable initialization error',
+                    message: airtableInit.message,
+                    details: airtableInit.error
+                })
+            };
+        }
+        
+        if (!cloudinaryInit.success) {
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Cloudinary initialization error',
+                    message: cloudinaryInit.message,
+                    details: cloudinaryInit.error
+                })
+            };
+        }
+        
+        const db = firebaseInit.db;
+        const base = airtableInit.base;
+        const cloudinary = cloudinaryInit.cloudinary;
+        
+        // Parse form data
+        let submission;
+        try {
+            submission = await parser.parse(event);
+        } catch (error) {
+            console.error('Error parsing form data:', error);
+            return { 
+                statusCode: 400, 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: 'Error processing form data' })
+            };
+        }
+        
         // Handle image upload
         const photoFile = submission.files.find(f => f.fieldname === 'photo');
-        const uploadedImage = await uploadImage(photoFile);
+        const uploadedImage = await uploadImage(photoFile, cloudinary);
         
         // Determine if submission is from admin form (auto-approves)
         const isFromAdmin = submission['accessibility-rating'] !== undefined || submission['vibe-tags'] !== undefined;
@@ -181,6 +312,7 @@ exports.handler = async function (event, context) {
         if (isFromAdmin) {
             return {
                 statusCode: 200,
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     success: true, 
                     message: `Venue "${venueData['Name']}" created successfully.`,
@@ -218,14 +350,12 @@ exports.handler = async function (event, context) {
         console.error('Error in unified venue submission:', error);
         return {
             statusCode: 500,
-            body: `<!DOCTYPE html>
-            <html>
-            <body>
-                <h1>Submission Error</h1>
-                <p>An error occurred while submitting your venue. Please try again.</p>
-                <pre style="display:none;">${error.toString()}</pre>
-            </body>
-            </html>`
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                error: 'Venue submission failed',
+                message: error.message,
+                type: error.constructor.name
+            })
         };
     }
 };
