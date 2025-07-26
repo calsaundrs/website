@@ -268,5 +268,38 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu').classList.toggle('hidden');
+        });
+
+        // Share functionality
+        function shareVenue() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: document.querySelector('meta[name="description"]').getAttribute('content'),
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Venue link copied to clipboard!');
+                });
+            }
+        }
+
+        // Add click handlers for share buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareButtons = document.querySelectorAll('button');
+            shareButtons.forEach(button => {
+                if (button.textContent.includes('Share')) {
+                    button.addEventListener('click', shareVenue);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

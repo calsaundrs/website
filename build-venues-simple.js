@@ -396,6 +396,39 @@ const templateContent = `<!DOCTYPE html>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu').classList.toggle('hidden');
+        });
+
+        // Share functionality
+        function shareVenue() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: document.querySelector('meta[name="description"]').getAttribute('content'),
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Venue link copied to clipboard!');
+                });
+            }
+        }
+
+        // Add click handlers for share buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareButtons = document.querySelectorAll('button');
+            shareButtons.forEach(button => {
+                if (button.textContent.includes('Share')) {
+                    button.addEventListener('click', shareVenue);
+                }
+            });
+        });
+    </script>
 </body>
 </html>`;
 
@@ -424,6 +457,40 @@ function renderTemplate(template, data) {
     // Replace upcoming events
     result = result.replace(/\{\{#if hasUpcomingEvents\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, content) => {
         return data.hasUpcomingEvents ? content : '';
+    });
+    
+    // Add date formatting functions
+    result = result.replace(/\{\{formatDay\s+([^}]+)\}\}/g, (match, dateString) => {
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '--';
+            return date.getDate();
+        } catch (error) {
+            return '--';
+        }
+    });
+    
+    result = result.replace(/\{\{formatMonth\s+([^}]+)\}\}/g, (match, dateString) => {
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '---';
+            return date.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
+        } catch (error) {
+            return '---';
+        }
+    });
+    
+    result = result.replace(/\{\{formatTime\s+([^}]+)\}\}/g, (match, dateString) => {
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Time TBC';
+            return date.toLocaleTimeString('en-GB', { 
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            return 'Time TBC';
+        }
     });
     
     return result;
