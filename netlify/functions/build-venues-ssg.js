@@ -1,7 +1,4 @@
-const { generateAllVenuePages } = require('../../build-venues-simple.js');
-
-// Also import the API-based build function
-const { generateFromAPI } = require('../../build-from-api.js');
+const { generateAllVenuePages } = require('../../build-venues-from-db.js');
 
 exports.handler = async (event, context) => {
     // Set CORS headers

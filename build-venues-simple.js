@@ -2,6 +2,11 @@ const fs = require('fs').promises;
 const path = require('path');
 const admin = require('firebase-admin');
 
+// Add fetch for Node.js (if not available)
+if (typeof fetch === 'undefined') {
+    global.fetch = require('node-fetch');
+}
+
 // Initialize Firebase Admin with error handling
 let firebaseInitialized = false;
 let db = null;
@@ -37,36 +42,23 @@ if (!admin.apps.length) {
 
 // Function to get real venues from Firebase
 async function getRealVenues() {
-    if (!firebaseInitialized || !db) {
-        console.log('⚠️ Firebase not initialized, using sample venues...');
-        return getSampleVenues();
-    }
-    
     try {
-        console.log('📡 Fetching real venues from Firebase...');
+        console.log('🔍 Fetching venues from API...');
         
-        const venuesRef = db.collection('venues');
-        const snapshot = await venuesRef.get();
-        
-        const venues = [];
-        snapshot.forEach(doc => {
-            const venueData = doc.data();
-            const processedVenue = processVenueForPublic({
-                id: doc.id,
-                ...venueData
-            });
-            
-                    // Only include venues that have actual images (not placeholders)
-        if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-            venues.push(processedVenue);
+        // Use the API endpoint instead of direct Firebase connection
+        const response = await fetch('/.netlify/functions/get-venues-firestore');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        });
         
-        console.log(`✅ Found ${venues.length} real venues from Firebase`);
+        const data = await response.json();
+        const venues = data.venues || [];
+        
+        console.log(`✅ Found ${venues.length} real venues from API`);
         return venues;
         
     } catch (error) {
-        console.error('❌ Error fetching venues from Firebase:', error);
+        console.error('❌ Error fetching venues from API:', error);
         console.log('⚠️ Using sample venues as fallback...');
         return getSampleVenues();
     }
