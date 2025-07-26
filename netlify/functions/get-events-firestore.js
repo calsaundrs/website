@@ -251,7 +251,7 @@ async function handleAdminView(queryParams) {
 }
 
 async function handleVenuesView() {
-    console.log("=== VENUES VIEW REQUESTED - v2 ===");
+    console.log("=== VENUES VIEW REQUESTED - v3 - NO AIRTABLE URLS ===");
 
     try {
         const venuesRef = db.collection('venues');
@@ -264,36 +264,20 @@ async function handleVenuesView() {
         snapshot.forEach(doc => {
             const venueData = doc.data();
             
-            // Check for various possible image fields
-            const possibleImageFields = [
-                'Photo',
-                'Photo URL',
-                'Photo Medium URL',
-                'Photo Thumbnail URL',
-                'image',
-                'Image'
-            ];
+            // Process all venues - let processVenueForPublic handle image logic
+            const processedVenue = processVenueForPublic({
+                id: doc.id,
+                ...venueData
+            });
             
-            let hasImage = false;
-            
-            for (const field of possibleImageFields) {
-                if (venueData[field] !== undefined && venueData[field] !== null && venueData[field] !== '') {
-                    hasImage = true;
-                    break;
-                }
-            }
-            
-            if (hasImage) {
-                const processedVenue = processVenueForPublic({
-                    id: doc.id,
-                    ...venueData
-                });
+            // Only include venues that have some form of image (Cloudinary or will use placeholder)
+            if (processedVenue.image || processedVenue.name) {
                 console.log(`Processed venue ${processedVenue.name} image:`, processedVenue.image);
                 venues.push(processedVenue);
             }
         });
         
-        console.log(`Found ${venues.length} venues with images`);
+        console.log(`Found ${venues.length} venues to display`);
         
         return {
             statusCode: 200,
