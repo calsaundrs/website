@@ -5,7 +5,8 @@
   # Directory that contains the deploy-ready HTML files and assets.
   publish = "."
   functions = "netlify/functions"
-  command = "npm run build"
+  # Build command is commented out until environment variables are set
+  # command = "npm run build"
 
 # Specifies how serverless functions are handled
 [functions]
@@ -22,10 +23,10 @@
   to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
   status = 200
 
-# Rule for individual VENUE pages (Static SSG-based)
+# Rule for individual VENUE pages (Dynamic-based until SSG is configured)
 [[redirects]]
   from = "/venue/*"
-  to = "/venue/:splat.html"
+  to = "/.netlify/functions/get-venue-details?slug=:splat"
   status = 200
 
 # Rule for the main EVENTS listing page

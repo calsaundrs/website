@@ -1,55 +1,75 @@
 const admin = require('firebase-admin');
-const fs = require('fs').promises;
-const path = require('path');
 const Handlebars = require('handlebars');
 
-// Initialize Firebase Admin with error handling
-let firebaseInitialized = false;
+// Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
     try {
-        // Check if all required environment variables are present
-        const requiredVars = [
-            'FIREBASE_PROJECT_ID',
-            'FIREBASE_CLIENT_EMAIL', 
-            'FIREBASE_PRIVATE_KEY'
-        ];
-        
-        const missingVars = requiredVars.filter(varName => !process.env[varName]);
-        
-        if (missingVars.length > 0) {
-            console.warn(`⚠️  Missing Firebase environment variables: ${missingVars.join(', ')}`);
-            console.warn('SSG will be skipped. Venue pages will not be generated.');
-            console.warn('Please set the following environment variables in Netlify:');
-            console.warn('- FIREBASE_PROJECT_ID');
-            console.warn('- FIREBASE_CLIENT_EMAIL');
-            console.warn('- FIREBASE_PRIVATE_KEY');
-            console.warn('- CLOUDINARY_CLOUD_NAME (optional)');
-            console.warn('');
-            console.warn('The site will continue to work with dynamic venue pages.');
-        } else {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-                })
-            });
-            firebaseInitialized = true;
-            console.log('✅ Firebase initialized successfully');
-        }
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+            })
+        });
     } catch (error) {
-        console.error('❌ Firebase initialization failed:', error.message);
-        console.warn('SSG will be skipped. Venue pages will not be generated.');
-        console.warn('The site will continue to work with dynamic venue pages.');
+        console.error('Firebase initialization failed:', error);
     }
-} else {
-    firebaseInitialized = true;
 }
 
 const db = admin.firestore();
 
-// The exact template from get-venue-details.js
-const templateContent = `<!DOCTYPE html>
+exports.handler = async function (event, context) {
+    console.log("venue-ssg-fallback function called");
+    
+    // Extract slug from query parameters
+    let slug = event.queryStringParameters?.slug;
+    
+    // Fallback: try to extract from path if not in query params
+    if (!slug) {
+        const pathParts = event.path.split("/");
+        slug = pathParts[pathParts.length - 1];
+    }
+    
+    console.log("Extracted slug:", slug);
+    
+    if (!slug) {
+        return { 
+            statusCode: 400, 
+            body: 'Error: Venue slug not provided.' 
+        };
+    }
+
+    try {
+        // Check if static file exists first
+        const staticPath = `/venue/${slug}.html`;
+        console.log(`Checking for static file: ${staticPath}`);
+        
+        // For now, we'll always use the dynamic approach
+        // In a real implementation, you could check if the file exists
+        
+        console.log("Attempting to fetch venue with slug:", slug);
+        
+        // Get venue data from Firestore
+        const venueData = await getVenueBySlug(slug);
+        
+        if (!venueData) {
+            console.log("No venue found with slug:", slug);
+            return { 
+                statusCode: 404, 
+                body: 'Venue not found.' 
+            };
+        }
+
+        console.log("Venue found:", venueData.name);
+
+        // Get upcoming events for this venue
+        const upcomingEvents = await getUpcomingEventsForVenue(venueData.id, 6);
+
+        // Get Google Places data
+        const googlePlacesData = await getGooglePlacesData(venueData);
+
+        // Use the same template as the SSG
+        const templateContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -476,75 +496,113 @@ const templateContent = `<!DOCTYPE html>
 </body>
 </html>`;
 
-// Register Handlebars helpers
-Handlebars.registerHelper('times', function(n, block) {
-    let accum = '';
-    for (let i = 0; i < n; ++i) {
-        accum += block.fn(i);
+        // Register Handlebars helpers
+        Handlebars.registerHelper('times', function(n, block) {
+            let accum = '';
+            for (let i = 0; i < n; ++i) {
+                accum += block.fn(i);
+            }
+            return accum;
+        });
+
+        Handlebars.registerHelper('subtract', function(a, b) {
+            return a - b;
+        });
+
+        Handlebars.registerHelper('formatDay', function(dateString) {
+            const date = new Date(dateString);
+            return date.getDate();
+        });
+
+        Handlebars.registerHelper('formatMonth', function(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short' });
+        });
+
+        Handlebars.registerHelper('formatTime', function(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        });
+
+        // Create the Handlebars template
+        const template = Handlebars.compile(templateContent);
+
+        // Generate category tags
+        const categoryTags = generateCategoryTags(venueData.category);
+
+        // Prepare template data
+        const templateData = {
+            venue: venueData,
+            upcomingEvents: upcomingEvents,
+            hasUpcomingEvents: upcomingEvents.length > 0,
+            googlePlaces: googlePlacesData,
+            categoryTags: categoryTags
+        };
+
+        // Generate HTML
+        const html = template(templateData);
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'text/html',
+                'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+            },
+            body: html
+        };
+
+    } catch (error) {
+        console.error('Error generating venue page:', error);
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'text/html'
+            },
+            body: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Error - Venue Not Found</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+                    <h1>Venue Not Found</h1>
+                    <p>The venue you're looking for could not be found.</p>
+                    <a href="/all-venues.html">← Back to Venues</a>
+                </body>
+                </html>
+            `
+        };
     }
-    return accum;
-});
+};
 
-Handlebars.registerHelper('subtract', function(a, b) {
-    return a - b;
-});
-
-Handlebars.registerHelper('formatDay', function(dateString) {
-    const date = new Date(dateString);
-    return date.getDate();
-});
-
-Handlebars.registerHelper('formatMonth', function(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short' });
-});
-
-Handlebars.registerHelper('formatTime', function(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-    });
-});
-
-// Create the Handlebars template
-const template = Handlebars.compile(templateContent);
-
-// Function to get all venues from Firestore
-async function getAllVenues() {
+// Helper functions (same as in the original get-venue-details.js)
+async function getVenueBySlug(slug) {
     try {
-        if (!firebaseInitialized) {
-            console.log('⚠️  Firebase not initialized. Cannot fetch venues.');
-            return [];
+        const venuesRef = db.collection('venues');
+        const snapshot = await venuesRef.where('slug', '==', slug).limit(1).get();
+        
+        if (snapshot.empty) {
+            return null;
         }
         
-        const venuesRef = db.collection('venues');
-        const snapshot = await venuesRef.get();
-        
-        const venues = [];
-        snapshot.forEach(doc => {
-            const venueData = doc.data();
-            const processedVenue = processVenueForPublic({
-                id: doc.id,
-                ...venueData
-            });
-            
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-                venues.push(processedVenue);
-            }
+        const doc = snapshot.docs[0];
+        return processVenueForDetails({
+            id: doc.id,
+            ...doc.data()
         });
-        
-        return venues;
     } catch (error) {
-        console.error('Error fetching venues:', error);
-        throw error;
+        console.error('Error fetching venue by slug:', error);
+        return null;
     }
 }
 
-// Function to process venue data (same as in get-venues-firestore.js)
-function processVenueForPublic(venueData) {
+function processVenueForDetails(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
     
@@ -601,14 +659,8 @@ function processVenueForPublic(venueData) {
     return venue;
 }
 
-// Function to get upcoming events for a venue
 async function getUpcomingEventsForVenue(venueId, limit = 6) {
     try {
-        if (!firebaseInitialized) {
-            console.log('⚠️  Firebase not initialized. Cannot fetch upcoming events.');
-            return [];
-        }
-        
         const now = new Date();
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
@@ -637,10 +689,8 @@ async function getUpcomingEventsForVenue(venueId, limit = 6) {
     }
 }
 
-// Function to get Google Places data (simplified for SSG)
 async function getGooglePlacesData(venueData) {
-    // For SSG, we'll return empty data since Google Places API calls are expensive
-    // and the data changes frequently. This maintains the template structure.
+    // For now, return empty data since Google Places API calls are expensive
     return {
         isOpen: null,
         rating: null,
@@ -653,7 +703,6 @@ async function getGooglePlacesData(venueData) {
     };
 }
 
-// Function to generate category tags HTML
 function generateCategoryTags(categories) {
     if (!categories || categories.length === 0) {
         return '<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span>';
@@ -663,202 +712,3 @@ function generateCategoryTags(categories) {
         `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${category}</span>`
     ).join('');
 }
-
-// Function to create fallback mechanism when SSG is not available
-async function createFallbackMechanism() {
-    try {
-        console.log('Creating fallback mechanism for venue pages...');
-        
-        // Create venue directory if it doesn't exist
-        const venueDir = path.join(__dirname, 'venue');
-        await fs.mkdir(venueDir, { recursive: true });
-        
-        // Create a fallback HTML file that redirects to the dynamic function
-        const fallbackHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Venue...</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            color: #EAEAEA;
-        }
-        .loader {
-            border: 3px solid rgba(75, 85, 99, 0.3);
-            border-top: 3px solid #E83A99;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-    <h1>Loading Venue...</h1>
-    <div class="loader"></div>
-    <p>Redirecting to dynamic venue page...</p>
-    <script>
-        // Extract the venue slug from the URL
-        const pathParts = window.location.pathname.split('/');
-        const slug = pathParts[pathParts.length - 1];
-        
-        // Redirect to the dynamic function
-        if (slug) {
-            window.location.href = '/.netlify/functions/get-venue-details?slug=' + slug;
-        } else {
-            window.location.href = '/all-venues.html';
-        }
-    </script>
-</body>
-</html>`;
-        
-        // Create a generic fallback file
-        const fallbackPath = path.join(venueDir, 'fallback.html');
-        await fs.writeFile(fallbackPath, fallbackHtml, 'utf8');
-        
-        console.log('✓ Created fallback mechanism');
-        console.log('  - Fallback file: venue/fallback.html');
-        console.log('  - Dynamic function: /.netlify/functions/get-venue-details');
-        
-    } catch (error) {
-        console.error('Error creating fallback mechanism:', error);
-    }
-}
-
-// Function to generate a single venue page
-async function generateVenuePage(venue) {
-    try {
-        console.log(`Generating page for venue: ${venue.name}`);
-        
-        // Get upcoming events for this venue
-        const upcomingEvents = await getUpcomingEventsForVenue(venue.id, 6);
-        
-        // Get Google Places data (empty for SSG)
-        const googlePlaces = await getGooglePlacesData(venue);
-        
-        // Generate category tags
-        const categoryTags = generateCategoryTags(venue.category);
-        
-        // Prepare template data
-        const templateData = {
-            venue: venue,
-            upcomingEvents: upcomingEvents,
-            hasUpcomingEvents: upcomingEvents.length > 0,
-            googlePlaces: googlePlaces,
-            categoryTags: categoryTags
-        };
-        
-        // Generate HTML
-        const html = template(templateData);
-        
-        // Create venue directory if it doesn't exist
-        const venueDir = path.join(__dirname, 'venue');
-        await fs.mkdir(venueDir, { recursive: true });
-        
-        // Write the HTML file
-        const filePath = path.join(venueDir, `${venue.slug}.html`);
-        await fs.writeFile(filePath, html, 'utf8');
-        
-        console.log(`✓ Generated: ${filePath}`);
-        return filePath;
-        
-    } catch (error) {
-        console.error(`Error generating page for venue ${venue.name}:`, error);
-        throw error;
-    }
-}
-
-// Main function to generate all venue pages
-async function generateAllVenuePages() {
-    try {
-        console.log('🚀 Starting SSG for venues...');
-        
-        // Check if Firebase is initialized
-        if (!firebaseInitialized) {
-            console.log('⚠️  Firebase not initialized. Skipping venue SSG.');
-            console.log('The site will continue to work with dynamic venue pages.');
-            console.log('To enable SSG, set the required environment variables in Netlify.');
-            
-            return {
-                totalVenues: 0,
-                generatedFiles: 0,
-                sitemapEntries: [],
-                skipped: true,
-                reason: 'Firebase not initialized - missing environment variables'
-            };
-        }
-        
-        // Get all venues
-        const venues = await getAllVenues();
-        console.log(`Found ${venues.length} venues to generate`);
-        
-        // Generate pages for each venue
-        const generatedFiles = [];
-        for (const venue of venues) {
-            try {
-                const filePath = await generateVenuePage(venue);
-                generatedFiles.push(filePath);
-            } catch (error) {
-                console.error(`Failed to generate page for ${venue.name}:`, error);
-            }
-        }
-        
-        console.log(`✅ Successfully generated ${generatedFiles.length} venue pages`);
-        
-        // Create a sitemap entry for venues
-        const sitemapEntries = generatedFiles.map(filePath => {
-            const slug = path.basename(filePath, '.html');
-            return `https://www.brumoutloud.co.uk/venue/${slug}`;
-        });
-        
-        console.log('📋 Venue URLs for sitemap:');
-        sitemapEntries.forEach(url => console.log(`  ${url}`));
-        
-        return {
-            totalVenues: venues.length,
-            generatedFiles: generatedFiles.length,
-            sitemapEntries: sitemapEntries
-        };
-        
-    } catch (error) {
-        console.error('❌ Error during SSG:', error);
-        throw error;
-    }
-}
-
-// Run the SSG if this script is executed directly
-if (require.main === module) {
-    generateAllVenuePages()
-        .then(result => {
-            if (result.skipped) {
-                console.log('⚠️  SSG skipped due to missing configuration');
-                console.log(`Reason: ${result.reason}`);
-                console.log('The site will continue to work with dynamic venue pages.');
-                process.exit(0); // Exit successfully even when skipped
-            } else {
-                console.log('🎉 SSG completed successfully!');
-                console.log(`Generated ${result.generatedFiles} venue pages`);
-                process.exit(0);
-            }
-        })
-        .catch(error => {
-            console.error('💥 SSG failed:', error);
-            process.exit(1);
-        });
-}
-
-module.exports = {
-    generateAllVenuePages,
-    generateVenuePage,
-    getAllVenues
-};
