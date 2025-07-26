@@ -313,12 +313,32 @@ function processVenueForPublic(venueData) {
     // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${cloudinaryId}`;
     } else {
-        // 2. Generate a consistent placeholder based on venue name
-        const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
-        const encodedName = encodeURIComponent(venueName);
-        imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
+        // 2. Try to find any image field that might contain a Cloudinary URL
+        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
+        for (const field of possibleImageFields) {
+            const imageData = venueData[field];
+            if (imageData) {
+                // Check if it's already a Cloudinary URL
+                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                    imageUrl = imageData;
+                    break;
+                }
+                // Check if it's an object with a Cloudinary URL
+                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                    imageUrl = imageData.url;
+                    break;
+                }
+            }
+        }
+        
+        // 3. If still no image, generate a consistent placeholder based on venue name
+        if (!imageUrl) {
+            const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+            const encodedName = encodeURIComponent(venueName);
+            imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
+        }
     }
     const venue = {
         id: venueData.id,
@@ -392,11 +412,36 @@ function processEventForPublic(eventData) {
     };
     // Extract image URL from various possible formats
     let imageUrl = null;
-    // Only use Cloudinary public ID - no Airtable URLs
+    
+    // 1. First try Cloudinary public ID
     if (mappedData.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${mappedData.cloudinaryPublicId}`;
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${mappedData.cloudinaryPublicId}`;
+    } else {
+        // 2. Try to find any image field that might contain a Cloudinary URL
+        const possibleImageFields = ['Promo Image', 'image', 'Image'];
+        for (const field of possibleImageFields) {
+            const imageData = mappedData[field];
+            if (imageData) {
+                // Check if it's already a Cloudinary URL
+                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                    imageUrl = imageData;
+                    break;
+                }
+                // Check if it's an object with a Cloudinary URL
+                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                    imageUrl = imageData.url;
+                    break;
+                }
+            }
+        }
+        
+        // 3. If still no image, generate a consistent placeholder based on event name
+        if (!imageUrl) {
+            const eventName = mappedData.name || 'Event';
+            const encodedName = encodeURIComponent(eventName);
+            imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
+        }
     }
-    // If no Cloudinary ID, imageUrl remains null and will use placeholder
     // Handle venue data - check for venue object first, then fallback to individual fields
     let venueData = null;
     
