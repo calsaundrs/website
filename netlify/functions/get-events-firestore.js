@@ -251,7 +251,7 @@ async function handleAdminView(queryParams) {
 }
 
 async function handleVenuesView() {
-    console.log("=== VENUES VIEW REQUESTED ===");
+    console.log("=== VENUES VIEW REQUESTED - v2 ===");
 
     try {
         const venuesRef = db.collection('venues');
@@ -321,6 +321,32 @@ async function handleVenuesView() {
 }
 
 function processVenueForPublic(venueData) {
+    // Extract image URL from various possible formats
+    let imageUrl = null;
+    const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL'];
+    
+    for (const field of possibleImageFields) {
+        const imageData = venueData[field];
+        if (imageData) {
+            if (Array.isArray(imageData) && imageData.length > 0) {
+                // Handle array format (like from Airtable)
+                const firstImage = imageData[0];
+                if (firstImage && firstImage.url) {
+                    imageUrl = firstImage.url;
+                    break;
+                }
+            } else if (typeof imageData === 'string') {
+                // Handle direct URL string
+                imageUrl = imageData;
+                break;
+            } else if (imageData && imageData.url) {
+                // Handle object with url property
+                imageUrl = imageData.url;
+                break;
+            }
+        }
+    }
+    
     const venue = {
         id: venueData.id,
         name: venueData.name || venueData['Venue Name'] || venueData['Name'],
@@ -328,7 +354,7 @@ function processVenueForPublic(venueData) {
         description: venueData.description || venueData['Description'] || `Venue hosting events`,
         address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
         link: venueData.link || venueData['Venue Link'] || venueData['Link'],
-        image: venueData.image || venueData['Image'] || venueData['Photo'] || venueData['Photo URL'],
+        image: imageUrl ? { url: imageUrl } : null,
         category: venueData.category || venueData.tags || venueData['Tags'] || [],
         type: venueData.type || venueData['Type'] || 'venue',
         status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
@@ -416,6 +442,37 @@ function processEventForPublic(eventData) {
         };
     }
 
+    // Extract image URL from various possible formats
+    let imageUrl = null;
+    const possibleImageFields = ['Promo Image', 'image', 'Image'];
+    
+    for (const field of possibleImageFields) {
+        const imageData = mappedData[field];
+        if (imageData) {
+            if (Array.isArray(imageData) && imageData.length > 0) {
+                // Handle array format (like from Airtable)
+                const firstImage = imageData[0];
+                if (firstImage && firstImage.url) {
+                    imageUrl = firstImage.url;
+                    break;
+                }
+            } else if (typeof imageData === 'string') {
+                // Handle direct URL string
+                imageUrl = imageData;
+                break;
+            } else if (imageData && imageData.url) {
+                // Handle object with url property
+                imageUrl = imageData.url;
+                break;
+            }
+        }
+    }
+    
+    // Also check for Cloudinary ID
+    if (!imageUrl && mappedData.cloudinaryPublicId) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${mappedData.cloudinaryPublicId}`;
+    }
+    
     return {
         id: mappedData.id,
         name: mappedData.name,
@@ -424,7 +481,7 @@ function processEventForPublic(eventData) {
         date: mappedData.date,
         category: mappedData.category,
         venue: venueData,
-        image: extractImageInfo(mappedData),
+        image: imageUrl ? { url: imageUrl } : null,
         price: mappedData.price,
         ageRestriction: mappedData.ageRestriction,
         link: mappedData.link || mappedData.ticketLink,
