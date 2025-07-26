@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 
@@ -770,7 +771,7 @@ async function generateVenuePage(venue) {
         
         // Ensure venue directory exists
         const venueDir = path.join(__dirname, 'venue');
-        if (!fs.existsSync(venueDir)) {
+        if (!fsSync.existsSync(venueDir)) {
             await fs.mkdir(venueDir, { recursive: true });
         }
         
