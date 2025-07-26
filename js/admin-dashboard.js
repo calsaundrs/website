@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadSettings();
             setupAutoRefresh();
             setupNotifications();
+            setupRebuildVenues();
             
             console.log('Admin dashboard initialized successfully');
         } catch (error) {
@@ -462,6 +463,148 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(settingsForm);
             await saveSettings(formData);
         });
+    }
+    
+    // Setup rebuild venues functionality
+    function setupRebuildVenues() {
+        console.log('Setting up rebuild venues functionality...');
+        const rebuildBtn = document.getElementById('rebuild-venues-btn');
+        const rebuildStatus = document.getElementById('rebuild-status');
+        
+        console.log('Rebuild button found:', !!rebuildBtn);
+        console.log('Rebuild status found:', !!rebuildStatus);
+        
+        // Load last rebuild time from localStorage
+        const lastRebuildInfo = document.getElementById('last-rebuild-info');
+        const lastRebuildTime = document.getElementById('last-rebuild-time');
+        if (lastRebuildInfo && lastRebuildTime) {
+            const lastRebuild = localStorage.getItem('lastVenueRebuild');
+            if (lastRebuild) {
+                try {
+                    const rebuildData = JSON.parse(lastRebuild);
+                    const rebuildDate = new Date(rebuildData.timestamp);
+                    lastRebuildTime.textContent = `Last: ${rebuildDate.toLocaleString()}`;
+                    lastRebuildInfo.classList.remove('hidden');
+                } catch (error) {
+                    console.warn('Error parsing last rebuild data:', error);
+                }
+            }
+        }
+        
+        if (rebuildBtn) {
+            console.log('Adding click listener to rebuild button...');
+            rebuildBtn.addEventListener('click', async () => {
+                try {
+                    console.log('Rebuild button clicked!');
+                    if (rebuildBtn.disabled) {
+                        console.log('Button is disabled, returning');
+                        return;
+                    }
+                
+                // Show confirmation dialog
+                console.log('Showing confirmation dialog...');
+                const confirmed = confirm('Are you sure you want to rebuild all venue pages? This will regenerate all static venue files with the latest data from the database.');
+                console.log('Confirmation result:', confirmed);
+                
+                if (!confirmed) {
+                    console.log('User cancelled rebuild');
+                    return;
+                }
+                
+                console.log('User confirmed rebuild, starting process...');
+                
+                try {
+                    // Show loading state
+                    rebuildBtn.disabled = true;
+                    rebuildStatus.classList.remove('hidden');
+                    rebuildBtn.querySelector('.fa-sync-alt').classList.add('animate-spin');
+                    
+                    showNotification('Starting venue rebuild process...', 'info');
+                    
+                    // Call the rebuild function
+                    console.log('Calling rebuild function...');
+                    const response = await fetch('/.netlify/functions/build-venues-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'rebuild',
+                            source: 'admin-panel'
+                        })
+                    });
+                    
+                    console.log('Rebuild response status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('Rebuild result:', result);
+                    
+                    if (result.success) {
+                        showNotification(`✅ Successfully rebuilt ${result.generatedFiles || 0} venue pages!`, 'success');
+                        
+                        // Update last rebuild time
+                        const lastRebuildInfo = document.getElementById('last-rebuild-info');
+                        const lastRebuildTime = document.getElementById('last-rebuild-time');
+                        if (lastRebuildInfo && lastRebuildTime) {
+                            const now = new Date();
+                            lastRebuildTime.textContent = `Last: ${now.toLocaleString()}`;
+                            lastRebuildInfo.classList.remove('hidden');
+                        }
+                        
+                        // Store rebuild info in localStorage
+                        localStorage.setItem('lastVenueRebuild', JSON.stringify({
+                            timestamp: new Date().toISOString(),
+                            filesGenerated: result.generatedFiles || 0,
+                            source: result.source || 'admin-panel'
+                        }));
+                        
+                        // Add to recent activity
+                        const activity = {
+                            type: 'rebuild',
+                            message: `Rebuilt ${result.generatedFiles || 0} venue pages`,
+                            timestamp: new Date().toISOString(),
+                            details: result
+                        };
+                        
+                        // Update recent activity display
+                        if (recentActivity) {
+                            const activityHtml = `
+                                <div class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg">
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-white font-medium">${activity.message}</p>
+                                        <p class="text-gray-400 text-sm">${getTimeAgo(activity.timestamp)}</p>
+                                    </div>
+                                </div>
+                            `;
+                            recentActivity.insertAdjacentHTML('afterbegin', activityHtml);
+                        }
+                        
+                    } else {
+                        throw new Error(result.error || 'Unknown error occurred');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error rebuilding venues:', error);
+                    showNotification(`❌ Failed to rebuild venues: ${error.message}`, 'error');
+                } finally {
+                    // Reset button state
+                    rebuildBtn.disabled = false;
+                    rebuildStatus.classList.add('hidden');
+                    rebuildBtn.querySelector('.fa-sync-alt').classList.remove('animate-spin');
+                }
+            } catch (error) {
+                console.error('Unexpected error in rebuild button click handler:', error);
+                showNotification(`❌ Unexpected error: ${error.message}`, 'error');
+            }
+            });
+        }
     }
     
     // Request notification permission on page load

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Venues - Brum Out Loud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <h1 class="text-3xl font-bold mb-6">Debug Venues API</h1>
+    
+    <button id="test-api" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-4">
+        Test Venues API
+    </button>
+    
+    <div id="results" class="bg-gray-800 p-4 rounded"></div>
+    
+    <script>
+        document.getElementById('test-api').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-venues-firestore');
+                const data = await response.json();
+                
+                console.log('API Response:', data);
+                
+                let html = '<h2 class="text-xl font-bold mb-4">API Response:</h2>';
+                html += `<p><strong>Total venues:</strong> ${data.venues ? data.venues.length : 'No venues array'}</p>`;
+                html += `<p><strong>Version:</strong> ${data.version || 'Unknown'}</p>`;
+                
+                if (data.venues && data.venues.length > 0) {
+                    html += '<h3 class="text-lg font-bold mt-4 mb-2">Venues:</h3>';
+                    data.venues.forEach((venue, index) => {
+                        html += `
+                            <div class="border border-gray-600 p-3 mb-2 rounded">
+                                <p><strong>${index + 1}. ${venue.name}</strong></p>
+                                <p>ID: ${venue.id}</p>
+                                <p>Slug: ${venue.slug || 'NO SLUG!'}</p>
+                                <p>Address: ${venue.address}</p>
+                                <p>Image: ${venue.image ? venue.image.url : 'No image'}</p>
+                                <p>Categories: ${venue.category ? venue.category.join(', ') : 'No categories'}</p>
+                                <a href="/venue/${venue.slug}" class="text-blue-400 hover:underline">Test Link: /venue/${venue.slug}</a>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<p class="text-red-400">No venues found in response</p>';
+                }
+                
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="text-red-400">Error: ${error.message}</p>`;
+                console.error('Error testing API:', error);
+            }
+        });
+    </script>
+</body>
+</html>

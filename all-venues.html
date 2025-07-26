@@ -527,6 +527,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             venueGrid.innerHTML = venuesToDisplay.map(venue => {
+                // Debug: Log venue data for debugging
+                console.log('Rendering venue:', venue.name, 'slug:', venue.slug, 'link will be:', `/venue/${venue.slug}`);
+                
                 const tagsHTML = (venue.tags || venue.category || []).length > 0 ? 
                     (venue.tags || venue.category || []).map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
                 const imageUrl = venue.image && venue.image.url ? venue.image.url : 'https://placehold.co/400x300/1e1e1e/EAEAEA?text=Venue';
@@ -587,6 +590,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 if (allVenues.length > 0) {
                     console.log('First venue data:', allVenues[0]);
                     console.log('First venue image:', allVenues[0].image);
+                    console.log('First venue slug:', allVenues[0].slug);
+                    console.log('Raw API response:', data);
+                } else {
+                    console.log('❌ No venues returned from API');
                     console.log('Raw API response:', data);
                 }
 

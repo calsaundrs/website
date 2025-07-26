@@ -36,6 +36,8 @@ exports.handler = async (event, context) => {
             // Debug: Log raw venue data to see what fields exist
             console.log(`Raw venue data for ${processedVenue.name}:`, {
                 id: doc.id,
+                name: venueData.name || venueData['Venue Name'] || venueData['Name'],
+                slug: processedVenue.slug,
                 hasImageField: !!venueData.image,
                 hasPhotoField: !!venueData.Photo,
                 hasCloudinaryId: !!venueData['Cloudinary Public ID'],
@@ -45,6 +47,9 @@ exports.handler = async (event, context) => {
             // Only include venues that have actual images (not placeholders)
             if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
                 venues.push(processedVenue);
+                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
+            } else {
+                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
             }
         });
         
@@ -115,10 +120,19 @@ function processVenueForPublic(venueData) {
         }
     }
     
+    // Generate slug from venue name if not provided
+    const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    };
+    
     const venue = {
         id: venueData.id,
-        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
-        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
+        name: venueName,
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'] || generateSlug(venueName),
         description: venueData.description || venueData['Description'] || `Venue hosting events`,
         address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
         link: venueData.link || venueData['Venue Link'] || venueData['Link'],

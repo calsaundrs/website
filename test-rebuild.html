@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Rebuild Function</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .button { background: #E83A99; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .button:hover { background: #D61F69; }
+        .button:disabled { background: #666; cursor: not-allowed; }
+        .result { margin: 20px 0; padding: 10px; border-radius: 5px; }
+        .success { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; }
+        .error { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; }
+        .loading { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <h1>Test Rebuild Function</h1>
+    
+    <button id="test-rebuild" class="button">Test Rebuild Function</button>
+    <button id="test-api" class="button">Test Venues API</button>
+    
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('test-rebuild').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            const button = document.getElementById('test-rebuild');
+            
+            button.disabled = true;
+            resultsDiv.innerHTML = '<div class="result loading">Testing rebuild function...</div>';
+            
+            try {
+                console.log('Testing rebuild function...');
+                const response = await fetch('/.netlify/functions/build-venues-ssg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'rebuild',
+                        source: 'test-page'
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Rebuild result:', result);
+                
+                if (result.success) {
+                    resultsDiv.innerHTML = `<div class="result success">
+                        <h3>✅ Rebuild Successful!</h3>
+                        <p><strong>Files generated:</strong> ${result.generatedFiles || 0}</p>
+                        <p><strong>Timestamp:</strong> ${result.timestamp}</p>
+                        <p><strong>Source:</strong> ${result.source}</p>
+                    </div>`;
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                console.error('Error testing rebuild:', error);
+                resultsDiv.innerHTML = `<div class="result error">
+                    <h3>❌ Rebuild Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                </div>`;
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        document.getElementById('test-api').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            const button = document.getElementById('test-api');
+            
+            button.disabled = true;
+            resultsDiv.innerHTML = '<div class="result loading">Testing venues API...</div>';
+            
+            try {
+                console.log('Testing venues API...');
+                const response = await fetch('/.netlify/functions/get-venues-firestore');
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API result:', data);
+                
+                resultsDiv.innerHTML = `<div class="result success">
+                    <h3>✅ API Test Successful!</h3>
+                    <p><strong>Total venues:</strong> ${data.venues ? data.venues.length : 'No venues array'}</p>
+                    <p><strong>Version:</strong> ${data.version || 'Unknown'}</p>
+                    ${data.venues && data.venues.length > 0 ? `
+                        <h4>First few venues:</h4>
+                        <ul>
+                            ${data.venues.slice(0, 3).map(venue => `
+                                <li><strong>${venue.name}</strong> - Slug: ${venue.slug || 'NO SLUG'}</li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p>No venues found</p>'}
+                </div>`;
+                
+            } catch (error) {
+                console.error('Error testing API:', error);
+                resultsDiv.innerHTML = `<div class="result error">
+                    <h3>❌ API Test Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                </div>`;
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
