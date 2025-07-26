@@ -1,41 +1,264 @@
 const Airtable = require('airtable');
-const admin = require('firebase-admin');
 
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        }),
-    });
+// Check if required environment variables are available
+function checkEnvironmentVariables() {
+    const required = [
+        'AIRTABLE_PERSONAL_ACCESS_TOKEN',
+        'AIRTABLE_BASE_ID',
+        'FIREBASE_PROJECT_ID',
+        'FIREBASE_CLIENT_EMAIL',
+        'FIREBASE_PRIVATE_KEY'
+    ];
+    
+    const missing = required.filter(varName => !process.env[varName]);
+    
+    if (missing.length > 0) {
+        return {
+            success: false,
+            missing: missing,
+            message: `Missing environment variables: ${missing.join(', ')}`
+        };
+    }
+    
+    return { success: true };
 }
 
-const db = admin.firestore();
-const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+// Initialize Firebase Admin with error handling
+function initializeFirebase() {
+    try {
+        const admin = require('firebase-admin');
+        
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+                }),
+            });
+        }
+        
+        return { success: true, db: admin.firestore() };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message,
+            message: 'Failed to initialize Firebase Admin'
+        };
+    }
+}
+
+// Initialize Airtable with error handling
+function initializeAirtable() {
+    try {
+        const base = new Airtable({ 
+            apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
+        }).base(process.env.AIRTABLE_BASE_ID);
+        
+        return { success: true, base: base };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message,
+            message: 'Failed to initialize Airtable'
+        };
+    }
+}
+
+// Helper function to safely get field value
+function getFieldValue(record, fieldName, defaultValue = null) {
+    try {
+        const value = record.get(fieldName);
+        return value !== undefined && value !== null ? value : defaultValue;
+    } catch (error) {
+        console.log(`Field "${fieldName}" not found, using default value: ${defaultValue}`);
+        return defaultValue;
+    }
+}
+
+// Helper function to create URL-friendly slug
+function slugify(text) {
+    if (!text) return '';
+    return text
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-');
+}
 
 exports.handler = async function (event, context) {
-    console.log('Starting complete data migration from Airtable to Firestore...');
+    console.log('Starting complete data migration...');
     
     try {
-        const migrationResults = {
-            events: await migrateEvents(),
-            venues: await migrateVenues(),
-            summary: {}
+        // Check environment variables
+        const envCheck = checkEnvironmentVariables();
+        if (!envCheck.success) {
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                body: JSON.stringify({
+                    error: 'Environment configuration error',
+                    message: envCheck.message,
+                    missing: envCheck.missing
+                })
+            };
+        }
+        
+        // Initialize services
+        const firebaseInit = initializeFirebase();
+        const airtableInit = initializeAirtable();
+        
+        if (!firebaseInit.success) {
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                body: JSON.stringify({
+                    error: 'Firebase initialization error',
+                    message: firebaseInit.message,
+                    details: firebaseInit.error
+                })
+            };
+        }
+        
+        if (!airtableInit.success) {
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                body: JSON.stringify({
+                    error: 'Airtable initialization error',
+                    message: airtableInit.message,
+                    details: airtableInit.error
+                })
+            };
+        }
+        
+        const db = firebaseInit.db;
+        const base = airtableInit.base;
+        
+        const results = {
+            events: { migrated: 0, skipped: 0, errors: 0 },
+            venues: { migrated: 0, skipped: 0, errors: 0 },
+            details: []
         };
         
-        // Generate summary
-        migrationResults.summary = {
-            eventsMigrated: migrationResults.events.migrated,
-            eventsSkipped: migrationResults.events.skipped,
-            eventsErrors: migrationResults.events.errors,
-            venuesMigrated: migrationResults.venues.migrated,
-            venuesSkipped: migrationResults.venues.skipped,
-            venuesErrors: migrationResults.venues.errors,
-            totalMigrated: migrationResults.events.migrated + migrationResults.venues.migrated,
-            totalErrors: migrationResults.events.errors + migrationResults.venues.errors
-        };
+        // Migrate Events
+        console.log('Starting event migration...');
+        try {
+            const events = await base('Events').select().all();
+            console.log(`Found ${events.length} events in Airtable`);
+            
+            for (const event of events) {
+                try {
+                    // Check if event already exists in Firestore
+                    const existingQuery = await db.collection('events')
+                        .where('airtableId', '==', event.id)
+                        .limit(1)
+                        .get();
+                    
+                    if (!existingQuery.empty) {
+                        console.log(`Event ${event.id} already exists in Firestore, skipping`);
+                        results.events.skipped++;
+                        continue;
+                    }
+                    
+                    // Get event data with safe field access
+                    const eventData = {
+                        airtableId: event.id,
+                        name: getFieldValue(event, 'Event Name', 'Untitled Event'),
+                        description: getFieldValue(event, 'Description', ''),
+                        date: getFieldValue(event, 'Date', ''),
+                        status: getFieldValue(event, 'Status', 'pending').toLowerCase(),
+                        venueName: getFieldValue(event, 'Venue Name', ''),
+                        category: getFieldValue(event, 'Category', []),
+                        price: getFieldValue(event, 'Price', ''),
+                        link: getFieldValue(event, 'Link', ''),
+                        submittedBy: getFieldValue(event, 'Submitter Email', ''),
+                        slug: getFieldValue(event, 'Slug', slugify(getFieldValue(event, 'Event Name', 'untitled-event'))),
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+                    
+                    // Add to Firestore
+                    await db.collection('events').add(eventData);
+                    console.log(`Migrated event: ${eventData.name}`);
+                    results.events.migrated++;
+                    results.details.push(`✅ Event: ${eventData.name}`);
+                    
+                } catch (error) {
+                    console.error(`Error migrating event ${event.id}:`, error);
+                    results.events.errors++;
+                    results.details.push(`❌ Event ${event.id}: ${error.message}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching events from Airtable:', error);
+            results.details.push(`❌ Events fetch error: ${error.message}`);
+        }
+        
+        // Migrate Venues
+        console.log('Starting venue migration...');
+        try {
+            const venues = await base('Venues').select().all();
+            console.log(`Found ${venues.length} venues in Airtable`);
+            
+            for (const venue of venues) {
+                try {
+                    // Check if venue already exists in Firestore
+                    const existingQuery = await db.collection('venues')
+                        .where('airtableId', '==', venue.id)
+                        .limit(1)
+                        .get();
+                    
+                    if (!existingQuery.empty) {
+                        console.log(`Venue ${venue.id} already exists in Firestore, skipping`);
+                        results.venues.skipped++;
+                        continue;
+                    }
+                    
+                    // Get venue data with safe field access
+                    const venueData = {
+                        airtableId: venue.id,
+                        name: getFieldValue(venue, 'Name', 'Untitled Venue'),
+                        description: getFieldValue(venue, 'Description', ''),
+                        address: getFieldValue(venue, 'Address', ''),
+                        status: getFieldValue(venue, 'Status', 'pending').toLowerCase(),
+                        listingStatus: getFieldValue(venue, 'Listing Status', 'pending').toLowerCase(),
+                        contactEmail: getFieldValue(venue, 'Contact Email', ''),
+                        website: getFieldValue(venue, 'Website', ''),
+                        slug: getFieldValue(venue, 'Slug', slugify(getFieldValue(venue, 'Name', 'untitled-venue'))),
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+                    
+                    // Add to Firestore
+                    await db.collection('venues').add(venueData);
+                    console.log(`Migrated venue: ${venueData.name}`);
+                    results.venues.migrated++;
+                    results.details.push(`✅ Venue: ${venueData.name}`);
+                    
+                } catch (error) {
+                    console.error(`Error migrating venue ${venue.id}:`, error);
+                    results.venues.errors++;
+                    results.details.push(`❌ Venue ${venue.id}: ${error.message}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching venues from Airtable:', error);
+            results.details.push(`❌ Venues fetch error: ${error.message}`);
+        }
         
         return {
             statusCode: 200,
@@ -43,238 +266,26 @@ exports.handler = async function (event, context) {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-cache'
             },
-            body: JSON.stringify(migrationResults)
+            body: JSON.stringify({
+                success: true,
+                message: 'Data migration completed',
+                results: results
+            })
         };
         
     } catch (error) {
-        console.error('Migration failed:', error);
+        console.error('Data migration failed:', error);
         return {
             statusCode: 500,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
             },
             body: JSON.stringify({
-                error: 'Migration failed',
+                error: 'Data migration failed',
                 message: error.message,
-                stack: error.stack
+                type: error.constructor.name
             })
         };
     }
 };
-
-async function migrateEvents() {
-    console.log('Migrating events...');
-    
-    // Get all events from Airtable
-    const airtableEvents = await base('Events').select({
-        fields: [
-            'Event Name', 'Slug', 'Description', 'Date', 'Status', 'Venue Name',
-            'VenueText', 'Category', 'Price', 'Age Restriction', 'Link',
-            'Recurring Info', 'Series ID', 'Cloudinary Public ID', 'Promo Image',
-            'Submitter Email', 'Created Time', 'Last Modified Time', 'Venue',
-            'Venue Slug', 'Venue Address', 'Ticket Link', 'Promotion'
-        ]
-    }).all();
-    
-    console.log(`Found ${airtableEvents.length} events to migrate`);
-    
-    let migrated = 0;
-    let skipped = 0;
-    let errors = 0;
-    
-    for (const airtableEvent of airtableEvents) {
-        try {
-            const airtableId = airtableEvent.id;
-            
-            // Check if event already exists in Firestore
-            const existingDoc = await db.collection('events').where('airtableId', '==', airtableId).limit(1).get();
-            
-            if (!existingDoc.empty) {
-                console.log(`Event ${airtableEvent.fields['Event Name']} already exists in Firestore, skipping...`);
-                skipped++;
-                continue;
-            }
-            
-            // Transform Airtable data to Firestore format
-            const firestoreData = transformEventData(airtableEvent.fields, airtableId);
-            
-            // Add to Firestore
-            await db.collection('events').add(firestoreData);
-            
-            console.log(`Migrated event: ${airtableEvent.fields['Event Name']}`);
-            migrated++;
-            
-        } catch (error) {
-            console.error(`Error migrating event ${airtableEvent.fields['Event Name']}:`, error);
-            errors++;
-        }
-    }
-    
-    return { migrated, skipped, errors };
-}
-
-async function migrateVenues() {
-    console.log('Migrating venues...');
-    
-    // Get all venues from Airtable
-    const airtableVenues = await base('Venues').select({
-        fields: [
-            'Name', 'Description', 'Slug', 'Address', 'Opening Hours',
-            'Accessibility', 'Website', 'Instagram', 'Facebook', 'TikTok',
-            'Contact Email', 'Contact Phone', 'Status', 'Listing Status',
-            'Photo URL', 'Photo Medium URL', 'Photo Thumbnail URL',
-            'Vibe Tags', 'Venue Features', 'Accessibility Features',
-            'Google Rating', 'Number of Reviews', 'Created Time', 'Last Modified Time'
-        ]
-    }).all();
-    
-    console.log(`Found ${airtableVenues.length} venues to migrate`);
-    
-    let migrated = 0;
-    let skipped = 0;
-    let errors = 0;
-    
-    for (const airtableVenue of airtableVenues) {
-        try {
-            const airtableId = airtableVenue.id;
-            
-            // Check if venue already exists in Firestore
-            const existingDoc = await db.collection('venues').where('airtableId', '==', airtableId).limit(1).get();
-            
-            if (!existingDoc.empty) {
-                console.log(`Venue ${airtableVenue.fields['Name']} already exists in Firestore, skipping...`);
-                skipped++;
-                continue;
-            }
-            
-            // Transform Airtable data to Firestore format
-            const firestoreData = transformVenueData(airtableVenue.fields, airtableId);
-            
-            // Add to Firestore
-            await db.collection('venues').add(firestoreData);
-            
-            console.log(`Migrated venue: ${airtableVenue.fields['Name']}`);
-            migrated++;
-            
-        } catch (error) {
-            console.error(`Error migrating venue ${airtableVenue.fields['Name']}:`, error);
-            errors++;
-        }
-    }
-    
-    return { migrated, skipped, errors };
-}
-
-function transformEventData(airtableFields, airtableId) {
-    // Map Airtable fields to Firestore fields
-    const firestoreData = {
-        // Core fields
-        airtableId: airtableId,
-        name: airtableFields['Event Name'],
-        slug: airtableFields['Slug'],
-        description: airtableFields['Description'],
-        date: airtableFields['Date'],
-        status: airtableFields['Status']?.toLowerCase() || 'pending',
-        
-        // Venue information
-        venueName: airtableFields['Venue Name'] || airtableFields['VenueText'],
-        venueSlug: airtableFields['Venue Slug'],
-        venueAddress: airtableFields['Venue Address'],
-        
-        // Event details
-        category: airtableFields['Category'] || [],
-        price: airtableFields['Price'],
-        ageRestriction: airtableFields['Age Restriction'],
-        link: airtableFields['Link'],
-        ticketLink: airtableFields['Ticket Link'],
-        
-        // Recurring event information
-        recurringInfo: airtableFields['Recurring Info'],
-        seriesId: airtableFields['Series ID'],
-        
-        // Image information
-        cloudinaryPublicId: airtableFields['Cloudinary Public ID'],
-        promoImage: airtableFields['Promo Image'],
-        
-        // Submission information
-        submittedBy: airtableFields['Submitter Email'],
-        submittedAt: airtableFields['Created Time'],
-        
-        // Timestamps
-        createdAt: airtableFields['Created Time'] ? new Date(airtableFields['Created Time']) : new Date(),
-        updatedAt: airtableFields['Last Modified Time'] ? new Date(airtableFields['Last Modified Time']) : new Date(),
-        
-        // Promotion data
-        promotion: airtableFields['Promotion'] || {}
-    };
-    
-    // Handle venue object if it exists
-    if (airtableFields['Venue'] && Array.isArray(airtableFields['Venue'])) {
-        firestoreData.venue = {
-            id: airtableFields['Venue'][0],
-            name: airtableFields['Venue Name'],
-            slug: airtableFields['Venue Slug'],
-            address: airtableFields['Venue Address']
-        };
-    }
-    
-    // Clean up undefined values
-    Object.keys(firestoreData).forEach(key => {
-        if (firestoreData[key] === undefined) {
-            delete firestoreData[key];
-        }
-    });
-    
-    return firestoreData;
-}
-
-function transformVenueData(airtableFields, airtableId) {
-    // Map Airtable fields to Firestore fields
-    const firestoreData = {
-        // Core fields
-        airtableId: airtableId,
-        name: airtableFields['Name'],
-        slug: airtableFields['Slug'],
-        description: airtableFields['Description'],
-        address: airtableFields['Address'],
-        status: airtableFields['Status']?.toLowerCase() || 'pending',
-        listingStatus: airtableFields['Listing Status']?.toLowerCase() || 'listed',
-        
-        // Contact information
-        website: airtableFields['Website'],
-        instagram: airtableFields['Instagram'],
-        facebook: airtableFields['Facebook'],
-        tiktok: airtableFields['TikTok'],
-        contactEmail: airtableFields['Contact Email'],
-        contactPhone: airtableFields['Contact Phone'],
-        
-        // Venue details
-        openingHours: airtableFields['Opening Hours'],
-        accessibility: airtableFields['Accessibility'],
-        vibeTags: airtableFields['Vibe Tags'] || [],
-        venueFeatures: airtableFields['Venue Features'] || [],
-        accessibilityFeatures: airtableFields['Accessibility Features'] || [],
-        
-        // Image information
-        photoUrl: airtableFields['Photo URL'],
-        photoMediumUrl: airtableFields['Photo Medium URL'],
-        photoThumbnailUrl: airtableFields['Photo Thumbnail URL'],
-        
-        // Google information
-        googleRating: airtableFields['Google Rating'],
-        numberOfReviews: airtableFields['Number of Reviews'],
-        
-        // Timestamps
-        createdAt: airtableFields['Created Time'] ? new Date(airtableFields['Created Time']) : new Date(),
-        updatedAt: airtableFields['Last Modified Time'] ? new Date(airtableFields['Last Modified Time']) : new Date()
-    };
-    
-    // Clean up undefined values
-    Object.keys(firestoreData).forEach(key => {
-        if (firestoreData[key] === undefined) {
-            delete firestoreData[key];
-        }
-    });
-    
-    return firestoreData;
-}
