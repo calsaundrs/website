@@ -277,7 +277,7 @@ async function handleVenuesView() {
             }
         });
         
-        console.log(`Found ${venues.length} venues to display`);
+        console.log(`Found ${venues.length} venues to display - NO AIRTABLE URLS`);
         
         return {
             statusCode: 200,

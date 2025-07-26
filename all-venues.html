@@ -646,7 +646,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // --- Initialization ---
         async function initializePage() {
             try {
-                const response = await fetch('/.netlify/functions/get-events-firestore?view=venues');
+                // Force cache refresh by adding timestamp
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/.netlify/functions/get-events-firestore?view=venues&t=${timestamp}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
                 if (!response.ok) throw new Error('Failed to fetch venues. Status: ' + response.status);
                 const data = await response.json();
                 
@@ -656,6 +663,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 if (allVenues.length > 0) {
                     console.log('First venue data:', allVenues[0]);
                     console.log('First venue image:', allVenues[0].image);
+                    console.log('Raw API response:', data);
                 }
 
                 setupEventListeners();
