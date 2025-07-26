@@ -325,44 +325,12 @@ async function handleVenuesView() {
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
-    // 1. Cloudinary public ID
+    // Only use Cloudinary public ID - no Airtable URLs
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
-    } else {
-        // 2. Airtable image array or other fields
-        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL'];
-        for (const field of possibleImageFields) {
-            const imageData = venueData[field];
-            if (imageData) {
-                if (Array.isArray(imageData) && imageData.length > 0) {
-                    const firstImage = imageData[0];
-                    if (firstImage) {
-                        // Prefer large, then small, then full, then main url
-                        if (firstImage.thumbnails && firstImage.thumbnails.large && firstImage.thumbnails.large.url) {
-                            imageUrl = firstImage.thumbnails.large.url;
-                            break;
-                        } else if (firstImage.thumbnails && firstImage.thumbnails.small && firstImage.thumbnails.small.url) {
-                            imageUrl = firstImage.thumbnails.small.url;
-                            break;
-                        } else if (firstImage.thumbnails && firstImage.thumbnails.full && firstImage.thumbnails.full.url) {
-                            imageUrl = firstImage.thumbnails.full.url;
-                            break;
-                        } else if (firstImage.url) {
-                            imageUrl = firstImage.url;
-                            break;
-                        }
-                    }
-                } else if (typeof imageData === 'string') {
-                    imageUrl = imageData;
-                    break;
-                } else if (imageData && imageData.url) {
-                    imageUrl = imageData.url;
-                    break;
-                }
-            }
-        }
     }
+    // If no Cloudinary ID, imageUrl remains null and will use placeholder
     const venue = {
         id: venueData.id,
         name: venueData.name || venueData['Venue Name'] || venueData['Name'],
@@ -435,43 +403,11 @@ function processEventForPublic(eventData) {
     };
     // Extract image URL from various possible formats
     let imageUrl = null;
-    // 1. Cloudinary public ID
+    // Only use Cloudinary public ID - no Airtable URLs
     if (mappedData.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${mappedData.cloudinaryPublicId}`;
-    } else {
-        // 2. Airtable image array or other fields
-        const possibleImageFields = ['Promo Image', 'image', 'Image'];
-        for (const field of possibleImageFields) {
-            const imageData = mappedData[field];
-            if (imageData) {
-                if (Array.isArray(imageData) && imageData.length > 0) {
-                    const firstImage = imageData[0];
-                    if (firstImage) {
-                        // Prefer large, then small, then full, then main url
-                        if (firstImage.thumbnails && firstImage.thumbnails.large && firstImage.thumbnails.large.url) {
-                            imageUrl = firstImage.thumbnails.large.url;
-                            break;
-                        } else if (firstImage.thumbnails && firstImage.thumbnails.small && firstImage.thumbnails.small.url) {
-                            imageUrl = firstImage.thumbnails.small.url;
-                            break;
-                        } else if (firstImage.thumbnails && firstImage.thumbnails.full && firstImage.thumbnails.full.url) {
-                            imageUrl = firstImage.thumbnails.full.url;
-                            break;
-                        } else if (firstImage.url) {
-                            imageUrl = firstImage.url;
-                            break;
-                        }
-                    }
-                } else if (typeof imageData === 'string') {
-                    imageUrl = imageData;
-                    break;
-                } else if (imageData && imageData.url) {
-                    imageUrl = imageData.url;
-                    break;
-                }
-            }
-        }
     }
+    // If no Cloudinary ID, imageUrl remains null and will use placeholder
     // Handle venue data - check for venue object first, then fallback to individual fields
     let venueData = null;
     
