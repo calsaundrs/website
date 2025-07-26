@@ -116,9 +116,30 @@ exports.handler = async function (event, context) {
             background-clip: text;
         }
         
-        .card-bg {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            border: 1px solid #333;
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
         }
         
         .animate-fade-in {
@@ -142,14 +163,56 @@ exports.handler = async function (event, context) {
         }
         
         .event-card {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            border: 1px solid #333;
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
             transition: all 0.3s ease;
         }
         
         .event-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+        }
+        
+        .hero-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #1e1e1e;
+            overflow: hidden;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .hero-image-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            filter: blur(24px) brightness(0.5);
+            transform: scale(1.1);
+            transition: opacity 0.4s ease;
+        }
+        
+        .hero-image-container:hover .hero-image-bg {
+            opacity: 1;
+        }
+        
+        .hero-image-fg {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10;
+            transition: all 0.4s ease;
+        }
+        
+        .hero-image-container:hover .hero-image-fg {
+            object-fit: contain;
+            transform: scale(0.9);
         }
     </style>
 </head>
@@ -180,78 +243,155 @@ exports.handler = async function (event, context) {
             </a>
         </div>
 
-        <!-- Venue Details -->
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Main Venue Info -->
+        <!-- Hero Image -->
+        {{#if venue.image}}
+        <div class="hero-image-container mb-8">
+            <img src="{{venue.image.url}}" alt="" class="hero-image-bg" aria-hidden="true">
+            <img src="{{venue.image.url}}" alt="{{venue.name}}" class="hero-image-fg">
+            <div class="absolute top-4 right-4">
+                <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                    <i class="fas fa-share mr-1"></i>Share
+                </button>
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Venue Header -->
+        <div class="mb-8">
+            <p class="font-semibold accent-color mb-2">VENUE DETAILS</p>
+            <h1 class="font-anton text-6xl lg:text-8xl heading-gradient leading-none mb-8">{{venue.name}}</h1>
+            <p class="text-xl text-gray-300 mb-4">
+                <i class="fas fa-map-marker-alt mr-2 accent-color"></i>
+                {{venue.address}}
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6">
+                {{#each venue.category}}
+                <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                {{/each}}
+            </div>
+        </div>
+
+        <!-- Venue Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
             <div class="lg:col-span-2">
-                <div class="card-bg rounded-lg p-8 mb-8">
-                    <!-- Venue Header -->
-                    <div class="mb-6">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            {{{categoryTags}}}
+                <!-- About This Venue -->
+                {{#if venue.description}}
+                <div class="venue-card p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-info-circle mr-3 accent-color"></i>About This Venue
+                    </h2>
+                    <p class="text-gray-300 leading-relaxed">{{venue.description}}</p>
+                </div>
+                {{/if}}
+
+                <!-- Gallery Placeholder -->
+                <div class="venue-card p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-images mr-3 accent-color"></i>Gallery
+                    </h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-2xl text-gray-600"></i>
                         </div>
-                        
-                        <h1 class="text-4xl font-bold text-white mb-4">{{venue.name}}</h1>
-                        
-                        <div class="flex items-center text-gray-400 mb-6">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span>{{venue.address}}</span>
+                        <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-2xl text-gray-600"></i>
                         </div>
-                    </div>
-
-                    <!-- Venue Image -->
-                    {{#if venue.image}}
-                    <div class="mb-6">
-                        <img src="{{venue.image.url}}" alt="{{venue.name}}" class="w-full h-64 object-cover rounded-lg">
-                    </div>
-                    {{/if}}
-
-                    <!-- Venue Description -->
-                    {{#if venue.description}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">About This Venue</h2>
-                        <p class="text-gray-300 leading-relaxed">{{venue.description}}</p>
-                    </div>
-                    {{/if}}
-
-                    <!-- Venue Link -->
-                    {{#if venue.link}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Visit Venue</h2>
-                        <a href="{{venue.link}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-accent-color text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-external-link-alt mr-2"></i>
-                            Visit Website
-                        </a>
-                    </div>
-                    {{/if}}
-
-                    <!-- Opening Hours -->
-                    {{#if venue.openingHours}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Opening Hours</h2>
-                        <div class="bg-gray-800 rounded-lg p-4">
-                            <pre class="text-gray-300 whitespace-pre-wrap">{{venue.openingHours}}</pre>
+                        <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-2xl text-gray-600"></i>
+                        </div>
+                        <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-image text-2xl text-gray-600"></i>
                         </div>
                     </div>
-                    {{/if}}
+                    <p class="text-xs text-gray-500 mt-4 text-center">
+                        Please note: these images are sourced from the venue's Google Places listing. We do not have control over which photos are displayed.
+                    </p>
                 </div>
 
-                <!-- Upcoming Events -->
-                {{#if hasUpcomingEvents}}
-                <div class="card-bg rounded-lg p-8">
-                    <h2 class="text-2xl font-bold text-white mb-6">Upcoming Events</h2>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        {{#each upcomingEvents}}
-                        <div class="event-card rounded-lg p-4">
-                            <h3 class="font-semibold text-white mb-2">{{name}}</h3>
-                            <p class="text-gray-400 text-sm">{{formatDate date}}</p>
-                            <div class="flex flex-wrap gap-1 mt-2">
-                                {{#each category}}
-                                <span class="category-tag">{{this}}</span>
-                                {{/each}}
+                <!-- Google Reviews Placeholder -->
+                <div class="venue-card p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fab fa-google mr-3 accent-color"></i>Recent Reviews from Google
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-800/50 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-semibold text-white">Sarah Johnson</p>
+                                <div class="text-xs">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                </div>
                             </div>
-                            <a href="/event/{{slug}}" class="text-accent-color hover:text-white transition-colors text-sm mt-2 inline-block">
-                                View Event →
+                            <p class="text-gray-300 text-sm">Amazing atmosphere and great drag shows! The staff are friendly and the drinks are reasonably priced. Highly recommend for a night out.</p>
+                        </div>
+                        <div class="p-4 bg-gray-800/50 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-semibold text-white">Mike Thompson</p>
+                                <div class="text-xs">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 text-sm">Great venue with multiple floors. The music is always on point and the crowd is welcoming. Perfect for the LGBTQ+ community.</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center">
+                        <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                    </div>
+                </div>
+
+                <!-- Regular Events -->
+                {{#if hasUpcomingEvents}}
+                <div class="venue-card p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-redo mr-3 accent-color"></i>Regular Events
+                    </h2>
+                    <div class="space-y-4">
+                        {{#each upcomingEvents}}
+                        <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-green-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-white">{{name}}</h4>
+                                <p class="text-gray-400 text-sm">{{formatDate date}}</p>
+                                <p class="text-gray-300 text-sm">{{description}}</p>
+                            </div>
+                            <a href="/event/{{slug}}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View
+                            </a>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Upcoming Special Events -->
+                {{#if hasUpcomingEvents}}
+                <div class="venue-card p-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-calendar mr-3 accent-color"></i>Upcoming Special Events
+                    </h2>
+                    <div class="space-y-4">
+                        {{#each upcomingEvents}}
+                        <div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">
+                                <i class="fas fa-image text-gray-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-white">{{name}}</h4>
+                                <p class="text-gray-400 text-sm">{{formatDate date}}</p>
+                                <p class="text-gray-300 text-sm">{{description}}</p>
+                            </div>
+                            <a href="/event/{{slug}}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View
                             </a>
                         </div>
                         {{/each}}
@@ -261,31 +401,65 @@ exports.handler = async function (event, context) {
             </div>
 
             <!-- Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="card-bg rounded-lg p-6 sticky top-8">
-                    <h2 class="text-xl font-bold text-white mb-4">Venue Details</h2>
-                    
-                    <div class="space-y-4">
+            <div class="space-y-6">
+                <!-- Current Status -->
+                <div class="venue-card p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-clock mr-2 accent-color"></i>Current Status
+                    </h3>
+                    <!-- Open Status -->
+                    <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                        <p class="font-bold text-lg">Open</p>
+                        <p class="text-sm">Open until 2:00 AM</p>
+                    </div>
+                </div>
+
+                <!-- Opening Hours -->
+                {{#if venue.openingHours}}
+                <div class="venue-card p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-clock mr-2 accent-color"></i>Opening Hours
+                    </h3>
+                    <div class="space-y-2 text-gray-300 text-sm">
+                        <pre class="whitespace-pre-wrap">{{venue.openingHours}}</pre>
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Google Rating -->
+                <div class="venue-card p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fab fa-google mr-2 accent-color"></i>Google Rating
+                    </h3>
+                    <div class="flex items-center space-x-2 text-xl mb-2">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Address</h3>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                        <p class="text-white font-semibold">4.8 <span class="text-gray-400">(247)</span></p>
+                    </div>
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                        View on Google Maps
+                    </a>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="venue-card p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-info-circle mr-2 accent-color"></i>Contact Info
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-gray-400 text-sm">Address</p>
                             <p class="text-white">{{venue.address}}</p>
                         </div>
-                        
-                        {{#if venue.category}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Categories</h3>
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                {{#each venue.category}}
-                                <span class="category-tag">{{this}}</span>
-                                {{/each}}
-                            </div>
-                        </div>
-                        {{/if}}
-                        
                         {{#if venue.link}}
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Website</h3>
-                            <a href="{{venue.link}}" target="_blank" rel="noopener noreferrer" class="text-accent-color hover:text-white transition-colors">
+                            <p class="text-gray-400 text-sm">Website</p>
+                            <a href="{{venue.link}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
                                 Visit Website
                             </a>
                         </div>
