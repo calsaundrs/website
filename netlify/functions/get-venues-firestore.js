@@ -42,10 +42,8 @@ exports.handler = async (event, context) => {
                 processedImage: processedVenue.image
             });
             
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-                venues.push(processedVenue);
-            }
+            // Include all venues, even with placeholder images
+            venues.push(processedVenue);
         });
         
         console.log(`Found ${venues.length} venues to display - CLOUDINARY ONLY`);
@@ -115,10 +113,19 @@ function processVenueForPublic(venueData) {
         }
     }
     
+    // Generate slug from venue name if not provided
+    const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    };
+    
     const venue = {
         id: venueData.id,
-        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
-        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
+        name: venueName,
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'] || generateSlug(venueName),
         description: venueData.description || venueData['Description'] || `Venue hosting events`,
         address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
         link: venueData.link || venueData['Venue Link'] || venueData['Link'],
