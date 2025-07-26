@@ -251,7 +251,7 @@ async function handleAdminView(queryParams) {
 }
 
 async function handleVenuesView() {
-    console.log("=== VENUES VIEW REQUESTED - v4 - CLOUDINARY ONLY ===");
+    console.log("=== VENUES VIEW REQUESTED - v5 - NO AIRTABLE AT ALL ===");
 
     try {
         const venuesRef = db.collection('venues');
@@ -291,11 +291,14 @@ async function handleVenuesView() {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'public, max-age=300' // 5 minutes cache
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             },
             body: JSON.stringify({
                 venues: venues,
-                totalCount: venues.length
+                totalCount: venues.length,
+                version: 'v4-cloudinary-only'
             })
         };
         
@@ -368,31 +371,7 @@ function processVenueForPublic(venueData) {
     return venue;
 }
 
-// Extract image information from Firestore data
-function extractImageInfo(fields) {
-    const cloudinaryId = fields['Cloudinary Public ID'];
-    const promoImage = fields['Promo Image'];
-    
-    if (cloudinaryId) {
-        return {
-            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
-            alt: fields['Event Name']
-        };
-    } else if (promoImage) {
-        // Handle both string URLs and array objects
-        const imageUrl = typeof promoImage === 'string' ? promoImage : 
-                        (promoImage.url || promoImage[0]?.url);
-        
-        if (imageUrl) {
-            return {
-                url: imageUrl,
-                alt: fields['Event Name']
-            };
-        }
-    }
-    
-    return null;
-}
+// This function is deprecated - using processVenueForPublic and processEventForPublic instead
 
 function processEventForPublic(eventData) {
     // Map Firestore field names to expected field names (same as service)
