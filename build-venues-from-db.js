@@ -692,8 +692,10 @@ function processVenueForPublic(venueData) {
     
     // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
-    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${cloudinaryId}`;
+    if (cloudinaryId) {
+        // Use a default cloud name if environment variable is not available
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'brumoutloud';
+        imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${cloudinaryId}`;
     } else {
         // 2. Try to find any image field that might contain a Cloudinary URL
         const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
@@ -800,14 +802,23 @@ async function generateAllVenuePages() {
         const venues = [];
         snapshot.forEach(doc => {
             const venueData = doc.data();
+            console.log(`Processing venue: ${venueData.name || venueData['Venue Name'] || 'Unknown'}`);
+            console.log(`Has Cloudinary ID: ${!!(venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'])}`);
+            
             const processedVenue = processVenueForPublic({
                 id: doc.id,
                 ...venueData
             });
             
+            console.log(`Processed image URL: ${processedVenue.image?.url || 'No image'}`);
+            console.log(`Is placeholder: ${processedVenue.image?.url?.includes('placehold.co') || false}`);
+            
             // Only include venues that have actual images (not placeholders)
             if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
                 venues.push(processedVenue);
+                console.log(`✅ INCLUDED: ${processedVenue.name}`);
+            } else {
+                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
             }
         });
         
