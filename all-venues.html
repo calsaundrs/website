@@ -592,6 +592,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.log('First venue image:', allVenues[0].image);
                     console.log('First venue slug:', allVenues[0].slug);
                     console.log('Raw API response:', data);
+                } else {
+                    console.log('❌ No venues returned from API');
+                    console.log('Raw API response:', data);
                 }
 
                 displayVenues(); // Display all venues
