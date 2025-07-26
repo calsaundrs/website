@@ -4,7 +4,8 @@
   "scripts": {
     "build:css": "npx tailwindcss build -o css/tailwind.css",
     "build:venues": "node build-venues-ssg.js",
-    "build": "npm run build:css && npm run build:venues"
+    "build:venues:simple": "node build-venues-simple.js",
+    "build": "npm run build:venues:simple"
   },
   "dependencies": {
     "airtable": "^0.12.2",
