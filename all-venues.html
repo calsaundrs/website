@@ -426,24 +426,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the best LGBTQ+ friendly bars, clubs, and spaces in Birmingham. From iconic venues to hidden gems, find your perfect queer space.</p>
         </div>
         
-        <!-- Filter Bar -->
-        <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
-            <div class="flex flex-wrap gap-3 items-center">
-                <button class="filter-button active" data-filter-type="type" data-filter-value="all">All Venues</button>
-                <button class="filter-button" data-filter-type="type" data-filter-value="club">Clubs</button>
-                <button class="filter-button" data-filter-type="type" data-filter-value="bar">Bars</button>
-                <button class="filter-button" data-filter-type="type" data-filter-value="pub">Pubs</button>
-                <button class="filter-button" data-filter-type="type" data-filter-value="cafe">Cafes</button>
-                <button class="filter-button" data-filter-type="type" data-filter-value="restaurant">Restaurants</button>
-                
-                <!-- Search Bar -->
-                <div class="relative flex-1 max-w-md">
-                    <input type="text" id="search-input" placeholder="Search venues..." 
-                           class="w-full bg-gray-800/50 border border-gray-600/50 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500">
-                    <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Venues Grid -->
         <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
@@ -498,8 +481,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script>
         // --- Global State ---
         let allVenues = [];
-        let activeTypeFilter = 'all';
-        let searchTerm = '';
 
         // --- DOM Elements ---
         const venueGrid = document.getElementById('venue-grid');
@@ -517,29 +498,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             return stars;
         }
 
-        // --- Filtering and Sorting Logic ---
-        function applyFiltersAndSort() {
-            let filteredVenues = [...allVenues];
+        // --- Display Logic ---
+        function displayVenues() {
+            // Sort by popularity first, then alphabetically
+            const sortedVenues = [...allVenues].sort((a, b) => {
+                if (a.popular && !b.popular) return -1;
+                if (!a.popular && b.popular) return 1;
+                return a.name.localeCompare(b.name);
+            });
 
-            // Apply type filter
-            if (activeTypeFilter !== 'all') {
-                filteredVenues = filteredVenues.filter(venue => venue.type === activeTypeFilter);
-            }
-
-            // Apply search filter
-            if (searchTerm.trim() !== '') {
-                const searchLower = searchTerm.toLowerCase();
-                filteredVenues = filteredVenues.filter(venue => 
-                    venue.name.toLowerCase().includes(searchLower) ||
-                    (venue.description && venue.description.toLowerCase().includes(searchLower)) ||
-                    (venue.address && venue.address.toLowerCase().includes(searchLower))
-                );
-            }
-
-            // Sort by name alphabetically
-            filteredVenues.sort((a, b) => a.name.localeCompare(b.name));
-
-            renderVenues(filteredVenues);
+            renderVenues(sortedVenues);
         }
 
         // --- Rendering Venue Cards ---
@@ -595,53 +563,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
 
-        // --- Reset Filters ---
-        function resetFilters() {
-            activeTypeFilter = 'all';
-            searchTerm = '';
 
-            // Reset UI active states
-            document.querySelectorAll('#filter-bar-container .filter-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('#filter-bar-container .filter-button[data-filter-value="all"]').classList.add('active');
-            
-            // Clear search input
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) searchInput.value = '';
-
-            applyFiltersAndSort();
-        }
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            // Filter button clicks
-            document.querySelectorAll('#filter-bar-container .filter-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    document.querySelectorAll('#filter-bar-container .filter-button').forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked button
-                    button.classList.add('active');
-                    
-                    // Update filter
-                    activeTypeFilter = button.dataset.filterValue;
-                    applyFiltersAndSort();
-                });
-            });
-
-            // Search input
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    searchTerm = e.target.value;
-                    applyFiltersAndSort();
-                });
-            }
-
-            // Reset filters button
-            const resetBtn = document.getElementById('reset-venue-filters-btn');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', resetFilters);
-            }
-        }
 
         // --- Initialization ---
         async function initializePage() {
@@ -668,8 +590,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.log('Raw API response:', data);
                 }
 
-                setupEventListeners();
-                applyFiltersAndSort(); // Apply initial filters and render
+                displayVenues(); // Display all venues
             } catch (error) {
                 console.error("Error initializing venues page:", error);
                 venueGrid.innerHTML = `
