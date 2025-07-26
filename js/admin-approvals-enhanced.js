@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let venues = [];
             
             try {
-                const eventsResponse = await fetch('/.netlify/functions/get-pending-items');
+                const eventsResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 if (eventsResponse.ok) {
                     events = await eventsResponse.json();
                     console.log(`Loaded ${events.length} pending events`);
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Regular approval for non-recurring events or venues
-            const endpoint = type === 'event' ? 'update-submission-status' : 'update-item-status';
+            const endpoint = type === 'event' ? 'update-submission-status' : 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function rejectItem(id, type, reason) {
         try {
-            const endpoint = type === 'event' ? 'update-submission-status' : 'update-item-status';
+            const endpoint = type === 'event' ? 'update-submission-status' : 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            const endpoint = type === 'event' ? 'update-submission' : 'update-item-status';
+            const endpoint = type === 'event' ? 'update-submission' : 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {

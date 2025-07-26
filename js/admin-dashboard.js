@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let pendingEvents = [];
             try {
                 console.log('Fetching pending events...');
-                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items');
+                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 if (!pendingEventsResponse.ok) {
                     throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
                 }
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check for new submissions
     async function checkForNewSubmissions() {
         try {
-            const response = await fetch('/.netlify/functions/get-pending-items');
+            const response = await fetch('/.netlify/functions/get-pending-items-firestore');
             const pendingItems = await response.json();
             
             const currentTime = Date.now();
