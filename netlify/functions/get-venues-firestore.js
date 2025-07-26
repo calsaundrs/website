@@ -36,14 +36,21 @@ exports.handler = async (event, context) => {
             // Debug: Log raw venue data to see what fields exist
             console.log(`Raw venue data for ${processedVenue.name}:`, {
                 id: doc.id,
+                name: venueData.name || venueData['Venue Name'] || venueData['Name'],
+                slug: processedVenue.slug,
                 hasImageField: !!venueData.image,
                 hasPhotoField: !!venueData.Photo,
                 hasCloudinaryId: !!venueData['Cloudinary Public ID'],
                 processedImage: processedVenue.image
             });
             
-            // Include all venues, even with placeholder images
-            venues.push(processedVenue);
+            // Only include venues that have actual images (not placeholders)
+            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
+                venues.push(processedVenue);
+                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
+            } else {
+                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
+            }
         });
         
         console.log(`Found ${venues.length} venues to display - CLOUDINARY ONLY`);
