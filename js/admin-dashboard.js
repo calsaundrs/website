@@ -467,8 +467,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Setup rebuild venues functionality
     function setupRebuildVenues() {
+        console.log('Setting up rebuild venues functionality...');
         const rebuildBtn = document.getElementById('rebuild-venues-btn');
         const rebuildStatus = document.getElementById('rebuild-status');
+        
+        console.log('Rebuild button found:', !!rebuildBtn);
+        console.log('Rebuild status found:', !!rebuildStatus);
         
         // Load last rebuild time from localStorage
         const lastRebuildInfo = document.getElementById('last-rebuild-info');
@@ -488,7 +492,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (rebuildBtn) {
+            console.log('Adding click listener to rebuild button...');
             rebuildBtn.addEventListener('click', async () => {
+                console.log('Rebuild button clicked!');
                 if (rebuildBtn.disabled) return;
                 
                 // Show confirmation dialog
