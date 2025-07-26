@@ -326,7 +326,7 @@ exports.handler = async function (event, context) {
         
         // Prepare event data for both Airtable and Firestore
         const eventData = {
-            // Core fields (matching the working event-submission.js)
+            // Core fields (matching the working event-submission.js exactly)
             'Event Name': submission['event-name'] || 'Untitled Event',
             'Date': new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
             'Description': submission.description || '',
@@ -335,10 +335,8 @@ exports.handler = async function (event, context) {
             'Submitter Email': submission.email || null,
             'Slug': slug,
             
-            // Optional fields
+            // Optional fields (only if they exist in your schema)
             'Category': submission.category ? submission.category.split(',') : [],
-            'Price': submission.price || '',
-            'Age Restriction': submission['age-restriction'] || '',
             
             // Recurring event fields
             'Recurring Info': recurringInfo,
@@ -364,8 +362,6 @@ exports.handler = async function (event, context) {
             status: 'pending',
             venueName: submission['venue-text'] || submission['venue-name'] || '',
             category: eventData['Category'],
-            price: eventData['Price'] || '',
-            ageRestriction: eventData['Age Restriction'] || '',
             link: eventData['Link'],
             recurringInfo: eventData['Recurring Info'],
             seriesId: eventData['Series ID'],

@@ -83,6 +83,9 @@
                     <button id="test-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-plus mr-2"></i>Test Event Submission
                     </button>
+                    <button id="test-minimal-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-calendar mr-2"></i>Test Minimal Submission
+                    </button>
                     <button id="test-venue-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-building mr-2"></i>Test Venue Submission
                     </button>
@@ -507,7 +510,6 @@
                 formData.append('start-time', '19:00');
                 formData.append('venue-text', 'Test Venue');
                 formData.append('category', 'Test, Migration');
-                formData.append('price', 'Free');
                 formData.append('email', 'test@brumoutloud.co.uk');
                 
                 const response = await fetch('/.netlify/functions/unified-event-submission', {
@@ -523,6 +525,42 @@
                 }
             } catch (error) {
                 resultsDiv.innerHTML = `<p class="status-error">Event submission error: ${error.message}</p>`;
+            }
+        }
+
+        async function testMinimalSubmission() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Testing minimal event submission...</p>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('event-name', 'Minimal Test Event');
+                formData.append('description', 'This is a minimal test event');
+                formData.append('date', '2024-12-25');
+                formData.append('start-time', '19:00');
+                formData.append('venue-text', 'Test Venue');
+                formData.append('email', 'test@brumoutloud.co.uk');
+                
+                const response = await fetch('/.netlify/functions/minimal-event-submission', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Minimal test event submitted successfully!</p>
+                            <p class="text-gray-400">Airtable ID: ${data.airtableId}</p>
+                            <p class="text-gray-400">Firestore ID: ${data.firestoreId}</p>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultsDiv.innerHTML = `<p class="status-error">Minimal submission failed: ${errorText}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Minimal submission error: ${error.message}</p>`;
             }
         }
 
@@ -611,6 +649,7 @@
         document.getElementById('run-audit').addEventListener('click', runAudit);
         document.getElementById('run-migration').addEventListener('click', runMigration);
         document.getElementById('test-submission').addEventListener('click', testEventSubmission);
+        document.getElementById('test-minimal-submission').addEventListener('click', testMinimalSubmission);
         document.getElementById('test-venue-submission').addEventListener('click', testVenueSubmission);
         document.getElementById('create-test-data').addEventListener('click', createTestData);
 
