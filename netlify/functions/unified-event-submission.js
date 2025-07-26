@@ -332,8 +332,7 @@ exports.handler = async function (event, context) {
             'Description': submission.description,
             'Date': submission.date,
             'Status': 'Pending Review',
-            'Venue Name': submission['venue-name'],
-            'VenueText': submission['venue-text'],
+            'VenueText': submission['venue-text'] || submission['venue-name'], // Text field for venue name
             'Category': submission.category ? submission.category.split(',') : [],
             'Price': submission.price || '',
             'Age Restriction': submission['age-restriction'] || '',
@@ -366,7 +365,7 @@ exports.handler = async function (event, context) {
             description: eventData['Description'],
             date: eventData['Date'],
             status: 'pending',
-            venueName: eventData['Venue Name'] || eventData['VenueText'],
+            venueName: eventData['VenueText'],
             category: eventData['Category'],
             price: eventData['Price'] || '',
             ageRestriction: eventData['Age Restriction'] || '',
