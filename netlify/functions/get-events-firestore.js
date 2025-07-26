@@ -284,10 +284,12 @@ async function handleVenuesView() {
             }
             
             if (hasImage) {
-                venues.push(processVenueForPublic({
+                const processedVenue = processVenueForPublic({
                     id: doc.id,
                     ...venueData
-                }));
+                });
+                console.log(`Processed venue ${processedVenue.name} image:`, processedVenue.image);
+                venues.push(processedVenue);
             }
         });
         
@@ -329,11 +331,20 @@ function processVenueForPublic(venueData) {
         const imageData = venueData[field];
         if (imageData) {
             if (Array.isArray(imageData) && imageData.length > 0) {
-                // Handle array format (like from Airtable)
+                // Handle Airtable array format
                 const firstImage = imageData[0];
-                if (firstImage && firstImage.url) {
-                    imageUrl = firstImage.url;
-                    break;
+                if (firstImage) {
+                    // Prefer the main URL, then large thumbnail, then small thumbnail
+                    if (firstImage.url) {
+                        imageUrl = firstImage.url;
+                        break;
+                    } else if (firstImage.thumbnails && firstImage.thumbnails.large && firstImage.thumbnails.large.url) {
+                        imageUrl = firstImage.thumbnails.large.url;
+                        break;
+                    } else if (firstImage.thumbnails && firstImage.thumbnails.small && firstImage.thumbnails.small.url) {
+                        imageUrl = firstImage.thumbnails.small.url;
+                        break;
+                    }
                 }
             } else if (typeof imageData === 'string') {
                 // Handle direct URL string
@@ -450,11 +461,20 @@ function processEventForPublic(eventData) {
         const imageData = mappedData[field];
         if (imageData) {
             if (Array.isArray(imageData) && imageData.length > 0) {
-                // Handle array format (like from Airtable)
+                // Handle Airtable array format
                 const firstImage = imageData[0];
-                if (firstImage && firstImage.url) {
-                    imageUrl = firstImage.url;
-                    break;
+                if (firstImage) {
+                    // Prefer the main URL, then large thumbnail, then small thumbnail
+                    if (firstImage.url) {
+                        imageUrl = firstImage.url;
+                        break;
+                    } else if (firstImage.thumbnails && firstImage.thumbnails.large && firstImage.thumbnails.large.url) {
+                        imageUrl = firstImage.thumbnails.large.url;
+                        break;
+                    } else if (firstImage.thumbnails && firstImage.thumbnails.small && firstImage.thumbnails.small.url) {
+                        imageUrl = firstImage.thumbnails.small.url;
+                        break;
+                    }
                 }
             } else if (typeof imageData === 'string') {
                 // Handle direct URL string

@@ -559,8 +559,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             venueGrid.innerHTML = venuesToDisplay.map(venue => {
-                const tagsHTML = venue.tags && venue.tags.length > 0 ? 
-                    venue.tags.map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
+                const tagsHTML = (venue.tags || venue.category || []).length > 0 ? 
+                    (venue.tags || venue.category || []).map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
                 const imageUrl = venue.image && venue.image.url ? venue.image.url : 'https://placehold.co/400x300/1e1e1e/EAEAEA?text=Venue';
                 const isPopular = venue.popular || false;
                 const venueType = venue.type || 'venue';
@@ -651,6 +651,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const data = await response.json();
                 
                 allVenues = data.venues || []; 
+                
+                // Debug: Log the first venue to see image data
+                if (allVenues.length > 0) {
+                    console.log('First venue data:', allVenues[0]);
+                    console.log('First venue image:', allVenues[0].image);
+                }
 
                 setupEventListeners();
                 applyFiltersAndSort(); // Apply initial filters and render
