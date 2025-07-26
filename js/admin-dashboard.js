@@ -494,14 +494,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rebuildBtn) {
             console.log('Adding click listener to rebuild button...');
             rebuildBtn.addEventListener('click', async () => {
-                console.log('Rebuild button clicked!');
-                if (rebuildBtn.disabled) {
-                    console.log('Button is disabled, returning');
-                    return;
-                }
+                try {
+                    console.log('Rebuild button clicked!');
+                    if (rebuildBtn.disabled) {
+                        console.log('Button is disabled, returning');
+                        return;
+                    }
                 
                 // Show confirmation dialog
+                console.log('Showing confirmation dialog...');
                 const confirmed = confirm('Are you sure you want to rebuild all venue pages? This will regenerate all static venue files with the latest data from the database.');
+                console.log('Confirmation result:', confirmed);
+                
                 if (!confirmed) {
                     console.log('User cancelled rebuild');
                     return;
@@ -595,6 +599,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     rebuildStatus.classList.add('hidden');
                     rebuildBtn.querySelector('.fa-sync-alt').classList.remove('animate-spin');
                 }
+            } catch (error) {
+                console.error('Unexpected error in rebuild button click handler:', error);
+                showNotification(`❌ Unexpected error: ${error.message}`, 'error');
+            }
             });
         }
     }
