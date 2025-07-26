@@ -769,8 +769,8 @@ async function generateVenuePage(venue) {
         
         const html = renderTemplate(templateContent, templateData);
         
-        // Ensure venue directory exists
-        const venueDir = path.join(__dirname, 'venue');
+        // Ensure venue directory exists (use project root, not function directory)
+        const venueDir = path.join(process.cwd(), 'venue');
         if (!fsSync.existsSync(venueDir)) {
             await fs.mkdir(venueDir, { recursive: true });
         }
