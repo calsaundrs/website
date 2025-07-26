@@ -46,6 +46,12 @@
   to = "/test-venues.html"
   status = 200
 
+# Rule for the test rebuild page
+[[redirects]]
+  from = "/test-rebuild"
+  to = "/test-rebuild.html"
+  status = 200
+
 # Rule for the main EVENTS listing page
 [[redirects]]
   from = "/events"
