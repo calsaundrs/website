@@ -80,8 +80,8 @@ exports.handler = async function (event, context) {
             'Slug': slug,
             
             // Additional fields to test
-            'Link': submission.link || '',
-            'Category': submission.category ? submission.category.split(',') : []
+            'Link': submission.link || ''
+            // Removed Category field for now - it's a select field with predefined options
         };
         
         console.log('Attempting to create event in Airtable with data:', eventData);
@@ -101,7 +101,7 @@ exports.handler = async function (event, context) {
             date: eventData['Date'],
             status: 'pending',
             venueName: submission['venue-text'] || submission['venue-name'] || '',
-            category: eventData['Category'],
+            category: submission.category ? submission.category.split(',') : [], // Store in Firestore but not Airtable
             link: eventData['Link'],
             submittedBy: eventData['Submitter Email'],
             createdAt: new Date(),
