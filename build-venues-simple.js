@@ -653,9 +653,31 @@ function renderTemplate(template, data) {
         return data.venue[objKey] && data.venue[objKey][propKey] ? data.venue[objKey][propKey] : '';
     });
     
-    // Replace conditional blocks for venue properties
-    result = result.replace(/\{\{#if venue\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+    // Replace conditional blocks for venue properties with else
+    result = result.replace(/\{\{#if venue\.([^}]+)\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, ifContent, elseContent) => {
+        return data.venue[key] ? ifContent : elseContent;
+    });
+    
+    // Replace conditional blocks for venue properties without else
+    result = result.replace(/\{\{#if venue\.([^}]+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
         return data.venue[key] ? content : '';
+    });
+    
+    // Special handling for venue.description if it wasn't caught
+    if (result.includes('{{#if venue.description}}')) {
+        result = result.replace(/\{\{#if venue\.description\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, content) => {
+            return data.venue.description ? content : '';
+        });
+    }
+    
+    // Replace conditional blocks for venue object properties (like venue.image.url)
+    result = result.replace(/\{\{#if venue\.(\w+)\.(\w+)\}\}([\s\S]*?)\{\{else\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, objKey, propKey, ifContent, elseContent) => {
+        return data.venue[objKey] && data.venue[objKey][propKey] ? ifContent : elseContent;
+    });
+    
+    // Replace conditional blocks for venue object properties without else
+    result = result.replace(/\{\{#if venue\.(\w+)\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, objKey, propKey, content) => {
+        return data.venue[objKey] && data.venue[objKey][propKey] ? content : '';
     });
     
     // Replace conditional blocks for googlePlaces properties

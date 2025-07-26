@@ -13,7 +13,7 @@
     <meta property="og:url" content="https://brumoutloud.co.uk/venue/village-inn">
     
     <meta property="og:image" content="https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn">
-    
+    {{/if}}
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
@@ -151,8 +151,6 @@
             <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
                 
                 <img src="https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn" alt="The Village Inn" class="w-full h-full object-cover">
-                {{else}}
-                <i class="fas fa-building text-6xl text-gray-600"></i>
                 
                 <div class="absolute top-4 left-4">
                     <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
@@ -224,7 +222,7 @@
                         
 
                         <!-- Google Reviews -->
-                        
+                        {{#if googlePlaces.reviews.length}}
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fab fa-google mr-3 text-accent-color"></i>Recent Reviews from Google
