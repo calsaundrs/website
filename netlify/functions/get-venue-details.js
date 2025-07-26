@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const Handlebars = require('handlebars');
+const fetch = require('node-fetch');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -62,6 +63,9 @@ exports.handler = async function (event, context) {
 
         // Get upcoming events for this venue
         const upcomingEvents = await getUpcomingEventsForVenue(venueData.id, 6);
+
+        // Get Google Places data
+        const googlePlacesData = await getGooglePlacesData(venueData);
 
         // Embedded template to avoid file system issues in Netlify Functions
         const templateContent = `<!DOCTYPE html>
@@ -258,67 +262,54 @@ exports.handler = async function (event, context) {
                         </div>
                         {{/if}}
 
-                        <!-- Gallery Placeholder -->
+                        <!-- Gallery -->
+                        {{#if googlePlaces.images.length}}
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
                             </h2>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
+                                {{#each googlePlaces.images}}
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover">
                                 </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
+                                {{/each}}
                             </div>
                             <p class="text-xs text-gray-500 mt-4 text-center">
-                                Please note: these images are sourced from the venue's Google Places listing. We do not have control over which photos are displayed.
+                                Images sourced from Google Places
                             </p>
                         </div>
+                        {{/if}}
 
-                        <!-- Google Reviews Placeholder -->
+                        <!-- Google Reviews -->
+                        {{#if googlePlaces.reviews.length}}
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fab fa-google mr-3 text-accent-color"></i>Recent Reviews from Google
                             </h2>
                             <div class="space-y-4">
+                                {{#each googlePlaces.reviews}}
                                 <div class="p-4 bg-gray-800/50 rounded-lg">
                                     <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Sarah Johnson</p>
+                                        <p class="font-semibold text-white">{{author}}</p>
                                         <div class="text-xs">
+                                            {{#times rating}}
                                             <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Amazing atmosphere and great drag shows! The staff are friendly and the drinks are reasonably priced. Highly recommend for a night out.</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Mike Thompson</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
+                                            {{/times}}
+                                            {{#times (subtract 5 rating)}}
                                             <i class="far fa-star text-yellow-400"></i>
+                                            {{/times}}
                                         </div>
                                     </div>
-                                    <p class="text-gray-300 text-sm">Great venue with multiple floors. The music is always on point and the crowd is welcoming. Perfect for the LGBTQ+ community.</p>
+                                    <p class="text-gray-300 text-sm">{{text}}</p>
                                 </div>
+                                {{/each}}
                             </div>
                             <div class="mt-8 text-center">
                                 <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
                             </div>
                         </div>
+                        {{/if}}
 
                         <!-- Upcoming Events -->
                         {{#if hasUpcomingEvents}}
@@ -361,8 +352,42 @@ exports.handler = async function (event, context) {
                         </div>
                         {{/if}}
 
+                        <!-- Current Status -->
+                        {{#if googlePlaces.isOpen}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                            </h3>
+                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                <p class="font-bold text-lg">Open</p>
+                                <p class="text-sm">Currently open for business</p>
+                            </div>
+                        </div>
+                        {{else if (not googlePlaces.isOpen)}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                            </h3>
+                            <div class="p-3 rounded-lg border text-center bg-red-500/10 text-red-400 border-red-500/30 mb-4">
+                                <p class="font-bold text-lg">Closed</p>
+                                <p class="text-sm">Currently closed</p>
+                            </div>
+                        </div>
+                        {{/if}}
+
                         <!-- Opening Hours -->
-                        {{#if venue.openingHours}}
+                        {{#if googlePlaces.openingHours.length}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                {{#each googlePlaces.openingHours}}
+                                <p>{{this}}</p>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{else if venue.openingHours}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
@@ -374,24 +399,52 @@ exports.handler = async function (event, context) {
                         {{/if}}
 
                         <!-- Google Rating -->
+                        {{#if googlePlaces.rating}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
                             </h3>
                             <div class="flex items-center space-x-2 text-xl mb-2">
                                 <div>
+                                    {{#times googlePlaces.rating}}
                                     <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
+                                    {{/times}}
+                                    {{#times (subtract 5 googlePlaces.rating)}}
+                                    <i class="far fa-star text-yellow-400"></i>
+                                    {{/times}}
                                 </div>
-                                <p class="text-white font-semibold">4.8 <span class="text-gray-400">(247)</span></p>
+                                <p class="text-white font-semibold">{{googlePlaces.rating}} <span class="text-gray-400">({{googlePlaces.reviewCount}})</span></p>
                             </div>
                             <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
                                 View on Google Maps
                             </a>
                         </div>
+                        {{/if}}
+
+                        <!-- Contact Info -->
+                        {{#if googlePlaces.phone}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:{{googlePlaces.phone}}" class="text-blue-400 hover:underline">
+                                        {{googlePlaces.phone}}
+                                    </a>
+                                </div>
+                                {{#if googlePlaces.website}}
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="{{googlePlaces.website}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        {{/if}}
 
                         <!-- Share Venue -->
                         <div class="venue-card p-6">
@@ -442,6 +495,19 @@ exports.handler = async function (event, context) {
 </body>
 </html>`;
 
+        // Register Handlebars helpers
+        Handlebars.registerHelper('times', function(n, block) {
+            let accum = '';
+            for(let i = 0; i < n; ++i) {
+                accum += block.fn(i);
+            }
+            return accum;
+        });
+
+        Handlebars.registerHelper('subtract', function(a, b) {
+            return a - b;
+        });
+
         // Compile the template
         const template = Handlebars.compile(templateContent);
 
@@ -450,6 +516,7 @@ exports.handler = async function (event, context) {
             venue: venueData,
             upcomingEvents: upcomingEvents,
             hasUpcomingEvents: upcomingEvents.length > 0,
+            googlePlaces: googlePlacesData,
             categoryTags: (venueData.category || []).map(tag => 
                 '<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">' + tag + '</span>'
             ).join(''),
@@ -661,5 +728,120 @@ async function getUpcomingEventsForVenue(venueId, limit = 6) {
     } catch (error) {
         console.error('Error fetching upcoming events for venue:', error);
         return [];
+    }
+}
+
+async function getGooglePlacesData(venueData) {
+    try {
+        // Check if we have a Google Places ID
+        const placeId = venueData.googlePlaceId || venueData['Google Place ID'];
+        
+        if (!placeId) {
+            console.log('No Google Place ID found for venue:', venueData.name);
+            return {
+                images: [],
+                reviews: [],
+                rating: null,
+                reviewCount: 0,
+                openingHours: null,
+                isOpen: null
+            };
+        }
+
+        const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+        if (!apiKey) {
+            console.log('No Google Places API key found');
+            return {
+                images: [],
+                reviews: [],
+                rating: null,
+                reviewCount: 0,
+                openingHours: null,
+                isOpen: null
+            };
+        }
+
+        // Get place details
+        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=photos,reviews,rating,user_ratings_total,opening_hours,formatted_phone_number,website&key=${apiKey}`;
+        
+        const detailsResponse = await fetch(detailsUrl);
+        const detailsData = await detailsResponse.json();
+
+        if (detailsData.status !== 'OK') {
+            console.log('Google Places API error:', detailsData.status);
+            return {
+                images: [],
+                reviews: [],
+                rating: null,
+                reviewCount: 0,
+                openingHours: null,
+                isOpen: null
+            };
+        }
+
+        const result = detailsData.result;
+        
+        // Process images
+        const images = [];
+        if (result.photos && result.photos.length > 0) {
+            // Get up to 8 images
+            const photoLimit = Math.min(result.photos.length, 8);
+            for (let i = 0; i < photoLimit; i++) {
+                const photo = result.photos[i];
+                const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&maxheight=600&photo_reference=${photo.photo_reference}&key=${apiKey}`;
+                images.push({
+                    url: imageUrl,
+                    width: photo.width,
+                    height: photo.height
+                });
+            }
+        }
+
+        // Process reviews
+        const reviews = [];
+        if (result.reviews && result.reviews.length > 0) {
+            // Get up to 5 reviews
+            const reviewLimit = Math.min(result.reviews.length, 5);
+            for (let i = 0; i < reviewLimit; i++) {
+                const review = result.reviews[i];
+                reviews.push({
+                    author: review.author_name,
+                    rating: review.rating,
+                    text: review.text,
+                    time: review.time,
+                    profilePhoto: review.profile_photo_url
+                });
+            }
+        }
+
+        // Process opening hours
+        let openingHours = null;
+        let isOpen = null;
+        if (result.opening_hours) {
+            openingHours = result.opening_hours.weekday_text || [];
+            isOpen = result.opening_hours.open_now;
+        }
+
+        return {
+            images: images,
+            reviews: reviews,
+            rating: result.rating || null,
+            reviewCount: result.user_ratings_total || 0,
+            openingHours: openingHours,
+            isOpen: isOpen,
+            phone: result.formatted_phone_number || null,
+            website: result.website || null
+        };
+
+    } catch (error) {
+        console.error('Error fetching Google Places data:', error);
+        return {
+            images: [],
+            reviews: [],
+            rating: null,
+            reviewCount: 0,
+            openingHours: null,
+            isOpen: null
+        };
     }
 }
