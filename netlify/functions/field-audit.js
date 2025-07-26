@@ -1,7 +1,7 @@
 const Airtable = require('airtable');
 
 exports.handler = async function (event, context) {
-    console.log('Starting field audit...');
+    console.log('Starting comprehensive field audit...');
     
     try {
         // Check environment variables
@@ -28,10 +28,9 @@ exports.handler = async function (event, context) {
             apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
         }).base(process.env.AIRTABLE_BASE_ID);
         
-        // Get a sample record to see the field structure
+        // Get multiple records to see more fields
         const events = await base('Events').select({
-            fields: ['Event Name'],
-            maxRecords: 1
+            maxRecords: 5
         }).all();
         
         if (events.length === 0) {
@@ -45,38 +44,69 @@ exports.handler = async function (event, context) {
             };
         }
         
-        const sampleEvent = events[0];
-        const fields = Object.keys(sampleEvent.fields);
+        // Collect all unique fields from all records
+        const allFields = new Set();
+        events.forEach(event => {
+            Object.keys(event.fields).forEach(field => allFields.add(field));
+        });
         
-        // Try to access each field to see which ones are computed
+        const fieldNames = Array.from(allFields).sort();
+        console.log('Found fields:', fieldNames);
+        
+        // Analyze each field
         const fieldAnalysis = {};
+        const sampleEvent = events[0];
         
-        for (const fieldName of fields) {
+        for (const fieldName of fieldNames) {
             try {
+                // Try to get the field value
                 const value = sampleEvent.get(fieldName);
                 fieldAnalysis[fieldName] = {
                     accessible: true,
                     value: value,
                     type: typeof value,
-                    isArray: Array.isArray(value)
+                    isArray: Array.isArray(value),
+                    isNull: value === null,
+                    isUndefined: value === undefined,
+                    stringLength: typeof value === 'string' ? value.length : null
                 };
             } catch (error) {
                 fieldAnalysis[fieldName] = {
                     accessible: false,
                     error: error.message,
-                    type: 'computed'
+                    type: 'computed',
+                    errorType: error.constructor.name
                 };
             }
+        }
+        
+        // Also try to get table metadata
+        let tableInfo = null;
+        try {
+            // Try to get table information
+            const table = base('Events');
+            tableInfo = {
+                name: 'Events',
+                recordCount: events.length
+            };
+        } catch (error) {
+            tableInfo = {
+                error: error.message
+            };
         }
         
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                message: 'Field audit completed',
-                totalFields: fields.length,
+                message: 'Comprehensive field audit completed',
+                totalFields: fieldNames.length,
                 fields: fieldAnalysis,
-                sampleRecordId: sampleEvent.id
+                fieldNames: fieldNames,
+                sampleRecordId: sampleEvent.id,
+                tableInfo: tableInfo,
+                recordsAnalyzed: events.length,
+                rawFields: events[0].fields // Include raw fields for debugging
             })
         };
         
@@ -88,7 +118,8 @@ exports.handler = async function (event, context) {
             body: JSON.stringify({
                 error: 'Field audit failed',
                 message: error.message,
-                stack: error.stack
+                stack: error.stack,
+                type: error.constructor.name
             })
         };
     }

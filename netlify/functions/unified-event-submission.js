@@ -326,18 +326,19 @@ exports.handler = async function (event, context) {
         
         // Prepare event data for both Airtable and Firestore
         const eventData = {
-            // Core fields
-            'Event Name': submission['event-name'],
-            'Slug': slug,
-            'Description': submission.description,
-            'Date': submission.date,
+            // Core fields (matching the working event-submission.js)
+            'Event Name': submission['event-name'] || 'Untitled Event',
+            'Date': new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
+            'Description': submission.description || '',
+            'Link': submission.link || '',
             'Status': 'Pending Review',
-            'VenueText': submission['venue-text'] || submission['venue-name'], // Text field for venue name
+            'Submitter Email': submission.email || null,
+            'Slug': slug,
+            
+            // Optional fields
             'Category': submission.category ? submission.category.split(',') : [],
             'Price': submission.price || '',
             'Age Restriction': submission['age-restriction'] || '',
-            'Link': submission.link,
-            'Submitter Email': submission.email,
             
             // Recurring event fields
             'Recurring Info': recurringInfo,
@@ -345,11 +346,7 @@ exports.handler = async function (event, context) {
             
             // Image fields
             'Cloudinary Public ID': uploadedImage ? uploadedImage.publicId : null,
-            'Promo Image': uploadedImage ? uploadedImage.url : null,
-            
-            // Timestamps
-            'Created Time': new Date().toISOString(),
-            'Last Modified Time': new Date().toISOString()
+            'Promo Image': uploadedImage ? uploadedImage.url : null
         };
         
         // Submit to Airtable
@@ -365,7 +362,7 @@ exports.handler = async function (event, context) {
             description: eventData['Description'],
             date: eventData['Date'],
             status: 'pending',
-            venueName: eventData['VenueText'],
+            venueName: submission['venue-text'] || submission['venue-name'] || '',
             category: eventData['Category'],
             price: eventData['Price'] || '',
             ageRestriction: eventData['Age Restriction'] || '',
@@ -375,7 +372,6 @@ exports.handler = async function (event, context) {
             cloudinaryPublicId: eventData['Cloudinary Public ID'],
             promoImage: eventData['Promo Image'],
             submittedBy: eventData['Submitter Email'],
-            submittedAt: eventData['Created Time'],
             createdAt: new Date(),
             updatedAt: new Date()
         };
