@@ -495,13 +495,19 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Adding click listener to rebuild button...');
             rebuildBtn.addEventListener('click', async () => {
                 console.log('Rebuild button clicked!');
-                if (rebuildBtn.disabled) return;
+                if (rebuildBtn.disabled) {
+                    console.log('Button is disabled, returning');
+                    return;
+                }
                 
                 // Show confirmation dialog
                 const confirmed = confirm('Are you sure you want to rebuild all venue pages? This will regenerate all static venue files with the latest data from the database.');
                 if (!confirmed) {
+                    console.log('User cancelled rebuild');
                     return;
                 }
+                
+                console.log('User confirmed rebuild, starting process...');
                 
                 try {
                     // Show loading state
@@ -512,6 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showNotification('Starting venue rebuild process...', 'info');
                     
                     // Call the rebuild function
+                    console.log('Calling rebuild function...');
                     const response = await fetch('/.netlify/functions/build-venues-ssg', {
                         method: 'POST',
                         headers: {
@@ -523,11 +530,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         })
                     });
                     
+                    console.log('Rebuild response status:', response.status);
+                    
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
                     
                     const result = await response.json();
+                    console.log('Rebuild result:', result);
                     
                     if (result.success) {
                         showNotification(`✅ Successfully rebuilt ${result.generatedFiles || 0} venue pages!`, 'success');
