@@ -1,69 +1,106 @@
 const fs = require('fs').promises;
 const path = require('path');
+const admin = require('firebase-admin');
 
-// Sample venue data (you can replace this with your actual venue data)
-const sampleVenues = [
-    {
-        id: 'nightingale-club',
-        name: 'The Nightingale Club',
-        slug: 'nightingale-club',
-        description: 'Birmingham\'s premier LGBTQ+ nightclub, featuring multiple floors of entertainment, drag shows, and themed nights.',
-        address: '18 Kent Street, Birmingham, B5 6RD',
-        link: 'https://nightingaleclub.co.uk',
-        image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Nightingale+Club' },
-        category: ['LGBTQ+', 'Nightclub', 'Drag Shows'],
-        openingHours: 'Mon-Sun: 9pm-3am',
-        popular: true
-    },
-    {
-        id: 'village-inn',
-        name: 'The Village Inn',
-        slug: 'village-inn',
-        description: 'A welcoming LGBTQ+ pub in the heart of Birmingham\'s Gay Village, offering great drinks and a friendly atmosphere.',
-        address: '22 Hurst Street, Birmingham, B5 4TD',
-        link: 'https://villageinnbirmingham.co.uk',
-        image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn' },
-        category: ['LGBTQ+', 'Pub', 'Bar'],
-        openingHours: 'Mon-Sun: 12pm-12am',
-        popular: true
-    },
-    {
-        id: 'loft-lounge',
-        name: 'The Loft Lounge',
-        slug: 'loft-lounge',
-        description: 'Sophisticated cocktail bar with stunning city views, perfect for pre-drinks or a relaxed evening out.',
-        address: '15 Hurst Street, Birmingham, B5 4TD',
-        link: 'https://loftloungebirmingham.co.uk',
-        image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Loft+Lounge' },
-        category: ['LGBTQ+', 'Cocktail Bar', 'Lounge'],
-        openingHours: 'Tue-Sun: 5pm-2am',
-        popular: false
-    },
-    {
-        id: 'rainbow-bar',
-        name: 'The Rainbow Bar',
-        slug: 'rainbow-bar',
-        description: 'Vibrant LGBTQ+ bar with regular karaoke nights, quiz events, and a welcoming community atmosphere.',
-        address: '28 Hurst Street, Birmingham, B5 4TD',
-        link: 'https://rainbowbarbirmingham.co.uk',
-        image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Rainbow+Bar' },
-        category: ['LGBTQ+', 'Bar', 'Karaoke'],
-        openingHours: 'Mon-Sun: 2pm-2am',
-        popular: false
-    },
-    {
-        id: 'pride-center',
-        name: 'The Pride Center',
-        slug: 'pride-center',
-        description: 'Community center and event space for LGBTQ+ groups, offering support services and social events.',
-        address: '38-40 Hurst Street, Birmingham, B5 4TD',
-        link: 'https://pridecenterbirmingham.co.uk',
-        image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Pride+Center' },
-        category: ['LGBTQ+', 'Community Center', 'Support'],
-        openingHours: 'Mon-Fri: 10am-6pm, Sat: 10am-4pm',
-        popular: true
+// Initialize Firebase Admin with error handling
+let firebaseInitialized = false;
+let db = null;
+
+if (!admin.apps.length) {
+    try {
+        const requiredVars = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
+        const missingVars = requiredVars.filter(varName => !process.env[varName]);
+        
+        if (missingVars.length > 0) {
+            console.warn(`⚠️  Missing Firebase environment variables: ${missingVars.join(', ')}`);
+            console.warn('SSG will use fallback sample venues.');
+        } else {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+                })
+            });
+            db = admin.firestore();
+            firebaseInitialized = true;
+            console.log('✅ Firebase initialized successfully');
+        }
+    } catch (error) {
+        console.error('❌ Firebase initialization failed:', error.message);
+        console.warn('SSG will use fallback sample venues.');
     }
-];
+} else {
+    db = admin.firestore();
+    firebaseInitialized = true;
+}
+
+// Function to get real venues from Firebase
+async function getRealVenues() {
+    if (!firebaseInitialized || !db) {
+        console.log('⚠️ Firebase not initialized, using sample venues...');
+        return getSampleVenues();
+    }
+    
+    try {
+        console.log('📡 Fetching real venues from Firebase...');
+        
+        const venuesRef = db.collection('venues');
+        const snapshot = await venuesRef.get();
+        
+        const venues = [];
+        snapshot.forEach(doc => {
+            const venueData = doc.data();
+            const processedVenue = processVenueForPublic({
+                id: doc.id,
+                ...venueData
+            });
+            
+            // Only include venues that have actual images (not placeholders)
+            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
+                venues.push(processedVenue);
+            }
+        });
+        
+        console.log(`✅ Found ${venues.length} real venues from Firebase`);
+        return venues;
+        
+    } catch (error) {
+        console.error('❌ Error fetching venues from Firebase:', error);
+        console.log('⚠️ Using sample venues as fallback...');
+        return getSampleVenues();
+    }
+}
+
+// Function to get sample venues as fallback
+function getSampleVenues() {
+    return [
+        {
+            id: 'nightingale-club',
+            name: 'The Nightingale Club',
+            slug: 'nightingale-club',
+            description: 'Birmingham\'s premier LGBTQ+ nightclub, featuring multiple floors of entertainment, drag shows, and themed nights.',
+            address: '18 Kent Street, Birmingham, B5 6RD',
+            link: 'https://nightingaleclub.co.uk',
+            image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Nightingale+Club' },
+            category: ['LGBTQ+', 'Nightclub', 'Drag Shows'],
+            openingHours: 'Mon-Sun: 9pm-3am',
+            popular: true
+        },
+        {
+            id: 'village-inn',
+            name: 'The Village Inn',
+            slug: 'village-inn',
+            description: 'A welcoming LGBTQ+ pub in the heart of Birmingham\'s Gay Village, offering great drinks and a friendly atmosphere.',
+            address: '22 Hurst Street, Birmingham, B5 4TD',
+            link: 'https://villageinnbirmingham.co.uk',
+            image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn' },
+            category: ['LGBTQ+', 'Pub', 'Bar'],
+            openingHours: 'Mon-Sun: 12pm-12am',
+            popular: true
+        }
+    ];
+}
 
 // The exact same HTML template as used in the dynamic system
 const templateContent = `<!DOCTYPE html>
@@ -392,6 +429,64 @@ function renderTemplate(template, data) {
     return result;
 }
 
+// Function to process venue data (same as in get-venues-firestore.js)
+function processVenueForPublic(venueData) {
+    // Extract image URL from various possible formats
+    let imageUrl = null;
+    
+    // 1. First try Cloudinary public ID
+    const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
+    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${cloudinaryId}`;
+    } else {
+        // 2. Try to find any image field that might contain a Cloudinary URL
+        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
+        for (const field of possibleImageFields) {
+            const imageData = venueData[field];
+            if (imageData) {
+                // Check if it's already a Cloudinary URL
+                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                    imageUrl = imageData;
+                    break;
+                }
+                // Check if it's an object with a Cloudinary URL
+                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                    imageUrl = imageData.url;
+                    break;
+                }
+            }
+        }
+        
+        // 3. If still no image, generate a consistent placeholder based on venue name
+        if (!imageUrl) {
+            const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+            const encodedName = encodeURIComponent(venueName);
+            imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
+        }
+    }
+    
+    const venue = {
+        id: venueData.id,
+        name: venueData.name || venueData['Venue Name'] || venueData['Name'],
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'],
+        description: venueData.description || venueData['Description'] || `Venue hosting events`,
+        address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
+        link: venueData.link || venueData['Venue Link'] || venueData['Link'],
+        image: imageUrl ? { url: imageUrl } : null,
+        category: venueData.category || venueData.tags || venueData['Tags'] || [],
+        type: venueData.type || venueData['Type'] || 'venue',
+        status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
+        openingHours: venueData.openingHours || venueData['Opening Hours'],
+        popular: venueData.popular || venueData['Popular'] || false
+    };
+    
+    if (!venue.category || venue.category.length === 0) {
+        venue.category = ['LGBTQ+', 'Venue'];
+    }
+    
+    return venue;
+}
+
 function generateCategoryTags(categories) {
     if (!categories || categories.length === 0) {
         return '<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span>';
@@ -434,11 +529,14 @@ async function generateVenuePage(venue) {
 async function generateAllVenuePages() {
     try {
         console.log('🚀 Starting Simple Venue SSG Build...');
-        console.log(`📄 Found ${sampleVenues.length} venues to generate`);
+        
+        // Get real venues from Firebase
+        const venues = await getRealVenues();
+        console.log(`📄 Found ${venues.length} venues to generate`);
         
         const generatedFiles = [];
         
-        for (const venue of sampleVenues) {
+        for (const venue of venues) {
             try {
                 const filePath = await generateVenuePage(venue);
                 generatedFiles.push(filePath);
@@ -459,7 +557,7 @@ async function generateAllVenuePages() {
         sitemapEntries.forEach(url => console.log(`  ${url}`));
         
         return {
-            totalVenues: sampleVenues.length,
+            totalVenues: venues.length,
             generatedFiles: generatedFiles.length,
             sitemapEntries: sitemapEntries
         };
@@ -485,4 +583,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = { generateAllVenuePages, generateVenuePage, sampleVenues };
+module.exports = { generateAllVenuePages, generateVenuePage, getRealVenues };

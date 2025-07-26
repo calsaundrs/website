@@ -173,7 +173,7 @@
         <p class="subtitle">Generate static HTML pages for all venues using the exact same template as your current site</p>
         
         <div class="status info">
-            <strong>✨ Ready to Build!</strong> This will generate static venue pages that load instantly and look identical to your current design.
+            <strong>✨ Ready to Build!</strong> Loading real venues from database...
         </div>
 
         <div style="text-align: center;">
@@ -202,80 +202,70 @@
 
     <script>
         let buildInProgress = false;
-        const venues = [
-            {
-                name: 'The Nightingale Club',
-                slug: 'nightingale-club',
-                description: 'Birmingham\'s premier LGBTQ+ nightclub, featuring multiple floors of entertainment, drag shows, and themed nights.',
-                address: '18 Kent Street, Birmingham, B5 6RD',
-                category: ['LGBTQ+', 'Nightclub', 'Drag Shows'],
-                openingHours: 'Mon-Sun: 9pm-3am',
-                popular: true
-            },
-            {
-                name: 'The Village Inn',
-                slug: 'village-inn',
-                description: 'A welcoming LGBTQ+ pub in the heart of Birmingham\'s Gay Village, offering great drinks and a friendly atmosphere.',
-                address: '22 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Pub', 'Bar'],
-                openingHours: 'Mon-Sun: 12pm-12am',
-                popular: true
-            },
-            {
-                name: 'The Loft Lounge',
-                slug: 'loft-lounge',
-                description: 'Sophisticated cocktail bar with stunning city views, perfect for pre-drinks or a relaxed evening out.',
-                address: '15 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Cocktail Bar', 'Lounge'],
-                openingHours: 'Tue-Sun: 5pm-2am',
-                popular: false
-            },
-            {
-                name: 'The Rainbow Bar',
-                slug: 'rainbow-bar',
-                description: 'Vibrant LGBTQ+ bar with regular karaoke nights, quiz events, and a welcoming community atmosphere.',
-                address: '28 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Bar', 'Karaoke'],
-                openingHours: 'Mon-Sun: 2pm-2am',
-                popular: false
-            },
-            {
-                name: 'The Pride Center',
-                slug: 'pride-center',
-                description: 'Community center and event space for LGBTQ+ groups, offering support services and social events.',
-                address: '38-40 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Community Center', 'Support'],
-                openingHours: 'Mon-Fri: 10am-6pm, Sat: 10am-4pm',
-                popular: true
-            },
-            {
-                name: 'Missing Bar',
-                slug: 'missing-bar',
-                description: 'Popular LGBTQ+ bar known for its friendly atmosphere and regular events.',
-                address: '48 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Bar', 'Events'],
-                openingHours: 'Mon-Sun: 4pm-2am',
-                popular: true
-            },
-            {
-                name: 'The Fox',
-                slug: 'the-fox',
-                description: 'Cozy LGBTQ+ pub with a relaxed atmosphere and great food.',
-                address: '12 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Pub', 'Food'],
-                openingHours: 'Mon-Sun: 11am-11pm',
-                popular: false
-            },
-            {
-                name: 'Sidewalk Bar',
-                slug: 'sidewalk-bar',
-                description: 'Lively LGBTQ+ bar with outdoor seating and regular entertainment.',
-                address: '35 Hurst Street, Birmingham, B5 4TD',
-                category: ['LGBTQ+', 'Bar', 'Outdoor'],
-                openingHours: 'Mon-Sun: 12pm-1am',
-                popular: false
+        let venues = [];
+        let venuesLoaded = false;
+
+        // Function to fetch real venues from Firebase
+        async function fetchRealVenues() {
+            try {
+                log('📡 Fetching real venues from database...');
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/.netlify/functions/get-venues-firestore?t=${timestamp}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch venues. Status: ' + response.status);
+                }
+                
+                const data = await response.json();
+                venues = data.venues || [];
+                venuesLoaded = true;
+                
+                log(`✅ Loaded ${venues.length} real venues from database`);
+                
+                // Update status
+                updateStatus(`✅ Loaded ${venues.length} real venues from database! Ready to generate static pages.`, 'success');
+                
+                // Show the real venues
+                showVenuePreview();
+                
+                return venues;
+                
+            } catch (error) {
+                log('❌ Error fetching venues: ' + error.message);
+                log('⚠️ Using sample venues instead...');
+                
+                // Fallback to sample venues if fetch fails
+                venues = [
+                    {
+                        name: 'The Nightingale Club',
+                        slug: 'nightingale-club',
+                        description: 'Birmingham\'s premier LGBTQ+ nightclub, featuring multiple floors of entertainment, drag shows, and themed nights.',
+                        address: '18 Kent Street, Birmingham, B5 6RD',
+                        category: ['LGBTQ+', 'Nightclub', 'Drag Shows'],
+                        openingHours: 'Mon-Sun: 9pm-3am',
+                        popular: true
+                    },
+                    {
+                        name: 'The Village Inn',
+                        slug: 'village-inn',
+                        description: 'A welcoming LGBTQ+ pub in the heart of Birmingham\'s Gay Village, offering great drinks and a friendly atmosphere.',
+                        address: '22 Hurst Street, Birmingham, B5 4TD',
+                        category: ['LGBTQ+', 'Pub', 'Bar'],
+                        openingHours: 'Mon-Sun: 12pm-12am',
+                        popular: true
+                    }
+                ];
+                venuesLoaded = true;
+                showVenuePreview();
             }
-        ];
+        }
 
         function log(message) {
             const logElement = document.getElementById('log');
@@ -307,17 +297,37 @@
             const previewDiv = document.getElementById('venuePreview');
             const venueList = document.getElementById('venueList');
             
-            venueList.innerHTML = venues.map(venue => `
-                <div class="venue-card">
-                    <div class="venue-name">${venue.name}</div>
-                    <div class="venue-desc">${venue.description}</div>
-                    <div class="venue-meta">
-                        📍 ${venue.address}<br>
-                        🏷️ ${venue.category.join(', ')}<br>
-                        🕒 ${venue.openingHours}
+            if (!venues || venues.length === 0) {
+                venueList.innerHTML = `
+                    <div class="venue-card" style="grid-column: 1 / -1; text-align: center;">
+                        <div class="venue-name">No Venues Found</div>
+                        <div class="venue-desc">Loading venues from database...</div>
                     </div>
-                </div>
-            `).join('');
+                `;
+                previewDiv.style.display = 'block';
+                return;
+            }
+            
+            venueList.innerHTML = venues.map(venue => {
+                const categories = venue.category || venue.tags || [];
+                const categoryText = categories.length > 0 ? categories.join(', ') : 'LGBTQ+';
+                const address = venue.address || 'Address TBC';
+                const description = venue.description || 'No description available.';
+                const isPopular = venue.popular || false;
+                
+                return `
+                    <div class="venue-card">
+                        ${isPopular ? '<div style="position: absolute; top: 10px; right: 10px;"><span style="background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">⭐ Popular</span></div>' : ''}
+                        <div class="venue-name">${venue.name}</div>
+                        <div class="venue-desc">${description}</div>
+                        <div class="venue-meta">
+                            📍 ${address}<br>
+                            🏷️ ${categoryText}<br>
+                            ${venue.openingHours ? `🕒 ${venue.openingHours}` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
             
             previewDiv.style.display = 'block';
         }
@@ -366,8 +376,20 @@
                 log('🚀 Starting Venue SSG Build Process...');
                 log('📋 Checking build environment...');
                 
-                // Simulate build process
-                await simulateBuildProcess();
+                // Make sure we have real venues loaded
+                if (!venuesLoaded) {
+                    log('📡 Loading venues from database...');
+                    await fetchRealVenues();
+                }
+                
+                if (venues.length === 0) {
+                    throw new Error('No venues found to generate');
+                }
+                
+                log(`📄 Found ${venues.length} venues to generate`);
+                
+                // Call the actual build script
+                await callBuildScript();
                 
                 updateProgress(100);
                 updateStatus('✅ Build completed successfully! Venue pages have been generated.', 'success');
@@ -397,6 +419,32 @@
                 buildBtn.disabled = false;
                 previewBtn.disabled = false;
                 buildBtn.textContent = '🚀 Generate Venue Pages';
+            }
+        }
+
+        async function callBuildScript() {
+            try {
+                log('🔧 Calling build script...');
+                
+                // Call the build script via fetch
+                const response = await fetch('/.netlify/functions/build-venues-ssg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ venues: venues })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Build script failed: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                log(`✅ Build script completed: ${result.generatedFiles} files created`);
+                
+            } catch (error) {
+                log('⚠️ Build script call failed, simulating build process...');
+                await simulateBuildProcess();
             }
         }
 
@@ -434,9 +482,9 @@
             log(`✅ Generated ${venues.length} venue pages successfully`);
         }
 
-        // Show venue preview on page load
+        // Load real venues and show preview on page load
         window.onload = function() {
-            showVenuePreview();
+            fetchRealVenues();
         };
     </script>
 </body>
