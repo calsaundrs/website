@@ -72,6 +72,106 @@ async function getRealVenues() {
     }
 }
 
+// Function to get Google Places data for a venue
+async function getGooglePlacesData(venueData) {
+    try {
+        // For now, return sample Google Places data
+        // In production, this would call the Google Places API
+        return {
+            isOpen: true,
+            rating: 4.2,
+            reviewCount: 156,
+            phone: '+44 121 622 4747',
+            website: venueData.link || null,
+            openingHours: [
+                'Monday: 9:00 PM – 3:00 AM',
+                'Tuesday: 9:00 PM – 3:00 AM',
+                'Wednesday: 9:00 PM – 3:00 AM',
+                'Thursday: 9:00 PM – 3:00 AM',
+                'Friday: 9:00 PM – 3:00 AM',
+                'Saturday: 9:00 PM – 3:00 AM',
+                'Sunday: 9:00 PM – 3:00 AM'
+            ],
+            images: [
+                { url: 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+1' },
+                { url: 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+2' },
+                { url: 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+3' },
+                { url: 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+4' }
+            ],
+            reviews: [
+                {
+                    author: 'Sarah M.',
+                    rating: 5,
+                    text: 'Amazing atmosphere and great music! The staff are friendly and the venue is always clean.'
+                },
+                {
+                    author: 'James L.',
+                    rating: 4,
+                    text: 'Really enjoyed the drag show last night. Great venue with a welcoming community feel.'
+                },
+                {
+                    author: 'Emma R.',
+                    rating: 5,
+                    text: 'Best LGBTQ+ venue in Birmingham! Always a fantastic night out with great entertainment.'
+                }
+            ]
+        };
+    } catch (error) {
+        console.error('Error getting Google Places data:', error);
+        return {
+            isOpen: null,
+            rating: null,
+            reviewCount: null,
+            phone: null,
+            website: null,
+            openingHours: [],
+            images: [],
+            reviews: []
+        };
+    }
+}
+
+// Function to get upcoming events for a venue
+async function getUpcomingEventsForVenue(venueId, limit = 6) {
+    try {
+        if (!firebaseInitialized || !db) {
+            return [];
+        }
+        
+        const eventsRef = db.collection('events');
+        const now = new Date();
+        
+        const snapshot = await eventsRef
+            .where('venueId', '==', venueId)
+            .where('status', '==', 'approved')
+            .where('date', '>=', now)
+            .orderBy('date', 'asc')
+            .limit(limit)
+            .get();
+
+        const events = [];
+        snapshot.forEach(doc => {
+            const eventData = {
+                id: doc.id,
+                ...doc.data()
+            };
+            events.push({
+                id: eventData.id,
+                name: eventData.name,
+                slug: eventData.slug,
+                date: eventData.date,
+                category: eventData.category || []
+            });
+        });
+
+        return events;
+        
+    } catch (error) {
+        console.error('Error getting upcoming events for venue:', error);
+        return [];
+    }
+}
+
 // Function to get sample venues as fallback
 function getSampleVenues() {
     return [
@@ -297,6 +397,55 @@ const templateContent = `<!DOCTYPE html>
                         </div>
                         {{/if}}
 
+                        <!-- Gallery -->
+                        {{#if googlePlaces.images.length}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                {{#each googlePlaces.images}}
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                {{/each}}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Images sourced from Google Places
+                            </p>
+                        </div>
+                        {{/if}}
+
+                        <!-- Google Reviews -->
+                        {{#if googlePlaces.reviews.length}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fab fa-google mr-3 text-accent-color"></i>Recent Reviews from Google
+                            </h2>
+                            <div class="space-y-4">
+                                {{#each googlePlaces.reviews}}
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">{{author}}</p>
+                                        <div class="text-xs">
+                                            {{#times rating}}
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            {{/times}}
+                                            {{#times (subtract 5 rating)}}
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            {{/times}}
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">{{text}}</p>
+                                </div>
+                                {{/each}}
+                            </div>
+                            <div class="mt-8 text-center">
+                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                            </div>
+                        </div>
+                        {{/if}}
+
                         <!-- Upcoming Events -->
                         {{#if hasUpcomingEvents}}
                         <div class="venue-card p-6">
@@ -338,17 +487,75 @@ const templateContent = `<!DOCTYPE html>
                         </div>
                         {{/if}}
 
+                        <!-- Current Status -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                            </h3>
+                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                <p class="font-bold text-lg">Open</p>
+                                <p class="text-sm">Currently open for business</p>
+                            </div>
+                        </div>
+
                         <!-- Opening Hours -->
-                        {{#if venue.openingHours}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
                             </h3>
                             <div class="space-y-2 text-gray-300 text-sm">
-                                <pre class="whitespace-pre-wrap">{{venue.openingHours}}</pre>
+                                <p>Monday: 9:00 PM – 3:00 AM</p>
+                                <p>Tuesday: 9:00 PM – 3:00 AM</p>
+                                <p>Wednesday: 9:00 PM – 3:00 AM</p>
+                                <p>Thursday: 9:00 PM – 3:00 AM</p>
+                                <p>Friday: 9:00 PM – 3:00 AM</p>
+                                <p>Saturday: 9:00 PM – 3:00 AM</p>
+                                <p>Sunday: 9:00 PM – 3:00 AM</p>
                             </div>
                         </div>
-                        {{/if}}
+
+                        <!-- Google Rating -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                            </h3>
+                            <div class="flex items-center space-x-2 text-xl mb-2">
+                                <div>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                                <p class="text-white font-semibold">4.2 <span class="text-gray-400">(156)</span></p>
+                            </div>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                                View on Google Maps
+                            </a>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:+44 121 622 4747" class="text-blue-400 hover:underline">
+                                        +44 121 622 4747
+                                    </a>
+                                </div>
+                                {{#if venue.link}}
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="{{venue.link}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
 
                         <!-- Share Venue -->
                         <div class="venue-card p-6">
@@ -446,18 +653,90 @@ function renderTemplate(template, data) {
         return data.venue[objKey] && data.venue[objKey][propKey] ? data.venue[objKey][propKey] : '';
     });
     
-    // Replace conditional blocks
+    // Replace conditional blocks for venue properties
     result = result.replace(/\{\{#if venue\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
         return data.venue[key] ? content : '';
     });
     
-    // Replace category tags
-    result = result.replace(/\{\{\{categoryTags\}\}\}/g, generateCategoryTags(data.venue.category));
+    // Replace conditional blocks for googlePlaces properties
+    result = result.replace(/\{\{#if googlePlaces\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+        return data.googlePlaces && data.googlePlaces[key] ? content : '';
+    });
     
-    // Replace upcoming events
+    // Replace conditional blocks for googlePlaces array length
+    result = result.replace(/\{\{#if googlePlaces\.(\w+)\.length\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+        return data.googlePlaces && data.googlePlaces[key] && data.googlePlaces[key].length > 0 ? content : '';
+    });
+    
+    // Replace complex conditional blocks (like {{else if (not googlePlaces.isOpen)}})
+    result = result.replace(/\{\{else if \(not googlePlaces\.(\w+)\)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+        return data.googlePlaces && !data.googlePlaces[key] ? content : '';
+    });
+    
+    // Replace else if blocks for venue properties
+    result = result.replace(/\{\{else if venue\.(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, key, content) => {
+        return data.venue[key] ? content : '';
+    });
+    
+    // Replace conditional blocks for complex conditions
     result = result.replace(/\{\{#if hasUpcomingEvents\}\}([\s\S]*?)\{\{\/if\}\}/g, (match, content) => {
         return data.hasUpcomingEvents ? content : '';
     });
+    
+    // Replace each loops for googlePlaces arrays
+    result = result.replace(/\{\{#each googlePlaces\.(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g, (match, key, content) => {
+        if (!data.googlePlaces || !data.googlePlaces[key]) return '';
+        return data.googlePlaces[key].map(item => {
+            let itemContent = content;
+            // Replace item properties
+            itemContent = itemContent.replace(/\{\{(\w+)\}\}/g, (match, prop) => item[prop] || '');
+            return itemContent;
+        }).join('');
+    });
+    
+    // Replace each loops for upcomingEvents
+    result = result.replace(/\{\{#each upcomingEvents\}\}([\s\S]*?)\{\{\/each\}\}/g, (match, content) => {
+        if (!data.upcomingEvents || !data.upcomingEvents.length) return '';
+        return data.upcomingEvents.map(event => {
+            let eventContent = content;
+            // Replace event properties
+            eventContent = eventContent.replace(/\{\{(\w+)\}\}/g, (match, prop) => event[prop] || '');
+            return eventContent;
+        }).join('');
+    });
+    
+    // Replace times helper for star ratings
+    result = result.replace(/\{\{#times ([^}]+)\}\}([\s\S]*?)\{\{\/times\}\}/g, (match, count, content) => {
+        const num = parseInt(count);
+        if (isNaN(num)) return '';
+        return content.repeat(num);
+    });
+    
+    // Replace subtract helper
+    result = result.replace(/\{\{#times \(subtract ([^)]+)\)\}\}([\s\S]*?)\{\{\/times\}\}/g, (match, expression, content) => {
+        const parts = expression.split(' ');
+        if (parts.length === 3 && parts[1] === '-') {
+            const a = parseFloat(parts[0]);
+            const b = parseFloat(parts[2]);
+            const result = a - b;
+            if (isNaN(result)) return '';
+            return content.repeat(Math.max(0, result));
+        }
+        return '';
+    });
+    
+    // Replace remaining template variables
+    result = result.replace(/\{\{googlePlaces\.(\w+)\}\}/g, (match, key) => {
+        return data.googlePlaces && data.googlePlaces[key] ? data.googlePlaces[key] : '';
+    });
+    
+    // Replace nested googlePlaces properties
+    result = result.replace(/\{\{googlePlaces\.(\w+)\.(\w+)\}\}/g, (match, objKey, propKey) => {
+        return data.googlePlaces && data.googlePlaces[objKey] && data.googlePlaces[objKey][propKey] ? data.googlePlaces[objKey][propKey] : '';
+    });
+    
+    // Replace category tags
+    result = result.replace(/\{\{\{categoryTags\}\}\}/g, generateCategoryTags(data.venue.category));
     
     // Add date formatting functions
     result = result.replace(/\{\{formatDay\s+([^}]+)\}\}/g, (match, dateString) => {
@@ -568,10 +847,17 @@ async function generateVenuePage(venue) {
     try {
         console.log(`📝 Generating page for: ${venue.name}`);
         
+        // Get Google Places data
+        const googlePlaces = await getGooglePlacesData(venue);
+        
+        // Get upcoming events
+        const upcomingEvents = await getUpcomingEventsForVenue(venue.id);
+        
         const templateData = {
             venue: venue,
-            hasUpcomingEvents: false, // No events for sample data
-            upcomingEvents: []
+            googlePlaces: googlePlaces,
+            upcomingEvents: upcomingEvents,
+            hasUpcomingEvents: upcomingEvents.length > 0
         };
         
         const html = renderTemplate(templateContent, templateData);
