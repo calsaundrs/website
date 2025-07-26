@@ -309,12 +309,17 @@ async function handleVenuesView() {
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
-    // Only use Cloudinary public ID - no Airtable URLs
+    
+    // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
+    } else {
+        // 2. Generate a consistent placeholder based on venue name
+        const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+        const encodedName = encodeURIComponent(venueName);
+        imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
     }
-    // If no Cloudinary ID, imageUrl remains null and will use placeholder
     const venue = {
         id: venueData.id,
         name: venueData.name || venueData['Venue Name'] || venueData['Name'],
