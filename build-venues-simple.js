@@ -56,10 +56,8 @@ async function getRealVenues() {
                 ...venueData
             });
             
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-                venues.push(processedVenue);
-            }
+                    // Include ALL venues for now (we can filter later if needed)
+        venues.push(processedVenue);
         });
         
         console.log(`✅ Found ${venues.length} real venues from Firebase`);
