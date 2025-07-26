@@ -1,92 +1,61 @@
-const Airtable = require('airtable');
+const admin = require('firebase-admin');
 
-const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        })
+    });
+}
 
-exports.handler = async (event) => {
-    if (event.httpMethod !== 'GET') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
-    }
+const db = admin.firestore();
 
-    console.log('debug-venues: Starting debug function');
-
-    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Missing Airtable configuration' }),
-        };
-    }
-
-    const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
-
+exports.handler = async function (event, context) {
+    console.log("debug-venues function called");
+    
     try {
-        // Get all venues to see what status values exist
-        console.log('debug-venues: Fetching all venues to check status values...');
+        const venuesRef = db.collection('venues');
+        const snapshot = await venuesRef.limit(10).get();
         
-        const allVenues = await base('Venues').select({
-            fields: ['Name', 'Status', 'Created Time']
-        }).all();
-
-        console.log(`debug-venues: Found ${allVenues.length} total venues`);
-
-        // Count status values
-        const statusCounts = {};
-        const sampleVenues = [];
-
-        allVenues.forEach(record => {
-            const status = record.fields.Status || 'No Status';
-            statusCounts[status] = (statusCounts[status] || 0) + 1;
-            
-            // Keep first 5 venues of each status for samples
-            if (!sampleVenues.find(v => v.status === status) || sampleVenues.filter(v => v.status === status).length < 5) {
-                sampleVenues.push({
-                    id: record.id,
-                    name: record.fields.Name || 'Unnamed',
-                    status: status,
-                    createdTime: record.fields['Created Time']
-                });
-            }
+        console.log(`Found ${snapshot.size} venues in collection`);
+        
+        const venues = [];
+        snapshot.forEach(doc => {
+            const venueData = doc.data();
+            venues.push({
+                id: doc.id,
+                fields: Object.keys(venueData),
+                data: venueData
+            });
         });
-
-        // Get pending venues specifically
-        console.log('debug-venues: Fetching pending venues...');
-        const pendingVenues = await base('Venues').select({
-            filterByFormula: "{Status} = 'Pending Review'",
-            fields: ['Name', 'Status', 'Created Time']
-        }).all();
-
-        console.log(`debug-venues: Found ${pendingVenues.length} pending venues`);
-
-        const result = {
-            totalVenues: allVenues.length,
-            statusCounts: statusCounts,
-            pendingVenuesCount: pendingVenues.length,
-            sampleVenues: sampleVenues,
-            availableStatuses: Object.keys(statusCounts),
-            pendingVenues: pendingVenues.map(record => ({
-                id: record.id,
-                name: record.fields.Name || 'Unnamed',
-                status: record.fields.Status,
-                createdTime: record.fields['Created Time']
-            }))
-        };
-
+        
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
             },
-            body: JSON.stringify(result),
+            body: JSON.stringify({
+                success: true,
+                totalVenues: snapshot.size,
+                venues: venues
+            })
         };
+        
     } catch (error) {
-        console.error("debug-venues: Error:", error);
+        console.error('Error debugging venues:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ 
-                error: 'Failed to debug venues', 
-                details: error.toString(),
-                message: error.message 
-            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                success: false,
+                error: error.message
+            })
         };
     }
 };

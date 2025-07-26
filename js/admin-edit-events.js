@@ -150,7 +150,7 @@ async function loadAllEvents() {
         console.log('Admin Edit Events: Loading all events...');
         
         // Load regular events
-        const eventsResponse = await fetch('/.netlify/functions/get-events');
+        const eventsResponse = await fetch('/.netlify/functions/get-events-firestore?view=admin');
         console.log('Admin Edit Events: Events response status:', eventsResponse.status);
         
         if (eventsResponse.ok) {

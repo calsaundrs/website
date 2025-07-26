@@ -97,7 +97,156 @@
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
-    <script src="/js/main.js" defer></script>
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <!-- PWA and favicons -->
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="apple-touch-icon" href="/faviconV2.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8a2be2">
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Critical CSS to prevent pride flag flashing */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
+
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .filter-button {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            color: #D1D5DB;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+        .filter-button:hover {
+            background: rgba(55, 65, 81, 0.8);
+            border-color: rgba(75, 85, 99, 0.7);
+            transform: translateY(-1px);
+        }
+        .filter-button.active {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border-color: rgba(232, 58, 153, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(232, 58, 153, 0.3);
+        }
+
+        /* Enhanced visual hierarchy */
+        .heading-gradient {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Improved popover styling */
+        .popover {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
+        }
+
+        /* Enhanced loader */
+        .loader {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(75, 85, 99, 0.3);
+            border-top: 3px solid #E83A99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom aspect ratio for venue cards */
+        .aspect-2-1 {
+            aspect-ratio: 2 / 1;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 767px) {
+            #filter-bar-container {
+                padding: 1rem;
+            }
+            #filter-bar-container .flex {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .filter-button {
+                width: 100%;
+                justify-content: center;
+            }
+            /* Popover width adjustment for mobile */
+            .popover {
+                width: calc(100vw - 2rem);
+                left: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
 
     <!-- Tailwind loaded with defer to avoid render blocking -->
     <script src="https://cdn.tailwindcss.com" defer></script>
@@ -241,8 +390,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            style="font-family: 'Omnes Pro', sans-serif;">
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                 onload="document.body.classList.add('flag-loaded')">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
             <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
@@ -267,118 +417,74 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <section id="venues-list">
-            <div class="text-center mb-8">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-                BIRMINGHAM'S <span class="accent-color-secondary">LGBTQ+ VENUES</span>
+    <main class="container mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">
+                <span class="heading-gradient">LGBTQ+ Venues</span>
+                <span class="text-white">in Birmingham</span>
             </h1>
-                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Discover the best gay bars, clubs, and queer spaces in Birmingham.</h2>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the best LGBTQ+ friendly bars, clubs, and spaces in Birmingham. From iconic venues to hidden gems, find your perfect queer space.</p>
+        </div>
+        
+
+
+        <!-- Venues Grid -->
+        <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            <div class="col-span-full text-center venue-card p-12">
+                <div class="loader mx-auto mb-4"></div>
+                <p class="text-gray-400">Loading venues...</p>
             </div>
-
-            <div id="venue-filter-bar-container" class="mb-12 flex flex-wrap items-center gap-3 md:gap-4">
-                <div class="relative w-full md:w-auto">
-                    <button id="vibe-tags-btn" class="filter-button">
-                        <span>All Vibes</span> <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="vibe-tags-popover" class="popover max-h-80 overflow-y-auto">
-                        <p class="text-gray-400">Loading vibe tags...</p>
-                    </div>
-                </div>
-
-                <div class="relative w-full md:w-auto">
-                    <button id="venue-features-btn" class="filter-button">
-                        <span>All Features</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="venue-features-popover" class="popover max-h-80 overflow-y-auto">
-                        <p class="text-gray-400">Loading features...</p>
-                    </div>
-                </div>
-
-                <div class="relative w-full md:w-auto">
-                    <button id="accessibility-btn" class="filter-button">
-                        <span>All Accessibility</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="accessibility-popover" class="popover max-h-80 overflow-y-auto">
-                        <p class="text-gray-400">Loading accessibility options...</p>
-                    </div>
-                </div>
-
-                <button id="clear-venue-filters-btn" class="filter-button">Clear Filters</button>
+        </div>
+        
+        <!-- No Results Message -->
+        <div id="no-venues-message" class="hidden text-center venue-card p-12">
+            <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400 mb-4">
+                <i class="fas fa-store-alt-slash fa-2x"></i>
             </div>
-
-            <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4">
-                    <div class="loader"></div>
-                    <span>Loading venues...</span>
-                </div>
-            </div>
-            <div id="no-venues-message" class="hidden text-center card-bg p-12 col-span-full">
-                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color-secondary">
-                    <i class="fas fa-store-alt-slash fa-2x"></i>
-                </div>
-                <h3 class="mt-4 text-xl font-semibold text-white">No Venues Found</h3>
-                <p class="mt-2 text-gray-400">We couldn't find any venues at this time. Why not be the first to <a href="/get-listed.html" class="underline hover:text-white">get listed</a>?</p>
-                <button id="reset-venue-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
-            </div>
-        </section>
+            <h3 class="text-xl font-semibold text-white mb-2">No Venues Found</h3>
+            <p class="text-gray-400 mb-6">Try adjusting your filters or search terms.</p>
+            <button id="reset-venue-filters-btn" class="filter-button active">Clear Filters</button>
+        </div>
     </main>
     
     <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+        <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <script>
         // --- Global State ---
         let allVenues = [];
-        // Removed currentSortOrder as sorting is now implicit
-        let activeVibeTagFilter = 'all';
-        let activeVenueFeatureFilter = 'all';
-        let activeAccessibilityFilter = 'all'; 
 
         // --- DOM Elements ---
         const venueGrid = document.getElementById('venue-grid');
         const noVenuesMessage = document.getElementById('no-venues-message');
-        const venueFilterBarContainer = document.getElementById('venue-filter-bar-container');
-
-        // Removed sortRatingBtn as sorting is now implicit
-        const vibeTagsBtn = document.getElementById('vibe-tags-btn');
-        const vibeTagsPopover = document.getElementById('vibe-tags-popover');
-        const venueFeaturesBtn = document.getElementById('venue-features-btn');
-        const venueFeaturesPopover = document.getElementById('venue-features-popover');
-        const accessibilityBtn = document.getElementById('accessibility-btn');
-        const accessibilityPopover = document.getElementById('accessibility-popover');
-        const clearVenueFiltersBtn = document.getElementById('clear-venue-filters-btn');
-        const resetVenueFiltersBtn = document.getElementById('reset-venue-filters-btn');
 
         // Helper for star ratings (not used for display but kept if needed elsewhere or for future features)
         function generateStars(rating) {
@@ -392,163 +498,110 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             return stars;
         }
 
-        // --- Filtering and Sorting Logic ---
-        function applyFiltersAndSort() {
-            let filteredVenues = [...allVenues];
-
-            // Apply Vibe Tag filter
-            if (activeVibeTagFilter !== 'all') {
-                filteredVenues = filteredVenues.filter(venue => venue.vibeTags && venue.vibeTags.includes(activeVibeTagFilter));
-            }
-
-            // Apply Venue Features filter
-            if (activeVenueFeatureFilter !== 'all') {
-                filteredVenues = filteredVenues.filter(venue => venue.venueFeatures && venue.venueFeatures.includes(activeVenueFeatureFilter));
-            }
-
-            // Apply Accessibility filter
-            if (activeAccessibilityFilter !== 'all') {
-                filteredVenues = filteredVenues.filter(venue => venue.accessibilityFeatures && venue.accessibilityFeatures.includes(activeAccessibilityFilter));
-            }
-
-            // Apply Sorting by Number of Reviews (Descending) - Implicit sorting
-            filteredVenues.sort((a, b) => {
-                const reviewsA = a.numberOfReviews || 0; // Use 0 if reviews is missing or null
-                const reviewsB = b.numberOfReviews || 0;
-                return reviewsB - reviewsA; // Descending order
+        // --- Display Logic ---
+        function displayVenues() {
+            // Sort by popularity first, then alphabetically
+            const sortedVenues = [...allVenues].sort((a, b) => {
+                if (a.popular && !b.popular) return -1;
+                if (!a.popular && b.popular) return 1;
+                return a.name.localeCompare(b.name);
             });
 
-            renderVenueCards(filteredVenues);
+            renderVenues(sortedVenues);
         }
 
         // --- Rendering Venue Cards ---
-        function renderVenueCards(venuesToDisplay) {
-            venueGrid.innerHTML = ''; // Clear previous venues
-            venueGrid.style.display = venuesToDisplay.length > 0 ? 'grid' : 'none';
-            noVenuesMessage.style.display = venuesToDisplay.length > 0 ? 'none' : 'block';
-
-            if (venuesToDisplay.length > 0) {
-                venuesToDisplay.forEach(venue => {
-                    const placeholder = 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue';
-                    const mediumSrc = venue.photo?.medium || placeholder;
-                    const vibeTagsHtml = venue.vibeTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-
-                    const venueCard = `
-                        <a href="/venue/${venue.slug}" class="item-card card-bg block group animate-fade-in">
-                            <div class="item-card-image-container">
-                                <img src="${mediumSrc}" alt="${venue.name}" class="item-card-image" loading="lazy">
-                            </div>
-                            <div class="p-6">
-                                <h3 class="font-bold text-xl text-white mb-2 truncate group-hover:accent-color">${venue.name}</h3>
-                                <p class="text-gray-400 h-12 overflow-hidden">${venue.description || ''}</p>
-                                <div class="mt-2 flex flex-wrap gap-2">${vibeTagsHtml}</div>
-                            </div>
-                        </a>
-                    `;
-                    venueGrid.insertAdjacentHTML('beforeend', venueCard);
-                });
+        function renderVenues(venuesToDisplay) {
+            if (!venuesToDisplay || venuesToDisplay.length === 0) {
+                venueGrid.innerHTML = `
+                    <div class="col-span-full text-center venue-card p-12">
+                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400 mb-4">
+                            <i class="fas fa-store-alt-slash fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">No Venues Found</h3>
+                        <p class="text-gray-400 mb-6">Try adjusting your filters or search terms.</p>
+                        <button id="reset-venue-filters-btn" class="filter-button active">Clear Filters</button>
+                    </div>
+                `;
+                return;
             }
+
+            venueGrid.innerHTML = venuesToDisplay.map(venue => {
+                const tagsHTML = (venue.tags || venue.category || []).length > 0 ? 
+                    (venue.tags || venue.category || []).map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
+                const imageUrl = venue.image && venue.image.url ? venue.image.url : 'https://placehold.co/400x300/1e1e1e/EAEAEA?text=Venue';
+                const isPopular = venue.popular || false;
+                const venueType = venue.type || 'venue';
+
+                return `
+                    <div class="venue-card rounded-xl overflow-hidden relative flex flex-col">
+                        ${isPopular ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Popular</span></div>' : ''}
+                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                            <img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover object-center">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-white mb-2 text-left">${venue.name}</h3>
+                            <p class="text-gray-400 text-sm mb-3 text-left">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${venue.address || 'Address TBC'}
+                            </p>
+                            <p class="text-gray-300 text-sm mb-4 text-left line-clamp-2">${venue.description || 'No description available.'}</p>
+                            <div class="flex gap-1 mb-4 overflow-hidden">
+                                ${tagsHTML}
+                            </div>
+                            <div class="flex justify-between items-center mt-auto">
+                                <a href="/venue/${venue.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-eye mr-1"></i>View Venue
+                                </a>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
         }
 
-        // --- Render Popover Options ---
-        function renderFilterOptions(dataArray, popoverElement, filterName) {
-            popoverElement.innerHTML = '';
-            const allButton = document.createElement('button');
-            allButton.className = 'popover-option';
-            // Changed text here
-            allButton.textContent = `All ${filterName === 'vibes' ? 'Vibes' : filterName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`; 
-            allButton.dataset.filterValue = 'all';
-            popoverElement.appendChild(allButton);
 
-            const uniqueOptions = [...new Set(dataArray.flat())].filter(Boolean).sort();
-            uniqueOptions.forEach(item => {
-                const button = document.createElement('button');
-                button.className = 'popover-option';
-                button.textContent = item;
-                button.dataset.filterValue = item;
-                popoverElement.appendChild(button);
-            });
-        }
 
-        // --- Reset Filters ---
-        function resetFilters() {
-            activeVibeTagFilter = 'all';
-            activeVenueFeatureFilter = 'all';
-            activeAccessibilityFilter = 'all';
 
-            // Reset UI active states/texts
-            document.querySelectorAll('#venue-filter-bar-container .filter-button').forEach(btn => btn.classList.remove('active'));
-            
-            // Set first active filter to 'All Vibes' (or whichever is the primary filter button)
-            vibeTagsBtn.classList.add('active'); // Assuming All Vibes is the default active state visually
-
-            vibeTagsBtn.querySelector('span').textContent = 'All Vibes'; // Changed text
-            venueFeaturesBtn.querySelector('span').textContent = 'All Features';
-            accessibilityBtn.querySelector('span').textContent = 'All Accessibility';
-
-            applyFiltersAndSort();
-        }
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            // Popover Toggles
-            vibeTagsBtn.addEventListener('click', (e) => { e.stopPropagation(); venueFeaturesPopover.classList.remove('show'); accessibilityPopover.classList.remove('show'); vibeTagsPopover.classList.toggle('show'); });
-            venueFeaturesBtn.addEventListener('click', (e) => { e.stopPropagation(); vibeTagsPopover.classList.remove('show'); accessibilityPopover.classList.remove('show'); venueFeaturesPopover.classList.toggle('show'); });
-            accessibilityBtn.addEventListener('click', (e) => { e.stopPropagation(); vibeTagsPopover.classList.remove('show'); venueFeaturesPopover.classList.remove('show'); accessibilityPopover.classList.toggle('show'); });
-
-            // Popover Option Clicks
-            vibeTagsPopover.addEventListener('click', (e) => {
-                const btn = e.target.closest('.popover-option');
-                if (btn) { activeVibeTagFilter = btn.dataset.filterValue; vibeTagsBtn.querySelector('span').textContent = btn.textContent; vibeTagsPopover.classList.remove('show'); applyFiltersAndSort(); }
-            });
-            venueFeaturesPopover.addEventListener('click', (e) => {
-                const btn = e.target.closest('.popover-option');
-                if (btn) { activeVenueFeatureFilter = btn.dataset.filterValue; venueFeaturesBtn.querySelector('span').textContent = btn.textContent; venueFeaturesPopover.classList.remove('show'); applyFiltersAndSort(); }
-            });
-            accessibilityPopover.addEventListener('click', (e) => {
-                const btn = e.target.closest('.popover-option');
-                if (btn) { activeAccessibilityFilter = btn.dataset.filterValue; accessibilityBtn.querySelector('span').textContent = btn.textContent; accessibilityPopover.classList.remove('show'); applyFiltersAndSort(); }
-            });
-
-            // Clear All Filters Button
-            clearVenueFiltersBtn.addEventListener('click', resetFilters);
-            resetVenueFiltersBtn.addEventListener('click', resetFilters); // For no-results message
-
-            // Close popovers when clicking outside
-            window.addEventListener('click', () => {
-                vibeTagsPopover.classList.remove('show');
-                venueFeaturesPopover.classList.remove('show');
-                accessibilityPopover.classList.remove('show');
-            });
-        }
 
         // --- Initialization ---
         async function initializePage() {
-            const loader = venueGrid.querySelector('.loader')?.parentElement; 
-            if (loader) loader.style.display = 'flex';
-
             try {
-                const response = await fetch('/.netlify/functions/get-venues');
+                // Force cache refresh by adding timestamp
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/.netlify/functions/get-venues-firestore?t=${timestamp}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
                 if (!response.ok) throw new Error('Failed to fetch venues. Status: ' + response.status);
-                const fetchedVenues = await response.json();
+                const data = await response.json();
                 
-                allVenues = fetchedVenues; 
+                allVenues = data.venues || []; 
+                
+                // Debug: Log the first venue to see image data
+                if (allVenues.length > 0) {
+                    console.log('First venue data:', allVenues[0]);
+                    console.log('First venue image:', allVenues[0].image);
+                    console.log('Raw API response:', data);
+                }
 
-                // Populate popover options dynamically
-                renderFilterOptions(allVenues.map(v => v.vibeTags), vibeTagsPopover, 'vibes'); // Changed filterName here
-                renderFilterOptions(allVenues.map(v => v.venueFeatures), venueFeaturesPopover, 'venue-features');
-                renderFilterOptions(allVenues.map(v => v.accessibilityFeatures), accessibilityPopover, 'accessibility-features');
-
-                setupEventListeners();
-                resetFilters(); // Initialize filters to their default state and apply
+                displayVenues(); // Display all venues
             } catch (error) {
                 console.error("Error initializing venues page:", error);
-                venueGrid.innerHTML = ''; // Clear loader
-                venueGrid.style.display = 'none';
-                noVenuesMessage.style.display = 'block';
-                noVenuesMessage.querySelector('p').textContent = 'Failed to load venues. Please try again later.';
-            } finally {
-                if (loader) loader.style.display = 'none';
+                venueGrid.innerHTML = `
+                    <div class="col-span-full text-center venue-card p-12">
+                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-red-500 mb-4">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Error Loading Venues</h3>
+                        <p class="text-gray-400">Please try refreshing the page.</p>
+                    </div>
+                `;
             }
         }
 

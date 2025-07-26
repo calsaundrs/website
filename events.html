@@ -108,6 +108,14 @@
     <meta name="theme-color" content="#8a2be2">
     
     <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
         /* Critical CSS to prevent pride flag flashing */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -129,9 +137,11 @@
             border-radius: 0.75rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             padding: 1rem;
-            z-index: 20;
+            z-index: 1000;
             background-color: #1e1e1e;
             border: 1px solid #2e2e2e;
+            top: 100%;
+            left: 0;
         }
         .popover.show {
             display: block;
@@ -147,6 +157,103 @@
         .popover-option:hover {
             background-color: #374151;
         }
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .filter-button {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            color: #D1D5DB;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+        .filter-button:hover {
+            background: rgba(55, 65, 81, 0.8);
+            border-color: rgba(75, 85, 99, 0.7);
+            transform: translateY(-1px);
+        }
+        .filter-button.active {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border-color: rgba(232, 58, 153, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(232, 58, 153, 0.3);
+        }
+
+        /* Enhanced visual hierarchy */
+        .heading-gradient {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Improved popover styling */
+        .popover {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
+        }
+
+        /* Enhanced loader */
+        .loader {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(75, 85, 99, 0.3);
+            border-top: 3px solid #E83A99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom aspect ratio for event cards */
+        .aspect-2-1 {
+            aspect-ratio: 2 / 1;
+        }
+
         .category-tag {
             display: inline-block;
             background-color: rgba(181, 100, 247, 0.1);
@@ -333,52 +440,40 @@
         }
         /* When checked, make the dot move */
         input:checked ~ .toggle-dot {
-            transform: translateX(1.5rem); /* Move 1.5rem */
-            /* Removed background-color: white !important; */
+            transform: translateX(1.25rem); /* Move 1.25rem for smaller toggle */
         }
         /* When checked, also change the background of the track */
         input:checked ~ .block {
-             background-color: #B564F7; /* Primary accent color for track when active */
+             background-color: #E83A99; /* Primary accent color for track when active */
         }
 
         /* Custom styles for filter bar layout */
-        /* Ensure filter buttons stretch to full width on mobile for better touch target */
+        /* Mobile responsive adjustments */
         @media (max-width: 767px) {
             #filter-bar-container {
-                display: grid; /* Changed to grid for 2 columns */
-                grid-template-columns: repeat(2, 1fr); /* Two equal columns */
-                gap: 0.75rem; /* Consistent gap */
-                align-items: center; /* Vertically align items in grid */
+                padding: 1rem;
             }
-            /* Apply to all direct children of the filter bar for equal column distribution */
-            #filter-bar-container > * {
-                width: 100%; /* Fill the grid column */
-                margin-left: 0 !important; /* Override any ml-auto */
+            #filter-bar-container .flex {
+                flex-direction: column;
+                gap: 0.75rem;
             }
-            /* Specific style for the NSFW toggle container to place it correctly */
+            .filter-button {
+                width: 100%;
+                justify-content: center;
+            }
             #nsfw-toggle-container {
-                 grid-column: span 2; /* Make it span both columns on mobile */
-                 order: 99; /* Push to the end of the flex container (now grid) so it wraps cleanly */
-                 margin-top: 0.75rem; /* Add some space above it if it wraps */
-                 width: 100%; /* Ensure it spans fully */
-                 justify-content: space-between; /* Space out toggle and text */
-            }
-            /* Filter buttons inside grid should also fill their column */
-            #filter-bar-container .filter-button {
-                justify-content: center; /* Center text within buttons */
+                width: 100%;
+                justify-content: center;
             }
             /* Popover width adjustment for mobile */
             .popover {
-                width: calc(100% - 2rem);
-                left: 1rem; right: 1rem;
+                width: calc(100vw - 2rem);
+                left: 1rem;
+                right: 1rem;
             }
             /* Text labels for NSFW toggle on mobile */
-            #nsfw-toggle-label {
-                 justify-content: space-between;
-            }
             #nsfw-mode-text-mobile {
-                display: block; flex-grow: 1; text-align: right; padding-right: 0.5rem;
-                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                display: block;
             }
             #nsfw-mode-text-desktop {
                 display: none;
@@ -386,33 +481,6 @@
         }
         /* Desktop specific layout adjustments */
         @media (min-width: 768px) {
-            #filter-bar-container {
-                display: flex; /* Back to flex on desktop */
-                flex-direction: row; flex-wrap: wrap; align-items: center;
-                gap: 1rem; /* md:gap-4 from HTML */
-            }
-            /* Apply to all direct children for desktop flex distribution */
-            #filter-bar-container > * {
-                width: auto; /* Revert to auto width */
-            }
-            /* For the filter buttons, allow them to grow and enforce some base styling */
-            #filter-bar-container .filter-button {
-                flex-grow: 1; /* Allow to grow and take equal space */
-                min-width: 120px; /* Optional: minimum width for aesthetic consistency */
-                justify-content: center; /* Center text for equal distribution */
-            }
-            /* Specific adjustments for popover buttons as they contain spans/icons */
-            #category-btn, #venue-btn, #custom-date-btn {
-                min-width: 150px; /* Adjust as needed for content */
-            }
-            /* NSFW toggle for desktop */
-            #nsfw-toggle-container {
-                order: auto; margin-top: 0; margin-left: auto; width: auto;
-                flex-grow: 0; /* Don't grow, maintain explicit width */
-            }
-            #nsfw-toggle-label {
-                 justify-content: flex-start;
-            }
             #nsfw-mode-text-mobile {
                 display: none;
             }
@@ -450,8 +518,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            style="font-family: 'Omnes Pro', sans-serif;">
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                 onload="document.body.classList.add('flag-loaded')">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
             <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
@@ -476,13 +545,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <section class="text-center mb-8">
-            <div class="text-center mb-4">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-                LGBTQ+ <span class="accent-color">EVENTS</span> IN BIRMINGHAM
-            </h1>
-                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Your guide to queer club nights, social gatherings, and cultural events.</h2>
+    <main class="container mx-auto px-8 py-12 relative z-10">
+        <section class="text-center mb-12">
+            <div class="text-center mb-8">
+                <h1 class="font-anton text-6xl md:text-7xl lg:text-8xl leading-none tracking-wider text-white mb-4">
+                    LGBTQ+ <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">EVENTS</span> IN BIRMINGHAM
+                </h1>
+                <h2 class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Your guide to queer club nights, social gatherings, and cultural events in the heart of the Midlands.</h2>
             </div>
 
             <div class="mb-12 hidden" id="featured-events-section">
@@ -493,51 +562,62 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                  </div>
             </div>
 
-            <div id="filter-bar-container" class="mb-6 flex flex-wrap items-center gap-3 md:gap-4">
-
-                <button class="filter-button active w-full" data-filter-type="date" data-filter-value="all">All Upcoming</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="today">Today</button>
-                <button class="filter-button w-full" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
-                <div class="relative w-full"> <button id="custom-date-btn" class="filter-button w-full">Custom Date</button>
-                    <div id="custom-date-popover" class="popover">
-                        <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
-                        <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
-                        <label for="date-to" class="block text-sm font-semibold mb-1 text-gray-400">To</label>
-                        <input type="date" id="date-to" class="w-full p-2 bg-gray-800 rounded-md text-white">
+            <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <button class="filter-button active" data-filter-type="date" data-filter-value="all">All Upcoming</button>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
+                    
+                    <div class="relative z-20">
+                        <button id="custom-date-btn" class="filter-button">
+                            <span>Custom Date</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="custom-date-popover" class="popover">
+                            <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
+                            <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
+                            <label for="date-to" class="block text-sm font-semibold mb-1 text-gray-400">To</label>
+                            <input type="date" id="date-to" class="w-full p-2 bg-gray-800 rounded-md text-white">
+                        </div>
                     </div>
-                </div>
 
-                <div class="relative w-full"> <button id="category-btn" class="filter-button w-full">
-                        <span>All Categories</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="category-popover" class="popover max-h-80 overflow-y-auto">
-                           <p class="text-gray-400">Loading categories...</p>
+                    <div class="relative z-20">
+                        <button id="category-btn" class="filter-button">
+                            <span>All Categories</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="category-popover" class="popover max-h-80 overflow-y-auto">
+                            <p class="text-gray-400">Loading categories...</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="relative w-full"> <button id="venue-btn" class="filter-button w-full">
-                        <span>All Venues</span>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
-                    <div id="venue-popover" class="popover max-h-80 overflow-y-auto">
-                        <p class="text-gray-400">Loading venues...</p>
+                    <div class="relative z-20">
+                        <button id="venue-btn" class="filter-button">
+                            <span>All Venues</span>
+                            <i class="fas fa-chevron-down text-xs ml-2"></i>
+                        </button>
+                        <div id="venue-popover" class="popover max-h-80 overflow-y-auto">
+                            <p class="text-gray-400">Loading venues...</p>
+                        </div>
                     </div>
-                </div>
 
-                <div id="nsfw-toggle-container" class="filter-button flex items-center justify-between !p-3 w-full min-w-fit ml-auto order-last">
-                    <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer flex-grow">
-                        <div class="relative flex-shrink-0">
-                            <input type="checkbox" id="nsfw-toggle" class="sr-only"> <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                            <div class="toggle-dot absolute left-1 top-1 w-6 h-6 rounded-full bg-white"></div> </div>
-                        <span id="nsfw-mode-text-mobile" class="ml-3 text-white font-medium">SFW Mode</span>
-                        <span id="nsfw-mode-text-desktop" class="ml-3 text-white font-medium">SFW Mode</span>
-                    </label>
+                    <!-- SFW Toggle -->
+                    <div id="nsfw-toggle-container" class="flex items-center bg-gray-800/50 border border-gray-600/50 rounded-lg px-3 py-2">
+                        <label id="nsfw-toggle-label" for="nsfw-toggle" class="flex items-center cursor-pointer">
+                            <div class="relative flex-shrink-0">
+                                <input type="checkbox" id="nsfw-toggle" class="sr-only">
+                                <div class="block bg-gray-600 w-10 h-5 rounded-full"></div>
+                                <div class="toggle-dot absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-200"></div>
+                            </div>
+                            <span id="nsfw-mode-text-mobile" class="ml-2 text-white font-medium text-sm">SFW</span>
+                            <span id="nsfw-mode-text-desktop" class="ml-2 text-white font-medium text-sm">SFW Mode</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-            <div id="kink-sfw-notice" class="hidden text-center card-bg p-8 md:p-12 col-span-full mb-6">
-                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
+            <div id="kink-sfw-notice" class="hidden text-center venue-card p-8 md:p-12 col-span-full mb-6">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400">
                     <i class="fas fa-eye-slash fa-2x"></i>
                 </div>
                 <h3 class="mt-4 text-xl font-semibold text-white">"Kink" Events Hidden</h3>
@@ -557,20 +637,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
             </div>
 
-            <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4">
+            <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 items-start">
+                <div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4 py-12">
                     <div class="loader"></div>
-                    <span>Loading events...</span>
+                    <span class="text-lg">Loading events...</span>
                 </div>
             </div>
-               <div id="no-results-message" class="hidden text-center card-bg p-12 col-span-full">
-                    <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
-                        <i class="fas fa-search fa-2x"></i>
-                    </div>
-                    <h3 class="mt-4 text-xl font-semibold text-white">No Results Found</h3>
-                    <p class="mt-2 text-gray-400">We couldn't find any events matching your filters. Try adjusting your search.</p>
-                    <button id="clear-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+            <div id="no-results-message" class="hidden text-center venue-card p-12 col-span-full">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400">
+                    <i class="fas fa-search fa-2x"></i>
                 </div>
+                <h3 class="mt-4 text-xl font-semibold text-white">No Results Found</h3>
+                <p class="mt-2 text-gray-400">We couldn't find any events matching your filters. Try adjusting your search.</p>
+                <button id="clear-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+            </div>
         </section>
     </main>
 
@@ -601,35 +681,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 
     <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+        <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <script src="/js/event-store.js"></script>
     <script>
@@ -701,14 +781,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Filtering Logic ---
         function applyFilters() {
-            // Use the store to update filters
+            // Convert legacy filter format to store format
             const filters = {
                 dateRange: activeDateFilter,
                 categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
                 venues: activeVenueFilter !== 'all' ? [activeVenueFilter] : [],
-                sfwMode: isSfwMode
+                sfwMode: isSfwMode,
+                limit: 50
             };
             
+            console.log('Applying filters:', filters);
             eventStore.updateFilters(filters);
         }
 
@@ -731,26 +813,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             eventGrid.innerHTML = events.map(event => {
                 const tagsHTML = event.category && event.category.length > 0 ? 
-                    event.category.map(cat => `<span class="category-tag">${cat}</span>`).join('') : '';
+                    event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
                 const imageUrl = event.image && event.image.url ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
                 const isBoosted = event.promotion && event.promotion.boosted;
                 const venueName = event.venue && event.venue.name ? event.venue.name : 'TBC';
+                const eventDate = new Date(event.date);
+                const formattedDate = eventDate.toLocaleDateString('en-GB', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
 
                 return `
-                    <a href="/event/${event.slug}" class="item-card card-bg block group animate-fade-in flex flex-row md:flex-col ${isBoosted ? 'boosted-listing' : ''}">
-                        ${isBoosted ? '<div class="boosted-listing-tag">BOOSTED</div>' : ''}
-                        ${event.recurringInfo ? '<div class="recurring-event-tag">RECURRING</div>' : ''}
-                        <div class="item-card-image-container w-1/3 md:w-full flex-shrink-0">
-                            <img src="${imageUrl}" alt="${event.name}" class="item-card-image" loading="lazy">
+                    <div class="venue-card rounded-xl overflow-hidden relative">
+                        ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
+                        ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
+                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
                         </div>
-                        <div class="p-6 w-2/3 md:w-full flex-grow text-left">
-                            <div class="mb-2 flex flex-wrap gap-2">${tagsHTML}</div>
-                            <h3 class="font-bold text-xl text-white mb-2 group-hover:accent-color" title="${event.name}" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">${event.name}</h3>
-                            <p class="text-gray-400 mb-1">${new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })}</p>
-                            <p class="text-gray-400">${venueName}</p>
-                            ${event.recurringInfo ? `<p class="text-sm text-purple-300 mt-1">${event.recurringInfo}</p>` : ''}
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm text-gray-400">${formattedDate}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2 text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem; line-height: 1.5rem;">${event.name}</h3>
+                            <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
+                            <div class="flex gap-1 mb-4 overflow-hidden">
+                                ${tagsHTML}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-eye mr-1"></i>View Details
+                                </a>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </div>
                         </div>
-                    </a>`;
+                    </div>`;
             }).join('');
         }
 
@@ -812,7 +911,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             if (error) {
                 eventGrid.innerHTML = `
-                    <div class="col-span-full text-center card-bg p-12">
+                    <div class="col-span-full text-center venue-card p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-800 text-white">
                             <i class="fas fa-exclamation-triangle fa-2x"></i>
                         </div>
@@ -878,9 +977,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     document.querySelectorAll('#filter-bar-container .filter-button[data-filter-type="date"]').forEach(b => b.classList.remove('active'));
                     button.classList.add('active');
 
-                    activeDateFilter.type = button.dataset.filterValue;
-                    activeDateFilter.from = null;
-                    activeDateFilter.to = null;
+                    const filterValue = button.dataset.filterValue;
+                    
+                    if (filterValue === 'today') {
+                        const today = new Date();
+                        activeDateFilter = {
+                            type: 'custom',
+                            from: today.toISOString().split('T')[0],
+                            to: today.toISOString().split('T')[0]
+                        };
+                    } else if (filterValue === 'this-weekend') {
+                        const today = new Date();
+                        const dayOfWeek = today.getDay();
+                        const daysUntilSaturday = 6 - dayOfWeek;
+                        const saturday = new Date(today);
+                        saturday.setDate(today.getDate() + daysUntilSaturday);
+                        const sunday = new Date(saturday);
+                        sunday.setDate(saturday.getDate() + 1);
+                        
+                        activeDateFilter = {
+                            type: 'custom',
+                            from: saturday.toISOString().split('T')[0],
+                            to: sunday.toISOString().split('T')[0]
+                        };
+                    } else {
+                        activeDateFilter = {
+                            type: filterValue,
+                            from: null,
+                            to: null
+                        };
+                    }
+                    
+                    console.log('Date filter changed:', activeDateFilter);
                     applyFilters();
                 }
             });
@@ -908,6 +1036,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 activeCategoryFilter = button.dataset.filterValue;
                 categoryBtn.querySelector('span').textContent = button.textContent;
                 categoryPopover.classList.remove('show');
+                console.log('Category filter changed:', activeCategoryFilter);
                 applyFilters();
             });
 
@@ -917,6 +1046,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 activeVenueFilter = button.dataset.filterValue;
                 venueBtn.querySelector('span').textContent = button.textContent;
                 venuePopover.classList.remove('show');
+                console.log('Venue filter changed:', activeVenueFilter);
                 applyFilters();
             });
 
@@ -1013,6 +1143,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 // Subscribe to store changes
                 eventStore.subscribe((state) => {
+                    console.log('Event store state updated:', state);
                     renderEvents(state.events);
                     updateLoadingState(state.loading);
                     updateErrorState(state.error);
