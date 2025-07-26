@@ -18,13 +18,20 @@ exports.handler = async function (event, context) {
     console.log("get-venue-details function called");
     console.log("Event path:", event.path);
     console.log("Event queryStringParameters:", event.queryStringParameters);
+    console.log("Full event object:", JSON.stringify(event, null, 2));
     
     // Extract slug from query parameters (as configured in netlify.toml)
     let slug = event.queryStringParameters?.slug;
     
     // Fallback: try to extract from path if not in query params
     if (!slug) {
-        slug = event.path.split("/").pop();
+        const pathParts = event.path.split("/");
+        slug = pathParts[pathParts.length - 1];
+    }
+    
+    // Additional fallback: try to extract from the full path
+    if (!slug && event.path.includes('/venue/')) {
+        slug = event.path.split('/venue/')[1];
     }
     
     console.log("Extracted slug:", slug);

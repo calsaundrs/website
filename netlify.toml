@@ -24,7 +24,7 @@
 # Rule for individual VENUE pages (Firestore-based)
 [[redirects]]
   from = "/venue/*"
-  to = "/.netlify/functions/get-venue-details-firestore?slug=:splat"
+  to = "/.netlify/functions/get-venue-details?slug=:splat"
   status = 200
 
 # Rule for the main EVENTS listing page
