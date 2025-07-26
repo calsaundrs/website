@@ -1,158 +1,108 @@
 const Airtable = require('airtable');
 
-// Check if required environment variables are available
-function checkEnvironmentVariables() {
-    const required = [
-        'AIRTABLE_PERSONAL_ACCESS_TOKEN',
-        'AIRTABLE_BASE_ID',
-        'FIREBASE_PROJECT_ID',
-        'FIREBASE_CLIENT_EMAIL',
-        'FIREBASE_PRIVATE_KEY'
-    ];
-    
-    const missing = required.filter(varName => !process.env[varName]);
-    
-    if (missing.length > 0) {
-        return {
-            success: false,
-            missing: missing,
-            message: `Missing environment variables: ${missing.join(', ')}`
-        };
-    }
-    
-    return { success: true };
-}
-
-// Initialize Firebase Admin with error handling
-function initializeFirebase() {
-    try {
-        const admin = require('firebase-admin');
-        
-        if (!admin.apps.length) {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-                }),
-            });
-        }
-        
-        return { success: true, db: admin.firestore() };
-    } catch (error) {
-        return {
-            success: false,
-            error: error.message,
-            message: 'Failed to initialize Firebase Admin'
-        };
-    }
-}
-
-// Initialize Airtable with error handling
-function initializeAirtable() {
-    try {
-        const base = new Airtable({ 
-            apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
-        }).base(process.env.AIRTABLE_BASE_ID);
-        
-        return { success: true, base: base };
-    } catch (error) {
-        return {
-            success: false,
-            error: error.message,
-            message: 'Failed to initialize Airtable'
-        };
-    }
-}
-
-// Helper function to safely get field value
-function getFieldValue(record, fieldName, defaultValue = null) {
-    try {
-        const value = record.get(fieldName);
-        return value !== undefined && value !== null ? value : defaultValue;
-    } catch (error) {
-        console.log(`Field "${fieldName}" not found, using default value: ${defaultValue}`);
-        return defaultValue;
-    }
-}
-
-// Helper function to create URL-friendly slug
-function slugify(text) {
-    if (!text) return '';
-    return text
-        .toString()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]+/g, '')
-        .replace(/--+/g, '-');
-}
-
 exports.handler = async function (event, context) {
     console.log('Starting complete data migration...');
     
     try {
         // Check environment variables
-        const envCheck = checkEnvironmentVariables();
-        if (!envCheck.success) {
+        const required = [
+            'AIRTABLE_PERSONAL_ACCESS_TOKEN',
+            'AIRTABLE_BASE_ID',
+            'FIREBASE_PROJECT_ID',
+            'FIREBASE_CLIENT_EMAIL',
+            'FIREBASE_PRIVATE_KEY'
+        ];
+        
+        const missing = required.filter(varName => !process.env[varName]);
+        if (missing.length > 0) {
+            console.error('Missing environment variables:', missing);
             return {
                 statusCode: 500,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     error: 'Environment configuration error',
-                    message: envCheck.message,
-                    missing: envCheck.missing
+                    message: `Missing environment variables: ${missing.join(', ')}`,
+                    missing: missing
                 })
             };
         }
         
-        // Initialize services
-        const firebaseInit = initializeFirebase();
-        const airtableInit = initializeAirtable();
-        
-        if (!firebaseInit.success) {
+        // Initialize Firebase
+        let db;
+        try {
+            const admin = require('firebase-admin');
+            if (!admin.apps.length) {
+                admin.initializeApp({
+                    credential: admin.credential.cert({
+                        projectId: process.env.FIREBASE_PROJECT_ID,
+                        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+                    }),
+                });
+            }
+            db = admin.firestore();
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization failed:', error);
             return {
                 statusCode: 500,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     error: 'Firebase initialization error',
-                    message: firebaseInit.message,
-                    details: firebaseInit.error
+                    message: error.message
                 })
             };
         }
         
-        if (!airtableInit.success) {
+        // Initialize Airtable
+        let base;
+        try {
+            base = new Airtable({ 
+                apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
+            }).base(process.env.AIRTABLE_BASE_ID);
+            console.log('Airtable initialized successfully');
+        } catch (error) {
+            console.error('Airtable initialization failed:', error);
             return {
                 statusCode: 500,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     error: 'Airtable initialization error',
-                    message: airtableInit.message,
-                    details: airtableInit.error
+                    message: error.message
                 })
             };
         }
-        
-        const db = firebaseInit.db;
-        const base = airtableInit.base;
         
         const results = {
             events: { migrated: 0, skipped: 0, errors: 0 },
             venues: { migrated: 0, skipped: 0, errors: 0 },
             details: []
         };
+        
+        // Helper function to safely get field value
+        function getFieldValue(record, fieldName, defaultValue = '') {
+            try {
+                const value = record.get(fieldName);
+                return value !== undefined && value !== null ? value : defaultValue;
+            } catch (error) {
+                console.log(`Field "${fieldName}" not found, using default: ${defaultValue}`);
+                return defaultValue;
+            }
+        }
+        
+        // Helper function to create slug
+        function slugify(text) {
+            if (!text) return '';
+            return text
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w-]+/g, '')
+                .replace(/--+/g, '-');
+        }
         
         // Migrate Events
         console.log('Starting event migration...');
@@ -260,31 +210,28 @@ exports.handler = async function (event, context) {
             results.details.push(`❌ Venues fetch error: ${error.message}`);
         }
         
+        console.log('Migration completed successfully');
+        console.log('Results:', JSON.stringify(results, null, 2));
+        
         return {
             statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 success: true,
-                message: 'Data migration completed',
+                message: 'Data migration completed successfully',
                 results: results
             })
         };
         
     } catch (error) {
-        console.error('Data migration failed:', error);
+        console.error('Migration failed with error:', error);
         return {
             statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Data migration failed',
+                error: 'Migration failed',
                 message: error.message,
-                type: error.constructor.name
+                stack: error.stack
             })
         };
     }

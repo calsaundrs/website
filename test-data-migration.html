@@ -362,15 +362,33 @@
             
             try {
                 const response = await fetch('/.netlify/functions/complete-data-migration');
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    resultsDiv.innerHTML = `<p class="status-error">Migration failed (HTTP ${response.status}): ${errorText}</p>`;
+                    return;
+                }
+                
                 const data = await response.json();
                 
                 if (response.ok) {
                     resultsDiv.innerHTML = `
                         <div class="space-y-2">
                             <p class="status-success">✅ Migration completed successfully!</p>
-                            <p class="text-gray-400">Events migrated: ${data.summary.eventsMigrated}</p>
-                            <p class="text-gray-400">Venues migrated: ${data.summary.venuesMigrated}</p>
-                            <p class="text-gray-400">Total errors: ${data.summary.totalErrors}</p>
+                            <p class="text-gray-400">Events migrated: ${data.results.events.migrated}</p>
+                            <p class="text-gray-400">Events skipped: ${data.results.events.skipped}</p>
+                            <p class="text-gray-400">Events errors: ${data.results.events.errors}</p>
+                            <p class="text-gray-400">Venues migrated: ${data.results.venues.migrated}</p>
+                            <p class="text-gray-400">Venues skipped: ${data.results.venues.skipped}</p>
+                            <p class="text-gray-400">Venues errors: ${data.results.venues.errors}</p>
+                            ${data.results.details.length > 0 ? `
+                                <div class="mt-4">
+                                    <p class="text-gray-400 font-semibold">Details:</p>
+                                    <div class="text-xs text-gray-500 max-h-32 overflow-y-auto">
+                                        ${data.results.details.map(detail => `<div>${detail}</div>`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 } else {
