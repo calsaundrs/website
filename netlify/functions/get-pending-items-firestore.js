@@ -150,12 +150,15 @@ async function getPendingEvents(limit, offset) {
         
         // Use the original query for the actual results
         console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
-        const snapshot = await eventsRef
-            .where('status', '==', 'pending')
+        
+        // Query for both 'pending' and 'pending review' statuses
+        const pendingQuery = eventsRef
+            .where('status', 'in', ['pending', 'pending review'])
             .orderBy('createdAt', 'desc')
             .limit(limit)
-            .offset(offset)
-            .get();
+            .offset(offset);
+        
+        const snapshot = await pendingQuery.get();
         
         console.log("🔍 GET PENDING EVENTS: Query completed");
         console.log("🔍 GET PENDING EVENTS: Snapshot size:", snapshot.size);
