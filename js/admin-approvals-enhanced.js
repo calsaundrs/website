@@ -43,57 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
             let venues = [];
             
             try {
-                const eventsResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
-                if (eventsResponse.ok) {
-                    events = await eventsResponse.json();
-                    console.log(`Loaded ${events.length} pending events`);
+                const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+                if (response.ok) {
+                    const data = await response.json();
+                    // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
+                    allItems = data.items || [];
+                    console.log(`Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
                 } else {
-                    console.error('Events response not ok:', eventsResponse.status);
-                    events = [];
+                    console.error('Response not ok:', response.status);
+                    allItems = [];
                 }
             } catch (error) {
-                console.error('Error loading pending events:', error);
-                showNotification('Error loading pending events', 'error');
-                events = [];
+                console.error('Error loading pending items:', error);
+                showNotification('Error loading pending items', 'error');
+                allItems = [];
             }
-            
-            try {
-                const venuesResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
-                if (venuesResponse.ok) {
-                    const venuesData = await venuesResponse.json();
-                    venues = venuesData.items ? venuesData.items.filter(item => item.type === 'venue') : [];
-                    console.log(`Loaded ${venues.length} pending venues`);
-                } else {
-                    console.error('Venues response not ok:', venuesResponse.status);
-                    venues = [];
-                }
-            } catch (error) {
-                console.error('Error loading pending venues:', error);
-                showNotification('Error loading pending venues', 'error');
-                venues = [];
-            }
-            
-            // Ensure we have arrays before calling .map()
-            if (!Array.isArray(events)) {
-                console.warn('Events is not an array:', events);
-                events = [];
-            }
-            
-            if (!Array.isArray(venues)) {
-                console.warn('Venues is not an array:', venues);
-                venues = [];
-            }
-            
-            // Combine and format items
-            allItems = [
-                ...events.map(item => ({ ...item, type: 'event' })),
-                ...venues.map(item => ({ ...item, type: 'venue' }))
-            ];
             
             // Sort by creation date (newest first)
             allItems.sort((a, b) => {
-                const dateA = new Date(a.fields.Date || a.fields['Created Time'] || a.createdTime);
-                const dateB = new Date(b.fields.Date || b.fields['Created Time'] || b.createdTime);
+                const dateA = new Date(a.createdAt || a.submittedAt || a.date);
+                const dateB = new Date(b.createdAt || b.submittedAt || b.date);
                 return dateB - dateA;
             });
             
@@ -154,12 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createItemCard(item) {
         const isEvent = item.type === 'event';
-        const fields = item.fields;
         
-        const title = isEvent ? fields['Event Name'] : fields.Name;
-        const description = fields.Description || 'No description provided';
-        const contactEmail = fields['Contact Email'] || fields['Submitter Email'] || 'No email provided';
-        const date = isEvent ? fields.Date : (fields['Created Time'] || fields.Date);
+        // Use direct properties instead of fields object for Firestore data
+        const title = isEvent ? item.name : item.name;
+        const description = item.description || 'No description provided';
+        const contactEmail = item.submittedBy || 'No email provided';
+        const date = isEvent ? item.date : (item.createdAt || item.submittedAt);
         const formattedDate = date ? new Date(date).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'long',
@@ -205,53 +174,43 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="detail-value">${formattedDate}</p>
                         </div>
                         
-                        ${fields.Category ? `
+                        ${item.category && item.category.length > 0 ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Category</p>
-                                <p class="detail-value">${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category}</p>
+                                <p class="detail-value">${Array.isArray(item.category) ? item.category.join(', ') : item.category}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Venue Name'] ? `
+                        ${item.venue && item.venue.name ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Venue</p>
-                                <p class="detail-value">${Array.isArray(fields['Venue Name']) ? fields['Venue Name'][0] : fields['Venue Name']}</p>
+                                <p class="detail-value">${item.venue.name}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Series ID'] ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Series Info</p>
-                                <p class="detail-value">
-                                    ${fields['Series Instance Number'] ? `Instance ${fields['Series Instance Number']} of ${fields['Series Instance Count']}` : 'Series Event'}
-                                    ${fields['Series Instance Count'] > 2 ? ` (${fields['Series Instance Count'] - 2} more future instances)` : ''}
-                                </p>
-                            </div>
-                        ` : ''}
-                        
-                        ${fields['Recurring Info'] ? `
+                        ${item.recurringInfo ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Recurring Pattern</p>
-                                <p class="detail-value">${fields['Recurring Info']}</p>
+                                <p class="detail-value">${item.recurringInfo}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Series ID'] ? `
+                        ${item.series ? `
                             <div class="approval-card-detail-item">
-                                <p class="detail-label">Series ID</p>
-                                <p class="detail-value">${fields['Series ID']}</p>
+                                <p class="detail-label">Series Info</p>
+                                <p class="detail-value">Series Event</p>
                             </div>
                         ` : ''}
                     ` : `
                         <div class="approval-card-detail-item">
                             <p class="detail-label">Address</p>
-                            <p class="detail-value">${fields.Address || 'No address provided'}</p>
+                            <p class="detail-value">${item.address || 'No address provided'}</p>
                         </div>
                         
-                        ${fields.Website ? `
+                        ${item.website ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Website</p>
-                                <p class="detail-value">${fields.Website}</p>
+                                <p class="detail-value">${item.website}</p>
                             </div>
                         ` : ''}
                     `}
