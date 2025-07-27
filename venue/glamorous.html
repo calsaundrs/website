@@ -340,9 +340,21 @@
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
                 
-                const venueEvents = data.events.filter(event => 
-                    event.venueName && event.venueName.toLowerCase().includes('glamorous')
-                );
+                const venueEvents = data.events.filter(event => {
+                    // Check venueName field
+                    if (event.venueName && event.venueName.toLowerCase().includes('glamorous')) {
+                        return true;
+                    }
+                    // Check event name
+                    if (event.name && event.name.toLowerCase().includes('glamorous')) {
+                        return true;
+                    }
+                    // Check description
+                    if (event.description && event.description.toLowerCase().includes('glamorous')) {
+                        return true;
+                    }
+                    return false;
+                });
                 
                 const eventsContainer = document.getElementById('events-container');
                 
