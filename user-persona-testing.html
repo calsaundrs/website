@@ -294,6 +294,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Investigate 147 unknown events</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testGenerateAllVenuePages()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-file-code mr-2"></i>Generate All Venue Pages
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Create venue pages for ALL venues</p>
+            </div>
         </div>
     </main>
 
@@ -1015,6 +1022,43 @@
                 }
             } catch (error) {
                 addResult(`❌ Event status fix failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Generate all venue pages function
+        async function testGenerateAllVenuePages() {
+            clearResults();
+            addResult('📄 Generating all venue pages...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/generate-all-venue-pages');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ All venue pages generated successfully!`, 'success');
+                    addResult(`📊 Total venues: ${data.totalVenues}`, 'success');
+                    addResult(`📄 Pages generated: ${data.generatedFiles}`, 'success');
+                    
+                    if (data.venues.length > 0) {
+                        addResult(`📋 Sample venues generated:`, 'success');
+                        data.venues.slice(0, 10).forEach(venue => {
+                            addResult(`   • ${venue.name} (${venue.slug})`, 'success');
+                        });
+                        if (data.venues.length > 10) {
+                            addResult(`   ... and ${data.venues.length - 10} more`, 'success');
+                        }
+                    }
+                    
+                    addResult(`💡 Try visiting /all-venues.html and clicking venue links`, 'info');
+                    addResult(`🔗 Example: /venue/${data.venues[0]?.slug || 'example-venue'}`, 'info');
+                } else {
+                    addResult(`❌ Venue page generation failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Venue page generation failed: ${error.message}`, 'error');
             }
         }
     </script>
