@@ -283,25 +283,33 @@ async function handleVenuesView(db) {
         snapshot.forEach(doc => {
             const rawData = doc.data();
             
-            // Process venue data for public view
-            const venueData = {
-                id: doc.id,
-                name: rawData.name || rawData['Name'] || 'Untitled Venue',
-                description: rawData.description || rawData['Description'] || '',
-                address: rawData.address || rawData['Address'] || '',
-                status: rawData.status || 'pending',
-                slug: rawData.slug || rawData['Slug'] || '',
-                category: rawData.category || rawData['Tags'] || [],
-                website: rawData.website || rawData['Website'] || '',
-                contactPhone: rawData.contactPhone || rawData['Contact Phone'] || '',
-                openingHours: rawData.openingHours || rawData['Opening Hours'] || '',
-                image: extractImageUrl(rawData)
-            };
+            // Extract image data
+            const imageData = extractImageUrl(rawData);
             
-            venues.push(venueData);
+            // Only include venues that have Cloudinary image data
+            if (imageData && imageData.url) {
+                // Process venue data for public view
+                const venueData = {
+                    id: doc.id,
+                    name: rawData.name || rawData['Name'] || 'Untitled Venue',
+                    description: rawData.description || rawData['Description'] || '',
+                    address: rawData.address || rawData['Address'] || '',
+                    status: rawData.status || 'pending',
+                    slug: rawData.slug || rawData['Slug'] || '',
+                    category: rawData.category || rawData['Tags'] || [],
+                    website: rawData.website || rawData['Website'] || '',
+                    contactPhone: rawData.contactPhone || rawData['Contact Phone'] || '',
+                    openingHours: rawData.openingHours || rawData['Opening Hours'] || '',
+                    image: imageData,
+                    popular: rawData.popular || false
+                };
+                
+                venues.push(venueData);
+            }
         });
         
-        console.log(`Processed ${venues.length} venues for public view`);
+        console.log(`Processed ${venues.length} venues with Cloudinary images for public view`);
+        console.log('Venues with images:', venues.map(v => ({ name: v.name, hasImage: !!v.image })));
         
         return {
             statusCode: 200,
@@ -323,24 +331,25 @@ async function handleVenuesView(db) {
 }
 
 function extractImageUrl(data) {
-    // Extract image URL from various possible formats
+    // Extract Cloudinary image object from various possible formats
     if (data.promoImage && data.promoImage.url) {
-        return data.promoImage.url;
-    }
-    if (data.image && data.image.url) {
-        return data.image.url;
-    }
-    if (data['Promo Image'] && data['Promo Image'].url) {
-        return data['Promo Image'].url;
-    }
-    if (data['Image'] && data['Image'].url) {
-        return data['Image'].url;
-    }
-    if (typeof data.promoImage === 'string') {
         return data.promoImage;
     }
-    if (typeof data.image === 'string') {
+    if (data.image && data.image.url) {
         return data.image;
+    }
+    if (data['Promo Image'] && data['Promo Image'].url) {
+        return data['Promo Image'];
+    }
+    if (data['Image'] && data['Image'].url) {
+        return data['Image'];
+    }
+    // If it's a string, try to convert to object format
+    if (typeof data.promoImage === 'string') {
+        return { url: data.promoImage };
+    }
+    if (typeof data.image === 'string') {
+        return { url: data.image };
     }
     return null;
 }
