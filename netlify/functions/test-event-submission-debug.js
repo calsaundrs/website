@@ -1,30 +1,10 @@
 const admin = require('firebase-admin');
 
-exports.handler = async function (event, context) {
-    console.log('Event submission debug test called');
+exports.handler = async function(event, context) {
+    console.log('Test event submission debug function called');
     
     try {
-        // Check environment variables
-        const required = [
-            'FIREBASE_PROJECT_ID',
-            'FIREBASE_CLIENT_EMAIL',
-            'FIREBASE_PRIVATE_KEY'
-        ];
-        
-        const missing = required.filter(varName => !process.env[varName]);
-        if (missing.length > 0) {
-            return {
-                statusCode: 500,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    error: 'Environment configuration error',
-                    message: `Missing environment variables: ${missing.join(', ')}`,
-                    missing: missing
-                })
-            };
-        }
-        
-        // Initialize Firebase
+        // Initialize Firebase if not already initialized
         if (!admin.apps.length) {
             admin.initializeApp({
                 credential: admin.credential.cert({
@@ -34,90 +14,54 @@ exports.handler = async function (event, context) {
                 })
             });
         }
+
         const db = admin.firestore();
         
-        // Parse form data manually (no formidable dependency)
-        let fields = {};
-        let files = {};
-        
-        if (event.body) {
-            // Handle multipart form data
-            const boundary = event.headers['content-type']?.split('boundary=')[1];
-            if (boundary) {
-                const parts = event.body.split(`--${boundary}`);
-                for (const part of parts) {
-                    if (part.includes('Content-Disposition: form-data')) {
-                        const nameMatch = part.match(/name="([^"]+)"/);
-                        if (nameMatch) {
-                            const fieldName = nameMatch[1];
-                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                            if (valueMatch) {
-                                fields[fieldName] = valueMatch[1].trim();
-                            }
-                        }
-                    }
-                }
-            } else {
-                // Handle URL-encoded form data
-                const params = new URLSearchParams(event.body);
-                for (const [key, value] of params) {
-                    fields[key] = value;
-                }
-            }
-        }
-        
-        console.log('Raw fields:', fields);
-        console.log('Raw files:', files);
-        
-        const submission = { ...fields, files: Object.values(files) };
-        console.log('Parsed submission keys:', Object.keys(submission));
-        
-        // Test basic event submission
-        const testEventData = {
-            name: submission['event-name'] || 'Debug Test Event',
-            slug: 'debug-test-event-2025-01-27',
-            description: submission.description || 'Debug test event',
-            date: new Date().toISOString(),
+        // Test writing a simple event to Firestore
+        const testEvent = {
+            name: 'Test Debug Event',
+            description: 'This is a test event to debug Firestore writes',
+            date: new Date('2025-08-30T20:00:00.000Z').toISOString(),
             status: 'pending',
-            venueName: submission['venue-name'] || 'Debug Venue',
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
-            link: submission.link || '',
-            recurringInfo: submission['recurring-info'] || '',
-            seriesId: `debug_series_${Date.now()}`,
-            submittedBy: submission.email || 'debug@test.com',
+            venueName: 'Test Debug Venue',
+            category: ['Test'],
+            submittedBy: 'debug@test.com',
             createdAt: new Date(),
             updatedAt: new Date()
         };
         
-        console.log('Test event data:', testEventData);
+        console.log('Writing test event to Firestore:', testEvent);
         
-        // Submit to Firestore
-        const firestoreDoc = await db.collection('events').add(testEventData);
+        const docRef = await db.collection('events').add(testEvent);
         
-        console.log(`Debug event submitted successfully. Firestore ID: ${firestoreDoc.id}`);
+        console.log('Test event written successfully with ID:', docRef.id);
+        
+        // Now read it back to verify
+        const doc = await docRef.get();
+        const data = doc.data();
+        
+        console.log('Read back event data:', data);
         
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 success: true,
-                message: 'Debug event submission successful',
-                firestoreId: firestoreDoc.id,
-                submittedData: testEventData,
-                receivedFields: fields,
-                receivedFiles: Object.keys(files)
+                message: 'Test event written and read successfully',
+                eventId: docRef.id,
+                eventData: data,
+                status: data.status
             })
         };
         
     } catch (error) {
-        console.error('Debug event submission failed:', error);
+        console.error('Error in test event submission debug:', error);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Debug event submission failed',
+                error: 'Test failed',
                 message: error.message,
-                type: error.constructor.name,
                 stack: error.stack
             })
         };
