@@ -259,6 +259,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Debug raw form data parsing</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testGetEventsDebug()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-calendar mr-2"></i>Debug Get Events
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug get-events-firestore function</p>
+            </div>
         </div>
     </main>
 
@@ -814,6 +821,41 @@
                     addResult(`📋 Received fields: ${Object.keys(data.receivedFields).join(', ')}`, 'success');
                 } else {
                     addResult(`❌ Form data debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug get events function
+        async function testGetEventsDebug() {
+            clearResults();
+            addResult('🔍 Debugging get-events-firestore function...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-get-events-debug');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Get events debug successful!`, 'success');
+                    addResult(`📊 Event count: ${data.eventCount}`, 'success');
+                    addResult(`🏢 Project ID: ${data.environment.projectId}`, 'success');
+                    addResult(`📧 Has client email: ${data.environment.hasClientEmail ? 'Yes' : 'No'}`, 'success');
+                    addResult(`🔑 Has private key: ${data.environment.hasPrivateKey ? 'Yes' : 'No'}`, 'success');
+                    
+                    if (data.events.length > 0) {
+                        addResult(`📋 Sample events:`, 'success');
+                        data.events.forEach(event => {
+                            addResult(`   • ${event.name} (${event.status})`, 'success');
+                        });
+                    } else {
+                        addResult(`📝 No events found in database`, 'info');
+                    }
+                } else {
+                    addResult(`❌ Get events debug failed: ${data.message}`, 'error');
                     if (data.stack) {
                         addResult(`🔍 Error stack: ${data.stack}`, 'error');
                     }
