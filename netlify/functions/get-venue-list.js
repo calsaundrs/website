@@ -24,34 +24,73 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        console.log('Venue List: Starting function - testing basic functionality');
+        console.log('Venue List: Starting function');
         
-        // Return a simple test response for now
-        const testVenues = [
-            {
-                id: 'test-1',
-                name: 'Test Venue 1',
-                address: '123 Test Street',
-                description: 'A test venue',
-                website: 'https://example.com',
-                phone: '0121 123 4567'
-            },
-            {
-                id: 'test-2',
-                name: 'Test Venue 2',
-                address: '456 Test Avenue',
-                description: 'Another test venue',
-                website: 'https://example2.com',
-                phone: '0121 987 6543'
-            }
+        // Check environment variables
+        const required = [
+            'FIREBASE_PROJECT_ID',
+            'FIREBASE_CLIENT_EMAIL',
+            'FIREBASE_PRIVATE_KEY'
         ];
-
-        console.log('Venue List: Returning test venues successfully');
-
+        
+        const missing = required.filter(varName => !process.env[varName]);
+        if (missing.length > 0) {
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({
+                    error: 'Environment configuration error',
+                    message: `Missing environment variables: ${missing.join(', ')}`,
+                    missing: missing
+                })
+            };
+        }
+        
+        // Initialize Firebase
+        const admin = require('firebase-admin');
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+                })
+            });
+        }
+        const db = admin.firestore();
+        
+        // Fetch all venues from Firestore
+        const venuesRef = db.collection('venues');
+        console.log('Venue List: Fetching venues from Firestore');
+        const snapshot = await venuesRef.get();
+        console.log(`Venue List: Found ${snapshot.size} venues`);
+        
+        const venues = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            venues.push({
+                id: doc.id,
+                name: data.name || data['Name'] || 'Unnamed Venue',
+                address: data.address || data['Address'] || '',
+                description: data.description || data['Description'] || '',
+                website: data.website || data['Website'] || '',
+                phone: data.contactPhone || data['Contact Phone'] || data.phone || '',
+                status: data.status || 'pending',
+                slug: data.slug || data['Slug'] || '',
+                category: data.category || data['Tags'] || [],
+                image: data.image || data['Image'] || null,
+                popular: data.popular || false
+            });
+        });
+        
+        // Sort venues by name
+        venues.sort((a, b) => a.name.localeCompare(b.name));
+        
+        console.log('Venue List: Returning venues successfully');
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify(testVenues)
+            body: JSON.stringify(venues)
         };
 
     } catch (error) {

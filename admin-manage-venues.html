@@ -393,8 +393,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             allAdminVenues = []; // Reset stored data
 
             try {
-                // Call the Firestore function to get all venues (same as venues listing page)
-                const response = await fetch('/.netlify/functions/get-events-firestore-simple?view=venues');
+                // Call the Firestore function to get all venues for admin management
+                const response = await fetch('/.netlify/functions/get-venue-list');
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({details: 'Server returned an invalid response'}));
                     throw new Error(errorData.details || 'Failed to fetch venues.');
@@ -402,14 +402,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const data = await response.json();
                 loadingState.style.display = 'none'; // Hide loading spinner
                 
-                if (data && data.venues && data.venues.length > 0) {
-                    allAdminVenues = data.venues;
+                if (data && data.length > 0) {
+                    allAdminVenues = data;
                     // Render each venue
                     allAdminVenues.forEach(item => venueList.appendChild(renderVenue(item)));
                 } else {
-                    venueList.innerHTML = '<p class="text-center text-gray-400">No approved venues found.</p>';
+                    venueList.innerHTML = '<p class="text-center text-gray-400">No venues found.</p>';
                 }
-                // The get-events-firestore-simple function fetches all approved venues, so no "Load More" needed.
+                // The get-venue-list function fetches all venues, so no "Load More" needed.
                 loadMoreContainer.style.display = 'none'; 
             } catch (error) {
                 console.error("Error fetching venues:", error);
