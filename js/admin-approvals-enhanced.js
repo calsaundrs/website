@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Regular approval for non-recurring events or venues
-            const endpoint = 'unified-update-item-status';
+            const endpoint = 'update-item-status-firestore-only';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function rejectItem(id, type, reason) {
         try {
-            const endpoint = 'unified-update-item-status';
+            const endpoint = 'update-item-status-firestore-only';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            const endpoint = 'unified-update-item-status';
+            const endpoint = 'update-item-status-firestore-only';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
