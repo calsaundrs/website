@@ -108,7 +108,7 @@ exports.handler = async function (event, context) {
         console.log('🔑 EVENT SUBMISSION: Submission keys:', Object.keys(submission));
         console.log('📅 EVENT SUBMISSION: Event date:', submission.date);
         console.log('⏰ EVENT SUBMISSION: Event time:', submission['start-time']);
-        console.log('🏢 EVENT SUBMISSION: Venue name:', submission['venue-name']);
+        console.log('🏢 EVENT SUBMISSION: Venue ID:', submission.venueId);
         
         // Generate slug
         const slug = generateSlug(submission['event-name'], submission.date);
@@ -127,20 +127,43 @@ exports.handler = async function (event, context) {
             eventDateTime = new Date().toISOString();
         }
         
+        // Get venue name from venue ID
+        let venueName = '';
+        if (submission.venueId && submission.venueId !== 'new') {
+            try {
+                console.log('🏢 EVENT SUBMISSION: Looking up venue name for ID:', submission.venueId);
+                const venueDoc = await db.collection('venues').doc(submission.venueId).get();
+                if (venueDoc.exists) {
+                    const venueData = venueDoc.data();
+                    venueName = venueData.name || venueData['Venue Name'] || 'Unknown Venue';
+                    console.log('🏢 EVENT SUBMISSION: Found venue name:', venueName);
+                } else {
+                    console.log('🏢 EVENT SUBMISSION: Venue not found, using ID as name');
+                    venueName = submission.venueId;
+                }
+            } catch (venueError) {
+                console.error('🏢 EVENT SUBMISSION: Error looking up venue:', venueError);
+                venueName = submission.venueId || 'Unknown Venue';
+            }
+        } else if (submission['new-venue-name']) {
+            venueName = submission['new-venue-name'];
+            console.log('🏢 EVENT SUBMISSION: Using new venue name:', venueName);
+        }
+        
         const firestoreData = {
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
             description: submission.description || '',
             date: eventDateTime,
             status: 'pending',
-            venueName: submission['venue-name'] || '',
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
+            venueName: venueName,
+            category: submission.categoryIds ? [submission.categoryIds] : [],
             link: submission.link || '',
-            recurringInfo: submission['recurring-info'] || '',
-            seriesId: submission['series-id'] || `series_${Date.now()}`,
+            recurringInfo: submission.recurrence || '',
+            seriesId: `series_${Date.now()}`,
             cloudinaryPublicId: null,
             promoImage: null,
-            submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
+            submittedBy: submission['contact-email'] || 'anonymous@brumoutloud.co.uk',
             createdAt: new Date(),
             updatedAt: new Date()
         };
