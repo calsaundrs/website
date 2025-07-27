@@ -339,12 +339,13 @@
     
     
     
+    
     <script>
-        // Load events for this venue
+        // Load events for this venue using the comprehensive recurring events system
         async function loadVenueEvents() {
             try {
-                // Use the working venue-specific events API
-                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=equator-bar');
+                // Use the new recurring events system
+                const response = await fetch('/.netlify/functions/recurring-events-system?action=get-grouped&venueSlug=equator-bar');
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
                 
@@ -366,28 +367,88 @@
                                     year: 'numeric' 
                                 });
 
-                                // Handle recurring event display
+                                // Handle recurring event display with comprehensive system
                                 let recurringDisplay = '';
-                                if (event.recurringInfo) {
-                                    // Extract recurring pattern from recurringInfo
-                                    const recurringText = event.recurringInfo.toLowerCase();
-                                    if (recurringText.includes('weekly') || recurringText.includes('every week')) {
-                                        recurringDisplay = 'Weekly Event';
-                                    } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
-                                        recurringDisplay = 'Monthly Event';
-                                    } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
-                                        recurringDisplay = 'Daily Event';
-                                    } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
-                                        recurringDisplay = 'Bi-Weekly Event';
-                                    } else {
-                                        recurringDisplay = 'Recurring Event';
+                                let recurringBadge = '';
+                                
+                                if (event.isRecurringGroup) {
+                                    // This is a grouped recurring event
+                                    const pattern = event.recurringPattern;
+                                    const instanceCount = event.instances ? event.instances.length : 0;
+                                    const nextOccurrence = event.nextOccurrence ? new Date(event.nextOccurrence) : null;
+                                    
+                                    // Create pattern label
+                                    let patternLabel = '';
+                                    switch (pattern) {
+                                        case 'weekly':
+                                            patternLabel = 'Weekly Event';
+                                            break;
+                                        case 'monthly':
+                                            patternLabel = 'Monthly Event';
+                                            break;
+                                        case 'daily':
+                                            patternLabel = 'Daily Event';
+                                            break;
+                                        case 'bi-weekly':
+                                            patternLabel = 'Bi-Weekly Event';
+                                            break;
+                                        case 'yearly':
+                                            patternLabel = 'Annual Event';
+                                            break;
+                                        default:
+                                            patternLabel = 'Recurring Event';
                                     }
+                                    
+                                    // Add instance count if multiple instances
+                                    if (instanceCount > 1) {
+                                        patternLabel += ` (${instanceCount} upcoming)`;
+                                    }
+                                    
+                                    recurringDisplay = patternLabel;
+                                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                                    
+                                    // Update date to show next occurrence
+                                    if (nextOccurrence) {
+                                        formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            year: 'numeric' 
+                                        });
+                                    }
+                                    
+                                } else if (event.recurringInfo || event.recurringPattern) {
+                                    // Individual recurring event (fallback)
+                                    const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+                                    let patternLabel = '';
+                                    
+                                    switch (pattern) {
+                                        case 'weekly':
+                                            patternLabel = 'Weekly Event';
+                                            break;
+                                        case 'monthly':
+                                            patternLabel = 'Monthly Event';
+                                            break;
+                                        case 'daily':
+                                            patternLabel = 'Daily Event';
+                                            break;
+                                        case 'bi-weekly':
+                                            patternLabel = 'Bi-Weekly Event';
+                                            break;
+                                        case 'yearly':
+                                            patternLabel = 'Annual Event';
+                                            break;
+                                        default:
+                                            patternLabel = 'Recurring Event';
+                                    }
+                                    
+                                    recurringDisplay = patternLabel;
+                                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
                                 }
 
                                 return `
                                     <div class="venue-card rounded-xl overflow-hidden relative">
                                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
-                                        ${recurringDisplay ? `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span></div>` : ''}
+                                        ${recurringBadge}
                                         <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
                                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                                         </div>
@@ -438,6 +499,26 @@
                         <p class="text-gray-400 text-lg">We're having trouble loading events right now. Please try again later.</p>
                     </div>
                 `;
+            }
+        }
+
+        // Helper function to extract recurring pattern (fallback)
+        function extractRecurringPattern(recurringInfo) {
+            if (!recurringInfo) return null;
+            
+            const text = recurringInfo.toLowerCase();
+            if (text.includes('weekly') || text.includes('every week')) {
+                return 'weekly';
+            } else if (text.includes('monthly') || text.includes('every month')) {
+                return 'monthly';
+            } else if (text.includes('daily') || text.includes('every day')) {
+                return 'daily';
+            } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+                return 'bi-weekly';
+            } else if (text.includes('yearly') || text.includes('annual')) {
+                return 'yearly';
+            } else {
+                return 'recurring';
             }
         }
 
