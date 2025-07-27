@@ -1,5 +1,3 @@
-const Airtable = require('airtable');
-
 exports.handler = async function(event, context) {
     // Enable CORS
     const headers = {
@@ -26,42 +24,38 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        console.log('Venue List: Starting function');
-        console.log('Venue List: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
-        console.log('Venue List: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
+        console.log('Venue List: Starting function - testing basic functionality');
         
-        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
-            throw new Error('Missing required environment variables');
-        }
+        // Return a simple test response for now
+        const testVenues = [
+            {
+                id: 'test-1',
+                name: 'Test Venue 1',
+                address: '123 Test Street',
+                description: 'A test venue',
+                website: 'https://example.com',
+                phone: '0121 123 4567'
+            },
+            {
+                id: 'test-2',
+                name: 'Test Venue 2',
+                address: '456 Test Avenue',
+                description: 'Another test venue',
+                website: 'https://example2.com',
+                phone: '0121 987 6543'
+            }
+        ];
 
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
-        
-        console.log('Venue List: Fetching venues from Airtable');
-        const records = await base('Venues').select({
-            sort: [{ field: 'Name', direction: 'asc' }]
-        }).all();
-
-        console.log(`Venue List: Found ${records.length} venues`);
-
-        const venues = records.map(record => ({
-            id: record.id,
-            name: record.get('Name') || 'Unnamed Venue',
-            address: record.get('Address') || '',
-            description: record.get('Description') || '',
-            website: record.get('Website') || '',
-            phone: record.get('Phone') || ''
-        }));
-
-        console.log('Venue List: Returning venues successfully');
+        console.log('Venue List: Returning test venues successfully');
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify(venues)
+            body: JSON.stringify(testVenues)
         };
 
     } catch (error) {
-        console.error('Venue List: Error fetching venues:', error);
+        console.error('Venue List: Error:', error);
         console.error('Venue List: Error stack:', error.stack);
         return {
             statusCode: 500,

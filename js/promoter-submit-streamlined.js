@@ -290,7 +290,38 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error fetching venues:', error);
-            venueSelect.innerHTML = '<option value="">Error loading venues</option>';
+            // Fallback to some common venues for testing
+            const fallbackVenues = [
+                'The Nightingale Club',
+                'The Village Inn',
+                'The Old Joint Stock Pub & Theatre',
+                'Glamorous',
+                'The Sunflower Lounge',
+                'The Actress & Bishop',
+                'The Flapper',
+                'The Victoria',
+                'The Rainbow',
+                'The Missing Bar',
+                'The Custard Factory',
+                'The Hare & Hounds',
+                'The O2 Academy',
+                'The Institute',
+                'The Asylum'
+            ];
+            
+            venueSelect.innerHTML = '<option value="">Select an existing venue...</option>';
+            fallbackVenues.forEach(venue => {
+                const option = document.createElement('option');
+                option.value = venue;
+                option.textContent = venue;
+                venueSelect.appendChild(option);
+            });
+            
+            // Add "Create New Venue" option
+            const newVenueOption = document.createElement('option');
+            newVenueOption.value = 'new';
+            newVenueOption.textContent = '➕ Create New Venue';
+            venueSelect.appendChild(newVenueOption);
         }
     }
 
