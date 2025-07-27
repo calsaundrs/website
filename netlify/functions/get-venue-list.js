@@ -1,3 +1,5 @@
+const admin = require('firebase-admin');
+
 exports.handler = async function(event, context) {
     // Enable CORS
     const headers = {
@@ -47,7 +49,6 @@ exports.handler = async function(event, context) {
         }
         
         // Initialize Firebase
-        const admin = require('firebase-admin');
         if (!admin.apps.length) {
             admin.initializeApp({
                 credential: admin.credential.cert({
@@ -95,36 +96,12 @@ exports.handler = async function(event, context) {
         
         console.log(`Venue List: Returning ${venues.length} venues with Cloudinary images successfully`);
         console.log('Venues with images:', venues.map(v => ({ name: v.name, hasImage: !!v.image })));
+        
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify(venues)
         };
-    }
-    
-    function extractImageUrl(data) {
-        // Extract Cloudinary image object from various possible formats
-        if (data.promoImage && data.promoImage.url) {
-            return data.promoImage;
-        }
-        if (data.image && data.image.url) {
-            return data.image;
-        }
-        if (data['Promo Image'] && data['Promo Image'].url) {
-            return data['Promo Image'];
-        }
-        if (data['Image'] && data['Image'].url) {
-            return data['Image'];
-        }
-        // If it's a string, try to convert to object format
-        if (typeof data.promoImage === 'string') {
-            return { url: data.promoImage };
-        }
-        if (typeof data.image === 'string') {
-            return { url: data.image };
-        }
-        return null;
-    }
 
     } catch (error) {
         console.error('Venue List: Error:', error);
@@ -140,3 +117,27 @@ exports.handler = async function(event, context) {
         };
     }
 };
+
+function extractImageUrl(data) {
+    // Extract Cloudinary image object from various possible formats
+    if (data.promoImage && data.promoImage.url) {
+        return data.promoImage;
+    }
+    if (data.image && data.image.url) {
+        return data.image;
+    }
+    if (data['Promo Image'] && data['Promo Image'].url) {
+        return data['Promo Image'];
+    }
+    if (data['Image'] && data['Image'].url) {
+        return data['Image'];
+    }
+    // If it's a string, try to convert to object format
+    if (typeof data.promoImage === 'string') {
+        return { url: data.promoImage };
+    }
+    if (typeof data.image === 'string') {
+        return { url: data.image };
+    }
+    return null;
+}
