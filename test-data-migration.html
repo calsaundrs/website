@@ -751,23 +751,21 @@
             resultsDiv.innerHTML = '<p class="text-gray-400">Testing venue submission...</p>';
             
             try {
-                const formData = new FormData();
-                formData.append('venue-name', 'Test Venue - Data Migration');
-                formData.append('description', 'This is a test venue for data migration testing');
-                formData.append('address', '123 Test Street, Birmingham');
-                formData.append('contact-email', 'test@brumoutloud.co.uk');
-                formData.append('website', 'https://testvenue.com');
-                
-                const response = await fetch('/.netlify/functions/unified-venue-submission', {
-                    method: 'POST',
-                    body: formData
-                });
+                const response = await fetch('/.netlify/functions/test-venue-submission-minimal');
+                const data = await response.json();
                 
                 if (response.ok) {
-                    resultsDiv.innerHTML = '<p class="status-success">✅ Test venue submitted successfully!</p>';
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Test venue submitted successfully!</p>
+                            <p class="text-gray-400">Airtable ID: ${data.airtableId}</p>
+                            <p class="text-gray-400">Firestore ID: ${data.firestoreId}</p>
+                            <p class="text-gray-400">Slug: ${data.slug}</p>
+                            <p class="text-gray-400">Fields used: ${data.fieldsUsed.join(', ')}</p>
+                        </div>
+                    `;
                 } else {
-                    const errorText = await response.text();
-                    resultsDiv.innerHTML = `<p class="status-error">Venue submission failed: ${errorText}</p>`;
+                    resultsDiv.innerHTML = `<p class="status-error">Venue submission failed: ${JSON.stringify(data)}</p>`;
                 }
             } catch (error) {
                 resultsDiv.innerHTML = `<p class="status-error">Venue submission error: ${error.message}</p>`;
