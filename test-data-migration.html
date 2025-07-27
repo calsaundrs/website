@@ -125,6 +125,9 @@
                     <button id="create-enhanced-test-data" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-plus-circle mr-2"></i>Create Enhanced Test Data
                     </button>
+                    <button id="create-link-only-test-data" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-link mr-2"></i>Create Link-Only Test Data
+                    </button>
                 </div>
             </div>
         </div>
@@ -1051,6 +1054,31 @@
             }
         }
 
+        async function createLinkOnlyTestData() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Creating link-only test data...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-data-creation-link-only');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Link-only test data created successfully!</p>
+                            <p class="text-gray-400">Event: ${data.results.events.airtable?.name || 'Failed'}</p>
+                            <p class="text-gray-400">Venue: ${data.results.venues.airtable?.name || 'Failed'}</p>
+                            <p class="text-gray-400 text-xs">Note: Added Link for events (no Category)</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p class="status-error">Link-only test data creation failed: ${data.message}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Link-only test data creation error: ${error.message}</p>`;
+            }
+        }
+
         async function loadPendingItems() {
             const pendingDiv = document.getElementById('pending-items');
             
@@ -1098,6 +1126,7 @@
         document.getElementById('create-test-data').addEventListener('click', createTestData);
         document.getElementById('create-minimal-test-data').addEventListener('click', createMinimalTestData);
         document.getElementById('create-enhanced-test-data').addEventListener('click', createEnhancedTestData);
+        document.getElementById('create-link-only-test-data').addEventListener('click', createLinkOnlyTestData);
 
         // Initialize
         testEnvironment();
