@@ -46,6 +46,14 @@ exports.handler = async function (event, context) {
             console.log('🔍 EVENT SUBMISSION: Raw body length:', event.body.length);
             console.log('🔍 EVENT SUBMISSION: Content-Type:', event.headers['content-type']);
             
+            // Check if body is base64 encoded
+            let decodedBody = event.body;
+            if (event.isBase64Encoded) {
+                console.log('🔍 EVENT SUBMISSION: Body is base64 encoded, decoding...');
+                decodedBody = Buffer.from(event.body, 'base64').toString('utf8');
+                console.log('🔍 EVENT SUBMISSION: Decoded body length:', decodedBody.length);
+            }
+            
             // Handle multipart form data
             const contentType = event.headers['content-type'] || '';
             const boundaryMatch = contentType.match(/boundary=([^;]+)/);
@@ -54,22 +62,21 @@ exports.handler = async function (event, context) {
                 const boundary = boundaryMatch[1];
                 console.log('🔍 EVENT SUBMISSION: Found boundary:', boundary);
                 
-                // Remove the boundary prefix and suffix
-                const bodyWithoutBoundary = event.body.replace(`--${boundary}--`, '').replace(`--${boundary}`, '');
-                const parts = bodyWithoutBoundary.split(`--${boundary}`);
-                
+                // Split by boundary
+                const parts = decodedBody.split(`--${boundary}`);
                 console.log('🔍 EVENT SUBMISSION: Number of parts:', parts.length);
                 
                 for (let i = 0; i < parts.length; i++) {
                     const part = parts[i];
-                    if (part.trim() === '') continue;
+                    if (part.trim() === '' || part.includes('--')) continue;
                     
-                    console.log(`🔍 EVENT SUBMISSION: Processing part ${i}:`, part.substring(0, 100) + '...');
+                    console.log(`🔍 EVENT SUBMISSION: Processing part ${i}:`, part.substring(0, 200) + '...');
                     
                     // Extract field name
                     const nameMatch = part.match(/name="([^"]+)"/);
                     if (nameMatch) {
                         const fieldName = nameMatch[1];
+                        console.log(`🔍 EVENT SUBMISSION: Found field name: ${fieldName}`);
                         
                         // Extract field value (everything after the double newline)
                         const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
@@ -77,13 +84,17 @@ exports.handler = async function (event, context) {
                             const fieldValue = valueMatch[1].trim();
                             fields[fieldName] = fieldValue;
                             console.log(`🔍 EVENT SUBMISSION: Parsed field ${fieldName}:`, fieldValue);
+                        } else {
+                            console.log(`🔍 EVENT SUBMISSION: No value found for field ${fieldName}`);
                         }
+                    } else {
+                        console.log(`🔍 EVENT SUBMISSION: No name found in part ${i}`);
                     }
                 }
             } else {
                 console.log('🔍 EVENT SUBMISSION: No boundary found, trying URL-encoded');
                 // Handle URL-encoded form data
-                const params = new URLSearchParams(event.body);
+                const params = new URLSearchParams(decodedBody);
                 for (const [key, value] of params) {
                     fields[key] = value;
                     console.log(`🔍 EVENT SUBMISSION: Parsed field ${key}:`, value);
