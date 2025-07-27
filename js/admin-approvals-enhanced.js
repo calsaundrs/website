@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if this is a recurring event
             const item = allItems.find(item => item.id === id && item.type === type);
             
-            if (type === 'event' && item && item.fields['Series ID']) {
+            if (type === 'event' && item && (item.series || item.recurringInfo)) {
                 // Show recurring approval modal
                 openRecurringApprovalModal(id, type);
                 return;
