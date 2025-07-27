@@ -221,7 +221,7 @@ exports.handler = async function (event, context) {
         const venueData = {
             // Core fields
             'Name': venueName,
-            'Slug': slug,
+            // Removed 'Slug' - it's a computed field in Airtable
             'Description': submission.description || '',
             'Address': submission.address || '',
             'Status': isFromAdmin ? 'Approved' : 'Pending Review',
@@ -266,7 +266,7 @@ exports.handler = async function (event, context) {
         const firestoreData = {
             airtableId: airtableId,
             name: venueData['Name'],
-            slug: venueData['Slug'],
+            slug: slug, // Use the generated slug directly
             description: venueData['Description'],
             address: venueData['Address'],
             status: venueData['Status'].toLowerCase(),
