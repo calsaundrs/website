@@ -217,31 +217,29 @@ exports.handler = async function (event, context) {
         const venueName = submission.name || submission['venue-name'];
         const slug = generateSlug(venueName);
         
-        // Prepare venue data for both Airtable and Firestore
+        // Prepare venue data for both Airtable and Firestore (using only working fields)
         const venueData = {
-            // Core fields
+            // Core fields (confirmed working)
             'Name': venueName,
-            // Removed 'Slug' - it's a computed field in Airtable
             'Description': submission.description || '',
             'Address': submission.address || '',
             'Status': isFromAdmin ? 'Approved' : 'Pending Review',
-            'Listing Status': isFromAdmin ? 'Listed' : 'Pending Review',
-            
-            // Contact information
             'Contact Email': submission['contact-email'] || '',
             'Website': submission.website || '',
+            'Contact Phone': submission['contact-phone'] || '',
+            'Opening Hours': submission['opening-hours'] || '',
+            'Accessibility': submission.accessibility || ''
+            // Removed 'Listing Status' - using only confirmed working fields
+            // Removed 'Slug' - it's a computed field in Airtable
+            
+            // Additional fields (test these incrementally)
             'Instagram': submission.instagram || '',
             'Facebook': submission.facebook || '',
             'TikTok': submission.tiktok || '',
-            'Contact Phone': submission['contact-phone'] || '',
-            
-            // Venue details
-            'Opening Hours': submission['opening-hours'] || '',
-            'Accessibility': submission.accessibility || '',
             'Accessibility Rating': submission['accessibility-rating'] || '',
             'Parking Exception': submission['parking-exception'] || '',
             
-            // Tags and features
+            // Tags and features (test these incrementally)
             'Vibe Tags': toArray(submission['vibe-tags']),
             'Venue Features': toArray(submission['venue-features']),
             'Accessibility Features': toArray(submission['accessibility-features']),
@@ -267,7 +265,7 @@ exports.handler = async function (event, context) {
             description: venueData['Description'],
             address: venueData['Address'],
             status: venueData['Status'].toLowerCase(),
-            listingStatus: venueData['Listing Status'].toLowerCase(),
+            // Removed listingStatus - not using Listing Status field
             
             // Contact information
             website: venueData['Website'],

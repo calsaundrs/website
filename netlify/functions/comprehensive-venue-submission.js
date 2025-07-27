@@ -81,25 +81,18 @@ exports.handler = async function (event, context) {
             return Array.isArray(value) ? value : [value];
         };
         
-        // Prepare comprehensive venue data for Airtable
+        // Prepare comprehensive venue data for Airtable (using only confirmed working fields)
         const venueData = {
             'Name': testSubmission.name,
             'Description': testSubmission.description,
             'Address': testSubmission.address,
             'Status': 'Pending Review',
-            'Listing Status': 'Unlisted', // Use existing option instead of "Pending Review"
             'Contact Email': testSubmission['contact-email'],
             'Website': testSubmission.website,
-            'Instagram': testSubmission.instagram,
-            'Facebook': testSubmission.facebook,
-            'TikTok': testSubmission.tiktok,
             'Contact Phone': testSubmission['contact-phone'],
             'Opening Hours': testSubmission['opening-hours'],
-            'Accessibility': testSubmission.accessibility,
-            'Parking Exception': testSubmission['parking-exception'],
-            'Vibe Tags': toArray(testSubmission['vibe-tags']),
-            'Venue Features': toArray(testSubmission['venue-features']),
-            'Accessibility Features': toArray(testSubmission['accessibility-features'])
+            'Accessibility': testSubmission.accessibility
+            // Removed fields that might cause issues: Listing Status, social media, tags, etc.
         };
         
         console.log('Attempting to create comprehensive venue in Airtable with data:', venueData);
@@ -108,7 +101,7 @@ exports.handler = async function (event, context) {
         const airtableRecord = await base('Venues').create([{ fields: venueData }]);
         const airtableId = airtableRecord[0].id;
         
-        // Prepare Firestore data (with slug)
+        // Prepare Firestore data (with slug and all fields)
         const firestoreData = {
             airtableId: airtableId,
             name: venueData['Name'],
@@ -116,19 +109,19 @@ exports.handler = async function (event, context) {
             description: venueData['Description'],
             address: venueData['Address'],
             status: venueData['Status'].toLowerCase(),
-            listingStatus: venueData['Listing Status'].toLowerCase(), // Will be "unlisted"
             website: venueData['Website'],
-            instagram: venueData['Instagram'],
-            facebook: venueData['Facebook'],
-            tiktok: venueData['TikTok'],
             contactEmail: venueData['Contact Email'],
             contactPhone: venueData['Contact Phone'],
             openingHours: venueData['Opening Hours'],
             accessibility: venueData['Accessibility'],
-            parkingException: venueData['Parking Exception'],
-            vibeTags: venueData['Vibe Tags'],
-            venueFeatures: venueData['Venue Features'],
-            accessibilityFeatures: venueData['Accessibility Features'],
+            // Store additional fields in Firestore even if not in Airtable
+            instagram: testSubmission.instagram,
+            facebook: testSubmission.facebook,
+            tiktok: testSubmission.tiktok,
+            parkingException: testSubmission['parking-exception'],
+            vibeTags: testSubmission['vibe-tags'],
+            venueFeatures: testSubmission['venue-features'],
+            accessibilityFeatures: testSubmission['accessibility-features'],
             createdAt: new Date(),
             updatedAt: new Date()
         };
