@@ -252,6 +252,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Debug venue submission issues</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testFormDataDebug()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-code mr-2"></i>Debug Form Data
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug raw form data parsing</p>
+            </div>
         </div>
     </main>
 
@@ -767,6 +774,46 @@
                     addResult(`📊 Status: ${data.status}`, 'success');
                 } else {
                     addResult(`❌ Debug venue submission failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug form data function
+        async function testFormDataDebug() {
+            clearResults();
+            addResult('🔍 Debugging form data parsing...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('event-name', 'Debug Test Event');
+                formData.append('date', '2025-01-27');
+                formData.append('start-time', '20:00');
+                formData.append('description', 'Debug test event submission');
+                formData.append('venue-name', 'Debug Venue');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/test-form-data-debug', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Form data debug successful!`, 'success');
+                    addResult(`📊 Field count: ${data.fieldCount}`, 'success');
+                    addResult(`📅 Test date: ${data.testDate}`, 'success');
+                    addResult(`⏰ Test time: ${data.testTime}`, 'success');
+                    addResult(`✅ Valid date: ${data.isValidDate ? 'Yes' : 'No'}`, data.isValidDate ? 'success' : 'error');
+                    addResult(`📝 Parsed date: ${data.parsedDate}`, 'success');
+                    addResult(`📋 Received fields: ${Object.keys(data.receivedFields).join(', ')}`, 'success');
+                } else {
+                    addResult(`❌ Form data debug failed: ${data.message}`, 'error');
                     if (data.stack) {
                         addResult(`🔍 Error stack: ${data.stack}`, 'error');
                     }

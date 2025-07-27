@@ -71,7 +71,7 @@ exports.handler = async function (event, context) {
         console.log('Submission keys:', Object.keys(submission));
         
         // Generate slug
-        const venueName = submission.name || submission['venue-name'];
+        const venueName = submission.name || submission['venue-name'] || 'Untitled Venue';
         const slug = generateSlug(venueName);
         
         // Determine if submission is from admin form (auto-approves)
@@ -139,5 +139,5 @@ exports.handler = async function (event, context) {
 };
 
 function generateSlug(venueName) {
-    return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return (venueName || 'venue').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }

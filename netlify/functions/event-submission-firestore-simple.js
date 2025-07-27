@@ -74,11 +74,24 @@ exports.handler = async function (event, context) {
         const slug = generateSlug(submission['event-name'], submission.date);
         
         // Prepare Firestore data (no Cloudinary dependency)
+        const eventDate = submission.date || new Date().toISOString().split('T')[0];
+        const eventTime = submission['start-time'] || '00:00';
+        
+        // Validate and create date
+        let eventDateTime;
+        try {
+            eventDateTime = new Date(`${eventDate}T${eventTime}`).toISOString();
+        } catch (dateError) {
+            console.error('Date parsing error:', dateError);
+            // Fallback to current date/time
+            eventDateTime = new Date().toISOString();
+        }
+        
         const firestoreData = {
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
             description: submission.description || '',
-            date: new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
+            date: eventDateTime,
             status: 'pending',
             venueName: submission['venue-name'] || '',
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
@@ -129,7 +142,12 @@ exports.handler = async function (event, context) {
 };
 
 function generateSlug(eventName, date) {
-    const datePart = new Date(date).toISOString().split('T')[0];
-    const namePart = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    let datePart;
+    try {
+        datePart = new Date(date).toISOString().split('T')[0];
+    } catch (error) {
+        datePart = new Date().toISOString().split('T')[0];
+    }
+    const namePart = (eventName || 'event').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     return `${namePart}-${datePart}`;
 }
