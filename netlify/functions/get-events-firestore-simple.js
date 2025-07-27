@@ -77,7 +77,7 @@ exports.handler = async function (event, context) {
         
         const filters = {
             status: 'approved',
-            limit: parseInt(queryParams.limit) || 50,
+            limit: parseInt(queryParams.limit) || 1000, // Increase limit to get more events
             offset: parseInt(queryParams.offset) || 0,
             dateRange: { type: 'all' } // Temporarily hardcode to debug
         };
@@ -173,20 +173,8 @@ exports.handler = async function (event, context) {
         
         if (filters.dateRange.type === 'upcoming') {
             console.log('Processing upcoming filter...');
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            console.log('Today:', today.toISOString());
-            
-            // Simple date filtering - only include events from today onwards
-            filteredEvents = events.filter(event => {
-                const eventDate = new Date(event.date);
-                // Test with a hardcoded date to see if the comparison works
-                const testDate = new Date('2025-07-20T00:00:00.000Z');
-                const isUpcoming = eventDate >= testDate;
-                console.log(`Event: ${event.name}, Date: ${event.date}, EventDate: ${eventDate.toISOString()}, TestDate: ${testDate.toISOString()}, Is Upcoming: ${isUpcoming}`);
-                return isUpcoming;
-            });
-            console.log(`Filtered to ${filteredEvents.length} upcoming events`);
+            console.log('Temporarily returning all events for debugging');
+            filteredEvents = events; // Return all events for now
         } else {
             console.log('Not processing upcoming filter, using all events');
         }
