@@ -1012,7 +1012,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     this.previewContainer.innerHTML = '<p class="text-gray-400">No events would be generated with the current settings.</p>';
                 } else {
                     const previewHTML = instances.slice(0, 10).map((date, index) => {
-                        const formattedDate = date.toLocaleDateString('en-GB', {
+                        // Handle both Date objects and date strings
+                        const dateObj = typeof date === 'string' ? new Date(date) : date;
+                        const formattedDate = dateObj.toLocaleDateString('en-GB', {
                             weekday: 'long',
                             day: 'numeric',
                             month: 'long',

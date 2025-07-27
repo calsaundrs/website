@@ -4,6 +4,32 @@ exports.handler = async function (event, context) {
     console.log('Getting venue list for event submission form');
     
     try {
+        // Check environment variables
+        const required = [
+            'FIREBASE_PROJECT_ID',
+            'FIREBASE_CLIENT_EMAIL',
+            'FIREBASE_PRIVATE_KEY'
+        ];
+        
+        const missing = required.filter(varName => !process.env[varName]);
+        if (missing.length > 0) {
+            console.error('Missing environment variables:', missing);
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                },
+                body: JSON.stringify({
+                    success: false,
+                    error: 'Environment configuration error',
+                    message: `Missing environment variables: ${missing.join(', ')}`
+                })
+            };
+        }
+        
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -106,7 +132,8 @@ exports.handler = async function (event, context) {
             body: JSON.stringify({
                 success: false,
                 error: 'Failed to fetch venues',
-                message: error.message
+                message: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
             })
         };
     }
