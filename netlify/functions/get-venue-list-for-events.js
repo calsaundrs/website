@@ -49,24 +49,17 @@ exports.handler = async function (event, context) {
         
         console.log(`Searching venues with query: "${search}", limit: ${limit}`);
         
-        // Try to get just one venue first to test the connection
-        console.log('Testing venue collection access...');
-        const testSnapshot = await db.collection('venues').limit(1).get();
-        console.log(`Test query successful, found ${testSnapshot.size} documents`);
-        
-        // Now get all venues with a simple query
+        // Get all venues with a simple query
         const snapshot = await db.collection('venues').limit(100).get();
-        console.log(`Main query successful, found ${snapshot.size} total documents`);
+        console.log(`Found ${snapshot.size} total venues`);
         
         let venues = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
-            console.log(`Processing venue: ${doc.id}, status: ${data.status}`);
             
             // Filter for approved venues only
             if (data.status !== 'approved') {
-                console.log(`Skipping non-approved venue: ${doc.id}`);
                 return; // Skip non-approved venues
             }
             
