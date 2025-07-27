@@ -27,24 +27,34 @@ exports.handler = async function (event, context) {
         
         const events = [];
         const statuses = new Set();
+        const pendingEvents = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
             const status = data.status || 'no-status';
             statuses.add(status);
             
-            events.push({
+            const eventData = {
                 id: doc.id,
                 name: data.name,
                 status: status,
                 createdAt: data.createdAt,
                 venueName: data.venueName,
                 submittedBy: data.submittedBy
-            });
+            };
+            
+            events.push(eventData);
+            
+            // Collect pending events separately
+            if (status === 'pending' || status === 'pending review') {
+                pendingEvents.push(eventData);
+            }
         });
         
         console.log("🔍 DEBUG EVENTS: All statuses found:", Array.from(statuses));
-        console.log("🔍 DEBUG EVENTS: Events data:", events);
+        console.log("🔍 DEBUG EVENTS: Pending events count:", pendingEvents.length);
+        console.log("🔍 DEBUG EVENTS: Pending events:", pendingEvents);
+        console.log("🔍 DEBUG EVENTS: Total events:", events.length);
         
         return {
             statusCode: 200,
@@ -57,6 +67,8 @@ exports.handler = async function (event, context) {
             body: JSON.stringify({
                 totalEvents: snapshot.size,
                 statuses: Array.from(statuses),
+                pendingEventsCount: pendingEvents.length,
+                pendingEvents: pendingEvents,
                 events: events
             })
         };

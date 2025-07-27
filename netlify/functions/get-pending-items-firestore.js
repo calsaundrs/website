@@ -152,13 +152,45 @@ async function getPendingEvents(limit, offset) {
         console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
         
         // Query for both 'pending' and 'pending review' statuses
-        const pendingQuery = eventsRef
-            .where('status', 'in', ['pending', 'pending review'])
+        // Firestore doesn't support 'in' with orderBy, so we'll do two separate queries
+        console.log("🔍 GET PENDING EVENTS: Querying for 'pending' status...");
+        const pendingSnapshot = await eventsRef
+            .where('status', '==', 'pending')
             .orderBy('createdAt', 'desc')
             .limit(limit)
-            .offset(offset);
+            .get();
+            
+        console.log("🔍 GET PENDING EVENTS: Querying for 'pending review' status...");
+        const pendingReviewSnapshot = await eventsRef
+            .where('status', '==', 'pending review')
+            .orderBy('createdAt', 'desc')
+            .limit(limit)
+            .get();
+            
+        console.log("🔍 GET PENDING EVENTS: 'pending' results:", pendingSnapshot.size);
+        console.log("🔍 GET PENDING EVENTS: 'pending review' results:", pendingReviewSnapshot.size);
         
-        const snapshot = await pendingQuery.get();
+        // Combine the results
+        const allDocs = [];
+        pendingSnapshot.forEach(doc => allDocs.push(doc));
+        pendingReviewSnapshot.forEach(doc => allDocs.push(doc));
+        
+        // Sort by creation date (newest first)
+        allDocs.sort((a, b) => {
+            const dateA = a.data().createdAt;
+            const dateB = b.data().createdAt;
+            return dateB - dateA;
+        });
+        
+        // Apply pagination
+        const paginatedDocs = allDocs.slice(offset, offset + limit);
+        console.log("🔍 GET PENDING EVENTS: Combined and paginated results:", paginatedDocs.length);
+        
+        const snapshot = {
+            size: paginatedDocs.length,
+            empty: paginatedDocs.length === 0,
+            forEach: (callback) => paginatedDocs.forEach(callback)
+        };
         
         console.log("🔍 GET PENDING EVENTS: Query completed");
         console.log("🔍 GET PENDING EVENTS: Snapshot size:", snapshot.size);
