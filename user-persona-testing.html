@@ -308,6 +308,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Copy uppercase Status to lowercase status</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testDebugStatusInconsistency()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-search mr-2"></i>Debug Status Inconsistency
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Investigate remaining status issues</p>
+            </div>
         </div>
     </main>
 
@@ -1161,6 +1168,57 @@
                 }
             } catch (error) {
                 addResult(`❌ Event status fields fix failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug status inconsistency function
+        async function testDebugStatusInconsistency() {
+            clearResults();
+            addResult('🔍 Investigating status inconsistency...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-status-inconsistency');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Status inconsistency analysis completed!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    
+                    addResult(`📈 Status breakdown:`, 'success');
+                    Object.entries(data.statusCounts).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`🔍 Field analysis:`, 'success');
+                    addResult(`   • Both fields (status + Status): ${data.analysis.bothFields} events`, 'success');
+                    addResult(`   • Only lowercase (status): ${data.analysis.onlyLowercase} events`, 'success');
+                    addResult(`   • Only uppercase (Status): ${data.analysis.onlyUppercase} events`, 'success');
+                    addResult(`   • No status field: ${data.analysis.noStatus} events`, 'success');
+                    addResult(`   • Inconsistent values: ${data.analysis.inconsistentValues} events`, 'success');
+                    
+                    if (data.sampleBothFields.length > 0) {
+                        addResult(`📋 Sample events with both fields:`, 'success');
+                        data.sampleBothFields.forEach(event => {
+                            addResult(`   • ${event.name}: status="${event.lowerStatus}", Status="${event.upperStatus}"`, 'success');
+                        });
+                    }
+                    
+                    if (data.sampleInconsistentValues.length > 0) {
+                        addResult(`⚠️ Sample events with inconsistent values:`, 'error');
+                        data.sampleInconsistentValues.forEach(event => {
+                            addResult(`   • ${event.name}: status="${event.lowerStatus}" vs Status="${event.upperStatus}"`, 'error');
+                        });
+                    }
+                    
+                    addResult(`💡 This will help identify the remaining status field issues`, 'info');
+                } else {
+                    addResult(`❌ Status inconsistency analysis failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Status inconsistency analysis failed: ${error.message}`, 'error');
             }
         }
     </script>
