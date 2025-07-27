@@ -301,6 +301,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Get venue data for page generation</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testFixEventStatusFields()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-wrench mr-2"></i>Fix Event Status Fields
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Copy uppercase Status to lowercase status</p>
+            </div>
         </div>
     </main>
 
@@ -1111,6 +1118,49 @@
                 }
             } catch (error) {
                 addResult(`❌ Unknown events debug failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Fix event status fields function
+        async function testFixEventStatusFields() {
+            clearResults();
+            addResult('🔧 Fixing event status fields...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/fix-event-status-fields');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Event status fields fixed successfully!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`🔧 Events updated: ${data.eventsUpdated}`, 'success');
+                    
+                    addResult(`📈 Status counts before fix:`, 'success');
+                    Object.entries(data.statusCountsBefore).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`📈 Status counts after fix:`, 'success');
+                    Object.entries(data.statusCountsAfter).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.eventsToUpdate.length > 0) {
+                        addResult(`📋 Sample events updated:`, 'success');
+                        data.eventsToUpdate.forEach(event => {
+                            addResult(`   • ${event.name}: ${event.upperStatus} → ${event.newStatus}`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try "Debug All Events" again to verify the fix`, 'info');
+                } else {
+                    addResult(`❌ Event status fields fix failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Event status fields fix failed: ${error.message}`, 'error');
             }
         }
     </script>
