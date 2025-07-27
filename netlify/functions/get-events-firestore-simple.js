@@ -71,13 +71,41 @@ exports.handler = async function (event, context) {
     }
 };
 
-async function handlePublicView(db, queryParams) {
-    const filters = {
-        status: 'approved',
-        limit: parseInt(queryParams.limit) || 50,
-        offset: parseInt(queryParams.offset) || 0,
-        dateRange: queryParams.dateRange ? JSON.parse(queryParams.dateRange) : { type: 'all' }
-    };
+    async function handlePublicView(db, queryParams) {
+        console.log('=== handlePublicView called ===');
+        console.log('QueryParams received:', queryParams);
+        
+        const filters = {
+            status: 'approved',
+            limit: parseInt(queryParams.limit) || 50,
+            offset: parseInt(queryParams.offset) || 0,
+            dateRange: { type: 'all' } // Temporarily hardcode to debug
+        };
+        
+        // Try to parse dateRange if provided
+        if (queryParams.dateRange) {
+            try {
+                filters.dateRange = JSON.parse(queryParams.dateRange);
+                console.log('Successfully parsed dateRange:', filters.dateRange);
+                console.log('DateRange type:', filters.dateRange.type);
+            } catch (error) {
+                console.error('Error parsing dateRange:', error);
+                console.log('Raw dateRange value:', queryParams.dateRange);
+                // Fallback to default
+                filters.dateRange = { type: 'all' };
+            }
+        } else {
+            console.log('No dateRange parameter provided, using default');
+        }
+        
+        // Also check for simple filter parameter as fallback
+        if (queryParams.filter) {
+            console.log('Found filter parameter:', queryParams.filter);
+            if (queryParams.filter === 'upcoming') {
+                filters.dateRange = { type: 'upcoming' };
+                console.log('Set dateRange to upcoming based on filter parameter');
+            }
+        }
 
     console.log("Public view filters:", filters);
 
@@ -86,29 +114,11 @@ async function handlePublicView(db, queryParams) {
         
         // Start with approved events
         let query = eventsRef.where('status', '==', 'approved');
+        console.log('Query created with status filter for approved events');
+        console.log('Query parameters received:', queryParams);
         
-        // Apply date filtering based on dateRange type
-        if (filters.dateRange.type === 'upcoming') {
-            // Get current date (start of today)
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            query = query.where('date', '>=', today);
-        } else if (filters.dateRange.type === 'thisWeek') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const endOfWeek = new Date(today);
-            endOfWeek.setDate(today.getDate() + 7);
-            query = query.where('date', '>=', today).where('date', '<=', endOfWeek);
-        } else if (filters.dateRange.type === 'thisMonth') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            query = query.where('date', '>=', today).where('date', '<=', endOfMonth);
-        } else if (filters.dateRange.type === 'custom' && filters.dateRange.from && filters.dateRange.to) {
-            const fromDate = new Date(filters.dateRange.from);
-            const toDate = new Date(filters.dateRange.to);
-            query = query.where('date', '>=', fromDate).where('date', '<=', toDate);
-        }
+        // Temporarily disable Firestore date filtering and do it in JavaScript
+        console.log('Date filtering will be done in JavaScript after fetching events');
         // For 'all' type, no date filtering is applied
         
         // Always sort by date ascending
@@ -125,6 +135,16 @@ async function handlePublicView(db, queryParams) {
         
         snapshot.forEach(doc => {
             const rawData = doc.data();
+            
+            // Debug: Log the first few events' dates
+            if (events.length < 5) {
+                console.log(`Event ${events.length + 1}:`, {
+                    name: rawData.name || rawData['Event Name'],
+                    date: rawData.date || rawData['Date'],
+                    dateType: typeof (rawData.date || rawData['Date']),
+                    isDate: rawData.date instanceof Date || rawData['Date'] instanceof Date
+                });
+            }
             
             // Process event data for public view
             const eventData = {
@@ -146,6 +166,31 @@ async function handlePublicView(db, queryParams) {
         
         console.log(`Processed ${events.length} events for public view`);
         
+        // Apply date filtering in JavaScript
+        let filteredEvents = events;
+        console.log('DateRange type received:', filters.dateRange.type);
+        console.log('Total events fetched:', events.length);
+        
+        if (filters.dateRange.type === 'upcoming') {
+            console.log('Processing upcoming filter...');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            console.log('Today:', today.toISOString());
+            
+            // Simple date filtering - only include events from today onwards
+            filteredEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                // Test with a hardcoded date to see if the comparison works
+                const testDate = new Date('2025-07-20T00:00:00.000Z');
+                const isUpcoming = eventDate >= testDate;
+                console.log(`Event: ${event.name}, Date: ${event.date}, EventDate: ${eventDate.toISOString()}, TestDate: ${testDate.toISOString()}, Is Upcoming: ${isUpcoming}`);
+                return isUpcoming;
+            });
+            console.log(`Filtered to ${filteredEvents.length} upcoming events`);
+        } else {
+            console.log('Not processing upcoming filter, using all events');
+        }
+        
         return {
             statusCode: 200,
             headers: {
@@ -154,8 +199,8 @@ async function handlePublicView(db, queryParams) {
             },
             body: JSON.stringify({
                 success: true,
-                events: events,
-                total: events.length,
+                events: filteredEvents,
+                total: filteredEvents.length,
                 limit: filters.limit,
                 offset: filters.offset
             })
