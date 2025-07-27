@@ -151,32 +151,24 @@ async function getPendingEvents(limit, offset) {
         // Use the original query for the actual results
         console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
         
-        // Query for both 'pending' and 'pending review' statuses
-        // Firestore doesn't support 'in' with orderBy, so we'll do two separate queries
-        console.log("🔍 GET PENDING EVENTS: Querying for 'pending' status...");
-        const pendingSnapshot = await eventsRef
-            .where('status', '==', 'pending')
-            .orderBy('createdAt', 'desc')
-            .limit(limit)
-            .get();
-            
-        console.log("🔍 GET PENDING EVENTS: Querying for 'pending review' status...");
-        const pendingReviewSnapshot = await eventsRef
-            .where('status', '==', 'pending review')
-            .orderBy('createdAt', 'desc')
-            .limit(limit)
-            .get();
-            
-        console.log("🔍 GET PENDING EVENTS: 'pending' results:", pendingSnapshot.size);
-        console.log("🔍 GET PENDING EVENTS: 'pending review' results:", pendingReviewSnapshot.size);
+        // Simplified query - get all events and filter in memory
+        console.log("🔍 GET PENDING EVENTS: Getting all events and filtering in memory...");
+        const allEventsSnapshot = await eventsRef.get();
+        console.log("🔍 GET PENDING EVENTS: Total events found:", allEventsSnapshot.size);
         
-        // Combine the results
-        const allDocs = [];
-        pendingSnapshot.forEach(doc => allDocs.push(doc));
-        pendingReviewSnapshot.forEach(doc => allDocs.push(doc));
+        // Filter for pending events in memory
+        const pendingDocs = [];
+        allEventsSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.status === 'pending' || data.status === 'pending review') {
+                pendingDocs.push(doc);
+            }
+        });
+        
+        console.log("🔍 GET PENDING EVENTS: Pending events found:", pendingDocs.length);
         
         // Sort by creation date (newest first)
-        allDocs.sort((a, b) => {
+        pendingDocs.sort((a, b) => {
             const dateA = a.data().createdAt;
             const dateB = b.data().createdAt;
             
@@ -194,8 +186,8 @@ async function getPendingEvents(limit, offset) {
         });
         
         // Apply pagination
-        const paginatedDocs = allDocs.slice(offset, offset + limit);
-        console.log("🔍 GET PENDING EVENTS: Combined and paginated results:", paginatedDocs.length);
+        const paginatedDocs = pendingDocs.slice(offset, offset + limit);
+        console.log("🔍 GET PENDING EVENTS: Paginated results:", paginatedDocs.length);
         console.log("🔍 GET PENDING EVENTS: First few docs:", paginatedDocs.slice(0, 3).map(doc => ({
             id: doc.id,
             name: doc.data().name,
