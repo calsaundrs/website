@@ -76,9 +76,8 @@ exports.handler = async function(event, context) {
             const imageData = extractImageUrl(data);
             console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
             
-            // Include all venues for public display
-            // TODO: Consider re-enabling image filter if needed
-            if (true) { // imageData && imageData.url) {
+            // Only include venues that have Cloudinary image data
+            if (imageData && imageData.url) {
                 venues.push({
                     id: doc.id,
                     name: data.name || data['Name'] || 'Unnamed Venue',
