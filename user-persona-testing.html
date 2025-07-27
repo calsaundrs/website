@@ -373,25 +373,25 @@
 
         // Test Functions
         async function testBrowseEvents() {
-            const response = await fetch('/.netlify/functions/get-events-firestore');
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple');
             const data = await response.json();
             return `Found ${data.events?.length || 0} events`;
         }
 
         async function testSearchEvents() {
-            const response = await fetch('/.netlify/functions/get-events-firestore?search=pride');
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?search=pride');
             const data = await response.json();
             return `Found ${data.events?.length || 0} events matching "pride"`;
         }
 
         async function testFilterByCategory() {
-            const response = await fetch('/.netlify/functions/get-events-firestore?categories=Club Night');
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?categories=Club Night');
             const data = await response.json();
             return `Found ${data.events?.length || 0} club night events`;
         }
 
         async function testViewEventDetails() {
-            const response = await fetch('/.netlify/functions/get-events-firestore?limit=1');
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=1');
             const data = await response.json();
             if (data.events && data.events.length > 0) {
                 const event = data.events[0];

@@ -136,7 +136,7 @@ class EventAPI {
       }
     });
 
-    const response = await fetch(`${this.baseUrl}/get-events-firestore?${params}`);
+            const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,7 +146,7 @@ class EventAPI {
   }
 
   async getVenues() {
-    const response = await fetch(`${this.baseUrl}/get-events-firestore?view=venues`);
+            const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?view=venues`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

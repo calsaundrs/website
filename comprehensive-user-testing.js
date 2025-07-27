@@ -174,26 +174,26 @@ class UserPersonaSimulator {
     }
 
     async browseEvents() {
-        const response = await fetch('/.netlify/functions/get-events-firestore');
+        const response = await fetch('/.netlify/functions/get-events-firestore-simple');
         const data = await response.json();
         if (!data.events) throw new Error('No events data returned');
         return `Found ${data.events.length} events`;
     }
 
     async searchEvents(query) {
-        const response = await fetch(`/.netlify/functions/get-events-firestore?search=${encodeURIComponent(query)}`);
+        const response = await fetch(`/.netlify/functions/get-events-firestore-simple?search=${encodeURIComponent(query)}`);
         const data = await response.json();
         return `Found ${data.events?.length || 0} events matching "${query}"`;
     }
 
     async filterEventsByCategory(category) {
-        const response = await fetch(`/.netlify/functions/get-events-firestore?categories=${encodeURIComponent(category)}`);
+        const response = await fetch(`/.netlify/functions/get-events-firestore-simple?categories=${encodeURIComponent(category)}`);
         const data = await response.json();
         return `Found ${data.events?.length || 0} ${category} events`;
     }
 
     async viewEventDetails() {
-        const response = await fetch('/.netlify/functions/get-events-firestore?limit=1');
+        const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=1');
         const data = await response.json();
         if (!data.events || data.events.length === 0) {
             throw new Error('No events available for testing');
