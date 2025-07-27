@@ -336,7 +336,7 @@ exports.handler = async function (event, context) {
             'Slug': slug,
             
             // Optional fields (only if they exist in your schema)
-            'Category': submission.category ? submission.category.split(',') : [],
+            'Category': submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
             
             // Recurring event fields
             'Recurring Info': recurringInfo,
