@@ -128,6 +128,9 @@
                     <button id="create-link-only-test-data" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-link mr-2"></i>Create Link-Only Test Data
                     </button>
+                    <button id="test-unified-event-submission" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-check-circle mr-2"></i>Test Unified Event Submission
+                    </button>
                 </div>
             </div>
         </div>
@@ -1079,6 +1082,32 @@
             }
         }
 
+        async function testUnifiedEventSubmission() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Testing unified event submission...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-unified-event-submission');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Unified event submission test completed!</p>
+                            <p class="text-gray-400">Airtable: ${data.results.airtable?.name || 'Failed'} (${data.results.airtable?.hasCategory ? 'Has Category' : 'No Category'})</p>
+                            <p class="text-gray-400">Firestore: ${data.results.firestore?.name || 'Failed'} (${data.results.firestore?.hasCategory ? 'Has Category' : 'No Category'})</p>
+                            <p class="text-gray-400">Categories: ${data.results.categoryHandling?.processed?.join(', ') || 'None'}</p>
+                            <p class="text-gray-400 text-xs">Note: Categories stored only in Firestore, not Airtable</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p class="status-error">Unified event submission test failed: ${data.message}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Unified event submission test error: ${error.message}</p>`;
+            }
+        }
+
         async function loadPendingItems() {
             const pendingDiv = document.getElementById('pending-items');
             
@@ -1127,6 +1156,7 @@
         document.getElementById('create-minimal-test-data').addEventListener('click', createMinimalTestData);
         document.getElementById('create-enhanced-test-data').addEventListener('click', createEnhancedTestData);
         document.getElementById('create-link-only-test-data').addEventListener('click', createLinkOnlyTestData);
+        document.getElementById('test-unified-event-submission').addEventListener('click', testUnifiedEventSubmission);
 
         // Initialize
         testEnvironment();

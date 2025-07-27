@@ -359,7 +359,7 @@ exports.handler = async function (event, context) {
             date: eventData['Date'],
             status: 'pending',
             venueName: submission['venue-text'] || submission['venue-name'] || '',
-            category: eventData['Category'],
+            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
             link: eventData['Link'],
             recurringInfo: eventData['Recurring Info'],
             seriesId: eventData['Series ID'],
@@ -397,7 +397,8 @@ exports.handler = async function (event, context) {
                     airtableId: instanceRecord[0].id,
                     date: eventDates[i],
                     slug: generateSlug(eventData['Event Name'], eventDates[i]),
-                    seriesId: seriesId
+                    seriesId: seriesId,
+                    category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : []
                 };
                 
                 await db.collection('events').add(firestoreInstanceData);
