@@ -335,9 +335,6 @@ exports.handler = async function (event, context) {
             'Submitter Email': submission.email || null,
             'Slug': slug,
             
-            // Optional fields (only if they exist in your schema)
-            'Category': submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
-            
             // Recurring event fields
             'Recurring Info': recurringInfo,
             'Series ID': seriesId,
@@ -345,6 +342,7 @@ exports.handler = async function (event, context) {
             // Image fields
             'Cloudinary Public ID': uploadedImage ? uploadedImage.publicId : null,
             'Promo Image': uploadedImage ? uploadedImage.url : null
+            // Note: Category field removed - will be stored only in Firestore
         };
         
         // Submit to Airtable
