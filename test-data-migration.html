@@ -104,6 +104,9 @@
                     <button id="test-fixed-venue-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-wrench mr-2"></i>Test Fixed Venue Submission
                     </button>
+                    <button id="test-minimal-venue-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-minus-circle mr-2"></i>Test Minimal Venue Submission
+                    </button>
                     <button id="create-test-data" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-plus-circle mr-2"></i>Create Test Data
                     </button>
@@ -798,6 +801,33 @@
             }
         }
 
+        async function testMinimalVenueSubmission() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Testing minimal venue submission...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-venue-submission-minimal');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Minimal venue submission test successful!</p>
+                            <p class="text-gray-400">Airtable ID: ${data.airtableId}</p>
+                            <p class="text-gray-400">Firestore ID: ${data.firestoreId}</p>
+                            <p class="text-gray-400">Slug: ${data.slug}</p>
+                            <p class="text-gray-400">Fields used: ${data.fieldsUsed.join(', ')}</p>
+                            <p class="text-gray-400 text-xs">Note: ${data.note}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p class="status-error">Minimal venue submission failed: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Minimal venue submission error: ${error.message}</p>`;
+            }
+        }
+
         async function createTestData() {
             const resultsDiv = document.getElementById('test-results');
             resultsDiv.innerHTML = '<p class="text-gray-400">Creating test data...</p>';
@@ -862,6 +892,7 @@
         document.getElementById('test-admin-workflow').addEventListener('click', testAdminWorkflow);
         document.getElementById('test-venue-submission').addEventListener('click', testVenueSubmission);
         document.getElementById('test-fixed-venue-submission').addEventListener('click', testFixedVenueSubmission);
+        document.getElementById('test-minimal-venue-submission').addEventListener('click', testMinimalVenueSubmission);
         document.getElementById('create-test-data').addEventListener('click', createTestData);
 
         // Initialize

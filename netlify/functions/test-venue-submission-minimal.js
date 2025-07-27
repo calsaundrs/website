@@ -1,9 +1,8 @@
 const Airtable = require('airtable');
 const admin = require('firebase-admin');
-const cloudinary = require('cloudinary').v2;
 
 exports.handler = async function (event, context) {
-    console.log('Testing fixed venue submission...');
+    console.log('Testing minimal venue submission...');
     
     try {
         // Check environment variables
@@ -12,10 +11,7 @@ exports.handler = async function (event, context) {
             'AIRTABLE_BASE_ID',
             'FIREBASE_PROJECT_ID',
             'FIREBASE_CLIENT_EMAIL',
-            'FIREBASE_PRIVATE_KEY',
-            'CLOUDINARY_CLOUD_NAME',
-            'CLOUDINARY_API_KEY',
-            'CLOUDINARY_API_SECRET'
+            'FIREBASE_PRIVATE_KEY'
         ];
         
         const missing = required.filter(varName => !process.env[varName]);
@@ -47,45 +43,27 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET,
-        });
-        
-        // Generate test venue data
+        // Generate test venue data with minimal fields
         const testSubmission = {
-            name: 'Fixed Test Venue',
-            description: 'This is a test venue to verify the slug fix works',
-            address: '123 Fixed Street, Birmingham',
-            'contact-email': 'test@brumoutloud.co.uk',
-            website: 'https://fixedtestvenue.com',
-            'opening-hours': 'Mon-Sat: 10am-11pm, Sun: 12pm-10pm',
-            accessibility: 'Wheelchair accessible, accessible toilets',
-            'vibe-tags': ['LGBTQ+ Friendly', 'Inclusive'],
-            'venue-features': ['Dance Floor', 'Bar', 'Stage']
+            name: 'Minimal Test Venue',
+            description: 'This is a minimal test venue',
+            address: '123 Minimal Street, Birmingham',
+            'contact-email': 'test@brumoutloud.co.uk'
         };
         
         // Generate slug
         const slug = testSubmission.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         
-        // Prepare venue data for Airtable (without computed fields)
+        // Prepare minimal venue data for Airtable
         const venueData = {
             'Name': testSubmission.name,
             'Description': testSubmission.description,
             'Address': testSubmission.address,
             'Status': 'Pending Review',
-            'Listing Status': 'Pending Review',
-            'Contact Email': testSubmission['contact-email'],
-            'Website': testSubmission.website,
-            'Opening Hours': testSubmission['opening-hours'],
-            'Accessibility': testSubmission.accessibility,
-            'Vibe Tags': testSubmission['vibe-tags'],
-            'Venue Features': testSubmission['venue-features']
-            // Removed 'Created Time' and 'Last Modified Time' - they are computed fields
+            'Contact Email': testSubmission['contact-email']
         };
         
-        console.log('Attempting to create venue in Airtable with data:', venueData);
+        console.log('Attempting to create minimal venue in Airtable with data:', venueData);
         
         // Submit to Airtable
         const airtableRecord = await base('Venues').create([{ fields: venueData }]);
@@ -99,13 +77,7 @@ exports.handler = async function (event, context) {
             description: venueData['Description'],
             address: venueData['Address'],
             status: venueData['Status'].toLowerCase(),
-            listingStatus: venueData['Listing Status'].toLowerCase(),
-            website: venueData['Website'],
             contactEmail: venueData['Contact Email'],
-            openingHours: venueData['Opening Hours'],
-            accessibility: venueData['Accessibility'],
-            vibeTags: venueData['Vibe Tags'],
-            venueFeatures: venueData['Venue Features'],
             createdAt: new Date(),
             updatedAt: new Date()
         };
@@ -113,29 +85,29 @@ exports.handler = async function (event, context) {
         // Submit to Firestore
         const firestoreDoc = await db.collection('venues').add(firestoreData);
         
-        console.log(`Fixed venue submitted successfully. Airtable ID: ${airtableId}, Firestore ID: ${firestoreDoc.id}`);
+        console.log(`Minimal venue submitted successfully. Airtable ID: ${airtableId}, Firestore ID: ${firestoreDoc.id}`);
         
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 success: true,
-                message: 'Fixed venue submission test successful!',
+                message: 'Minimal venue submission test successful!',
                 airtableId: airtableId,
                 firestoreId: firestoreDoc.id,
                 slug: slug,
                 fieldsUsed: Object.keys(venueData),
-                note: 'Slug field removed from Airtable (computed field) but stored in Firestore'
+                note: 'Only essential fields used - no computed fields'
             })
         };
         
     } catch (error) {
-        console.error('Fixed venue submission failed:', error);
+        console.error('Minimal venue submission failed:', error);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Fixed venue submission failed',
+                error: 'Minimal venue submission failed',
                 message: error.message,
                 type: error.constructor.name
             })

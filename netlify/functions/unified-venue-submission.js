@@ -250,11 +250,8 @@ exports.handler = async function (event, context) {
             'Photo URL': uploadedImage ? uploadedImage.original : null,
             'Photo Medium URL': uploadedImage ? uploadedImage.medium : null,
             'Photo Thumbnail URL': uploadedImage ? uploadedImage.thumbnail : null,
-            'Cloudinary Public ID': uploadedImage ? uploadedImage.publicId : null,
-            
-            // Timestamps
-            'Created Time': new Date().toISOString(),
-            'Last Modified Time': new Date().toISOString()
+            'Cloudinary Public ID': uploadedImage ? uploadedImage.publicId : null
+            // Removed 'Created Time' and 'Last Modified Time' - they are computed fields
         };
         
         // Submit to Airtable
