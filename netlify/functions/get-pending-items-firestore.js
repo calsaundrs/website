@@ -179,12 +179,29 @@ async function getPendingEvents(limit, offset) {
         allDocs.sort((a, b) => {
             const dateA = a.data().createdAt;
             const dateB = b.data().createdAt;
-            return dateB - dateA;
+            
+            // Handle Firestore timestamp objects
+            if (dateA && dateA._seconds) {
+                const timeA = dateA._seconds * 1000 + (dateA._nanoseconds || 0) / 1000000;
+                const timeB = dateB._seconds * 1000 + (dateB._nanoseconds || 0) / 1000000;
+                return timeB - timeA;
+            }
+            
+            // Handle regular Date objects or strings
+            const timeA = new Date(dateA).getTime();
+            const timeB = new Date(dateB).getTime();
+            return timeB - timeA;
         });
         
         // Apply pagination
         const paginatedDocs = allDocs.slice(offset, offset + limit);
         console.log("🔍 GET PENDING EVENTS: Combined and paginated results:", paginatedDocs.length);
+        console.log("🔍 GET PENDING EVENTS: First few docs:", paginatedDocs.slice(0, 3).map(doc => ({
+            id: doc.id,
+            name: doc.data().name,
+            status: doc.data().status,
+            createdAt: doc.data().createdAt
+        })));
         
         const snapshot = {
             size: paginatedDocs.length,
