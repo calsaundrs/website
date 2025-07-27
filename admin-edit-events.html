@@ -108,6 +108,144 @@
             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
         }
         
+        /* Enhanced Event Card Styles */
+        .event-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .event-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+        }
+        
+        .event-card-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .event-card-detail-item {
+            margin-bottom: 0.75rem;
+        }
+        
+        .event-card-detail-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #8B5CF6;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .detail-value {
+            color: #E5E7EB;
+            line-height: 1.5;
+        }
+        
+        .event-card-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .button-edit, .button-delete, .button-view {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .button-edit {
+            background: rgba(75, 85, 99, 0.3);
+            color: #E5E7EB;
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        
+        .button-edit:hover {
+            background: rgba(75, 85, 99, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .button-delete {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .button-delete:hover {
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            transform: translateY(-1px);
+        }
+        
+        .button-view {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .button-view:hover {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            transform: translateY(-1px);
+        }
+        
+        /* Status badge improvements */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .status-badge.deleted {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6B7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+        
         .btn-secondary {
             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             transition: all 0.3s ease;
