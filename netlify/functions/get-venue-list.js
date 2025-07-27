@@ -67,14 +67,18 @@ exports.handler = async function(event, context) {
         console.log(`Venue List: Found ${snapshot.size} venues`);
         
         const venues = [];
+        console.log('Venue List: Processing venues...');
         snapshot.forEach(doc => {
             const data = doc.data();
+            console.log(`Venue List: Processing venue ${doc.id}: ${data.name || data['Name'] || 'Unnamed'}`);
             
             // Extract image data
             const imageData = extractImageUrl(data);
+            console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
             
-            // Only include venues that have Cloudinary image data
-            if (imageData && imageData.url) {
+            // Temporarily include all venues (image filter disabled for testing)
+            // TODO: Re-enable image filter once venues have proper image data
+            if (true) { // imageData && imageData.url) {
                 venues.push({
                     id: doc.id,
                     name: data.name || data['Name'] || 'Unnamed Venue',
