@@ -911,8 +911,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return;
                 }
                 
-                const instances = this.calculateInstances(startDate, endDate, pattern.value, maxInstances);
-                this.displayPreview(instances);
+                if (pattern.value === 'custom') {
+                    // Use enhanced custom recurrence parser
+                    this.generateCustomPreview(startDate, endDate, maxInstances);
+                } else {
+                    // Use standard pattern calculation
+                    const instances = this.calculateInstances(startDate, endDate, pattern.value, maxInstances);
+                    this.displayPreview(instances);
+                }
+            }
+            
+            async generateCustomPreview(startDate, endDate, maxInstances) {
+                const customDesc = document.querySelector('textarea[name="custom-recurrence-desc"]').value;
+                
+                if (!customDesc.trim()) {
+                    alert('Please enter a custom recurrence description');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/.netlify/functions/custom-recurrence-parser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            description: customDesc,
+                            startDate: startDate,
+                            endDate: endDate,
+                            maxInstances: maxInstances
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to parse custom recurrence');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.displayPreview(data.instances, data.parsedPattern);
+                    } else {
+                        alert('Error parsing custom recurrence: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Error generating custom preview:', error);
+                    alert('Error generating preview. Please try again.');
+                }
             }
             
             calculateInstances(startDate, endDate, pattern, maxInstances) {
@@ -949,7 +994,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 return instances;
             }
             
-            displayPreview(instances) {
+            displayPreview(instances, parsedPattern = null) {
                 if (instances.length === 0) {
                     this.previewContainer.innerHTML = '<p class="text-gray-400">No events would be generated with the current settings.</p>';
                 } else {
@@ -966,7 +1011,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     const remainingText = instances.length > 10 ? 
                         `<div class="text-sm text-gray-400 mt-2">... and ${instances.length - 10} more events</div>` : '';
                     
-                    this.previewContainer.innerHTML = previewHTML + remainingText;
+                    const patternInfo = parsedPattern ? 
+                        `<div class="text-sm text-blue-300 mb-2">Parsed Pattern: <strong>${parsedPattern}</strong></div>` : '';
+                    
+                    this.previewContainer.innerHTML = patternInfo + previewHTML + remainingText;
                 }
                 
                 this.previewResults.classList.remove('hidden');

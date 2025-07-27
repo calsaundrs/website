@@ -202,7 +202,14 @@ exports.handler = async function (event, context) {
             Object.assign(firestoreData, recurringData);
             
             // Generate recurring event instances
-            const instances = generateRecurringInstances(recurringData);
+            let instances;
+            if (recurringData.recurringPattern === 'custom' && recurringData.customRecurrenceDesc) {
+                // Use enhanced custom recurrence parser
+                instances = await generateCustomRecurringInstances(recurringData);
+            } else {
+                // Use standard pattern generation
+                instances = generateRecurringInstances(recurringData);
+            }
             
             // Create all instances in a batch
             const batch = db.batch();
@@ -235,7 +242,12 @@ exports.handler = async function (event, context) {
             
             return {
                 statusCode: 200,
-                headers: { 'Content-Type': 'text/html' },
+                headers: {
+                    'Content-Type': 'text/html',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                },
                 body: `<!DOCTYPE html>
                 <html>
                 <head>
@@ -251,7 +263,7 @@ exports.handler = async function (event, context) {
                 <body>
                     <h1 class="success">Recurring Events Created Successfully!</h1>
                     <p>Your recurring event "${submission['event-name']}" has been created with <span class="highlight">${instances.length} instances</span>.</p>
-                    <p class="info">Pattern: ${submission['recurrence-pattern'] || 'Custom'}</p>
+                    <p class="info">Pattern: ${recurringData.recurringPattern === 'custom' ? recurringData.customRecurrenceDesc : recurringData.recurringPattern}</p>
                     <p class="info">All events have been submitted for review.</p>
                     <p class="info">You will be redirected to the events page shortly.</p>
                     <p class="info">Note: This submission was processed using Firestore only.</p>
@@ -314,11 +326,11 @@ function generateVenueSlug(venueName) {
     return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-function generateRecurringInstances(recurringData) {
-    const startDate = new Date(recurringData.recurringStartDate);
-    const endDate = recurringData.recurringEndDate ? new Date(recurringData.recurringEndDate) : null;
-    const pattern = recurringData.recurringPattern;
-    const maxInstances = recurringData.maxInstances || 52;
+function generateRecurringInstances(eventData) {
+    const startDate = new Date(eventData.recurringStartDate);
+    const endDate = eventData.recurringEndDate ? new Date(eventData.recurringEndDate) : null;
+    const pattern = eventData.recurringPattern;
+    const maxInstances = eventData.maxInstances || 52;
     
     const instances = [];
     let current = new Date(startDate);
@@ -352,4 +364,41 @@ function generateRecurringInstances(recurringData) {
     }
     
     return instances;
+}
+
+async function generateCustomRecurringInstances(eventData) {
+    try {
+        // Call the custom recurrence parser
+        const response = await fetch(`${process.env.NETLIFY_FUNCTIONS_URL || 'http://localhost:8888'}/.netlify/functions/custom-recurrence-parser`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                description: eventData.customRecurrenceDesc,
+                startDate: eventData.recurringStartDate,
+                endDate: eventData.recurringEndDate,
+                maxInstances: eventData.maxInstances
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to parse custom recurrence');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.instances.map(dateStr => new Date(dateStr));
+        } else {
+            throw new Error(data.message || 'Failed to parse custom recurrence');
+        }
+    } catch (error) {
+        console.error('Error generating custom recurring instances:', error);
+        // Fallback to weekly pattern
+        return generateRecurringInstances({
+            ...eventData,
+            recurringPattern: 'weekly'
+        });
+    }
 }
