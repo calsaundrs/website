@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 venueFormData.append('website', newVenueWebsite.value.trim());
                 venueFormData.append('description', `Venue created during event submission for: ${eventName}`);
                 
-                const venueResponse = await fetch('/.netlify/functions/venue-submission', {
+                const venueResponse = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
                     method: 'POST',
                     body: venueFormData
                 });
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add the venue ID
             eventFormData.append('venueId', finalVenueId);
             
-            const response = await fetch('/.netlify/functions/event-submission', {
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
                 method: 'POST',
                 body: eventFormData
             });
