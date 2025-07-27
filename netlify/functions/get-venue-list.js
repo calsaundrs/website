@@ -76,8 +76,9 @@ exports.handler = async function(event, context) {
             const imageData = extractImageUrl(data);
             console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
             
-            // Only include venues that have Cloudinary image data
-            if (imageData && imageData.url) {
+            // Temporarily include all venues while we debug image data
+            // TODO: Re-enable image filter once we find the correct image field names
+            if (true) { // imageData && imageData.url) {
                 venues.push({
                     id: doc.id,
                     name: data.name || data['Name'] || 'Unnamed Venue',
