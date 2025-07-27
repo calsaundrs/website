@@ -49,25 +49,19 @@ exports.handler = async function (event, context) {
         
         console.log(`Searching venues with query: "${search}", limit: ${limit}`);
         
-        // Build query
-        let query = db.collection('venues')
-            .where('status', '==', 'approved')
-            .orderBy('name', 'asc');
-        
-        // Apply search filter if provided
-        if (search.trim()) {
-            // For now, we'll filter client-side since Firestore doesn't support case-insensitive search
-            // In production, you might want to use Algolia or similar for better search
-            query = query.limit(100); // Get more results for client-side filtering
-        } else {
-            query = query.limit(limit);
-        }
+        // Build query - get all venues and filter client-side to avoid index issues
+        let query = db.collection('venues').limit(100);
         
         const snapshot = await query.get();
         let venues = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
+            
+            // Filter for approved venues only
+            if (data.status !== 'approved') {
+                return; // Skip non-approved venues
+            }
             
             // Client-side search filtering
             if (search.trim()) {
