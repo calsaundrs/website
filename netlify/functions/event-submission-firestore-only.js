@@ -109,6 +109,62 @@ exports.handler = async function (event, context) {
         // Generate slug
         const slug = generateSlug(submission['event-name'], submission.date);
         
+        // Handle venue linking
+        let venueData = {
+            venueId: null,
+            venueName: '',
+            venueAddress: '',
+            venueSlug: ''
+        };
+        
+        if (submission['venue-id'] && submission['venue-id'] !== 'new') {
+            // Existing venue selected
+            try {
+                const venueDoc = await db.collection('venues').doc(submission['venue-id']).get();
+                if (venueDoc.exists) {
+                    const venue = venueDoc.data();
+                    venueData = {
+                        venueId: submission['venue-id'],
+                        venueName: venue.name || venue['Name'] || '',
+                        venueAddress: venue.address || venue['Address'] || '',
+                        venueSlug: venue.slug || ''
+                    };
+                } else {
+                    console.warn(`Venue ID ${submission['venue-id']} not found, falling back to text input`);
+                    venueData.venueName = submission['venue-name'] || '';
+                }
+            } catch (venueError) {
+                console.error('Error fetching venue:', venueError);
+                venueData.venueName = submission['venue-name'] || '';
+            }
+        } else if (submission['new-venue-name']) {
+            // New venue being created
+            venueData.venueName = submission['new-venue-name'];
+            venueData.venueAddress = submission['new-venue-address'] || '';
+            
+            // Create new venue record
+            const newVenueData = {
+                name: submission['new-venue-name'],
+                address: submission['new-venue-address'] || '',
+                postcode: submission['new-venue-postcode'] || '',
+                website: submission['new-venue-website'] || '',
+                slug: generateVenueSlug(submission['new-venue-name']),
+                status: 'pending',
+                submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+            
+            const newVenueRef = await db.collection('venues').add(newVenueData);
+            venueData.venueId = newVenueRef.id;
+            venueData.venueSlug = newVenueData.slug;
+            
+            console.log(`New venue created with ID: ${newVenueRef.id}`);
+        } else {
+            // Fallback to text input
+            venueData.venueName = submission['venue-name'] || '';
+        }
+        
         // Prepare Firestore data (no Airtable dependency)
         const firestoreData = {
             name: submission['event-name'] || 'Untitled Event',
@@ -116,7 +172,10 @@ exports.handler = async function (event, context) {
             description: submission.description || '',
             date: new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
             status: 'pending',
-            venueName: submission['venue-name'] || '',
+            venueId: venueData.venueId,
+            venueName: venueData.venueName,
+            venueAddress: venueData.venueAddress,
+            venueSlug: venueData.venueSlug,
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
             link: submission.link || '',
             recurringInfo: submission['recurring-info'] || '',
@@ -176,4 +235,8 @@ function generateSlug(eventName, date) {
     const datePart = new Date(date).toISOString().split('T')[0];
     const namePart = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     return `${namePart}-${datePart}`;
+}
+
+function generateVenueSlug(venueName) {
+    return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }

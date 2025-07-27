@@ -332,34 +332,20 @@
         </div>
     </footer>
 
+    
     <script>
         // Load events for this venue
         async function loadVenueEvents() {
             try {
-                const response = await fetch('/.netlify/functions/get-events-firestore-simple');
+                // Use the new venue-specific events API
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=missing-bar');
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
                 
-                const venueEvents = data.events.filter(event => {
-                    // Check venueName field
-                    if (event.venueName && event.venueName.toLowerCase().includes('missing')) {
-                        return true;
-                    }
-                    // Check event name
-                    if (event.name && event.name.toLowerCase().includes('missing')) {
-                        return true;
-                    }
-                    // Check description
-                    if (event.description && event.description.toLowerCase().includes('missing')) {
-                        return true;
-                    }
-                    return false;
-                });
-                
                 const eventsContainer = document.getElementById('events-container');
                 
-                if (venueEvents.length > 0) {
-                    eventsContainer.innerHTML = venueEvents.map(event => 
+                if (data.success && data.events.length > 0) {
+                    eventsContainer.innerHTML = data.events.map(event => 
                         '<div class="flex items-center gap-4 p-4 bg-gray-800/50 rounded-lg mb-4">' +
                             '<div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded flex items-center justify-center">' +
                                 '<i class="fas fa-calendar text-gray-600"></i>' +
