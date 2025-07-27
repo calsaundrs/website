@@ -95,6 +95,9 @@
                     <button id="test-comprehensive-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-star mr-2"></i>Test Comprehensive Submission
                     </button>
+                    <button id="test-admin-workflow" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-user-shield mr-2"></i>Test Admin Workflow
+                    </button>
                     <button id="test-venue-submission" class="btn-secondary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-building mr-2"></i>Test Venue Submission
                     </button>
@@ -703,6 +706,40 @@
             }
         }
 
+        async function testAdminWorkflow() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Testing admin workflow...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-admin-workflow');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Admin workflow test completed successfully!</p>
+                            <p class="text-gray-400">Test Event: ${data.testEvent.name}</p>
+                            <p class="text-gray-400">Airtable ID: ${data.testEvent.airtableId}</p>
+                            <p class="text-gray-400">Firestore ID: ${data.testEvent.firestoreId}</p>
+                            <p class="text-gray-400">Airtable Status: ${data.approvalTest.airtableStatus}</p>
+                            <p class="text-gray-400">Firestore Status: ${data.approvalTest.firestoreStatus}</p>
+                            <p class="text-gray-400">Status Match: ${data.approvalTest.statusMatch ? '✅ PASS' : '❌ FAIL'}</p>
+                            <div class="mt-4">
+                                <p class="text-gray-400 font-semibold">Workflow Steps:</p>
+                                <ul class="text-xs text-gray-500 space-y-1">
+                                    ${data.workflowSteps.map(step => `<li>${step}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p class="status-error">Admin workflow test failed: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Admin workflow test error: ${error.message}</p>`;
+            }
+        }
+
         async function testVenueSubmission() {
             const resultsDiv = document.getElementById('test-results');
             resultsDiv.innerHTML = '<p class="text-gray-400">Testing venue submission...</p>';
@@ -792,6 +829,7 @@
         document.getElementById('test-minimal-submission').addEventListener('click', testMinimalSubmission);
         document.getElementById('test-enhanced-submission').addEventListener('click', testEnhancedSubmission);
         document.getElementById('test-comprehensive-submission').addEventListener('click', testComprehensiveSubmission);
+        document.getElementById('test-admin-workflow').addEventListener('click', testAdminWorkflow);
         document.getElementById('test-venue-submission').addEventListener('click', testVenueSubmission);
         document.getElementById('create-test-data').addEventListener('click', createTestData);
 

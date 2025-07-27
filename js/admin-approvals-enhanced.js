@@ -58,9 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             try {
-                const venuesResponse = await fetch('/.netlify/functions/get-pending-venues');
+                const venuesResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 if (venuesResponse.ok) {
-                    venues = await venuesResponse.json();
+                    const venuesData = await venuesResponse.json();
+                    venues = venuesData.items ? venuesData.items.filter(item => item.type === 'venue') : [];
                     console.log(`Loaded ${venues.length} pending venues`);
                 } else {
                     console.error('Venues response not ok:', venuesResponse.status);
@@ -317,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Regular approval for non-recurring events or venues
-            const endpoint = type === 'event' ? 'update-submission-status' : 'unified-update-item-status';
+            const endpoint = 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -431,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function rejectItem(id, type, reason) {
         try {
-            const endpoint = type === 'event' ? 'update-submission-status' : 'unified-update-item-status';
+            const endpoint = 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -537,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            const endpoint = type === 'event' ? 'update-submission' : 'unified-update-item-status';
+            const endpoint = 'unified-update-item-status';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
