@@ -338,12 +338,13 @@
     
     
     
+    
     <script>
         // Load events for this venue
         async function loadVenueEvents() {
             try {
-                // Use the new grouped events API
-                const response = await fetch('/.netlify/functions/get-events-grouped?venueSlug=sidewalk');
+                // Use the working venue-specific events API
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=sidewalk');
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
                 
@@ -367,26 +368,8 @@
 
                                 // Handle recurring event display
                                 let recurringDisplay = '';
-                                if (event.isRecurringGroup) {
-                                    const pattern = event.recurringPattern;
-                                    if (pattern === 'weekly') {
-                                        recurringDisplay = 'Weekly Event';
-                                    } else if (pattern === 'monthly') {
-                                        recurringDisplay = 'Monthly Event';
-                                    } else if (pattern === 'daily') {
-                                        recurringDisplay = 'Daily Event';
-                                    } else if (pattern === 'bi-weekly') {
-                                        recurringDisplay = 'Bi-Weekly Event';
-                                    } else {
-                                        recurringDisplay = 'Recurring Event';
-                                    }
-                                    
-                                    // Add instance count if multiple instances
-                                    if (event.instances && event.instances.length > 1) {
-                                        recurringDisplay += ` (${event.instances.length} upcoming)`;
-                                    }
-                                } else if (event.recurringInfo) {
-                                    // Fallback for non-grouped recurring events
+                                if (event.recurringInfo) {
+                                    // Extract recurring pattern from recurringInfo
                                     const recurringText = event.recurringInfo.toLowerCase();
                                     if (recurringText.includes('weekly') || recurringText.includes('every week')) {
                                         recurringDisplay = 'Weekly Event';
