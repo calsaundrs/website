@@ -94,6 +94,19 @@ async function getPendingEvents(limit, offset) {
         const eventsRef = db.collection('events');
         console.log("🔍 GET PENDING EVENTS: Created events reference");
         
+        // First, let's check if there are any events at all
+        console.log("🔍 GET PENDING EVENTS: Checking total events count...");
+        const allEventsSnapshot = await eventsRef.get();
+        console.log("🔍 GET PENDING EVENTS: Total events in collection:", allEventsSnapshot.size);
+        
+        // Let's also check what statuses exist
+        const statuses = new Set();
+        allEventsSnapshot.forEach(doc => {
+            const data = doc.data();
+            statuses.add(data.status || 'no-status');
+        });
+        console.log("🔍 GET PENDING EVENTS: All statuses found:", Array.from(statuses));
+        
         console.log("🔍 GET PENDING EVENTS: Executing Firestore query...");
         const snapshot = await eventsRef
             .where('status', '==', 'pending')
