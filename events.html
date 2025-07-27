@@ -838,11 +838,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     year: 'numeric' 
                 });
 
+                // Handle recurring event display
+                let recurringDisplay = '';
+                if (event.recurringInfo) {
+                    // Extract recurring pattern from recurringInfo
+                    const recurringText = event.recurringInfo.toLowerCase();
+                    if (recurringText.includes('weekly') || recurringText.includes('every week')) {
+                        recurringDisplay = 'Weekly Event';
+                    } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
+                        recurringDisplay = 'Monthly Event';
+                    } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
+                        recurringDisplay = 'Daily Event';
+                    } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
+                        recurringDisplay = 'Bi-Weekly Event';
+                    } else {
+                        recurringDisplay = 'Recurring Event';
+                    }
+                }
+
                 return `
                     <div class="venue-card rounded-xl overflow-hidden relative">
                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
-                        ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
-                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                        ${recurringDisplay ? `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span></div>` : ''}
+                        <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                         </div>
                         <div class="p-6">

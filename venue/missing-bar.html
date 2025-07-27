@@ -336,12 +336,14 @@
     
     
     
+    
+    
     <script>
         // Load events for this venue
         async function loadVenueEvents() {
             try {
-                // Use the new venue-specific events API
-                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=missing-bar');
+                // Use the new grouped events API
+                const response = await fetch('/.netlify/functions/get-events-grouped?venueSlug=missing-bar');
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
                 
@@ -363,11 +365,47 @@
                                     year: 'numeric' 
                                 });
 
+                                // Handle recurring event display
+                                let recurringDisplay = '';
+                                if (event.isRecurringGroup) {
+                                    const pattern = event.recurringPattern;
+                                    if (pattern === 'weekly') {
+                                        recurringDisplay = 'Weekly Event';
+                                    } else if (pattern === 'monthly') {
+                                        recurringDisplay = 'Monthly Event';
+                                    } else if (pattern === 'daily') {
+                                        recurringDisplay = 'Daily Event';
+                                    } else if (pattern === 'bi-weekly') {
+                                        recurringDisplay = 'Bi-Weekly Event';
+                                    } else {
+                                        recurringDisplay = 'Recurring Event';
+                                    }
+                                    
+                                    // Add instance count if multiple instances
+                                    if (event.instances && event.instances.length > 1) {
+                                        recurringDisplay += ` (${event.instances.length} upcoming)`;
+                                    }
+                                } else if (event.recurringInfo) {
+                                    // Fallback for non-grouped recurring events
+                                    const recurringText = event.recurringInfo.toLowerCase();
+                                    if (recurringText.includes('weekly') || recurringText.includes('every week')) {
+                                        recurringDisplay = 'Weekly Event';
+                                    } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
+                                        recurringDisplay = 'Monthly Event';
+                                    } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
+                                        recurringDisplay = 'Daily Event';
+                                    } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
+                                        recurringDisplay = 'Bi-Weekly Event';
+                                    } else {
+                                        recurringDisplay = 'Recurring Event';
+                                    }
+                                }
+
                                 return `
                                     <div class="venue-card rounded-xl overflow-hidden relative">
                                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
-                                        ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
-                                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                                        ${recurringDisplay ? `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span></div>` : ''}
+                                        <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
                                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                                         </div>
                                         <div class="p-6">
