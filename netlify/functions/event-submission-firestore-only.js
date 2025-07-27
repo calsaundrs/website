@@ -178,8 +178,6 @@ exports.handler = async function (event, context) {
             venueSlug: venueData.venueSlug,
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
             link: submission.link || '',
-            recurringInfo: submission['recurring-info'] || '',
-            seriesId: submission['series-id'] || `series_${Date.now()}`,
             cloudinaryPublicId: uploadedImage ? uploadedImage.publicId : null,
             promoImage: uploadedImage ? uploadedImage.url : null,
             submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
@@ -187,35 +185,110 @@ exports.handler = async function (event, context) {
             updatedAt: new Date()
         };
         
-        // Submit to Firestore only
-        console.log('Submitting to Firestore...');
-        const firestoreDoc = await db.collection('events').add(firestoreData);
-        
-        console.log(`Event submitted successfully. Firestore ID: ${firestoreDoc.id}`);
-        
-        return {
-            statusCode: 200,
-            headers: { 'Content-Type': 'text/html' },
-            body: `<!DOCTYPE html>
-            <html>
-            <head>
-                <title>Event Submitted Successfully</title>
-                <meta http-equiv="refresh" content="3;url=/events.html">
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                    .success { color: #10B981; }
-                    .info { color: #6B7280; }
-                </style>
-            </head>
-            <body>
-                <h1 class="success">Event Submitted Successfully!</h1>
-                <p>Your event "${submission['event-name']}" has been submitted for review.</p>
-                <p class="info">You will be redirected to the events page shortly.</p>
-                <p class="info">Firestore ID: ${firestoreDoc.id}</p>
-                <p class="info">Note: This submission was processed using Firestore only.</p>
-            </body>
-            </html>`
-        };
+        // Handle recurring events
+        if (submission['is-recurring'] === 'on' || submission['is-recurring'] === 'true') {
+            // This is a recurring event
+            const recurringData = {
+                isRecurring: true,
+                recurringPattern: submission['recurrence-pattern'] || null,
+                recurringStartDate: submission['recurrence-start-date'] || submission.date,
+                recurringEndDate: submission['recurrence-end-date'] || null,
+                maxInstances: parseInt(submission['max-instances']) || 52,
+                customRecurrenceDesc: submission['custom-recurrence-desc'] || null,
+                recurringInfo: submission['custom-recurrence-desc'] || submission['recurrence-pattern'] || 'Recurring event'
+            };
+            
+            // Merge recurring data
+            Object.assign(firestoreData, recurringData);
+            
+            // Generate recurring event instances
+            const instances = generateRecurringInstances(recurringData);
+            
+            // Create all instances in a batch
+            const batch = db.batch();
+            const createdEvents = [];
+            
+            instances.forEach((instance, index) => {
+                const eventRef = db.collection('events').doc();
+                const instanceData = {
+                    ...firestoreData,
+                    date: instance.toISOString(),
+                    slug: `${slug}-${index + 1}`,
+                    recurringInstance: index + 1,
+                    totalInstances: instances.length,
+                    recurringGroupId: `group_${Date.now()}`,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+                
+                batch.set(eventRef, instanceData);
+                createdEvents.push({
+                    id: eventRef.id,
+                    date: instance.toISOString(),
+                    slug: `${slug}-${index + 1}`
+                });
+            });
+            
+            await batch.commit();
+            
+            console.log(`Created ${instances.length} recurring event instances`);
+            
+            return {
+                statusCode: 200,
+                headers: { 'Content-Type': 'text/html' },
+                body: `<!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Recurring Events Submitted Successfully</title>
+                    <meta http-equiv="refresh" content="5;url=/events.html">
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1f2937; color: white; }
+                        .success { color: #10B981; }
+                        .info { color: #9CA3AF; }
+                        .highlight { color: #E83A99; }
+                    </style>
+                </head>
+                <body>
+                    <h1 class="success">Recurring Events Created Successfully!</h1>
+                    <p>Your recurring event "${submission['event-name']}" has been created with <span class="highlight">${instances.length} instances</span>.</p>
+                    <p class="info">Pattern: ${submission['recurrence-pattern'] || 'Custom'}</p>
+                    <p class="info">All events have been submitted for review.</p>
+                    <p class="info">You will be redirected to the events page shortly.</p>
+                    <p class="info">Note: This submission was processed using Firestore only.</p>
+                </body>
+                </html>`
+            };
+        } else {
+            // Single event submission
+            console.log('Submitting single event to Firestore...');
+            const firestoreDoc = await db.collection('events').add(firestoreData);
+            
+            console.log(`Event submitted successfully. Firestore ID: ${firestoreDoc.id}`);
+            
+            return {
+                statusCode: 200,
+                headers: { 'Content-Type': 'text/html' },
+                body: `<!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Event Submitted Successfully</title>
+                    <meta http-equiv="refresh" content="3;url=/events.html">
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1f2937; color: white; }
+                        .success { color: #10B981; }
+                        .info { color: #9CA3AF; }
+                    </style>
+                </head>
+                <body>
+                    <h1 class="success">Event Submitted Successfully!</h1>
+                    <p>Your event "${submission['event-name']}" has been submitted for review.</p>
+                    <p class="info">You will be redirected to the events page shortly.</p>
+                    <p class="info">Firestore ID: ${firestoreDoc.id}</p>
+                    <p class="info">Note: This submission was processed using Firestore only.</p>
+                </body>
+                </html>`
+            };
+        }
         
     } catch (error) {
         console.error('Error in Firestore-only event submission:', error);
@@ -239,4 +312,44 @@ function generateSlug(eventName, date) {
 
 function generateVenueSlug(venueName) {
     return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function generateRecurringInstances(recurringData) {
+    const startDate = new Date(recurringData.recurringStartDate);
+    const endDate = recurringData.recurringEndDate ? new Date(recurringData.recurringEndDate) : null;
+    const pattern = recurringData.recurringPattern;
+    const maxInstances = recurringData.maxInstances || 52;
+    
+    const instances = [];
+    let current = new Date(startDate);
+    let count = 0;
+    
+    while (count < maxInstances) {
+        if (endDate && current > endDate) {
+            break;
+        }
+        
+        instances.push(new Date(current));
+        count++;
+        
+        switch (pattern) {
+            case 'weekly':
+                current.setDate(current.getDate() + 7);
+                break;
+            case 'bi-weekly':
+                current.setDate(current.getDate() + 14);
+                break;
+            case 'monthly':
+                current.setMonth(current.getMonth() + 1);
+                break;
+            case 'yearly':
+                current.setFullYear(current.getFullYear() + 1);
+                break;
+            default:
+                // For custom patterns, assume weekly as fallback
+                current.setDate(current.getDate() + 7);
+        }
+    }
+    
+    return instances;
 }

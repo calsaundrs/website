@@ -338,45 +338,133 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                        placeholder="https://">
                             </div>
 
-                            <!-- Recurrence Info -->
+                            <!-- Recurring Events System -->
                             <div class="md:col-span-2">
                                 <div class="flex items-center mb-2">
                                     <label class="text-sm font-semibold accent-color-secondary">
-                                        <i class="fas fa-redo mr-1"></i>Recurrence
+                                        <i class="fas fa-redo mr-1"></i>Recurring Events
                                     </label>
                                     <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors ml-2" id="recurrence-tips-toggle">
                                         <i class="fas fa-info-circle text-sm"></i>
                                     </button>
-                                    <div class="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
+                                    <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
                                         <h4 class="text-blue-300 font-semibold mb-2">
                                             <i class="fas fa-calendar-alt mr-2"></i>Recurring Events
                                         </h4>
-                                        <p class="text-sm text-blue-200 mb-2">If your event repeats regularly (e.g., every Tuesday), select the recurrence type below.</p>
-                                        <p class="text-sm text-blue-200">This will automatically create multiple event entries for you.</p>
+                                        <p class="text-sm text-blue-200 mb-2">Create events that repeat regularly. The system will automatically generate all instances for you.</p>
+                                        <p class="text-sm text-blue-200">Examples: Weekly club nights, Monthly meetups, Annual events</p>
                                         <div class="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div class="feature-card p-3 rounded-lg">
-                                        <label class="flex items-center">
-                                            <input type="radio" name="recurrence" value="none" checked 
-                                                   class="mr-2 text-accent-color focus:ring-accent-color">
-                                            <span class="text-white">One-time event</span>
-                                        </label>
-                                    </div>
-                                    <div class="feature-card p-3 rounded-lg">
-                                        <label class="flex items-center">
-                                            <input type="radio" name="recurrence" value="weekly" 
-                                                   class="mr-2 text-accent-color focus:ring-accent-color">
-                                            <span class="text-white">Weekly</span>
-                                        </label>
-                                    </div>
-                                    <div class="feature-card p-3 rounded-lg">
-                                        <label class="flex items-center">
-                                            <input type="radio" name="recurrence" value="monthly" 
-                                                   class="mr-2 text-accent-color focus:ring-accent-color">
-                                            <span class="text-white">Monthly</span>
-                                        </label>
+                                
+                                <!-- Recurring Event Toggle -->
+                                <div class="feature-card p-4 rounded-lg mb-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="is-recurring" name="is-recurring" 
+                                               class="mr-3 text-accent-color focus:ring-accent-color rounded">
+                                        <span class="text-white font-semibold">This is a recurring event</span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Recurring Event Configuration (Hidden by default) -->
+                                <div id="recurring-config" class="hidden space-y-4">
+                                    <div class="card-bg p-4 rounded-lg border border-blue-600/30">
+                                        <h4 class="text-blue-300 font-semibold mb-4">
+                                            <i class="fas fa-cog mr-2"></i>Recurring Event Configuration
+                                        </h4>
+                                        
+                                        <!-- Recurrence Pattern -->
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-semibold mb-2 text-white">
+                                                <i class="fas fa-calendar mr-1"></i>Recurrence Pattern <span class="text-red-400">*</span>
+                                            </label>
+                                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                    <input type="radio" name="recurrence-pattern" value="weekly" 
+                                                           class="mr-2 text-accent-color focus:ring-accent-color">
+                                                    <span class="text-white">Weekly</span>
+                                                </label>
+                                                <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                    <input type="radio" name="recurrence-pattern" value="bi-weekly" 
+                                                           class="mr-2 text-accent-color focus:ring-accent-color">
+                                                    <span class="text-white">Bi-Weekly</span>
+                                                </label>
+                                                <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                    <input type="radio" name="recurrence-pattern" value="monthly" 
+                                                           class="mr-2 text-accent-color focus:ring-accent-color">
+                                                    <span class="text-white">Monthly</span>
+                                                </label>
+                                                <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                    <input type="radio" name="recurrence-pattern" value="yearly" 
+                                                           class="mr-2 text-accent-color focus:ring-accent-color">
+                                                    <span class="text-white">Yearly</span>
+                                                </label>
+                                                <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                    <input type="radio" name="recurrence-pattern" value="custom" 
+                                                           class="mr-2 text-accent-color focus:ring-accent-color">
+                                                    <span class="text-white">Custom</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Custom Recurrence (Hidden by default) -->
+                                        <div id="custom-recurrence" class="hidden mb-4">
+                                            <label class="block text-sm font-semibold mb-2 text-white">
+                                                <i class="fas fa-edit mr-1"></i>Custom Recurrence Description
+                                            </label>
+                                            <textarea name="custom-recurrence-desc" 
+                                                      class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                      placeholder="e.g., Every first Saturday of the month, Every other Tuesday, etc."
+                                                      rows="2"></textarea>
+                                        </div>
+                                        
+                                        <!-- Recurrence Duration -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <label class="block text-sm font-semibold mb-2 text-white">
+                                                    <i class="fas fa-calendar-plus mr-1"></i>Start Date <span class="text-red-400">*</span>
+                                                </label>
+                                                <input type="date" name="recurrence-start-date" 
+                                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                       min="<?php echo date('Y-m-d'); ?>">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold mb-2 text-white">
+                                                    <i class="fas fa-calendar-minus mr-1"></i>End Date
+                                                </label>
+                                                <input type="date" name="recurrence-end-date" 
+                                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                       min="<?php echo date('Y-m-d'); ?>">
+                                                <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing events</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Maximum Instances -->
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-semibold mb-2 text-white">
+                                                <i class="fas fa-hashtag mr-1"></i>Maximum Number of Instances
+                                            </label>
+                                            <input type="number" name="max-instances" 
+                                                   class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                   placeholder="52" min="1" max="1000" value="52">
+                                            <p class="text-xs text-gray-400 mt-1">Maximum number of events to create (default: 52 for weekly events)</p>
+                                        </div>
+                                        
+                                        <!-- Preview Generated Events -->
+                                        <div class="mb-4">
+                                            <button type="button" id="preview-recurring" 
+                                                    class="btn-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                                                <i class="fas fa-eye mr-2"></i>Preview Generated Events
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Preview Results -->
+                                        <div id="recurring-preview" class="hidden">
+                                            <h5 class="text-blue-300 font-semibold mb-2">Generated Events Preview:</h5>
+                                            <div id="preview-results" class="bg-gray-800 rounded-lg p-3 max-h-40 overflow-y-auto">
+                                                <!-- Preview results will be populated here -->
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -714,7 +802,202 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // Initialize venue selector when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             new VenueSelector();
+            new RecurringEventsManager();
         });
+        
+        // Recurring Events Management System
+        class RecurringEventsManager {
+            constructor() {
+                this.isRecurringCheckbox = document.getElementById('is-recurring');
+                this.recurringConfig = document.getElementById('recurring-config');
+                this.customRecurrence = document.getElementById('custom-recurrence');
+                this.previewButton = document.getElementById('preview-recurring');
+                this.previewResults = document.getElementById('recurring-preview');
+                this.previewContainer = document.getElementById('preview-results');
+                
+                this.initializeEventListeners();
+            }
+            
+            initializeEventListeners() {
+                // Toggle recurring configuration
+                this.isRecurringCheckbox.addEventListener('change', () => {
+                    this.toggleRecurringConfig();
+                });
+                
+                // Handle recurrence pattern changes
+                document.querySelectorAll('input[name="recurrence-pattern"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        this.handlePatternChange();
+                    });
+                });
+                
+                // Preview button
+                this.previewButton.addEventListener('click', () => {
+                    this.generatePreview();
+                });
+                
+                // Date validation
+                document.querySelector('input[name="recurrence-start-date"]').addEventListener('change', () => {
+                    this.validateDates();
+                });
+                
+                document.querySelector('input[name="recurrence-end-date"]').addEventListener('change', () => {
+                    this.validateDates();
+                });
+            }
+            
+            toggleRecurringConfig() {
+                if (this.isRecurringCheckbox.checked) {
+                    this.recurringConfig.classList.remove('hidden');
+                    this.previewResults.classList.add('hidden');
+                } else {
+                    this.recurringConfig.classList.add('hidden');
+                    this.previewResults.classList.add('hidden');
+                }
+            }
+            
+            handlePatternChange() {
+                const selectedPattern = document.querySelector('input[name="recurrence-pattern"]:checked');
+                
+                if (selectedPattern && selectedPattern.value === 'custom') {
+                    this.customRecurrence.classList.remove('hidden');
+                } else {
+                    this.customRecurrence.classList.add('hidden');
+                }
+                
+                // Update max instances based on pattern
+                this.updateMaxInstances(selectedPattern ? selectedPattern.value : null);
+            }
+            
+            updateMaxInstances(pattern) {
+                const maxInstancesInput = document.querySelector('input[name="max-instances"]');
+                
+                switch (pattern) {
+                    case 'weekly':
+                        maxInstancesInput.value = '52';
+                        break;
+                    case 'bi-weekly':
+                        maxInstancesInput.value = '26';
+                        break;
+                    case 'monthly':
+                        maxInstancesInput.value = '12';
+                        break;
+                    case 'yearly':
+                        maxInstancesInput.value = '5';
+                        break;
+                    default:
+                        maxInstancesInput.value = '52';
+                }
+            }
+            
+            validateDates() {
+                const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
+                const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
+                
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    alert('End date must be after start date');
+                    document.querySelector('input[name="recurrence-end-date"]').value = '';
+                }
+            }
+            
+            generatePreview() {
+                const pattern = document.querySelector('input[name="recurrence-pattern"]:checked');
+                const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
+                const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
+                const maxInstances = parseInt(document.querySelector('input[name="max-instances"]').value) || 52;
+                
+                if (!pattern || !startDate) {
+                    alert('Please select a recurrence pattern and start date');
+                    return;
+                }
+                
+                const instances = this.calculateInstances(startDate, endDate, pattern.value, maxInstances);
+                this.displayPreview(instances);
+            }
+            
+            calculateInstances(startDate, endDate, pattern, maxInstances) {
+                const instances = [];
+                let current = new Date(startDate);
+                let count = 0;
+                
+                while (count < maxInstances) {
+                    if (endDate && current > new Date(endDate)) {
+                        break;
+                    }
+                    
+                    instances.push(new Date(current));
+                    count++;
+                    
+                    switch (pattern) {
+                        case 'weekly':
+                            current.setDate(current.getDate() + 7);
+                            break;
+                        case 'bi-weekly':
+                            current.setDate(current.getDate() + 14);
+                            break;
+                        case 'monthly':
+                            current.setMonth(current.getMonth() + 1);
+                            break;
+                        case 'yearly':
+                            current.setFullYear(current.getFullYear() + 1);
+                            break;
+                        default:
+                            return instances;
+                    }
+                }
+                
+                return instances;
+            }
+            
+            displayPreview(instances) {
+                if (instances.length === 0) {
+                    this.previewContainer.innerHTML = '<p class="text-gray-400">No events would be generated with the current settings.</p>';
+                } else {
+                    const previewHTML = instances.slice(0, 10).map((date, index) => {
+                        const formattedDate = date.toLocaleDateString('en-GB', {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                        return `<div class="text-sm text-gray-300 mb-1">${index + 1}. ${formattedDate}</div>`;
+                    }).join('');
+                    
+                    const remainingText = instances.length > 10 ? 
+                        `<div class="text-sm text-gray-400 mt-2">... and ${instances.length - 10} more events</div>` : '';
+                    
+                    this.previewContainer.innerHTML = previewHTML + remainingText;
+                }
+                
+                this.previewResults.classList.remove('hidden');
+            }
+            
+            // Method to get recurring event data for form submission
+            getRecurringEventData() {
+                if (!this.isRecurringCheckbox.checked) {
+                    return null;
+                }
+                
+                const pattern = document.querySelector('input[name="recurrence-pattern"]:checked');
+                const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
+                const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
+                const maxInstances = parseInt(document.querySelector('input[name="max-instances"]').value) || 52;
+                const customDesc = document.querySelector('textarea[name="custom-recurrence-desc"]').value;
+                
+                if (!pattern || !startDate) {
+                    throw new Error('Recurring event configuration is incomplete');
+                }
+                
+                return {
+                    isRecurring: true,
+                    recurringPattern: pattern.value,
+                    recurringStartDate: startDate,
+                    recurringEndDate: endDate || null,
+                    maxInstances: maxInstances,
+                    customRecurrenceDesc: customDesc || null
+                };
+            }
+        }
     </script>
 </body>
 </html>

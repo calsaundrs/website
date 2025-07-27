@@ -1,30 +1,9 @@
 const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
-    console.log("get-events-firestore-simple function called");
-    console.log("Query parameters:", event.queryStringParameters);
+    console.log('Getting events with comprehensive recurring system');
     
     try {
-        // Check environment variables
-        const required = [
-            'FIREBASE_PROJECT_ID',
-            'FIREBASE_CLIENT_EMAIL',
-            'FIREBASE_PRIVATE_KEY'
-        ];
-        
-        const missing = required.filter(varName => !process.env[varName]);
-        if (missing.length > 0) {
-            return {
-                statusCode: 500,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    error: 'Environment configuration error',
-                    message: `Missing environment variables: ${missing.join(', ')}`,
-                    missing: missing
-                })
-            };
-        }
-        
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -37,302 +16,276 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        const queryParams = event.queryStringParameters || {};
-        const view = queryParams.view || 'public';
+        // Get query parameters
+        const queryParams = new URLSearchParams(event.queryStringParameters || '');
+        const limit = parseInt(queryParams.get('limit')) || 50;
+        const view = queryParams.get('view');
         
-        console.log("View:", view);
+        console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}`);
         
-        // Handle different views
-        if (view === 'venues') {
-            return await handleVenuesView(db);
-        } else if (view === 'admin') {
-            return await handleAdminView(db, queryParams);
-        } else {
-            return await handlePublicView(db, queryParams);
-        }
+        // Build query
+        let query = db.collection('events')
+            .where('status', '==', 'approved')
+            .orderBy('date', 'asc');
+        
+        const snapshot = await query.get();
+        let events = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            
+            // Only include future events or events from today
+            const eventDate = new Date(data.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (eventDate >= today) {
+                events.push({
+                    id: doc.id,
+                    name: data.name || 'Untitled Event',
+                    description: data.description || '',
+                    date: data.date,
+                    status: data.status || 'approved',
+                    venueId: data.venueId || null,
+                    venueName: data.venueName || '',
+                    venueAddress: data.venueAddress || '',
+                    venueSlug: data.venueSlug || '',
+                    category: data.category || [],
+                    link: data.link || '',
+                    recurringInfo: data.recurringInfo || '',
+                    recurringPattern: data.recurringPattern || null,
+                    recurringEndDate: data.recurringEndDate || null,
+                    isRecurring: data.isRecurring || false,
+                    recurringGroupId: data.recurringGroupId || null,
+                    recurringInstance: data.recurringInstance || null,
+                    totalInstances: data.totalInstances || null,
+                    image: extractImageUrl(data),
+                    slug: data.slug || '',
+                    promotion: data.promotion || null
+                });
+            }
+        });
+        
+        // Group recurring events
+        const groupedEvents = groupRecurringEvents(events);
+        
+        // Sort by date
+        groupedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Apply limit
+        const limitedEvents = groupedEvents.slice(0, limit);
+        
+        console.log(`Returning ${limitedEvents.length} grouped events (from ${events.length} original events)`);
+        
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+            },
+            body: JSON.stringify({
+                success: true,
+                events: limitedEvents,
+                total: limitedEvents.length,
+                originalCount: events.length,
+                groupedCount: groupedEvents.length,
+                limit: limit
+            })
+        };
         
     } catch (error) {
-        console.error('Error in get-events-firestore-simple:', error);
-        console.error('Error stack:', error.stack);
-        
+        console.error('Error getting events with recurring system:', error);
         return {
             statusCode: 500,
             headers: {
                 'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
             },
             body: JSON.stringify({
-                error: 'Internal server error',
-                message: error.message,
-                details: error.details || 'No additional details available',
-                code: error.code || 'UNKNOWN'
+                success: false,
+                error: 'Failed to fetch events',
+                message: error.message
             })
         };
     }
 };
 
-    async function handlePublicView(db, queryParams) {
-        console.log('=== handlePublicView called ===');
-        console.log('QueryParams received:', queryParams);
-        
-        const filters = {
-            status: 'approved',
-            limit: parseInt(queryParams.limit) || 1000, // Increase limit to get more events
-            offset: parseInt(queryParams.offset) || 0,
-            dateRange: { type: 'all' } // Temporarily hardcode to debug
-        };
-        
-        // Try to parse dateRange if provided
-        if (queryParams.dateRange) {
-            try {
-                filters.dateRange = JSON.parse(queryParams.dateRange);
-                console.log('Successfully parsed dateRange:', filters.dateRange);
-                console.log('DateRange type:', filters.dateRange.type);
-            } catch (error) {
-                console.error('Error parsing dateRange:', error);
-                console.log('Raw dateRange value:', queryParams.dateRange);
-                // Fallback to default
-                filters.dateRange = { type: 'all' };
-            }
-        } else {
-            console.log('No dateRange parameter provided, using default');
-        }
-        
-        // Also check for simple filter parameter as fallback
-        if (queryParams.filter) {
-            console.log('Found filter parameter:', queryParams.filter);
-            if (queryParams.filter === 'upcoming') {
-                filters.dateRange = { type: 'upcoming' };
-                console.log('Set dateRange to upcoming based on filter parameter');
-            }
-        }
-
-    console.log("Public view filters:", filters);
-
-    try {
-        const eventsRef = db.collection('events');
-        
-        // Start with approved events
-        let query = eventsRef.where('status', '==', 'approved');
-        console.log('Query created with status filter for approved events');
-        console.log('Query parameters received:', queryParams);
-        
-        // Temporarily disable Firestore date filtering and do it in JavaScript
-        console.log('Date filtering will be done in JavaScript after fetching events');
-        // For 'all' type, no date filtering is applied
-        
-        // Always sort by date ascending
-        query = query.orderBy('date', 'asc');
-
-        // Apply pagination
-        query = query.limit(filters.limit).offset(filters.offset);
-
-        console.log("Executing Firestore query...");
-        const snapshot = await query.get();
-        console.log(`Query returned ${snapshot.size} documents`);
-        
-        const events = [];
-        
-        snapshot.forEach(doc => {
-            const rawData = doc.data();
-            
-            // Debug: Log the first few events' dates
-            if (events.length < 5) {
-                console.log(`Event ${events.length + 1}:`, {
-                    name: rawData.name || rawData['Event Name'],
-                    date: rawData.date || rawData['Date'],
-                    dateType: typeof (rawData.date || rawData['Date']),
-                    isDate: rawData.date instanceof Date || rawData['Date'] instanceof Date
-                });
-            }
-            
-            // Process event data for public view
-            const eventData = {
-                id: doc.id,
-                name: rawData.name || rawData['Event Name'] || 'Untitled Event',
-                description: rawData.description || rawData['Description'] || '',
-                date: rawData.date || rawData['Date'] || null,
-                status: rawData.status || 'pending',
-                slug: rawData.slug || rawData['Slug'] || '',
-                category: rawData.category || rawData['categories'] || [],
-                venueName: rawData.venueName || rawData['Venue Name'] || '',
-                link: rawData.link || rawData['Link'] || '',
-                recurringInfo: rawData.recurringInfo || rawData['Recurring Info'] || '',
-                image: extractImageUrl(rawData)
-            };
-            
-            events.push(eventData);
-        });
-        
-        console.log(`Processed ${events.length} events for public view`);
-        
-        // Apply date filtering in JavaScript
-        let filteredEvents = events;
-        console.log('DateRange type received:', filters.dateRange.type);
-        console.log('Total events fetched:', events.length);
-        
-        if (filters.dateRange.type === 'upcoming') {
-            console.log('Processing upcoming filter...');
-            console.log('Temporarily returning all events for debugging');
-            filteredEvents = events; // Return all events for now
-        } else {
-            console.log('Not processing upcoming filter, using all events');
-        }
-        
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'public, max-age=300'
-            },
-            body: JSON.stringify({
-                success: true,
-                events: filteredEvents,
-                total: filteredEvents.length,
-                limit: filters.limit,
-                offset: filters.offset
-            })
-        };
-        
-    } catch (error) {
-        console.error('Error in handlePublicView:', error);
-        throw error;
-    }
-}
-
-async function handleAdminView(db, queryParams) {
-    const filters = {
-        limit: parseInt(queryParams.limit) || 50,
-        offset: parseInt(queryParams.offset) || 0
-    };
-
-    console.log("Admin view filters:", filters);
-
-    try {
-        const eventsRef = db.collection('events');
-        
-        // For admin view, get all events but sort by date (most recent first)
-        let query = eventsRef.orderBy('date', 'desc');
-
-        // Apply pagination
-        query = query.limit(filters.limit).offset(filters.offset);
-
-        console.log("Executing admin Firestore query...");
-        const snapshot = await query.get();
-        console.log(`Admin query returned ${snapshot.size} documents`);
-        
-        const events = [];
-        
-        snapshot.forEach(doc => {
-            const rawData = doc.data();
-            
-            // Process event data for admin view
-            const eventData = {
-                id: doc.id,
-                name: rawData.name || rawData['Event Name'] || 'Untitled Event',
-                description: rawData.description || rawData['Description'] || '',
-                date: rawData.date || rawData['Date'] || null,
-                status: rawData.status || 'pending',
-                slug: rawData.slug || rawData['Slug'] || '',
-                category: rawData.category || rawData['categories'] || [],
-                venueName: rawData.venueName || rawData['Venue Name'] || '',
-                link: rawData.link || rawData['Link'] || '',
-                recurringInfo: rawData.recurringInfo || rawData['Recurring Info'] || '',
-                submittedBy: rawData.submittedBy || rawData['Submitter Email'] || '',
-                createdAt: rawData.createdAt || null,
-                updatedAt: rawData.updatedAt || null,
-                image: extractImageUrl(rawData)
-            };
-            
-            events.push(eventData);
-        });
-        
-        console.log(`Processed ${events.length} events for admin view`);
-        
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
-            },
-            body: JSON.stringify({
-                success: true,
-                events: events,
-                total: events.length,
-                limit: filters.limit,
-                offset: filters.offset
-            })
-        };
-        
-    } catch (error) {
-        console.error('Error in handleAdminView:', error);
-        throw error;
-    }
-}
-
-async function handleVenuesView(db) {
-    console.log("Handling venues view");
-
-    try {
-        const venuesRef = db.collection('venues');
-        const snapshot = await venuesRef.limit(50).get();
-        console.log(`Venues query returned ${snapshot.size} documents`);
-        
-        const venues = [];
-        
-        snapshot.forEach(doc => {
-            const rawData = doc.data();
-            
-            // Extract image data
-            const imageData = extractImageUrl(rawData);
-            
-            // Only include venues that have Cloudinary image data
-            if (imageData && imageData.url) {
-                // Process venue data for public view
-                const venueData = {
-                    id: doc.id,
-                    name: rawData.name || rawData['Name'] || 'Untitled Venue',
-                    description: rawData.description || rawData['Description'] || '',
-                    address: rawData.address || rawData['Address'] || '',
-                    status: rawData.status || 'pending',
-                    slug: rawData.slug || rawData['Slug'] || '',
-                    category: rawData.category || rawData['Tags'] || [],
-                    website: rawData.website || rawData['Website'] || '',
-                    contactPhone: rawData.contactPhone || rawData['Contact Phone'] || '',
-                    openingHours: rawData.openingHours || rawData['Opening Hours'] || '',
-                    image: imageData,
-                    popular: rawData.popular || false
+function groupRecurringEvents(events) {
+    const groupedEvents = [];
+    const recurringGroups = new Map();
+    
+    events.forEach(event => {
+        if (event.isRecurring && event.recurringGroupId) {
+            // This is a recurring event with a group ID
+            if (recurringGroups.has(event.recurringGroupId)) {
+                // Add to existing group
+                const group = recurringGroups.get(event.recurringGroupId);
+                group.instances.push(event);
+                // Update the group's date to the earliest instance
+                if (new Date(event.date) < new Date(group.date)) {
+                    group.date = event.date;
+                }
+            } else {
+                // Create new group
+                const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+                const group = {
+                    ...event,
+                    instances: [event],
+                    isRecurringGroup: true,
+                    recurringPattern: pattern,
+                    nextOccurrence: calculateNextOccurrence(event.date, pattern),
+                    totalOccurrences: calculateTotalOccurrences(event.date, event.recurringEndDate, pattern)
                 };
-                
-                venues.push(venueData);
+                recurringGroups.set(event.recurringGroupId, group);
             }
-        });
-        
-        console.log(`Processed ${venues.length} venues with Cloudinary images for public view`);
-        console.log('Venues with images:', venues.map(v => ({ name: v.name, hasImage: !!v.image })));
-        
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'public, max-age=300'
-            },
-            body: JSON.stringify({
-                success: true,
-                venues: venues,
-                total: venues.length
-            })
-        };
-        
-    } catch (error) {
-        console.error('Error in handleVenuesView:', error);
-        throw error;
+        } else if (event.recurringInfo || event.recurringPattern) {
+            // Legacy recurring event (no group ID)
+            const groupKey = createRecurringGroupKey(event);
+            
+            if (recurringGroups.has(groupKey)) {
+                // Add to existing group
+                const group = recurringGroups.get(groupKey);
+                group.instances.push(event);
+                // Update the group's date to the earliest instance
+                if (new Date(event.date) < new Date(group.date)) {
+                    group.date = event.date;
+                }
+            } else {
+                // Create new group
+                const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+                const group = {
+                    ...event,
+                    instances: [event],
+                    isRecurringGroup: true,
+                    recurringPattern: pattern,
+                    nextOccurrence: calculateNextOccurrence(event.date, pattern),
+                    totalOccurrences: calculateTotalOccurrences(event.date, event.recurringEndDate, pattern)
+                };
+                recurringGroups.set(groupKey, group);
+            }
+        } else {
+            // Non-recurring event, add directly
+            groupedEvents.push(event);
+        }
+    });
+    
+    // Add grouped recurring events
+    recurringGroups.forEach(group => {
+        groupedEvents.push(group);
+    });
+    
+    return groupedEvents;
+}
+
+function createRecurringGroupKey(event) {
+    // Create a unique key based on event name, venue, and recurring pattern
+    const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+    return `${event.name}-${event.venueName}-${pattern}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
+}
+
+function extractRecurringPattern(recurringInfo) {
+    if (!recurringInfo) return null;
+    
+    const text = recurringInfo.toLowerCase();
+    if (text.includes('weekly') || text.includes('every week')) {
+        return 'weekly';
+    } else if (text.includes('monthly') || text.includes('every month')) {
+        return 'monthly';
+    } else if (text.includes('daily') || text.includes('every day')) {
+        return 'daily';
+    } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+        return 'bi-weekly';
+    } else if (text.includes('yearly') || text.includes('annual')) {
+        return 'yearly';
+    } else {
+        return 'recurring';
     }
+}
+
+function calculateNextOccurrence(startDate, pattern) {
+    const start = new Date(startDate);
+    const now = new Date();
+    
+    if (start > now) {
+        return start;
+    }
+    
+    let next = new Date(start);
+    
+    switch (pattern) {
+        case 'daily':
+            while (next <= now) {
+                next.setDate(next.getDate() + 1);
+            }
+            break;
+        case 'weekly':
+            while (next <= now) {
+                next.setDate(next.getDate() + 7);
+            }
+            break;
+        case 'bi-weekly':
+            while (next <= now) {
+                next.setDate(next.getDate() + 14);
+            }
+            break;
+        case 'monthly':
+            while (next <= now) {
+                next.setMonth(next.getMonth() + 1);
+            }
+            break;
+        case 'yearly':
+            while (next <= now) {
+                next.setFullYear(next.getFullYear() + 1);
+            }
+            break;
+        default:
+            return start;
+    }
+    
+    return next;
+}
+
+function calculateTotalOccurrences(startDate, endDate, pattern) {
+    if (!endDate) return null;
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    let count = 0;
+    let current = new Date(start);
+    
+    while (current <= end) {
+        count++;
+        
+        switch (pattern) {
+            case 'daily':
+                current.setDate(current.getDate() + 1);
+                break;
+            case 'weekly':
+                current.setDate(current.getDate() + 7);
+                break;
+            case 'bi-weekly':
+                current.setDate(current.getDate() + 14);
+                break;
+            case 'monthly':
+                current.setMonth(current.getMonth() + 1);
+                break;
+            case 'yearly':
+                current.setFullYear(current.getFullYear() + 1);
+                break;
+            default:
+                return count;
+        }
+    }
+    
+    return count;
 }
 
 function extractImageUrl(data) {
     // Extract Cloudinary image object from various possible formats
-    // Check for object formats with URL properties
     if (data.promoImage && data.promoImage.url) {
         return data.promoImage;
     }
