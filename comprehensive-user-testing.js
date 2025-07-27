@@ -241,7 +241,7 @@ class UserPersonaSimulator {
         formData.append('date', '2025-02-20');
         formData.append('start-time', '20:00');
         formData.append('description', 'Basic test event submission');
-        formData.append('venue-text', 'Test Venue');
+        formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
         const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -265,7 +265,7 @@ class UserPersonaSimulator {
         formData.append('start-time', '21:00');
         formData.append('description', 'Test event with categories');
         formData.append('category', 'Club Night, Party');
-        formData.append('venue-text', 'Test Venue');
+        formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
         const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -284,7 +284,7 @@ class UserPersonaSimulator {
         formData.append('start-time', '19:00');
         formData.append('description', 'Test recurring event');
         formData.append('recurring-info', 'Every Friday');
-        formData.append('venue-text', 'Test Venue');
+        formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
         const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -303,7 +303,7 @@ class UserPersonaSimulator {
         formData.append('start-time', '22:00');
         formData.append('description', 'Test event with external link');
         formData.append('link', 'https://example.com/event');
-        formData.append('venue-text', 'Test Venue');
+        formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
         const response = await fetch('/.netlify/functions/event-submission-firestore-only', {

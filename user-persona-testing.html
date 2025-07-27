@@ -231,6 +231,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Advanced testing with detailed reporting</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testFirestoreFixes()" class="btn-danger text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-bug mr-2"></i>Test Firestore Fixes
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Test the recent field name fixes</p>
+            </div>
         </div>
     </main>
 
@@ -387,7 +394,7 @@
             formData.append('date', '2025-02-15');
             formData.append('start-time', '20:00');
             formData.append('description', 'This is a test event for persona testing');
-            formData.append('venue-text', 'Test Venue');
+            formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
             const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -414,7 +421,7 @@
             formData.append('start-time', '21:00');
             formData.append('description', 'Test event with categories');
             formData.append('category', 'Club Night, Party');
-            formData.append('venue-text', 'Test Venue');
+            formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
             const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -436,7 +443,7 @@
             formData.append('start-time', '19:00');
             formData.append('description', 'Test recurring event');
             formData.append('recurring-info', 'Every Friday');
-            formData.append('venue-text', 'Test Venue');
+            formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
             const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -643,6 +650,36 @@
             script.onerror = () => {
                 addResult('❌ Failed to load comprehensive testing script', 'error');
             };
+        }
+
+        // Test Firestore fixes function
+        async function testFirestoreFixes() {
+            clearResults();
+            addResult('🔧 Testing Firestore field name fixes...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-firestore-fixes');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Firestore fixes test completed!`, 'success');
+                    addResult(`📊 Success Rate: ${data.summary.successRate}`, 'success');
+                    addResult(`📈 Events: ${data.results.events.success ? '✅' : '❌'} (${data.results.events.count} found)`, data.results.events.success ? 'success' : 'error');
+                    addResult(`🏢 Venues: ${data.results.venues.success ? '✅' : '❌'} (${data.results.venues.count} found)`, data.results.venues.success ? 'success' : 'error');
+                    addResult(`⏳ Pending Events: ${data.results.pendingEvents.success ? '✅' : '❌'} (${data.results.pendingEvents.count} found)`, data.results.pendingEvents.success ? 'success' : 'error');
+                    addResult(`⏳ Pending Venues: ${data.results.pendingVenues.success ? '✅' : '❌'} (${data.results.pendingVenues.count} found)`, data.results.pendingVenues.success ? 'success' : 'error');
+                    
+                    if (data.summary.successRate === '100.0%') {
+                        addResult('🎉 All Firestore queries working correctly!', 'success');
+                    } else {
+                        addResult('⚠️ Some queries still need attention', 'error');
+                    }
+                } else {
+                    addResult(`❌ Firestore fixes test failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Test failed: ${error.message}`, 'error');
+            }
         }
     </script>
 </body>

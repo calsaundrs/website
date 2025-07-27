@@ -139,7 +139,7 @@ function processVenueForPublic(venueData) {
         image: imageUrl ? { url: imageUrl } : null,
         category: venueData.category || venueData.tags || venueData['Tags'] || [],
         type: venueData.type || venueData['Type'] || 'venue',
-        status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
+                    status: venueData.status || 'listed',
         openingHours: venueData.openingHours || venueData['Opening Hours'],
         popular: venueData.popular || venueData['Popular'] || false
     };

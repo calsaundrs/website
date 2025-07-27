@@ -74,7 +74,7 @@ async function handlePublicView(queryParams) {
 
             try {
             const eventsRef = db.collection('events');
-            let query = eventsRef.where('Status', '==', 'Approved');
+            let query = eventsRef.where('status', '==', 'approved');
 
         // Start with a simple query that will work immediately
         // This will generate index creation links for more complex queries
@@ -104,7 +104,7 @@ async function handlePublicView(queryParams) {
                 name: rawData['Event Name'] || rawData.name,
                 description: rawData['Description'] || rawData.description,
                 date: rawData['Date'] || rawData.date,
-                status: rawData['Status'] || rawData.status,
+                status: rawData.status,
                 slug: rawData['Slug'] || rawData.slug,
                 category: rawData['categories'] || rawData.category || [],
                 venueId: rawData['venueId'] || rawData.venueId,
@@ -170,7 +170,7 @@ async function handlePublicView(queryParams) {
 
         // Get total count for pagination
         console.log("Getting total count...");
-        const countQuery = eventsRef.where('Status', '==', 'Approved');
+        const countQuery = eventsRef.where('status', '==', 'approved');
         const countSnapshot = await countQuery.get();
         const totalCount = countSnapshot.size;
         console.log(`Total count: ${totalCount}`);
@@ -394,7 +394,7 @@ function processEventForPublic(eventData) {
         link: eventData['Link'] || eventData.link,
         ticketLink: eventData['Ticket Link'] || eventData.ticketLink,
         seriesId: eventData['Series ID'] || eventData.seriesId,
-        status: eventData['Status'] || eventData.status,
+                    status: eventData.status,
         recurringInfo: eventData['Recurring Info'] || eventData.recurringInfo
     };
     // Extract image URL from various possible formats
