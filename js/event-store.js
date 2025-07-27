@@ -94,7 +94,7 @@ class EventStore {
   // Get default filters
   getDefaultFilters() {
     return {
-      dateRange: { type: 'all' },
+      dateRange: { type: 'upcoming' },
       categories: [],
       venues: [],
       search: '',

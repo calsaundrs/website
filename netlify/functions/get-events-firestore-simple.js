@@ -75,14 +75,44 @@ async function handlePublicView(db, queryParams) {
     const filters = {
         status: 'approved',
         limit: parseInt(queryParams.limit) || 50,
-        offset: parseInt(queryParams.offset) || 0
+        offset: parseInt(queryParams.offset) || 0,
+        dateRange: queryParams.dateRange ? JSON.parse(queryParams.dateRange) : { type: 'all' }
     };
 
     console.log("Public view filters:", filters);
 
     try {
         const eventsRef = db.collection('events');
+        
+        // Start with approved events
         let query = eventsRef.where('status', '==', 'approved');
+        
+        // Apply date filtering based on dateRange type
+        if (filters.dateRange.type === 'upcoming') {
+            // Get current date (start of today)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            query = query.where('date', '>=', today);
+        } else if (filters.dateRange.type === 'thisWeek') {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const endOfWeek = new Date(today);
+            endOfWeek.setDate(today.getDate() + 7);
+            query = query.where('date', '>=', today).where('date', '<=', endOfWeek);
+        } else if (filters.dateRange.type === 'thisMonth') {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            query = query.where('date', '>=', today).where('date', '<=', endOfMonth);
+        } else if (filters.dateRange.type === 'custom' && filters.dateRange.from && filters.dateRange.to) {
+            const fromDate = new Date(filters.dateRange.from);
+            const toDate = new Date(filters.dateRange.to);
+            query = query.where('date', '>=', fromDate).where('date', '<=', toDate);
+        }
+        // For 'all' type, no date filtering is applied
+        
+        // Always sort by date ascending
+        query = query.orderBy('date', 'asc');
 
         // Apply pagination
         query = query.limit(filters.limit).offset(filters.offset);
@@ -147,7 +177,9 @@ async function handleAdminView(db, queryParams) {
 
     try {
         const eventsRef = db.collection('events');
-        let query = eventsRef;
+        
+        // For admin view, get all events but sort by date (most recent first)
+        let query = eventsRef.orderBy('date', 'desc');
 
         // Apply pagination
         query = query.limit(filters.limit).offset(filters.offset);
