@@ -286,9 +286,8 @@ async function handleVenuesView(db) {
             // Extract image data
             const imageData = extractImageUrl(rawData);
             
-            // Temporarily include all venues (image filter disabled for testing)
-            // TODO: Re-enable image filter once venues have proper image data
-            if (true) { // imageData && imageData.url) {
+            // Only include venues that have Cloudinary image data
+            if (imageData && imageData.url) {
                 // Process venue data for public view
                 const venueData = {
                     id: doc.id,
@@ -333,6 +332,7 @@ async function handleVenuesView(db) {
 
 function extractImageUrl(data) {
     // Extract Cloudinary image object from various possible formats
+    // Check for object formats with URL properties
     if (data.promoImage && data.promoImage.url) {
         return data.promoImage;
     }
@@ -345,12 +345,54 @@ function extractImageUrl(data) {
     if (data['Image'] && data['Image'].url) {
         return data['Image'];
     }
-    // If it's a string, try to convert to object format
-    if (typeof data.promoImage === 'string') {
+    if (data.thumbnail && data.thumbnail.url) {
+        return data.thumbnail;
+    }
+    if (data['Thumbnail'] && data['Thumbnail'].url) {
+        return data['Thumbnail'];
+    }
+    if (data.venueImage && data.venueImage.url) {
+        return data.venueImage;
+    }
+    if (data['Venue Image'] && data['Venue Image'].url) {
+        return data['Venue Image'];
+    }
+    if (data.promo_image && data.promo_image.url) {
+        return data.promo_image;
+    }
+    if (data.venue_image && data.venue_image.url) {
+        return data.venue_image;
+    }
+    
+    // Check for string formats
+    if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
         return { url: data.promoImage };
     }
-    if (typeof data.image === 'string') {
+    if (typeof data.image === 'string' && data.image.includes('cloudinary')) {
         return { url: data.image };
     }
+    if (typeof data.thumbnail === 'string' && data.thumbnail.includes('cloudinary')) {
+        return { url: data.thumbnail };
+    }
+    if (typeof data.venueImage === 'string' && data.venueImage.includes('cloudinary')) {
+        return { url: data.venueImage };
+    }
+    if (typeof data.promo_image === 'string' && data.promo_image.includes('cloudinary')) {
+        return { url: data.promo_image };
+    }
+    if (typeof data.venue_image === 'string' && data.venue_image.includes('cloudinary')) {
+        return { url: data.venue_image };
+    }
+    
+    // Check for any field that contains 'cloudinary' in the URL
+    for (const [key, value] of Object.entries(data)) {
+        if (typeof value === 'string' && value.includes('cloudinary')) {
+            return { url: value };
+        }
+        if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
+            return value;
+        }
+    }
+    
     return null;
 }
