@@ -286,9 +286,8 @@ async function handleVenuesView(db) {
             // Extract image data
             const imageData = extractImageUrl(rawData);
             
-            // Temporarily include all venues while we debug image data
-            // TODO: Re-enable image filter once we find the correct image field names
-            if (true) { // imageData && imageData.url) {
+            // Only include venues that have Cloudinary image data
+            if (imageData && imageData.url) {
                 // Process venue data for public view
                 const venueData = {
                     id: doc.id,
