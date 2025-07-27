@@ -956,8 +956,12 @@
                         addResult(`⚠️ ISSUE: No approved events found - check status field casing!`, 'error');
                     }
                     
-                    if (data.approvedEvents !== data.approvedUpperEvents) {
-                        addResult(`⚠️ ISSUE: Status field casing inconsistency detected!`, 'error');
+                    if (data.eventsWithBothFields > 0) {
+                        addResult(`⚠️ ISSUE: ${data.eventsWithBothFields} events still have both status and Status fields!`, 'error');
+                    } else if (data.eventsWithUpperStatus > 0) {
+                        addResult(`⚠️ ISSUE: ${data.eventsWithUpperStatus} events still have uppercase Status field!`, 'error');
+                    } else {
+                        addResult(`✅ Status field consistency verified!`, 'success');
                     }
                 } else {
                     addResult(`❌ All events debug failed: ${data.message}`, 'error');

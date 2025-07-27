@@ -100,6 +100,23 @@ exports.handler = async function (event, context) {
         const pendingUpperSnapshot = await pendingUpperQuery.get();
         console.log(`Events with status "Pending": ${pendingUpperSnapshot.size}`);
         
+        // Check for any remaining Status fields
+        let eventsWithUpperStatus = 0;
+        let eventsWithBothFields = 0;
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data['Status']) {
+                eventsWithUpperStatus++;
+                if (data.status) {
+                    eventsWithBothFields++;
+                }
+            }
+        });
+        
+        console.log(`Events with uppercase Status field: ${eventsWithUpperStatus}`);
+        console.log(`Events with both status and Status fields: ${eventsWithBothFields}`);
+        
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -112,6 +129,8 @@ exports.handler = async function (event, context) {
                 pendingEvents: pendingSnapshot.size,
                 approvedUpperEvents: approvedUpperSnapshot.size,
                 pendingUpperEvents: pendingUpperSnapshot.size,
+                eventsWithUpperStatus: eventsWithUpperStatus,
+                eventsWithBothFields: eventsWithBothFields,
                 allEvents: allEvents.slice(0, 20), // Show first 20 for debugging
                 sampleEvents: allEvents.slice(0, 5) // Show first 5 with full details
             })

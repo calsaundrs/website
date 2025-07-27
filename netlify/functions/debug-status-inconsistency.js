@@ -45,50 +45,58 @@ exports.handler = async function (event, context) {
         
         console.log(`Found ${snapshot.size} events in database`);
         
-        const statusAnalysis = {
-            bothFields: [],
-            onlyLowercase: [],
-            onlyUppercase: [],
-            noStatus: [],
-            inconsistentValues: []
+        const statusCounts = {};
+        const analysis = {
+            bothFields: 0,
+            onlyLowercase: 0,
+            onlyUppercase: 0,
+            noStatus: 0,
+            inconsistentValues: 0
         };
         
-        const statusCounts = {};
+        const sampleBothFields = [];
+        const sampleInconsistentValues = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
             const lowerStatus = data.status;
             const upperStatus = data['Status'];
             
-            // Count statuses
+            // Count statuses (use lowercase if available)
             const status = lowerStatus || 'unknown';
             statusCounts[status] = (statusCounts[status] || 0) + 1;
             
-            const eventInfo = {
-                id: doc.id,
-                name: data.name || data['Event Name'] || 'Untitled Event',
-                lowerStatus: lowerStatus,
-                upperStatus: upperStatus,
-                hasLower: !!lowerStatus,
-                hasUpper: !!upperStatus
-            };
-            
-            // Categorize the event
+            // Analyze field presence
             if (lowerStatus && upperStatus) {
-                statusAnalysis.bothFields.push(eventInfo);
+                analysis.bothFields++;
+                sampleBothFields.push({
+                    id: doc.id,
+                    name: data.name || data['Event Name'] || 'Untitled Event',
+                    lowerStatus: lowerStatus,
+                    upperStatus: upperStatus
+                });
+                
+                // Check if values are inconsistent
                 if (lowerStatus.toLowerCase() !== upperStatus.toLowerCase()) {
-                    statusAnalysis.inconsistentValues.push(eventInfo);
+                    analysis.inconsistentValues++;
+                    sampleInconsistentValues.push({
+                        id: doc.id,
+                        name: data.name || data['Event Name'] || 'Untitled Event',
+                        lowerStatus: lowerStatus,
+                        upperStatus: upperStatus
+                    });
                 }
             } else if (lowerStatus && !upperStatus) {
-                statusAnalysis.onlyLowercase.push(eventInfo);
+                analysis.onlyLowercase++;
             } else if (!lowerStatus && upperStatus) {
-                statusAnalysis.onlyUppercase.push(eventInfo);
+                analysis.onlyUppercase++;
             } else {
-                statusAnalysis.noStatus.push(eventInfo);
+                analysis.noStatus++;
             }
         });
         
-        console.log('Status analysis completed');
+        console.log('Status counts:', statusCounts);
+        console.log('Field analysis:', analysis);
         
         return {
             statusCode: 200,
@@ -98,18 +106,9 @@ exports.handler = async function (event, context) {
                 message: 'Status inconsistency analysis completed',
                 totalEvents: snapshot.size,
                 statusCounts: statusCounts,
-                analysis: {
-                    bothFields: statusAnalysis.bothFields.length,
-                    onlyLowercase: statusAnalysis.onlyLowercase.length,
-                    onlyUppercase: statusAnalysis.onlyUppercase.length,
-                    noStatus: statusAnalysis.noStatus.length,
-                    inconsistentValues: statusAnalysis.inconsistentValues.length
-                },
-                sampleBothFields: statusAnalysis.bothFields.slice(0, 5),
-                sampleOnlyLowercase: statusAnalysis.onlyLowercase.slice(0, 5),
-                sampleOnlyUppercase: statusAnalysis.onlyUppercase.slice(0, 5),
-                sampleNoStatus: statusAnalysis.noStatus.slice(0, 5),
-                sampleInconsistentValues: statusAnalysis.inconsistentValues.slice(0, 5)
+                analysis: analysis,
+                sampleBothFields: sampleBothFields.slice(0, 10),
+                sampleInconsistentValues: sampleInconsistentValues.slice(0, 10)
             })
         };
         
