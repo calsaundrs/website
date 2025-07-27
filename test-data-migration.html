@@ -131,6 +131,9 @@
                     <button id="test-unified-event-submission" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
                         <i class="fas fa-check-circle mr-2"></i>Test Unified Event Submission
                     </button>
+                    <button id="test-unified-venue-submission" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                        <i class="fas fa-building mr-2"></i>Test Unified Venue Submission
+                    </button>
                 </div>
             </div>
         </div>
@@ -1108,6 +1111,34 @@
             }
         }
 
+        async function testUnifiedVenueSubmission() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p class="text-gray-400">Testing unified venue submission...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-unified-venue-submission');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="status-success">✅ Unified venue submission test completed!</p>
+                            <p class="text-gray-400">Airtable: ${data.results.airtable?.name || 'Failed'} (${data.results.airtable?.fieldsCount || 0} fields)</p>
+                            <p class="text-gray-400">Firestore: ${data.results.firestore?.name || 'Failed'} (${data.results.firestore?.fieldsCount || 0} fields)</p>
+                            <p class="text-gray-400">Social Media: ${data.results.fieldHandling?.socialMediaStored ? 'Stored' : 'Not stored'}</p>
+                            <p class="text-gray-400">Tags: ${data.results.fieldHandling?.tagsStored || 0} tags stored</p>
+                            <p class="text-gray-400">Features: ${data.results.fieldHandling?.featuresStored || 0} features stored</p>
+                            <p class="text-gray-400 text-xs">Note: Additional fields stored only in Firestore</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p class="status-error">Unified venue submission test failed: ${data.message}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="status-error">Unified venue submission test error: ${error.message}</p>`;
+            }
+        }
+
         async function loadPendingItems() {
             const pendingDiv = document.getElementById('pending-items');
             
@@ -1157,6 +1188,7 @@
         document.getElementById('create-enhanced-test-data').addEventListener('click', createEnhancedTestData);
         document.getElementById('create-link-only-test-data').addEventListener('click', createLinkOnlyTestData);
         document.getElementById('test-unified-event-submission').addEventListener('click', testUnifiedEventSubmission);
+        document.getElementById('test-unified-venue-submission').addEventListener('click', testUnifiedVenueSubmission);
 
         // Initialize
         testEnvironment();
