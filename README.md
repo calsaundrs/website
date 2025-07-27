@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 [![License](https://img.shields.io/badge/license-Private-red.svg)]()
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
 
 > The definitive, bold, and unapologetic guide to Birmingham's LGBTQ+ scene
 
@@ -41,7 +41,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 ### Technology Stack
 - **Frontend**: HTML5, CSS3 (Tailwind), Vanilla JavaScript
 - **Backend**: Netlify Functions (Node.js serverless)
-- **Database**: Airtable
+- **Database**: Firestore (Firebase)
 - **Authentication**: Firebase Authentication
 - **Image Storage**: Cloudinary
 - **AI Processing**: Google Gemini API
@@ -64,7 +64,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 └─────────────────────────────────────────────┘
                       ↓
 ┌─ External Services ─────────────────────────┐
-│ • Airtable (Database)                      │
+│ • Firestore (Database)                     │
 │ • Cloudinary (Image Storage)               │
 │ • Firebase (Authentication)                │
 │ • Google Gemini (AI Processing)            │
@@ -94,7 +94,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 ### Prerequisites
 - Node.js 18+ and npm
 - Git
-- Accounts for: Firebase, Airtable, Cloudinary, Google Cloud
+- Accounts for: Firebase, Cloudinary, Google Cloud
 
 ### Installation
 
@@ -111,8 +111,9 @@ npm install
 cp .env.example .env
 
 # Add your API keys to .env file
-AIRTABLE_PERSONAL_ACCESS_TOKEN=your_token
-AIRTABLE_BASE_ID=your_base_id
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_CLIENT_EMAIL=your_client_email
+FIREBASE_PRIVATE_KEY=your_private_key
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_secret
@@ -166,28 +167,27 @@ netlify env:set KEY value
 ### Public Endpoints
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/get-events` | GET | Retrieve event listings |
-| `/get-event-details` | GET | Get individual event details |
-| `/get-venues` | GET | Retrieve venue listings |
-| `/get-venue-details` | GET | Get individual venue details |
-| `/event-submission` | POST | Submit new events |
-| `/venue-submission` | POST | Submit new venues |
-| `/sitemap` | GET | XML sitemap for SEO |
+| `/get-events-firestore` | GET | Retrieve event listings |
+| `/get-event-details-firestore` | GET | Get individual event details |
+| `/get-venues-firestore` | GET | Retrieve venue listings |
+| `/get-venue-details-firestore` | GET | Get individual venue details |
+| `/event-submission-firestore-only` | POST | Submit new events |
+| `/venue-submission-firestore-only` | POST | Submit new venues |
+| `/sitemap-firestore` | GET | XML sitemap for SEO |
 
 ### Admin Endpoints (Auth Required)
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/get-pending-events` | GET | Events awaiting approval |
-| `/get-pending-venues` | GET | Venues awaiting approval |
+| `/get-pending-items-firestore` | GET | Items awaiting approval |
 | `/create-approved-event` | POST | Create/update approved events |
-| `/update-item-status` | POST | Update approval status |
+| `/update-item-status-firestore-only` | POST | Update approval status |
 | `/process-poster` | POST | AI poster processing |
 | `/process-spreadsheet` | POST | Spreadsheet data extraction |
 
 ### Example Usage
 ```javascript
 // Get upcoming events
-const response = await fetch('/.netlify/functions/get-events');
+const response = await fetch('/.netlify/functions/get-events-firestore');
 const { events } = await response.json();
 
 // Submit a new event
@@ -196,7 +196,7 @@ formData.append('eventName', 'Pride Night');
 formData.append('description', 'Weekly celebration...');
 formData.append('date', '2024-07-15');
 
-const result = await fetch('/.netlify/functions/event-submission', {
+const result = await fetch('/.netlify/functions/event-submission-firestore-only', {
   method: 'POST',
   body: formData
 });
@@ -376,7 +376,7 @@ netlify env:list
 
 ### Resources
 - **[Netlify Functions Docs](https://docs.netlify.com/functions/overview/)**
-- **[Airtable API Reference](https://airtable.com/developers/web/api/introduction)**
+- **[Firestore Documentation](https://firebase.google.com/docs/firestore)**
 - **[Firebase Auth Guide](https://firebase.google.com/docs/auth)**
 - **[Tailwind CSS Docs](https://tailwindcss.com/docs)**
 
@@ -408,7 +408,7 @@ Our commitment extends beyond technology to actively supporting and uplifting Bi
 
 ---
 
-*Last updated: July 2025*
-*Platform Version: 1.1.0*
+*Last updated: January 2025*
+*Platform Version: 2.0.0*
 
 **Built with ❤️ for Birmingham's LGBTQ+ community**
