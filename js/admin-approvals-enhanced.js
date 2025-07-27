@@ -43,14 +43,23 @@ document.addEventListener('DOMContentLoaded', () => {
             let venues = [];
             
             try {
+                console.log('🔍 ADMIN: Loading pending items...');
+                console.log('🌐 ADMIN: Requesting from get-pending-items-firestore');
+                
                 const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+                console.log('🌐 ADMIN: Response status:', response.status);
+                console.log('🌐 ADMIN: Response ok:', response.ok);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('📊 ADMIN: Response data:', data);
+                    
                     // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
                     allItems = data.items || [];
-                    console.log(`Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
+                    console.log(`📊 ADMIN: Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
+                    console.log('📊 ADMIN: All items:', allItems);
                 } else {
-                    console.error('Response not ok:', response.status);
+                    console.error('❌ ADMIN: Response not ok:', response.status);
                     allItems = [];
                 }
             } catch (error) {

@@ -409,6 +409,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Submit form
         try {
+            console.log('🚀 FORM SUBMISSION: Starting form submission');
+            console.log('🔍 FORM SUBMISSION: Form data:', new FormData(form));
+            console.log('🏢 FORM SUBMISSION: Selected venue:', venueSelect.value);
+            console.log('📝 FORM SUBMISSION: Event name:', eventName);
+            console.log('📅 FORM SUBMISSION: Event date:', eventDate);
+            
             let finalVenueId = venueSelect.value;
             
             // If creating a new venue, create it first
@@ -453,16 +459,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add the venue ID
             eventFormData.append('venueId', finalVenueId);
             
+            console.log('🌐 FORM SUBMISSION: Sending request to event-submission-firestore-simple');
+            console.log('🌐 FORM SUBMISSION: Request URL:', '/.netlify/functions/event-submission-firestore-simple');
+            console.log('🌐 FORM SUBMISSION: Request method: POST');
+            
             const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
                 method: 'POST',
                 body: eventFormData
             });
             
+            console.log('🌐 FORM SUBMISSION: Response status:', response.status);
+            console.log('🌐 FORM SUBMISSION: Response ok:', response.ok);
+            
             if (!response.ok) {
+                console.error('❌ FORM SUBMISSION: Response not ok:', response.status);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
             const result = await response.json();
+            console.log('✅ FORM SUBMISSION: Response received:', result);
             
             if (result.success) {
                 alert('Event submitted successfully! We\'ll review it within 24-48 hours.');

@@ -1,7 +1,8 @@
 const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
-    console.log('Debug all events function called');
+    console.log('🔍 DEBUG ALL EVENTS: Function called');
+    console.log('📋 DEBUG ALL EVENTS: HTTP Method:', event.httpMethod);
     
     try {
         // Check environment variables
@@ -36,14 +37,14 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        console.log('Firebase initialized successfully');
+        console.log('✅ DEBUG ALL EVENTS: Firebase initialized successfully');
         
         // Get ALL events (no filters)
-        console.log('Fetching ALL events from database...');
+        console.log('🔍 DEBUG ALL EVENTS: Fetching ALL events from database...');
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef.get();
         
-        console.log(`Total events in database: ${snapshot.size}`);
+        console.log(`📊 DEBUG ALL EVENTS: Total events in database: ${snapshot.size}`);
         
         const allEvents = [];
         const statusCounts = {};
@@ -76,19 +77,19 @@ exports.handler = async function (event, context) {
             });
         });
         
-        console.log('Status counts:', statusCounts);
+        console.log('📊 DEBUG ALL EVENTS: Status counts:', statusCounts);
         
         // Test the approved events query specifically
-        console.log('Testing approved events query...');
+        console.log('🔍 DEBUG ALL EVENTS: Testing approved events query...');
         const approvedQuery = eventsRef.where('status', '==', 'approved');
         const approvedSnapshot = await approvedQuery.get();
-        console.log(`Approved events: ${approvedSnapshot.size}`);
+        console.log(`📊 DEBUG ALL EVENTS: Approved events: ${approvedSnapshot.size}`);
         
         // Test the pending events query
-        console.log('Testing pending events query...');
+        console.log('🔍 DEBUG ALL EVENTS: Testing pending events query...');
         const pendingQuery = eventsRef.where('status', '==', 'pending');
         const pendingSnapshot = await pendingQuery.get();
-        console.log(`Pending events: ${pendingSnapshot.size}`);
+        console.log(`📊 DEBUG ALL EVENTS: Pending events: ${pendingSnapshot.size}`);
         
         // Test case-insensitive queries
         console.log('Testing case-insensitive queries...');
