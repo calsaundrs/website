@@ -58,12 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const eventsData = await pendingEventsResponse.json();
                 
-                // Ensure we have an array
-                if (!Array.isArray(eventsData)) {
-                    console.warn('Pending events is not an array:', eventsData);
-                    pendingEvents = [];
+                // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
+                if (eventsData && eventsData.items) {
+                    pendingEvents = eventsData.items.filter(item => item.type === 'event');
                 } else {
-                    pendingEvents = eventsData;
+                    pendingEvents = [];
                 }
                 
                 console.log(`Loaded ${pendingEvents.length} pending events`);
@@ -72,17 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 pendingEvents = [];
             }
             
-            // Load pending venues (with fallback)
+            // Load pending venues from the same function
             let pendingVenues = [];
             try {
                 console.log('Fetching pending venues...');
-                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-venues');
+                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 if (pendingVenuesResponse.ok) {
-                    pendingVenues = await pendingVenuesResponse.json();
+                    const venuesData = await pendingVenuesResponse.json();
                     
-                    // Ensure we have an array
-                    if (!Array.isArray(pendingVenues)) {
-                        console.warn('Pending venues is not an array:', pendingVenues);
+                    // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
+                    if (venuesData && venuesData.items) {
+                        pendingVenues = venuesData.items.filter(item => item.type === 'venue');
+                    } else {
                         pendingVenues = [];
                     }
                     
