@@ -315,6 +315,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Investigate remaining status issues</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testCleanupDuplicateStatus()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-broom mr-2"></i>Cleanup Duplicate Status
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Remove uppercase Status fields</p>
+            </div>
         </div>
     </main>
 
@@ -1219,6 +1226,49 @@
                 }
             } catch (error) {
                 addResult(`❌ Status inconsistency analysis failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Cleanup duplicate status fields function
+        async function testCleanupDuplicateStatus() {
+            clearResults();
+            addResult('🧹 Cleaning up duplicate status fields...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/cleanup-duplicate-status-fields');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Duplicate status fields cleaned up successfully!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`🧹 Events cleaned: ${data.eventsCleaned}`, 'success');
+                    
+                    addResult(`📈 Status counts before cleanup:`, 'success');
+                    Object.entries(data.statusCountsBefore).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`📈 Status counts after cleanup:`, 'success');
+                    Object.entries(data.statusCountsAfter).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.eventsToCleanup.length > 0) {
+                        addResult(`📋 Sample events cleaned:`, 'success');
+                        data.eventsToCleanup.forEach(event => {
+                            addResult(`   • ${event.name}: Removed Status="${event.upperStatus}"`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try "Debug All Events" again to verify no more inconsistencies`, 'info');
+                } else {
+                    addResult(`❌ Duplicate status cleanup failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Duplicate status cleanup failed: ${error.message}`, 'error');
             }
         }
     </script>
