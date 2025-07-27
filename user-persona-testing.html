@@ -273,6 +273,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Debug all events in database</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testVenueRebuild()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-hammer mr-2"></i>Rebuild Venue Pages
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Generate venue detail pages</p>
+            </div>
         </div>
     </main>
 
@@ -918,6 +925,39 @@
                 }
             } catch (error) {
                 addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Venue rebuild function
+        async function testVenueRebuild() {
+            clearResults();
+            addResult('🔨 Triggering venue page rebuild...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/trigger-venue-rebuild');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Venue rebuild triggered successfully!`, 'success');
+                    addResult(`📊 Venues found: ${data.venuesFound}`, 'success');
+                    addResult(`🔨 Rebuild result: ${data.rebuildResult.message}`, 'success');
+                    
+                    if (data.venues.length > 0) {
+                        addResult(`📋 Sample venues:`, 'success');
+                        data.venues.forEach(venue => {
+                            addResult(`   • ${venue.name} (${venue.slug})`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try visiting /all-venues.html to see the updated venue listings`, 'info');
+                } else {
+                    addResult(`❌ Venue rebuild failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Venue rebuild failed: ${error.message}`, 'error');
             }
         }
     </script>
