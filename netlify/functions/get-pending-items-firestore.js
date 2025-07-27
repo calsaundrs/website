@@ -99,15 +99,57 @@ async function getPendingEvents(limit, offset) {
         const allEventsSnapshot = await eventsRef.get();
         console.log("🔍 GET PENDING EVENTS: Total events in collection:", allEventsSnapshot.size);
         
-        // Let's also check what statuses exist
+        // Let's also check what statuses exist and show some sample data
         const statuses = new Set();
+        const sampleEvents = [];
         allEventsSnapshot.forEach(doc => {
             const data = doc.data();
-            statuses.add(data.status || 'no-status');
+            const status = data.status || 'no-status';
+            statuses.add(status);
+            
+            // Keep first 3 events for debugging
+            if (sampleEvents.length < 3) {
+                sampleEvents.push({
+                    id: doc.id,
+                    name: data.name,
+                    status: status,
+                    createdAt: data.createdAt,
+                    venueName: data.venueName
+                });
+            }
         });
         console.log("🔍 GET PENDING EVENTS: All statuses found:", Array.from(statuses));
+        console.log("🔍 GET PENDING EVENTS: Sample events:", sampleEvents);
         
-        console.log("🔍 GET PENDING EVENTS: Executing Firestore query...");
+        // Try different status variations
+        console.log("🔍 GET PENDING EVENTS: Trying different status queries...");
+        
+        // Query 1: Exact 'pending'
+        console.log("🔍 GET PENDING EVENTS: Query 1 - status == 'pending'");
+        const snapshot1 = await eventsRef.where('status', '==', 'pending').get();
+        console.log("🔍 GET PENDING EVENTS: Query 1 results:", snapshot1.size);
+        
+        // Query 2: Case-insensitive 'Pending'
+        console.log("🔍 GET PENDING EVENTS: Query 2 - status == 'Pending'");
+        const snapshot2 = await eventsRef.where('status', '==', 'Pending').get();
+        console.log("🔍 GET PENDING EVENTS: Query 2 results:", snapshot2.size);
+        
+        // Query 3: No status filter (get all)
+        console.log("🔍 GET PENDING EVENTS: Query 3 - no status filter");
+        const snapshot3 = await eventsRef.limit(5).get();
+        console.log("🔍 GET PENDING EVENTS: Query 3 results:", snapshot3.size);
+        snapshot3.forEach(doc => {
+            const data = doc.data();
+            console.log("🔍 GET PENDING EVENTS: Event data:", {
+                id: doc.id,
+                name: data.name,
+                status: data.status,
+                createdAt: data.createdAt
+            });
+        });
+        
+        // Use the original query for the actual results
+        console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
         const snapshot = await eventsRef
             .where('status', '==', 'pending')
             .orderBy('createdAt', 'desc')
