@@ -972,25 +972,26 @@
 
         async function createTestData() {
             const resultsDiv = document.getElementById('test-results');
-            resultsDiv.innerHTML = '<p class="text-gray-400">Creating test data...</p>';
+            resultsDiv.innerHTML = '<p class="text-gray-400">Creating fixed test data...</p>';
             
             try {
-                const response = await fetch('/.netlify/functions/test-data-creation');
+                const response = await fetch('/.netlify/functions/test-data-creation-fixed');
                 const data = await response.json();
                 
                 if (response.ok) {
                     resultsDiv.innerHTML = `
                         <div class="space-y-2">
-                            <p class="status-success">✅ Test data created successfully!</p>
+                            <p class="status-success">✅ Fixed test data created successfully!</p>
                             <p class="text-gray-400">Event: ${data.results.events.airtable?.name || 'Failed'}</p>
                             <p class="text-gray-400">Venue: ${data.results.venues.airtable?.name || 'Failed'}</p>
+                            <p class="text-gray-400 text-xs">Note: Using only confirmed working fields</p>
                         </div>
                     `;
                 } else {
-                    resultsDiv.innerHTML = `<p class="status-error">Test data creation failed: ${data.message}</p>`;
+                    resultsDiv.innerHTML = `<p class="status-error">Fixed test data creation failed: ${data.message}</p>`;
                 }
             } catch (error) {
-                resultsDiv.innerHTML = `<p class="status-error">Test data creation error: ${error.message}</p>`;
+                resultsDiv.innerHTML = `<p class="status-error">Fixed test data creation error: ${error.message}</p>`;
             }
         }
 

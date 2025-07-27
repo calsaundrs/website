@@ -134,14 +134,12 @@ exports.handler = async function (event, context) {
             const testEventData = {
                 'Event Name': 'Test Event - Data Migration',
                 'Description': 'This is a test event created by the data migration system',
-                'Date': '2024-12-25',
+                'Date': new Date('2024-12-25T19:00:00').toISOString(),
                 'Status': 'Approved',
-                'Venue Name': 'Test Venue',
-                'Category': ['Test', 'Migration'],
                 'Link': 'https://example.com',
                 'Submitter Email': 'test@brumoutloud.co.uk',
-                'Created Time': new Date().toISOString(),
-                'Last Modified Time': new Date().toISOString()
+                'Category': ['Test', 'Migration']
+                // Removed 'Venue Name' (computed field), 'Created Time', 'Last Modified Time' (computed fields)
             };
             
             const airtableEvent = await base('Events').create([{ fields: testEventData }]);
@@ -187,11 +185,9 @@ exports.handler = async function (event, context) {
                 'Description': 'This is a test venue created by the data migration system',
                 'Address': '123 Test Street, Birmingham',
                 'Status': 'Approved',
-                'Listing Status': 'Listed',
                 'Contact Email': 'test@brumoutloud.co.uk',
-                'Website': 'https://testvenue.com',
-                'Created Time': new Date().toISOString(),
-                'Last Modified Time': new Date().toISOString()
+                'Website': 'https://testvenue.com'
+                // Removed 'Listing Status' (might cause issues), 'Created Time', 'Last Modified Time' (computed fields)
             };
             
             const airtableVenue = await base('Venues').create([{ fields: testVenueData }]);
