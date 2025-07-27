@@ -319,9 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    status: 'Approved',
-                    type: type
+                    itemId: id,
+                    newStatus: 'Approved',
+                    itemType: type
                 })
             });
             
@@ -433,10 +433,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    status: 'Rejected',
-                    reason: reason,
-                    type: type
+                    itemId: id,
+                    newStatus: 'Rejected',
+                    itemType: type,
+                    reason: reason
                 })
             });
             
@@ -483,45 +483,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function createEditFormFields(item) {
-        const fields = item.fields;
         const isEvent = item.type === 'event';
         
         if (isEvent) {
+            // Handle Firestore timestamp for date
+            let dateValue = '';
+            if (item.date) {
+                if (item.date._seconds) {
+                    // Firestore timestamp
+                    dateValue = new Date(item.date._seconds * 1000).toISOString().slice(0, 16);
+                } else {
+                    // Regular date
+                    dateValue = new Date(item.date).toISOString().slice(0, 16);
+                }
+            }
+            
             return `
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label>
-                    <input type="text" name="event-name" value="${fields['Event Name'] || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="event-name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${fields.Description || ''}</textarea>
+                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label>
-                    <input type="datetime-local" name="date" value="${fields.Date ? new Date(fields.Date).toISOString().slice(0, 16) : ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="datetime-local" name="date" value="${dateValue}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Category</label>
-                    <input type="text" name="category" value="${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
+                    <input type="text" name="venue-name" value="${item.venue?.name || item.venueName || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
             `;
         } else {
             return `
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                    <input type="text" name="name" value="${fields.Name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${fields.Description || ''}</textarea>
+                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Address</label>
-                    <input type="text" name="address" value="${fields.Address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="address" value="${item.address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Website</label>
-                    <input type="url" name="website" value="${fields.Website || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="url" name="website" value="${item.website || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
             `;
         }
