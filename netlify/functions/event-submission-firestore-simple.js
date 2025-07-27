@@ -43,27 +43,50 @@ exports.handler = async function (event, context) {
         let fields = {};
         
         if (event.body) {
+            console.log('🔍 EVENT SUBMISSION: Raw body length:', event.body.length);
+            console.log('🔍 EVENT SUBMISSION: Content-Type:', event.headers['content-type']);
+            
             // Handle multipart form data
-            const boundary = event.headers['content-type']?.split('boundary=')[1];
-            if (boundary) {
-                const parts = event.body.split(`--${boundary}`);
-                for (const part of parts) {
-                    if (part.includes('Content-Disposition: form-data')) {
-                        const nameMatch = part.match(/name="([^"]+)"/);
-                        if (nameMatch) {
-                            const fieldName = nameMatch[1];
-                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                            if (valueMatch) {
-                                fields[fieldName] = valueMatch[1].trim();
-                            }
+            const contentType = event.headers['content-type'] || '';
+            const boundaryMatch = contentType.match(/boundary=([^;]+)/);
+            
+            if (boundaryMatch) {
+                const boundary = boundaryMatch[1];
+                console.log('🔍 EVENT SUBMISSION: Found boundary:', boundary);
+                
+                // Remove the boundary prefix and suffix
+                const bodyWithoutBoundary = event.body.replace(`--${boundary}--`, '').replace(`--${boundary}`, '');
+                const parts = bodyWithoutBoundary.split(`--${boundary}`);
+                
+                console.log('🔍 EVENT SUBMISSION: Number of parts:', parts.length);
+                
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    if (part.trim() === '') continue;
+                    
+                    console.log(`🔍 EVENT SUBMISSION: Processing part ${i}:`, part.substring(0, 100) + '...');
+                    
+                    // Extract field name
+                    const nameMatch = part.match(/name="([^"]+)"/);
+                    if (nameMatch) {
+                        const fieldName = nameMatch[1];
+                        
+                        // Extract field value (everything after the double newline)
+                        const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                        if (valueMatch) {
+                            const fieldValue = valueMatch[1].trim();
+                            fields[fieldName] = fieldValue;
+                            console.log(`🔍 EVENT SUBMISSION: Parsed field ${fieldName}:`, fieldValue);
                         }
                     }
                 }
             } else {
+                console.log('🔍 EVENT SUBMISSION: No boundary found, trying URL-encoded');
                 // Handle URL-encoded form data
                 const params = new URLSearchParams(event.body);
                 for (const [key, value] of params) {
                     fields[key] = value;
+                    console.log(`🔍 EVENT SUBMISSION: Parsed field ${key}:`, value);
                 }
             }
         }
