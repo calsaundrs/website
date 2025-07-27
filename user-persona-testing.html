@@ -266,6 +266,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Debug get-events-firestore function</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testAllEventsDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-database mr-2"></i>Debug All Events
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug all events in database</p>
+            </div>
         </div>
     </main>
 
@@ -856,6 +863,55 @@
                     }
                 } else {
                     addResult(`❌ Get events debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug all events function
+        async function testAllEventsDebug() {
+            clearResults();
+            addResult('🔍 Debugging all events in database...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-all-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ All events debug successful!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`📈 Status breakdown:`, 'success');
+                    
+                    Object.entries(data.statusCounts).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`✅ Approved events (lowercase): ${data.approvedEvents}`, 'success');
+                    addResult(`⏳ Pending events (lowercase): ${data.pendingEvents}`, 'success');
+                    addResult(`✅ Approved events (uppercase): ${data.approvedUpperEvents}`, 'success');
+                    addResult(`⏳ Pending events (uppercase): ${data.pendingUpperEvents}`, 'success');
+                    
+                    if (data.sampleEvents.length > 0) {
+                        addResult(`📋 Sample events with details:`, 'success');
+                        data.sampleEvents.forEach(event => {
+                            addResult(`   • ${event.name} (${event.status}) - ${event.venueName}`, 'success');
+                        });
+                    }
+                    
+                    // Show potential issues
+                    if (data.totalEvents > 0 && data.approvedEvents === 0) {
+                        addResult(`⚠️ ISSUE: No approved events found - check status field casing!`, 'error');
+                    }
+                    
+                    if (data.approvedEvents !== data.approvedUpperEvents) {
+                        addResult(`⚠️ ISSUE: Status field casing inconsistency detected!`, 'error');
+                    }
+                } else {
+                    addResult(`❌ All events debug failed: ${data.message}`, 'error');
                     if (data.stack) {
                         addResult(`🔍 Error stack: ${data.stack}`, 'error');
                     }
