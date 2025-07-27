@@ -547,16 +547,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            const endpoint = 'update-item-status-firestore-only';
+            const endpoint = 'update-item-firestore';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    ...data,
-                    type: type
+                    itemId: id,
+                    itemType: type,
+                    ...data
                 })
             });
             
@@ -564,12 +564,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(`${type === 'event' ? 'Event' : 'Venue'} updated successfully!`, 'success');
                 await loadPendingItems(); // Refresh the list
             } else {
-                throw new Error('Failed to update item');
+                const errorData = await response.json();
+                console.error('Server error:', errorData);
+                throw new Error(`Failed to update item: ${errorData.message || 'Unknown error'}`);
             }
             
         } catch (error) {
             console.error('Error updating item:', error);
-            showNotification('Error updating item', 'error');
+            showNotification(`Error updating item: ${error.message}`, 'error');
         }
     }
     
