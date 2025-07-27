@@ -296,10 +296,10 @@
             </div>
             
             <div class="mt-4">
-                <button onclick="testGenerateAllVenuePages()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
-                    <i class="fas fa-file-code mr-2"></i>Generate All Venue Pages
+                <button onclick="testGetVenueData()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-database mr-2"></i>Get Venue Data
                 </button>
-                <p class="text-sm text-gray-400 mt-2">Create venue pages for ALL venues</p>
+                <p class="text-sm text-gray-400 mt-2">Get venue data for page generation</p>
             </div>
         </div>
     </main>
@@ -1025,22 +1025,21 @@
             }
         }
 
-        // Generate all venue pages function
-        async function testGenerateAllVenuePages() {
+        // Get venue data function
+        async function testGetVenueData() {
             clearResults();
-            addResult('📄 Generating all venue pages...', 'loading');
+            addResult('📊 Getting venue data for page generation...', 'loading');
             
             try {
-                const response = await fetch('/.netlify/functions/generate-all-venue-pages');
+                const response = await fetch('/.netlify/functions/get-venue-data-for-pages');
                 const data = await response.json();
                 
                 if (data.success) {
-                    addResult(`✅ All venue pages generated successfully!`, 'success');
+                    addResult(`✅ Venue data retrieved successfully!`, 'success');
                     addResult(`📊 Total venues: ${data.totalVenues}`, 'success');
-                    addResult(`📄 Pages generated: ${data.generatedFiles}`, 'success');
                     
                     if (data.venues.length > 0) {
-                        addResult(`📋 Sample venues generated:`, 'success');
+                        addResult(`📋 Sample venues:`, 'success');
                         data.venues.slice(0, 10).forEach(venue => {
                             addResult(`   • ${venue.name} (${venue.slug})`, 'success');
                         });
@@ -1049,16 +1048,69 @@
                         }
                     }
                     
-                    addResult(`💡 Try visiting /all-venues.html and clicking venue links`, 'info');
-                    addResult(`🔗 Example: /venue/${data.venues[0]?.slug || 'example-venue'}`, 'info');
+                    addResult(`📄 Template available: ${data.template ? 'Yes' : 'No'}`, 'success');
+                    addResult(`💡 Next step: Use this data to generate venue pages`, 'info');
+                    addResult(`🔗 Example venue URL: /venue/${data.venues[0]?.slug || 'example-venue'}`, 'info');
+                    
+                    // Store the data for potential use
+                    window.venueData = data;
                 } else {
-                    addResult(`❌ Venue page generation failed: ${data.message}`, 'error');
+                    addResult(`❌ Venue data retrieval failed: ${data.message}`, 'error');
                     if (data.stack) {
                         addResult(`🔍 Error stack: ${data.stack}`, 'error');
                     }
                 }
             } catch (error) {
-                addResult(`❌ Venue page generation failed: ${error.message}`, 'error');
+                addResult(`❌ Venue data retrieval failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug unknown events function
+        async function testDebugUnknownEvents() {
+            clearResults();
+            addResult('🔍 Investigating unknown events...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-unknown-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Unknown events debug completed!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`❓ Unknown events: ${data.unknownEventsCount}`, 'success');
+                    
+                    addResult(`📈 All status values found:`, 'success');
+                    Object.entries(data.statusValues).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.sampleUnknownEvent) {
+                        addResult(`📋 Sample unknown event analysis:`, 'success');
+                        addResult(`   • Name: ${data.sampleUnknownEvent.name}`, 'success');
+                        addResult(`   • Has status field: ${data.sampleUnknownEvent.hasStatusField}`, 'success');
+                        addResult(`   • Has Status field: ${data.sampleUnknownEvent.hasStatusFieldUpper}`, 'success');
+                        addResult(`   • Status value: "${data.sampleUnknownEvent.statusValue}"`, 'success');
+                        addResult(`   • Status value (upper): "${data.sampleUnknownEvent.statusValueUpper}"`, 'success');
+                        addResult(`   • All fields: ${data.sampleUnknownEvent.allFields.join(', ')}`, 'success');
+                    }
+                    
+                    addResult(`🔍 Field analysis (how many events have each field):`, 'success');
+                    Object.entries(data.fieldAnalysis)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 10)
+                        .forEach(([field, count]) => {
+                            addResult(`   • ${field}: ${count} events`, 'success');
+                        });
+                    
+                    addResult(`💡 This will help us understand why 147 events have "unknown" status`, 'info');
+                } else {
+                    addResult(`❌ Unknown events debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Unknown events debug failed: ${error.message}`, 'error');
             }
         }
     </script>
