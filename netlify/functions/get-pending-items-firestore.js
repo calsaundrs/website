@@ -151,15 +151,19 @@ async function getPendingEvents(limit, offset) {
         // Use the original query for the actual results
         console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
         
-        // Simplified query - get all events and filter in memory
-        console.log("🔍 GET PENDING EVENTS: Getting all events and filtering in memory...");
-        const allEventsSnapshot = await eventsRef.get();
-        console.log("🔍 GET PENDING EVENTS: Total events found:", allEventsSnapshot.size);
+        // Simplified query - get events with limit and filter in memory
+        console.log("🔍 GET PENDING EVENTS: Getting events with limit and filtering in memory...");
+        const allEventsSnapshot = await eventsRef
+            .orderBy('createdAt', 'desc')
+            .limit(100) // Limit to prevent timeout
+            .get();
+        console.log("🔍 GET PENDING EVENTS: Events found:", allEventsSnapshot.size);
         
         // Filter for pending events in memory
         const pendingDocs = [];
         allEventsSnapshot.forEach(doc => {
             const data = doc.data();
+            console.log("🔍 GET PENDING EVENTS: Checking event:", doc.id, "status:", data.status);
             if (data.status === 'pending' || data.status === 'pending review') {
                 pendingDocs.push(doc);
             }
@@ -248,6 +252,9 @@ async function getPendingEvents(limit, offset) {
         console.error('❌ GET PENDING EVENTS: Error fetching pending events:', error);
         console.error('❌ GET PENDING EVENTS: Error message:', error.message);
         console.error('❌ GET PENDING EVENTS: Error stack:', error.stack);
+        
+        // Return empty array but log the error
+        console.error('❌ GET PENDING EVENTS: Returning empty array due to error');
         return [];
     }
 }
