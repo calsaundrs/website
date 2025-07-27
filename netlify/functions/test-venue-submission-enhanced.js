@@ -1,9 +1,8 @@
 const Airtable = require('airtable');
 const admin = require('firebase-admin');
-const cloudinary = require('cloudinary').v2;
 
 exports.handler = async function (event, context) {
-    console.log('Testing comprehensive venue submission...');
+    console.log('Testing enhanced venue submission...');
     
     try {
         // Check environment variables
@@ -12,10 +11,7 @@ exports.handler = async function (event, context) {
             'AIRTABLE_BASE_ID',
             'FIREBASE_PROJECT_ID',
             'FIREBASE_CLIENT_EMAIL',
-            'FIREBASE_PRIVATE_KEY',
-            'CLOUDINARY_CLOUD_NAME',
-            'CLOUDINARY_API_KEY',
-            'CLOUDINARY_API_SECRET'
+            'FIREBASE_PRIVATE_KEY'
         ];
         
         const missing = required.filter(varName => !process.env[varName]);
@@ -47,62 +43,35 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET,
-        });
-        
-        // Generate comprehensive test venue data
+        // Generate enhanced test venue data (building on minimal)
         const testSubmission = {
-            name: 'Comprehensive Test Venue',
-            description: 'This is a comprehensive test venue with all working fields',
-            address: '123 Comprehensive Street, Birmingham',
+            name: 'Enhanced Test Venue',
+            description: 'This is an enhanced test venue with additional fields',
+            address: '123 Enhanced Street, Birmingham',
             'contact-email': 'test@brumoutloud.co.uk',
-            website: 'https://comprehensivevenue.com',
-            instagram: '@comprehensivevenue',
-            facebook: 'ComprehensiveVenue',
-            tiktok: '@comprehensivevenue',
+            website: 'https://enhancedvenue.com',
             'contact-phone': '0121 123 4567',
             'opening-hours': 'Mon-Sat: 10am-11pm, Sun: 12pm-10pm',
-            accessibility: 'Wheelchair accessible, accessible toilets, hearing loop',
-            'parking-exception': 'Free parking available on weekends',
-            'vibe-tags': ['LGBTQ+ Friendly', 'Inclusive', 'Welcoming'],
-            'venue-features': ['Dance Floor', 'Bar', 'Stage', 'Sound System'],
-            'accessibility-features': ['Wheelchair Access', 'Accessible Toilets', 'Hearing Loop']
+            accessibility: 'Wheelchair accessible, accessible toilets'
         };
         
         // Generate slug
         const slug = testSubmission.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         
-        // Helper function for arrays
-        const toArray = (value) => {
-            if (value === undefined) return [];
-            return Array.isArray(value) ? value : [value];
-        };
-        
-        // Prepare comprehensive venue data for Airtable
+        // Prepare enhanced venue data for Airtable (building on minimal)
         const venueData = {
             'Name': testSubmission.name,
             'Description': testSubmission.description,
             'Address': testSubmission.address,
             'Status': 'Pending Review',
-            'Listing Status': 'Unlisted', // Use existing option instead of "Pending Review"
             'Contact Email': testSubmission['contact-email'],
             'Website': testSubmission.website,
-            'Instagram': testSubmission.instagram,
-            'Facebook': testSubmission.facebook,
-            'TikTok': testSubmission.tiktok,
             'Contact Phone': testSubmission['contact-phone'],
             'Opening Hours': testSubmission['opening-hours'],
-            'Accessibility': testSubmission.accessibility,
-            'Parking Exception': testSubmission['parking-exception'],
-            'Vibe Tags': toArray(testSubmission['vibe-tags']),
-            'Venue Features': toArray(testSubmission['venue-features']),
-            'Accessibility Features': toArray(testSubmission['accessibility-features'])
+            'Accessibility': testSubmission.accessibility
         };
         
-        console.log('Attempting to create comprehensive venue in Airtable with data:', venueData);
+        console.log('Attempting to create enhanced venue in Airtable with data:', venueData);
         
         // Submit to Airtable
         const airtableRecord = await base('Venues').create([{ fields: venueData }]);
@@ -116,19 +85,11 @@ exports.handler = async function (event, context) {
             description: venueData['Description'],
             address: venueData['Address'],
             status: venueData['Status'].toLowerCase(),
-            listingStatus: venueData['Listing Status'].toLowerCase(), // Will be "unlisted"
-            website: venueData['Website'],
-            instagram: venueData['Instagram'],
-            facebook: venueData['Facebook'],
-            tiktok: venueData['TikTok'],
             contactEmail: venueData['Contact Email'],
+            website: venueData['Website'],
             contactPhone: venueData['Contact Phone'],
             openingHours: venueData['Opening Hours'],
             accessibility: venueData['Accessibility'],
-            parkingException: venueData['Parking Exception'],
-            vibeTags: venueData['Vibe Tags'],
-            venueFeatures: venueData['Venue Features'],
-            accessibilityFeatures: venueData['Accessibility Features'],
             createdAt: new Date(),
             updatedAt: new Date()
         };
@@ -136,29 +97,29 @@ exports.handler = async function (event, context) {
         // Submit to Firestore
         const firestoreDoc = await db.collection('venues').add(firestoreData);
         
-        console.log(`Comprehensive venue submitted successfully. Airtable ID: ${airtableId}, Firestore ID: ${firestoreDoc.id}`);
+        console.log(`Enhanced venue submitted successfully. Airtable ID: ${airtableId}, Firestore ID: ${firestoreDoc.id}`);
         
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 success: true,
-                message: 'Comprehensive venue submission test successful!',
+                message: 'Enhanced venue submission test successful!',
                 airtableId: airtableId,
                 firestoreId: firestoreDoc.id,
                 slug: slug,
                 fieldsUsed: Object.keys(venueData),
-                note: 'Comprehensive fields including social media, accessibility, and features'
+                note: 'Enhanced fields beyond minimal: Website, Phone, Opening Hours, Accessibility'
             })
         };
         
     } catch (error) {
-        console.error('Comprehensive venue submission failed:', error);
+        console.error('Enhanced venue submission failed:', error);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Comprehensive venue submission failed',
+                error: 'Enhanced venue submission failed',
                 message: error.message,
                 type: error.constructor.name
             })
