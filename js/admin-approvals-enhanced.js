@@ -58,6 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     allItems = data.items || [];
                     console.log(`📊 ADMIN: Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
                     console.log('📊 ADMIN: All items:', allItems);
+                    
+                    // Debug: Check first few items structure
+                    if (allItems.length > 0) {
+                        console.log('📊 ADMIN: First item structure:', {
+                            id: allItems[0].id,
+                            type: allItems[0].type,
+                            name: allItems[0].name,
+                            status: allItems[0].status,
+                            createdAt: allItems[0].createdAt,
+                            submittedBy: allItems[0].submittedBy
+                        });
+                    }
                 } else {
                     console.error('❌ ADMIN: Response not ok:', response.status);
                     allItems = [];
@@ -70,8 +82,22 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Sort by creation date (newest first)
             allItems.sort((a, b) => {
-                const dateA = new Date(a.createdAt || a.submittedAt || a.date);
-                const dateB = new Date(b.createdAt || b.submittedAt || b.date);
+                let dateA = a.createdAt || a.submittedAt || a.date;
+                let dateB = b.createdAt || b.submittedAt || b.date;
+                
+                // Handle Firestore timestamp objects
+                if (dateA && dateA._seconds) {
+                    dateA = new Date(dateA._seconds * 1000);
+                } else {
+                    dateA = new Date(dateA);
+                }
+                
+                if (dateB && dateB._seconds) {
+                    dateB = new Date(dateB._seconds * 1000);
+                } else {
+                    dateB = new Date(dateB);
+                }
+                
                 return dateB - dateA;
             });
             
