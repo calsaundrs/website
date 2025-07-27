@@ -59,25 +59,11 @@ exports.handler = async function (event, context) {
             });
         });
         
-        // Trigger the venue rebuild
+        // Trigger the venue rebuild by calling the function directly
         console.log('Triggering venue rebuild...');
-        const rebuildResponse = await fetch('/.netlify/functions/build-venues-ssg', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer admin-trigger'
-            },
-            body: JSON.stringify({
-                action: 'rebuild',
-                source: 'debug-trigger'
-            })
-        });
+        const { generateAllVenuePages } = require('../../build-venues-from-db.js');
         
-        if (!rebuildResponse.ok) {
-            throw new Error(`Venue rebuild failed: ${rebuildResponse.status}`);
-        }
-        
-        const rebuildResult = await rebuildResponse.json();
+        const rebuildResult = await generateAllVenuePages();
         
         return {
             statusCode: 200,
