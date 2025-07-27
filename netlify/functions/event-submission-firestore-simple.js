@@ -1,19 +1,15 @@
 const admin = require('firebase-admin');
 const formidable = require('formidable');
-const cloudinary = require('cloudinary').v2;
 
 exports.handler = async function (event, context) {
-    console.log('Firestore-only event submission called');
+    console.log('Simple Firestore-only event submission called');
     
     try {
-        // Check environment variables (no Airtable needed)
+        // Check environment variables (no Cloudinary needed)
         const required = [
             'FIREBASE_PROJECT_ID',
             'FIREBASE_CLIENT_EMAIL',
-            'FIREBASE_PRIVATE_KEY',
-            'CLOUDINARY_CLOUD_NAME',
-            'CLOUDINARY_API_KEY',
-            'CLOUDINARY_API_SECRET'
+            'FIREBASE_PRIVATE_KEY'
         ];
         
         const missing = required.filter(varName => !process.env[varName]);
@@ -41,13 +37,6 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        // Initialize Cloudinary
-        cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET,
-        });
-        
         // Parse form data
         const form = formidable({});
         const [fields, files] = await new Promise((resolve, reject) => {
@@ -57,39 +46,16 @@ exports.handler = async function (event, context) {
             });
         });
         
+        console.log('Parsed fields:', fields);
+        console.log('Parsed files:', files);
+        
         const submission = { ...fields, files: Object.values(files) };
-        console.log('Parsed submission:', Object.keys(submission));
-        
-        // Handle image upload
-        const imageFile = submission.files.find(f => f.fieldname === 'image');
-        let uploadedImage = null;
-        
-        if (imageFile && imageFile.size > 0) {
-            try {
-                const result = await cloudinary.uploader.upload(imageFile.filepath, {
-                    folder: 'events',
-                    transformation: [
-                        { width: 800, height: 400, crop: 'fill', gravity: 'auto' },
-                        { quality: 'auto', fetch_format: 'auto' }
-                    ]
-                });
-                
-                uploadedImage = {
-                    publicId: result.public_id,
-                    url: result.secure_url,
-                    original: result.secure_url
-                };
-                console.log('Image uploaded successfully:', uploadedImage.publicId);
-            } catch (uploadError) {
-                console.error('Image upload failed:', uploadError);
-                // Continue without image
-            }
-        }
+        console.log('Submission keys:', Object.keys(submission));
         
         // Generate slug
         const slug = generateSlug(submission['event-name'], submission.date);
         
-        // Prepare Firestore data (no Airtable dependency)
+        // Prepare Firestore data (no Cloudinary dependency)
         const firestoreData = {
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
@@ -101,12 +67,14 @@ exports.handler = async function (event, context) {
             link: submission.link || '',
             recurringInfo: submission['recurring-info'] || '',
             seriesId: submission['series-id'] || `series_${Date.now()}`,
-            cloudinaryPublicId: uploadedImage ? uploadedImage.publicId : null,
-            promoImage: uploadedImage ? uploadedImage.url : null,
+            cloudinaryPublicId: null,
+            promoImage: null,
             submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
             createdAt: new Date(),
             updatedAt: new Date()
         };
+        
+        console.log('Firestore data to submit:', firestoreData);
         
         // Submit to Firestore only
         console.log('Submitting to Firestore...');
@@ -116,37 +84,27 @@ exports.handler = async function (event, context) {
         
         return {
             statusCode: 200,
-            headers: { 'Content-Type': 'text/html' },
-            body: `<!DOCTYPE html>
-            <html>
-            <head>
-                <title>Event Submitted Successfully</title>
-                <meta http-equiv="refresh" content="3;url=/events.html">
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                    .success { color: #10B981; }
-                    .info { color: #6B7280; }
-                </style>
-            </head>
-            <body>
-                <h1 class="success">Event Submitted Successfully!</h1>
-                <p>Your event "${submission['event-name']}" has been submitted for review.</p>
-                <p class="info">You will be redirected to the events page shortly.</p>
-                <p class="info">Firestore ID: ${firestoreDoc.id}</p>
-                <p class="info">Note: This submission was processed using Firestore only.</p>
-            </body>
-            </html>`
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                success: true,
+                message: 'Event submitted successfully',
+                firestoreId: firestoreDoc.id,
+                eventName: firestoreData.name,
+                venueName: firestoreData.venueName,
+                status: firestoreData.status
+            })
         };
         
     } catch (error) {
-        console.error('Error in Firestore-only event submission:', error);
+        console.error('Error in simple Firestore-only event submission:', error);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 error: 'Event submission failed',
                 message: error.message,
-                type: error.constructor.name
+                type: error.constructor.name,
+                stack: error.stack
             })
         };
     }

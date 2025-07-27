@@ -238,6 +238,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Test the recent field name fixes</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testEventSubmissionDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-search mr-2"></i>Debug Event Submission
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug event submission issues</p>
+            </div>
         </div>
     </main>
 
@@ -397,15 +404,17 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                return 'Event submitted successfully';
+                const data = await response.json();
+                return `Event submitted successfully (ID: ${data.firestoreId})`;
             } else {
-                throw new Error('Event submission failed');
+                const errorData = await response.json();
+                throw new Error(`Event submission failed: ${errorData.message}`);
             }
         }
 
@@ -424,15 +433,17 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                return 'Event with categories submitted successfully';
+                const data = await response.json();
+                return `Event with categories submitted successfully (ID: ${data.firestoreId})`;
             } else {
-                throw new Error('Event with categories submission failed');
+                const errorData = await response.json();
+                throw new Error(`Event with categories submission failed: ${errorData.message}`);
             }
         }
 
@@ -446,15 +457,17 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                return 'Recurring event submitted successfully';
+                const data = await response.json();
+                return `Recurring event submitted successfully (ID: ${data.firestoreId})`;
             } else {
-                throw new Error('Recurring event submission failed');
+                const errorData = await response.json();
+                throw new Error(`Recurring event submission failed: ${errorData.message}`);
             }
         }
 
@@ -679,6 +692,45 @@
                 }
             } catch (error) {
                 addResult(`❌ Test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug event submission function
+        async function testEventSubmissionDebug() {
+            clearResults();
+            addResult('🔍 Debugging event submission...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('event-name', 'Debug Test Event');
+                formData.append('date', '2025-01-27');
+                formData.append('start-time', '20:00');
+                formData.append('description', 'Debug test event submission');
+                formData.append('venue-name', 'Debug Venue');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/test-event-submission-debug', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Debug event submission successful!`, 'success');
+                    addResult(`📝 Firestore ID: ${data.firestoreId}`, 'success');
+                    addResult(`📊 Received fields: ${Object.keys(data.receivedFields).join(', ')}`, 'success');
+                    addResult(`📁 Received files: ${data.receivedFiles.join(', ')}`, 'success');
+                    addResult(`🎯 Event name: ${data.submittedData.name}`, 'success');
+                    addResult(`🏢 Venue name: ${data.submittedData.venueName}`, 'success');
+                } else {
+                    addResult(`❌ Debug event submission failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
             }
         }
     </script>

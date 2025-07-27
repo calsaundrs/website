@@ -244,13 +244,17 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Basic event submission failed');
-        return 'Basic event submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Basic event submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Basic event submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async submitEventWithImage() {
@@ -268,13 +272,17 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Event with categories submission failed');
-        return 'Event with categories submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Event with categories submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Event with categories submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async submitRecurringEvent() {
@@ -287,13 +295,17 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Recurring event submission failed');
-        return 'Recurring event submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Recurring event submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Recurring event submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async submitEventWithLink() {
@@ -306,13 +318,17 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Event with link submission failed');
-        return 'Event with link submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Event with link submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Event with link submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async checkSubmissionStatus() {
