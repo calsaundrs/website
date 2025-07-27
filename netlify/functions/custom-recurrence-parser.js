@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
-    console.log('Custom Recurrence Parser');
+    console.log('Custom Recurrence Parser with Gemini AI');
     
     try {
         const body = JSON.parse(event.body);
@@ -10,7 +10,14 @@ exports.handler = async function (event, context) {
         const endDate = body.endDate ? new Date(body.endDate) : null;
         const maxInstances = body.maxInstances || 52;
         
-        const instances = parseCustomRecurrence(customDescription, startDate, endDate, maxInstances);
+        // First try AI-powered parsing
+        let instances = await parseWithGemini(customDescription, startDate, endDate, maxInstances);
+        
+        // If AI parsing fails, fall back to rule-based parsing
+        if (!instances || instances.length === 0) {
+            console.log('AI parsing failed, falling back to rule-based parsing');
+            instances = parseCustomRecurrence(customDescription, startDate, endDate, maxInstances);
+        }
         
         return {
             statusCode: 200,
@@ -24,7 +31,8 @@ exports.handler = async function (event, context) {
                 success: true,
                 instances: instances,
                 parsedPattern: extractPatternFromDescription(customDescription),
-                totalInstances: instances.length
+                totalInstances: instances.length,
+                method: instances.length > 0 ? 'ai_enhanced' : 'rule_based'
             })
         };
         
@@ -46,6 +54,96 @@ exports.handler = async function (event, context) {
         };
     }
 };
+
+async function parseWithGemini(description, startDate, endDate, maxInstances) {
+    try {
+        if (!process.env.GEMINI_API_KEY) {
+            console.log('Gemini API key not available, skipping AI parsing');
+            return null;
+        }
+
+        const prompt = `
+You are a calendar recurrence parser. Given a natural language description of a recurring event, generate a list of dates.
+
+Description: "${description}"
+Start Date: ${startDate.toISOString().split('T')[0]}
+End Date: ${endDate ? endDate.toISOString().split('T')[0] : 'No end date'}
+Maximum Instances: ${maxInstances}
+
+Rules:
+1. Only generate dates that are on or after the start date
+2. If an end date is provided, don't generate dates after it
+3. Don't exceed the maximum instances limit
+4. Return dates in ISO format (YYYY-MM-DD)
+5. Handle complex patterns like "first Monday of each month", "every other Tuesday", "last Friday of the month", etc.
+6. Be flexible with natural language - understand variations in how people describe recurring events
+
+Examples:
+- "Every first Saturday of the month" → Generate first Saturday of each month
+- "Every other Tuesday" → Generate every second Tuesday
+- "Last Friday of each month" → Generate last Friday of each month
+- "1st and 3rd Thursday" → Generate 1st and 3rd Thursday of each month
+- "Every Monday except bank holidays" → Generate every Monday (bank holiday logic would need separate handling)
+
+Return ONLY a JSON array of date strings in ISO format (YYYY-MM-DD), nothing else.
+Example: ["2024-01-01", "2024-01-08", "2024-01-15"]
+`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            throw new Error('Invalid response from Gemini API');
+        }
+
+        const aiResponse = data.candidates[0].content.parts[0].text.trim();
+        console.log('Gemini response:', aiResponse);
+
+        // Try to extract JSON from the response
+        let jsonMatch = aiResponse.match(/\[.*\]/);
+        if (!jsonMatch) {
+            // If no JSON array found, try to parse the entire response
+            jsonMatch = aiResponse;
+        }
+
+        const dates = JSON.parse(jsonMatch);
+        
+        if (!Array.isArray(dates)) {
+            throw new Error('AI response is not a valid date array');
+        }
+
+        // Convert to Date objects and validate
+        const instances = dates
+            .map(dateStr => new Date(dateStr))
+            .filter(date => !isNaN(date.getTime()) && date >= startDate)
+            .filter(date => !endDate || date <= endDate)
+            .slice(0, maxInstances);
+
+        console.log(`AI generated ${instances.length} valid instances`);
+        return instances;
+
+    } catch (error) {
+        console.error('Error in AI parsing:', error);
+        return null;
+    }
+}
 
 function parseCustomRecurrence(description, startDate, endDate, maxInstances) {
     const text = description.toLowerCase().trim();

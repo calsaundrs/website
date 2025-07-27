@@ -929,6 +929,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     return;
                 }
                 
+                // Show loading state
+                this.previewContainer.innerHTML = `
+                    <div class="flex items-center justify-center py-4">
+                        <div class="loader w-6 h-6 mr-3"></div>
+                        <span class="text-blue-300">Processing with AI...</span>
+                    </div>
+                `;
+                this.previewResults.classList.remove('hidden');
+                
                 try {
                     const response = await fetch('/.netlify/functions/custom-recurrence-parser', {
                         method: 'POST',
@@ -950,7 +959,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     const data = await response.json();
                     
                     if (data.success) {
-                        this.displayPreview(data.instances, data.parsedPattern);
+                        const methodLabel = data.method === 'ai_enhanced' ? 
+                            '<span class="text-green-400">AI Enhanced</span>' : 
+                            '<span class="text-yellow-400">Rule Based</span>';
+                        
+                        this.displayPreview(data.instances, data.parsedPattern, methodLabel);
                     } else {
                         alert('Error parsing custom recurrence: ' + data.message);
                     }
@@ -994,7 +1007,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 return instances;
             }
             
-            displayPreview(instances, parsedPattern = null) {
+            displayPreview(instances, parsedPattern = null, methodLabel = null) {
                 if (instances.length === 0) {
                     this.previewContainer.innerHTML = '<p class="text-gray-400">No events would be generated with the current settings.</p>';
                 } else {
@@ -1014,7 +1027,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     const patternInfo = parsedPattern ? 
                         `<div class="text-sm text-blue-300 mb-2">Parsed Pattern: <strong>${parsedPattern}</strong></div>` : '';
                     
-                    this.previewContainer.innerHTML = patternInfo + previewHTML + remainingText;
+                    const methodInfo = methodLabel ? 
+                        `<div class="text-sm mb-2">Processing Method: ${methodLabel}</div>` : '';
+                    
+                    this.previewContainer.innerHTML = methodInfo + patternInfo + previewHTML + remainingText;
                 }
                 
                 this.previewResults.classList.remove('hidden');
