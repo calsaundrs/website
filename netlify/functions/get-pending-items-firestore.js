@@ -151,25 +151,28 @@ async function getPendingEvents(limit, offset) {
         // Use the original query for the actual results
         console.log("🔍 GET PENDING EVENTS: Executing final Firestore query...");
         
-        // Simplified query - get events with limit and filter in memory
-        console.log("🔍 GET PENDING EVENTS: Getting events with limit and filtering in memory...");
-        const allEventsSnapshot = await eventsRef
-            .orderBy('createdAt', 'desc')
-            .limit(100) // Limit to prevent timeout
+        // Simple query - just get pending events directly
+        console.log("🔍 GET PENDING EVENTS: Querying for pending events...");
+        const pendingSnapshot = await eventsRef
+            .where('status', '==', 'pending')
+            .limit(50)
             .get();
-        console.log("🔍 GET PENDING EVENTS: Events found:", allEventsSnapshot.size);
+        console.log("🔍 GET PENDING EVENTS: Pending events found:", pendingSnapshot.size);
         
-        // Filter for pending events in memory
+        // Also get pending review events
+        console.log("🔍 GET PENDING EVENTS: Querying for pending review events...");
+        const pendingReviewSnapshot = await eventsRef
+            .where('status', '==', 'pending review')
+            .limit(50)
+            .get();
+        console.log("🔍 GET PENDING EVENTS: Pending review events found:", pendingReviewSnapshot.size);
+        
+        // Combine the results
         const pendingDocs = [];
-        allEventsSnapshot.forEach(doc => {
-            const data = doc.data();
-            console.log("🔍 GET PENDING EVENTS: Checking event:", doc.id, "status:", data.status);
-            if (data.status === 'pending' || data.status === 'pending review') {
-                pendingDocs.push(doc);
-            }
-        });
+        pendingSnapshot.forEach(doc => pendingDocs.push(doc));
+        pendingReviewSnapshot.forEach(doc => pendingDocs.push(doc));
         
-        console.log("🔍 GET PENDING EVENTS: Pending events found:", pendingDocs.length);
+        console.log("🔍 GET PENDING EVENTS: Total pending events:", pendingDocs.length);
         
         // Sort by creation date (newest first)
         pendingDocs.sort((a, b) => {
