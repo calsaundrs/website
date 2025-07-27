@@ -76,7 +76,7 @@ exports.handler = async function(event, context) {
             const imageData = extractImageUrl(data);
             console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
             
-            // Temporarily include all venues (image filter disabled for testing)
+            // Include all venues for now since image data is missing
             // TODO: Re-enable image filter once venues have proper image data
             if (true) { // imageData && imageData.url) {
                 venues.push({
