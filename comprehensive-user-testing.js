@@ -349,13 +349,17 @@ class UserPersonaSimulator {
         formData.append('address', '123 Test Street, Birmingham');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Basic venue submission failed');
-        return 'Basic venue submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Basic venue submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Basic venue submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async submitVenueWithPhoto() {
@@ -373,13 +377,17 @@ class UserPersonaSimulator {
         formData.append('opening-hours', 'Mon-Sat: 10am-11pm');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Venue with details submission failed');
-        return 'Venue with details submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Venue with details submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Venue with details submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async submitVenueWithSocialMedia() {
@@ -392,13 +400,17 @@ class UserPersonaSimulator {
         formData.append('features', 'Dance floor, Bar, Stage');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
             method: 'POST',
             body: formData
         });
 
-        if (!response.ok) throw new Error('Venue with social media submission failed');
-        return 'Venue with social media submitted successfully';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Venue with social media submission failed: ${errorData.message}`);
+        }
+        const data = await response.json();
+        return `Venue with social media submitted successfully (ID: ${data.firestoreId})`;
     }
 
     async addVenueFeatures() {

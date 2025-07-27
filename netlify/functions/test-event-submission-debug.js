@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const formidable = require('formidable');
 
 exports.handler = async function (event, context) {
     console.log('Event submission debug test called');
@@ -37,14 +36,35 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        // Parse form data
-        const form = formidable({});
-        const [fields, files] = await new Promise((resolve, reject) => {
-            form.parse(event, (err, fields, files) => {
-                if (err) reject(err);
-                else resolve([fields, files]);
-            });
-        });
+        // Parse form data manually (no formidable dependency)
+        let fields = {};
+        let files = {};
+        
+        if (event.body) {
+            // Handle multipart form data
+            const boundary = event.headers['content-type']?.split('boundary=')[1];
+            if (boundary) {
+                const parts = event.body.split(`--${boundary}`);
+                for (const part of parts) {
+                    if (part.includes('Content-Disposition: form-data')) {
+                        const nameMatch = part.match(/name="([^"]+)"/);
+                        if (nameMatch) {
+                            const fieldName = nameMatch[1];
+                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                            if (valueMatch) {
+                                fields[fieldName] = valueMatch[1].trim();
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Handle URL-encoded form data
+                const params = new URLSearchParams(event.body);
+                for (const [key, value] of params) {
+                    fields[key] = value;
+                }
+            }
+        }
         
         console.log('Raw fields:', fields);
         console.log('Raw files:', files);

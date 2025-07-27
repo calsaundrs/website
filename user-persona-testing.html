@@ -245,6 +245,13 @@
                 </button>
                 <p class="text-sm text-gray-400 mt-2">Debug event submission issues</p>
             </div>
+            
+            <div class="mt-4">
+                <button onclick="testVenueSubmissionDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-building mr-2"></i>Debug Venue Submission
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug venue submission issues</p>
+            </div>
         </div>
     </main>
 
@@ -725,6 +732,41 @@
                     addResult(`🏢 Venue name: ${data.submittedData.venueName}`, 'success');
                 } else {
                     addResult(`❌ Debug event submission failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug venue submission function
+        async function testVenueSubmissionDebug() {
+            clearResults();
+            addResult('🔍 Debugging venue submission...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('venue-name', 'Debug Test Venue');
+                formData.append('description', 'Debug test venue submission');
+                formData.append('address', '123 Debug Street, Birmingham');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Debug venue submission successful!`, 'success');
+                    addResult(`📝 Firestore ID: ${data.firestoreId}`, 'success');
+                    addResult(`🏢 Venue name: ${data.venueName}`, 'success');
+                    addResult(`📊 Status: ${data.status}`, 'success');
+                } else {
+                    addResult(`❌ Debug venue submission failed: ${data.message}`, 'error');
                     if (data.stack) {
                         addResult(`🔍 Error stack: ${data.stack}`, 'error');
                     }

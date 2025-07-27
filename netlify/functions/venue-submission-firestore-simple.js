@@ -1,7 +1,7 @@
 const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
-    console.log('Simple Firestore-only event submission called');
+    console.log('Simple Firestore-only venue submission called');
     
     try {
         // Check environment variables (no Cloudinary needed)
@@ -71,20 +71,31 @@ exports.handler = async function (event, context) {
         console.log('Submission keys:', Object.keys(submission));
         
         // Generate slug
-        const slug = generateSlug(submission['event-name'], submission.date);
+        const venueName = submission.name || submission['venue-name'];
+        const slug = generateSlug(venueName);
+        
+        // Determine if submission is from admin form (auto-approves)
+        const isFromAdmin = submission['accessibility-rating'] !== undefined || submission['vibe-tags'] !== undefined;
         
         // Prepare Firestore data (no Cloudinary dependency)
         const firestoreData = {
-            name: submission['event-name'] || 'Untitled Event',
+            name: venueName,
             slug: slug,
             description: submission.description || '',
-            date: new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
-            status: 'pending',
-            venueName: submission['venue-name'] || '',
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
-            link: submission.link || '',
-            recurringInfo: submission['recurring-info'] || '',
-            seriesId: submission['series-id'] || `series_${Date.now()}`,
+            address: submission.address || '',
+            status: isFromAdmin ? 'approved' : 'pending',
+            contactEmail: submission.email || submission['contact-email'] || '',
+            website: submission.website || '',
+            contactPhone: submission['contact-phone'] || '',
+            openingHours: submission['opening-hours'] || '',
+            accessibility: submission.accessibility || '',
+            features: submission.features ? submission.features.split(',').map(f => f.trim()) : [],
+            socialMedia: {
+                instagram: submission.instagram || '',
+                facebook: submission.facebook || '',
+                twitter: submission.twitter || ''
+            },
+            tags: submission.tags ? submission.tags.split(',').map(t => t.trim()) : [],
             cloudinaryPublicId: null,
             promoImage: null,
             submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
@@ -96,30 +107,29 @@ exports.handler = async function (event, context) {
         
         // Submit to Firestore only
         console.log('Submitting to Firestore...');
-        const firestoreDoc = await db.collection('events').add(firestoreData);
+        const firestoreDoc = await db.collection('venues').add(firestoreData);
         
-        console.log(`Event submitted successfully. Firestore ID: ${firestoreDoc.id}`);
+        console.log(`Venue submitted successfully. Firestore ID: ${firestoreDoc.id}`);
         
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 success: true,
-                message: 'Event submitted successfully',
+                message: 'Venue submitted successfully',
                 firestoreId: firestoreDoc.id,
-                eventName: firestoreData.name,
-                venueName: firestoreData.venueName,
+                venueName: firestoreData.name,
                 status: firestoreData.status
             })
         };
         
     } catch (error) {
-        console.error('Error in simple Firestore-only event submission:', error);
+        console.error('Error in simple Firestore-only venue submission:', error);
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Event submission failed',
+                error: 'Venue submission failed',
                 message: error.message,
                 type: error.constructor.name,
                 stack: error.stack
@@ -128,8 +138,6 @@ exports.handler = async function (event, context) {
     }
 };
 
-function generateSlug(eventName, date) {
-    const datePart = new Date(date).toISOString().split('T')[0];
-    const namePart = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    return `${namePart}-${datePart}`;
+function generateSlug(venueName) {
+    return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }

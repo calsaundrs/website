@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const formidable = require('formidable');
 const cloudinary = require('cloudinary').v2;
 
 exports.handler = async function (event, context) {
@@ -48,14 +47,35 @@ exports.handler = async function (event, context) {
             api_secret: process.env.CLOUDINARY_API_SECRET,
         });
         
-        // Parse form data
-        const form = formidable({});
-        const [fields, files] = await new Promise((resolve, reject) => {
-            form.parse(event, (err, fields, files) => {
-                if (err) reject(err);
-                else resolve([fields, files]);
-            });
-        });
+        // Parse form data manually (no formidable dependency)
+        let fields = {};
+        let files = {};
+        
+        if (event.body) {
+            // Handle multipart form data
+            const boundary = event.headers['content-type']?.split('boundary=')[1];
+            if (boundary) {
+                const parts = event.body.split(`--${boundary}`);
+                for (const part of parts) {
+                    if (part.includes('Content-Disposition: form-data')) {
+                        const nameMatch = part.match(/name="([^"]+)"/);
+                        if (nameMatch) {
+                            const fieldName = nameMatch[1];
+                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                            if (valueMatch) {
+                                fields[fieldName] = valueMatch[1].trim();
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Handle URL-encoded form data
+                const params = new URLSearchParams(event.body);
+                for (const [key, value] of params) {
+                    fields[key] = value;
+                }
+            }
+        }
         
         const submission = { ...fields, files: Object.values(files) };
         console.log('Parsed submission:', Object.keys(submission));
