@@ -63,6 +63,9 @@
                     <button id="test-detailed-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                         Run Detailed Diagnostic
                     </button>
+                    <button id="test-simple-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                        Test Simple Firebase
+                    </button>
                 </div>
                 <div id="function-results" class="mt-4 text-sm"></div>
             </div>
@@ -115,6 +118,54 @@
                         <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
                     </div>
                 `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-900 p-4 rounded">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test simple Firebase function
+        async function testSimple() {
+            const resultsDiv = document.getElementById('function-results');
+            resultsDiv.innerHTML = '<p class="text-yellow-400">Testing simple Firebase function...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-build-events-simple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'test',
+                        source: 'debug-page'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="bg-gray-700 p-4 rounded">
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Success:</strong> ${result.success}</p>
+                            <p><strong>Firebase Status:</strong> ${result.firebaseStatus}</p>
+                            <p><strong>Event Count:</strong> ${result.eventCount}</p>
+                            <p><strong>Environment:</strong> ${result.environment}</p>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="bg-red-900 p-4 rounded">
+                            <p><strong>Error:</strong> ${result.error || 'Unknown error'}</p>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                }
             } catch (error) {
                 resultsDiv.innerHTML = `
                     <div class="bg-red-900 p-4 rounded">
@@ -324,6 +375,7 @@
                             
                         } catch (error) {
                             console.error('Error rebuilding events:', error);
+                            const testResults = document.getElementById('test-results');
                             testResults.innerHTML = `
                                 <div class="bg-red-900 p-4 rounded">
                                     <p class="text-red-400 font-bold">❌ Error!</p>
@@ -336,9 +388,10 @@
                             rebuildStatus.classList.add('hidden');
                             rebuildBtn.querySelector('.fa-calendar-alt').classList.remove('animate-spin');
                         }
-                    } catch (error) {
-                        console.error('Unexpected error in rebuild events button click handler:', error);
-                        const testResults = document.getElementById('test-results');
+                                    } catch (error) {
+                    console.error('Unexpected error in rebuild events button click handler:', error);
+                    const testResults = document.getElementById('test-results');
+                    if (testResults) {
                         testResults.innerHTML = `
                             <div class="bg-red-900 p-4 rounded">
                                 <p class="text-red-400 font-bold">❌ Unexpected Error!</p>
@@ -346,6 +399,7 @@
                             </div>
                         `;
                     }
+                }
                 });
             } else {
                 console.error('Rebuild events button not found!');
@@ -368,11 +422,15 @@
             // Setup manual test buttons
             const testFunctionBtn = document.getElementById('test-function-btn');
             const testDetailedBtn = document.getElementById('test-detailed-btn');
+            const testSimpleBtn = document.getElementById('test-simple-btn');
             if (testFunctionBtn) {
                 testFunctionBtn.addEventListener('click', testFunction);
             }
             if (testDetailedBtn) {
                 testDetailedBtn.addEventListener('click', testDetailed);
+            }
+            if (testSimpleBtn) {
+                testSimpleBtn.addEventListener('click', testSimple);
             }
         });
     </script>
