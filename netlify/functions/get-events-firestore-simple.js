@@ -353,49 +353,57 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
 function extractImageUrl(data) {
     console.log('Extracting image from data with keys:', Object.keys(data));
     
+    // First, try to use cloudinaryPublicId if available (most reliable)
+    if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
+        console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
+        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${data.cloudinaryPublicId}`;
+        console.log('Generated Cloudinary URL:', cloudinaryUrl);
+        return { url: cloudinaryUrl };
+    }
+    
     // Extract Cloudinary image object from various possible formats
     if (data.promoImage && data.promoImage.url) {
-        console.log('Found promoImage:', data.promoImage);
+        console.log('Found promoImage object:', data.promoImage);
         return data.promoImage;
     }
     if (data.image && data.image.url) {
-        console.log('Found image:', data.image);
+        console.log('Found image object:', data.image);
         return data.image;
     }
     if (data['Promo Image'] && data['Promo Image'].url) {
-        console.log('Found Promo Image:', data['Promo Image']);
+        console.log('Found Promo Image object:', data['Promo Image']);
         return data['Promo Image'];
     }
     if (data['Image'] && data['Image'].url) {
-        console.log('Found Image:', data['Image']);
+        console.log('Found Image object:', data['Image']);
         return data['Image'];
     }
     if (data.thumbnail && data.thumbnail.url) {
-        console.log('Found thumbnail:', data.thumbnail);
+        console.log('Found thumbnail object:', data.thumbnail);
         return data.thumbnail;
     }
     if (data['Thumbnail'] && data['Thumbnail'].url) {
-        console.log('Found Thumbnail:', data['Thumbnail']);
+        console.log('Found Thumbnail object:', data['Thumbnail']);
         return data['Thumbnail'];
     }
     if (data.venueImage && data.venueImage.url) {
-        console.log('Found venueImage:', data.venueImage);
+        console.log('Found venueImage object:', data.venueImage);
         return data.venueImage;
     }
     if (data['Venue Image'] && data['Venue Image'].url) {
-        console.log('Found Venue Image:', data['Venue Image']);
+        console.log('Found Venue Image object:', data['Venue Image']);
         return data['Venue Image'];
     }
     if (data.promo_image && data.promo_image.url) {
-        console.log('Found promo_image:', data.promo_image);
+        console.log('Found promo_image object:', data.promo_image);
         return data.promo_image;
     }
     if (data.venue_image && data.venue_image.url) {
-        console.log('Found venue_image:', data.venue_image);
+        console.log('Found venue_image object:', data.venue_image);
         return data.venue_image;
     }
     
-    // Check for string formats
+    // Check for string formats (direct URLs)
     if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
         console.log('Found promoImage string:', data.promoImage);
         return { url: data.promoImage };
@@ -431,23 +439,6 @@ function extractImageUrl(data) {
             console.log('Found cloudinary object in field', key, ':', value);
             return value;
         }
-    }
-    
-    // Try using the id field as a Cloudinary public ID
-    if (data.id && typeof data.id === 'string') {
-        console.log('Trying id as Cloudinary public ID:', data.id);
-        // Try different Cloudinary URL formats
-        const cloudinaryUrls = [
-            `https://res.cloudinary.com/brumoutloud/image/upload/v1/${data.id}`,
-            `https://res.cloudinary.com/brumoutloud/image/upload/${data.id}`,
-            `https://res.cloudinary.com/brumoutloud/image/upload/f_auto,q_auto/${data.id}`,
-            `https://res.cloudinary.com/brumoutloud/image/upload/w_400,h_600,c_fill/${data.id}`
-        ];
-        
-        // For now, let's try the first format and see if it works
-        const testUrl = cloudinaryUrls[0];
-        console.log('Testing Cloudinary URL:', testUrl);
-        return { url: testUrl };
     }
     
     console.log('No image found in data');
