@@ -20,8 +20,9 @@ exports.handler = async function (event, context) {
         const queryParams = new URLSearchParams(event.queryStringParameters || '');
         const limit = parseInt(queryParams.get('limit')) || 50;
         const view = queryParams.get('view');
+        const venues = queryParams.getAll('venues'); // Get venue filters
         
-        console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}`);
+        console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}`);
         
         // Build query
         let query = db.collection('events')
@@ -65,6 +66,15 @@ exports.handler = async function (event, context) {
                 });
             }
         });
+        
+        // Filter by venues if specified
+        if (venues && venues.length > 0 && venues[0] !== 'all') {
+            console.log(`Filtering events by venues: ${venues.join(', ')}`);
+            events = events.filter(event => {
+                return venues.some(venueSlug => event.venueSlug === venueSlug);
+            });
+            console.log(`After venue filtering: ${events.length} events`);
+        }
         
         // Group recurring events
         const groupedEvents = groupRecurringEvents(events);

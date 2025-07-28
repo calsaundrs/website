@@ -922,7 +922,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const button = document.createElement('button');
                 button.className = 'popover-option';
                 button.textContent = venue.name;
-                button.dataset.filterValue = venue.name;
+                button.dataset.filterValue = venue.slug || venue.name; // Use slug if available, fallback to name
                 venuePopover.appendChild(button);
             });
         }
