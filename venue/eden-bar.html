@@ -339,11 +339,11 @@
         </div>
     </footer>
 
+    
     <script>
-        // Load events for this venue
+        // Load events for this venue with separate sections for recurring and one-off events
         async function loadVenueEvents() {
             try {
-                // Use the new venue-specific events API
                 const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=eden-bar');
                 if (!response.ok) throw new Error('Failed to fetch events');
                 const data = await response.json();
@@ -351,91 +351,46 @@
                 const eventsContainer = document.getElementById('events-container');
                 
                 if (data.success && data.events.length > 0) {
-                    eventsContainer.innerHTML = `
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${data.events.map(event => {
-                                // Format date and time
-                                const eventDate = new Date(event.date);
-                                const dateStr = eventDate.toLocaleDateString('en-GB', { 
-                                    weekday: 'short', 
-                                    day: 'numeric', 
-                                    month: 'short'
-                                });
-                                const timeStr = eventDate.toLocaleTimeString('en-GB', { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
-                                });
-                                
-                                // Truncate description if too long
-                                const description = event.description || 'No description available';
-                                const shortDescription = description.length > 120 
-                                    ? description.substring(0, 120) + '...' 
-                                    : description;
-                                
-                                // Get category badges (limit to 2 for space)
-                                const categoryBadges = event.category && event.category.length > 0 
-                                    ? event.category.slice(0, 2).map(cat => 
-                                        `<span class="inline-block bg-accent-color/20 text-accent-color text-xs px-2 py-1 rounded-full mr-1">${cat}</span>`
-                                    ).join('') 
-                                    : '';
-                                
-                                return `
-                                    <div class="venue-card overflow-hidden group hover:transform hover:scale-[1.02] transition-all duration-300">
-                                        <!-- Event Image -->
-                                        <div class="relative h-48 overflow-hidden">
-                                            <img src="${event.image}" alt="${event.name}" 
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                            
-                                            <!-- Image Overlay -->
-                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                            
-                                            <!-- Date Badge -->
-                                            <div class="absolute top-4 left-4 bg-accent-color/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                                ${dateStr}
-                                            </div>
-                                            
-                                            <!-- Time Badge -->
-                                            <div class="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                                                <i class="fas fa-clock mr-1"></i>${timeStr}
-                                            </div>
-                                            
-                                            <!-- Category Badges -->
-                                            ${categoryBadges ? `
-                                                <div class="absolute bottom-4 left-4">
-                                                    ${categoryBadges}
-                                                </div>
-                                            ` : ''}
-                                        </div>
-                                        
-                                        <!-- Event Content -->
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-accent-color transition-colors line-clamp-2">
-                                                ${event.name}
-                                            </h3>
-                                            
-                                            <p class="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
-                                                ${shortDescription}
-                                            </p>
-                                            
-                                            <!-- Action Buttons -->
-                                            <div class="flex gap-2">
-                                                ${event.link ? `
-                                                    <a href="${event.link}" target="_blank" rel="noopener noreferrer" 
-                                                       class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex-1 text-center hover:opacity-90 transition-opacity">
-                                                        <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
-                                                    </a>
-                                                ` : ''}
-                                                <button onclick="showEventDetails('${event.id}')" 
-                                                        class="btn-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-600 transition-colors">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
+                    // Separate recurring and one-off events
+                    const recurringEvents = data.events.filter(event => event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern);
+                    const oneOffEvents = data.events.filter(event => !event.isRecurringGroup && !event.isRecurring && !event.recurringInfo && !event.recurringPattern);
+                    
+                    let eventsHTML = '';
+                    
+                    // Recurring Events Section
+                    if (recurringEvents.length > 0) {
+                        eventsHTML += `
+                            <div class="mb-8">
+                                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                                    <i class="fas fa-redo mr-3 text-green-400"></i>
+                                    Regular Events
+                                    <span class="ml-3 bg-green-500/20 text-green-300 text-sm px-3 py-1 rounded-full">${recurringEvents.length} event${recurringEvents.length !== 1 ? 's' : ''}</span>
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    ${recurringEvents.map(event => renderEventCard(event, true)).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // One-off Events Section
+                    if (oneOffEvents.length > 0) {
+                        eventsHTML += `
+                            <div class="mb-8">
+                                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                                    <i class="fas fa-calendar-day mr-3 text-blue-400"></i>
+                                    Upcoming Events
+                                    <span class="ml-3 bg-blue-500/20 text-blue-300 text-sm px-3 py-1 rounded-full">${oneOffEvents.length} event${oneOffEvents.length !== 1 ? 's' : ''}</span>
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    ${oneOffEvents.map(event => renderEventCard(event, false)).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    eventsContainer.innerHTML = eventsHTML;
+                    
                 } else {
                     eventsContainer.innerHTML = `
                         <div class="text-center py-16">
@@ -463,13 +418,144 @@
                 `;
             }
         }
+        
+        function renderEventCard(event, isRecurring) {
+            const tagsHTML = event.category && event.category.length > 0 ? 
+                event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
+            const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+            const isBoosted = event.promotion && event.promotion.boosted;
+            const venueName = event.venueName || 'TBC';
+            
+            let eventDate = new Date(event.date);
+            let formattedDate = eventDate.toLocaleDateString('en-GB', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
 
-        // Function to show event details (placeholder for future modal)
-        function showEventDetails(eventId) {
-            // For now, just log the event ID
-            console.log('Show details for event:', eventId);
-            // TODO: Implement modal or redirect to event detail page
-            alert('Event details feature coming soon!');
+            // Handle recurring event display
+            let recurringBadge = '';
+            
+            if (isRecurring) {
+                if (event.isRecurringGroup) {
+                    // This is a grouped recurring event
+                    const pattern = event.recurringPattern;
+                    const instanceCount = event.instances ? event.instances.length : 0;
+                    const nextOccurrence = event.nextOccurrence ? new Date(event.nextOccurrence) : null;
+                    
+                    // Create pattern label
+                    let patternLabel = '';
+                    switch (pattern) {
+                        case 'weekly':
+                            patternLabel = 'Weekly Event';
+                            break;
+                        case 'monthly':
+                            patternLabel = 'Monthly Event';
+                            break;
+                        case 'daily':
+                            patternLabel = 'Daily Event';
+                            break;
+                        case 'bi-weekly':
+                            patternLabel = 'Bi-Weekly Event';
+                            break;
+                        case 'yearly':
+                            patternLabel = 'Annual Event';
+                            break;
+                        default:
+                            patternLabel = 'Recurring Event';
+                    }
+                    
+                    // Add instance count if multiple instances
+                    if (instanceCount > 1) {
+                        patternLabel += ` (${instanceCount} upcoming)`;
+                    }
+                    
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                    
+                    // Update date to show next occurrence
+                    if (nextOccurrence) {
+                        formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        });
+                    }
+                    
+                } else if (event.recurringInfo || event.recurringPattern) {
+                    // Individual recurring event
+                    const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+                    let patternLabel = '';
+                    
+                    switch (pattern) {
+                        case 'weekly':
+                            patternLabel = 'Weekly Event';
+                            break;
+                        case 'monthly':
+                            patternLabel = 'Monthly Event';
+                            break;
+                        case 'daily':
+                            patternLabel = 'Daily Event';
+                            break;
+                        case 'bi-weekly':
+                            patternLabel = 'Bi-Weekly Event';
+                            break;
+                        case 'yearly':
+                            patternLabel = 'Annual Event';
+                            break;
+                        default:
+                            patternLabel = 'Recurring Event';
+                    }
+                    
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                }
+            }
+
+            return `
+                <div class="venue-card rounded-xl overflow-hidden relative">
+                    ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
+                    ${recurringBadge}
+                    <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                        <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">${formattedDate}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem; line-height: 1.5rem;">${event.name}</h3>
+                        <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
+                        <div class="flex gap-1 mb-4 overflow-hidden">
+                            ${tagsHTML}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Helper function to extract recurring pattern (fallback)
+        function extractRecurringPattern(recurringInfo) {
+            if (!recurringInfo) return null;
+            
+            const text = recurringInfo.toLowerCase();
+            if (text.includes('weekly') || text.includes('every week')) {
+                return 'weekly';
+            } else if (text.includes('monthly') || text.includes('every month')) {
+                return 'monthly';
+            } else if (text.includes('daily') || text.includes('every day')) {
+                return 'daily';
+            } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+                return 'bi-weekly';
+            } else if (text.includes('yearly') || text.includes('annual')) {
+                return 'yearly';
+            } else {
+                return 'recurring';
+            }
         }
 
         // Load events when page loads
