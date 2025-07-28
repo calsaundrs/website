@@ -940,6 +940,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 button.dataset.filterValue = venue.slug || venue.name; // Use slug if available, fallback to name
                 venuePopover.appendChild(button);
             });
+            
+            console.log('Venue popover HTML after rendering:', venuePopover.innerHTML);
         }
 
         function updateLoadingState(loading) {
@@ -1091,10 +1093,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const button = e.target.closest('.popover-option');
                 if(!button) return;
                 activeVenueFilter = button.dataset.filterValue;
+                console.log('Venue button element:', venueBtn);
+                console.log('Venue button span element:', venueBtn.querySelector('span'));
                 venueBtn.querySelector('span').textContent = button.textContent;
                 venuePopover.classList.remove('show');
                 console.log('Venue filter changed:', activeVenueFilter);
                 console.log('Button data:', button.dataset);
+                console.log('Button text content:', button.textContent);
                 applyFilters();
             });
 
