@@ -1,92 +1,93 @@
-const Airtable = require('airtable');
+const admin = require('firebase-admin');
 
-const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        }),
+    });
+}
 
-exports.handler = async (event) => {
-    if (event.httpMethod !== 'GET') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
-    }
+const db = admin.firestore();
 
-    console.log('debug-events: Starting debug function');
-
-    if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Missing Airtable configuration' }),
-        };
-    }
-
-    const base = new Airtable({ apiKey: AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(AIRTABLE_BASE_ID);
-
+exports.handler = async function (event, context) {
+    console.log("🔍 DEBUG EVENTS: Function called");
+    
     try {
-        // Get all events to see what status values exist
-        console.log('debug-events: Fetching all events to check status values...');
+        const eventsRef = db.collection('events');
         
-        const allEvents = await base('Events').select({
-            fields: ['Event Name', 'Status', 'Date']
-        }).all();
-
-        console.log(`debug-events: Found ${allEvents.length} total events`);
-
-        // Count status values
-        const statusCounts = {};
-        const sampleEvents = [];
-
-        allEvents.forEach(record => {
-            const status = record.fields.Status || 'No Status';
-            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        // Get all events
+        console.log("🔍 DEBUG EVENTS: Fetching all events...");
+        const snapshot = await eventsRef.get();
+        
+        console.log("🔍 DEBUG EVENTS: Total events found:", snapshot.size);
+        
+        const events = [];
+        const statuses = new Set();
+        const pendingEvents = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const status = data.status || 'no-status';
+            statuses.add(status);
             
-            // Keep first 5 events of each status for samples
-            if (!sampleEvents.find(e => e.status === status) || sampleEvents.filter(e => e.status === status).length < 5) {
-                sampleEvents.push({
-                    id: record.id,
-                    name: record.fields['Event Name'] || 'Unnamed',
-                    status: status,
-                    date: record.fields.Date
-                });
+            const eventData = {
+                id: doc.id,
+                name: data.name,
+                status: status,
+                createdAt: data.createdAt,
+                venueName: data.venueName,
+                submittedBy: data.submittedBy
+            };
+            
+            events.push(eventData);
+            
+            // Collect pending events separately
+            if (status === 'pending' || status === 'pending review') {
+                pendingEvents.push(eventData);
             }
         });
-
-        // Get pending events specifically
-        console.log('debug-events: Fetching pending events...');
-        const pendingEvents = await base('Events').select({
-            filterByFormula: "{Status} = 'Pending Review'",
-            fields: ['Event Name', 'Status', 'Date']
-        }).all();
-
-        console.log(`debug-events: Found ${pendingEvents.length} pending events`);
-
-        const result = {
-            totalEvents: allEvents.length,
-            statusCounts: statusCounts,
-            pendingEventsCount: pendingEvents.length,
-            sampleEvents: sampleEvents,
-            availableStatuses: Object.keys(statusCounts),
-            pendingEvents: pendingEvents.map(record => ({
-                id: record.id,
-                name: record.fields['Event Name'] || 'Unnamed',
-                status: record.fields.Status,
-                date: record.fields.Date
-            }))
-        };
-
+        
+        console.log("🔍 DEBUG EVENTS: All statuses found:", Array.from(statuses));
+        console.log("🔍 DEBUG EVENTS: Pending events count:", pendingEvents.length);
+        console.log("🔍 DEBUG EVENTS: Pending events:", pendingEvents);
+        console.log("🔍 DEBUG EVENTS: Total events:", events.length);
+        
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, OPTIONS'
             },
-            body: JSON.stringify(result),
+            body: JSON.stringify({
+                totalEvents: snapshot.size,
+                statuses: Array.from(statuses),
+                pendingEventsCount: pendingEvents.length,
+                pendingEvents: pendingEvents,
+                events: events
+            })
         };
+        
     } catch (error) {
-        console.error("debug-events: Error:", error);
+        console.error('❌ DEBUG EVENTS: Error:', error);
+        
         return {
             statusCode: 500,
-            body: JSON.stringify({ 
-                error: 'Failed to debug events', 
-                details: error.toString(),
-                message: error.message 
-            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, OPTIONS'
+            },
+            body: JSON.stringify({
+                error: 'Internal server error',
+                message: error.message
+            })
         };
     }
 };

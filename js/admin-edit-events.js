@@ -150,7 +150,7 @@ async function loadAllEvents() {
         console.log('Admin Edit Events: Loading all events...');
         
         // Load regular events
-        const eventsResponse = await fetch('/.netlify/functions/get-events-firestore?view=admin');
+        const eventsResponse = await fetch('/.netlify/functions/get-events-firestore-simple?view=admin');
         console.log('Admin Edit Events: Events response status:', eventsResponse.status);
         
         if (eventsResponse.ok) {
@@ -161,11 +161,11 @@ async function loadAllEvents() {
             // Separate pending and approved events
             pendingEvents = allEvents.filter(event => {
                 const status = event.status || event.Status || event['Status'];
-                return status === 'Pending Review';
+                return status === 'pending' || status === 'pending review' || status === 'Pending Review';
             });
             approvedEvents = allEvents.filter(event => {
                 const status = event.status || event.Status || event['Status'];
-                return status === 'Approved';
+                return status === 'approved' || status === 'Approved';
             });
             
             console.log(`Admin Edit Events: Loaded ${allEvents.length} total events (${pendingEvents.length} pending, ${approvedEvents.length} approved)`);
@@ -249,57 +249,76 @@ function renderEvents(events) {
             </div>`;
 
         return `
-            <div class="event-card rounded-xl p-6 transition-all duration-300 ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
-                <!-- Event Image - Moved to top for better visibility -->
-                ${imageHtml}
+            <div class="event-card ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
+                <div class="event-card-header">
+                    <div class="flex items-start space-x-3 flex-1 min-w-0">
+                        <div class="text-2xl text-blue-400 flex-shrink-0 mt-1">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-xl font-bold text-white truncate">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                ${statusBadge}
+                                ${isToday ? '<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
+                                ${isPast ? '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full">Past</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400 flex-shrink-0">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" 
+                                   class="bulk-select-checkbox form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500" 
+                                   data-event-id="${event.id}"
+                                   ${isSelected ? 'checked' : ''}>
+                            <span class="ml-2 text-gray-400 text-xs">Select</span>
+                        </label>
+                    </div>
+                </div>
                 
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="flex items-center gap-3">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" 
-                                           class="bulk-select-checkbox form-checkbox h-5 w-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500" 
-                                           data-event-id="${event.id}"
-                                           ${isSelected ? 'checked' : ''}>
-                                    <span class="ml-2 text-gray-400 text-sm">Select</span>
-                                </label>
-                            </div>
-                            <div class="text-center w-16 flex-shrink-0">
-                                <div class="text-2xl font-bold text-white ${isToday ? 'text-purple-400' : ''}">
-                                    ${eventDate.getDate()}
-                                </div>
-                                <div class="text-sm text-gray-400">
-                                    ${eventDate.toLocaleDateString('en-US', { month: 'short' })}
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center gap-2 mb-3">
-                            ${statusBadge}
-                            ${isToday ? '<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
-                            ${isPast ? '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full">Past</span>' : ''}
-                        </div>
-                        
-                        <p class="text-gray-300 mb-3 line-clamp-2">${event.description || event.Description || 'No description available'}</p>
-                        
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            ${categoryBadges}
-                        </div>
+                <div class="event-card-details">
+                    <div class="event-card-detail-item">
+                        <p class="detail-label">Description</p>
+                        <p class="detail-value">${event.description || event.Description || 'No description available'}</p>
                     </div>
                     
-                    <div class="flex flex-col gap-2 ml-4">
-                        <button onclick="openEditModal('${event.id}')" class="btn-primary text-white px-4 py-2 rounded-lg text-sm transition-all">
-                            <i class="fas fa-edit mr-1"></i>Edit
-                        </button>
-                        <button onclick="handleDeleteEvent('${event.id}')" class="btn-danger text-white px-4 py-2 rounded-lg text-sm transition-all">
-                            <i class="fas fa-trash mr-1"></i>Delete
-                        </button>
+                    <div class="event-card-detail-item">
+                        <p class="detail-label">Event Date</p>
+                        <p class="detail-value">${eventDate.toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</p>
                     </div>
+                    
+                    <div class="event-card-detail-item">
+                        <p class="detail-label">Venue</p>
+                        <p class="detail-value">${event.venue || event.VenueText || event['Venue Name'] || event.venueName || 'TBC'}</p>
+                    </div>
+                    
+                    ${event.category && event.category.length > 0 ? `
+                        <div class="event-card-detail-item">
+                            <p class="detail-label">Categories</p>
+                            <div class="flex flex-wrap gap-1">
+                                ${categoryBadges}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="event-card-detail-item">
+                        <p class="detail-label">Submitted By</p>
+                        <p class="detail-value">${event.submittedBy || event['Submitted By'] || 'Unknown'}</p>
+                    </div>
+                </div>
+                
+                <div class="event-card-actions">
+                    <button onclick="openEditModal('${event.id}')" class="button-edit">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </button>
+                    <button onclick="handleDeleteEvent('${event.id}')" class="button-delete">
+                        <i class="fas fa-trash mr-2"></i>Delete
+                    </button>
                 </div>
             </div>
         `;
@@ -928,9 +947,36 @@ async function handleEditFormSubmit(event) {
     }
     
     try {
-        const response = await fetch('/.netlify/functions/update-event', {
+        // Convert form data to JSON for Firestore function
+        const eventData = {
+            itemId: currentEventForEdit ? currentEventForEdit.id : null,
+            itemType: 'event',
+            name: document.getElementById('edit-name').value,
+            description: document.getElementById('edit-description').value,
+            date: document.getElementById('edit-date').value,
+            time: document.getElementById('edit-time').value,
+            status: document.getElementById('edit-status').value,
+            link: document.getElementById('edit-link').value,
+            category: Array.from(document.querySelectorAll('#edit-categories input:checked')).map(cb => cb.value)
+        };
+        
+        // Handle venue
+        const venueSelect = document.getElementById('edit-venue-select');
+        if (venueSelect.value === 'new') {
+            const newVenueName = document.getElementById('edit-new-venue-name').value;
+            if (newVenueName) {
+                eventData.venueName = newVenueName;
+            }
+        } else if (venueSelect.value) {
+            eventData.venueId = venueSelect.value;
+        }
+        
+        const response = await fetch('/.netlify/functions/update-item-firestore', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData)
         });
         
         if (response.ok) {
@@ -939,7 +985,7 @@ async function handleEditFormSubmit(event) {
             await loadAllEvents(); // Refresh the events list
         } else {
             const errorData = await response.json();
-            showError(`Failed to update event: ${errorData.error || 'Unknown error'}`);
+            showError(`Failed to update event: ${errorData.message || 'Unknown error'}`);
         }
     } catch (error) {
         console.error('Error updating event:', error);
@@ -956,14 +1002,15 @@ async function handleDeleteEvent(eventId) {
     }
     
     try {
-        const response = await fetch('/.netlify/functions/delete-submission', {
+        const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: event.id,
-                type: 'Event'
+                itemId: event.id,
+                newStatus: 'deleted',
+                itemType: 'event'
             })
         });
         
@@ -1326,14 +1373,16 @@ async function handleBulkStatusChange(newStatus) {
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
-            const formData = new FormData();
-            formData.append('id', eventId);
-            formData.append('type', 'Event');
-            formData.append('Status', newStatus);
-            
-            const response = await fetch('/.netlify/functions/update-submission', {
+            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    itemId: eventId,
+                    newStatus: newStatus,
+                    itemType: 'event'
+                })
             });
             
             if (response.ok) {
@@ -1365,14 +1414,15 @@ async function handleBulkDelete() {
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
-            const response = await fetch('/.netlify/functions/delete-submission', {
+            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: eventId,
-                    type: 'Event'
+                    itemId: eventId,
+                    newStatus: 'deleted',
+                    itemType: 'event'
                 })
             });
             

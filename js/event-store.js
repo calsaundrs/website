@@ -94,7 +94,7 @@ class EventStore {
   // Get default filters
   getDefaultFilters() {
     return {
-      dateRange: { type: 'all' },
+      dateRange: { type: 'upcoming' },
       categories: [],
       venues: [],
       search: '',
@@ -136,17 +136,28 @@ class EventAPI {
       }
     });
 
-    const response = await fetch(`${this.baseUrl}/get-events-firestore?${params}`);
+    console.log('EventAPI: Calling get-events-firestore-simple with params:', params.toString());
+    const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log('EventAPI: Received data from API:', data);
+    console.log('EventAPI: Number of events:', data.events ? data.events.length : 0);
+    
+    // Log the first event to see its structure
+    if (data.events && data.events.length > 0) {
+      console.log('EventAPI: First event structure:', data.events[0]);
+      console.log('EventAPI: First event image field:', data.events[0].image);
+    }
+    
+    return data;
   }
 
   async getVenues() {
-    const response = await fetch(`${this.baseUrl}/get-events-firestore?view=venues`);
+            const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?view=venues`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

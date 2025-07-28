@@ -551,7 +551,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <h1 class="font-anton text-6xl md:text-7xl lg:text-8xl leading-none tracking-wider text-white mb-4">
                     LGBTQ+ <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">EVENTS</span> IN BIRMINGHAM
                 </h1>
-                <h2 class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Your guide to queer club nights, social gatherings, and cultural events in the heart of the Midlands.</h2>
+                <h2 class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-4">Your guide to queer club nights, social gatherings, and cultural events in the heart of the Midlands.</h2>
+                <div class="text-lg text-gray-400">
+                    <span class="event-count">0</span> upcoming events found
+                </div>
             </div>
 
             <div class="mb-12 hidden" id="featured-events-section">
@@ -564,7 +567,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
                 <div class="flex flex-wrap gap-3 items-center">
-                    <button class="filter-button active" data-filter-type="date" data-filter-value="all">All Upcoming</button>
+                    <button class="filter-button active" data-filter-type="date" data-filter-value="upcoming">Upcoming</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
                     <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
                     
@@ -656,7 +659,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <div id="event-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
         <div class="w-full max-w-4xl">
-               <form name="event-submission" class="card-bg p-8 md:p-12 space-y-6 relative" method="POST" action="/.netlify/functions/event-submission" enctype="multipart/form-data">
+               <form name="event-submission" class="card-bg p-8 md:p-12 space-y-6 relative" method="POST" action="/.netlify/functions/event-submission-firestore-only" enctype="multipart/form-data">
                     <button type="button" onclick="hideEventModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
                     <h3 class="font-anton text-4xl text-center heading-gradient mb-6">Submit an <span class="accent-color">Event</span></h3>
                     <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
@@ -711,14 +714,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </footer>
 
-    <script src="/js/event-store.js"></script>
+    <script src="/js/event-store.js?v=3"></script>
     <script>
         // --- Global State ---
         let eventStore;
         let featuredEvents = [];
         
         // Legacy filter state (will be replaced by store)
-        let activeDateFilter = { type: 'all', from: null, to: null };
+        let activeDateFilter = { type: 'upcoming', from: null, to: null };
         let activeCategoryFilter = 'all';
         let activeVenueFilter = 'all';
         let isSfwMode = true;
@@ -791,21 +794,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             };
             
             console.log('Applying filters:', filters);
-            eventStore.updateFilters(filters);
+            console.log('EventStore available:', typeof eventStore !== 'undefined');
+            console.log('EventStore instance:', eventStore);
+            
+            if (eventStore && typeof eventStore.updateFilters === 'function') {
+                eventStore.updateFilters(filters);
+            } else {
+                console.error('EventStore or updateFilters method not available');
+            }
         }
 
         // --- Rendering ---
         function renderEvents(events) {
             if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
             
+            // Update event count display
+            const eventCountElement = document.querySelector('.event-count');
+            if (eventCountElement) {
+                eventCountElement.textContent = events ? events.length : 0;
+            }
+            
             if (!events || events.length === 0) {
                 eventGrid.innerHTML = `
                     <div class="col-span-full text-center card-bg p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
-                            <i class="fas fa-search fa-2x"></i>
+                            <i class="fas fa-calendar-times fa-2x"></i>
                         </div>
-                        <h3 class="mt-4 text-xl font-semibold text-white">No Events Found</h3>
-                        <p class="mt-2 text-gray-400">Try adjusting your filters or search terms.</p>
+                        <h3 class="mt-4 text-xl font-semibold text-white">No Upcoming Events</h3>
+                        <p class="mt-2 text-gray-400">Check back soon for new events, or try adjusting your filters.</p>
+                        <div class="mt-6">
+                            <a href="/submit-event.html" class="btn-primary text-white px-6 py-3 rounded-lg">
+                                <i class="fas fa-plus mr-2"></i>Submit an Event
+                            </a>
+                        </div>
                     </div>
                 `;
                 return;
@@ -814,9 +835,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             eventGrid.innerHTML = events.map(event => {
                 const tagsHTML = event.category && event.category.length > 0 ? 
                     event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
-                const imageUrl = event.image && event.image.url ? event.image.url : 'https://placehold.co/400x600/1e1e1e/EAEAEA?text=Event';
+                
+                // Debug image data
+                console.log('Event image data for', event.name, ':', event.image);
+                console.log('Full event data for', event.name, ':', event);
+                
+                const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+                console.log('Final imageUrl for', event.name, ':', imageUrl);
+                
                 const isBoosted = event.promotion && event.promotion.boosted;
-                const venueName = event.venue && event.venue.name ? event.venue.name : 'TBC';
+                const venueName = event.venueName || 'TBC';
                 const eventDate = new Date(event.date);
                 const formattedDate = eventDate.toLocaleDateString('en-GB', { 
                     month: 'short', 
@@ -824,12 +852,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     year: 'numeric' 
                 });
 
+                // Handle recurring event display
+                let recurringDisplay = '';
+                if (event.recurringInfo) {
+                    // Extract recurring pattern from recurringInfo
+                    const recurringText = event.recurringInfo.toLowerCase();
+                    if (recurringText.includes('weekly') || recurringText.includes('every week')) {
+                        recurringDisplay = 'Weekly Event';
+                    } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
+                        recurringDisplay = 'Monthly Event';
+                    } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
+                        recurringDisplay = 'Daily Event';
+                    } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
+                        recurringDisplay = 'Bi-Weekly Event';
+                    } else {
+                        recurringDisplay = 'Recurring Event';
+                    }
+                }
+
                 return `
                     <div class="venue-card rounded-xl overflow-hidden relative">
                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
-                        ${event.recurringInfo ? '<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>Recurring</span></div>' : ''}
-                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
+                        ${recurringDisplay ? `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span></div>` : ''}
+                        <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                         </div>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-3">
@@ -854,10 +900,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderCategoryOptions() {
-            if (!categoryPopover || !eventStore) return; // Exit if elements don't exist yet
+            if (!categoryPopover || !eventStore) {
+                console.log('Category popover or eventStore not available');
+                return;
+            }
             
             // Get categories from current events
             const categories = [...new Set(eventStore.state.events.flatMap(event => event.category))].filter(Boolean).sort();
+            console.log('Rendering category options:', categories);
             categoryPopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -876,8 +926,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderVenueOptions(venues = []) {
-            if (!venuePopover) return; // Exit if element doesn't exist yet
+            if (!venuePopover) {
+                console.log('Venue popover not available');
+                return;
+            }
             
+            console.log('Rendering venue options:', venues);
             venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -890,9 +944,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const button = document.createElement('button');
                 button.className = 'popover-option';
                 button.textContent = venue.name;
-                button.dataset.filterValue = venue.name;
+                button.dataset.filterValue = venue.slug || venue.name; // Use slug if available, fallback to name
                 venuePopover.appendChild(button);
             });
+            
+            console.log('Venue popover HTML after rendering:', venuePopover.innerHTML);
         }
 
         function updateLoadingState(loading) {
@@ -949,12 +1005,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
         function resetFilters() {
-            activeDateFilter = { type: 'all', from: null, to: null };
+            activeDateFilter = { type: 'upcoming', from: null, to: null };
             activeCategoryFilter = 'all';
             activeVenueFilter = 'all';
             
             document.querySelectorAll('#filter-bar-container .filter-button[data-filter-type="date"]').forEach(b => b.classList.remove('active'));
-            document.querySelector('#filter-bar-container .filter-button[data-filter-value="all"][data-filter-type="date"]').classList.add('active');
+            document.querySelector('#filter-bar-container .filter-button[data-filter-value="upcoming"][data-filter-type="date"]').classList.add('active');
             
             categoryBtn.querySelector('span').textContent = 'All Categories';
             venueBtn.querySelector('span').textContent = 'All Venues';
@@ -1015,7 +1071,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             customDateBtn.addEventListener('click', (e) => { e.stopPropagation(); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); customDatePopover.classList.toggle('show'); });
             categoryBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); venuePopover.classList.remove('show'); categoryPopover.classList.toggle('show'); });
-            venueBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); });
+            venueBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                customDatePopover.classList.remove('show'); 
+                categoryPopover.classList.remove('show'); 
+                venuePopover.classList.toggle('show'); 
+                console.log('Venue button clicked, popover show state:', venuePopover.classList.contains('show'));
+            });
             
             clearFiltersBtn.addEventListener('click', resetFilters);
 
@@ -1044,9 +1106,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const button = e.target.closest('.popover-option');
                 if(!button) return;
                 activeVenueFilter = button.dataset.filterValue;
+                console.log('Venue button element:', venueBtn);
+                console.log('Venue button span element:', venueBtn.querySelector('span'));
                 venueBtn.querySelector('span').textContent = button.textContent;
                 venuePopover.classList.remove('show');
                 console.log('Venue filter changed:', activeVenueFilter);
+                console.log('Button data:', button.dataset);
+                console.log('Button text content:', button.textContent);
                 applyFilters();
             });
 
@@ -1138,8 +1204,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // --- Initial Data Fetch & Processing ---
         async function initializePage() {
             try {
+                console.log('Initializing events page...');
+                
+                // Check if EventStore is available
+                if (typeof EventStore === 'undefined') {
+                    throw new Error('EventStore class is not available. Check if event-store.js is loaded correctly.');
+                }
+                
                 // Initialize event store
                 eventStore = new EventStore();
+                console.log('EventStore initialized:', eventStore);
                 
                 // Subscribe to store changes
                 eventStore.subscribe((state) => {
@@ -1148,10 +1222,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     updateLoadingState(state.loading);
                     updateErrorState(state.error);
                     updateFilterUI(state.filters);
+                    
+                    // Re-render filter options when events change
+                    if (state.events && state.events.length > 0) {
+                        renderCategoryOptions();
+                    }
                 });
 
                 // Load venues for filtering first
+                console.log('Loading venues for filtering...');
                 const venues = await eventStore.api.getVenues();
+                console.log('Venues loaded:', venues);
                 
                 setSfwMode(true);
 
@@ -1159,12 +1240,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 createSlideshowElements(); 
 
-                renderCategoryOptions();
-                renderVenueOptions(venues); 
+                // Set up event listeners first
                 setupEventListeners();
                 
-                // Load initial events after everything is set up
+                // Load initial events first
+                console.log('Loading initial events...');
                 await eventStore.loadEvents(eventStore.state.filters);
+                
+                // Now render filter options after events are loaded
+                renderCategoryOptions();
+                renderVenueOptions(venues);
+                
+                // Check for venue parameter in URL and apply filter
+                const urlParams = new URLSearchParams(window.location.search);
+                const venueParam = urlParams.get('venue');
+                if (venueParam) {
+                    console.log('Venue parameter found:', venueParam);
+                    // Find the venue button and trigger the filter
+                    const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
+                    if (venueButton) {
+                        console.log('Found venue button, clicking it...');
+                        venueButton.click();
+                    } else {
+                        console.log('Venue button not found for:', venueParam);
+                        console.log('Available venue buttons:', document.querySelectorAll('[data-filter-value]'));
+                    }
+                }
                 
             } catch (error) {
                 console.error("Error initializing page:", error);
@@ -1174,6 +1275,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         document.addEventListener('DOMContentLoaded', initializePage);
     </script>
-        <script src="/js/main.js"></script>
+        <script src="/js/main.js?v=3"></script>
 </body>
 </html>

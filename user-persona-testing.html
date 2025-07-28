@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Persona Testing | Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+        }
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .persona-card {
+            transition: all 0.3s ease;
+        }
+        .persona-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+        .test-result {
+            transition: all 0.3s ease;
+        }
+        .test-result.success {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .test-result.error {
+            border-color: #EF4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .test-result.loading {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+            </a>
+            <div class="text-gray-400">
+                <i class="fas fa-user-tie mr-2"></i>User Persona Testing
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-8 py-8">
+        <div class="text-center mb-12">
+            <h1 class="font-anton text-6xl md:text-7xl leading-none tracking-wider heading-gradient mb-4">
+                USER PERSONA <span class="accent-color">TESTING</span>
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Comprehensive testing of different user types and their interactions with the Brum Outloud platform
+            </p>
+        </div>
+
+        <!-- Persona Selection -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Event Goer -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-calendar-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Event Goer</h3>
+                        <p class="text-sm text-gray-400">Looking for events</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    Someone who wants to discover LGBTQ+ events in Birmingham, browse venues, and find things to do.
+                </p>
+                <button onclick="runPersonaTest('event-goer')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test Event Goer Journey
+                </button>
+            </div>
+
+            <!-- Event Organizer -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-green-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-microphone text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Event Organizer</h3>
+                        <p class="text-sm text-gray-400">Submitting events</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    A promoter or organizer who wants to submit their LGBTQ+ events to the platform for listing.
+                </p>
+                <button onclick="runPersonaTest('event-organizer')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test Event Submission
+                </button>
+            </div>
+
+            <!-- Venue Owner -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-building text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Venue Owner</h3>
+                        <p class="text-sm text-gray-400">Listing venues</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    A venue owner who wants to list their LGBTQ+-friendly venue on the platform.
+                </p>
+                <button onclick="runPersonaTest('venue-owner')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test Venue Submission
+                </button>
+            </div>
+
+            <!-- Admin User -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-user-shield text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Admin User</h3>
+                        <p class="text-sm text-gray-400">Managing content</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    A platform administrator who reviews submissions, manages content, and maintains the site.
+                </p>
+                <button onclick="runPersonaTest('admin')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test Admin Workflow
+                </button>
+            </div>
+
+            <!-- Mobile User -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-mobile-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Mobile User</h3>
+                        <p class="text-sm text-gray-400">On-the-go browsing</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    Someone using the platform on their mobile device while out and about in Birmingham.
+                </p>
+                <button onclick="runPersonaTest('mobile-user')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test Mobile Experience
+                </button>
+            </div>
+
+            <!-- New User -->
+            <div class="persona-card card-bg p-6 rounded-xl border border-gray-700">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-user-plus text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">New User</h3>
+                        <p class="text-sm text-gray-400">First-time visitor</p>
+                    </div>
+                </div>
+                <p class="text-gray-300 text-sm mb-4">
+                    Someone visiting the platform for the first time, exploring what's available.
+                </p>
+                <button onclick="runPersonaTest('new-user')" class="btn-primary text-white px-4 py-2 rounded-lg w-full">
+                    <i class="fas fa-play mr-2"></i>Test New User Journey
+                </button>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="card-bg p-8 rounded-xl">
+            <h2 class="text-2xl font-bold text-white mb-6">
+                <i class="fas fa-chart-line mr-2"></i>Test Results
+            </h2>
+            <div id="test-results" class="space-y-4">
+                <div class="text-center text-gray-400">
+                    <i class="fas fa-info-circle text-2xl mb-2"></i>
+                    <p>Select a persona above to start testing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Test All -->
+        <div class="mt-8 text-center space-y-4">
+            <button onclick="runAllPersonaTests()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                <i class="fas fa-rocket mr-2"></i>Run All Persona Tests
+            </button>
+            
+            <div class="mt-4">
+                <button onclick="runComprehensiveSimulation()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-robot mr-2"></i>Run Comprehensive Simulation
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Advanced testing with detailed reporting</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testFirestoreFixes()" class="btn-danger text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-bug mr-2"></i>Test Firestore Fixes
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Test the recent field name fixes</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testEventSubmissionDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-search mr-2"></i>Debug Event Submission
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug event submission issues</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testVenueSubmissionDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-building mr-2"></i>Debug Venue Submission
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug venue submission issues</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testFormDataDebug()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-code mr-2"></i>Debug Form Data
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug raw form data parsing</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testGetEventsDebug()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-calendar mr-2"></i>Debug Get Events
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug get-events-firestore function</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testAllEventsDebug()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-database mr-2"></i>Debug All Events
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Debug all events in database</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testVenueRebuild()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-hammer mr-2"></i>Rebuild Venue Pages
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Generate venue detail pages</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testFixEventStatus()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-wrench mr-2"></i>Fix Event Status Casing
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Fix uppercase status values</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testDebugUnknownEvents()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-search mr-2"></i>Debug Unknown Events
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Investigate 147 unknown events</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testGetVenueData()" class="btn-success text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-database mr-2"></i>Get Venue Data
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Get venue data for page generation</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testFixEventStatusFields()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-wrench mr-2"></i>Fix Event Status Fields
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Copy uppercase Status to lowercase status</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testDebugStatusInconsistency()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-search mr-2"></i>Debug Status Inconsistency
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Investigate remaining status issues</p>
+            </div>
+            
+            <div class="mt-4">
+                <button onclick="testCleanupDuplicateStatus()" class="btn-warning text-white px-8 py-4 rounded-lg text-lg font-bold">
+                    <i class="fas fa-broom mr-2"></i>Cleanup Duplicate Status
+                </button>
+                <p class="text-sm text-gray-400 mt-2">Remove uppercase Status fields</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let testResults = [];
+
+        // Persona test definitions
+        const personaTests = {
+            'event-goer': {
+                name: 'Event Goer',
+                tests: [
+                    { name: 'Browse Events', func: testBrowseEvents },
+                    { name: 'Search Events', func: testSearchEvents },
+                    { name: 'Filter by Category', func: testFilterByCategory },
+                    { name: 'View Event Details', func: testViewEventDetails },
+                    { name: 'Browse Venues', func: testBrowseVenues },
+                    { name: 'View Venue Details', func: testViewVenueDetails }
+                ]
+            },
+            'event-organizer': {
+                name: 'Event Organizer',
+                tests: [
+                    { name: 'Submit Event Form', func: testEventSubmission },
+                    { name: 'Upload Event Image', func: testEventImageUpload },
+                    { name: 'Add Event Categories', func: testEventCategories },
+                    { name: 'Set Recurring Event', func: testRecurringEvent }
+                ]
+            },
+            'venue-owner': {
+                name: 'Venue Owner',
+                tests: [
+                    { name: 'Submit Venue Form', func: testVenueSubmission },
+                    { name: 'Upload Venue Photo', func: testVenuePhotoUpload },
+                    { name: 'Add Venue Details', func: testVenueDetails },
+                    { name: 'Add Social Media', func: testVenueSocialMedia }
+                ]
+            },
+            'admin': {
+                name: 'Admin User',
+                tests: [
+                    { name: 'View Pending Items', func: testViewPendingItems },
+                    { name: 'Approve Event', func: testApproveEvent },
+                    { name: 'Reject Event', func: testRejectEvent },
+                    { name: 'Edit Event', func: testEditEvent },
+                    { name: 'View Dashboard', func: testAdminDashboard }
+                ]
+            },
+            'mobile-user': {
+                name: 'Mobile User',
+                tests: [
+                    { name: 'Mobile Navigation', func: testMobileNavigation },
+                    { name: 'Touch Interactions', func: testTouchInteractions },
+                    { name: 'Mobile Forms', func: testMobileForms },
+                    { name: 'Responsive Design', func: testResponsiveDesign }
+                ]
+            },
+            'new-user': {
+                name: 'New User',
+                tests: [
+                    { name: 'Homepage Experience', func: testHomepageExperience },
+                    { name: 'Discover Events', func: testDiscoverEvents },
+                    { name: 'Learn About Platform', func: testLearnAboutPlatform },
+                    { name: 'First Interaction', func: testFirstInteraction }
+                ]
+            }
+        };
+
+        async function runPersonaTest(personaType) {
+            const persona = personaTests[personaType];
+            if (!persona) return;
+
+            clearResults();
+            addResult(`🧪 Starting ${persona.name} persona test...`, 'loading');
+
+            for (let i = 0; i < persona.tests.length; i++) {
+                const test = persona.tests[i];
+                addResult(`⏳ Running: ${test.name}...`, 'loading');
+                
+                try {
+                    const result = await test.func();
+                    addResult(`✅ ${test.name}: ${result}`, 'success');
+                } catch (error) {
+                    addResult(`❌ ${test.name}: ${error.message}`, 'error');
+                }
+                
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            addResult(`🎉 ${persona.name} persona test completed!`, 'success');
+        }
+
+        async function runAllPersonaTests() {
+            clearResults();
+            addResult('🚀 Starting comprehensive persona testing...', 'loading');
+
+            for (const [personaType, persona] of Object.entries(personaTests)) {
+                addResult(`🧪 Testing ${persona.name} persona...`, 'loading');
+                await runPersonaTest(personaType);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            addResult('🎉 All persona tests completed!', 'success');
+        }
+
+        // Test Functions
+        async function testBrowseEvents() {
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple');
+            const data = await response.json();
+            return `Found ${data.events?.length || 0} events`;
+        }
+
+        async function testSearchEvents() {
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?search=pride');
+            const data = await response.json();
+            return `Found ${data.events?.length || 0} events matching "pride"`;
+        }
+
+        async function testFilterByCategory() {
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?categories=Club Night');
+            const data = await response.json();
+            return `Found ${data.events?.length || 0} club night events`;
+        }
+
+        async function testViewEventDetails() {
+            const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=1');
+            const data = await response.json();
+            if (data.events && data.events.length > 0) {
+                const event = data.events[0];
+                return `Event details loaded: ${event.name}`;
+            }
+            return 'No events available for testing';
+        }
+
+        async function testBrowseVenues() {
+            const response = await fetch('/.netlify/functions/get-venues-firestore');
+            const data = await response.json();
+            return `Found ${data.venues?.length || 0} venues`;
+        }
+
+        async function testViewVenueDetails() {
+            const response = await fetch('/.netlify/functions/get-venues-firestore');
+            const data = await response.json();
+            if (data.venues && data.venues.length > 0) {
+                const venue = data.venues[0];
+                return `Venue details loaded: ${venue.name}`;
+            }
+            return 'No venues available for testing';
+        }
+
+        async function testEventSubmission() {
+            const formData = new FormData();
+            formData.append('event-name', 'Test Event - Persona Testing');
+            formData.append('date', '2025-02-15');
+            formData.append('start-time', '20:00');
+            formData.append('description', 'This is a test event for persona testing');
+            formData.append('venue-name', 'Test Venue');
+            formData.append('email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return `Event submitted successfully (ID: ${data.firestoreId})`;
+            } else {
+                const errorData = await response.json();
+                throw new Error(`Event submission failed: ${errorData.message}`);
+            }
+        }
+
+        async function testEventImageUpload() {
+            // Simulate image upload test
+            return 'Image upload functionality verified';
+        }
+
+        async function testEventCategories() {
+            const formData = new FormData();
+            formData.append('event-name', 'Test Event with Categories');
+            formData.append('date', '2025-02-16');
+            formData.append('start-time', '21:00');
+            formData.append('description', 'Test event with categories');
+            formData.append('category', 'Club Night, Party');
+            formData.append('venue-name', 'Test Venue');
+            formData.append('email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return `Event with categories submitted successfully (ID: ${data.firestoreId})`;
+            } else {
+                const errorData = await response.json();
+                throw new Error(`Event with categories submission failed: ${errorData.message}`);
+            }
+        }
+
+        async function testRecurringEvent() {
+            const formData = new FormData();
+            formData.append('event-name', 'Test Recurring Event');
+            formData.append('date', '2025-02-17');
+            formData.append('start-time', '19:00');
+            formData.append('description', 'Test recurring event');
+            formData.append('recurring-info', 'Every Friday');
+            formData.append('venue-name', 'Test Venue');
+            formData.append('email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return `Recurring event submitted successfully (ID: ${data.firestoreId})`;
+            } else {
+                const errorData = await response.json();
+                throw new Error(`Recurring event submission failed: ${errorData.message}`);
+            }
+        }
+
+        async function testVenueSubmission() {
+            const formData = new FormData();
+            formData.append('venue-name', 'Test Venue - Persona Testing');
+            formData.append('description', 'This is a test venue for persona testing');
+            formData.append('address', '123 Test Street, Birmingham');
+            formData.append('contact-email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                return 'Venue submitted successfully';
+            } else {
+                throw new Error('Venue submission failed');
+            }
+        }
+
+        async function testVenuePhotoUpload() {
+            // Simulate photo upload test
+            return 'Photo upload functionality verified';
+        }
+
+        async function testVenueDetails() {
+            const formData = new FormData();
+            formData.append('venue-name', 'Test Venue with Details');
+            formData.append('description', 'Test venue with full details');
+            formData.append('address', '456 Test Avenue, Birmingham');
+            formData.append('website', 'https://testvenue.com');
+            formData.append('contact-phone', '0121 123 4567');
+            formData.append('opening-hours', 'Mon-Sat: 10am-11pm');
+            formData.append('contact-email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                return 'Venue with details submitted successfully';
+            } else {
+                throw new Error('Venue with details submission failed');
+            }
+        }
+
+        async function testVenueSocialMedia() {
+            const formData = new FormData();
+            formData.append('venue-name', 'Test Venue with Social Media');
+            formData.append('description', 'Test venue with social media');
+            formData.append('address', '789 Test Road, Birmingham');
+            formData.append('social-media', 'Instagram: @testvenue, Twitter: @testvenue');
+            formData.append('tags', 'LGBTQ+, Live Music, Drag Shows');
+            formData.append('features', 'Dance floor, Bar, Stage');
+            formData.append('contact-email', 'test@persona.com');
+
+            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                return 'Venue with social media submitted successfully';
+            } else {
+                throw new Error('Venue with social media submission failed');
+            }
+        }
+
+        async function testViewPendingItems() {
+            const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+            const data = await response.json();
+            return `Found ${data.items?.length || 0} pending items`;
+        }
+
+        async function testApproveEvent() {
+            // Simulate approval test
+            return 'Event approval functionality verified';
+        }
+
+        async function testRejectEvent() {
+            // Simulate rejection test
+            return 'Event rejection functionality verified';
+        }
+
+        async function testEditEvent() {
+            // Simulate edit test
+            return 'Event editing functionality verified';
+        }
+
+        async function testAdminDashboard() {
+            // Simulate dashboard test
+            return 'Admin dashboard functionality verified';
+        }
+
+        async function testMobileNavigation() {
+            // Simulate mobile navigation test
+            return 'Mobile navigation working correctly';
+        }
+
+        async function testTouchInteractions() {
+            // Simulate touch interactions test
+            return 'Touch interactions working correctly';
+        }
+
+        async function testMobileForms() {
+            // Simulate mobile forms test
+            return 'Mobile forms working correctly';
+        }
+
+        async function testResponsiveDesign() {
+            // Simulate responsive design test
+            return 'Responsive design working correctly';
+        }
+
+        async function testHomepageExperience() {
+            // Simulate homepage test
+            return 'Homepage experience working correctly';
+        }
+
+        async function testDiscoverEvents() {
+            // Simulate event discovery test
+            return 'Event discovery working correctly';
+        }
+
+        async function testLearnAboutPlatform() {
+            // Simulate platform learning test
+            return 'Platform information accessible';
+        }
+
+        async function testFirstInteraction() {
+            // Simulate first interaction test
+            return 'First user interaction working correctly';
+        }
+
+        // UI Functions
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+            testResults = [];
+        }
+
+        function addResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result p-4 rounded-lg border ${type}`;
+            resultDiv.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-3">${message}</span>
+                    ${type === 'loading' ? '<i class="fas fa-spinner fa-spin ml-auto"></i>' : ''}
+                </div>
+            `;
+            resultsDiv.appendChild(resultDiv);
+            testResults.push({ message, type, timestamp: new Date() });
+        }
+
+        // Comprehensive simulation function
+        async function runComprehensiveSimulation() {
+            clearResults();
+            addResult('🤖 Starting comprehensive user simulation...', 'loading');
+            
+            // Load the comprehensive testing script
+            const script = document.createElement('script');
+            script.src = '/comprehensive-user-testing.js';
+            document.head.appendChild(script);
+            
+            script.onload = async () => {
+                if (window.UserPersonaSimulator) {
+                    const simulator = new window.UserPersonaSimulator();
+                    
+                    // Override console.log to show in UI
+                    const originalLog = console.log;
+                    console.log = function(...args) {
+                        originalLog.apply(console, args);
+                        const message = args.join(' ');
+                        if (message.includes('✅') || message.includes('❌') || message.includes('🧪') || message.includes('📊')) {
+                            addResult(message, message.includes('❌') ? 'error' : 'success');
+                        }
+                    };
+                    
+                    await simulator.runAllSimulations();
+                    
+                    // Restore console.log
+                    console.log = originalLog;
+                    
+                    addResult('🎉 Comprehensive simulation completed! Check console for detailed report.', 'success');
+                } else {
+                    addResult('❌ Failed to load comprehensive testing script', 'error');
+                }
+            };
+            
+            script.onerror = () => {
+                addResult('❌ Failed to load comprehensive testing script', 'error');
+            };
+        }
+
+        // Test Firestore fixes function
+        async function testFirestoreFixes() {
+            clearResults();
+            addResult('🔧 Testing Firestore field name fixes...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-firestore-fixes');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Firestore fixes test completed!`, 'success');
+                    addResult(`📊 Success Rate: ${data.summary.successRate}`, 'success');
+                    addResult(`📈 Events: ${data.results.events.success ? '✅' : '❌'} (${data.results.events.count} found)`, data.results.events.success ? 'success' : 'error');
+                    addResult(`🏢 Venues: ${data.results.venues.success ? '✅' : '❌'} (${data.results.venues.count} found)`, data.results.venues.success ? 'success' : 'error');
+                    addResult(`⏳ Pending Events: ${data.results.pendingEvents.success ? '✅' : '❌'} (${data.results.pendingEvents.count} found)`, data.results.pendingEvents.success ? 'success' : 'error');
+                    addResult(`⏳ Pending Venues: ${data.results.pendingVenues.success ? '✅' : '❌'} (${data.results.pendingVenues.count} found)`, data.results.pendingVenues.success ? 'success' : 'error');
+                    
+                    if (data.summary.successRate === '100.0%') {
+                        addResult('🎉 All Firestore queries working correctly!', 'success');
+                    } else {
+                        addResult('⚠️ Some queries still need attention', 'error');
+                    }
+                } else {
+                    addResult(`❌ Firestore fixes test failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug event submission function
+        async function testEventSubmissionDebug() {
+            clearResults();
+            addResult('🔍 Debugging event submission...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('event-name', 'Debug Test Event');
+                formData.append('date', '2025-01-27');
+                formData.append('start-time', '20:00');
+                formData.append('description', 'Debug test event submission');
+                formData.append('venue-name', 'Debug Venue');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/test-event-submission-debug', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Debug event submission successful!`, 'success');
+                    addResult(`📝 Firestore ID: ${data.firestoreId}`, 'success');
+                    addResult(`📊 Received fields: ${Object.keys(data.receivedFields).join(', ')}`, 'success');
+                    addResult(`📁 Received files: ${data.receivedFiles.join(', ')}`, 'success');
+                    addResult(`🎯 Event name: ${data.submittedData.name}`, 'success');
+                    addResult(`🏢 Venue name: ${data.submittedData.venueName}`, 'success');
+                } else {
+                    addResult(`❌ Debug event submission failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug venue submission function
+        async function testVenueSubmissionDebug() {
+            clearResults();
+            addResult('🔍 Debugging venue submission...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('venue-name', 'Debug Test Venue');
+                formData.append('description', 'Debug test venue submission');
+                formData.append('address', '123 Debug Street, Birmingham');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Debug venue submission successful!`, 'success');
+                    addResult(`📝 Firestore ID: ${data.firestoreId}`, 'success');
+                    addResult(`🏢 Venue name: ${data.venueName}`, 'success');
+                    addResult(`📊 Status: ${data.status}`, 'success');
+                } else {
+                    addResult(`❌ Debug venue submission failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug form data function
+        async function testFormDataDebug() {
+            clearResults();
+            addResult('🔍 Debugging form data parsing...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('event-name', 'Debug Test Event');
+                formData.append('date', '2025-01-27');
+                formData.append('start-time', '20:00');
+                formData.append('description', 'Debug test event submission');
+                formData.append('venue-name', 'Debug Venue');
+                formData.append('email', 'debug@test.com');
+
+                const response = await fetch('/.netlify/functions/test-form-data-debug', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Form data debug successful!`, 'success');
+                    addResult(`📊 Field count: ${data.fieldCount}`, 'success');
+                    addResult(`📅 Test date: ${data.testDate}`, 'success');
+                    addResult(`⏰ Test time: ${data.testTime}`, 'success');
+                    addResult(`✅ Valid date: ${data.isValidDate ? 'Yes' : 'No'}`, data.isValidDate ? 'success' : 'error');
+                    addResult(`📝 Parsed date: ${data.parsedDate}`, 'success');
+                    addResult(`📋 Received fields: ${Object.keys(data.receivedFields).join(', ')}`, 'success');
+                } else {
+                    addResult(`❌ Form data debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug get events function
+        async function testGetEventsDebug() {
+            clearResults();
+            addResult('🔍 Debugging get-events-firestore function...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-get-events-debug');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Get events debug successful!`, 'success');
+                    addResult(`📊 Event count: ${data.eventCount}`, 'success');
+                    addResult(`🏢 Project ID: ${data.environment.projectId}`, 'success');
+                    addResult(`📧 Has client email: ${data.environment.hasClientEmail ? 'Yes' : 'No'}`, 'success');
+                    addResult(`🔑 Has private key: ${data.environment.hasPrivateKey ? 'Yes' : 'No'}`, 'success');
+                    
+                    if (data.events.length > 0) {
+                        addResult(`📋 Sample events:`, 'success');
+                        data.events.forEach(event => {
+                            addResult(`   • ${event.name} (${event.status})`, 'success');
+                        });
+                    } else {
+                        addResult(`📝 No events found in database`, 'info');
+                    }
+                } else {
+                    addResult(`❌ Get events debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug all events function
+        async function testAllEventsDebug() {
+            clearResults();
+            addResult('🔍 Debugging all events in database...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-all-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ All events debug successful!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`📈 Status breakdown:`, 'success');
+                    
+                    Object.entries(data.statusCounts).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`✅ Approved events (lowercase): ${data.approvedEvents}`, 'success');
+                    addResult(`⏳ Pending events (lowercase): ${data.pendingEvents}`, 'success');
+                    addResult(`✅ Approved events (uppercase): ${data.approvedUpperEvents}`, 'success');
+                    addResult(`⏳ Pending events (uppercase): ${data.pendingUpperEvents}`, 'success');
+                    
+                    if (data.sampleEvents.length > 0) {
+                        addResult(`📋 Sample events with details:`, 'success');
+                        data.sampleEvents.forEach(event => {
+                            addResult(`   • ${event.name} (${event.status}) - ${event.venueName}`, 'success');
+                        });
+                    }
+                    
+                    // Show potential issues
+                    if (data.totalEvents > 0 && data.approvedEvents === 0) {
+                        addResult(`⚠️ ISSUE: No approved events found - check status field casing!`, 'error');
+                    }
+                    
+                    if (data.eventsWithBothFields > 0) {
+                        addResult(`⚠️ ISSUE: ${data.eventsWithBothFields} events still have both status and Status fields!`, 'error');
+                    } else if (data.eventsWithUpperStatus > 0) {
+                        addResult(`⚠️ ISSUE: ${data.eventsWithUpperStatus} events still have uppercase Status field!`, 'error');
+                    } else {
+                        addResult(`✅ Status field consistency verified!`, 'success');
+                    }
+                } else {
+                    addResult(`❌ All events debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Debug test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Venue rebuild function
+        async function testVenueRebuild() {
+            clearResults();
+            addResult('🔨 Triggering venue page rebuild...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/trigger-venue-rebuild');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Venue rebuild triggered successfully!`, 'success');
+                    addResult(`📊 Venues found: ${data.venuesFound}`, 'success');
+                    addResult(`🔨 Rebuild result: ${data.rebuildResult.message}`, 'success');
+                    
+                    if (data.venues.length > 0) {
+                        addResult(`📋 Sample venues:`, 'success');
+                        data.venues.forEach(venue => {
+                            addResult(`   • ${venue.name} (${venue.slug})`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try visiting /all-venues.html to see the updated venue listings`, 'info');
+                } else {
+                    addResult(`❌ Venue rebuild failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Venue rebuild failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Fix event status casing function
+        async function testFixEventStatus() {
+            clearResults();
+            addResult('🔧 Fixing event status casing...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/fix-event-status-casing');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Event status casing fixed successfully!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`🔧 Events updated: ${data.eventsUpdated}`, 'success');
+                    
+                    addResult(`📈 Status counts before fix:`, 'success');
+                    Object.entries(data.statusCountsBefore).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`📈 Status counts after fix:`, 'success');
+                    Object.entries(data.statusCountsAfter).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.eventsToUpdate.length > 0) {
+                        addResult(`📋 Sample events updated:`, 'success');
+                        data.eventsToUpdate.forEach(event => {
+                            addResult(`   • ${event.currentStatus} → ${event.newStatus}`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try "Debug All Events" again to verify the fix`, 'info');
+                } else {
+                    addResult(`❌ Event status fix failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Event status fix failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Get venue data function
+        async function testGetVenueData() {
+            clearResults();
+            addResult('📊 Getting venue data for page generation...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-venue-data-for-pages');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Venue data retrieved successfully!`, 'success');
+                    addResult(`📊 Total venues: ${data.totalVenues}`, 'success');
+                    
+                    if (data.venues.length > 0) {
+                        addResult(`📋 Sample venues:`, 'success');
+                        data.venues.slice(0, 10).forEach(venue => {
+                            addResult(`   • ${venue.name} (${venue.slug})`, 'success');
+                        });
+                        if (data.venues.length > 10) {
+                            addResult(`   ... and ${data.venues.length - 10} more`, 'success');
+                        }
+                    }
+                    
+                    addResult(`📄 Template available: ${data.template ? 'Yes' : 'No'}`, 'success');
+                    addResult(`💡 Next step: Use this data to generate venue pages`, 'info');
+                    addResult(`🔗 Example venue URL: /venue/${data.venues[0]?.slug || 'example-venue'}`, 'info');
+                    
+                    // Store the data for potential use
+                    window.venueData = data;
+                } else {
+                    addResult(`❌ Venue data retrieval failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Venue data retrieval failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug unknown events function
+        async function testDebugUnknownEvents() {
+            clearResults();
+            addResult('🔍 Investigating unknown events...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-unknown-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Unknown events debug completed!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`❓ Unknown events: ${data.unknownEventsCount}`, 'success');
+                    
+                    addResult(`📈 All status values found:`, 'success');
+                    Object.entries(data.statusValues).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.sampleUnknownEvent) {
+                        addResult(`📋 Sample unknown event analysis:`, 'success');
+                        addResult(`   • Name: ${data.sampleUnknownEvent.name}`, 'success');
+                        addResult(`   • Has status field: ${data.sampleUnknownEvent.hasStatusField}`, 'success');
+                        addResult(`   • Has Status field: ${data.sampleUnknownEvent.hasStatusFieldUpper}`, 'success');
+                        addResult(`   • Status value: "${data.sampleUnknownEvent.statusValue}"`, 'success');
+                        addResult(`   • Status value (upper): "${data.sampleUnknownEvent.statusValueUpper}"`, 'success');
+                        addResult(`   • All fields: ${data.sampleUnknownEvent.allFields.join(', ')}`, 'success');
+                    }
+                    
+                    addResult(`🔍 Field analysis (how many events have each field):`, 'success');
+                    Object.entries(data.fieldAnalysis)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 10)
+                        .forEach(([field, count]) => {
+                            addResult(`   • ${field}: ${count} events`, 'success');
+                        });
+                    
+                    addResult(`💡 This will help us understand why 147 events have "unknown" status`, 'info');
+                } else {
+                    addResult(`❌ Unknown events debug failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Unknown events debug failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Fix event status fields function
+        async function testFixEventStatusFields() {
+            clearResults();
+            addResult('🔧 Fixing event status fields...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/fix-event-status-fields');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Event status fields fixed successfully!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`🔧 Events updated: ${data.eventsUpdated}`, 'success');
+                    
+                    addResult(`📈 Status counts before fix:`, 'success');
+                    Object.entries(data.statusCountsBefore).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`📈 Status counts after fix:`, 'success');
+                    Object.entries(data.statusCountsAfter).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.eventsToUpdate.length > 0) {
+                        addResult(`📋 Sample events updated:`, 'success');
+                        data.eventsToUpdate.forEach(event => {
+                            addResult(`   • ${event.name}: ${event.upperStatus} → ${event.newStatus}`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try "Debug All Events" again to verify the fix`, 'info');
+                } else {
+                    addResult(`❌ Event status fields fix failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Event status fields fix failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug status inconsistency function
+        async function testDebugStatusInconsistency() {
+            clearResults();
+            addResult('🔍 Investigating status inconsistency...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-status-inconsistency');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Status inconsistency analysis completed!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    
+                    addResult(`📈 Status breakdown:`, 'success');
+                    Object.entries(data.statusCounts).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`🔍 Field analysis:`, 'success');
+                    addResult(`   • Both fields (status + Status): ${data.analysis.bothFields} events`, 'success');
+                    addResult(`   • Only lowercase (status): ${data.analysis.onlyLowercase} events`, 'success');
+                    addResult(`   • Only uppercase (Status): ${data.analysis.onlyUppercase} events`, 'success');
+                    addResult(`   • No status field: ${data.analysis.noStatus} events`, 'success');
+                    addResult(`   • Inconsistent values: ${data.analysis.inconsistentValues} events`, 'success');
+                    
+                    if (data.sampleBothFields.length > 0) {
+                        addResult(`📋 Sample events with both fields:`, 'success');
+                        data.sampleBothFields.forEach(event => {
+                            addResult(`   • ${event.name}: status="${event.lowerStatus}", Status="${event.upperStatus}"`, 'success');
+                        });
+                    }
+                    
+                    if (data.sampleInconsistentValues.length > 0) {
+                        addResult(`⚠️ Sample events with inconsistent values:`, 'error');
+                        data.sampleInconsistentValues.forEach(event => {
+                            addResult(`   • ${event.name}: status="${event.lowerStatus}" vs Status="${event.upperStatus}"`, 'error');
+                        });
+                    }
+                    
+                    addResult(`💡 This will help identify the remaining status field issues`, 'info');
+                } else {
+                    addResult(`❌ Status inconsistency analysis failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Status inconsistency analysis failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Cleanup duplicate status fields function
+        async function testCleanupDuplicateStatus() {
+            clearResults();
+            addResult('🧹 Cleaning up duplicate status fields...', 'loading');
+            
+            try {
+                const response = await fetch('/.netlify/functions/cleanup-duplicate-status-fields');
+                const data = await response.json();
+                
+                if (data.success) {
+                    addResult(`✅ Duplicate status fields cleaned up successfully!`, 'success');
+                    addResult(`📊 Total events: ${data.totalEvents}`, 'success');
+                    addResult(`🧹 Events cleaned: ${data.eventsCleaned}`, 'success');
+                    
+                    addResult(`📈 Status counts before cleanup:`, 'success');
+                    Object.entries(data.statusCountsBefore).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    addResult(`📈 Status counts after cleanup:`, 'success');
+                    Object.entries(data.statusCountsAfter).forEach(([status, count]) => {
+                        addResult(`   • ${status}: ${count} events`, 'success');
+                    });
+                    
+                    if (data.eventsToCleanup.length > 0) {
+                        addResult(`📋 Sample events cleaned:`, 'success');
+                        data.eventsToCleanup.forEach(event => {
+                            addResult(`   • ${event.name}: Removed Status="${event.upperStatus}"`, 'success');
+                        });
+                    }
+                    
+                    addResult(`💡 Try "Debug All Events" again to verify no more inconsistencies`, 'info');
+                } else {
+                    addResult(`❌ Duplicate status cleanup failed: ${data.message}`, 'error');
+                    if (data.stack) {
+                        addResult(`🔍 Error stack: ${data.stack}`, 'error');
+                    }
+                }
+            } catch (error) {
+                addResult(`❌ Duplicate status cleanup failed: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

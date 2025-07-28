@@ -1,4 +1,4 @@
-const Airtable = require('airtable');
+const admin = require('firebase-admin');
 
 exports.handler = async function(event, context) {
     // Enable CORS
@@ -27,33 +27,79 @@ exports.handler = async function(event, context) {
 
     try {
         console.log('Venue List: Starting function');
-        console.log('Venue List: API Key exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
-        console.log('Venue List: Base ID exists:', !!process.env.AIRTABLE_BASE_ID);
         
-        if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID) {
-            throw new Error('Missing required environment variables');
+        // Check environment variables
+        const required = [
+            'FIREBASE_PROJECT_ID',
+            'FIREBASE_CLIENT_EMAIL',
+            'FIREBASE_PRIVATE_KEY'
+        ];
+        
+        const missing = required.filter(varName => !process.env[varName]);
+        if (missing.length > 0) {
+            return {
+                statusCode: 500,
+                headers,
+                body: JSON.stringify({
+                    error: 'Environment configuration error',
+                    message: `Missing environment variables: ${missing.join(', ')}`,
+                    missing: missing
+                })
+            };
         }
-
-        const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
         
-        console.log('Venue List: Fetching venues from Airtable');
-        const records = await base('Venues').select({
-            sort: [{ field: 'Name', direction: 'asc' }]
-        }).all();
-
-        console.log(`Venue List: Found ${records.length} venues`);
-
-        const venues = records.map(record => ({
-            id: record.id,
-            name: record.get('Name') || 'Unnamed Venue',
-            address: record.get('Address') || '',
-            description: record.get('Description') || '',
-            website: record.get('Website') || '',
-            phone: record.get('Phone') || ''
-        }));
-
-        console.log('Venue List: Returning venues successfully');
-
+        // Initialize Firebase
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID,
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+                })
+            });
+        }
+        const db = admin.firestore();
+        
+        // Fetch all venues from Firestore
+        const venuesRef = db.collection('venues');
+        console.log('Venue List: Fetching venues from Firestore');
+        const snapshot = await venuesRef.get();
+        console.log(`Venue List: Found ${snapshot.size} venues`);
+        
+        const venues = [];
+        console.log('Venue List: Processing venues...');
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            console.log(`Venue List: Processing venue ${doc.id}: ${data.name || data['Name'] || 'Unnamed'}`);
+            
+            // Extract image data
+            const imageData = extractImageUrl(data);
+            console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
+            
+            // Only include venues that have Cloudinary image data
+            if (imageData && imageData.url) {
+                venues.push({
+                    id: doc.id,
+                    name: data.name || data['Name'] || 'Unnamed Venue',
+                    address: data.address || data['Address'] || '',
+                    description: data.description || data['Description'] || '',
+                    website: data.website || data['Website'] || '',
+                    phone: data.contactPhone || data['Contact Phone'] || data.phone || '',
+                    status: data.status || 'pending',
+                    slug: data.slug || data['Slug'] || '',
+                    category: data.category || data['Tags'] || [],
+                    image: imageData,
+                    popular: data.popular || false
+                });
+            }
+        });
+        
+        // Sort venues by name
+        venues.sort((a, b) => a.name.localeCompare(b.name));
+        
+        console.log(`Venue List: Returning ${venues.length} venues with Cloudinary images successfully`);
+        console.log('Venues with images:', venues.map(v => ({ name: v.name, hasImage: !!v.image })));
+        
         return {
             statusCode: 200,
             headers,
@@ -61,7 +107,7 @@ exports.handler = async function(event, context) {
         };
 
     } catch (error) {
-        console.error('Venue List: Error fetching venues:', error);
+        console.error('Venue List: Error:', error);
         console.error('Venue List: Error stack:', error.stack);
         return {
             statusCode: 500,
@@ -74,3 +120,70 @@ exports.handler = async function(event, context) {
         };
     }
 };
+
+function extractImageUrl(data) {
+    // Extract Cloudinary image object from various possible formats
+    // Check for object formats with URL properties
+    if (data.promoImage && data.promoImage.url) {
+        return data.promoImage;
+    }
+    if (data.image && data.image.url) {
+        return data.image;
+    }
+    if (data['Promo Image'] && data['Promo Image'].url) {
+        return data['Promo Image'];
+    }
+    if (data['Image'] && data['Image'].url) {
+        return data['Image'];
+    }
+    if (data.thumbnail && data.thumbnail.url) {
+        return data.thumbnail;
+    }
+    if (data['Thumbnail'] && data['Thumbnail'].url) {
+        return data['Thumbnail'];
+    }
+    if (data.venueImage && data.venueImage.url) {
+        return data.venueImage;
+    }
+    if (data['Venue Image'] && data['Venue Image'].url) {
+        return data['Venue Image'];
+    }
+    if (data.promo_image && data.promo_image.url) {
+        return data.promo_image;
+    }
+    if (data.venue_image && data.venue_image.url) {
+        return data.venue_image;
+    }
+    
+    // Check for string formats
+    if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
+        return { url: data.promoImage };
+    }
+    if (typeof data.image === 'string' && data.image.includes('cloudinary')) {
+        return { url: data.image };
+    }
+    if (typeof data.thumbnail === 'string' && data.thumbnail.includes('cloudinary')) {
+        return { url: data.thumbnail };
+    }
+    if (typeof data.venueImage === 'string' && data.venueImage.includes('cloudinary')) {
+        return { url: data.venueImage };
+    }
+    if (typeof data.promo_image === 'string' && data.promo_image.includes('cloudinary')) {
+        return { url: data.promo_image };
+    }
+    if (typeof data.venue_image === 'string' && data.venue_image.includes('cloudinary')) {
+        return { url: data.venue_image };
+    }
+    
+    // Check for any field that contains 'cloudinary' in the URL
+    for (const [key, value] of Object.entries(data)) {
+        if (typeof value === 'string' && value.includes('cloudinary')) {
+            return { url: value };
+        }
+        if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
+            return value;
+        }
+    }
+    
+    return null;
+}

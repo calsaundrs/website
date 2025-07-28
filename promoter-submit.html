@@ -853,7 +853,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             try {
-                const response = await fetch('/.netlify/functions/event-submission', {
+                const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
                     method: 'POST',
                     body: formData
                 });

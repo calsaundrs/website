@@ -43,56 +43,61 @@ document.addEventListener('DOMContentLoaded', () => {
             let venues = [];
             
             try {
-                const eventsResponse = await fetch('/.netlify/functions/get-pending-items');
-                if (eventsResponse.ok) {
-                    events = await eventsResponse.json();
-                    console.log(`Loaded ${events.length} pending events`);
+                console.log('🔍 ADMIN: Loading pending items...');
+                console.log('🌐 ADMIN: Requesting from get-pending-items-firestore');
+                
+                const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+                console.log('🌐 ADMIN: Response status:', response.status);
+                console.log('🌐 ADMIN: Response ok:', response.ok);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 ADMIN: Response data:', data);
+                    
+                    // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
+                    allItems = data.items || [];
+                    console.log(`📊 ADMIN: Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
+                    console.log('📊 ADMIN: All items:', allItems);
+                    
+                    // Debug: Check first few items structure
+                    if (allItems.length > 0) {
+                        console.log('📊 ADMIN: First item structure:', {
+                            id: allItems[0].id,
+                            type: allItems[0].type,
+                            name: allItems[0].name,
+                            status: allItems[0].status,
+                            createdAt: allItems[0].createdAt,
+                            submittedBy: allItems[0].submittedBy
+                        });
+                    }
                 } else {
-                    console.error('Events response not ok:', eventsResponse.status);
-                    events = [];
+                    console.error('❌ ADMIN: Response not ok:', response.status);
+                    allItems = [];
                 }
             } catch (error) {
-                console.error('Error loading pending events:', error);
-                showNotification('Error loading pending events', 'error');
-                events = [];
+                console.error('Error loading pending items:', error);
+                showNotification('Error loading pending items', 'error');
+                allItems = [];
             }
-            
-            try {
-                const venuesResponse = await fetch('/.netlify/functions/get-pending-venues');
-                if (venuesResponse.ok) {
-                    venues = await venuesResponse.json();
-                    console.log(`Loaded ${venues.length} pending venues`);
-                } else {
-                    console.error('Venues response not ok:', venuesResponse.status);
-                    venues = [];
-                }
-            } catch (error) {
-                console.error('Error loading pending venues:', error);
-                showNotification('Error loading pending venues', 'error');
-                venues = [];
-            }
-            
-            // Ensure we have arrays before calling .map()
-            if (!Array.isArray(events)) {
-                console.warn('Events is not an array:', events);
-                events = [];
-            }
-            
-            if (!Array.isArray(venues)) {
-                console.warn('Venues is not an array:', venues);
-                venues = [];
-            }
-            
-            // Combine and format items
-            allItems = [
-                ...events.map(item => ({ ...item, type: 'event' })),
-                ...venues.map(item => ({ ...item, type: 'venue' }))
-            ];
             
             // Sort by creation date (newest first)
             allItems.sort((a, b) => {
-                const dateA = new Date(a.fields.Date || a.fields['Created Time'] || a.createdTime);
-                const dateB = new Date(b.fields.Date || b.fields['Created Time'] || b.createdTime);
+                let dateA = a.createdAt || a.submittedAt || a.date;
+                let dateB = b.createdAt || b.submittedAt || b.date;
+                
+                // Handle Firestore timestamp objects
+                if (dateA && dateA._seconds) {
+                    dateA = new Date(dateA._seconds * 1000);
+                } else {
+                    dateA = new Date(dateA);
+                }
+                
+                if (dateB && dateB._seconds) {
+                    dateB = new Date(dateB._seconds * 1000);
+                } else {
+                    dateB = new Date(dateB);
+                }
+                
                 return dateB - dateA;
             });
             
@@ -153,12 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createItemCard(item) {
         const isEvent = item.type === 'event';
-        const fields = item.fields;
         
-        const title = isEvent ? fields['Event Name'] : fields.Name;
-        const description = fields.Description || 'No description provided';
-        const contactEmail = fields['Contact Email'] || fields['Submitter Email'] || 'No email provided';
-        const date = isEvent ? fields.Date : (fields['Created Time'] || fields.Date);
+        // Use direct properties instead of fields object for Firestore data
+        const title = isEvent ? item.name : item.name;
+        const description = item.description || 'No description provided';
+        const contactEmail = item.submittedBy || 'No email provided';
+        const date = isEvent ? item.date : (item.createdAt || item.submittedAt);
         const formattedDate = date ? new Date(date).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'long',
@@ -204,53 +209,43 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="detail-value">${formattedDate}</p>
                         </div>
                         
-                        ${fields.Category ? `
+                        ${item.category && item.category.length > 0 ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Category</p>
-                                <p class="detail-value">${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category}</p>
+                                <p class="detail-value">${Array.isArray(item.category) ? item.category.join(', ') : item.category}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Venue Name'] ? `
+                        ${item.venue && item.venue.name ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Venue</p>
-                                <p class="detail-value">${Array.isArray(fields['Venue Name']) ? fields['Venue Name'][0] : fields['Venue Name']}</p>
+                                <p class="detail-value">${item.venue.name}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Series ID'] ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Series Info</p>
-                                <p class="detail-value">
-                                    ${fields['Series Instance Number'] ? `Instance ${fields['Series Instance Number']} of ${fields['Series Instance Count']}` : 'Series Event'}
-                                    ${fields['Series Instance Count'] > 2 ? ` (${fields['Series Instance Count'] - 2} more future instances)` : ''}
-                                </p>
-                            </div>
-                        ` : ''}
-                        
-                        ${fields['Recurring Info'] ? `
+                        ${item.recurringInfo ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Recurring Pattern</p>
-                                <p class="detail-value">${fields['Recurring Info']}</p>
+                                <p class="detail-value">${item.recurringInfo}</p>
                             </div>
                         ` : ''}
                         
-                        ${fields['Series ID'] ? `
+                        ${item.series ? `
                             <div class="approval-card-detail-item">
-                                <p class="detail-label">Series ID</p>
-                                <p class="detail-value">${fields['Series ID']}</p>
+                                <p class="detail-label">Series Info</p>
+                                <p class="detail-value">Series Event</p>
                             </div>
                         ` : ''}
                     ` : `
                         <div class="approval-card-detail-item">
                             <p class="detail-label">Address</p>
-                            <p class="detail-value">${fields.Address || 'No address provided'}</p>
+                            <p class="detail-value">${item.address || 'No address provided'}</p>
                         </div>
                         
-                        ${fields.Website ? `
+                        ${item.website ? `
                             <div class="approval-card-detail-item">
                                 <p class="detail-label">Website</p>
-                                <p class="detail-value">${fields.Website}</p>
+                                <p class="detail-value">${item.website}</p>
                             </div>
                         ` : ''}
                     `}
@@ -310,23 +305,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if this is a recurring event
             const item = allItems.find(item => item.id === id && item.type === type);
             
-            if (type === 'event' && item && item.fields['Series ID']) {
+            if (type === 'event' && item && (item.series || item.recurringInfo)) {
                 // Show recurring approval modal
                 openRecurringApprovalModal(id, type);
                 return;
             }
             
             // Regular approval for non-recurring events or venues
-            const endpoint = type === 'event' ? 'update-submission-status' : 'update-item-status';
+            const endpoint = 'update-item-status-firestore-only';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    status: 'Approved',
-                    type: type
+                    itemId: id,
+                    newStatus: 'Approved',
+                    itemType: type
                 })
             });
             
@@ -431,17 +426,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function rejectItem(id, type, reason) {
         try {
-            const endpoint = type === 'event' ? 'update-submission-status' : 'update-item-status';
+            const endpoint = 'update-item-status-firestore-only';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    status: 'Rejected',
-                    reason: reason,
-                    type: type
+                    itemId: id,
+                    newStatus: 'Rejected',
+                    itemType: type,
+                    reason: reason
                 })
             });
             
@@ -488,45 +483,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function createEditFormFields(item) {
-        const fields = item.fields;
         const isEvent = item.type === 'event';
         
         if (isEvent) {
+            // Handle Firestore timestamp for date
+            let dateValue = '';
+            if (item.date) {
+                if (item.date._seconds) {
+                    // Firestore timestamp
+                    dateValue = new Date(item.date._seconds * 1000).toISOString().slice(0, 16);
+                } else {
+                    // Regular date
+                    dateValue = new Date(item.date).toISOString().slice(0, 16);
+                }
+            }
+            
             return `
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label>
-                    <input type="text" name="event-name" value="${fields['Event Name'] || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="event-name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${fields.Description || ''}</textarea>
+                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label>
-                    <input type="datetime-local" name="date" value="${fields.Date ? new Date(fields.Date).toISOString().slice(0, 16) : ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="datetime-local" name="date" value="${dateValue}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Category</label>
-                    <input type="text" name="category" value="${Array.isArray(fields.Category) ? fields.Category.join(', ') : fields.Category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
+                    <input type="text" name="venue-name" value="${item.venue?.name || item.venueName || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
             `;
         } else {
             return `
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                    <input type="text" name="name" value="${fields.Name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${fields.Description || ''}</textarea>
+                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Address</label>
-                    <input type="text" name="address" value="${fields.Address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="text" name="address" value="${item.address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-2 accent-color-secondary">Website</label>
-                    <input type="url" name="website" value="${fields.Website || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                    <input type="url" name="website" value="${item.website || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                 </div>
             `;
         }
@@ -537,16 +547,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
             
-            const endpoint = type === 'event' ? 'update-submission' : 'update-item-status';
+            const endpoint = 'update-item-firestore';
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id,
-                    ...data,
-                    type: type
+                    itemId: id,
+                    itemType: type,
+                    ...data
                 })
             });
             
@@ -554,12 +564,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(`${type === 'event' ? 'Event' : 'Venue'} updated successfully!`, 'success');
                 await loadPendingItems(); // Refresh the list
             } else {
-                throw new Error('Failed to update item');
+                const errorData = await response.json();
+                console.error('Server error:', errorData);
+                throw new Error(`Failed to update item: ${errorData.message || 'Unknown error'}`);
             }
             
         } catch (error) {
             console.error('Error updating item:', error);
-            showNotification('Error updating item', 'error');
+            showNotification(`Error updating item: ${error.message}`, 'error');
         }
     }
     
