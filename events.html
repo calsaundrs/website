@@ -1064,7 +1064,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             customDateBtn.addEventListener('click', (e) => { e.stopPropagation(); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); customDatePopover.classList.toggle('show'); });
             categoryBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); venuePopover.classList.remove('show'); categoryPopover.classList.toggle('show'); });
-            venueBtn.addEventListener('click', (e) => { e.stopPropagation(); customDatePopover.classList.remove('show'); categoryPopover.classList.remove('show'); venuePopover.classList.remove('show'); });
+            venueBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                customDatePopover.classList.remove('show'); 
+                categoryPopover.classList.remove('show'); 
+                venuePopover.classList.toggle('show'); 
+                console.log('Venue button clicked, popover show state:', venuePopover.classList.contains('show'));
+            });
             
             clearFiltersBtn.addEventListener('click', resetFilters);
 
