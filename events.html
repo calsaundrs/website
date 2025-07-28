@@ -838,6 +838,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 // Debug image data
                 console.log('Event image data for', event.name, ':', event.image);
+                console.log('Full event data for', event.name, ':', event);
                 
                 const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
                 console.log('Final imageUrl for', event.name, ':', imageUrl);

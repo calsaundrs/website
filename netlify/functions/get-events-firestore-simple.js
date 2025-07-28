@@ -84,6 +84,7 @@ exports.handler = async function (event, context) {
             if (eventDate >= today) {
                 // Debug image data
                 console.log('Event data for', data.name || 'Untitled Event', ':');
+                console.log('  - Raw data keys:', Object.keys(data));
                 console.log('  - promoImage:', data.promoImage);
                 console.log('  - image:', data.image);
                 console.log('  - promo_image:', data.promo_image);
