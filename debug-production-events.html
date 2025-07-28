@@ -66,6 +66,9 @@
                     <button id="test-simple-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
                         Test Simple Firebase
                     </button>
+                    <button id="test-simple-build-btn" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded">
+                        Test Simple Build
+                    </button>
                 </div>
                 <div id="function-results" class="mt-4 text-sm"></div>
             </div>
@@ -155,6 +158,55 @@
                             <p><strong>Firebase Status:</strong> ${result.firebaseStatus}</p>
                             <p><strong>Event Count:</strong> ${result.eventCount}</p>
                             <p><strong>Environment:</strong> ${result.environment}</p>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="bg-red-900 p-4 rounded">
+                            <p><strong>Error:</strong> ${result.error || 'Unknown error'}</p>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-900 p-4 rounded">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test simple build function
+        async function testSimpleBuild() {
+            const resultsDiv = document.getElementById('function-results');
+            resultsDiv.innerHTML = '<p class="text-yellow-400">Testing simple build function...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/build-events-ssg-simple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'rebuild',
+                        source: 'debug-page'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="bg-gray-700 p-4 rounded">
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Success:</strong> ${result.success}</p>
+                            <p><strong>Generated Files:</strong> ${result.generatedFiles}</p>
+                            <p><strong>Firebase Status:</strong> ${result.firebaseStatus}</p>
+                            <p><strong>Environment:</strong> ${result.environment}</p>
+                            <p><strong>Has Events:</strong> ${result.hasEvents}</p>
                             <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
                         </div>
                     `;
@@ -423,6 +475,7 @@
             const testFunctionBtn = document.getElementById('test-function-btn');
             const testDetailedBtn = document.getElementById('test-detailed-btn');
             const testSimpleBtn = document.getElementById('test-simple-btn');
+            const testSimpleBuildBtn = document.getElementById('test-simple-build-btn');
             if (testFunctionBtn) {
                 testFunctionBtn.addEventListener('click', testFunction);
             }
@@ -431,6 +484,9 @@
             }
             if (testSimpleBtn) {
                 testSimpleBtn.addEventListener('click', testSimple);
+            }
+            if (testSimpleBuildBtn) {
+                testSimpleBuildBtn.addEventListener('click', testSimpleBuild);
             }
         });
     </script>
