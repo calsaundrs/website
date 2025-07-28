@@ -471,11 +471,13 @@ exports.handler = async function(event, context) {
                     FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? 'SET' : 'NOT SET',
                     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? 'SET' : 'NOT SET'
                 },
-                generatedPages: generatedPages.map(page => ({
-                    fileName: page.fileName,
-                    eventName: page.event.name,
-                    eventSlug: page.event.slug
-                }))
+                generatedPages: generatedPages.map(function(page) {
+                    return {
+                        fileName: page.fileName,
+                        eventName: page.event.name,
+                        eventSlug: page.event.slug
+                    };
+                })
             })
         });
 
