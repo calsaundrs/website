@@ -46,7 +46,10 @@ if (!admin.apps.length) {
     firebaseInitialized = true;
 }
 
-const db = admin.firestore();
+let db;
+if (firebaseInitialized) {
+    db = admin.firestore();
+}
 
 // Load the event template
 async function loadEventTemplate() {
@@ -479,7 +482,7 @@ async function generateAllEventPages() {
     try {
         if (!firebaseInitialized) {
             console.log('⚠️  Firebase not initialized. Skipping event page generation.');
-            return;
+            return [];
         }
         
         console.log('🚀 Starting event page generation...');
@@ -493,7 +496,7 @@ async function generateAllEventPages() {
         
         if (events.length === 0) {
             console.log('⚠️  No events found. No pages will be generated.');
-            return;
+            return [];
         }
         
         console.log(`📝 Generating ${events.length} event pages...`);
@@ -623,11 +626,22 @@ async function main() {
             console.log(`✅ Event SSG Build Complete! Generated ${generatedPages.length} event pages.`);
         } else {
             console.log('⚠️  No event pages were generated.');
+            console.log('ℹ️  This is expected when Firebase credentials are not available.');
+            console.log('ℹ️  The site will continue to work with dynamic event pages.');
         }
+        
+        // Always create fallback mechanism
+        await createFallbackMechanism();
         
     } catch (error) {
         console.error('❌ Event SSG Build failed:', error);
-        process.exit(1);
+        // Don't exit with error code when Firebase is not available
+        if (!firebaseInitialized) {
+            console.log('ℹ️  Build completed without Firebase (expected behavior).');
+            process.exit(0);
+        } else {
+            process.exit(1);
+        }
     }
 }
 
