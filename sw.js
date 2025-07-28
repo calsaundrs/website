@@ -1,6 +1,6 @@
-const CACHE_NAME = 'brumoutloud-cache-v3';
-const STATIC_CACHE = 'brumoutloud-static-v3';
-const DYNAMIC_CACHE = 'brumoutloud-dynamic-v3';
+const CACHE_NAME = 'brumoutloud-cache-v4';
+const STATIC_CACHE = 'brumoutloud-static-v4';
+const DYNAMIC_CACHE = 'brumoutloud-dynamic-v4';
 
 // Static assets that rarely change
 const STATIC_ASSETS = [
@@ -78,24 +78,46 @@ async function cacheSSGPages(cache) {
   try {
     // Cache event pages
     const eventPages = await getEventPages();
-    for (const page of eventPages) {
-      try {
-        await cache.add(page);
-        console.log('Service Worker: Cached event page:', page);
-      } catch (err) {
-        console.log('Service Worker: Failed to cache event page:', page, err);
+    if (eventPages.length > 0) {
+      console.log(`Service Worker: Attempting to cache ${eventPages.length} event pages`);
+      for (const page of eventPages) {
+        try {
+          // Use fetch with no-cache to avoid 206 partial responses
+          const response = await fetch(page, { cache: 'no-cache' });
+          if (response.ok && response.status === 200) {
+            await cache.put(page, response);
+            console.log('Service Worker: Cached event page:', page);
+          } else {
+            console.log(`Service Worker: Skipping event page (${response.status}):`, page);
+          }
+        } catch (err) {
+          console.log('Service Worker: Failed to cache event page:', page, err.message);
+        }
       }
+    } else {
+      console.log('Service Worker: No event pages to cache');
     }
     
     // Cache venue pages
     const venuePages = await getVenuePages();
-    for (const page of venuePages) {
-      try {
-        await cache.add(page);
-        console.log('Service Worker: Cached venue page:', page);
-      } catch (err) {
-        console.log('Service Worker: Failed to cache venue page:', page, err);
+    if (venuePages.length > 0) {
+      console.log(`Service Worker: Attempting to cache ${venuePages.length} venue pages`);
+      for (const page of venuePages) {
+        try {
+          // Use fetch with no-cache to avoid 206 partial responses
+          const response = await fetch(page, { cache: 'no-cache' });
+          if (response.ok && response.status === 200) {
+            await cache.put(page, response);
+            console.log('Service Worker: Cached venue page:', page);
+          } else {
+            console.log(`Service Worker: Skipping venue page (${response.status}):`, page);
+          }
+        } catch (err) {
+          console.log('Service Worker: Failed to cache venue page:', page, err.message);
+        }
       }
+    } else {
+      console.log('Service Worker: No venue pages to cache');
     }
   } catch (err) {
     console.log('Service Worker: Error caching SSG pages:', err);
@@ -105,18 +127,21 @@ async function cacheSSGPages(cache) {
 // Function to get event pages from the event directory
 async function getEventPages() {
   try {
-    // This would ideally fetch from an API, but for now we'll use a fallback
-    // In a real implementation, you might want to fetch this from your API
-    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=50');
+    // Check if we're in a build environment or if event pages exist
+    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=10');
     if (response.ok) {
       const data = await response.json();
-      return data.events?.map(event => `/event/${event.slug}.html`) || [];
+      if (data.events && data.events.length > 0) {
+        // Only return event pages if we have events and they likely exist
+        return data.events.map(event => `/event/${event.slug}.html`);
+      }
     }
   } catch (err) {
     console.log('Service Worker: Could not fetch event pages:', err);
   }
   
-  // Fallback: return empty array
+  // Fallback: return empty array if no events or API fails
+  console.log('Service Worker: No event pages to cache (expected if SSG not run)');
   return [];
 }
 
@@ -238,18 +263,32 @@ async function handleFetch(request) {
 
 // Cache First strategy - good for static assets
 async function cacheFirst(request, cacheName) {
-  const cachedResponse = await caches.match(request);
-  if (cachedResponse) {
-    return cachedResponse;
+  try {
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    const networkResponse = await fetch(request);
+    // Only cache successful responses that are not partial (206)
+    if (networkResponse.ok && networkResponse.status !== 206) {
+      try {
+        const cache = await caches.open(cacheName);
+        await cache.put(request, networkResponse.clone());
+      } catch (cacheError) {
+        console.log('Service Worker: Failed to cache response:', cacheError.message);
+      }
+    }
+    return networkResponse;
+  } catch (error) {
+    console.log('Service Worker: Cache first strategy failed:', error.message);
+    // Return cached version if available, otherwise throw
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    throw error;
   }
-  
-  const networkResponse = await fetch(request);
-  // Only cache successful responses that are not partial (206)
-  if (networkResponse.ok && networkResponse.status !== 206) {
-    const cache = await caches.open(cacheName);
-    cache.put(request, networkResponse.clone());
-  }
-  return networkResponse;
 }
 
 // Network First strategy - good for dynamic content
