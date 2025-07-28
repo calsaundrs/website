@@ -200,81 +200,99 @@
                         </div>
 
                         <!-- Upcoming Events -->
-                        <div class="venue-card p-6 mb-6">
+                        <div class="venue-card p-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar-alt mr-3 text-accent-color"></i>Upcoming Events
+                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Events
                             </h2>
-                            <div id="events-container" class="min-h-96">
-                                <!-- Loading state -->
-                                <div class="text-center py-16">
-                                    <div class="loader mx-auto mb-4"></div>
-                                    <p class="text-gray-400">Loading events...</p>
-                                </div>
+                            <div id="events-container" class="text-center py-8">
+                                <div class="loader mx-auto mb-4"></div>
+                                <p class="text-gray-400">Loading events...</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Action Buttons -->
-                        <div class="venue-card p-6">
-                            <div class="space-y-3">
-                                <a href="https://nightingaleclub.co.uk" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
-                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
-                                </a>
-                            </div>
-                        </div>
-
                         <!-- Current Status -->
                         <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                            <h3 class="text-xl font-bold text-white mb-4">
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
                             </h3>
                             <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
                                 <p class="font-bold text-lg">Open</p>
-                                <p class="text-sm">Currently open for business</p>
+                                <p class="text-sm">Open until 3:00 AM</p>
                             </div>
                         </div>
 
                         <!-- Opening Hours -->
                         <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                            <h3 class="text-xl font-bold text-white mb-4">
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
                             </h3>
                             <div class="space-y-2 text-gray-300 text-sm">
-                                <p>Monday: 9:00 PM – 3:00 AM</p>
-                                <p>Tuesday: 9:00 PM – 3:00 AM</p>
-                                <p>Wednesday: 9:00 PM – 3:00 AM</p>
-                                <p>Thursday: 9:00 PM – 3:00 AM</p>
-                                <p>Friday: 9:00 PM – 3:00 AM</p>
-                                <p>Saturday: 9:00 PM – 3:00 AM</p>
-                                <p>Sunday: 9:00 PM – 3:00 AM</p>
+                                <div class="flex justify-between">
+                                    <span>Monday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Tuesday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Wednesday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Thursday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Friday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Saturday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Sunday</span>
+                                    <span>9:00 PM - 3:00 AM</span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Contact Info -->
                         <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-address-card mr-2 text-accent-color"></i>Contact Information
                             </h3>
                             <div class="space-y-3">
-                                <div>
-                                    <p class="text-gray-400 text-sm">Website</p>
-                                    <a href="https://nightingaleclub.co.uk" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
-                                        Visit Website
-                                    </a>
+                                <div class="flex items-center gap-3 text-gray-400">
+                                    <i class="fas fa-globe w-5"></i>
+                                    <a href="https://nightingaleclub.co.uk/" target="_blank" rel="noopener noreferrer" class="text-accent-color hover:underline">nightingaleclub.co.uk</a>
+                                </div>
+                                <div class="flex items-center gap-3 text-gray-400">
+                                    <i class="fas fa-map-marker-alt w-5"></i>
+                                    <span>18 Kent Street, Birmingham, B5 6RD, UK</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-gray-400">
+                                    <i class="fas fa-clock w-5"></i>
+                                    <span>Open Daily 9 PM - 3 AM</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Share Venue -->
+                        <!-- Action Buttons -->
                         <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
-                            </h3>
-                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                <i class="fas fa-share-alt mr-2"></i>Share Venue
-                            </button>
+                            <div class="space-y-3">
+                                <a href="https://nightingaleclub.co.uk/" target="_blank" rel="noopener noreferrer" 
+                                   class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
+                                </a>
+                                <a href="/all-venues" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                                    <i class="fas fa-arrow-left mr-2"></i>Back to Venues
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -283,33 +301,33 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8">
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
         <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                 </div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-                 <div>
-                     <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                     <ul>
-                         <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                         <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                         <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                         <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                     </ul>
-                 </div>
-                  <div>
-                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                     <ul>
-                         <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                         <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
-                         <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                         <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                     </ul>
-                 </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </footer>
