@@ -155,7 +155,7 @@
                         18 Kent St, Birmingham B5 6RD
                     </p>
                     <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Cabaret</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Gay Village</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Buzzing</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Memorable</span>
+                        <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Cabaret Bar</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Gay Village</span>
                     </div>
                 </div>
 
@@ -230,34 +230,13 @@
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
                             </h3>
                             <div class="space-y-2 text-gray-300 text-sm">
-                                <div class="flex justify-between">
-                                    <span>Monday</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Tuesday</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Wednesday</span>
-                                    <span>8:00 PM - 2:00 AM</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Thursday</span>
-                                    <span>8:00 PM - 2:00 AM</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Friday</span>
-                                    <span>8:00 PM - 3:00 AM</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Saturday</span>
-                                    <span>8:00 PM - 3:00 AM</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Sunday</span>
-                                    <span>8:00 PM - 2:00 AM</span>
-                                </div>
+                                <div class="flex justify-between"><span>Monday</span><span>Closed</span></div>
+                                <div class="flex justify-between"><span>Tuesday</span><span>Closed</span></div>
+                                <div class="flex justify-between"><span>Wednesday</span><span>8:00 PM - 2:00 AM</span></div>
+                                <div class="flex justify-between"><span>Thursday</span><span>8:00 PM - 2:00 AM</span></div>
+                                <div class="flex justify-between"><span>Friday</span><span>8:00 PM - 3:00 AM</span></div>
+                                <div class="flex justify-between"><span>Saturday</span><span>8:00 PM - 3:00 AM</span></div>
+                                <div class="flex justify-between"><span>Sunday</span><span>8:00 PM - 2:00 AM</span></div>
                             </div>
                         </div>
 
@@ -332,15 +311,6 @@
         </div>
     </footer>
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <script>
         // Load events for this venue with separate sections for recurring and one-off events
         async function loadVenueEvents() {
@@ -466,10 +436,10 @@
                             patternLabel = 'Recurring Event';
                     }
                     
-                    // Add instance count if multiple instances
-                    if (instanceCount > 1) {
-                        // patternLabel += ` (${instanceCount} upcoming)`;
-                    }
+                    // Remove instance count - users don't need to know how many upcoming
+                    // if (instanceCount > 1) {
+                    //     patternLabel += ` (${instanceCount} upcoming)`;
+                    // }
                     
                     recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
                     
