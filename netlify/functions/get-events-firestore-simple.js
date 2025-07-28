@@ -433,6 +433,23 @@ function extractImageUrl(data) {
         }
     }
     
+    // Try using the id field as a Cloudinary public ID
+    if (data.id && typeof data.id === 'string') {
+        console.log('Trying id as Cloudinary public ID:', data.id);
+        // Try different Cloudinary URL formats
+        const cloudinaryUrls = [
+            `https://res.cloudinary.com/brumoutloud/image/upload/v1/${data.id}`,
+            `https://res.cloudinary.com/brumoutloud/image/upload/${data.id}`,
+            `https://res.cloudinary.com/brumoutloud/image/upload/f_auto,q_auto/${data.id}`,
+            `https://res.cloudinary.com/brumoutloud/image/upload/w_400,h_600,c_fill/${data.id}`
+        ];
+        
+        // For now, let's try the first format and see if it works
+        const testUrl = cloudinaryUrls[0];
+        console.log('Testing Cloudinary URL:', testUrl);
+        return { url: testUrl };
+    }
+    
     console.log('No image found in data');
     return null;
 }
