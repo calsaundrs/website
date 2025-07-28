@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setupAutoRefresh();
             setupNotifications();
             setupRebuildVenues();
+            setupRebuildEvents();
             
             console.log('Admin dashboard initialized successfully');
         } catch (error) {
@@ -601,6 +602,147 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Unexpected error in rebuild button click handler:', error);
+                showNotification(`❌ Unexpected error: ${error.message}`, 'error');
+            }
+            });
+        }
+    }
+    
+    function setupRebuildEvents() {
+        console.log('Setting up rebuild events functionality...');
+        const rebuildBtn = document.getElementById('rebuild-events-btn');
+        const rebuildStatus = document.getElementById('rebuild-events-status');
+        
+        console.log('Rebuild events button found:', !!rebuildBtn);
+        console.log('Rebuild events status found:', !!rebuildStatus);
+        
+        // Load last rebuild time from localStorage
+        const lastRebuildInfo = document.getElementById('last-rebuild-events-info');
+        const lastRebuildTime = document.getElementById('last-rebuild-events-time');
+        if (lastRebuildInfo && lastRebuildTime) {
+            const lastRebuild = localStorage.getItem('lastEventRebuild');
+            if (lastRebuild) {
+                try {
+                    const rebuildData = JSON.parse(lastRebuild);
+                    const rebuildDate = new Date(rebuildData.timestamp);
+                    lastRebuildTime.textContent = `Last: ${rebuildDate.toLocaleString()}`;
+                    lastRebuildInfo.classList.remove('hidden');
+                } catch (error) {
+                    console.warn('Error parsing last event rebuild data:', error);
+                }
+            }
+        }
+        
+        if (rebuildBtn) {
+            console.log('Adding click listener to rebuild events button...');
+            rebuildBtn.addEventListener('click', async () => {
+                try {
+                    console.log('Rebuild events button clicked!');
+                    if (rebuildBtn.disabled) {
+                        console.log('Button is disabled, returning');
+                        return;
+                    }
+                
+                // Show confirmation dialog
+                console.log('Showing confirmation dialog...');
+                const confirmed = confirm('Are you sure you want to rebuild all event pages? This will regenerate all static event files with the latest data from the database.');
+                console.log('Confirmation result:', confirmed);
+                
+                if (!confirmed) {
+                    console.log('User cancelled rebuild');
+                    return;
+                }
+                
+                console.log('User confirmed rebuild, starting process...');
+                
+                try {
+                    // Show loading state
+                    rebuildBtn.disabled = true;
+                    rebuildStatus.classList.remove('hidden');
+                    rebuildBtn.querySelector('.fa-calendar-alt').classList.add('animate-spin');
+                    
+                    showNotification('Starting event rebuild process...', 'info');
+                    
+                    // Call the rebuild function
+                    console.log('Calling rebuild events function...');
+                    const response = await fetch('/.netlify/functions/build-events-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'rebuild',
+                            source: 'admin-panel'
+                        })
+                    });
+                    
+                    console.log('Rebuild events response status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('Rebuild events result:', result);
+                    
+                    if (result.success) {
+                        showNotification(`✅ Successfully rebuilt ${result.generatedFiles || 0} event pages!`, 'success');
+                        
+                        // Update last rebuild time
+                        const lastRebuildInfo = document.getElementById('last-rebuild-events-info');
+                        const lastRebuildTime = document.getElementById('last-rebuild-events-time');
+                        if (lastRebuildInfo && lastRebuildTime) {
+                            const now = new Date();
+                            lastRebuildTime.textContent = `Last: ${now.toLocaleString()}`;
+                            lastRebuildInfo.classList.remove('hidden');
+                        }
+                        
+                        // Store rebuild info in localStorage
+                        localStorage.setItem('lastEventRebuild', JSON.stringify({
+                            timestamp: new Date().toISOString(),
+                            filesGenerated: result.generatedFiles || 0,
+                            source: result.source || 'admin-panel'
+                        }));
+                        
+                        // Add to recent activity
+                        const activity = {
+                            type: 'rebuild',
+                            message: `Rebuilt ${result.generatedFiles || 0} event pages`,
+                            timestamp: new Date().toISOString(),
+                            details: result
+                        };
+                        
+                        // Update recent activity display
+                        if (recentActivity) {
+                            const activityHtml = `
+                                <div class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg">
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-white font-medium">${activity.message}</p>
+                                        <p class="text-gray-400 text-sm">${getTimeAgo(activity.timestamp)}</p>
+                                    </div>
+                                </div>
+                            `;
+                            recentActivity.insertAdjacentHTML('afterbegin', activityHtml);
+                        }
+                        
+                    } else {
+                        throw new Error(result.error || 'Unknown error occurred');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error rebuilding events:', error);
+                    showNotification(`❌ Failed to rebuild events: ${error.message}`, 'error');
+                } finally {
+                    // Reset button state
+                    rebuildBtn.disabled = false;
+                    rebuildStatus.classList.add('hidden');
+                    rebuildBtn.querySelector('.fa-calendar-alt').classList.remove('animate-spin');
+                }
+            } catch (error) {
+                console.error('Unexpected error in rebuild events button click handler:', error);
                 showNotification(`❌ Unexpected error: ${error.message}`, 'error');
             }
             });

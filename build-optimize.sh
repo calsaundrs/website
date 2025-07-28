@@ -105,6 +105,23 @@ else
     print_warning "No venue directory found - SSG may have failed"
 fi
 
+# Generate event pages (SSG)
+print_status "Generating event pages (SSG)..."
+if npm run build:events; then
+    print_success "Event pages generated successfully"
+else
+    print_warning "Event SSG failed - this may be due to missing environment variables"
+    print_warning "Continuing with build process..."
+fi
+
+# Check if event directory was created
+if [ -d "event" ]; then
+    EVENT_COUNT=$(find event -name "*.html" | wc -l)
+    print_success "Generated $EVENT_COUNT event pages"
+else
+    print_warning "No event directory found - SSG may have failed"
+fi
+
 # Optimize images (if ImageOptim CLI is available)
 if command -v imageoptim &> /dev/null; then
     print_status "Optimizing images..."
@@ -184,6 +201,12 @@ BUILD_SUMMARY="build-summary-$(date +%Y%m%d-%H%M%S).txt"
         echo "  Venue directory: $(du -sh venue 2>/dev/null | cut -f1 || echo "N/A")"
     else
         echo "  Venue pages: 0 (directory not found)"
+    fi
+    if [ -d "event" ]; then
+        echo "  Event pages: $(find event -name "*.html" | wc -l)"
+        echo "  Event directory: $(du -sh event 2>/dev/null | cut -f1 || echo "N/A")"
+    else
+        echo "  Event pages: 0 (directory not found)"
     fi
     echo ""
     echo "CSS Files:"

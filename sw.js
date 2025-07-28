@@ -1,6 +1,6 @@
-const CACHE_NAME = 'brumoutloud-cache-v2';
-const STATIC_CACHE = 'brumoutloud-static-v2';
-const DYNAMIC_CACHE = 'brumoutloud-dynamic-v2';
+const CACHE_NAME = 'brumoutloud-cache-v3';
+const STATIC_CACHE = 'brumoutloud-static-v3';
+const DYNAMIC_CACHE = 'brumoutloud-dynamic-v3';
 
 // Static assets that rarely change
 const STATIC_ASSETS = [
@@ -9,6 +9,7 @@ const STATIC_ASSETS = [
   '/css/main.css',
   '/js/main.js',
   '/faviconV2.png',
+  '/favicon.html',
   '/progressflag.svg.png',
   '/manifest.json'
 ];
@@ -23,7 +24,9 @@ const CORE_PAGES = [
   '/get-listed.html',
   '/privacy-policy.html',
   '/terms-and-conditions.html',
-  '/terms-of-submission.html'
+  '/terms-of-submission.html',
+  '/admin-settings.html',
+  '/test-event-ssg.html'
 ];
 
 // External resources to cache
@@ -55,6 +58,11 @@ self.addEventListener('install', (event) => {
             cache.add(url).catch(err => console.log(`Failed to cache ${url}:`, err))
           )
         );
+      }),
+      // Cache SSG pages (event and venue pages)
+      caches.open(CACHE_NAME).then((cache) => {
+        console.log('Service Worker: Caching SSG pages');
+        return cacheSSGPages(cache);
       })
     ]).then(() => {
       console.log('Service Worker: All caches populated');
@@ -64,6 +72,70 @@ self.addEventListener('install', (event) => {
     })
   );
 });
+
+// Function to cache SSG pages (event and venue pages)
+async function cacheSSGPages(cache) {
+  try {
+    // Cache event pages
+    const eventPages = await getEventPages();
+    for (const page of eventPages) {
+      try {
+        await cache.add(page);
+        console.log('Service Worker: Cached event page:', page);
+      } catch (err) {
+        console.log('Service Worker: Failed to cache event page:', page, err);
+      }
+    }
+    
+    // Cache venue pages
+    const venuePages = await getVenuePages();
+    for (const page of venuePages) {
+      try {
+        await cache.add(page);
+        console.log('Service Worker: Cached venue page:', page);
+      } catch (err) {
+        console.log('Service Worker: Failed to cache venue page:', page, err);
+      }
+    }
+  } catch (err) {
+    console.log('Service Worker: Error caching SSG pages:', err);
+  }
+}
+
+// Function to get event pages from the event directory
+async function getEventPages() {
+  try {
+    // This would ideally fetch from an API, but for now we'll use a fallback
+    // In a real implementation, you might want to fetch this from your API
+    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=50');
+    if (response.ok) {
+      const data = await response.json();
+      return data.events?.map(event => `/event/${event.slug}.html`) || [];
+    }
+  } catch (err) {
+    console.log('Service Worker: Could not fetch event pages:', err);
+  }
+  
+  // Fallback: return empty array
+  return [];
+}
+
+// Function to get venue pages from the venue directory
+async function getVenuePages() {
+  try {
+    // This would ideally fetch from an API, but for now we'll use a fallback
+    const response = await fetch('/.netlify/functions/get-venue-list');
+    if (response.ok) {
+      const data = await response.json();
+      return data.map(venue => `/venue/${venue.slug}.html`) || [];
+    }
+  } catch (err) {
+    console.log('Service Worker: Could not fetch venue pages:', err);
+  }
+  
+  // Fallback: return empty array
+  return [];
+}
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
@@ -116,6 +188,21 @@ async function handleFetch(request) {
   const url = new URL(request.url);
   
   try {
+    // Handle favicon requests specifically
+    if (url.pathname === '/favicon.ico') {
+      const faviconResponse = await caches.match('/faviconV2.png');
+      if (faviconResponse) {
+        return new Response(faviconResponse.body, {
+          status: 200,
+          statusText: 'OK',
+          headers: {
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=31536000'
+          }
+        });
+      }
+    }
+    
     // Strategy 1: Cache First for static assets
     if (isStaticAsset(url.pathname)) {
       return await cacheFirst(request, STATIC_CACHE);
@@ -229,6 +316,8 @@ function isAPICall(pathname) {
 function isPageRequest(pathname) {
   return pathname.endsWith('.html') || 
          pathname === '/' ||
+         pathname.startsWith('/event/') ||
+         pathname.startsWith('/venue/') ||
          (!pathname.includes('.') && !pathname.includes('/.netlify/'));
 }
 

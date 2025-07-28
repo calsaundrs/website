@@ -371,6 +371,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
                         </div>
                     </button>
+
+                    <button id="rebuild-events-btn" class="admin-link rounded-xl p-6 relative group text-left w-full">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div id="rebuild-events-status" class="hidden">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-color"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Rebuild Event Pages</h3>
+                        <p class="text-gray-400 text-sm">Regenerate all static event pages with latest data</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="text-accent-color group-hover:translate-x-2 transition-transform">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div id="last-rebuild-events-info" class="text-xs text-gray-500 hidden">
+                                <span id="last-rebuild-events-time">-</span>
+                            </div>
+                        </div>
+                    </button>
                 </div>
             </div>
 

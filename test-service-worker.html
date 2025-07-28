@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Worker Test - BrumOutLoud</title>
+    <meta name="description" content="Test page for Service Worker functionality">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="text-center mb-8">
+            <h1 class="font-anton text-5xl md:text-6xl leading-none tracking-wider heading-gradient">
+                SERVICE <span class="accent-color">WORKER TEST</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Test and manage the Service Worker functionality</p>
+        </div>
+
+        <!-- Service Worker Status -->
+        <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-cogs mr-3 accent-color"></i>Service Worker Status
+            </h2>
+            
+            <div id="sw-status" class="text-center mb-6">
+                <div class="text-gray-400">Checking Service Worker status...</div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Cache Management</h3>
+                    <button id="clear-cache-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-trash mr-2"></i>Clear All Caches
+                    </button>
+                    <button id="update-sw-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-sync-alt mr-2"></i>Update Service Worker
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Test Resources</h3>
+                    <button id="test-favicon-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-image mr-2"></i>Test Favicon
+                    </button>
+                    <button id="test-settings-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-cog mr-2"></i>Test Settings Redirect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cache Information -->
+        <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-database mr-3 accent-color"></i>Cache Information
+            </h2>
+            
+            <div id="cache-info" class="space-y-4">
+                <div class="text-gray-400 text-center">Loading cache information...</div>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="card-bg p-8 md:p-12 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-chart-bar mr-3 accent-color"></i>Test Results
+            </h2>
+            
+            <div id="test-results" class="space-y-4">
+                <div class="text-gray-400 text-center">Click test buttons above to see results</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto text-center">
+            <h3 class="font-anton text-3xl leading-tight text-white mb-4">BE SEEN,<br>BE HEARD.</h3>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Service Worker Test page loaded');
+            
+            const swStatus = document.getElementById('sw-status');
+            const cacheInfo = document.getElementById('cache-info');
+            const testResults = document.getElementById('test-results');
+            const clearCacheBtn = document.getElementById('clear-cache-btn');
+            const updateSwBtn = document.getElementById('update-sw-btn');
+            const testFaviconBtn = document.getElementById('test-favicon-btn');
+            const testSettingsBtn = document.getElementById('test-settings-btn');
+            
+            // Check Service Worker status
+            async function checkSWStatus() {
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const registration = await navigator.serviceWorker.getRegistration();
+                        if (registration) {
+                            swStatus.innerHTML = `
+                                <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                    <h3 class="text-green-400 font-bold mb-2">Service Worker Active</h3>
+                                    <p class="text-white">Status: ${registration.active ? 'Active' : 'Installing'}</p>
+                                    <p class="text-gray-400 text-sm">Scope: ${registration.scope}</p>
+                                </div>
+                            `;
+                        } else {
+                            swStatus.innerHTML = `
+                                <div class="bg-yellow-800/20 border border-yellow-500 p-4 rounded-lg">
+                                    <h3 class="text-yellow-400 font-bold mb-2">Service Worker Not Found</h3>
+                                    <p class="text-white">No service worker is currently registered</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        swStatus.innerHTML = `
+                            <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                                <h3 class="text-red-400 font-bold mb-2">Service Worker Not Supported</h3>
+                                <p class="text-white">This browser doesn't support Service Workers</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error checking SW status:', error);
+                    swStatus.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Error</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Get cache information
+            async function getCacheInfo() {
+                try {
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        const cacheDetails = await Promise.all(
+                            cacheNames.map(async (name) => {
+                                const cache = await caches.open(name);
+                                const keys = await cache.keys();
+                                return {
+                                    name,
+                                    count: keys.length,
+                                    size: 'N/A' // Cache size is not directly available
+                                };
+                            })
+                        );
+                        
+                        cacheInfo.innerHTML = `
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${cacheDetails.map(cache => `
+                                    <div class="bg-gray-800/50 p-4 rounded-lg">
+                                        <h3 class="text-white font-bold mb-2">${cache.name}</h3>
+                                        <p class="text-gray-400">Items: ${cache.count}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        cacheInfo.innerHTML = `
+                            <div class="text-red-400 text-center">
+                                <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                                <p>Cache API not supported</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error getting cache info:', error);
+                    cacheInfo.innerHTML = `
+                        <div class="text-red-400 text-center">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p>Error: ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Clear all caches
+            clearCacheBtn.addEventListener('click', async () => {
+                try {
+                    clearCacheBtn.disabled = true;
+                    clearCacheBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Clearing...';
+                    
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(
+                            cacheNames.map(cacheName => caches.delete(cacheName))
+                        );
+                        
+                        testResults.innerHTML = `
+                            <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                <h3 class="text-green-400 font-bold mb-2">Caches Cleared</h3>
+                                <p class="text-white">Successfully cleared ${cacheNames.length} caches</p>
+                            </div>
+                        `;
+                        
+                        // Refresh cache info
+                        await getCacheInfo();
+                    } else {
+                        throw new Error('Cache API not supported');
+                    }
+                } catch (error) {
+                    console.error('Error clearing caches:', error);
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Error Clearing Caches</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    clearCacheBtn.disabled = false;
+                    clearCacheBtn.innerHTML = '<i class="fas fa-trash mr-2"></i>Clear All Caches';
+                }
+            });
+            
+            // Update service worker
+            updateSwBtn.addEventListener('click', async () => {
+                try {
+                    updateSwBtn.disabled = true;
+                    updateSwBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+                    
+                    if ('serviceWorker' in navigator) {
+                        const registration = await navigator.serviceWorker.getRegistration();
+                        if (registration) {
+                            await registration.update();
+                            
+                            testResults.innerHTML = `
+                                <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                    <h3 class="text-green-400 font-bold mb-2">Service Worker Updated</h3>
+                                    <p class="text-white">Service worker update triggered successfully</p>
+                                </div>
+                            `;
+                            
+                            // Refresh status
+                            setTimeout(checkSWStatus, 1000);
+                        } else {
+                            throw new Error('No service worker registered');
+                        }
+                    } else {
+                        throw new Error('Service Worker not supported');
+                    }
+                } catch (error) {
+                    console.error('Error updating service worker:', error);
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Error Updating Service Worker</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    updateSwBtn.disabled = false;
+                    updateSwBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Update Service Worker';
+                }
+            });
+            
+            // Test favicon
+            testFaviconBtn.addEventListener('click', async () => {
+                try {
+                    testFaviconBtn.disabled = true;
+                    testFaviconBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    
+                    const response = await fetch('/favicon.ico');
+                    
+                    if (response.ok) {
+                        testResults.innerHTML = `
+                            <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                <h3 class="text-green-400 font-bold mb-2">Favicon Test Successful</h3>
+                                <p class="text-white">Status: ${response.status} ${response.statusText}</p>
+                                <p class="text-gray-400 text-sm">Content-Type: ${response.headers.get('content-type')}</p>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Error testing favicon:', error);
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Favicon Test Failed</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    testFaviconBtn.disabled = false;
+                    testFaviconBtn.innerHTML = '<i class="fas fa-image mr-2"></i>Test Favicon';
+                }
+            });
+            
+            // Test settings redirect
+            testSettingsBtn.addEventListener('click', async () => {
+                try {
+                    testSettingsBtn.disabled = true;
+                    testSettingsBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    
+                    const response = await fetch('/settings');
+                    
+                    if (response.ok || response.status === 301 || response.status === 302) {
+                        testResults.innerHTML = `
+                            <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                <h3 class="text-green-400 font-bold mb-2">Settings Redirect Test Successful</h3>
+                                <p class="text-white">Status: ${response.status} ${response.statusText}</p>
+                                <p class="text-gray-400 text-sm">Location: ${response.headers.get('location') || 'No redirect'}</p>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Error testing settings redirect:', error);
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Settings Redirect Test Failed</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    testSettingsBtn.disabled = false;
+                    testSettingsBtn.innerHTML = '<i class="fas fa-cog mr-2"></i>Test Settings Redirect';
+                }
+            });
+            
+            // Initialize
+            checkSWStatus();
+            getCacheInfo();
+        });
+    </script>
+</body>
+</html> 

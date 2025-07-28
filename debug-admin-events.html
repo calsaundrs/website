@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Admin Events - BrumOutLoud</title>
+    <meta name="description" content="Debug page for admin event rebuild functionality">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .log-output {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="text-center mb-8">
+            <h1 class="font-anton text-5xl md:text-6xl leading-none tracking-wider heading-gradient">
+                DEBUG <span class="accent-color">ADMIN EVENTS</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Debug the event rebuild functionality</p>
+        </div>
+
+        <!-- Debug Controls -->
+        <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-bug mr-3 accent-color"></i>Debug Controls
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Event Rebuild Test</h3>
+                    <button id="test-rebuild-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-calendar-alt mr-2"></i>Test Event Rebuild
+                    </button>
+                    <button id="test-function-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-code mr-2"></i>Test Netlify Function
+                    </button>
+                    <button id="test-diagnostic-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-stethoscope mr-2"></i>Test Diagnostic
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Element Check</h3>
+                    <button id="check-elements-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-search mr-2"></i>Check DOM Elements
+                    </button>
+                    <button id="clear-log-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-trash mr-2"></i>Clear Log
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Log -->
+        <div class="card-bg p-8 md:p-12 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-terminal mr-3 accent-color"></i>Debug Log
+            </h2>
+            
+            <div id="debug-log" class="log-output">
+                Debug log will appear here...
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto text-center">
+            <h3 class="font-anton text-3xl leading-tight text-white mb-4">BE SEEN,<br>BE HEARD.</h3>
+        </div>
+    </footer>
+
+    <script>
+        // Debug logging function
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#6b7280';
+            const logEntry = `[${timestamp}] ${message}\n`;
+            logElement.innerHTML += `<span style="color: ${color}">${logEntry}</span>`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[DEBUG] ${message}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Debug page loaded');
+            
+            const testRebuildBtn = document.getElementById('test-rebuild-btn');
+            const testFunctionBtn = document.getElementById('test-function-btn');
+            const testDiagnosticBtn = document.getElementById('test-diagnostic-btn');
+            const checkElementsBtn = document.getElementById('check-elements-btn');
+            const clearLogBtn = document.getElementById('clear-log-btn');
+            
+            // Test rebuild functionality
+            testRebuildBtn.addEventListener('click', async () => {
+                try {
+                    log('Testing event rebuild functionality...', 'info');
+                    testRebuildBtn.disabled = true;
+                    testRebuildBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    
+                    // Simulate the admin dashboard rebuild process
+                    log('Showing confirmation dialog...', 'info');
+                    const confirmed = confirm('Are you sure you want to rebuild all event pages? This will regenerate all static event files with the latest data from the database.');
+                    log(`Confirmation result: ${confirmed}`, 'info');
+                    
+                    if (!confirmed) {
+                        log('User cancelled rebuild', 'warning');
+                        return;
+                    }
+                    
+                    log('User confirmed rebuild, starting process...', 'info');
+                    
+                    // Show loading state simulation
+                    log('Setting loading state...', 'info');
+                    
+                    // Call the rebuild function
+                    log('Calling rebuild events function...', 'info');
+                    const response = await fetch('/.netlify/functions/build-events-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'rebuild',
+                            source: 'debug-page'
+                        })
+                    });
+                    
+                    log(`Response status: ${response.status}`, 'info');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    log(`Response result: ${JSON.stringify(result, null, 2)}`, 'success');
+                    
+                    if (result.success) {
+                        log(`✅ Successfully rebuilt ${result.generatedFiles || 0} event pages!`, 'success');
+                    } else {
+                        throw new Error(result.error || 'Unknown error occurred');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ Error: ${error.message}`, 'error');
+                    console.error('Full error:', error);
+                } finally {
+                    testRebuildBtn.disabled = false;
+                    testRebuildBtn.innerHTML = '<i class="fas fa-calendar-alt mr-2"></i>Test Event Rebuild';
+                }
+            });
+            
+            // Test Netlify function directly
+            testFunctionBtn.addEventListener('click', async () => {
+                try {
+                    log('Testing Netlify function directly...', 'info');
+                    testFunctionBtn.disabled = true;
+                    testFunctionBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    
+                    const response = await fetch('/.netlify/functions/build-events-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'test',
+                            source: 'debug-page'
+                        })
+                    });
+                    
+                    log(`Function response status: ${response.status}`, 'info');
+                    
+                    const result = await response.json();
+                    log(`Function result: ${JSON.stringify(result, null, 2)}`, 'success');
+                    
+                } catch (error) {
+                    log(`❌ Function error: ${error.message}`, 'error');
+                    console.error('Full function error:', error);
+                } finally {
+                    testFunctionBtn.disabled = false;
+                    testFunctionBtn.innerHTML = '<i class="fas fa-code mr-2"></i>Test Netlify Function';
+                }
+            });
+            
+            // Check DOM elements
+            checkElementsBtn.addEventListener('click', () => {
+                log('Checking DOM elements...', 'info');
+                
+                // Check if we're on the admin page
+                const isAdminPage = window.location.pathname.includes('admin-settings');
+                log(`Is admin page: ${isAdminPage}`, 'info');
+                
+                // Check for rebuild button
+                const rebuildBtn = document.getElementById('rebuild-events-btn');
+                log(`Rebuild events button found: ${!!rebuildBtn}`, rebuildBtn ? 'success' : 'error');
+                
+                // Check for status element
+                const rebuildStatus = document.getElementById('rebuild-events-status');
+                log(`Rebuild events status found: ${!!rebuildStatus}`, rebuildStatus ? 'success' : 'error');
+                
+                // Check for last rebuild info
+                const lastRebuildInfo = document.getElementById('last-rebuild-events-info');
+                const lastRebuildTime = document.getElementById('last-rebuild-events-time');
+                log(`Last rebuild info found: ${!!lastRebuildInfo}`, lastRebuildInfo ? 'success' : 'error');
+                log(`Last rebuild time found: ${!!lastRebuildTime}`, lastRebuildTime ? 'success' : 'error');
+                
+                // Check for recent activity
+                const recentActivity = document.getElementById('recent-activity');
+                log(`Recent activity found: ${!!recentActivity}`, recentActivity ? 'success' : 'error');
+                
+                // List all buttons with 'rebuild' in the ID
+                const rebuildButtons = document.querySelectorAll('[id*="rebuild"]');
+                log(`Found ${rebuildButtons.length} rebuild-related buttons:`, 'info');
+                rebuildButtons.forEach(btn => {
+                    log(`  - ${btn.id}: ${btn.textContent.trim()}`, 'info');
+                });
+            });
+            
+            // Test diagnostic function
+            testDiagnosticBtn.addEventListener('click', async () => {
+                try {
+                    log('Testing diagnostic function...', 'info');
+                    testDiagnosticBtn.disabled = true;
+                    testDiagnosticBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    
+                    const response = await fetch('/.netlify/functions/test-events-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'diagnostic',
+                            source: 'debug-page'
+                        })
+                    });
+                    
+                    log(`Diagnostic response status: ${response.status}`, 'info');
+                    
+                    const result = await response.json();
+                    log(`Diagnostic result: ${JSON.stringify(result, null, 2)}`, 'success');
+                    
+                } catch (error) {
+                    log(`❌ Diagnostic error: ${error.message}`, 'error');
+                    console.error('Full diagnostic error:', error);
+                } finally {
+                    testDiagnosticBtn.disabled = false;
+                    testDiagnosticBtn.innerHTML = '<i class="fas fa-stethoscope mr-2"></i>Test Diagnostic';
+                }
+            });
+            
+            // Clear log
+            clearLogBtn.addEventListener('click', () => {
+                document.getElementById('debug-log').innerHTML = 'Debug log cleared...\n';
+                log('Log cleared', 'info');
+            });
+            
+            // Initial log
+            log('Debug controls initialized', 'success');
+        });
+    </script>
+</body>
+</html> 

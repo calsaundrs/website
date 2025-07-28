@@ -3,6 +3,10 @@
 # Homepage redirect (if old homepage was different, unlikely but good to have)
 /       /   301
 
+# Fix common 404 errors
+/settings    /admin-settings.html    301
+/favicon.ico /faviconV2.png          301
+
 # Main section redirects
 /whats-on           /events.html        301
 /venues             /all-venues.html    301

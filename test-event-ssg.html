@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event SSG Test - BrumOutLoud</title>
+    <meta name="description" content="Test page for Event SSG functionality">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="text-center mb-8">
+            <h1 class="font-anton text-5xl md:text-6xl leading-none tracking-wider heading-gradient">
+                EVENT <span class="accent-color">SSG TEST</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Test the Event Static Site Generation functionality</p>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-cogs mr-3 accent-color"></i>SSG Controls
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Event SSG</h3>
+                    <button id="test-event-ssg-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-calendar-alt mr-2"></i>Test Event SSG Build
+                    </button>
+                    <div id="event-ssg-status" class="text-sm text-gray-400"></div>
+                </div>
+                
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-white">Event Data</h3>
+                    <button id="test-event-data-btn" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                        <i class="fas fa-database mr-2"></i>Test Event Data Fetch
+                    </button>
+                    <div id="event-data-status" class="text-sm text-gray-400"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div class="card-bg p-8 md:p-12 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-chart-bar mr-3 accent-color"></i>Test Results
+            </h2>
+            
+            <div id="test-results" class="space-y-4">
+                <div class="text-gray-400 text-center">Click a test button above to see results</div>
+            </div>
+        </div>
+
+        <!-- Event Pages List -->
+        <div class="card-bg p-8 md:p-12 mt-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-file-alt mr-3 accent-color"></i>Generated Event Pages
+            </h2>
+            
+            <div id="event-pages-list" class="space-y-2">
+                <div class="text-gray-400 text-center">Loading event pages...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto text-center">
+            <h3 class="font-anton text-3xl leading-tight text-white mb-4">BE SEEN,<br>BE HEARD.</h3>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Event SSG Test page loaded');
+            
+            const testEventSSGBtn = document.getElementById('test-event-ssg-btn');
+            const testEventDataBtn = document.getElementById('test-event-data-btn');
+            const eventSSGStatus = document.getElementById('event-ssg-status');
+            const eventDataStatus = document.getElementById('event-data-status');
+            const testResults = document.getElementById('test-results');
+            const eventPagesList = document.getElementById('event-pages-list');
+            
+            // Test Event SSG Build
+            testEventSSGBtn.addEventListener('click', async () => {
+                try {
+                    testEventSSGBtn.disabled = true;
+                    eventSSGStatus.textContent = 'Building event pages...';
+                    eventSSGStatus.className = 'text-sm text-yellow-400';
+                    
+                    const response = await fetch('/.netlify/functions/build-events-ssg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            action: 'test',
+                            source: 'test-page'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        eventSSGStatus.textContent = `✅ Success! ${result.generatedFiles || 0} pages built`;
+                        eventSSGStatus.className = 'text-sm text-green-400';
+                        
+                        testResults.innerHTML = `
+                            <div class="bg-green-800/20 border border-green-500 p-4 rounded-lg">
+                                <h3 class="text-green-400 font-bold mb-2">Event SSG Build Successful</h3>
+                                <p class="text-white">Generated ${result.generatedFiles || 0} event pages</p>
+                                <p class="text-gray-400 text-sm mt-2">Check the /event/ directory for generated files</p>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error(result.error || 'Unknown error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Event SSG test failed:', error);
+                    eventSSGStatus.textContent = `❌ Failed: ${error.message}`;
+                    eventSSGStatus.className = 'text-sm text-red-400';
+                    
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Event SSG Build Failed</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    testEventSSGBtn.disabled = false;
+                }
+            });
+            
+            // Test Event Data Fetch
+            testEventDataBtn.addEventListener('click', async () => {
+                try {
+                    testEventDataBtn.disabled = true;
+                    eventDataStatus.textContent = 'Fetching event data...';
+                    eventDataStatus.className = 'text-sm text-yellow-400';
+                    
+                    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=5');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    eventDataStatus.textContent = `✅ Success! ${data.events?.length || 0} events fetched`;
+                    eventDataStatus.className = 'text-sm text-green-400';
+                    
+                    testResults.innerHTML = `
+                        <div class="bg-blue-800/20 border border-blue-500 p-4 rounded-lg">
+                            <h3 class="text-blue-400 font-bold mb-2">Event Data Fetch Successful</h3>
+                            <p class="text-white">Fetched ${data.events?.length || 0} events from database</p>
+                            <div class="mt-4 space-y-2">
+                                ${data.events?.slice(0, 3).map(event => `
+                                    <div class="bg-gray-800/50 p-3 rounded-lg">
+                                        <p class="text-white font-medium">${event.name}</p>
+                                        <p class="text-gray-400 text-sm">${event.slug}</p>
+                                    </div>
+                                `).join('') || ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                } catch (error) {
+                    console.error('Event data test failed:', error);
+                    eventDataStatus.textContent = `❌ Failed: ${error.message}`;
+                    eventDataStatus.className = 'text-sm text-red-400';
+                    
+                    testResults.innerHTML = `
+                        <div class="bg-red-800/20 border border-red-500 p-4 rounded-lg">
+                            <h3 class="text-red-400 font-bold mb-2">Event Data Fetch Failed</h3>
+                            <p class="text-white">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    testEventDataBtn.disabled = false;
+                }
+            });
+            
+            // Load event pages list
+            async function loadEventPages() {
+                try {
+                    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=10');
+                    const data = await response.json();
+                    
+                    if (data.events && data.events.length > 0) {
+                        eventPagesList.innerHTML = `
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${data.events.map(event => `
+                                    <div class="bg-gray-800/50 p-4 rounded-lg">
+                                        <h3 class="text-white font-bold mb-2">${event.name}</h3>
+                                        <p class="text-gray-400 text-sm mb-2">Slug: ${event.slug}</p>
+                                        <a href="/event/${event.slug}" target="_blank" class="text-accent-color hover:text-white text-sm">
+                                            <i class="fas fa-external-link-alt mr-1"></i>View Page
+                                        </a>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        eventPagesList.innerHTML = `
+                            <div class="text-gray-400 text-center">
+                                <i class="fas fa-calendar-times text-4xl mb-4"></i>
+                                <p>No events found</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error loading event pages:', error);
+                    eventPagesList.innerHTML = `
+                        <div class="text-red-400 text-center">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p>Error loading event pages: ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Load event pages on page load
+            loadEventPages();
+        });
+    </script>
+</body>
+</html> 
