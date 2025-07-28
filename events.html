@@ -893,10 +893,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderCategoryOptions() {
-            if (!categoryPopover || !eventStore) return; // Exit if elements don't exist yet
+            if (!categoryPopover || !eventStore) {
+                console.log('Category popover or eventStore not available');
+                return;
+            }
             
             // Get categories from current events
             const categories = [...new Set(eventStore.state.events.flatMap(event => event.category))].filter(Boolean).sort();
+            console.log('Rendering category options:', categories);
             categoryPopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -915,8 +919,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderVenueOptions(venues = []) {
-            if (!venuePopover) return; // Exit if element doesn't exist yet
+            if (!venuePopover) {
+                console.log('Venue popover not available');
+                return;
+            }
             
+            console.log('Rendering venue options:', venues);
             venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -1196,6 +1204,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     updateLoadingState(state.loading);
                     updateErrorState(state.error);
                     updateFilterUI(state.filters);
+                    
+                    // Re-render filter options when events change
+                    if (state.events && state.events.length > 0) {
+                        renderCategoryOptions();
+                    }
                 });
 
                 // Load venues for filtering first
@@ -1209,9 +1222,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 createSlideshowElements(); 
 
-                renderCategoryOptions();
-                renderVenueOptions(venues); 
+                // Set up event listeners first
                 setupEventListeners();
+                
+                // Load initial events first
+                console.log('Loading initial events...');
+                await eventStore.loadEvents(eventStore.state.filters);
+                
+                // Now render filter options after events are loaded
+                renderCategoryOptions();
+                renderVenueOptions(venues);
                 
                 // Check for venue parameter in URL and apply filter
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1228,10 +1248,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         console.log('Available venue buttons:', document.querySelectorAll('[data-filter-value]'));
                     }
                 }
-                
-                // Load initial events after everything is set up
-                console.log('Loading initial events...');
-                await eventStore.loadEvents(eventStore.state.filters);
                 
             } catch (error) {
                 console.error("Error initializing page:", error);
