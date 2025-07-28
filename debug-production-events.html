@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Events Debug - BrumOutLoud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Production Events Debug</h1>
+        
+        <div class="space-y-6">
+            <!-- Test Button -->
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Test Rebuild Events Button</h2>
+                <button id="rebuild-events-btn" class="admin-link rounded-xl p-6 relative group text-left w-full">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-2xl text-accent-color">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div id="rebuild-events-status" class="hidden">
+                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-color"></div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Rebuild Event Pages</h3>
+                    <p class="text-gray-400 text-sm">Regenerate all static event pages with latest data</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div id="last-rebuild-events-info" class="text-xs text-gray-500 hidden">
+                            <span id="last-rebuild-events-time">-</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Debug Info -->
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Debug Information</h2>
+                <div id="debug-info" class="space-y-2 text-sm">
+                    <p>Loading debug info...</p>
+                </div>
+            </div>
+
+            <!-- Test Results -->
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Test Results</h2>
+                <div id="test-results" class="space-y-2">
+                    <p class="text-gray-400">No tests run yet</p>
+                </div>
+            </div>
+
+            <!-- Manual Test -->
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Manual Function Test</h2>
+                <button id="test-function-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Test Netlify Function Directly
+                </button>
+                <div id="function-results" class="mt-4 text-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug info
+        function updateDebugInfo() {
+            const debugInfo = document.getElementById('debug-info');
+            debugInfo.innerHTML = `
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>URL:</strong> ${window.location.href}</p>
+                <p><strong>Protocol:</strong> ${window.location.protocol}</p>
+                <p><strong>Host:</strong> ${window.location.host}</p>
+                <p><strong>Path:</strong> ${window.location.pathname}</p>
+                <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+                <p><strong>Local Storage Available:</strong> ${typeof(Storage) !== "undefined"}</p>
+                <p><strong>Fetch Available:</strong> ${typeof fetch !== 'undefined'}</p>
+            `;
+        }
+
+        // Test function directly
+        async function testFunction() {
+            const resultsDiv = document.getElementById('function-results');
+            resultsDiv.innerHTML = '<p class="text-yellow-400">Testing function...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/build-events-ssg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'rebuild',
+                        source: 'debug-page'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                resultsDiv.innerHTML = `
+                    <div class="bg-gray-700 p-4 rounded">
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Success:</strong> ${result.success}</p>
+                        <p><strong>Message:</strong> ${result.message || 'N/A'}</p>
+                        <p><strong>Generated Files:</strong> ${result.generatedFiles || 0}</p>
+                        <p><strong>Environment:</strong> ${result.environment || 'N/A'}</p>
+                        <p><strong>Firebase Status:</strong> ${result.firebaseStatus || 'N/A'}</p>
+                        <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-900 p-4 rounded">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Setup rebuild events functionality (copied from admin-dashboard.js)
+        function setupRebuildEvents() {
+            console.log('Setting up rebuild events functionality...');
+            const rebuildBtn = document.getElementById('rebuild-events-btn');
+            const rebuildStatus = document.getElementById('rebuild-events-status');
+            
+            console.log('Rebuild events button found:', !!rebuildBtn);
+            console.log('Rebuild events status found:', !!rebuildStatus);
+            
+            // Load last rebuild time from localStorage
+            const lastRebuildInfo = document.getElementById('last-rebuild-events-info');
+            const lastRebuildTime = document.getElementById('last-rebuild-events-time');
+            if (lastRebuildInfo && lastRebuildTime) {
+                const lastRebuild = localStorage.getItem('lastEventRebuild');
+                if (lastRebuild) {
+                    try {
+                        const rebuildData = JSON.parse(lastRebuild);
+                        const rebuildDate = new Date(rebuildData.timestamp);
+                        lastRebuildTime.textContent = `Last: ${rebuildDate.toLocaleString()}`;
+                        lastRebuildInfo.classList.remove('hidden');
+                    } catch (error) {
+                        console.warn('Error parsing last event rebuild data:', error);
+                    }
+                }
+            }
+            
+            if (rebuildBtn) {
+                console.log('Adding click listener to rebuild events button...');
+                rebuildBtn.addEventListener('click', async () => {
+                    try {
+                        console.log('Rebuild events button clicked!');
+                        if (rebuildBtn.disabled) {
+                            console.log('Button is disabled, returning');
+                            return;
+                        }
+                    
+                        // Show confirmation dialog
+                        console.log('Showing confirmation dialog...');
+                        const confirmed = confirm('Are you sure you want to rebuild all event pages? This will regenerate all static event files with the latest data from the database.');
+                        console.log('Confirmation result:', confirmed);
+                        
+                        if (!confirmed) {
+                            console.log('User cancelled rebuild');
+                            return;
+                        }
+                        
+                        console.log('User confirmed rebuild, starting process...');
+                        
+                        try {
+                            // Show loading state
+                            rebuildBtn.disabled = true;
+                            rebuildStatus.classList.remove('hidden');
+                            rebuildBtn.querySelector('.fa-calendar-alt').classList.add('animate-spin');
+                            
+                            // Update test results
+                            const testResults = document.getElementById('test-results');
+                            testResults.innerHTML = '<p class="text-yellow-400">Starting rebuild process...</p>';
+                            
+                            // Call the rebuild function
+                            console.log('Calling rebuild events function...');
+                            const response = await fetch('/.netlify/functions/build-events-ssg', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ 
+                                    action: 'rebuild',
+                                    source: 'debug-page'
+                                })
+                            });
+                            
+                            console.log('Rebuild events response status:', response.status);
+                            
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            }
+                            
+                            const result = await response.json();
+                            console.log('Rebuild events result:', result);
+                            
+                            if (result.success) {
+                                testResults.innerHTML = `
+                                    <div class="bg-green-900 p-4 rounded">
+                                        <p class="text-green-400 font-bold">✅ Success!</p>
+                                        <p>Generated ${result.generatedFiles || 0} event pages</p>
+                                        <p>Environment: ${result.environment}</p>
+                                        <p>Firebase Status: ${result.firebaseStatus}</p>
+                                    </div>
+                                `;
+                                
+                                // Update last rebuild time
+                                if (lastRebuildInfo && lastRebuildTime) {
+                                    const now = new Date();
+                                    lastRebuildTime.textContent = `Last: ${now.toLocaleString()}`;
+                                    lastRebuildInfo.classList.remove('hidden');
+                                }
+                                
+                                // Store rebuild info in localStorage
+                                localStorage.setItem('lastEventRebuild', JSON.stringify({
+                                    timestamp: new Date().toISOString(),
+                                    filesGenerated: result.generatedFiles || 0,
+                                    source: result.source || 'debug-page'
+                                }));
+                                
+                            } else {
+                                throw new Error(result.error || 'Unknown error occurred');
+                            }
+                            
+                        } catch (error) {
+                            console.error('Error rebuilding events:', error);
+                            testResults.innerHTML = `
+                                <div class="bg-red-900 p-4 rounded">
+                                    <p class="text-red-400 font-bold">❌ Error!</p>
+                                    <p>${error.message}</p>
+                                </div>
+                            `;
+                        } finally {
+                            // Reset button state
+                            rebuildBtn.disabled = false;
+                            rebuildStatus.classList.add('hidden');
+                            rebuildBtn.querySelector('.fa-calendar-alt').classList.remove('animate-spin');
+                        }
+                    } catch (error) {
+                        console.error('Unexpected error in rebuild events button click handler:', error);
+                        const testResults = document.getElementById('test-results');
+                        testResults.innerHTML = `
+                            <div class="bg-red-900 p-4 rounded">
+                                <p class="text-red-400 font-bold">❌ Unexpected Error!</p>
+                                <p>${error.message}</p>
+                            </div>
+                        `;
+                    }
+                });
+            } else {
+                console.error('Rebuild events button not found!');
+                const testResults = document.getElementById('test-results');
+                testResults.innerHTML = `
+                    <div class="bg-red-900 p-4 rounded">
+                        <p class="text-red-400 font-bold">❌ Button Not Found!</p>
+                        <p>The rebuild-events-btn element was not found in the DOM</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Debug page loaded');
+            updateDebugInfo();
+            setupRebuildEvents();
+            
+            // Setup manual test button
+            const testFunctionBtn = document.getElementById('test-function-btn');
+            if (testFunctionBtn) {
+                testFunctionBtn.addEventListener('click', testFunction);
+            }
+        });
+    </script>
+</body>
+</html> 
