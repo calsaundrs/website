@@ -104,232 +104,212 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(124, 58, 237, 0.3) 100%);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Venue Info Cards */
-        .info-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.5);
-        }
-
-        /* Tag Styles */
-        .tag {
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #8B5CF6;
-            transition: all 0.3s ease;
-        }
-
-        .tag:hover {
-            background: rgba(139, 92, 246, 0.3);
-            border-color: rgba(139, 92, 246, 0.5);
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="bg-black/20 backdrop-blur-lg border-b border-gray-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="/" class="text-white font-bold text-xl">
-                        <i class="fas fa-home mr-2"></i>BrumOutLoud
-                    </a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">
-                        <i class="fas fa-calendar mr-1"></i>Events
-                    </a>
-                    <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">
-                        <i class="fas fa-map-marker-alt mr-1"></i>Venues
-                    </a>
-                    <a href="/promoter-tool" class="text-gray-300 hover:text-white transition-colors">
-                        <i class="fas fa-plus mr-1"></i>Submit Event
-                    </a>
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a class='text-gray-300 hover:text-white' href='/events'>WHAT'S ON</a>
+                <a class='text-gray-300 hover:text-white' href='/all-venues'>VENUES</a>
+                <a class='text-gray-300 hover:text-white' href='/community'>COMMUNITY</a>
+                <a class='text-gray-300 hover:text-white' href='/contact'>CONTACT</a>
+                <a class='inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200' href='/promoter-tool'>GET LISTED</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" 
+                     alt="The Nightingale Club" 
+                     class="w-full h-full object-cover">
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section relative overflow-hidden">
-        <div class="absolute inset-0">
-            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" 
-                 alt="The Nightingale Club" 
-                 class="w-full h-full object-cover opacity-30">
-        </div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-            <div class="text-center">
-                <h1 class="text-5xl md:text-7xl font-anton mb-6 heading-gradient">
-                    The Nightingale Club
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                    Birmingham's oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene
-                </p>
-                <div class="flex flex-wrap justify-center gap-4 mb-8">
-                    <span class="tag px-4 py-2 rounded-full text-sm font-semibold">
-                        <i class="fas fa-users mr-2"></i>Capacity: 2000
-                    </span>
-                    <span class="tag px-4 py-2 rounded-full text-sm font-semibold">
-                        <i class="fas fa-star mr-2"></i>Premier Venue
-                    </span>
-                    <span class="tag px-4 py-2 rounded-full text-sm font-semibold">
-                        <i class="fas fa-music mr-2"></i>Multiple Floors
-                    </span>
+            
+            <div class="p-8">
+                <!-- Venue Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-4">The Nightingale Club</h1>
+                    <p class="text-xl text-gray-300 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                        18 Kent Street, Birmingham, B5 6RD, UK
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Nightclub</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Multi-floor</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Drag Shows</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Live Music</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Themed Nights</span>
+                    </div>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="https://nightingaleclub.co.uk/" target="_blank" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg">
-                        <i class="fas fa-external-link-alt mr-3"></i>Visit Website
-                    </a>
-                    <a href="#events" class="btn-secondary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg">
-                        <i class="fas fa-calendar mr-3"></i>View Events
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Venue Information -->
-    <section class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Info -->
-                <div class="lg:col-span-2">
-                    <div class="card-bg p-8 mb-8">
-                        <h2 class="text-3xl font-bold text-white mb-6">
-                            <i class="fas fa-info-circle mr-3 text-accent-color"></i>About The Nightingale Club
-                        </h2>
-                        <p class="text-gray-300 text-lg leading-relaxed mb-6">
-                            Birmingham's oldest and largest LGBT venue, The Nightingale Club is the beating heart of the local LGBTQIA+ nightlife and clubbing scene. With a massive capacity for 2000 people, this huge venue offers multiple floors of entertainment, making it the premier destination for queer nightlife in Birmingham.
-                        </p>
-                        <p class="text-gray-300 text-lg leading-relaxed mb-6">
-                            From drag shows and themed nights to live performances and club nights, The Nightingale Club has been serving the LGBTQ+ community for decades, providing a safe and vibrant space for everyone to express themselves and celebrate their identity.
-                        </p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                            <div class="info-card p-6">
-                                <h3 class="text-xl font-bold text-white mb-3">
-                                    <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
-                                </h3>
-                                <p class="text-gray-300">18 Kent Street, Birmingham, B5 6RD, UK</p>
+                <!-- Venue Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Venue
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed mb-4">
+                                Birmingham's oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.
+                            </p>
+                            <p class="text-gray-300 leading-relaxed">
+                                From drag shows and themed nights to live performances and club nights, The Nightingale Club has been serving the LGBTQ+ community for decades, providing a safe and vibrant space for everyone to express themselves and celebrate their identity.
+                            </p>
+                        </div>
+
+                        <!-- Gallery -->
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-2xl text-gray-600"></i>
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-2xl text-gray-600"></i>
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-2xl text-gray-600"></i>
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-2xl text-gray-600"></i>
+                                </div>
                             </div>
-                            <div class="info-card p-6">
-                                <h3 class="text-xl font-bold text-white mb-3">
-                                    <i class="fas fa-globe mr-2 text-accent-color"></i>Website
-                                </h3>
-                                <a href="https://nightingaleclub.co.uk/" target="_blank" class="text-accent-color hover:text-accent-color-secondary transition-colors">
-                                    nightingaleclub.co.uk
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Please note: these images are sourced from the venue's Google Places listing. We do not have control over which photos are displayed.
+                            </p>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar-alt mr-3 text-accent-color"></i>Upcoming Events
+                            </h2>
+                            <div id="events-container" class="min-h-96">
+                                <!-- Loading state -->
+                                <div class="text-center py-16">
+                                    <div class="loader mx-auto mb-4"></div>
+                                    <p class="text-gray-400">Loading events...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Action Buttons -->
+                        <div class="venue-card p-6">
+                            <div class="space-y-3">
+                                <a href="https://nightingaleclub.co.uk" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
                                 </a>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Sidebar -->
-                <div class="lg:col-span-1">
-                    <div class="card-bg p-6 mb-6">
-                        <h3 class="text-xl font-bold text-white mb-4">
-                            <i class="fas fa-clock mr-2 text-accent-color"></i>Quick Info
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-users mr-3 text-accent-color"></i>
-                                <span>Capacity: 2000</span>
-                            </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-building mr-3 text-accent-color"></i>
-                                <span>Multiple Floors</span>
-                            </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-star mr-3 text-accent-color"></i>
-                                <span>Premier Venue</span>
-                            </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-history mr-3 text-accent-color"></i>
-                                <span>Birmingham's Oldest</span>
+                        <!-- Current Status -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                            </h3>
+                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                <p class="font-bold text-lg">Open</p>
+                                <p class="text-sm">Currently open for business</p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card-bg p-6">
-                        <h3 class="text-xl font-bold text-white mb-4">
-                            <i class="fas fa-tags mr-2 text-accent-color"></i>Venue Type
-                        </h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="tag px-3 py-1 rounded-full text-sm">Nightclub</span>
-                            <span class="tag px-3 py-1 rounded-full text-sm">LGBTQ+</span>
-                            <span class="tag px-3 py-1 rounded-full text-sm">Drag Shows</span>
-                            <span class="tag px-3 py-1 rounded-full text-sm">Live Music</span>
-                            <span class="tag px-3 py-1 rounded-full text-sm">Themed Nights</span>
+                        <!-- Opening Hours -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <p>Monday: 9:00 PM – 3:00 AM</p>
+                                <p>Tuesday: 9:00 PM – 3:00 AM</p>
+                                <p>Wednesday: 9:00 PM – 3:00 AM</p>
+                                <p>Thursday: 9:00 PM – 3:00 AM</p>
+                                <p>Friday: 9:00 PM – 3:00 AM</p>
+                                <p>Saturday: 9:00 PM – 3:00 AM</p>
+                                <p>Sunday: 9:00 PM – 3:00 AM</p>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="https://nightingaleclub.co.uk" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Share Venue -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Venue
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Events Section -->
-    <section id="events" class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-white mb-4">
-                    <i class="fas fa-calendar-alt mr-3 text-accent-color"></i>Upcoming Events
-                </h2>
-                <p class="text-gray-300 text-lg">Discover what's happening at The Nightingale Club</p>
-            </div>
-            
-            <!-- Events Container -->
-            <div id="events-container" class="min-h-96">
-                <!-- Loading state -->
-                <div class="text-center py-16">
-                    <div class="loader mx-auto mb-4"></div>
-                    <p class="text-gray-400">Loading events...</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-black/20 border-t border-gray-800 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-white font-bold text-lg mb-4">BrumOutLoud</h3>
-                    <p class="text-gray-400 text-sm">Your guide to LGBTQ+ events and venues in Birmingham</p>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
-                        <li><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
-                        <li><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Submit Event</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/about.html" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="/contact.html" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-4">Legal</h4>
-                    <ul class="space-y-2">
-                        <li><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
-                    </ul>
-                </div>
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                 <div>
+                     <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                     <ul>
+                         <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                         <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                         <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                         <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                     </ul>
+                 </div>
+                  <div>
+                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                     <ul>
+                         <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                         <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                         <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                         <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                     </ul>
+                 </div>
             </div>
         </div>
     </footer>
