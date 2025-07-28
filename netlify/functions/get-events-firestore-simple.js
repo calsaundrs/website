@@ -82,6 +82,20 @@ exports.handler = async function (event, context) {
             today.setHours(0, 0, 0, 0);
             
             if (eventDate >= today) {
+                // Debug image data
+                console.log('Event data for', data.name || 'Untitled Event', ':');
+                console.log('  - promoImage:', data.promoImage);
+                console.log('  - image:', data.image);
+                console.log('  - promo_image:', data.promo_image);
+                console.log('  - All image-related fields:', Object.keys(data).filter(key => 
+                    key.toLowerCase().includes('image') || 
+                    key.toLowerCase().includes('promo') || 
+                    key.toLowerCase().includes('thumbnail')
+                ));
+                
+                const extractedImage = extractImageUrl(data);
+                console.log('  - Extracted image:', extractedImage);
+                
                 events.push({
                     id: doc.id,
                     name: data.name || 'Untitled Event',
@@ -101,7 +115,7 @@ exports.handler = async function (event, context) {
                     recurringGroupId: data.recurringGroupId || null,
                     recurringInstance: data.recurringInstance || null,
                     totalInstances: data.totalInstances || null,
-                    image: extractImageUrl(data),
+                    image: extractedImage,
                     slug: data.slug || '',
                     promotion: data.promotion || null
                 });
