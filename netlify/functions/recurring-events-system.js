@@ -59,21 +59,24 @@ exports.handler = async function (event, context) {
 async function getGroupedRecurringEvents(db, venueSlug, limit) {
     console.log(`Getting grouped recurring events for venue: ${venueSlug || 'all'}`);
     
-    // Build query
-    let query = db.collection('events')
-        .where('status', '==', 'approved')
-        .orderBy('date', 'asc');
-    
-    // If venueSlug is provided, filter by it
-    if (venueSlug) {
-        query = query.where('venueSlug', '==', venueSlug);
-    }
+    // Build simple query to avoid index issues
+    let query = db.collection('events').limit(100);
     
     const snapshot = await query.get();
     let events = [];
     
     snapshot.forEach(doc => {
         const data = doc.data();
+        
+        // Filter for approved events only
+        if (data.status !== 'approved') {
+            return; // Skip non-approved events
+        }
+        
+        // Filter by venueSlug if provided
+        if (venueSlug && data.venueSlug !== venueSlug) {
+            return; // Skip events not for this venue
+        }
         
         // Only include future events or events from today
         const eventDate = new Date(data.date);
@@ -98,16 +101,20 @@ async function getGroupedRecurringEvents(db, venueSlug, limit) {
                 recurringEndDate: data.recurringEndDate || null,
                 image: extractImageUrl(data),
                 slug: data.slug || '',
-                promotion: data.promotion || null
+                promotion: data.promotion || null,
+                isRecurring: data.isRecurring || false,
+                recurringGroupId: data.recurringGroupId || null,
+                recurringInstance: data.recurringInstance || null,
+                totalInstances: data.totalInstances || null
             });
         }
     });
     
+    // Sort events by date
+    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
     // Group recurring events
     const groupedEvents = groupRecurringEvents(events);
-    
-    // Sort by date
-    groupedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
     
     // Apply limit
     const limitedEvents = groupedEvents.slice(0, limit);
@@ -127,9 +134,7 @@ async function getGroupedRecurringEvents(db, venueSlug, limit) {
             events: limitedEvents,
             total: limitedEvents.length,
             originalCount: events.length,
-            groupedCount: groupedEvents.length,
-            venueSlug: venueSlug,
-            limit: limit
+            groupedCount: groupedEvents.length
         })
     };
 }
