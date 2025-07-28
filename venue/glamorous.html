@@ -466,10 +466,10 @@
                             patternLabel = 'Recurring Event';
                     }
                     
-                    // Add instance count if multiple instances
-                    if (instanceCount > 1) {
-                        patternLabel += ` (${instanceCount} upcoming)`;
-                    }
+                    // Remove instance count - users don't need to know how many upcoming
+                    // if (instanceCount > 1) {
+                    //     // patternLabel += ` (${instanceCount} upcoming)`;
+                    // }
                     
                     recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
                     
