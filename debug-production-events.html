@@ -56,9 +56,14 @@
             <!-- Manual Test -->
             <div class="bg-gray-800 p-6 rounded-lg">
                 <h2 class="text-xl font-semibold mb-4">Manual Function Test</h2>
-                <button id="test-function-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                    Test Netlify Function Directly
-                </button>
+                <div class="space-y-2">
+                    <button id="test-function-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        Test Netlify Function Directly
+                    </button>
+                    <button id="test-detailed-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        Run Detailed Diagnostic
+                    </button>
+                </div>
                 <div id="function-results" class="mt-4 text-sm"></div>
             </div>
         </div>
@@ -110,6 +115,95 @@
                         <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
                     </div>
                 `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="bg-red-900 p-4 rounded">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test detailed diagnostic
+        async function testDetailed() {
+            const resultsDiv = document.getElementById('function-results');
+            resultsDiv.innerHTML = '<p class="text-yellow-400">Running detailed diagnostic...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-events-ssg-detailed', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        action: 'diagnostic',
+                        source: 'debug-page'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.diagnostics) {
+                    const diag = result.diagnostics;
+                    resultsDiv.innerHTML = `
+                        <div class="bg-gray-700 p-4 rounded space-y-4">
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Environment</h3>
+                                <p><strong>NODE_ENV:</strong> ${diag.environment.NODE_ENV || 'N/A'}</p>
+                                <p><strong>NETLIFY:</strong> ${diag.environment.NETLIFY || 'N/A'}</p>
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Firebase Credentials</h3>
+                                <p><strong>PROJECT_ID:</strong> ${diag.firebase.FIREBASE_PROJECT_ID}</p>
+                                <p><strong>CLIENT_EMAIL:</strong> ${diag.firebase.FIREBASE_CLIENT_EMAIL}</p>
+                                <p><strong>PRIVATE_KEY:</strong> ${diag.firebase.FIREBASE_PRIVATE_KEY}</p>
+                                ${diag.firebase.initializationError ? `<p class="text-red-400"><strong>Init Error:</strong> ${diag.firebase.initializationError}</p>` : ''}
+                                ${diag.firebase.testQuery ? `
+                                    <p><strong>Test Query:</strong> ${diag.firebase.testQuery.success ? 'Success' : 'Failed'}</p>
+                                    ${diag.firebase.testQuery.success ? `<p><strong>Event Count:</strong> ${diag.firebase.testQuery.eventCount}</p>` : ''}
+                                    ${diag.firebase.testQuery.error ? `<p class="text-red-400"><strong>Query Error:</strong> ${diag.firebase.testQuery.error}</p>` : ''}
+                                ` : ''}
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Files</h3>
+                                <p><strong>Build Script:</strong> ${diag.files.buildScriptExists ? '✅ Found' : '❌ Missing'}</p>
+                                <p><strong>Event Directory:</strong> ${diag.files.eventDirExists ? '✅ Found' : '❌ Missing'}</p>
+                                <p><strong>Template:</strong> ${diag.files.templateExists ? '✅ Found' : '❌ Missing'}</p>
+                                ${diag.files.eventFiles ? `<p><strong>Event Files:</strong> ${diag.files.eventFiles.length} HTML files</p>` : ''}
+                            </div>
+                            
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Build Script Execution</h3>
+                                <p><strong>Executed:</strong> ${diag.buildScript.executed ? '✅ Yes' : '❌ No'}</p>
+                                ${diag.buildScript.executed ? `
+                                    <p><strong>Exit Code:</strong> ${diag.buildScript.exitCode}</p>
+                                    <p><strong>Has Error:</strong> ${diag.buildScript.hasError ? '❌ Yes' : '✅ No'}</p>
+                                    <p><strong>Output Length:</strong> ${diag.buildScript.outputLength} characters</p>
+                                    <p><strong>Error Length:</strong> ${diag.buildScript.errorLength} characters</p>
+                                    ${diag.buildScript.htmlFileCount ? `<p><strong>HTML Files After:</strong> ${diag.buildScript.htmlFileCount}</p>` : ''}
+                                    ${diag.buildScript.stdout ? `<details class="mt-2"><summary class="cursor-pointer">Build Output</summary><pre class="text-xs bg-gray-900 p-2 rounded mt-1 overflow-auto">${diag.buildScript.stdout}</pre></details>` : ''}
+                                    ${diag.buildScript.stderr ? `<details class="mt-2"><summary class="cursor-pointer text-red-400">Build Errors</summary><pre class="text-xs bg-red-900 p-2 rounded mt-1 overflow-auto">${diag.buildScript.stderr}</pre></details>` : ''}
+                                ` : ''}
+                                ${diag.buildScript.error ? `<p class="text-red-400"><strong>Execution Error:</strong> ${diag.buildScript.error}</p>` : ''}
+                            </div>
+                            
+                            <details class="mt-4">
+                                <summary class="cursor-pointer font-bold">Full Diagnostic Data</summary>
+                                <pre class="text-xs bg-gray-900 p-2 rounded mt-2 overflow-auto">${JSON.stringify(diag, null, 2)}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="bg-red-900 p-4 rounded">
+                            <p><strong>Error:</strong> ${result.error || 'Unknown error'}</p>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                }
             } catch (error) {
                 resultsDiv.innerHTML = `
                     <div class="bg-red-900 p-4 rounded">
@@ -271,10 +365,14 @@
             updateDebugInfo();
             setupRebuildEvents();
             
-            // Setup manual test button
+            // Setup manual test buttons
             const testFunctionBtn = document.getElementById('test-function-btn');
+            const testDetailedBtn = document.getElementById('test-detailed-btn');
             if (testFunctionBtn) {
                 testFunctionBtn.addEventListener('click', testFunction);
+            }
+            if (testDetailedBtn) {
+                testDetailedBtn.addEventListener('click', testDetailed);
             }
         });
     </script>
