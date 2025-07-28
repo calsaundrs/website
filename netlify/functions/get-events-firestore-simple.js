@@ -351,67 +351,88 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
 }
 
 function extractImageUrl(data) {
+    console.log('Extracting image from data with keys:', Object.keys(data));
+    
     // Extract Cloudinary image object from various possible formats
     if (data.promoImage && data.promoImage.url) {
+        console.log('Found promoImage:', data.promoImage);
         return data.promoImage;
     }
     if (data.image && data.image.url) {
+        console.log('Found image:', data.image);
         return data.image;
     }
     if (data['Promo Image'] && data['Promo Image'].url) {
+        console.log('Found Promo Image:', data['Promo Image']);
         return data['Promo Image'];
     }
     if (data['Image'] && data['Image'].url) {
+        console.log('Found Image:', data['Image']);
         return data['Image'];
     }
     if (data.thumbnail && data.thumbnail.url) {
+        console.log('Found thumbnail:', data.thumbnail);
         return data.thumbnail;
     }
     if (data['Thumbnail'] && data['Thumbnail'].url) {
+        console.log('Found Thumbnail:', data['Thumbnail']);
         return data['Thumbnail'];
     }
     if (data.venueImage && data.venueImage.url) {
+        console.log('Found venueImage:', data.venueImage);
         return data.venueImage;
     }
     if (data['Venue Image'] && data['Venue Image'].url) {
+        console.log('Found Venue Image:', data['Venue Image']);
         return data['Venue Image'];
     }
     if (data.promo_image && data.promo_image.url) {
+        console.log('Found promo_image:', data.promo_image);
         return data.promo_image;
     }
     if (data.venue_image && data.venue_image.url) {
+        console.log('Found venue_image:', data.venue_image);
         return data.venue_image;
     }
     
     // Check for string formats
     if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
+        console.log('Found promoImage string:', data.promoImage);
         return { url: data.promoImage };
     }
     if (typeof data.image === 'string' && data.image.includes('cloudinary')) {
+        console.log('Found image string:', data.image);
         return { url: data.image };
     }
     if (typeof data.thumbnail === 'string' && data.thumbnail.includes('cloudinary')) {
+        console.log('Found thumbnail string:', data.thumbnail);
         return { url: data.thumbnail };
     }
     if (typeof data.venueImage === 'string' && data.venueImage.includes('cloudinary')) {
+        console.log('Found venueImage string:', data.venueImage);
         return { url: data.venueImage };
     }
     if (typeof data.promo_image === 'string' && data.promo_image.includes('cloudinary')) {
+        console.log('Found promo_image string:', data.promo_image);
         return { url: data.promo_image };
     }
     if (typeof data.venue_image === 'string' && data.venue_image.includes('cloudinary')) {
+        console.log('Found venue_image string:', data.venue_image);
         return { url: data.venue_image };
     }
     
     // Check for any field that contains 'cloudinary' in the URL
     for (const [key, value] of Object.entries(data)) {
         if (typeof value === 'string' && value.includes('cloudinary')) {
+            console.log('Found cloudinary string in field', key, ':', value);
             return { url: value };
         }
         if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
+            console.log('Found cloudinary object in field', key, ':', value);
             return value;
         }
     }
     
+    console.log('No image found in data');
     return null;
 }
