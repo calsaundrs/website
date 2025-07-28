@@ -33,19 +33,6 @@ try {
     console.log('Firebase initialization failed:', error.message);
 }
 
-// Simple template for testing
-const SIMPLE_TEMPLATE = `<!DOCTYPE html>
-<html>
-<head>
-    <title>{{EVENT_NAME}}</title>
-</head>
-<body>
-    <h1>{{EVENT_NAME}}</h1>
-    <p>{{EVENT_DESCRIPTION}}</p>
-    <p>Date: {{EVENT_DATE}}</p>
-</body>
-</html>`;
-
 function processEventForPublic(eventData, eventId) {
     const event = {
         id: eventId,
@@ -69,7 +56,7 @@ async function getAllEvents() {
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(10) // Limit to 10 for testing
+            .limit(10)
             .get();
         
         console.log(`Found ${snapshot.size} approved events`);
@@ -93,20 +80,7 @@ async function getAllEvents() {
 }
 
 function generateEventPage(event) {
-    let template = SIMPLE_TEMPLATE;
-    
-    // Replace template variables
-    const replacements = {
-        '{{EVENT_NAME}}': event.name,
-        '{{EVENT_DESCRIPTION}}': event.description || 'No description available',
-        '{{EVENT_DATE}}': event.date ? new Date(event.date).toLocaleDateString() : 'Date TBC'
-    };
-    
-    // Apply replacements
-    Object.keys(replacements).forEach(key => {
-        template = template.replace(new RegExp(key, 'g'), replacements[key]);
-    });
-    
+    const template = '<!DOCTYPE html><html><head><title>' + event.name + '</title></head><body><h1>' + event.name + '</h1><p>' + (event.description || 'No description') + '</p><p>Date: ' + (event.date ? new Date(event.date).toLocaleDateString() : 'TBC') + '</p></body></html>';
     return template;
 }
 
@@ -119,7 +93,6 @@ async function generateAllEventPages() {
         
         console.log('Starting event page generation...');
         
-        // Fetch all events
         const events = await getAllEvents();
         
         if (events.length === 0) {
@@ -129,26 +102,25 @@ async function generateAllEventPages() {
         
         console.log(`Generating ${events.length} event pages...`);
         
-        // Generate pages for each event
         const generatedPages = [];
         for (const event of events) {
             try {
                 const htmlContent = generateEventPage(event);
-                const fileName = `${event.slug}.html`;
+                const fileName = event.slug + '.html';
                 
                 generatedPages.push({
-                    fileName,
+                    fileName: fileName,
                     content: htmlContent,
                     event: event
                 });
                 
-                console.log(`Generated: ${fileName}`);
+                console.log('Generated: ' + fileName);
             } catch (error) {
-                console.error(`Failed to generate page for event ${event.slug}:`, error.message);
+                console.error('Failed to generate page for event ' + event.slug + ':', error.message);
             }
         }
         
-        console.log(`Successfully generated ${generatedPages.length} event pages`);
+        console.log('Successfully generated ' + generatedPages.length + ' event pages');
         return generatedPages;
         
     } catch (error) {
@@ -158,14 +130,12 @@ async function generateAllEventPages() {
 }
 
 exports.handler = async function(event, context) {
-    // Enable CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
     };
 
-    // Handle preflight requests
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
@@ -185,7 +155,6 @@ exports.handler = async function(event, context) {
     try {
         console.log('Simple Event SSG Build: Starting function');
         
-        // Generate event pages
         const generatedPages = await generateAllEventPages();
         
         console.log('Simple Event SSG Build: Build completed');
@@ -196,7 +165,7 @@ exports.handler = async function(event, context) {
             body: JSON.stringify({
                 success: true,
                 message: 'Simple event pages built successfully',
-                output: `Generated ${generatedPages.length} event pages`,
+                output: 'Generated ' + generatedPages.length + ' event pages',
                 generatedFiles: generatedPages.length,
                 firebaseStatus: firebaseInitialized ? 'initialized' : 'not_initialized',
                 hasEvents: generatedPages.length > 0,
@@ -206,11 +175,13 @@ exports.handler = async function(event, context) {
                     FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? 'SET' : 'NOT SET',
                     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? 'SET' : 'NOT SET'
                 },
-                generatedPages: generatedPages.map(page => ({
-                    fileName: page.fileName,
-                    eventName: page.event.name,
-                    eventSlug: page.event.slug
-                }))
+                generatedPages: generatedPages.map(function(page) {
+                    return {
+                        fileName: page.fileName,
+                        eventName: page.event.name,
+                        eventSlug: page.event.slug
+                    };
+                })
             })
         });
 
