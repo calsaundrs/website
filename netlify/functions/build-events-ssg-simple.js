@@ -36,7 +36,7 @@ async function getAllEvents() {
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(5)
+            .limit(10)
             .get();
         
         const events = [];
@@ -57,6 +57,45 @@ async function getAllEvents() {
         console.error('Error fetching events:', error);
         return [];
     }
+}
+
+function generateEventPage(event) {
+    const html = '<!DOCTYPE html>' +
+        '<html lang="en">' +
+        '<head>' +
+        '<meta charset="UTF-8">' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+        '<title>' + event.name + ' - Brum Out Loud</title>' +
+        '<link href="https://cdn.tailwindcss.com" rel="stylesheet">' +
+        '</head>' +
+        '<body class="bg-gray-100">' +
+        '<div class="container mx-auto px-4 py-8">' +
+        '<h1 class="text-3xl font-bold text-gray-800 mb-4">' + event.name + '</h1>' +
+        '<p class="text-gray-600 mb-4">' + (event.description || 'No description available') + '</p>' +
+        '<a href="/events.html" class="text-blue-600 hover:text-blue-800">← Back to Events</a>' +
+        '</div>' +
+        '</body>' +
+        '</html>';
+    
+    return html;
+}
+
+async function generateAllEventPages() {
+    const events = await getAllEvents();
+    const generatedPages = [];
+    
+    for (const event of events) {
+        const htmlContent = generateEventPage(event);
+        const fileName = event.slug + '.html';
+        
+        generatedPages.push({
+            fileName: fileName,
+            content: htmlContent,
+            event: event
+        });
+    }
+    
+    return generatedPages;
 }
 
 exports.handler = async function(event, context) {
@@ -83,21 +122,28 @@ exports.handler = async function(event, context) {
     }
 
     try {
-        const events = await getAllEvents();
+        const generatedPages = await generateAllEventPages();
         
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify({
                 success: true,
-                message: 'Simple test completed',
-                eventCount: events.length,
+                message: 'Event pages built successfully',
+                generatedFiles: generatedPages.length,
                 firebaseStatus: firebaseInitialized ? 'initialized' : 'not_initialized',
+                hasEvents: generatedPages.length > 0,
                 environment: process.env.NETLIFY ? 'production' : 'development',
-                events: events.map(function(event) {
+                firebaseVars: {
+                    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID ? 'SET' : 'NOT SET',
+                    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? 'SET' : 'NOT SET',
+                    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? 'SET' : 'NOT SET'
+                },
+                generatedPages: generatedPages.map(function(page) {
                     return {
-                        name: event.name,
-                        slug: event.slug
+                        fileName: page.fileName,
+                        eventName: page.event.name,
+                        eventSlug: page.event.slug
                     };
                 })
             })
@@ -108,7 +154,7 @@ exports.handler = async function(event, context) {
             statusCode: 500,
             headers,
             body: JSON.stringify({
-                error: 'Test failed',
+                error: 'Build failed',
                 details: error.message
             })
         };
