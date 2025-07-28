@@ -1195,6 +1195,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 renderVenueOptions(venues); 
                 setupEventListeners();
                 
+                // Check for venue parameter in URL and apply filter
+                const urlParams = new URLSearchParams(window.location.search);
+                const venueParam = urlParams.get('venue');
+                if (venueParam) {
+                    console.log('Venue parameter found:', venueParam);
+                    // Find the venue button and trigger the filter
+                    const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
+                    if (venueButton) {
+                        venueButton.click();
+                    } else {
+                        console.log('Venue button not found for:', venueParam);
+                    }
+                }
+                
                 // Load initial events after everything is set up
                 await eventStore.loadEvents(eventStore.state.filters);
                 

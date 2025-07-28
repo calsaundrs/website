@@ -226,6 +226,27 @@
             aspect-ratio: 2 / 1;
         }
 
+        /* Enhanced venue card hover effects */
+        .venue-card {
+            transition: all 0.3s ease;
+        }
+        
+        .venue-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Ensure calendar button maintains its styling and doesn't inherit card hover effects */
+        .venue-card .btn-secondary {
+            position: relative;
+            z-index: 10;
+        }
+
+        .venue-card .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.6);
+            transform: translateY(-1px);
+        }
+
         /* Mobile responsive adjustments */
         @media (max-width: 767px) {
             #filter-bar-container {
@@ -537,13 +558,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const venueType = venue.type || 'venue';
 
                 return `
-                    <div class="venue-card rounded-xl overflow-hidden relative flex flex-col">
+                    <div class="venue-card rounded-xl overflow-hidden relative flex flex-col group cursor-pointer" onclick="window.location.href='/venue/${venue.slug}'">
                         ${isPopular ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Popular</span></div>' : ''}
                         <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                            <img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover object-center">
+                            <img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300">
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-bold text-white mb-2 text-left">${venue.name}</h3>
+                            <h3 class="text-xl font-bold text-white mb-2 text-left group-hover:text-accent-color transition-colors">${venue.name}</h3>
                             <p class="text-gray-400 text-sm mb-3 text-left">
                                 <i class="fas fa-map-marker-alt mr-1"></i>${venue.address || 'Address TBC'}
                             </p>
@@ -552,10 +573,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 ${tagsHTML}
                             </div>
                             <div class="flex justify-between items-center mt-auto">
-                                <a href="/venue/${venue.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <span class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                     <i class="fas fa-eye mr-1"></i>View Venue
-                                </a>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                </span>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="event.stopPropagation(); window.location.href='/events?venue=${venue.slug}'">
                                     <i class="fas fa-calendar"></i>
                                 </button>
                             </div>
