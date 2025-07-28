@@ -24,7 +24,48 @@ exports.handler = async function (event, context) {
         
         console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}`);
         
-        // Build query
+        // If view=venues, return venues instead of events
+        if (view === 'venues') {
+            console.log('Returning venues list');
+            const venuesRef = db.collection('venues');
+            const venuesSnapshot = await venuesRef.get();
+            const venuesList = [];
+            
+            venuesSnapshot.forEach(doc => {
+                const data = doc.data();
+                // Only include venues with Cloudinary images
+                const imageData = extractImageUrl(data);
+                if (imageData && imageData.url) {
+                    venuesList.push({
+                        id: doc.id,
+                        name: data.name || data['Name'] || 'Unnamed Venue',
+                        slug: data.slug || data['Slug'] || '',
+                        address: data.address || data['Address'] || '',
+                        description: data.description || data['Description'] || '',
+                        image: imageData
+                    });
+                }
+            });
+            
+            // Sort venues by name
+            venuesList.sort((a, b) => a.name.localeCompare(b.name));
+            
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                },
+                body: JSON.stringify({
+                    success: true,
+                    venues: venuesList
+                })
+            };
+        }
+        
+        // Build query for events
         let query = db.collection('events')
             .where('status', '==', 'approved')
             .orderBy('date', 'asc');
