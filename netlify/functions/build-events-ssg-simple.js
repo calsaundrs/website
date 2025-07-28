@@ -36,7 +36,7 @@ async function getAllEvents() {
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(10)
+            .limit(50)
             .get();
         
         const events = [];
@@ -123,17 +123,19 @@ exports.handler = async function(event, context) {
 
     try {
         const generatedPages = await generateAllEventPages();
+        const timestamp = new Date().toISOString();
         
         return {
             statusCode: 200,
             headers,
             body: JSON.stringify({
                 success: true,
-                message: 'Event pages built successfully',
+                message: 'Event pages built successfully - V2',
                 generatedFiles: generatedPages.length,
                 firebaseStatus: firebaseInitialized ? 'initialized' : 'not_initialized',
                 hasEvents: generatedPages.length > 0,
                 environment: process.env.NETLIFY ? 'production' : 'development',
+                timestamp: timestamp,
                 firebaseVars: {
                     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID ? 'SET' : 'NOT SET',
                     FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? 'SET' : 'NOT SET',
