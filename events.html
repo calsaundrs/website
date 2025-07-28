@@ -794,7 +794,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             };
             
             console.log('Applying filters:', filters);
-            eventStore.updateFilters(filters);
+            console.log('EventStore available:', typeof eventStore !== 'undefined');
+            console.log('EventStore instance:', eventStore);
+            
+            if (eventStore && typeof eventStore.updateFilters === 'function') {
+                eventStore.updateFilters(filters);
+            } else {
+                console.error('EventStore or updateFilters method not available');
+            }
         }
 
         // --- Rendering ---
@@ -1079,6 +1086,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 venueBtn.querySelector('span').textContent = button.textContent;
                 venuePopover.classList.remove('show');
                 console.log('Venue filter changed:', activeVenueFilter);
+                console.log('Button data:', button.dataset);
                 applyFilters();
             });
 
@@ -1170,8 +1178,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // --- Initial Data Fetch & Processing ---
         async function initializePage() {
             try {
+                console.log('Initializing events page...');
+                
+                // Check if EventStore is available
+                if (typeof EventStore === 'undefined') {
+                    throw new Error('EventStore class is not available. Check if event-store.js is loaded correctly.');
+                }
+                
                 // Initialize event store
                 eventStore = new EventStore();
+                console.log('EventStore initialized:', eventStore);
                 
                 // Subscribe to store changes
                 eventStore.subscribe((state) => {
@@ -1183,7 +1199,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 });
 
                 // Load venues for filtering first
+                console.log('Loading venues for filtering...');
                 const venues = await eventStore.api.getVenues();
+                console.log('Venues loaded:', venues);
                 
                 setSfwMode(true);
 
@@ -1203,13 +1221,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     // Find the venue button and trigger the filter
                     const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
                     if (venueButton) {
+                        console.log('Found venue button, clicking it...');
                         venueButton.click();
                     } else {
                         console.log('Venue button not found for:', venueParam);
+                        console.log('Available venue buttons:', document.querySelectorAll('[data-filter-value]'));
                     }
                 }
                 
                 // Load initial events after everything is set up
+                console.log('Loading initial events...');
                 await eventStore.loadEvents(eventStore.state.filters);
                 
             } catch (error) {
