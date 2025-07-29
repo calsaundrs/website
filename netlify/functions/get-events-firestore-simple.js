@@ -459,6 +459,7 @@ function extractImageUrl(data) {
         }
     }
     
-    console.log('No image found in data');
-    return null;
+    console.log('No image found in data, using placeholder');
+    // Return placeholder image (same as SSG pages)
+    return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };
 }
