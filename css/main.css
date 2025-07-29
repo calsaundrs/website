@@ -54,7 +54,7 @@ body.flag-loaded img[src*="progressflag"] {
 
 /* Enhanced focus styles for better accessibility */
 :focus-visible {
-    outline: 3px solid #B564F7;
+    outline: 3px solid #E83A99;
     outline-offset: 2px;
     border-radius: 4px;
 }
@@ -64,14 +64,14 @@ button:focus-visible,
 input[type="button"]:focus-visible,
 input[type="submit"]:focus-visible,
 .btn:focus-visible {
-    outline: 3px solid #B564F7;
+    outline: 3px solid #E83A99;
     outline-offset: 2px;
-    box-shadow: 0 0 0 2px rgba(181, 100, 247, 0.2);
+    box-shadow: 0 0 0 2px rgba(232, 58, 153, 0.2);
 }
 
 /* Link focus states */
 a:focus-visible {
-    outline: 2px solid #B564F7;
+    outline: 2px solid #E83A99;
     outline-offset: 2px;
     text-decoration: underline;
 }
@@ -80,8 +80,8 @@ a:focus-visible {
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-    border-color: #B564F7 !important;
-    box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.2);
+    border-color: #E83A99 !important;
+    box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.2);
     outline: none;
 }
 
@@ -203,16 +203,16 @@ select:focus-visible {
 }
 
 /* Core Colour Palette Classes */
-.accent-color { color: #B564F7; }
-.bg-accent-color { background-color: #B564F7; }
-.border-accent-color { border-color: #B564F7; }
-.accent-color-secondary { color: #FADCD9; }
-.bg-accent-color-secondary { background-color: #FADCD9; }
+.accent-color { color: #E83A99; }
+.bg-accent-color { background-color: #E83A99; }
+.border-accent-color { border-color: #E83A99; }
+.accent-color-secondary { color: #8B5CF6; }
+.bg-accent-color-secondary { background-color: #8B5CF6; }
 
 /* Component Styles - Optimized for performance */
 .nav-cta {
-    background-color: #FADCD9; 
-    color: #333333; 
+    background-color: #8B5CF6; 
+    color: #ffffff; 
     font-weight: bold;
     padding: 0.75rem 1.5rem; 
     border-radius: 0.5rem; 
@@ -225,12 +225,13 @@ select:focus-visible {
 }
 .nav-cta:focus-visible {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(181, 100, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(232, 58, 153, 0.3);
 }
 
 .card-bg {
-    background-color: #1e1e1e; 
-    border: 1px solid #2e2e2e;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(75, 85, 99, 0.3);
     border-radius: 1.25rem; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     overflow: hidden;
@@ -238,7 +239,7 @@ select:focus-visible {
 }
 
 .heading-gradient {
-    background: linear-gradient(180deg, #FFFFFF 50%, #d1c7b8 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
     -webkit-background-clip: text; 
     -webkit-text-fill-color: transparent;
     background-clip: text; 
@@ -246,15 +247,15 @@ select:focus-visible {
 }
 
 .filter-button {
-    background-color: rgba(42, 42, 42, 0.8);
-    color: #EAEAEA;
-    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
     padding: 0.5rem 1rem;
-    border-radius: 9999px;
+    border-radius: 0.5rem;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 600;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
     display: flex;
@@ -263,32 +264,39 @@ select:focus-visible {
     will-change: background-color, color, border-color;
 }
 .filter-button:hover {
-    background-color: rgba(60, 60, 60, 0.8);
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 .filter-button.active {
-    background-color: transparent;
-    color: #B564F7;
-    border-color: #B564F7;
+    background: linear-gradient(135deg, rgba(232, 58, 153, 0.3) 0%, rgba(232, 58, 153, 0.1) 100%);
+    border-color: rgba(232, 58, 153, 0.5);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(232, 58, 153, 0.3);
 }
 .filter-button:focus-visible {
-    border-color: #B564F7;
-    box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.3);
+    border-color: #E83A99;
+    box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.3);
 }
 
 /* Event/Venue Card Styles - Performance optimized */
 .item-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+    transition: all 0.3s ease;
     will-change: transform, box-shadow;
 }
 .item-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
+    border-color: rgba(232, 58, 153, 0.3);
     box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 }
 .item-card:focus-within {
     transform: translateY(-3px);
     box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-    outline: 2px solid #B564F7;
+    outline: 2px solid #E83A99;
 }
 
 .item-card-image-container {
@@ -311,19 +319,23 @@ select:focus-visible {
 
 /* Feature cards optimization */
 .feature-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.2);
+    transition: all 0.3s ease;
     will-change: transform, box-shadow;
 }
 
 .feature-card:hover {
-    transform: scale(1.03) translateY(-5px);
+    transform: translateY(-2px);
+    border-color: rgba(232, 58, 153, 0.3);
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
 .feature-card:focus-within {
-    transform: scale(1.02) translateY(-3px);
+    transform: translateY(-3px);
     box-shadow: 0 15px 45px rgba(0,0,0,0.5);
-    outline: 2px solid #B564F7;
+    outline: 2px solid #E83A99;
 }
 
 /* Loading states and accessibility improvements */

@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Initialize other features...
         initializeMobileMenu();
-        initializeWelcomeModal();
         initializeFormHandling();
     };
     
@@ -109,70 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menu.setAttribute('aria-hidden', 'true');
     };
     
-    // Welcome Modal Logic (only on homepage)
-    const initializeWelcomeModal = () => {
-        const modal = document.getElementById('welcomeModal');
-        const closeModalButton = document.getElementById('closeModalButton');
-        const exploreButton = document.getElementById('exploreButton');
-        const body = document.body;
 
-        if (modal) {
-            // Function to open the modal
-            const openModal = () => {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    body.classList.add('modal-open');
-                }, 10); // Short delay to allow display property to apply before transition
-            };
-
-            // Function to close the modal
-            const closeModal = () => {
-                modal.classList.add('opacity-0');
-                body.classList.remove('modal-open');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300); // Wait for transition to finish
-                
-                // Set a flag in localStorage so the modal doesn't show again
-                try {
-                    localStorage.setItem('brumOutloudVisited', 'true');
-                } catch (e) {
-                    console.error("LocalStorage is not available.", e);
-                }
-            };
-
-            // Check if the user has visited before
-            const hasVisited = localStorage.getItem('brumOutloudVisited');
-
-            if (!hasVisited) {
-                // If it's the first visit, show the modal after a short delay
-                setTimeout(openModal, 1000);
-            }
-
-            // Event listeners to close the modal
-            if (closeModalButton) {
-                closeModalButton.addEventListener('click', closeModal);
-            }
-            if (exploreButton) {
-                exploreButton.addEventListener('click', closeModal);
-            }
-
-            // Close modal when clicking outside of it
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-            
-            // Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    closeModal();
-                }
-            });
-        }
-    };
     
     // Form handling and validation
     const initializeFormHandling = () => {
