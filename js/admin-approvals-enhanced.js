@@ -283,10 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Approve buttons
         document.querySelectorAll('.approve-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.closest('button').dataset.id;
-                const type = e.target.closest('button').dataset.type;
-                approveItem(id, type);
+            btn.addEventListener('click', async (e) => {
+                const button = e.target.closest('button');
+                const id = button.dataset.id;
+                const type = button.dataset.type;
+                
+                // Show loading state
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Approving...';
+                button.disabled = true;
+                
+                try {
+                    await approveItem(id, type);
+                } finally {
+                    // Restore button state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
             });
         });
         
@@ -312,24 +325,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Regular approval for non-recurring events or venues
+            console.log(`✅ APPROVE: Starting approval for ${type} ${id}`);
+            
             const endpoint = 'update-item-status-firestore-only';
+            const requestBody = {
+                itemId: id,
+                newStatus: 'approved', // Use lowercase to match standardized fields
+                itemType: type
+            };
+            
+            console.log(`✅ APPROVE: Request body:`, requestBody);
+            
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    itemId: id,
-                    newStatus: 'Approved',
-                    itemType: type
-                })
+                body: JSON.stringify(requestBody)
             });
             
+            console.log(`✅ APPROVE: Response status: ${response.status}`);
+            console.log(`✅ APPROVE: Response ok: ${response.ok}`);
+            
             if (response.ok) {
+                const result = await response.json();
+                console.log(`✅ APPROVE: Response data:`, result);
+                
                 showNotification(`${type === 'event' ? 'Event' : 'Venue'} approved successfully!`, 'success');
-                await loadPendingItems(); // Refresh the list
+                
+                // Remove the item from the local arrays
+                allItems = allItems.filter(item => item.id !== id);
+                filteredItems = filteredItems.filter(item => item.id !== id);
+                
+                // Update display
+                updateDashboardStats();
+                displayItems();
+                
+                console.log(`✅ APPROVE: ${type} ${id} approved successfully`);
             } else {
-                throw new Error('Failed to approve item');
+                const errorData = await response.json().catch(() => ({}));
+                console.error(`❌ APPROVE: Response not ok:`, errorData);
+                throw new Error(`Failed to approve item: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             console.error('Error approving item:', error);
@@ -407,8 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            await rejectItem(id, type, reason);
-            modal.classList.add('hidden');
+            // Show loading state on confirm button
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Rejecting...';
+            confirmBtn.disabled = true;
+            
+            try {
+                await rejectItem(id, type, reason);
+                modal.classList.add('hidden');
+            } finally {
+                // Restore button state
+                confirmBtn.innerHTML = originalText;
+                confirmBtn.disabled = false;
+            }
         };
         
         const handleCancel = () => {
@@ -426,30 +473,54 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function rejectItem(id, type, reason) {
         try {
+            console.log(`🔄 REJECT: Starting rejection for ${type} ${id}`);
+            console.log(`🔄 REJECT: Reason: ${reason}`);
+            
             const endpoint = 'update-item-status-firestore-only';
+            const requestBody = {
+                itemId: id,
+                newStatus: 'rejected', // Use lowercase to match standardized fields
+                itemType: type,
+                reason: reason
+            };
+            
+            console.log(`🔄 REJECT: Request body:`, requestBody);
+            
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    itemId: id,
-                    newStatus: 'Rejected',
-                    itemType: type,
-                    reason: reason
-                })
+                body: JSON.stringify(requestBody)
             });
             
+            console.log(`🔄 REJECT: Response status: ${response.status}`);
+            console.log(`🔄 REJECT: Response ok: ${response.ok}`);
+            
             if (response.ok) {
+                const result = await response.json();
+                console.log(`🔄 REJECT: Response data:`, result);
+                
                 showNotification(`${type === 'event' ? 'Event' : 'Venue'} rejected successfully!`, 'success');
-                await loadPendingItems(); // Refresh the list
+                
+                // Remove the item from the local arrays
+                allItems = allItems.filter(item => item.id !== id);
+                filteredItems = filteredItems.filter(item => item.id !== id);
+                
+                // Update display
+                updateDashboardStats();
+                displayItems();
+                
+                console.log(`✅ REJECT: ${type} ${id} rejected successfully`);
             } else {
-                throw new Error('Failed to reject item');
+                const errorData = await response.json().catch(() => ({}));
+                console.error(`❌ REJECT: Response not ok:`, errorData);
+                throw new Error(`Failed to reject item: ${response.status} ${response.statusText}`);
             }
             
         } catch (error) {
-            console.error('Error rejecting item:', error);
-            showNotification('Error rejecting item', 'error');
+            console.error('❌ REJECT: Error rejecting item:', error);
+            showNotification(`Error rejecting ${type}: ${error.message}`, 'error');
         }
     }
     
