@@ -31,10 +31,15 @@ exports.handler = async function (event, context) {
         console.log(`Admin Events: Found ${snapshot.size} events in database`);
         
         let events = [];
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Start of today
         
         snapshot.forEach(doc => {
             const data = doc.data();
-            console.log(`Admin Events: Processing event ${doc.id}: ${data.name || data['Event Name'] || 'Untitled'}, status: ${data.status || 'no status'}`);
+            const eventDate = new Date(data.date);
+            const isFutureEvent = eventDate >= now;
+            
+            console.log(`Admin Events: Processing event ${doc.id}: ${data.name || data['Event Name'] || 'Untitled'}, status: ${data.status || 'no status'}, date: ${data.date}, isFuture: ${isFutureEvent}`);
             
             // Extract image information
             const imageData = extractImageUrl(data);
@@ -53,6 +58,7 @@ exports.handler = async function (event, context) {
                 slug: data.slug || '',
                 link: data.link || data['Link'] || '',
                 image: imageData,
+                isFutureEvent: isFutureEvent,
                 
                 // Recurring event fields
                 isRecurring: data.isRecurring || false,
@@ -85,17 +91,41 @@ exports.handler = async function (event, context) {
             console.log(`Admin Events: Filtering events by status: ${status}`);
             const beforeFilter = events.length;
             events = events.filter(e => e.status === status);
-            console.log(`Admin Events: After filtering: ${events.length} events (was ${beforeFilter})`);
+            console.log(`Admin Events: After status filtering: ${events.length} events (was ${beforeFilter})`);
         }
         
-        // Group recurring events
-        const groupedEvents = groupRecurringEvents(events);
+        // Filter to only future events for display
+        const allEvents = [...events]; // Keep all events for stats
+        const futureEvents = events.filter(e => e.isFutureEvent);
+        console.log(`Admin Events: Future events: ${futureEvents.length} out of ${allEvents.length} total`);
         
-        // Separate events by status
-        const pendingEvents = events.filter(e => e.status === 'pending');
-        const approvedEvents = events.filter(e => e.status === 'approved');
-        const rejectedEvents = events.filter(e => e.status === 'rejected');
-        const recurringEvents = groupedEvents.filter(e => e.isRecurring || e.isRecurringGroup);
+        // Group recurring events (using future events for display)
+        const groupedEvents = groupRecurringEvents(futureEvents);
+        
+        // Separate events by status (using future events for display)
+        const pendingEvents = futureEvents.filter(e => e.status === 'pending');
+        const approvedEvents = futureEvents.filter(e => e.status === 'approved');
+        const rejectedEvents = futureEvents.filter(e => e.status === 'rejected');
+        
+        // Fix recurring filter - check for any recurring indicators
+        const recurringEvents = futureEvents.filter(e => 
+            e.isRecurring || 
+            e.recurringPattern || 
+            e.recurringInfo || 
+            e.recurringGroupId || 
+            e.seriesId ||
+            e.isRecurringGroup
+        );
+        
+        console.log(`Admin Events: Recurring events found: ${recurringEvents.length}`);
+        console.log(`Admin Events: Recurring events details:`, recurringEvents.map(e => ({
+            name: e.name,
+            isRecurring: e.isRecurring,
+            recurringPattern: e.recurringPattern,
+            recurringInfo: e.recurringInfo,
+            recurringGroupId: e.recurringGroupId,
+            seriesId: e.seriesId
+        })));
         
         return {
             statusCode: 200,
@@ -107,18 +137,20 @@ exports.handler = async function (event, context) {
             },
             body: JSON.stringify({
                 success: true,
-                events: events,
+                events: futureEvents, // Only return future events for display
+                allEvents: allEvents, // Include all events for reference
                 groupedEvents: groupedEvents,
                 pendingEvents: pendingEvents,
                 approvedEvents: approvedEvents,
                 rejectedEvents: rejectedEvents,
                 recurringEvents: recurringEvents,
                 stats: {
-                    total: events.length,
+                    total: futureEvents.length, // Only count future events
                     pending: pendingEvents.length,
                     approved: approvedEvents.length,
                     rejected: rejectedEvents.length,
-                    recurring: recurringEvents.length
+                    recurring: recurringEvents.length,
+                    totalAllTime: allEvents.length // Include total for reference
                 }
             })
         };

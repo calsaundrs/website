@@ -109,6 +109,12 @@ function filterEvents(filter) {
                 renderRecurringEvents(recurringEvents);
             }
             break;
+        case 'past':
+            if (eventsContainer) {
+                eventsContainer.classList.remove('hidden');
+                renderEvents(window.pastEvents || []);
+            }
+            break;
     }
 }
 
@@ -137,7 +143,7 @@ async function loadAllEvents() {
     try {
         console.log('Admin Edit Events: Loading all events...');
         
-        // Load only approved events for manage events view
+        // Load all events (both future and past) for manage events view
         const response = await fetch('/.netlify/functions/get-admin-events?status=approved');
         console.log('Admin Edit Events: Response status:', response.status);
         
@@ -146,24 +152,35 @@ async function loadAllEvents() {
             console.log('Admin Edit Events: Data received:', data);
             
             if (data.success) {
+                // Future events for main display
                 allEvents = data.events || [];
                 approvedEvents = data.events || []; // All events are approved in this view
                 recurringEvents = data.recurringEvents || [];
                 
-                console.log(`Admin Edit Events: Loaded ${allEvents.length} approved events`);
-                console.log(`  - Approved: ${approvedEvents.length}`);
+                // Past events for separate view
+                const pastEvents = data.allEvents ? data.allEvents.filter(e => !e.isFutureEvent) : [];
+                
+                console.log(`Admin Edit Events: Loaded ${allEvents.length} future events`);
+                console.log(`Admin Edit Events: Loaded ${pastEvents.length} past events`);
+                console.log(`  - Future: ${allEvents.length}`);
+                console.log(`  - Past: ${pastEvents.length}`);
                 console.log(`  - Recurring: ${recurringEvents.length}`);
+                
+                // Store past events globally for the past filter
+                window.pastEvents = pastEvents;
             } else {
                 console.error('Admin Edit Events: Failed to load events:', data.error);
                 allEvents = [];
                 approvedEvents = [];
                 recurringEvents = [];
+                window.pastEvents = [];
             }
         } else {
             console.error('Admin Edit Events: Failed to load events:', response.status, response.statusText);
             allEvents = [];
             approvedEvents = [];
             recurringEvents = [];
+            window.pastEvents = [];
         }
         
         // Update stats
