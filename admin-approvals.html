@@ -103,21 +103,52 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
         
-        /* Approval Card Styles */
+        /* Enhanced Approval Card Styles */
         .approval-card {
-            background: rgba(17, 24, 39, 0.7);
+            background: rgba(17, 24, 39, 0.8);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .approval-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #E83A99, #8B5CF6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
         
         .approval-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            border-color: rgba(232, 58, 153, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .approval-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .approval-card.selected {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .approval-card.compact {
+            padding: 1rem;
+        }
+        
+        .approval-card.compact .approval-card-details {
+            display: none;
         }
         
         .approval-card-header {
@@ -174,16 +205,33 @@
         }
         
         .button-edit, .button-approve, .button-reject {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
             font-weight: 600;
             font-size: 0.875rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-edit::before, .button-approve::before, .button-reject::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .button-edit:hover::before, .button-approve:hover::before, .button-reject:hover::before {
+            left: 100%;
         }
         
         .button-edit {
@@ -260,6 +308,112 @@
             background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
             color: white;
             border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Enhanced Filter Button Styles */
+        .filter-btn {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border-color: rgba(232, 58, 153, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(232, 58, 153, 0.3);
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background: rgba(75, 85, 99, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        /* Loading Animation */
+        .loading-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Selection Checkbox */
+        .selection-checkbox {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(75, 85, 99, 0.5);
+            border-radius: 4px;
+            background: rgba(17, 24, 39, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .selection-checkbox:checked {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border-color: #10B981;
+        }
+        
+        .selection-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(17, 24, 39, 0.5);
+            border-radius: 16px;
+            border: 2px dashed rgba(75, 85, 99, 0.3);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            color: rgba(75, 85, 99, 0.5);
+            margin-bottom: 1rem;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(75, 85, 99, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E83A99, #8B5CF6);
+            transition: width 0.3s ease;
         }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
@@ -445,67 +599,130 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Approve or reject pending events and venues with our streamlined review process.</p>
             </div>
             
-            <!-- Dashboard Stats Bar -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="stats-card rounded-xl p-4 relative">
-                    <div class="flex items-center justify-between">
+            <!-- Enhanced Dashboard Stats Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="stats-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-gray-400 text-sm">Total Pending</p>
-                            <p class="text-2xl font-bold text-white" id="total-pending-count">-</p>
+                            <p class="text-gray-400 text-sm font-medium">Total Pending</p>
+                            <p class="text-3xl font-bold text-white" id="total-pending-count">-</p>
+                            <p class="text-xs text-gray-500 mt-1">Items awaiting review</p>
                         </div>
-                        <div class="text-3xl text-accent-color">
+                        <div class="text-4xl text-purple-400">
                             <i class="fas fa-clock"></i>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stats-card rounded-xl p-4 relative">
-                    <div class="flex items-center justify-between">
+                <div class="stats-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-gray-400 text-sm">Events</p>
-                            <p class="text-2xl font-bold text-white" id="pending-events-count">-</p>
+                            <p class="text-gray-400 text-sm font-medium">Events</p>
+                            <p class="text-3xl font-bold text-white" id="pending-events-count">-</p>
+                            <p class="text-xs text-gray-500 mt-1">Event submissions</p>
                         </div>
-                        <div class="text-3xl text-accent-color">
+                        <div class="text-4xl text-blue-400">
                             <i class="fas fa-calendar"></i>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stats-card rounded-xl p-4 relative">
-                    <div class="flex items-center justify-between">
+                <div class="stats-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10"></div>
+                    <div class="relative flex items-center justify-between">
                         <div>
-                            <p class="text-gray-400 text-sm">Venues</p>
-                            <p class="text-2xl font-bold text-white" id="pending-venues-count">-</p>
+                            <p class="text-gray-400 text-sm font-medium">Venues</p>
+                            <p class="text-3xl font-bold text-white" id="pending-venues-count">-</p>
+                            <p class="text-xs text-gray-500 mt-1">Venue submissions</p>
                         </div>
-                        <div class="text-3xl text-accent-color">
+                        <div class="text-4xl text-green-400">
                             <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card rounded-xl p-4 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10"></div>
+                    <div class="relative flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm font-medium">Recurring</p>
+                            <p class="text-3xl font-bold text-white" id="recurring-events-count">-</p>
+                            <p class="text-xs text-gray-500 mt-1">Series events</p>
+                        </div>
+                        <div class="text-4xl text-orange-400">
+                            <i class="fas fa-redo"></i>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Filters and Actions -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                <div class="flex flex-wrap gap-2">
-                    <button id="filter-all" class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                        All Items
-                    </button>
-                    <button id="filter-events" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                        Events Only
-                    </button>
-                    <button id="filter-venues" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                        Venues Only
-                    </button>
+            <!-- Enhanced Filters and Actions -->
+            <div class="bg-gray-800/50 rounded-xl p-6 mb-8 border border-gray-700/50">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <!-- Filter Section -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Filter by Type</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button id="filter-all" class="filter-btn active px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                    <i class="fas fa-list mr-2"></i>All Items
+                                </button>
+                                <button id="filter-events" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                    <i class="fas fa-calendar mr-2"></i>Events Only
+                                </button>
+                                <button id="filter-venues" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>Venues Only
+                                </button>
+                                <button id="filter-recurring" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                    <i class="fas fa-redo mr-2"></i>Recurring Only
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Sort by</label>
+                            <select id="sort-select" class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="name">Name A-Z</option>
+                                <option value="type">Type</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions Section -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="auto-refresh" class="rounded text-purple-500 focus:ring-purple-500 bg-gray-700 border-gray-600">
+                                <label for="auto-refresh" class="text-sm text-gray-300">Auto-refresh</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="compact-view" class="rounded text-purple-500 focus:ring-purple-500 bg-gray-700 border-gray-600">
+                                <label for="compact-view" class="text-sm text-gray-300">Compact View</label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button id="bulk-approve-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fas fa-check-double mr-2"></i>Bulk Approve
+                            </button>
+                            <button id="refresh-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                <i class="fas fa-sync-alt mr-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" id="auto-refresh" class="rounded text-accent-color focus:ring-accent-color">
-                        <label for="auto-refresh" class="text-sm text-gray-300">Auto-refresh</label>
+                <!-- Search Bar -->
+                <div class="mt-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search by name, description, or venue..." 
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    <button id="refresh-btn" class="bg-accent-color text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors">
-                        <i class="fas fa-sync-alt mr-2"></i>Refresh
-                    </button>
                 </div>
             </div>
             

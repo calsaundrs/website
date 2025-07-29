@@ -1,259 +1,295 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Enhanced Admin Approvals loaded successfully!');
+    console.log('🚀 Enhanced Admin Approvals loaded successfully!');
     
-    // Elements
+    // Enhanced Elements
     const loadingState = document.getElementById('loading-state');
     const approvalList = document.getElementById('approval-list');
     const noItemsMessage = document.getElementById('no-items-message');
     const totalPendingCount = document.getElementById('total-pending-count');
     const pendingEventsCount = document.getElementById('pending-events-count');
     const pendingVenuesCount = document.getElementById('pending-venues-count');
+    const recurringEventsCount = document.getElementById('recurring-events-count');
     const refreshBtn = document.getElementById('refresh-btn');
     const autoRefreshCheckbox = document.getElementById('auto-refresh');
+    const compactViewCheckbox = document.getElementById('compact-view');
+    const searchInput = document.getElementById('search-input');
+    const sortSelect = document.getElementById('sort-select');
+    const bulkApproveBtn = document.getElementById('bulk-approve-btn');
     
     // Filter buttons
     const filterAll = document.getElementById('filter-all');
     const filterEvents = document.getElementById('filter-events');
     const filterVenues = document.getElementById('filter-venues');
+    const filterRecurring = document.getElementById('filter-recurring');
     
-    // State
+    // Enhanced State Management
     let allItems = [];
     let filteredItems = [];
+    let selectedItems = new Set();
     let currentFilter = 'all';
+    let currentSort = 'newest';
+    let searchQuery = '';
+    let isCompactView = false;
     let autoRefreshInterval;
     let lastRefreshTime = Date.now();
+    let isLoading = false;
     
     // Initialize
     initializeApprovals();
     
     async function initializeApprovals() {
+        console.log('🚀 Initializing enhanced approvals system...');
         await loadPendingItems();
         setupEventListeners();
         setupAutoRefresh();
+        setupSearch();
+        setupSorting();
+        updateBulkActions();
     }
     
     async function loadPendingItems() {
+        if (isLoading) return;
+        
         try {
-            loadingState.classList.remove('hidden');
-            approvalList.classList.add('hidden');
-            noItemsMessage.classList.add('hidden');
+            isLoading = true;
+            showLoadingState();
             
-            // Load both events and venues with error handling
-            let events = [];
-            let venues = [];
+            console.log('🔍 Loading pending items...');
+            const response = await fetch('/.netlify/functions/get-pending-items-firestore');
             
-            try {
-                console.log('🔍 ADMIN: Loading pending items...');
-                console.log('🌐 ADMIN: Requesting from get-pending-items-firestore');
+            if (response.ok) {
+                const data = await response.json();
+                allItems = data.items || [];
+                console.log(`📊 Loaded ${allItems.length} pending items`);
                 
-                const response = await fetch('/.netlify/functions/get-pending-items-firestore');
-                console.log('🌐 ADMIN: Response status:', response.status);
-                console.log('🌐 ADMIN: Response ok:', response.ok);
+                // Reset selections when data changes
+                selectedItems.clear();
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('📊 ADMIN: Response data:', data);
-                    
-                    // The function returns {items: [...], totalCount: ..., hasMore: ..., filters: {...}}
-                    allItems = data.items || [];
-                    console.log(`📊 ADMIN: Loaded ${allItems.length} pending items (${allItems.filter(item => item.type === 'event').length} events, ${allItems.filter(item => item.type === 'venue').length} venues)`);
-                    console.log('📊 ADMIN: All items:', allItems);
-                    
-                    // Debug: Check first few items structure
-                    if (allItems.length > 0) {
-                        console.log('📊 ADMIN: First item structure:', {
-                            id: allItems[0].id,
-                            type: allItems[0].type,
-                            name: allItems[0].name,
-                            status: allItems[0].status,
-                            createdAt: allItems[0].createdAt,
-                            submittedBy: allItems[0].submittedBy
-                        });
-                    }
-                } else {
-                    console.error('❌ ADMIN: Response not ok:', response.status);
-                    allItems = [];
-                }
-            } catch (error) {
-                console.error('Error loading pending items:', error);
-                showNotification('Error loading pending items', 'error');
-                allItems = [];
+                // Apply current filters and sorting
+                applyFiltersAndSorting();
+                updateDashboardStats();
+                displayItems();
+                
+                showNotification(`Loaded ${allItems.length} pending items`, 'success');
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
-            // Sort by creation date (newest first)
-            allItems.sort((a, b) => {
-                let dateA = a.createdAt || a.submittedAt || a.date;
-                let dateB = b.createdAt || b.submittedAt || b.date;
-                
-                // Handle Firestore timestamp objects
-                if (dateA && dateA._seconds) {
-                    dateA = new Date(dateA._seconds * 1000);
-                } else {
-                    dateA = new Date(dateA);
-                }
-                
-                if (dateB && dateB._seconds) {
-                    dateB = new Date(dateB._seconds * 1000);
-                } else {
-                    dateB = new Date(dateB);
-                }
-                
-                return dateB - dateA;
-            });
-            
-            updateDashboardStats();
-            applyFilter();
-            
         } catch (error) {
-            console.error('Error loading pending items:', error);
-            showNotification('Error loading pending items', 'error');
+            console.error('❌ Error loading pending items:', error);
+            showNotification(`Error loading items: ${error.message}`, 'error');
+            allItems = [];
+            displayItems();
         } finally {
-            loadingState.classList.add('hidden');
+            isLoading = false;
+            hideLoadingState();
         }
+    }
+    
+    function showLoadingState() {
+        loadingState.classList.remove('hidden');
+        approvalList.classList.add('hidden');
+        noItemsMessage.classList.add('hidden');
+    }
+    
+    function hideLoadingState() {
+        loadingState.classList.add('hidden');
     }
     
     function updateDashboardStats() {
         const events = allItems.filter(item => item.type === 'event');
         const venues = allItems.filter(item => item.type === 'venue');
+        const recurring = allItems.filter(item => 
+            item.type === 'event' && (item.recurringInfo || item.series)
+        );
         
         totalPendingCount.textContent = allItems.length;
         pendingEventsCount.textContent = events.length;
         pendingVenuesCount.textContent = venues.length;
+        recurringEventsCount.textContent = recurring.length;
         
-        // Update last refresh time
-        lastRefreshTime = Date.now();
+        // Add loading animation to stats
+        [totalPendingCount, pendingEventsCount, pendingVenuesCount, recurringEventsCount].forEach(el => {
+            el.classList.add('loading-pulse');
+            setTimeout(() => el.classList.remove('loading-pulse'), 1000);
+        });
     }
     
-    function applyFilter() {
-        switch (currentFilter) {
-            case 'events':
-                filteredItems = allItems.filter(item => item.type === 'event');
-                break;
-            case 'venues':
-                filteredItems = allItems.filter(item => item.type === 'venue');
-                break;
-            default:
-                filteredItems = allItems;
+    function applyFiltersAndSorting() {
+        console.log('🔍 Applying filters and sorting...');
+        
+        // Apply search filter
+        let filtered = allItems;
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(item => 
+                item.name?.toLowerCase().includes(query) ||
+                item.description?.toLowerCase().includes(query) ||
+                item.venue?.name?.toLowerCase().includes(query) ||
+                item.submittedBy?.toLowerCase().includes(query)
+            );
         }
         
-        displayItems();
+        // Apply type filter
+        switch (currentFilter) {
+            case 'events':
+                filtered = filtered.filter(item => item.type === 'event');
+                break;
+            case 'venues':
+                filtered = filtered.filter(item => item.type === 'venue');
+                break;
+            case 'recurring':
+                filtered = filtered.filter(item => 
+                    item.type === 'event' && (item.recurringInfo || item.series)
+                );
+                break;
+        }
+        
+        // Apply sorting
+        filtered.sort((a, b) => {
+            switch (currentSort) {
+                case 'newest':
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                case 'oldest':
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                case 'name':
+                    return (a.name || '').localeCompare(b.name || '');
+                case 'type':
+                    return a.type.localeCompare(b.type);
+                default:
+                    return 0;
+            }
+        });
+        
+        filteredItems = filtered;
+        console.log(`📊 Filtered to ${filteredItems.length} items`);
     }
     
     function displayItems() {
         if (filteredItems.length === 0) {
-            approvalList.classList.add('hidden');
-            noItemsMessage.classList.remove('hidden');
+            showEmptyState();
             return;
         }
         
         approvalList.classList.remove('hidden');
         noItemsMessage.classList.add('hidden');
         
-        const itemsHtml = filteredItems.map(item => createItemCard(item)).join('');
+        const itemsHtml = filteredItems.map(item => createEnhancedItemCard(item)).join('');
         approvalList.innerHTML = itemsHtml;
         
-        // Re-attach event listeners to new elements
         attachItemEventListeners();
+        updateBulkActions();
     }
     
-    function createItemCard(item) {
-        const isEvent = item.type === 'event';
+    function showEmptyState() {
+        approvalList.classList.add('hidden');
+        noItemsMessage.classList.remove('hidden');
         
-        // Use direct properties instead of fields object for Firestore data
-        const title = isEvent ? item.name : item.name;
-        const description = item.description || 'No description provided';
-        const contactEmail = item.submittedBy || 'No email provided';
-        const date = isEvent ? item.date : (item.createdAt || item.submittedAt);
-        const formattedDate = date ? new Date(date).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }) : 'Date not specified';
+        const message = searchQuery.trim() ? 
+            `No items found matching "${searchQuery}"` : 
+            'No pending items to review';
         
-        const icon = isEvent ? 'fas fa-calendar' : 'fas fa-map-marker-alt';
-        const typeLabel = isEvent ? 'Event' : 'Venue';
-        const typeColor = isEvent ? 'text-blue-400' : 'text-green-400';
+        noItemsMessage.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">All Caught Up!</h3>
+                <p class="text-gray-400">${message}</p>
+                ${searchQuery.trim() ? `
+                    <button onclick="clearSearch()" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-times mr-2"></i>Clear Search
+                    </button>
+                ` : ''}
+            </div>
+        `;
+    }
+    
+    function createEnhancedItemCard(item) {
+        const isSelected = selectedItems.has(item.id);
+        const isRecurring = item.type === 'event' && (item.recurringInfo || item.series);
+        const compactClass = isCompactView ? 'compact' : '';
+        const selectedClass = isSelected ? 'selected' : '';
         
-        // Check if description is long enough to be expandable
-        const isLongDescription = description.length > 150;
-        const descriptionClass = isLongDescription ? 'detail-value expandable' : 'detail-value';
+        const statusBadge = getStatusBadge(item.status);
+        const categoryBadges = (item.category || []).map(cat => 
+            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+        ).join('');
+        
+        const venueInfo = item.venue ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Venue</div>
+                <div class="detail-value">${item.venue.name || 'Unknown'}</div>
+            </div>
+        ` : '';
+        
+        const dateInfo = item.date ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Event Date</div>
+                <div class="detail-value">${formatDate(item.date)}</div>
+            </div>
+        ` : '';
+        
+        const descriptionInfo = item.description ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Description</div>
+                <div class="detail-value expandable">${item.description}</div>
+            </div>
+        ` : '';
+        
+        const recurringInfo = isRecurring ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Recurring Pattern</div>
+                <div class="detail-value text-purple-300">
+                    <i class="fas fa-redo mr-2"></i>${item.recurringInfo || 'Series event'}
+                </div>
+            </div>
+        ` : '';
+        
+        const submittedInfo = item.submittedBy ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Submitted By</div>
+                <div class="detail-value">${item.submittedBy}</div>
+            </div>
+        ` : '';
+        
+        const createdAtInfo = item.createdAt ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Submitted</div>
+                <div class="detail-value">${formatDate(item.createdAt)}</div>
+            </div>
+        ` : '';
         
         return `
-            <div class="approval-card" data-id="${item.id}" data-type="${item.type}">
+            <div class="approval-card ${compactClass} ${selectedClass}" data-id="${item.id}" data-type="${item.type}">
+                <input type="checkbox" class="selection-checkbox" ${isSelected ? 'checked' : ''} data-id="${item.id}">
+                
                 <div class="approval-card-header">
                     <div class="flex items-start space-x-3 flex-1 min-w-0">
-                        <div class="text-2xl ${typeColor} flex-shrink-0 mt-1">
-                            <i class="${icon}"></i>
+                        <div class="text-2xl ${item.type === 'event' ? 'text-blue-400' : 'text-green-400'} flex-shrink-0 mt-1">
+                            <i class="${item.type === 'event' ? 'fas fa-calendar' : 'fas fa-map-marker-alt'}"></i>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <h3 class="text-xl font-bold text-white truncate">${title}</h3>
-                            <span class="inline-block bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full mt-1">${typeLabel}</span>
+                            <h3 class="text-xl font-bold text-white truncate">${item.name}</h3>
+                            <div class="flex items-center gap-2 mt-2">
+                                ${statusBadge}
+                                <span class="text-sm text-gray-400">${item.type}</span>
+                                ${isRecurring ? '<span class="text-sm text-purple-400"><i class="fas fa-redo mr-1"></i>Recurring</span>' : ''}
+                            </div>
+                            ${categoryBadges ? `<div class="mt-2">${categoryBadges}</div>` : ''}
                         </div>
                     </div>
                     <div class="text-sm text-gray-400 flex-shrink-0">
-                        Submitted: ${formattedDate}
+                        ${formatDate(item.createdAt)}
                     </div>
                 </div>
                 
                 <div class="approval-card-details">
-                    <div class="approval-card-detail-item">
-                        <p class="detail-label">Description</p>
-                        <p class="${descriptionClass}" title="${isLongDescription ? 'Click to expand' : ''}">${description}</p>
-                    </div>
-                    
-                    ${isEvent ? `
-                        <div class="approval-card-detail-item">
-                            <p class="detail-label">Event Date</p>
-                            <p class="detail-value">${formattedDate}</p>
-                        </div>
-                        
-                        ${item.category && item.category.length > 0 ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Category</p>
-                                <p class="detail-value">${Array.isArray(item.category) ? item.category.join(', ') : item.category}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${item.venue && item.venue.name ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Venue</p>
-                                <p class="detail-value">${item.venue.name}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${item.recurringInfo ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Recurring Pattern</p>
-                                <p class="detail-value">${item.recurringInfo}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${item.series ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Series Info</p>
-                                <p class="detail-value">Series Event</p>
-                            </div>
-                        ` : ''}
-                    ` : `
-                        <div class="approval-card-detail-item">
-                            <p class="detail-label">Address</p>
-                            <p class="detail-value">${item.address || 'No address provided'}</p>
-                        </div>
-                        
-                        ${item.website ? `
-                            <div class="approval-card-detail-item">
-                                <p class="detail-label">Website</p>
-                                <p class="detail-value">${item.website}</p>
-                            </div>
-                        ` : ''}
-                    `}
-                    
-                    <div class="approval-card-detail-item">
-                        <p class="detail-label">Contact Email</p>
-                        <p class="detail-value">${contactEmail}</p>
-                    </div>
+                    ${venueInfo}
+                    ${dateInfo}
+                    ${descriptionInfo}
+                    ${recurringInfo}
+                    ${submittedInfo}
+                    ${createdAtInfo}
                 </div>
                 
                 <div class="approval-card-actions">
@@ -272,6 +308,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function attachItemEventListeners() {
+        // Selection checkboxes
+        document.querySelectorAll('.selection-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const itemId = e.target.dataset.id;
+                if (e.target.checked) {
+                    selectedItems.add(itemId);
+                    e.target.closest('.approval-card').classList.add('selected');
+                } else {
+                    selectedItems.delete(itemId);
+                    e.target.closest('.approval-card').classList.remove('selected');
+                }
+                updateBulkActions();
+            });
+        });
+        
         // Edit buttons
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -315,105 +366,38 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function approveItem(id, type) {
         try {
-            // Check if this is a recurring event
-            const item = allItems.find(item => item.id === id && item.type === type);
-            
-            if (type === 'event' && item && (item.series || item.recurringInfo)) {
-                // Show recurring approval modal
-                openRecurringApprovalModal(id, type);
-                return;
-            }
-            
-            // Regular approval for non-recurring events or venues
             console.log(`✅ APPROVE: Starting approval for ${type} ${id}`);
             
             const endpoint = 'update-item-status-firestore-only';
             const requestBody = {
                 itemId: id,
-                newStatus: 'approved', // Use lowercase to match standardized fields
+                newStatus: 'approved',
                 itemType: type
             };
             
-            console.log(`✅ APPROVE: Request body:`, requestBody);
-            
             const response = await fetch(`/.netlify/functions/${endpoint}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody)
             });
             
-            console.log(`✅ APPROVE: Response status: ${response.status}`);
-            console.log(`✅ APPROVE: Response ok: ${response.ok}`);
-            
             if (response.ok) {
                 const result = await response.json();
-                console.log(`✅ APPROVE: Response data:`, result);
-                
                 showNotification(`${type === 'event' ? 'Event' : 'Venue'} approved successfully!`, 'success');
                 
-                // Remove the item from the local arrays
+                // Remove from arrays and selections
                 allItems = allItems.filter(item => item.id !== id);
-                filteredItems = filteredItems.filter(item => item.id !== id);
+                selectedItems.delete(id);
                 
-                // Update display
+                applyFiltersAndSorting();
                 updateDashboardStats();
                 displayItems();
-                
-                console.log(`✅ APPROVE: ${type} ${id} approved successfully`);
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error(`❌ APPROVE: Response not ok:`, errorData);
-                throw new Error(`Failed to approve item: ${response.status} ${response.statusText}`);
+                throw new Error(`Failed to approve: ${response.status}`);
             }
         } catch (error) {
-            console.error('Error approving item:', error);
-            showNotification('Error approving item', 'error');
-        }
-    }
-
-    function openRecurringApprovalModal(id, type) {
-        const modal = document.getElementById('recurring-approval-modal');
-        modal.classList.remove('hidden');
-        
-        // Store the current item being approved
-        modal.dataset.itemId = id;
-        modal.dataset.itemType = type;
-        
-        // Reset radio buttons
-        document.getElementById('approve-series').checked = true;
-    }
-
-    async function handleRecurringApproval() {
-        const modal = document.getElementById('recurring-approval-modal');
-        const id = modal.dataset.itemId;
-        const type = modal.dataset.itemType;
-        const approvalType = document.querySelector('input[name="approval-type"]:checked').value;
-        
-        try {
-            const response = await fetch('/.netlify/functions/approve-recurring-series', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    eventId: id,
-                    approveFutureInstances: approvalType === 'series'
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                showNotification(result.message, 'success');
-                modal.classList.add('hidden');
-                await loadPendingItems(); // Refresh the list
-            } else {
-                throw new Error('Failed to approve recurring series');
-            }
-        } catch (error) {
-            console.error('Error approving recurring series:', error);
-            showNotification('Error approving recurring series', 'error');
+            console.error('❌ APPROVE: Error:', error);
+            showNotification(`Error approving ${type}: ${error.message}`, 'error');
         }
     }
     
@@ -423,19 +407,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const cancelBtn = document.getElementById('cancel-rejection-btn');
         const reasonTextarea = document.getElementById('rejection-reason');
         
-        // Clear previous reason
         reasonTextarea.value = '';
-        
-        // Store the item info for rejection
         confirmBtn.dataset.id = id;
         confirmBtn.dataset.type = type;
         
         modal.classList.remove('hidden');
-        
-        // Focus on textarea
         setTimeout(() => reasonTextarea.focus(), 100);
         
-        // Event listeners
         const handleRejection = async () => {
             const reason = reasonTextarea.value.trim();
             if (!reason) {
@@ -443,7 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // Show loading state on confirm button
             const originalText = confirmBtn.innerHTML;
             confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Rejecting...';
             confirmBtn.disabled = true;
@@ -452,21 +429,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 await rejectItem(id, type, reason);
                 modal.classList.add('hidden');
             } finally {
-                // Restore button state
                 confirmBtn.innerHTML = originalText;
                 confirmBtn.disabled = false;
             }
         };
         
-        const handleCancel = () => {
-            modal.classList.add('hidden');
-        };
+        const handleCancel = () => modal.classList.add('hidden');
         
-        // Remove previous listeners
         confirmBtn.removeEventListener('click', handleRejection);
         cancelBtn.removeEventListener('click', handleCancel);
-        
-        // Add new listeners
         confirmBtn.addEventListener('click', handleRejection);
         cancelBtn.addEventListener('click', handleCancel);
     }
@@ -474,175 +445,34 @@ document.addEventListener('DOMContentLoaded', () => {
     async function rejectItem(id, type, reason) {
         try {
             console.log(`🔄 REJECT: Starting rejection for ${type} ${id}`);
-            console.log(`🔄 REJECT: Reason: ${reason}`);
             
-            const endpoint = 'update-item-status-firestore-only';
-            const requestBody = {
-                itemId: id,
-                newStatus: 'rejected', // Use lowercase to match standardized fields
-                itemType: type,
-                reason: reason
-            };
-            
-            console.log(`🔄 REJECT: Request body:`, requestBody);
-            
-            const response = await fetch(`/.netlify/functions/${endpoint}`, {
+            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody)
-            });
-            
-            console.log(`🔄 REJECT: Response status: ${response.status}`);
-            console.log(`🔄 REJECT: Response ok: ${response.ok}`);
-            
-            if (response.ok) {
-                const result = await response.json();
-                console.log(`🔄 REJECT: Response data:`, result);
-                
-                showNotification(`${type === 'event' ? 'Event' : 'Venue'} rejected successfully!`, 'success');
-                
-                // Remove the item from the local arrays
-                allItems = allItems.filter(item => item.id !== id);
-                filteredItems = filteredItems.filter(item => item.id !== id);
-                
-                // Update display
-                updateDashboardStats();
-                displayItems();
-                
-                console.log(`✅ REJECT: ${type} ${id} rejected successfully`);
-            } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error(`❌ REJECT: Response not ok:`, errorData);
-                throw new Error(`Failed to reject item: ${response.status} ${response.statusText}`);
-            }
-            
-        } catch (error) {
-            console.error('❌ REJECT: Error rejecting item:', error);
-            showNotification(`Error rejecting ${type}: ${error.message}`, 'error');
-        }
-    }
-    
-    function openEditModal(id, type) {
-        const modal = document.getElementById('edit-modal');
-        const form = document.getElementById('edit-form');
-        const fieldsContainer = document.getElementById('edit-form-fields');
-        
-        // Find the item
-        const item = allItems.find(item => item.id === id);
-        if (!item) {
-            showNotification('Item not found', 'error');
-            return;
-        }
-        
-        // Populate form fields based on type
-        fieldsContainer.innerHTML = createEditFormFields(item);
-        
-        modal.classList.remove('hidden');
-        
-        // Handle form submission
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            await saveEditForm(id, type, form);
-            modal.classList.add('hidden');
-        };
-        
-        // Remove previous listener and add new one
-        form.removeEventListener('submit', handleSubmit);
-        form.addEventListener('submit', handleSubmit);
-    }
-    
-    function createEditFormFields(item) {
-        const isEvent = item.type === 'event';
-        
-        if (isEvent) {
-            // Handle Firestore timestamp for date
-            let dateValue = '';
-            if (item.date) {
-                if (item.date._seconds) {
-                    // Firestore timestamp
-                    dateValue = new Date(item.date._seconds * 1000).toISOString().slice(0, 16);
-                } else {
-                    // Regular date
-                    dateValue = new Date(item.date).toISOString().slice(0, 16);
-                }
-            }
-            
-            return `
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label>
-                    <input type="text" name="event-name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label>
-                    <input type="datetime-local" name="date" value="${dateValue}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Category</label>
-                    <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                    <input type="text" name="venue-name" value="${item.venue?.name || item.venueName || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-            `;
-        } else {
-            return `
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                    <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label>
-                    <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">${item.description || ''}</textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Address</label>
-                    <input type="text" name="address" value="${item.address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 accent-color-secondary">Website</label>
-                    <input type="url" name="website" value="${item.website || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                </div>
-            `;
-        }
-    }
-    
-    async function saveEditForm(id, type, form) {
-        try {
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            const endpoint = 'update-item-firestore';
-            const response = await fetch(`/.netlify/functions/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     itemId: id,
+                    newStatus: 'rejected',
                     itemType: type,
-                    ...data
+                    reason: reason
                 })
             });
             
             if (response.ok) {
-                showNotification(`${type === 'event' ? 'Event' : 'Venue'} updated successfully!`, 'success');
-                await loadPendingItems(); // Refresh the list
+                showNotification(`${type === 'event' ? 'Event' : 'Venue'} rejected successfully!`, 'success');
+                
+                // Remove from arrays and selections
+                allItems = allItems.filter(item => item.id !== id);
+                selectedItems.delete(id);
+                
+                applyFiltersAndSorting();
+                updateDashboardStats();
+                displayItems();
             } else {
-                const errorData = await response.json();
-                console.error('Server error:', errorData);
-                throw new Error(`Failed to update item: ${errorData.message || 'Unknown error'}`);
+                throw new Error(`Failed to reject: ${response.status}`);
             }
-            
         } catch (error) {
-            console.error('Error updating item:', error);
-            showNotification(`Error updating item: ${error.message}`, 'error');
+            console.error('❌ REJECT: Error:', error);
+            showNotification(`Error rejecting ${type}: ${error.message}`, 'error');
         }
     }
     
@@ -651,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterAll.addEventListener('click', () => setFilter('all'));
         filterEvents.addEventListener('click', () => setFilter('events'));
         filterVenues.addEventListener('click', () => setFilter('venues'));
+        filterRecurring.addEventListener('click', () => setFilter('recurring'));
         
         // Refresh button
         refreshBtn.addEventListener('click', loadPendingItems);
@@ -658,27 +489,49 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-refresh checkbox
         autoRefreshCheckbox.addEventListener('change', setupAutoRefresh);
         
+        // Compact view checkbox
+        compactViewCheckbox.addEventListener('change', (e) => {
+            isCompactView = e.target.checked;
+            approvalList.classList.toggle('compact-view', isCompactView);
+            displayItems();
+        });
+        
+        // Bulk approve button
+        bulkApproveBtn.addEventListener('click', handleBulkApprove);
+        
         // Modal close buttons
-        document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+        document.getElementById('cancel-edit-btn')?.addEventListener('click', () => {
             document.getElementById('edit-modal').classList.add('hidden');
         });
         
-        document.getElementById('cancel-rejection-btn').addEventListener('click', () => {
+        document.getElementById('cancel-rejection-btn')?.addEventListener('click', () => {
             document.getElementById('rejection-modal').classList.add('hidden');
         });
         
-        // Recurring approval modal
-        document.getElementById('cancel-recurring-approval-btn').addEventListener('click', () => {
+        document.getElementById('cancel-recurring-approval-btn')?.addEventListener('click', () => {
             document.getElementById('recurring-approval-modal').classList.add('hidden');
         });
         
-        document.getElementById('confirm-recurring-approval-btn').addEventListener('click', handleRecurringApproval);
-        
-        // Close modals when clicking outside
-        document.getElementById('recurring-approval-modal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                e.currentTarget.classList.add('hidden');
-            }
+        document.getElementById('confirm-recurring-approval-btn')?.addEventListener('click', handleRecurringApproval);
+    }
+    
+    function setupSearch() {
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                applyFiltersAndSorting();
+                displayItems();
+            }, 300);
+        });
+    }
+    
+    function setupSorting() {
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            applyFiltersAndSorting();
+            displayItems();
         });
     }
     
@@ -686,10 +539,13 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilter = filter;
         
         // Update active button
-        [filterAll, filterEvents, filterVenues].forEach(btn => btn.classList.remove('active'));
+        [filterAll, filterEvents, filterVenues, filterRecurring].forEach(btn => 
+            btn.classList.remove('active')
+        );
         document.getElementById(`filter-${filter}`).classList.add('active');
         
-        applyFilter();
+        applyFiltersAndSorting();
+        displayItems();
     }
     
     function setupAutoRefresh() {
@@ -698,31 +554,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (autoRefreshCheckbox.checked) {
-            autoRefreshInterval = setInterval(async () => {
-                await loadPendingItems();
-            }, 30000); // Refresh every 30 seconds
+            autoRefreshInterval = setInterval(loadPendingItems, 30000);
+            showNotification('Auto-refresh enabled (30s interval)', 'info');
+        } else {
+            showNotification('Auto-refresh disabled', 'info');
         }
+    }
+    
+    function updateBulkActions() {
+        const hasSelection = selectedItems.size > 0;
+        bulkApproveBtn.disabled = !hasSelection;
+        
+        if (hasSelection) {
+            bulkApproveBtn.innerHTML = `<i class="fas fa-check-double mr-2"></i>Approve ${selectedItems.size} Items`;
+        } else {
+            bulkApproveBtn.innerHTML = `<i class="fas fa-check-double mr-2"></i>Bulk Approve`;
+        }
+    }
+    
+    async function handleBulkApprove() {
+        if (selectedItems.size === 0) return;
+        
+        const confirmed = confirm(`Are you sure you want to approve ${selectedItems.size} items?`);
+        if (!confirmed) return;
+        
+        const originalText = bulkApproveBtn.innerHTML;
+        bulkApproveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Approving...';
+        bulkApproveBtn.disabled = true;
+        
+        try {
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const itemId of selectedItems) {
+                const item = allItems.find(i => i.id === itemId);
+                if (item) {
+                    try {
+                        await approveItem(itemId, item.type);
+                        successCount++;
+                    } catch (error) {
+                        errorCount++;
+                        console.error(`Failed to approve ${itemId}:`, error);
+                    }
+                }
+            }
+            
+            if (successCount > 0) {
+                showNotification(`Successfully approved ${successCount} items${errorCount > 0 ? `, ${errorCount} failed` : ''}`, 'success');
+            }
+            if (errorCount > 0) {
+                showNotification(`${errorCount} items failed to approve`, 'error');
+            }
+        } finally {
+            bulkApproveBtn.innerHTML = originalText;
+            bulkApproveBtn.disabled = false;
+        }
+    }
+    
+    function clearSearch() {
+        searchInput.value = '';
+        searchQuery = '';
+        applyFiltersAndSorting();
+        displayItems();
+    }
+    
+    function getStatusBadge(status) {
+        const statusClass = status === 'pending' ? 'pending' : 'approved';
+        return `<span class="status-badge ${statusClass}">${status}</span>`;
+    }
+    
+    function formatDate(dateString) {
+        if (!dateString) return 'Unknown';
+        
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
     
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification-toast notification-${type}`;
-        notification.textContent = message;
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
         
         document.body.appendChild(notification);
-        
-        // Show notification
         setTimeout(() => notification.classList.add('show'), 100);
         
-        // Hide and remove after 3 seconds
         setTimeout(() => {
             notification.classList.remove('show');
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
     }
     
     // Cleanup on page unload
@@ -731,4 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(autoRefreshInterval);
         }
     });
+    
+    // Global function for clear search
+    window.clearSearch = clearSearch;
 });
