@@ -1124,31 +1124,57 @@ async function handleDeleteEvent(eventId) {
     const event = eventId ? allEvents.find(e => e.id === eventId) : currentEventForEdit;
     if (!event) return;
     
-    if (!confirm(`Are you sure you want to delete "${event.name || event['Event Name']}"? This action cannot be undone.`)) {
+    // Check if this is a recurring event
+    const isRecurring = event.isRecurring || event.isRecurringGroup || event.recurringGroupId || event.seriesId;
+    
+    let deleteSeries = false;
+    let confirmMessage = `Are you sure you want to delete "${event.name || event['Event Name']}"? This action cannot be undone.`;
+    
+    if (isRecurring) {
+        const seriesChoice = confirm(
+            `This is a recurring event. Do you want to:\n\n` +
+            `Click OK to delete the entire series (all instances)\n` +
+            `Click Cancel to delete only this single instance`
+        );
+        
+        if (seriesChoice) {
+            deleteSeries = true;
+            confirmMessage = `Are you sure you want to delete the ENTIRE recurring series "${event.name || event['Event Name']}"? This will delete ALL instances and cannot be undone.`;
+        } else {
+            confirmMessage = `Are you sure you want to delete this single instance of "${event.name || event['Event Name']}"? This action cannot be undone.`;
+        }
+    }
+    
+    if (!confirm(confirmMessage)) {
         return;
     }
     
     try {
-        const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
+        const response = await fetch('/.netlify/functions/delete-event-firestore', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                itemId: event.id,
-                newStatus: 'deleted',
-                itemType: 'event'
+                eventId: event.id,
+                deleteSeries: deleteSeries
             })
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to delete event');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete event');
         }
         
-        showSuccess('Event deleted successfully!');
-        closeEditModal();
-        await loadAllEvents(); // Reload data
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess(result.message || 'Event deleted successfully!');
+            closeEditModal();
+            await loadAllEvents(); // Reload data
+        } else {
+            throw new Error(result.message || 'Failed to delete event');
+        }
         
     } catch (error) {
         console.error('Error deleting event:', error);
@@ -1541,20 +1567,22 @@ async function handleBulkDelete() {
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
-            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
+            const response = await fetch('/.netlify/functions/delete-event-firestore', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    itemId: eventId,
-                    newStatus: 'deleted',
-                    itemType: 'event'
+                    eventId: eventId,
+                    deleteSeries: false // For bulk delete, only delete individual events
                 })
             });
             
             if (response.ok) {
-                successCount++;
+                const result = await response.json();
+                if (result.success) {
+                    successCount++;
+                }
             }
         }
         
