@@ -136,8 +136,8 @@ class EventAPI {
       }
     });
 
-    console.log('EventAPI: Calling get-events-airtable with params:', params.toString());
-    const response = await fetch(`${this.baseUrl}/get-events-airtable?${params}`);
+    console.log('EventAPI: Calling get-events-firestore-simple with params:', params.toString());
+    const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -157,7 +157,7 @@ class EventAPI {
   }
 
   async getVenues() {
-            const response = await fetch(`${this.baseUrl}/get-events-airtable?view=venues`);
+            const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?view=venues`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
