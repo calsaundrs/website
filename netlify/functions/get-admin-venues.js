@@ -67,7 +67,9 @@ exports.handler = async function(event, context) {
         console.log(`Admin Venues: Found ${snapshot.size} total venues`);
         
         const venues = [];
+        const venueMap = new Map(); // To track duplicates by name
         console.log('Admin Venues: Processing venues...');
+        
         snapshot.forEach(doc => {
             const data = doc.data();
             const venueName = data.name || data['Name'] || 'Unnamed';
@@ -80,12 +82,19 @@ exports.handler = async function(event, context) {
                 return;
             }
             
+            // Check for duplicates by name (case-insensitive)
+            const normalizedName = venueName.toLowerCase().trim();
+            if (venueMap.has(normalizedName)) {
+                console.log(`Admin Venues: Skipping duplicate venue: ${venueName} (ID: ${doc.id})`);
+                return;
+            }
+            
             console.log(`Admin Venues: Processing venue ${doc.id}: ${venueName}`);
             
             // Extract image data (but don't require it)
             const imageData = extractImageUrl(data);
             
-            venues.push({
+            const venue = {
                 id: doc.id,
                 name: venueName,
                 address: data.address || data['Address'] || '',
@@ -99,7 +108,10 @@ exports.handler = async function(event, context) {
                 popular: data.popular || false,
                 createdAt: data.createdAt || null,
                 updatedAt: data.updatedAt || null
-            });
+            };
+            
+            venues.push(venue);
+            venueMap.set(normalizedName, venue); // Track by normalized name
         });
         
         // Sort venues by name
