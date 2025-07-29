@@ -34,14 +34,31 @@ exports.handler = async function (event, context) {
         if (newStatus === 'Approved') {
             const recordSlug = updatedRecords[0].fields.Slug;
             const liveUrl = recordSlug ? `https://brumoutloud.co.uk/${type.toLowerCase()}/${recordSlug}` : `https://brumoutloud.co.uk`;
-L42: Great news! Your submission for "${name}" has been approved and is now live on Brum Outloud.
-L49: The Brum Outloud Team
-L65: https://brumoutloud.co.uk/promoter-tool
-L70: The Brum Outloud Team
-L75: const mail = { from: 'hello@brumoutloud.co.uk', to: contactEmail, subject: subject, text: body, };
-            console.log('--- EMAIL TO BE SENT ---');
-            console.log(JSON.stringify(mail, null, 2));
+            
+            subject = 'Your submission has been approved!';
+            body = `Great news! Your submission for "${name}" has been approved and is now live on Brum Outloud.
+
+You can view your ${type.toLowerCase()} at: ${liveUrl}
+
+Thank you for contributing to Birmingham's LGBTQ+ community!
+
+The Brum Outloud Team`;
+        } else if (newStatus === 'Rejected') {
+            subject = 'Update on your submission';
+            body = `Thank you for your submission to Brum Outloud.
+
+Unfortunately, we are unable to approve your ${type.toLowerCase()} "${name}" at this time.
+
+${reason ? `Reason: ${reason}` : ''}
+
+If you have any questions or would like to submit a revised version, please visit our promoter tools: https://brumoutloud.co.uk/promoter-tool
+
+The Brum Outloud Team`;
         }
+
+        const mail = { from: 'hello@brumoutloud.co.uk', to: contactEmail, subject: subject, text: body };
+        console.log('--- EMAIL TO BE SENT ---');
+        console.log(JSON.stringify(mail, null, 2));
 
         return {
             statusCode: 200,

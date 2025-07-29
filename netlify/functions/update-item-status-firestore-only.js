@@ -79,6 +79,49 @@ exports.handler = async function (event, context) {
         
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
         
+        // Trigger SSG rebuild if an event was approved
+        let ssgRebuildResult = null;
+        if (itemType === 'event' && newStatus.toLowerCase() === 'approved') {
+            try {
+                console.log('Event approved - triggering SSG rebuild...');
+                
+                // Call the SSG rebuild function
+                const response = await fetch(`${process.env.URL || 'https://new.brumoutloud.co.uk'}/.netlify/functions/build-events-ssg`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'rebuild',
+                        source: 'event-approval',
+                        eventId: itemId
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    ssgRebuildResult = {
+                        success: true,
+                        generatedFiles: result.generatedFiles || 0,
+                        message: 'SSG rebuild triggered successfully'
+                    };
+                    console.log('SSG rebuild completed:', result);
+                } else {
+                    console.warn('SSG rebuild failed:', response.status, response.statusText);
+                    ssgRebuildResult = {
+                        success: false,
+                        message: 'SSG rebuild failed'
+                    };
+                }
+            } catch (ssgError) {
+                console.error('Error triggering SSG rebuild:', ssgError);
+                ssgRebuildResult = {
+                    success: false,
+                    message: 'SSG rebuild error: ' + ssgError.message
+                };
+            }
+        }
+        
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -88,6 +131,7 @@ exports.handler = async function (event, context) {
                 itemId: itemId,
                 newStatus: newStatus,
                 itemType: itemType,
+                ssgRebuild: ssgRebuildResult,
                 note: 'This update was processed using Firestore only'
             })
         };
@@ -98,9 +142,8 @@ exports.handler = async function (event, context) {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                error: 'Status update failed',
-                message: error.message,
-                type: error.constructor.name
+                error: 'Internal server error',
+                message: error.toString()
             })
         };
     }

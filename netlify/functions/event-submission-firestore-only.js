@@ -277,6 +277,49 @@ exports.handler = async function (event, context) {
             
             console.log(`Event submitted successfully. Firestore ID: ${firestoreDoc.id}`);
             
+            // Trigger SSG rebuild for new event (if auto-approval is enabled)
+            let ssgRebuildResult = null;
+            if (process.env.AUTO_APPROVE_EVENTS === 'true') {
+                try {
+                    console.log('Auto-approval enabled - triggering SSG rebuild...');
+                    
+                    // Call the SSG rebuild function
+                    const response = await fetch(`${process.env.URL || 'https://new.brumoutloud.co.uk'}/.netlify/functions/build-events-ssg`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            action: 'rebuild',
+                            source: 'event-submission',
+                            eventId: firestoreDoc.id
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        ssgRebuildResult = {
+                            success: true,
+                            generatedFiles: result.generatedFiles || 0,
+                            message: 'SSG rebuild triggered successfully'
+                        };
+                        console.log('SSG rebuild completed:', result);
+                    } else {
+                        console.warn('SSG rebuild failed:', response.status, response.statusText);
+                        ssgRebuildResult = {
+                            success: false,
+                            message: 'SSG rebuild failed'
+                        };
+                    }
+                } catch (ssgError) {
+                    console.error('Error triggering SSG rebuild:', ssgError);
+                    ssgRebuildResult = {
+                        success: false,
+                        message: 'SSG rebuild error: ' + ssgError.message
+                    };
+                }
+            }
+            
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'text/html' },
@@ -297,6 +340,7 @@ exports.handler = async function (event, context) {
                     <p class="info">You will be redirected to the events page shortly.</p>
                     <p class="info">Firestore ID: ${firestoreDoc.id}</p>
                     <p class="info">Note: This submission was processed using Firestore only.</p>
+                    ${ssgRebuildResult ? `<p class="info">SSG Rebuild: ${ssgRebuildResult.message}</p>` : ''}
                 </body>
                 </html>`
             };

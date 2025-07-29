@@ -353,15 +353,15 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
 function extractImageUrl(data) {
     console.log('Extracting image from data with keys:', Object.keys(data));
     
-    // First, try to use cloudinaryPublicId if available (most reliable)
+    // Use the same logic as SSG event pages - prioritize cloudinaryPublicId with specific transformations
     if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
         console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${data.cloudinaryPublicId}`;
+        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data.cloudinaryPublicId}`;
         console.log('Generated Cloudinary URL:', cloudinaryUrl);
         return { url: cloudinaryUrl };
     }
     
-    // Extract Cloudinary image object from various possible formats
+    // Fallback to existing logic for other image formats
     if (data.promoImage && data.promoImage.url) {
         console.log('Found promoImage object:', data.promoImage);
         return data.promoImage;
