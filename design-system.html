@@ -506,25 +506,35 @@
                         </div>
                     </div>
 
-                    <!-- Category Filters -->
+                    <!-- Dynamic Category Filters -->
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Type:</span>
-                        <div class="flex gap-1">
-                            <button class="filter-btn text-xs">Drag</button>
-                            <button class="filter-btn text-xs">Club</button>
-                            <button class="filter-btn text-xs">Music</button>
+                        <div class="flex gap-1" id="dynamic-categories">
+                            <!-- Dynamically populated from event data -->
+                            <button class="filter-btn text-xs">Drag Shows</button>
+                            <button class="filter-btn text-xs">Club Nights</button>
+                            <button class="filter-btn text-xs">Live Music</button>
                             <button class="filter-btn text-xs">Karaoke</button>
+                            <button class="filter-btn text-xs">Quiz Nights</button>
+                            <button class="filter-btn text-xs">Comedy</button>
+                            <button class="filter-btn text-xs">Sports</button>
+                            <button class="filter-btn text-xs">Workshops</button>
+                            <button class="filter-btn text-xs">Kink Events</button>
+                            <button class="filter-btn text-xs">BDSM</button>
                         </div>
                     </div>
 
-                    <!-- Venue Filters -->
+                    <!-- Dynamic Venue Filters -->
                     <div class="flex items-center gap-2">
                         <span class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Venue:</span>
-                        <div class="flex gap-1">
-                            <button class="filter-btn text-xs">All</button>
-                            <button class="filter-btn text-xs">Nightingale</button>
-                            <button class="filter-btn text-xs">Village</button>
-                            <button class="filter-btn text-xs">Rainbow</button>
+                        <div class="flex gap-1" id="dynamic-venues">
+                            <!-- Dynamically populated from event data -->
+                            <button class="filter-btn text-xs">The Nightingale Club</button>
+                            <button class="filter-btn text-xs">The Village Inn</button>
+                            <button class="filter-btn text-xs">The Rainbow Bar</button>
+                            <button class="filter-btn text-xs">The Loft</button>
+                            <button class="filter-btn text-xs">Club X</button>
+                            <button class="filter-btn text-xs">The Eagle</button>
                         </div>
                     </div>
 
@@ -539,6 +549,17 @@
                         <button class="btn-secondary text-white px-2 py-1 rounded text-xs">
                             <i class="fas fa-times"></i>
                         </button>
+                    </div>
+                </div>
+
+                <!-- Implementation Notes -->
+                <div class="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <h4 class="text-sm font-semibold text-blue-300 mb-2">Dynamic Filter Implementation</h4>
+                    <div class="text-xs text-blue-200 space-y-1">
+                        <p><strong>Categories:</strong> Extracted from event.tags, event.category, event.type fields</p>
+                        <p><strong>Venues:</strong> Extracted from event.venue.name, event.venue_id fields</p>
+                        <p><strong>NSFW Events:</strong> Filtered by event.is_nsfw, event.age_restriction, event.tags containing kink/BDSM</p>
+                        <p><strong>Date Ranges:</strong> Calculated from event.date, event.start_time fields</p>
                     </div>
                 </div>
 
