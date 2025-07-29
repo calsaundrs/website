@@ -654,8 +654,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 showNotification('Event updated successfully!', 'success');
                 
+                // Store the event ID before closing modal
+                const eventId = window.currentEventForEdit.id;
+                
                 // Update the item in our local array
-                const itemIndex = allItems.findIndex(item => item.id === window.currentEventForEdit.id);
+                const itemIndex = allItems.findIndex(item => item.id === eventId);
                 if (itemIndex !== -1) {
                     allItems[itemIndex] = { ...allItems[itemIndex], ...eventData };
                 }
@@ -667,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyFiltersAndSorting();
                 displayItems();
                 
-                console.log(`✅ SAVE: Event ${window.currentEventForEdit.id} updated successfully`);
+                console.log(`✅ SAVE: Event ${eventId} updated successfully`);
             } else {
                 const errorData = await response.json();
                 console.error('❌ SAVE: Server error:', errorData);
