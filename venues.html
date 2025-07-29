@@ -16,6 +16,25 @@
     <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
         /* FOUC Prevention - Hide content until styles are loaded */
+        html {
+            visibility: hidden;
+        }
+        
+        html.loaded {
+            visibility: visible;
+        }
+        
+        body {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease !important;
+        }
+        
+        body.loaded {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
         .fouc-prevention {
             visibility: hidden;
             opacity: 0;

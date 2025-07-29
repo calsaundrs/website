@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple FOUC Test</title>
+    
+    <!-- Critical CSS to prevent FOUC -->
+    <style>
+        html {
+            visibility: hidden;
+        }
+        html.loaded {
+            visibility: visible;
+        }
+        body {
+            visibility: hidden !important;
+            opacity: 0 !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease !important;
+        }
+        body.loaded {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loading-screen.hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        .loading-text {
+            color: #B564F7;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+    
+    <!-- External CSS to simulate loading -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
+</head>
+<body class="fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <div style="padding: 20px; background: #1a1a1a; color: white; min-height: 100vh;">
+        <h1>FOUC Test Page</h1>
+        <p>If you can see this content smoothly, FOUC prevention is working!</p>
+        <p>If you saw unstyled content flash, FOUC prevention failed.</p>
+        
+        <h2>Test Links:</h2>
+        <ul>
+            <li><a href="/events.html" style="color: #B564F7;">Events Page</a></li>
+            <li><a href="/venues.html" style="color: #B564F7;">Venues Page</a></li>
+            <li><a href="/get-listed.html" style="color: #B564F7;">Get Listed Page</a></li>
+        </ul>
+        
+        <h2>Debug:</h2>
+        <button onclick="forceFOUCShow()" style="background: #B564F7; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+            Force Show Content
+        </button>
+        <div id="status" style="margin-top: 10px; font-family: monospace;"></div>
+    </div>
+
+    <script>
+        // Update status
+        function updateStatus() {
+            const htmlLoaded = document.documentElement.classList.contains('loaded');
+            const bodyLoaded = document.body.classList.contains('loaded');
+            const loadingHidden = document.getElementById('loadingScreen')?.classList.contains('hidden');
+            const foucExists = typeof window.foucPrevention !== 'undefined';
+            
+            document.getElementById('status').innerHTML = `
+                HTML loaded: ${htmlLoaded}<br>
+                Body loaded: ${bodyLoaded}<br>
+                Loading hidden: ${loadingHidden}<br>
+                FOUC script exists: ${foucExists}<br>
+                Ready state: ${document.readyState}
+            `;
+        }
+        
+        // Check status every second
+        setInterval(updateStatus, 1000);
+        updateStatus();
+        
+        // Listen for FOUC events
+        window.addEventListener('foucContentLoaded', () => {
+            console.log('FOUC content loaded event fired');
+            updateStatus();
+        });
+    </script>
+</body>
+</html>
