@@ -189,8 +189,8 @@ exports.handler = async function (event, context) {
                 
                 // Convert Map to array and sort by name
                 const venuesList = Array.from(venuesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
-            
-                            return {
+                
+                return {
                     statusCode: 200,
                     headers: {
                         'Content-Type': 'application/json',
