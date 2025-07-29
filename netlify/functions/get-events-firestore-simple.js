@@ -216,15 +216,21 @@ exports.handler = async function (event, context) {
                             sunday.setDate(friday.getDate() + 2);
                             return eventDate >= friday && eventDate <= sunday;
                         case 'this-week':
-                            const endOfWeek = new Date(today);
-                            endOfWeek.setDate(today.getDate() + 7);
-                            return eventDate >= today && eventDate < endOfWeek;
+                            const dayOfWeek = today.getDay();
+                            const daysUntilMonday = dayOfWeek === 0 ? 1 : (dayOfWeek === 1 ? 0 : 8 - dayOfWeek);
+                            const monday = new Date(today);
+                            monday.setDate(today.getDate() + daysUntilMonday);
+                            const friday = new Date(monday);
+                            friday.setDate(monday.getDate() + 4);
+                            return eventDate >= monday && eventDate <= friday;
                         case 'next-week':
-                            const startOfNextWeek = new Date(today);
-                            startOfNextWeek.setDate(today.getDate() + 7);
-                            const endOfNextWeek = new Date(startOfNextWeek);
-                            endOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
-                            return eventDate >= startOfNextWeek && eventDate < endOfNextWeek;
+                            const dayOfWeek = today.getDay();
+                            const daysUntilNextMonday = dayOfWeek === 0 ? 8 : (dayOfWeek === 1 ? 7 : 15 - dayOfWeek);
+                            const nextMonday = new Date(today);
+                            nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                            const nextFriday = new Date(nextMonday);
+                            nextFriday.setDate(nextMonday.getDate() + 4);
+                            return eventDate >= nextMonday && eventDate <= nextFriday;
                         case 'upcoming':
                         default:
                             return eventDate >= today;
