@@ -23,19 +23,18 @@ exports.handler = async function (event, context) {
         
         console.log(`Getting admin events. Status filter: ${status}, Limit: ${limit}`);
         
-        // Build query for events
+        // Build query for events - always get all events first
         let query = db.collection('events').orderBy('date', 'desc');
-        
-        // Add status filter if provided
-        if (status && status !== 'all') {
-            query = query.where('status', '==', status);
-        }
+        console.log('Admin Events: Executing query...');
         
         const snapshot = await query.limit(limit).get();
+        console.log(`Admin Events: Found ${snapshot.size} events in database`);
+        
         let events = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
+            console.log(`Admin Events: Processing event ${doc.id}: ${data.name || data['Event Name'] || 'Untitled'}, status: ${data.status || 'no status'}`);
             
             // Extract image information
             const imageData = extractImageUrl(data);
@@ -78,6 +77,16 @@ exports.handler = async function (event, context) {
             
             events.push(eventData);
         });
+        
+        console.log(`Admin Events: Processed ${events.length} events`);
+        
+        // Apply status filter if provided
+        if (status && status !== 'all') {
+            console.log(`Admin Events: Filtering events by status: ${status}`);
+            const beforeFilter = events.length;
+            events = events.filter(e => e.status === status);
+            console.log(`Admin Events: After filtering: ${events.length} events (was ${beforeFilter})`);
+        }
         
         // Group recurring events
         const groupedEvents = groupRecurringEvents(events);
