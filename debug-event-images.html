@@ -33,15 +33,27 @@
                 if (data.success) {
                     let html = '<h3>Debug Results:</h3>';
                     html += '<p><strong>Cloudinary Cloud Name:</strong> ' + data.cloudinaryCloudName + '</p>';
+                    html += '<p><strong>Total Events:</strong> ' + data.totalEvents + '</p>';
+                    html += '<p><strong>Events with Images:</strong> ' + data.eventsWithImages + '</p>';
+                    html += '<p><strong>Events without Images:</strong> ' + data.eventsWithoutImages + '</p>';
                     
-                    data.debugData.forEach((event, index) => {
-                        html += '<div class="event-data">';
+                    html += '<h4>Events WITH Images:</h4>';
+                    data.eventsWithImagesData.forEach((event, index) => {
+                        html += '<div class="event-data" style="border-left: 4px solid #10B981;">';
                         html += '<h4>Event ' + (index + 1) + ': ' + event.name + '</h4>';
                         html += '<p><strong>ID:</strong> ' + event.id + '</p>';
                         html += '<p><strong>Image Fields:</strong></p>';
                         html += '<pre>' + JSON.stringify(event.imageFields, null, 2) + '</pre>';
                         html += '<p><strong>Cloudinary Fields:</strong></p>';
                         html += '<pre>' + JSON.stringify(event.cloudinaryFields, null, 2) + '</pre>';
+                        html += '</div>';
+                    });
+                    
+                    html += '<h4>Events WITHOUT Images:</h4>';
+                    data.eventsWithoutImagesData.forEach((event, index) => {
+                        html += '<div class="event-data" style="border-left: 4px solid #EF4444;">';
+                        html += '<h4>Event ' + (index + 1) + ': ' + event.name + '</h4>';
+                        html += '<p><strong>ID:</strong> ' + event.id + '</p>';
                         html += '<p><strong>All Keys:</strong></p>';
                         html += '<pre>' + JSON.stringify(event.allKeys, null, 2) + '</pre>';
                         html += '</div>';

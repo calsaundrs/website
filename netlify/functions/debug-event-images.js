@@ -16,14 +16,15 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
-        // Get a few events to debug
+        // Get all approved events to debug
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(5)
             .get();
         
         const debugData = [];
+        const eventsWithImages = [];
+        const eventsWithoutImages = [];
         
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -51,13 +52,22 @@ exports.handler = async function (event, context) {
                 }
             });
             
-            debugData.push({
+            const eventData = {
                 id: doc.id,
                 name: data.name || 'Untitled Event',
                 imageFields: imageFields,
                 cloudinaryFields: cloudinaryFields,
-                allKeys: Object.keys(data)
-            });
+                allKeys: Object.keys(data),
+                hasAnyImage: Object.keys(imageFields).length > 0 || Object.keys(cloudinaryFields).length > 0
+            };
+            
+            debugData.push(eventData);
+            
+            if (eventData.hasAnyImage) {
+                eventsWithImages.push(eventData);
+            } else {
+                eventsWithoutImages.push(eventData);
+            }
         });
         
         return {
@@ -70,7 +80,12 @@ exports.handler = async function (event, context) {
             },
             body: JSON.stringify({
                 success: true,
+                totalEvents: debugData.length,
+                eventsWithImages: eventsWithImages.length,
+                eventsWithoutImages: eventsWithoutImages.length,
                 debugData: debugData,
+                eventsWithImagesData: eventsWithImages,
+                eventsWithoutImagesData: eventsWithoutImages,
                 cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || 'NOT SET'
             })
         };
