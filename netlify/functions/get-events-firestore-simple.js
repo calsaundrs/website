@@ -353,7 +353,15 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
 function extractImageUrl(data) {
     console.log('Extracting image from data with keys:', Object.keys(data));
     
-    // Use the same logic as SSG event pages - prioritize cloudinaryPublicId with specific transformations
+    // Use the same logic as SSG event pages - prioritize Cloudinary Public ID with specific transformations
+    if (data['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
+        console.log('Found Cloudinary Public ID:', data['Cloudinary Public ID']);
+        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data['Cloudinary Public ID']}`;
+        console.log('Generated Cloudinary URL:', cloudinaryUrl);
+        return { url: cloudinaryUrl };
+    }
+    
+    // Also check for camelCase version
     if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
         console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
         const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data.cloudinaryPublicId}`;
@@ -361,7 +369,16 @@ function extractImageUrl(data) {
         return { url: cloudinaryUrl };
     }
     
-    // Fallback to existing logic for other image formats
+    // Handle Promo Image as array (from Airtable)
+    if (data['Promo Image'] && Array.isArray(data['Promo Image']) && data['Promo Image'].length > 0) {
+        console.log('Found Promo Image array:', data['Promo Image']);
+        const promoImage = data['Promo Image'][0];
+        if (promoImage && promoImage.url) {
+            return { url: promoImage.url };
+        }
+    }
+    
+    // Handle other image formats
     if (data.promoImage && data.promoImage.url) {
         console.log('Found promoImage object:', data.promoImage);
         return data.promoImage;
@@ -369,10 +386,6 @@ function extractImageUrl(data) {
     if (data.image && data.image.url) {
         console.log('Found image object:', data.image);
         return data.image;
-    }
-    if (data['Promo Image'] && data['Promo Image'].url) {
-        console.log('Found Promo Image object:', data['Promo Image']);
-        return data['Promo Image'];
     }
     if (data['Image'] && data['Image'].url) {
         console.log('Found Image object:', data['Image']);
