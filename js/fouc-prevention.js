@@ -3,6 +3,32 @@
  * Prevents Flash of Unstyled Content across all pages
  */
 
+// Immediately hide content to prevent FOUC
+(function() {
+    'use strict';
+    
+    // Hide content immediately if not already hidden
+    if (document.body && !document.body.classList.contains('loaded')) {
+        document.body.style.visibility = 'hidden';
+        document.body.style.opacity = '0';
+    }
+    
+    // Also hide any existing content
+    const style = document.createElement('style');
+    style.textContent = `
+        body:not(.loaded) {
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        body.loaded {
+            visibility: visible !important;
+            opacity: 1 !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
 class FOUCPrevention {
     constructor() {
         this.body = document.body;
@@ -27,12 +53,12 @@ class FOUCPrevention {
         // Set fallback timeout
         this.loadTimeout = setTimeout(() => {
             this.showContent();
-        }, 2000);
+        }, 1500); // Reduced timeout for faster loading
         
         // Check resources and show content when ready
         this.checkResourcesLoaded().then(() => {
             clearTimeout(this.loadTimeout);
-            setTimeout(() => this.showContent(), 100);
+            setTimeout(() => this.showContent(), 50);
         }).catch(() => {
             clearTimeout(this.loadTimeout);
             this.showContent();
@@ -41,8 +67,17 @@ class FOUCPrevention {
         // Also show content when window load event fires
         window.addEventListener('load', () => {
             clearTimeout(this.loadTimeout);
-            setTimeout(() => this.showContent(), 100);
+            setTimeout(() => this.showContent(), 50);
         });
+        
+        // Show content when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => this.showContent(), 100);
+            });
+        } else {
+            setTimeout(() => this.showContent(), 100);
+        }
     }
     
     checkResourcesLoaded() {
@@ -92,13 +127,13 @@ class FOUCPrevention {
                         clearInterval(checkInterval);
                         resolve();
                     }
-                }, 100);
+                }, 50); // Faster checking
                 
-                // Timeout after 3 seconds
+                // Timeout after 2 seconds
                 setTimeout(() => {
                     clearInterval(checkInterval);
                     resolve(); // Continue anyway
-                }, 3000);
+                }, 2000);
             }
         });
     }
@@ -125,12 +160,12 @@ class FOUCPrevention {
                     resolve();
                 } else {
                     // Try again after a short delay
-                    setTimeout(resolve, 500);
+                    setTimeout(resolve, 200);
                 }
             };
             
             // Check after a short delay to allow font loading
-            setTimeout(checkFont, 100);
+            setTimeout(checkFont, 50);
         });
     }
     
