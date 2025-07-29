@@ -316,31 +316,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <!-- Dashboard Stats -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="stats-card rounded-xl p-6 relative">
+                <a href="/admin-approvals.html" class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Events</p>
                             <p class="text-3xl font-bold text-white" id="pending-events-count">-</p>
                         </div>
-                        <div class="text-4xl text-accent-color">
+                        <div class="text-4xl text-accent-color group-hover:scale-110 transition-transform">
                             <i class="fas fa-calendar-clock"></i>
                         </div>
                     </div>
                     <div id="pending-events-badge" class="notification-badge hidden">0</div>
-                </div>
+                    <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors"></div>
+                </a>
 
-                <div class="stats-card rounded-xl p-6 relative">
+                <a href="/admin-approvals.html" class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Venues</p>
                             <p class="text-3xl font-bold text-white" id="pending-venues-count">-</p>
                         </div>
-                        <div class="text-4xl text-accent-color">
+                        <div class="text-4xl text-accent-color group-hover:scale-110 transition-transform">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                     </div>
                     <div id="pending-venues-badge" class="notification-badge hidden">0</div>
-                </div>
+                    <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors"></div>
+                </a>
 
                 <div class="stats-card rounded-xl p-6 relative">
                     <div class="flex items-center justify-between">
