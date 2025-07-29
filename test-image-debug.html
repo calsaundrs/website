@@ -33,6 +33,10 @@
         Test Migration Connections
     </button>
     
+    <button onclick="testBasicFunction()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded mb-4 ml-2">
+        Test Basic Function
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -240,6 +244,37 @@
                     resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p class="text-red-400">Migration failed: ' + data.error + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testBasicFunction() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Testing basic function...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-basic-function');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Basic Function Test Results:</h2>';
+                    html += '<p><strong>Message:</strong> ' + data.data.message + '</p>';
+                    html += '<p><strong>Timestamp:</strong> ' + data.data.timestamp + '</p>';
+                    html += '<p><strong>Environment:</strong> ' + data.data.environment + '</p>';
+                    
+                    html += '<h3 class="font-bold mt-4 mb-2">Environment Variables:</h3>';
+                    html += '<p><strong>Airtable Token:</strong> ' + (data.data.hasAirtableToken ? '✅ Set' : '❌ Missing') + '</p>';
+                    html += '<p><strong>Airtable Base:</strong> ' + (data.data.hasAirtableBase ? '✅ Set' : '❌ Missing') + '</p>';
+                    html += '<p><strong>Firebase Project:</strong> ' + (data.data.hasFirebaseProject ? '✅ Set' : '❌ Missing') + '</p>';
+                    html += '<p><strong>Firebase Email:</strong> ' + (data.data.hasFirebaseEmail ? '✅ Set' : '❌ Missing') + '</p>';
+                    html += '<p><strong>Firebase Key:</strong> ' + (data.data.hasFirebaseKey ? '✅ Set' : '❌ Missing') + '</p>';
+                    html += '<p><strong>Cloudinary Name:</strong> ' + (data.data.hasCloudinaryName ? '✅ Set' : '❌ Missing') + '</p>';
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Basic function test failed: ' + data.error + '</p>';
                 }
             } catch (error) {
                 resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
