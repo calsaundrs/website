@@ -157,14 +157,15 @@ class EventAPI {
   }
 
   async getVenues() {
-    const response = await fetch(`${this.baseUrl}/get-venue-list-firestore`);
+    const response = await fetch(`${this.baseUrl}/simple-venue-test`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
-    return data || [];
+    console.log('Simple test response:', data);
+    return data.venues || [];
   }
 }
 
