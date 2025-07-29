@@ -21,6 +21,10 @@
         Check All Collections
     </button>
     
+    <button onclick="testBearAll()" class="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded mb-4 ml-2">
+        Debug Bear All Event
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -126,6 +130,60 @@
                                         <div class="border-l-4 border-gray-500 pl-3 mb-3">
                                             <p><strong>Doc ${index + 1}:</strong> ${doc.name}</p>
                                             <p><strong>ID:</strong> ${doc.id}</p>
+                                            <p><strong>Has Image Fields:</strong> ${doc.hasImageFields ? 'YES' : 'NO'}</p>
+                                            ${doc.hasImageFields ? `
+                                                <p><strong>Image Related Keys:</strong></p>
+                                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(doc.imageRelatedKeys, null, 2)}</pre>
+                                                <p><strong>Cloudinary Public ID:</strong> ${doc.cloudinaryPublicId || 'NOT FOUND'}</p>
+                                                <p><strong>Promo Image:</strong></p>
+                                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(doc.promoImage, null, 2)}</pre>
+                                            ` : ''}
+                                            <p><strong>All Keys:</strong></p>
+                                            <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(doc.allKeys, null, 2)}</pre>
+                                        </div>
+                                    `).join('')}
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + JSON.stringify(data) + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testBearAll() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Loading Bear All data...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-bear-all-event');
+                const data = await response.json();
+                
+                if (data.success && data.results) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Bear All Event Debug:</h2>';
+                    html += '<p><strong>Cloudinary Cloud Name:</strong> ' + data.cloudinaryCloudName + '</p>';
+                    html += '<p><strong>Available Collections:</strong> ' + data.collections.join(', ') + '</p>';
+                    
+                    Object.entries(data.results).forEach(([collectionName, result]) => {
+                        html += `
+                            <div class="border border-gray-600 rounded p-4 mb-4">
+                                <h3 class="font-bold text-lg mb-2">Collection: ${collectionName}</h3>
+                                <p><strong>Found Bear All:</strong> ${result.found ? 'YES' : 'NO'}</p>
+                                <p><strong>Document Count:</strong> ${result.docCount || 0}</p>
+                                ${result.error ? `<p class="text-red-400"><strong>Error:</strong> ${result.error}</p>` : ''}
+                                
+                                ${result.docs ? `
+                                    <h4 class="font-bold mt-3 mb-2">Bear All Documents:</h4>
+                                    ${result.docs.map((doc, index) => `
+                                        <div class="border-l-4 border-orange-500 pl-3 mb-3">
+                                            <p><strong>Doc ${index + 1}:</strong> ${doc.name}</p>
+                                            <p><strong>ID:</strong> ${doc.id}</p>
+                                            <p><strong>Slug:</strong> ${doc.slug || 'NOT FOUND'}</p>
                                             <p><strong>Has Image Fields:</strong> ${doc.hasImageFields ? 'YES' : 'NO'}</p>
                                             ${doc.hasImageFields ? `
                                                 <p><strong>Image Related Keys:</strong></p>
