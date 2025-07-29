@@ -355,24 +355,24 @@ exports.handler = async function (event, context) {
                             tomorrow.setDate(tomorrow.getDate() + 1);
                             return eventDate.toDateString() === tomorrow.toDateString();
                         case 'this-weekend':
-                            const dayOfWeek = today.getDay();
-                            const daysUntilFriday = 5 - dayOfWeek;
+                            const weekendDayOfWeek = today.getDay();
+                            const daysUntilFriday = 5 - weekendDayOfWeek;
                             const friday = new Date(today);
                             friday.setDate(today.getDate() + daysUntilFriday);
                             const sunday = new Date(friday);
                             sunday.setDate(friday.getDate() + 2);
                             return eventDate >= friday && eventDate <= sunday;
                         case 'this-week':
-                            const dayOfWeek = today.getDay();
-                            const daysUntilMonday = dayOfWeek === 0 ? 1 : (dayOfWeek === 1 ? 0 : 8 - dayOfWeek);
+                            const weekDayOfWeek = today.getDay();
+                            const daysUntilMonday = weekDayOfWeek === 0 ? 1 : (weekDayOfWeek === 1 ? 0 : 8 - weekDayOfWeek);
                             const monday = new Date(today);
                             monday.setDate(today.getDate() + daysUntilMonday);
-                            const sunday = new Date(monday);
-                            sunday.setDate(monday.getDate() + 6);
-                            return eventDate >= monday && eventDate <= sunday;
+                            const weekSunday = new Date(monday);
+                            weekSunday.setDate(monday.getDate() + 6);
+                            return eventDate >= monday && eventDate <= weekSunday;
                         case 'next-week':
-                            const dayOfWeek = today.getDay();
-                            const daysUntilNextMonday = dayOfWeek === 0 ? 8 : (dayOfWeek === 1 ? 7 : 15 - dayOfWeek);
+                            const nextWeekDayOfWeek = today.getDay();
+                            const daysUntilNextMonday = nextWeekDayOfWeek === 0 ? 8 : (nextWeekDayOfWeek === 1 ? 7 : 15 - nextWeekDayOfWeek);
                             const nextMonday = new Date(today);
                             nextMonday.setDate(today.getDate() + daysUntilNextMonday);
                             const nextSunday = new Date(nextMonday);
