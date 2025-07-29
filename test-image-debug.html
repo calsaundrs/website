@@ -216,10 +216,10 @@
         
         async function migrateEventImages() {
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<p>Starting image migration...</p>';
+            resultsDiv.innerHTML = '<p>Starting simple image migration...</p>';
             
             try {
-                const response = await fetch('/.netlify/functions/migrate-event-images-to-firestore');
+                const response = await fetch('/.netlify/functions/migrate-event-images-to-firestore-simple');
                 const data = await response.json();
                 
                 if (data.success) {
