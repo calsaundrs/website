@@ -7,35 +7,42 @@
 (function() {
     'use strict';
     
-    // Hide content immediately if not already hidden
-    if (document.body && !document.body.classList.contains('loaded')) {
-        document.body.style.visibility = 'hidden';
-        document.body.style.opacity = '0';
-    }
-    
-    // Also hide any existing content
-    const style = document.createElement('style');
-    style.textContent = `
-        body:not(.loaded) {
+    // Add critical CSS immediately
+    const criticalStyle = document.createElement('style');
+    criticalStyle.textContent = `
+        html {
+            visibility: hidden;
+        }
+        html.loaded {
+            visibility: visible;
+        }
+        body {
             visibility: hidden !important;
             opacity: 0 !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease !important;
         }
         body.loaded {
             visibility: visible !important;
             opacity: 1 !important;
-            transition: opacity 0.3s ease, visibility 0.3s ease !important;
+        }
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
         }
     `;
-    document.head.appendChild(style);
+    document.head.insertBefore(criticalStyle, document.head.firstChild);
 })();
 
 class FOUCPrevention {
     constructor() {
         this.body = document.body;
         this.loadingScreen = document.getElementById('loadingScreen');
-        this.loadTimeout = null;
         this.isContentShown = false;
-        
         this.init();
     }
     
@@ -50,123 +57,37 @@ class FOUCPrevention {
     }
     
     startLoading() {
-        // Set fallback timeout
-        this.loadTimeout = setTimeout(() => {
-            this.showContent();
-        }, 1500); // Reduced timeout for faster loading
-        
-        // Check resources and show content when ready
-        this.checkResourcesLoaded().then(() => {
-            clearTimeout(this.loadTimeout);
-            setTimeout(() => this.showContent(), 50);
-        }).catch(() => {
-            clearTimeout(this.loadTimeout);
-            this.showContent();
-        });
-        
-        // Also show content when window load event fires
-        window.addEventListener('load', () => {
-            clearTimeout(this.loadTimeout);
-            setTimeout(() => this.showContent(), 50);
-        });
-        
-        // Show content when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => this.showContent(), 100);
-            });
-        } else {
-            setTimeout(() => this.showContent(), 100);
-        }
-    }
-    
-    checkResourcesLoaded() {
-        const checks = [];
-        
-        // Check if main CSS is loaded
-        const mainCSSLink = document.querySelector('link[href*="main.css"]');
-        if (mainCSSLink) {
-            checks.push(this.checkCSSLoaded(mainCSSLink));
-        }
-        
-        // Check if fonts are loaded
-        if (document.fonts && document.fonts.ready) {
-            checks.push(document.fonts.ready);
-        }
-        
-        // Check if Tailwind is loaded
-        const tailwindScript = document.querySelector('script[src*="tailwindcss"]');
-        if (tailwindScript) {
-            checks.push(this.checkTailwindLoaded());
-        }
-        
-        // Check if custom fonts are loaded
-        checks.push(this.checkCustomFontsLoaded());
-        
-        return Promise.all(checks);
-    }
-    
-    checkCSSLoaded(linkElement) {
-        return new Promise((resolve) => {
-            if (linkElement.sheet !== null) {
-                resolve();
-            } else {
-                linkElement.addEventListener('load', resolve);
-                linkElement.addEventListener('error', resolve); // Continue even if CSS fails
-            }
-        });
-    }
-    
-    checkTailwindLoaded() {
-        return new Promise((resolve) => {
-            if (window.tailwind) {
-                resolve();
-            } else {
-                const checkInterval = setInterval(() => {
-                    if (window.tailwind) {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 50); // Faster checking
-                
-                // Timeout after 2 seconds
-                setTimeout(() => {
-                    clearInterval(checkInterval);
-                    resolve(); // Continue anyway
-                }, 2000);
-            }
-        });
-    }
-    
-    checkCustomFontsLoaded() {
-        return new Promise((resolve) => {
-            // Check for Omnes Pro font
-            const testString = 'Test';
-            const testElement = document.createElement('span');
-            testElement.style.fontFamily = 'Omnes Pro, sans-serif';
-            testElement.style.fontSize = '72px';
-            testElement.style.position = 'absolute';
-            testElement.style.visibility = 'hidden';
-            testElement.textContent = testString;
-            
-            document.body.appendChild(testElement);
-            
-            const checkFont = () => {
-                const width = testElement.offsetWidth;
-                document.body.removeChild(testElement);
-                
-                // If width is significantly different from default, font is loaded
-                if (width > 100) {
-                    resolve();
+        // Multiple triggers to ensure content shows
+        const triggers = [
+            // DOM ready
+            new Promise(resolve => {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', resolve);
                 } else {
-                    // Try again after a short delay
-                    setTimeout(resolve, 200);
+                    resolve();
                 }
-            };
+            }),
             
-            // Check after a short delay to allow font loading
-            setTimeout(checkFont, 50);
+            // Window load
+            new Promise(resolve => {
+                window.addEventListener('load', resolve);
+            }),
+            
+            // Fallback timeout
+            new Promise(resolve => {
+                setTimeout(resolve, 1000);
+            })
+        ];
+        
+        // Show content when any trigger fires
+        Promise.race(triggers).then(() => {
+            setTimeout(() => this.showContent(), 100);
         });
+        
+        // Additional safety timeout
+        setTimeout(() => {
+            this.showContent();
+        }, 2000);
     }
     
     showContent() {
@@ -174,7 +95,8 @@ class FOUCPrevention {
         
         this.isContentShown = true;
         
-        // Add loaded class to body
+        // Add loaded class to html and body
+        document.documentElement.classList.add('loaded');
         this.body.classList.add('loaded');
         
         // Hide loading screen with animation
@@ -191,6 +113,9 @@ class FOUCPrevention {
         
         // Trigger custom event for other scripts
         window.dispatchEvent(new CustomEvent('foucContentLoaded'));
+        
+        // Debug logging
+        console.log('FOUC Prevention: Content shown');
     }
     
     // Public method to manually show content
@@ -199,7 +124,7 @@ class FOUCPrevention {
     }
 }
 
-// Auto-initialize if DOM is ready
+// Auto-initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.foucPrevention = new FOUCPrevention();
@@ -207,6 +132,36 @@ if (document.readyState === 'loading') {
 } else {
     window.foucPrevention = new FOUCPrevention();
 }
+
+// Emergency fallback - show content after 3 seconds no matter what
+setTimeout(() => {
+    console.log('FOUC Prevention: Emergency fallback triggered');
+    if (window.foucPrevention) {
+        window.foucPrevention.forceShowContent();
+    } else {
+        document.documentElement.classList.add('loaded');
+        document.body.classList.add('loaded');
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+    }
+}, 3000);
+
+// Manual override for debugging
+window.forceFOUCShow = function() {
+    console.log('FOUC Prevention: Manual override triggered');
+    if (window.foucPrevention) {
+        window.foucPrevention.forceShowContent();
+    } else {
+        document.documentElement.classList.add('loaded');
+        document.body.classList.add('loaded');
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+    }
+};
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
