@@ -4,6 +4,25 @@ exports.handler = async function (event, context) {
     console.log('Getting events with comprehensive recurring system');
     
     try {
+        // Check if required environment variables are present
+        if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
+            console.error('Missing Firebase environment variables');
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                },
+                body: JSON.stringify({
+                    success: false,
+                    error: 'Server configuration error',
+                    message: 'Missing Firebase credentials'
+                })
+            };
+        }
+        
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -137,58 +156,54 @@ exports.handler = async function (event, context) {
         
         console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}, Categories: ${categories.join(', ')}, SFW Mode: ${sfwMode}, Date Range: ${dateRange}`);
         
+        // Test endpoint to verify function is working
+        if (view === 'test') {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                },
+                body: JSON.stringify({
+                    success: true,
+                    message: 'Function is working',
+                    timestamp: new Date().toISOString()
+                })
+            };
+        }
+        
         // If view=venues, return venues instead of events
         if (view === 'venues') {
             console.log('Returning venues list');
             try {
                 const venuesRef = db.collection('venues');
                 const venuesSnapshot = await venuesRef.get();
-                const venuesMap = new Map(); // Use Map to prevent duplicates
-                const testVenueKeywords = ['test', 'demo', 'example', 'sample', 'temp', 'temporary'];
+                const venuesList = [];
                 
                 venuesSnapshot.forEach(doc => {
-                    try {
-                        const data = doc.data();
-                        const venueName = data.name || data['Name'] || 'Unnamed Venue';
-                        const venueSlug = data.slug || data['Slug'] || '';
-                        
-                        // Skip test venues
-                        const isTestVenue = testVenueKeywords.some(keyword => 
-                            venueName.toLowerCase().includes(keyword) || 
-                            venueSlug.toLowerCase().includes(keyword)
-                        );
-                        
-                        if (isTestVenue) {
-                            console.log(`Skipping test venue: ${venueName}`);
-                            return;
-                        }
-                        
-                        // Only include venues with Cloudinary images
-                        const imageData = extractImageUrl(data);
-                        if (imageData && imageData.url) {
-                            // Use slug as key to prevent duplicates, fallback to name
-                            const key = venueSlug || venueName;
-                            
-                            if (!venuesMap.has(key)) {
-                                venuesMap.set(key, {
-                                    id: doc.id,
-                                    name: venueName,
-                                    slug: venueSlug,
-                                    address: data.address || data['Address'] || '',
-                                    description: data.description || data['Description'] || '',
-                                    image: imageData
-                                });
-                            } else {
-                                console.log(`Skipping duplicate venue: ${venueName}`);
-                            }
-                        }
-                    } catch (docError) {
-                        console.error('Error processing venue document:', docError);
-                    }
+                    const data = doc.data();
+                    const venueName = data.name || data['Name'] || 'Unnamed Venue';
+                    const venueSlug = data.slug || data['Slug'] || '';
+                    
+                    // Simple image handling - just use placeholder for now
+                    const imageData = { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(venueName)}` };
+                    
+                    venuesList.push({
+                        id: doc.id,
+                        name: venueName,
+                        slug: venueSlug,
+                        address: data.address || data['Address'] || '',
+                        description: data.description || data['Description'] || '',
+                        image: imageData
+                    });
                 });
                 
-                // Convert Map to array and sort by name
-                const venuesList = Array.from(venuesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+                // Sort by name
+                venuesList.sort((a, b) => a.name.localeCompare(b.name));
+                
+                console.log(`Successfully fetched ${venuesList.length} venues`);
                 
                 return {
                     statusCode: 200,
