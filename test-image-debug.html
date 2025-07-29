@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Debug Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <h1 class="text-2xl font-bold mb-6">Image Debug Test</h1>
+    
+    <button onclick="testImageExtraction()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-4">
+        Test Image Extraction
+    </button>
+    
+    <div id="results" class="space-y-4"></div>
+    
+    <script>
+        async function testImageExtraction() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=5');
+                const data = await response.json();
+                
+                if (data.success && data.events) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Event Image Data:</h2>';
+                    
+                    data.events.forEach((event, index) => {
+                        html += `
+                            <div class="border border-gray-600 rounded p-4 mb-4">
+                                <h3 class="font-bold text-lg mb-2">${event.name}</h3>
+                                <p><strong>Event ID:</strong> ${event.id}</p>
+                                <p><strong>Raw image data:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.image, null, 2)}</pre>
+                                <p><strong>Image URL used:</strong> ${event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'NO IMAGE'}</p>
+                                <p><strong>Image type:</strong> ${typeof event.image}</p>
+                                ${event.image && event.image.url ? `<img src="${event.image.url}" alt="${event.name}" class="w-32 h-32 object-cover rounded mt-2">` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + JSON.stringify(data) + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html> 

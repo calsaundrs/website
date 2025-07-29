@@ -88,10 +88,14 @@ exports.handler = async function (event, context) {
                 console.log('  - promoImage:', data.promoImage);
                 console.log('  - image:', data.image);
                 console.log('  - promo_image:', data.promo_image);
+                console.log('  - Cloudinary Public ID:', data['Cloudinary Public ID']);
+                console.log('  - cloudinaryPublicId:', data.cloudinaryPublicId);
+                console.log('  - Promo Image:', data['Promo Image']);
                 console.log('  - All image-related fields:', Object.keys(data).filter(key => 
                     key.toLowerCase().includes('image') || 
                     key.toLowerCase().includes('promo') || 
-                    key.toLowerCase().includes('thumbnail')
+                    key.toLowerCase().includes('thumbnail') ||
+                    key.toLowerCase().includes('cloudinary')
                 ));
                 
                 const extractedImage = extractImageUrl(data);
@@ -157,7 +161,8 @@ exports.handler = async function (event, context) {
                 total: limitedEvents.length,
                 originalCount: events.length,
                 groupedCount: groupedEvents.length,
-                limit: limit
+                limit: limit,
+                timestamp: new Date().toISOString()
             })
         };
         
