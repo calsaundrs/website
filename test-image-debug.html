@@ -13,6 +13,10 @@
         Test Image Extraction
     </button>
     
+    <button onclick="testRawData()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded mb-4 ml-2">
+        Test Raw Firestore Data
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -37,6 +41,48 @@
                                 <p><strong>Image URL used:</strong> ${event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'NO IMAGE'}</p>
                                 <p><strong>Image type:</strong> ${typeof event.image}</p>
                                 ${event.image && event.image.url ? `<img src="${event.image.url}" alt="${event.name}" class="w-32 h-32 object-cover rounded mt-2">` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + JSON.stringify(data) + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testRawData() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Loading raw data...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-events-raw-data');
+                const data = await response.json();
+                
+                if (data.success && data.debugData) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Raw Firestore Data:</h2>';
+                    html += '<p><strong>Cloudinary Cloud Name:</strong> ' + data.cloudinaryCloudName + '</p>';
+                    
+                    data.debugData.forEach((event, index) => {
+                        html += `
+                            <div class="border border-gray-600 rounded p-4 mb-4">
+                                <h3 class="font-bold text-lg mb-2">${event.name}</h3>
+                                <p><strong>Event ID:</strong> ${event.id}</p>
+                                <p><strong>All Keys:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.allKeys, null, 2)}</pre>
+                                <p><strong>Image Related Keys:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.imageRelatedKeys, null, 2)}</pre>
+                                <p><strong>Cloudinary Public ID:</strong> ${event.cloudinaryPublicId || 'NOT FOUND'}</p>
+                                <p><strong>Cloudinary Public ID (camelCase):</strong> ${event.cloudinaryPublicIdCamel || 'NOT FOUND'}</p>
+                                <p><strong>Promo Image:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.promoImage, null, 2)}</pre>
+                                <p><strong>Promo Image (camelCase):</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.promoImageCamel, null, 2)}</pre>
+                                <p><strong>Image:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.image, null, 2)}</pre>
                             </div>
                         `;
                     });
