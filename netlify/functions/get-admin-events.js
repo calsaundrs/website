@@ -39,43 +39,43 @@ exports.handler = async function (event, context) {
             const eventDate = new Date(data.date);
             const isFutureEvent = eventDate >= now;
             
-            console.log(`Admin Events: Processing event ${doc.id}: ${data.name || data['Event Name'] || 'Untitled'}, status: ${data.status || 'no status'}, date: ${data.date}, isFuture: ${isFutureEvent}`);
+            console.log(`Admin Events: Processing event ${doc.id}: ${data.name || 'Untitled'}, status: ${data.status || 'no status'}, date: ${data.date}, isFuture: ${isFutureEvent}`);
             
-            // Extract image information
+            // Extract image information using standardized fields
             const imageData = extractImageUrl(data);
             
-            // Process event data for admin view
+            // Process event data for admin view using standardized fields
             const eventData = {
                 id: doc.id,
-                name: data.name || data['Event Name'] || 'Untitled Event',
-                description: data.description || data['Description'] || '',
+                name: data.name || 'Untitled Event',
+                description: data.description || '',
                 date: data.date,
-                time: data.time || data['Time'] || '',
-                venueName: data.venueName || data['Venue Name'] || '',
-                venueSlug: data.venueSlug || data['Venue Slug'] || '',
-                category: data.category || data['Category'] || [],
+                time: data.time || '',
+                venueName: data.venueName || '',
+                venueSlug: data.venueSlug || '',
+                category: data.category || [],
                 status: data.status || 'pending',
                 slug: data.slug || '',
-                link: data.link || data['Link'] || '',
+                link: data.link || '',
                 image: imageData,
                 isFutureEvent: isFutureEvent,
                 
-                // Recurring event fields
+                // Recurring event fields (standardized)
                 isRecurring: data.isRecurring || false,
                 recurringPattern: data.recurringPattern || null,
-                recurringInfo: data.recurringInfo || data['Recurring Info'] || null,
+                recurringInfo: data.recurringInfo || null,
                 recurringGroupId: data.recurringGroupId || null,
-                seriesId: data.seriesId || data['Series ID'] || null,
+                seriesId: data.seriesId || null,
                 recurringInstance: data.recurringInstance || null,
                 totalInstances: data.totalInstances || null,
                 recurringStartDate: data.recurringStartDate || null,
                 recurringEndDate: data.recurringEndDate || null,
                 
-                // Metadata
+                // Metadata (standardized)
                 createdAt: data.createdAt || null,
                 updatedAt: data.updatedAt || null,
-                submittedBy: data.submittedBy || data['Submitted By'] || '',
-                submitterEmail: data.submitterEmail || data['Submitter Email'] || '',
+                submittedBy: data.submittedBy || '',
+                submitterEmail: data.submitterEmail || '',
                 
                 // Raw data for debugging
                 rawData: data
@@ -404,8 +404,8 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
 }
 
 function extractImageUrl(data) {
-    // Check for Cloudinary Public ID first (new format)
-    const cloudinaryId = data.cloudinaryPublicId || data['Cloudinary Public ID'];
+    // Check for standardized Cloudinary Public ID first
+    const cloudinaryId = data.cloudinaryPublicId;
     if (cloudinaryId) {
         return {
             url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
@@ -413,17 +413,21 @@ function extractImageUrl(data) {
         };
     }
     
-    // Check for Promo Image (Airtable format)
-    const promoImage = data['Promo Image'];
-    if (promoImage && Array.isArray(promoImage) && promoImage.length > 0) {
-        return {
-            url: promoImage[0].url,
-            alt: data.name || 'Event image'
-        };
+    // Check for standardized promo image
+    const promoImage = data.promoImage;
+    if (promoImage) {
+        const imageUrl = typeof promoImage === 'string' ? promoImage : 
+                        (promoImage.url || promoImage[0]?.url);
+        if (imageUrl) {
+            return {
+                url: imageUrl,
+                alt: data.name || 'Event image'
+            };
+        }
     }
     
-    // Check for image field (various formats)
-    const image = data.image || data.promoImage || data.promo_image;
+    // Check for generic image field
+    const image = data.image;
     if (image) {
         const imageUrl = typeof image === 'string' ? image : 
                         (image.url || image[0]?.url);
@@ -433,6 +437,23 @@ function extractImageUrl(data) {
                 alt: data.name || 'Event image'
             };
         }
+    }
+    
+    // Legacy fallbacks (for backward compatibility)
+    const legacyCloudinaryId = data['Cloudinary Public ID'];
+    if (legacyCloudinaryId) {
+        return {
+            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${legacyCloudinaryId}`,
+            alt: data.name || 'Event image'
+        };
+    }
+    
+    const legacyPromoImage = data['Promo Image'];
+    if (legacyPromoImage && Array.isArray(legacyPromoImage) && legacyPromoImage.length > 0) {
+        return {
+            url: legacyPromoImage[0].url,
+            alt: data.name || 'Event image'
+        };
     }
     
     // Return placeholder image

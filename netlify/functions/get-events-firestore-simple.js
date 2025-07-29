@@ -82,48 +82,43 @@ exports.handler = async function (event, context) {
             today.setHours(0, 0, 0, 0);
             
             if (eventDate >= today) {
-                // Debug image data
-                console.log('Event data for', data.name || 'Untitled Event', ':');
-                console.log('  - Raw data keys:', Object.keys(data));
-                console.log('  - promoImage:', data.promoImage);
-                console.log('  - image:', data.image);
-                console.log('  - promo_image:', data.promo_image);
-                console.log('  - Cloudinary Public ID:', data['Cloudinary Public ID']);
-                console.log('  - cloudinaryPublicId:', data.cloudinaryPublicId);
-                console.log('  - Promo Image:', data['Promo Image']);
-                console.log('  - All image-related fields:', Object.keys(data).filter(key => 
-                    key.toLowerCase().includes('image') || 
-                    key.toLowerCase().includes('promo') || 
-                    key.toLowerCase().includes('thumbnail') ||
-                    key.toLowerCase().includes('cloudinary')
-                ));
-                
-                const extractedImage = extractImageUrl(data);
-                console.log('  - Extracted image:', extractedImage);
-                
-                events.push({
+                // Use standardized field names - no more legacy mapping
+                const eventData = {
                     id: doc.id,
                     name: data.name || 'Untitled Event',
                     description: data.description || '',
                     date: data.date,
-                    status: data.status || 'approved',
+                    status: data.status || 'pending',
+                    slug: data.slug || '',
+                    category: data.category || [],
                     venueId: data.venueId || null,
                     venueName: data.venueName || '',
-                    venueAddress: data.venueAddress || '',
                     venueSlug: data.venueSlug || '',
-                    category: data.category || [],
+                    image: extractImageUrl(data),
                     link: data.link || '',
-                    recurringInfo: data.recurringInfo || '',
-                    recurringPattern: data.recurringPattern || null,
-                    recurringEndDate: data.recurringEndDate || null,
+                    ticketLink: data.ticketLink || '',
+                    recurringInfo: data.recurringInfo || null,
+                    seriesId: data.seriesId || null,
+                    promotion: data.promotion || {},
+                    createdAt: data.createdAt,
+                    updatedAt: data.updatedAt,
+                    submittedBy: data.submittedBy || '',
+                    approvedBy: data.approvedBy,
+                    approvedAt: data.approvedAt,
+                    
+                    // Recurring event fields (standardized)
                     isRecurring: data.isRecurring || false,
+                    recurringPattern: data.recurringPattern || null,
                     recurringGroupId: data.recurringGroupId || null,
                     recurringInstance: data.recurringInstance || null,
                     totalInstances: data.totalInstances || null,
-                    image: extractedImage,
-                    slug: data.slug || '',
-                    promotion: data.promotion || null
-                });
+                    recurringStartDate: data.recurringStartDate || null,
+                    recurringEndDate: data.recurringEndDate || null
+                };
+                
+                console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, image: ${JSON.stringify(eventData.image)})`);
+                
+                events.push(eventData);
             }
         });
         

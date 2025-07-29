@@ -54,28 +54,69 @@ function getOrdinalSuffix(day) {
 }
 
 function processEventForPublic(eventData, eventId) {
-    const event = {
-        id: eventId,
-        name: eventData.name || eventData['Event Name'] || 'Unnamed Event',
-        slug: eventData.slug || eventData['Event Slug'] || '',
-        description: eventData.description || eventData['Description'] || '',
-        date: eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null,
-        venue: eventData.venue || null,
-        imageUrl: null
+    // Use standardized field names - no more legacy mapping
+    const eventName = eventData.name || 'Unnamed Event';
+    const eventSlug = eventData.slug || '';
+    const eventDescription = eventData.description || '';
+    const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
+    
+    // Extract image URL using standardized fields
+    let imageUrl = null;
+    if (eventData.cloudinaryPublicId) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
+    } else if (eventData.promoImage) {
+        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
+                  (eventData.promoImage.url || eventData.promoImage[0]?.url);
+    } else if (eventData.image) {
+        imageUrl = typeof eventData.image === 'string' ? eventData.image : 
+                  (eventData.image.url || eventData.image[0]?.url);
+    }
+    
+    // Extract venue data using standardized fields
+    let venueData = {
+        id: '',
+        name: 'Venue TBC',
+        slug: ''
     };
     
-    // Process image URL
-    if (eventData.cloudinaryPublicId) {
-        const cloudinaryId = eventData.cloudinaryPublicId;
-        if (process.env.CLOUDINARY_CLOUD_NAME) {
-            event.imageUrl = 'https://res.cloudinary.com/' + process.env.CLOUDINARY_CLOUD_NAME + '/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/' + cloudinaryId;
-        } else {
-            event.imageUrl = 'https://placehold.co/1200x675/1e1e1e/EAEAEA?text=' + encodeURIComponent(event.name);
-        }
-    } else if (eventData.imageUrl) {
-        event.imageUrl = eventData.imageUrl;
-    } else {
-        event.imageUrl = 'https://placehold.co/1200x675/1e1e1e/EAEAEA?text=' + encodeURIComponent(event.name);
+    if (eventData.venueId) {
+        venueData = {
+            id: eventData.venueId,
+            name: eventData.venueName || 'Venue TBC',
+            slug: eventData.venueSlug || ''
+        };
+    } else if (eventData.venue) {
+        venueData = {
+            id: eventData.venue.id || '',
+            name: eventData.venue.name || 'Venue TBC',
+            slug: eventData.venue.slug || ''
+        };
+    }
+    
+    const event = {
+        id: eventId,
+        name: eventName,
+        slug: eventSlug,
+        description: eventDescription,
+        date: eventDate,
+        venue: venueData,
+        image: imageUrl ? { url: imageUrl } : null,
+        category: eventData.category || [],
+        price: eventData.price || null,
+        ageRestriction: eventData.ageRestriction || null,
+        organizer: eventData.organizer || null,
+        accessibility: eventData.accessibility || null,
+        ticketLink: eventData.ticketLink || null,
+        eventLink: eventData.eventLink || null,
+        facebookEvent: eventData.facebookEvent || null,
+        recurringInfo: eventData.recurringInfo || null,
+        boostedListingStartDate: eventData.boostedListingStartDate || null,
+        boostedListingEndDate: eventData.boostedListingEndDate || null,
+        otherInstances: [] // Will be populated for recurring events
+    };
+    
+    if (!event.category || event.category.length === 0) {
+        event.category = ['Event'];
     }
     
     return event;

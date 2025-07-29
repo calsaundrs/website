@@ -167,19 +167,37 @@ exports.handler = async function (event, context) {
         
         // Prepare Firestore data (no Airtable dependency)
         const firestoreData = {
+            // Core Fields (Standardized)
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
             description: submission.description || '',
             date: new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
             status: 'pending',
+            
+            // Venue Fields (Standardized)
             venueId: venueData.venueId,
             venueName: venueData.venueName,
             venueAddress: venueData.venueAddress,
             venueSlug: venueData.venueSlug,
+            
+            // Categorization (Standardized)
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
+            
+            // Links (Standardized)
             link: submission.link || '',
+            
+            // Media Fields (Standardized)
             cloudinaryPublicId: uploadedImage ? uploadedImage.publicId : null,
             promoImage: uploadedImage ? uploadedImage.url : null,
+            
+            // Recurring Event Fields (Standardized)
+            isRecurring: submission.recurrence ? true : false,
+            recurringInfo: submission.recurrence || null,
+            recurringPattern: null, // Will be set by series manager if needed
+            seriesId: null, // Will be set by series manager if needed
+            recurringGroupId: null, // Will be set by series manager if needed
+            
+            // Metadata (Standardized)
             submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
             createdAt: new Date(),
             updatedAt: new Date()
