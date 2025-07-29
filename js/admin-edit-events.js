@@ -8,7 +8,7 @@ let currentEventForEdit = null;
 let selectedEvents = new Set(); // For bulk actions
 let allVenues = []; // For venue picker
 
-// Available categories for the form
+// Available categories for the form (matching promoter submission)
 const VALID_CATEGORIES = [
     "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", 
     "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", 
@@ -900,7 +900,7 @@ function populateEditForm(event) {
             
             // Check if this venue matches the current event's venue
             const currentVenueId = event.venueId || event.Venue;
-            const currentVenueName = event.venue || event.VenueText || event['Venue Name'];
+            const currentVenueName = event.venueName || event.venue || event.VenueText || event['Venue Name'];
             if (currentVenueId === venue.id || currentVenueName === venue.name) {
                 option.selected = true;
             }
@@ -917,11 +917,18 @@ function populateEditForm(event) {
     
     // Populate categories
     const categoriesContainer = document.getElementById('edit-categories');
-    const eventCategories = event.categories || event.Categories || [];
-    const allCategories = ['Club Night', 'Drag Show', 'Live Music', 'Comedy', 'Theatre', 'Art Exhibition', 'Workshop', 'Social Event', 'Sports', 'Other'];
+    const eventCategories = event.category || event.categories || event.Category || event.Categories || [];
     
-    categoriesContainer.innerHTML = allCategories.map(category => {
-        const isChecked = eventCategories.includes(category);
+    // Handle both string and array formats
+    let normalizedEventCategories = [];
+    if (Array.isArray(eventCategories)) {
+        normalizedEventCategories = eventCategories;
+    } else if (typeof eventCategories === 'string') {
+        normalizedEventCategories = eventCategories.split(',').map(cat => cat.trim()).filter(cat => cat);
+    }
+    
+    categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
+        const isChecked = normalizedEventCategories.includes(category);
         return `
             <label class="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" name="categories" value="${category}" ${isChecked ? 'checked' : ''} class="rounded text-accent-color focus:ring-accent-color">
