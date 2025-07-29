@@ -128,7 +128,7 @@ function filterEvents(filter) {
 async function loadVenues() {
     try {
         console.log('Admin Edit Events: Loading venues...');
-        const response = await fetch('/.netlify/functions/get-venue-list');
+        const response = await fetch('/.netlify/functions/get-admin-venues');
         
         if (response.ok) {
             allVenues = await response.json();
