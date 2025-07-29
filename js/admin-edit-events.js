@@ -1122,7 +1122,12 @@ async function handleEditFormSubmit(event) {
 
 async function handleDeleteEvent(eventId) {
     const event = eventId ? allEvents.find(e => e.id === eventId) : currentEventForEdit;
-    if (!event) return;
+    if (!event) {
+        console.error('Admin Edit Events: No event found for deletion');
+        return;
+    }
+    
+    console.log('Admin Edit Events: Deleting event:', event.id, event.name);
     
     // Check if this is a recurring event
     const isRecurring = event.isRecurring || event.isRecurringGroup || event.recurringGroupId || event.seriesId;
@@ -1171,7 +1176,29 @@ async function handleDeleteEvent(eventId) {
         if (result.success) {
             showSuccess(result.message || 'Event deleted successfully!');
             closeEditModal();
+            
+            // Small delay to ensure deletion is processed
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Force refresh with current filter
+            console.log('Admin Edit Events: Refreshing events after deletion...');
+            
+            // Clear current data to force fresh load
+            allEvents = [];
+            pendingEvents = [];
+            approvedEvents = [];
+            recurringEvents = [];
+            
             await loadAllEvents(); // Reload data
+            
+            // Ensure the current filter is reapplied
+            console.log('Admin Edit Events: Reapplying filter:', currentFilter);
+            filterEvents(currentFilter);
+            
+            // Clear any selected events and current event
+            selectedEvents.clear();
+            currentEventForEdit = null;
+            updateBulkActionsVisibility();
         } else {
             throw new Error(result.message || 'Failed to delete event');
         }
