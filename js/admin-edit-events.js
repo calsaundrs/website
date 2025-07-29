@@ -874,32 +874,46 @@ function closeRecurringModal() {
 
 // Form handling
 function populateEditForm(event) {
-    if (!event) return;
+    console.log('Admin Edit Events: Populating form with event:', event);
     
-    // Populate basic fields
-    document.getElementById('edit-name').value = event.name || event['Event Name'] || '';
-    document.getElementById('edit-description').value = event.description || event.Description || '';
-    // Format date for HTML input (convert ISO string to yyyy-MM-dd)
-    const eventDate = event.date || event.Date || '';
+    // Use standardized field names
+    document.getElementById('edit-name').value = event.name || '';
+    document.getElementById('edit-description').value = event.description || '';
+    
+    // Format date for HTML input
+    const eventDate = event.date || '';
     const formattedDate = eventDate ? new Date(eventDate).toISOString().split('T')[0] : '';
     document.getElementById('edit-date').value = formattedDate;
-    document.getElementById('edit-time').value = event.time || event.Time || '';
-    document.getElementById('edit-status').value = event.status || event.Status || 'Pending Review';
-    document.getElementById('edit-link').value = event.link || event.Link || '';
     
-    // Populate venue select
-    const venueSelect = document.getElementById('edit-venue-select');
-    venueSelect.innerHTML = '<option value="">Select an existing venue...</option>';
+    document.getElementById('edit-time').value = event.time || '';
+    document.getElementById('edit-link').value = event.link || '';
+    document.getElementById('edit-status').value = event.status || 'pending';
     
-    if (allVenues && allVenues.length > 0) {
+    // Handle categories (standardized array format)
+    const eventCategories = event.category || [];
+    const categoriesContainer = document.getElementById('edit-categories');
+    categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
+        const isChecked = eventCategories.includes(category);
+        return `
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" value="${category}" ${isChecked ? 'checked' : ''} class="rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500">
+                <span class="text-sm text-gray-300">${category}</span>
+            </label>
+        `;
+    }).join('');
+    
+    // Handle venue selection (standardized field names)
+    const venueSelect = document.getElementById('edit-venue');
+    if (venueSelect) {
+        venueSelect.innerHTML = '<option value="">Select a venue</option>';
         allVenues.forEach(venue => {
             const option = document.createElement('option');
             option.value = venue.id;
             option.textContent = venue.name;
             
-            // Check if this venue matches the current event's venue
-            const currentVenueId = event.venueId || event.Venue;
-            const currentVenueName = event.venueName || event.venue || event.VenueText || event['Venue Name'];
+            // Match by venue ID or name
+            const currentVenueId = event.venueId;
+            const currentVenueName = event.venueName;
             if (currentVenueId === venue.id || currentVenueName === venue.name) {
                 option.selected = true;
             }
@@ -908,110 +922,28 @@ function populateEditForm(event) {
         });
     }
     
-    // Add "Create New Venue" option
-    const newVenueOption = document.createElement('option');
-    newVenueOption.value = 'new';
-    newVenueOption.textContent = '➕ Create New Venue';
-    venueSelect.appendChild(newVenueOption);
+    // Handle recurring event fields (standardized)
+    document.getElementById('edit-is-recurring').checked = event.isRecurring || false;
+    document.getElementById('edit-recurring-pattern').value = event.recurringPattern || '';
+    document.getElementById('edit-recurring-info').value = event.recurringInfo || '';
     
-    // Populate categories
-    const categoriesContainer = document.getElementById('edit-categories');
-    const eventCategories = event.category || event.categories || event.Category || event.Categories || [];
+    // Format recurring dates
+    const recurringStartDate = event.recurringStartDate || '';
+    const formattedStartDate = recurringStartDate ? new Date(recurringStartDate).toISOString().split('T')[0] : '';
+    document.getElementById('edit-recurring-start-date').value = formattedStartDate;
     
-    // Handle both string and array formats
-    let normalizedEventCategories = [];
-    if (Array.isArray(eventCategories)) {
-        normalizedEventCategories = eventCategories;
-    } else if (typeof eventCategories === 'string') {
-        normalizedEventCategories = eventCategories.split(',').map(cat => cat.trim()).filter(cat => cat);
-    }
+    const recurringEndDate = event.recurringEndDate || '';
+    const formattedEndDate = recurringEndDate ? new Date(recurringEndDate).toISOString().split('T')[0] : '';
+    document.getElementById('edit-recurring-end-date').value = formattedEndDate;
     
-    categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
-        const isChecked = normalizedEventCategories.includes(category);
-        return `
-            <label class="flex items-center space-x-2 cursor-pointer">
-                <input type="checkbox" name="categories" value="${category}" ${isChecked ? 'checked' : ''} class="rounded text-accent-color focus:ring-accent-color">
-                <span class="text-sm text-gray-300">${category}</span>
-            </label>
-        `;
-    }).join('');
+    document.getElementById('edit-total-instances').value = event.totalInstances || '';
+    document.getElementById('edit-recurring-instance').value = event.recurringInstance || '';
     
-    // Populate current image
-    const currentImage = document.getElementById('edit-current-image');
-    if (event.image?.url || event.imageUrl) {
-        currentImage.src = event.image?.url || event.imageUrl;
-        currentImage.style.display = 'block';
-        currentImage.nextElementSibling.style.display = 'none';
-    } else {
-        currentImage.style.display = 'none';
-        currentImage.nextElementSibling.style.display = 'flex';
-    }
+    // Store current event for editing
+    currentEventForEdit = event;
     
-    // Setup venue change handler
-    const newVenueFields = document.getElementById('edit-new-venue-fields');
-    venueSelect.addEventListener('change', function() {
-        if (this.value === 'new') {
-            newVenueFields.classList.remove('hidden');
-        } else {
-            newVenueFields.classList.add('hidden');
-        }
-    });
-    
-    // Populate recurring event fields
-    const isRecurringCheckbox = document.getElementById('edit-is-recurring');
-    const recurringFields = document.getElementById('edit-recurring-fields');
-    
-    if (isRecurringCheckbox) {
-        isRecurringCheckbox.checked = event.isRecurring || false;
-        
-        // Show/hide recurring fields based on checkbox
-        if (isRecurringCheckbox.checked) {
-            recurringFields.classList.remove('hidden');
-        } else {
-            recurringFields.classList.add('hidden');
-        }
-        
-        // Setup recurring checkbox handler
-        isRecurringCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                recurringFields.classList.remove('hidden');
-            } else {
-                recurringFields.classList.add('hidden');
-            }
-        });
-    }
-    
-    // Populate recurring pattern
-    const recurringPatternSelect = document.getElementById('edit-recurring-pattern');
-    if (recurringPatternSelect) {
-        recurringPatternSelect.value = event.recurringPattern || '';
-    }
-    
-    // Populate recurring info
-    const recurringInfoField = document.getElementById('edit-recurring-info');
-    if (recurringInfoField) {
-        recurringInfoField.value = event.recurringInfo || event['Recurring Info'] || '';
-    }
-    
-    // Populate recurring dates
-    const recurringStartDate = document.getElementById('edit-recurring-start-date');
-    const recurringEndDate = document.getElementById('edit-recurring-end-date');
-    if (recurringStartDate) {
-        recurringStartDate.value = event.recurringStartDate || event.date || '';
-    }
-    if (recurringEndDate) {
-        recurringEndDate.value = event.recurringEndDate || '';
-    }
-    
-    // Populate recurring instance info
-    const totalInstancesField = document.getElementById('edit-total-instances');
-    const recurringInstanceField = document.getElementById('edit-recurring-instance');
-    if (totalInstancesField) {
-        totalInstancesField.value = event.totalInstances || '';
-    }
-    if (recurringInstanceField) {
-        recurringInstanceField.value = event.recurringInstance || '';
-    }
+    // Show the modal
+    document.getElementById('edit-modal').classList.remove('hidden');
 }
 
 async function handleEditFormSubmit(event) {

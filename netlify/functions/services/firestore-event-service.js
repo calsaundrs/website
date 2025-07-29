@@ -161,30 +161,40 @@ class FirestoreEventService {
   }
 
   processStandaloneEvent(eventData) {
-    // Map Firestore field names to expected field names
+    // Use standardized field names - no more legacy mapping
     const mappedData = {
       id: eventData.id,
-      name: eventData['Event Name'] || eventData.name,
-      slug: eventData['Slug'] || eventData.slug,
-      description: eventData['Description'] || eventData.description,
-      category: eventData['categories'] || eventData.category || [],
-      date: eventData['Date'] || eventData.date,
-      venueId: eventData['venueId'] || eventData.venueId,
-      venueName: eventData['Venue Name'] || eventData.venueName,
-      venueSlug: eventData['Venue Slug'] || eventData.venueSlug,
-      venueAddress: eventData['Venue Address'] || eventData.venueAddress,
-      venueLink: eventData['Venue Link'] || eventData.venueLink,
-      image: eventData['Promo Image'] || eventData.image,
-      cloudinaryPublicId: eventData['Cloudinary Public ID'] || eventData.cloudinaryPublicId,
-      price: eventData['Price'] || eventData.price,
-      ageRestriction: eventData['Age Restriction'] || eventData.ageRestriction,
-      link: eventData['Link'] || eventData.link,
-      ticketLink: eventData['Ticket Link'] || eventData.ticketLink,
-      seriesId: eventData['Series ID'] || eventData.seriesId,
-      featuredBannerStartDate: eventData['Featured Banner Start Date'] || eventData.featuredBannerStartDate,
-      featuredBannerEndDate: eventData['Featured Banner End Date'] || eventData.featuredBannerEndDate,
-      boostedListingStartDate: eventData['Boosted Listing Start Date'] || eventData.boostedListingStartDate,
-      boostedListingEndDate: eventData['Boosted Listing End Date'] || eventData.boostedListingEndDate
+      name: eventData.name,
+      slug: eventData.slug,
+      description: eventData.description,
+      category: eventData.category || [],
+      date: eventData.date,
+      venueId: eventData.venueId,
+      venueName: eventData.venueName,
+      venueSlug: eventData.venueSlug,
+      venueAddress: eventData.venueAddress,
+      venueLink: eventData.venueLink,
+      image: eventData.promoImage || eventData.image,
+      cloudinaryPublicId: eventData.cloudinaryPublicId,
+      price: eventData.price,
+      ageRestriction: eventData.ageRestriction,
+      link: eventData.link,
+      ticketLink: eventData.ticketLink,
+      seriesId: eventData.seriesId,
+      featuredBannerStartDate: eventData.featuredBannerStartDate,
+      featuredBannerEndDate: eventData.featuredBannerEndDate,
+      boostedListingStartDate: eventData.boostedListingStartDate,
+      boostedListingEndDate: eventData.boostedListingEndDate,
+      
+      // Recurring event fields (standardized)
+      isRecurring: eventData.isRecurring || false,
+      recurringPattern: eventData.recurringPattern,
+      recurringInfo: eventData.recurringInfo,
+      recurringGroupId: eventData.recurringGroupId,
+      recurringInstance: eventData.recurringInstance,
+      totalInstances: eventData.totalInstances,
+      recurringStartDate: eventData.recurringStartDate,
+      recurringEndDate: eventData.recurringEndDate
     };
 
     return {
@@ -205,7 +215,17 @@ class FirestoreEventService {
       series: mappedData.seriesId ? {
         id: mappedData.seriesId,
         type: 'instance'
-      } : null
+      } : null,
+      
+      // Recurring event data
+      isRecurring: mappedData.isRecurring,
+      recurringPattern: mappedData.recurringPattern,
+      recurringInfo: mappedData.recurringInfo,
+      recurringGroupId: mappedData.recurringGroupId,
+      recurringInstance: mappedData.recurringInstance,
+      totalInstances: mappedData.totalInstances,
+      recurringStartDate: mappedData.recurringStartDate,
+      recurringEndDate: mappedData.recurringEndDate
     };
   }
 
@@ -229,16 +249,18 @@ class FirestoreEventService {
   }
 
   extractImageInfo(eventData) {
+    // Check for standardized Cloudinary Public ID first
     const cloudinaryId = eventData.cloudinaryPublicId;
-    const promoImage = eventData.image;
-    
     if (cloudinaryId) {
       return {
         url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
         alt: eventData.name
       };
-    } else if (promoImage) {
-      // Handle both string URLs and array objects
+    }
+    
+    // Check for standardized promo image
+    const promoImage = eventData.promoImage;
+    if (promoImage) {
       const imageUrl = typeof promoImage === 'string' ? promoImage : 
                       (promoImage.url || promoImage[0]?.url);
       
@@ -248,6 +270,37 @@ class FirestoreEventService {
           alt: eventData.name
         };
       }
+    }
+    
+    // Check for generic image field
+    const image = eventData.image;
+    if (image) {
+      const imageUrl = typeof image === 'string' ? image : 
+                      (image.url || image[0]?.url);
+      
+      if (imageUrl) {
+        return {
+          url: imageUrl,
+          alt: eventData.name
+        };
+      }
+    }
+    
+    // Legacy fallbacks (for backward compatibility)
+    const legacyCloudinaryId = eventData['Cloudinary Public ID'];
+    if (legacyCloudinaryId) {
+      return {
+        url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${legacyCloudinaryId}`,
+        alt: eventData.name
+      };
+    }
+    
+    const legacyPromoImage = eventData['Promo Image'];
+    if (legacyPromoImage && Array.isArray(legacyPromoImage) && legacyPromoImage.length > 0) {
+      return {
+        url: legacyPromoImage[0].url,
+        alt: eventData.name
+      };
     }
     
     return null;
