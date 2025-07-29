@@ -221,6 +221,18 @@
             background-clip: text;
         }
 
+        /* Mobile-specific heading gradient fix */
+        @media (max-width: 768px) {
+            .heading-gradient {
+                background: none;
+                -webkit-background-clip: initial;
+                -webkit-text-fill-color: initial;
+                background-clip: initial;
+                color: #FFFFFF;
+                text-shadow: 0 0 10px rgba(232, 58, 153, 0.5);
+            }
+        }
+
         /* Improved popover styling */
         .popover {
             background: rgba(31, 41, 55, 0.95);
