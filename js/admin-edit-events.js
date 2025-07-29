@@ -880,7 +880,10 @@ function populateEditForm(event) {
     // Populate basic fields
     document.getElementById('edit-name').value = event.name || event['Event Name'] || '';
     document.getElementById('edit-description').value = event.description || event.Description || '';
-    document.getElementById('edit-date').value = event.date || event.Date || '';
+    // Format date for HTML input (convert ISO string to yyyy-MM-dd)
+    const eventDate = event.date || event.Date || '';
+    const formattedDate = eventDate ? new Date(eventDate).toISOString().split('T')[0] : '';
+    document.getElementById('edit-date').value = formattedDate;
     document.getElementById('edit-time').value = event.time || event.Time || '';
     document.getElementById('edit-status').value = event.status || event.Status || 'Pending Review';
     document.getElementById('edit-link').value = event.link || event.Link || '';
@@ -1078,13 +1081,13 @@ async function handleEditFormSubmit(event) {
         const eventData = {
             itemId: currentEventForEdit ? currentEventForEdit.id : null,
             itemType: 'event',
-            name: document.getElementById('edit-name').value,
+            'event-name': document.getElementById('edit-name').value,
             description: document.getElementById('edit-description').value,
             date: document.getElementById('edit-date').value,
             time: document.getElementById('edit-time').value,
             status: document.getElementById('edit-status').value,
             link: document.getElementById('edit-link').value,
-            category: Array.from(document.querySelectorAll('#edit-categories input:checked')).map(cb => cb.value)
+            category: Array.from(document.querySelectorAll('#edit-categories input:checked')).map(cb => cb.value).join(',')
         };
         
         // Handle venue
@@ -1092,7 +1095,7 @@ async function handleEditFormSubmit(event) {
         if (venueSelect.value === 'new') {
             const newVenueName = document.getElementById('edit-new-venue-name').value;
             if (newVenueName) {
-                eventData.venueName = newVenueName;
+                eventData['venue-name'] = newVenueName;
             }
         } else if (venueSelect.value) {
             eventData.venueId = venueSelect.value;
