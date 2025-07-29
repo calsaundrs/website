@@ -121,39 +121,20 @@ class EventAPI {
   }
 
   async getEvents(filters = {}) {
-    const params = new URLSearchParams();
-    
-    // Add filter parameters
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        if (Array.isArray(value)) {
-          value.forEach(v => params.append(key, v));
-        } else if (typeof value === 'object') {
-          params.append(key, JSON.stringify(value));
-        } else {
-          params.append(key, value);
-        }
-      }
-    });
-
-    console.log('EventAPI: Calling get-events-firestore-simple with params:', params.toString());
-    const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
+    console.log('EventAPI: Calling simple-events-test');
+    const response = await fetch(`${this.baseUrl}/simple-events-test`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
-    console.log('EventAPI: Received data from API:', data);
-    console.log('EventAPI: Number of events:', data.events ? data.events.length : 0);
+    console.log('EventAPI: Simple events test response:', data);
     
-    // Log the first event to see its structure
-    if (data.events && data.events.length > 0) {
-      console.log('EventAPI: First event structure:', data.events[0]);
-      console.log('EventAPI: First event image field:', data.events[0].image);
-    }
-    
-    return data;
+    return {
+      events: data.events || [],
+      total: data.eventCount || 0
+    };
   }
 
   async getVenues() {
