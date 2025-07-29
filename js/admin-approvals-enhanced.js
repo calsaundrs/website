@@ -35,17 +35,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastRefreshTime = Date.now();
     let isLoading = false;
     
+    // Available categories for the form (matching promoter submission)
+    const VALID_CATEGORIES = [
+        "Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", 
+        "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", 
+        "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"
+    ];
+    
     // Initialize
     initializeApprovals();
     
     async function initializeApprovals() {
         console.log('🚀 Initializing enhanced approvals system...');
         await loadPendingItems();
+        await loadVenues();
         setupEventListeners();
         setupAutoRefresh();
         setupSearch();
         setupSorting();
         updateBulkActions();
+    }
+    
+    async function loadVenues() {
+        try {
+            console.log('🏢 Loading venues for edit form...');
+            const response = await fetch('/.netlify/functions/get-venue-list');
+            
+            if (response.ok) {
+                const data = await response.json();
+                window.allVenues = data.venues || [];
+                console.log(`🏢 Loaded ${window.allVenues.length} venues for edit form`);
+            } else {
+                console.error('❌ Failed to load venues:', response.status);
+                window.allVenues = [];
+            }
+        } catch (error) {
+            console.error('❌ Error loading venues:', error);
+            window.allVenues = [];
+        }
     }
     
     async function loadPendingItems() {
@@ -462,8 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function openEditModal(id, type) {
         const modal = document.getElementById('edit-modal');
-        const form = document.getElementById('edit-form');
-        const fieldsContainer = document.getElementById('edit-form-fields');
+        const modalTitle = document.getElementById('modal-title');
         
         // Find the item
         const item = allItems.find(item => item.id === id);
@@ -474,156 +500,145 @@ document.addEventListener('DOMContentLoaded', () => {
         
         console.log(`✏️ EDIT: Opening edit modal for ${type} ${id}`, item);
         
-        // Populate form fields based on type
-        fieldsContainer.innerHTML = createEditFormFields(item);
+        if (type === 'event') {
+            modalTitle.innerHTML = '<i class="fas fa-edit mr-3"></i>Edit Event';
+            populateEditForm(item);
+        } else {
+            modalTitle.innerHTML = '<i class="fas fa-edit mr-3"></i>Edit Venue';
+            populateVenueEditForm(item);
+        }
         
         modal.classList.remove('hidden');
-        
-        // Handle form submission
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            await saveEditForm(id, type, form);
-            modal.classList.add('hidden');
-        };
-        
-        // Remove previous listener and add new one
-        form.removeEventListener('submit', handleSubmit);
-        form.addEventListener('submit', handleSubmit);
     }
     
-    function createEditFormFields(item) {
-        const isEvent = item.type === 'event';
+    function populateEditForm(event) {
+        console.log('Admin Approvals: Populating form with event:', event);
         
-        if (isEvent) {
-            // Handle Firestore timestamp for date
-            let dateValue = '';
-            if (item.date) {
-                if (item.date._seconds) {
-                    // Firestore timestamp
-                    dateValue = new Date(item.date._seconds * 1000).toISOString().slice(0, 16);
-                } else {
-                    // Regular date
-                    dateValue = new Date(item.date).toISOString().slice(0, 16);
-                }
+        // Use standardized field names
+        document.getElementById('edit-name').value = event.name || '';
+        document.getElementById('edit-description').value = event.description || '';
+        
+        // Format date for HTML input
+        const eventDate = event.date || '';
+        const formattedDate = eventDate ? new Date(eventDate).toISOString().split('T')[0] : '';
+        document.getElementById('edit-date').value = formattedDate;
+        
+        document.getElementById('edit-time').value = event.time || '';
+        document.getElementById('edit-link').value = event.link || '';
+        document.getElementById('edit-status').value = event.status || 'pending';
+        document.getElementById('edit-price').value = event.price || '';
+        document.getElementById('edit-age-restriction').value = event.ageRestriction || '';
+        
+        // Handle categories (standardized array format)
+        const eventCategories = event.category || [];
+        const categoriesContainer = document.getElementById('edit-categories');
+        categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
+            const isChecked = eventCategories.includes(category);
+            return `
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" value="${category}" ${isChecked ? 'checked' : ''} class="rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500">
+                    <span class="text-sm text-gray-300">${category}</span>
+                </label>
+            `;
+        }).join('');
+        
+        // Handle venue selection
+        const venueSelect = document.getElementById('edit-venue-select');
+        if (venueSelect) {
+            venueSelect.innerHTML = '<option value="">Select a venue</option>';
+            
+            // Add existing venues (we'll need to load these)
+            if (window.allVenues && window.allVenues.length > 0) {
+                window.allVenues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.id;
+                    option.textContent = venue.name;
+                    
+                    // Match by venue ID or name
+                    const currentVenueId = event.venueId;
+                    const currentVenueName = event.venueName;
+                    if (currentVenueId === venue.id || currentVenueName === venue.name) {
+                        option.selected = true;
+                    }
+                    
+                    venueSelect.appendChild(option);
+                });
             }
             
-            return `
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Event Name</label>
-                        <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Description</label>
-                        <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">${item.description || ''}</textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Date & Time</label>
-                        <input type="datetime-local" name="date" value="${dateValue}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Category</label>
-                        <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Comma-separated categories">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Venue Name</label>
-                        <input type="text" name="venueName" value="${item.venue?.name || item.venueName || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Ticket Link</label>
-                        <input type="url" name="link" value="${item.link || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="https://...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Price</label>
-                        <input type="text" name="price" value="${item.price || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Free, £10, etc.">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Age Restriction</label>
-                        <input type="text" name="ageRestriction" value="${item.ageRestriction || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="18+, All ages, etc.">
-                    </div>
-                    ${item.recurringInfo ? `
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 text-purple-400">Recurring Pattern</label>
-                            <input type="text" name="recurringInfo" value="${item.recurringInfo}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" readonly>
-                            <p class="text-xs text-gray-400 mt-1">Recurring patterns cannot be edited here</p>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        } else {
-            return `
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Venue Name</label>
-                        <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Description</label>
-                        <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">${item.description || ''}</textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Address</label>
-                        <input type="text" name="address" value="${item.address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Website</label>
-                        <input type="url" name="link" value="${item.link || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="https://...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-purple-400">Category</label>
-                        <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Comma-separated categories">
-                    </div>
-                </div>
-            `;
+            venueSelect.appendChild(document.createElement('option')).value = 'new';
+            venueSelect.lastElementChild.textContent = '➕ Create New Venue';
         }
+        
+        // Store current event for editing
+        window.currentEventForEdit = event;
     }
     
-    async function saveEditForm(id, type, form) {
+    function populateVenueEditForm(venue) {
+        console.log('Admin Approvals: Populating venue form with:', venue);
+        
+        // For venues, we'll use a simpler approach since the form is primarily for events
+        // You can expand this if needed for venue editing
+        showNotification('Venue editing not yet implemented', 'info');
+    }
+    
+    async function handleEditFormSubmit(event) {
+        event.preventDefault();
+        
         try {
-            console.log(`💾 SAVE: Saving edits for ${type} ${id}`);
+            console.log(`💾 SAVE: Saving edits for event ${window.currentEventForEdit?.id}`);
             
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
+            // Convert form data to JSON for Firestore function
+            const eventData = {
+                itemId: window.currentEventForEdit ? window.currentEventForEdit.id : null,
+                itemType: 'event',
+                name: document.getElementById('edit-name').value,
+                description: document.getElementById('edit-description').value,
+                date: document.getElementById('edit-date').value,
+                time: document.getElementById('edit-time').value,
+                status: document.getElementById('edit-status').value,
+                link: document.getElementById('edit-link').value,
+                price: document.getElementById('edit-price').value,
+                ageRestriction: document.getElementById('edit-age-restriction').value,
+                category: Array.from(document.querySelectorAll('#edit-categories input:checked')).map(cb => cb.value)
+            };
             
-            // Process category field (convert comma-separated to array)
-            if (data.category) {
-                data.category = data.category.split(',').map(cat => cat.trim()).filter(cat => cat);
+            // Handle venue
+            const venueSelect = document.getElementById('edit-venue-select');
+            if (venueSelect.value === 'new') {
+                const newVenueName = document.getElementById('edit-new-venue-name').value;
+                if (newVenueName) {
+                    eventData.venueName = newVenueName;
+                }
+            } else if (venueSelect.value) {
+                eventData.venueId = venueSelect.value;
             }
             
-            // Process venue name for events
-            if (type === 'event' && data.venueName) {
-                data.venue = { name: data.venueName };
-                delete data.venueName;
-            }
+            console.log(`💾 SAVE: Processed data:`, eventData);
             
-            console.log(`💾 SAVE: Processed data:`, data);
-            
-            const endpoint = 'update-item-firestore';
-            const response = await fetch(`/.netlify/functions/${endpoint}`, {
+            const response = await fetch('/.netlify/functions/update-item-firestore', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    itemId: id,
-                    itemType: type,
-                    ...data
-                })
+                body: JSON.stringify(eventData)
             });
             
             if (response.ok) {
                 const result = await response.json();
-                showNotification(`${type === 'event' ? 'Event' : 'Venue'} updated successfully!`, 'success');
+                showNotification('Event updated successfully!', 'success');
                 
                 // Update the item in our local array
-                const itemIndex = allItems.findIndex(item => item.id === id);
+                const itemIndex = allItems.findIndex(item => item.id === window.currentEventForEdit.id);
                 if (itemIndex !== -1) {
-                    allItems[itemIndex] = { ...allItems[itemIndex], ...data };
+                    allItems[itemIndex] = { ...allItems[itemIndex], ...eventData };
                 }
+                
+                // Close modal
+                closeEditModal();
                 
                 // Refresh the display
                 applyFiltersAndSorting();
                 displayItems();
                 
-                console.log(`✅ SAVE: ${type} ${id} updated successfully`);
+                console.log(`✅ SAVE: Event ${window.currentEventForEdit.id} updated successfully`);
             } else {
                 const errorData = await response.json();
                 console.error('❌ SAVE: Server error:', errorData);
@@ -634,6 +649,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('❌ SAVE: Error updating item:', error);
             showNotification(`Error updating item: ${error.message}`, 'error');
         }
+    }
+    
+    function closeEditModal() {
+        const modal = document.getElementById('edit-modal');
+        modal.classList.add('hidden');
+        window.currentEventForEdit = null;
     }
     
     async function rejectItem(id, type, reason) {
@@ -694,11 +715,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bulk approve button
         bulkApproveBtn.addEventListener('click', handleBulkApprove);
         
-        // Modal close buttons
-        document.getElementById('cancel-edit-btn')?.addEventListener('click', () => {
-            document.getElementById('edit-modal').classList.add('hidden');
-        });
+        // Edit modal controls
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editForm = document.getElementById('edit-form');
         
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeEditModal);
+        if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
+        if (editForm) editForm.addEventListener('submit', handleEditFormSubmit);
+        
+        // Modal close buttons
         document.getElementById('cancel-rejection-btn')?.addEventListener('click', () => {
             document.getElementById('rejection-modal').classList.add('hidden');
         });
