@@ -585,11 +585,18 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         
         try {
-            console.log(`💾 SAVE: Saving edits for event ${window.currentEventForEdit?.id}`);
+            // Check if we have a current event for editing
+            if (!window.currentEventForEdit) {
+                console.error('❌ SAVE: No current event for editing');
+                showNotification('Error: No event selected for editing', 'error');
+                return;
+            }
+            
+            console.log(`💾 SAVE: Saving edits for event ${window.currentEventForEdit.id}`);
             
             // Convert form data to JSON for Firestore function
             const eventData = {
-                itemId: window.currentEventForEdit ? window.currentEventForEdit.id : null,
+                itemId: window.currentEventForEdit.id,
                 itemType: 'event',
                 name: document.getElementById('edit-name').value,
                 description: document.getElementById('edit-description').value,
@@ -829,7 +836,19 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             bulkApproveBtn.innerHTML = originalText;
             bulkApproveBtn.disabled = false;
+            selectedItems.clear();
+            updateBulkActions();
         }
+    }
+    
+    async function handleRecurringApproval() {
+        // Placeholder function for recurring approval modal
+        // This can be implemented later if needed
+        console.log('🔄 Recurring approval functionality not yet implemented');
+        showNotification('Recurring approval functionality not yet implemented', 'info');
+        
+        // Close the modal
+        document.getElementById('recurring-approval-modal').classList.add('hidden');
     }
     
     function clearSearch() {
