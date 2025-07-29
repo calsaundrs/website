@@ -196,8 +196,12 @@ function groupRecurringEvents(events) {
                 // Add to existing group
                 const group = recurringGroups.get(event.recurringGroupId);
                 group.instances.push(event);
-                // Update the group's date to the earliest instance
-                if (new Date(event.date) < new Date(group.date)) {
+                // Update the group's date to the earliest future instance
+                const eventDate = new Date(event.date);
+                const groupDate = new Date(group.date);
+                const now = new Date();
+                
+                if (eventDate >= now && (groupDate < now || eventDate < groupDate)) {
                     group.date = event.date;
                 }
             } else {
@@ -209,7 +213,8 @@ function groupRecurringEvents(events) {
                     isRecurringGroup: true,
                     recurringPattern: pattern,
                     nextOccurrence: calculateNextOccurrence(event.date, pattern),
-                    totalOccurrences: calculateTotalOccurrences(event.date, event.recurringEndDate, pattern)
+                    totalOccurrences: event.totalInstances || calculateTotalOccurrences(event.date, event.recurringEndDate, pattern),
+                    recurringGroupId: event.recurringGroupId
                 };
                 recurringGroups.set(event.recurringGroupId, group);
             }
@@ -244,9 +249,61 @@ function groupRecurringEvents(events) {
         }
     });
     
-    // Add grouped recurring events
+    // Add grouped recurring events (only show the next upcoming instance)
     recurringGroups.forEach(group => {
-        groupedEvents.push(group);
+        // Sort instances by date
+        group.instances.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Find the next upcoming instance
+        const now = new Date();
+        const nextInstance = group.instances.find(instance => new Date(instance.date) >= now);
+        
+        if (nextInstance) {
+            // Use the next instance as the main event
+            const mainEvent = {
+                ...group,
+                id: nextInstance.id,
+                name: nextInstance.name,
+                date: nextInstance.date,
+                venueName: nextInstance.venueName,
+                venueSlug: nextInstance.venueSlug,
+                description: nextInstance.description,
+                category: nextInstance.category,
+                link: nextInstance.link,
+                image: nextInstance.image,
+                slug: nextInstance.slug,
+                // Add recurring info
+                isRecurringGroup: true,
+                recurringPattern: group.recurringPattern,
+                totalInstances: group.totalInstances,
+                nextOccurrence: nextInstance.date,
+                recurringGroupId: group.recurringGroupId
+            };
+            groupedEvents.push(mainEvent);
+        } else {
+            // If no future instances, use the latest past instance
+            const latestInstance = group.instances[group.instances.length - 1];
+            const mainEvent = {
+                ...group,
+                id: latestInstance.id,
+                name: latestInstance.name,
+                date: latestInstance.date,
+                venueName: latestInstance.venueName,
+                venueSlug: latestInstance.venueSlug,
+                description: latestInstance.description,
+                category: latestInstance.category,
+                link: latestInstance.link,
+                image: latestInstance.image,
+                slug: latestInstance.slug,
+                // Add recurring info
+                isRecurringGroup: true,
+                recurringPattern: group.recurringPattern,
+                totalInstances: group.totalInstances,
+                nextOccurrence: latestInstance.date,
+                recurringGroupId: group.recurringGroupId
+            };
+            groupedEvents.push(mainEvent);
+        }
     });
     
     return groupedEvents;
