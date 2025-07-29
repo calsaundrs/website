@@ -90,7 +90,6 @@ async function getAllEvents() {
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(50)
             .get();
         
         console.log('Found ' + snapshot.size + ' approved events');
