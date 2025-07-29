@@ -220,17 +220,17 @@ exports.handler = async function (event, context) {
                             const daysUntilMonday = dayOfWeek === 0 ? 1 : (dayOfWeek === 1 ? 0 : 8 - dayOfWeek);
                             const monday = new Date(today);
                             monday.setDate(today.getDate() + daysUntilMonday);
-                            const friday = new Date(monday);
-                            friday.setDate(monday.getDate() + 4);
-                            return eventDate >= monday && eventDate <= friday;
+                            const sunday = new Date(monday);
+                            sunday.setDate(monday.getDate() + 6);
+                            return eventDate >= monday && eventDate <= sunday;
                         case 'next-week':
                             const dayOfWeek = today.getDay();
                             const daysUntilNextMonday = dayOfWeek === 0 ? 8 : (dayOfWeek === 1 ? 7 : 15 - dayOfWeek);
                             const nextMonday = new Date(today);
                             nextMonday.setDate(today.getDate() + daysUntilNextMonday);
-                            const nextFriday = new Date(nextMonday);
-                            nextFriday.setDate(nextMonday.getDate() + 4);
-                            return eventDate >= nextMonday && eventDate <= nextFriday;
+                            const nextSunday = new Date(nextMonday);
+                            nextSunday.setDate(nextMonday.getDate() + 6);
+                            return eventDate >= nextMonday && eventDate <= nextSunday;
                         case 'upcoming':
                         default:
                             return eventDate >= today;
