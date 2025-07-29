@@ -16,6 +16,116 @@ exports.handler = async function (event, context) {
         }
         const db = admin.firestore();
         
+        // Helper function to extract image URL from data
+        function extractImageUrl(data) {
+            console.log('Extracting image from data with keys:', Object.keys(data));
+            
+            // Use the same logic as SSG event pages - prioritize Cloudinary Public ID with specific transformations
+            if (data['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
+                console.log('Found Cloudinary Public ID:', data['Cloudinary Public ID']);
+                const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data['Cloudinary Public ID']}`;
+                console.log('Generated Cloudinary URL:', cloudinaryUrl);
+                return { url: cloudinaryUrl };
+            }
+            
+            // Also check for camelCase version
+            if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
+                console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
+                const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data.cloudinaryPublicId}`;
+                console.log('Generated Cloudinary URL:', cloudinaryUrl);
+                return { url: cloudinaryUrl };
+            }
+            
+            // Handle Promo Image as array (from Airtable)
+            if (data['Promo Image'] && Array.isArray(data['Promo Image']) && data['Promo Image'].length > 0) {
+                console.log('Found Promo Image array:', data['Promo Image']);
+                const promoImage = data['Promo Image'][0];
+                if (promoImage && promoImage.url) {
+                    return { url: promoImage.url };
+                }
+            }
+            
+            // Handle other image formats
+            if (data.promoImage && data.promoImage.url) {
+                console.log('Found promoImage object:', data.promoImage);
+                return data.promoImage;
+            }
+            if (data.image && data.image.url) {
+                console.log('Found image object:', data.image);
+                return data.image;
+            }
+            if (data['Image'] && data['Image'].url) {
+                console.log('Found Image object:', data['Image']);
+                return data['Image'];
+            }
+            if (data.thumbnail && data.thumbnail.url) {
+                console.log('Found thumbnail object:', data.thumbnail);
+                return data.thumbnail;
+            }
+            if (data['Thumbnail'] && data['Thumbnail'].url) {
+                console.log('Found Thumbnail object:', data['Thumbnail']);
+                return data['Thumbnail'];
+            }
+            if (data.venueImage && data.venueImage.url) {
+                console.log('Found venueImage object:', data.venueImage);
+                return data.venueImage;
+            }
+            if (data['Venue Image'] && data['Venue Image'].url) {
+                console.log('Found Venue Image object:', data['Venue Image']);
+                return data['Venue Image'];
+            }
+            if (data.promo_image && data.promo_image.url) {
+                console.log('Found promo_image object:', data.promo_image);
+                return data.promo_image;
+            }
+            if (data.venue_image && data.venue_image.url) {
+                console.log('Found venue_image object:', data.venue_image);
+                return data.venue_image;
+            }
+            
+            // Check for string formats (direct URLs)
+            if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
+                console.log('Found promoImage string:', data.promoImage);
+                return { url: data.promoImage };
+            }
+            if (typeof data.image === 'string' && data.image.includes('cloudinary')) {
+                console.log('Found image string:', data.image);
+                return { url: data.image };
+            }
+            if (typeof data.thumbnail === 'string' && data.thumbnail.includes('cloudinary')) {
+                console.log('Found thumbnail string:', data.thumbnail);
+                return { url: data.thumbnail };
+            }
+            if (typeof data.venueImage === 'string' && data.venueImage.includes('cloudinary')) {
+                console.log('Found venueImage string:', data.venueImage);
+                return { url: data.venueImage };
+            }
+            if (typeof data.promo_image === 'string' && data.promo_image.includes('cloudinary')) {
+                console.log('Found promo_image string:', data.promo_image);
+                return { url: data.promo_image };
+            }
+            if (typeof data.venue_image === 'string' && data.venue_image.includes('cloudinary')) {
+                console.log('Found venue_image string:', data.venue_image);
+                return { url: data.venue_image };
+            }
+            
+            // Check for any field that contains 'cloudinary' in the URL
+            for (const [key, value] of Object.entries(data)) {
+                if (typeof value === 'string' && value.includes('cloudinary')) {
+                    console.log('Found cloudinary string in field', key, ':', value);
+                    return { url: value };
+                }
+                if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
+                    console.log('Found cloudinary object in field', key, ':', value);
+                    return value;
+                }
+            }
+            
+            console.log('No image found in data, using placeholder');
+            // Return placeholder image (same as SSG pages)
+            return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };
+        }
+        
         // Get query parameters
         const queryParams = new URLSearchParams(event.queryStringParameters || '');
         const limit = parseInt(queryParams.get('limit')) || 50;
@@ -30,64 +140,86 @@ exports.handler = async function (event, context) {
         // If view=venues, return venues instead of events
         if (view === 'venues') {
             console.log('Returning venues list');
-            const venuesRef = db.collection('venues');
-            const venuesSnapshot = await venuesRef.get();
-            const venuesMap = new Map(); // Use Map to prevent duplicates
-            const testVenueKeywords = ['test', 'demo', 'example', 'sample', 'temp', 'temporary'];
-            
-            venuesSnapshot.forEach(doc => {
-                const data = doc.data();
-                const venueName = data.name || data['Name'] || 'Unnamed Venue';
-                const venueSlug = data.slug || data['Slug'] || '';
+            try {
+                const venuesRef = db.collection('venues');
+                const venuesSnapshot = await venuesRef.get();
+                const venuesMap = new Map(); // Use Map to prevent duplicates
+                const testVenueKeywords = ['test', 'demo', 'example', 'sample', 'temp', 'temporary'];
                 
-                // Skip test venues
-                const isTestVenue = testVenueKeywords.some(keyword => 
-                    venueName.toLowerCase().includes(keyword) || 
-                    venueSlug.toLowerCase().includes(keyword)
-                );
-                
-                if (isTestVenue) {
-                    console.log(`Skipping test venue: ${venueName}`);
-                    return;
-                }
-                
-                // Only include venues with Cloudinary images
-                const imageData = extractImageUrl(data);
-                if (imageData && imageData.url) {
-                    // Use slug as key to prevent duplicates, fallback to name
-                    const key = venueSlug || venueName;
-                    
-                    if (!venuesMap.has(key)) {
-                        venuesMap.set(key, {
-                            id: doc.id,
-                            name: venueName,
-                            slug: venueSlug,
-                            address: data.address || data['Address'] || '',
-                            description: data.description || data['Description'] || '',
-                            image: imageData
-                        });
-                    } else {
-                        console.log(`Skipping duplicate venue: ${venueName}`);
+                venuesSnapshot.forEach(doc => {
+                    try {
+                        const data = doc.data();
+                        const venueName = data.name || data['Name'] || 'Unnamed Venue';
+                        const venueSlug = data.slug || data['Slug'] || '';
+                        
+                        // Skip test venues
+                        const isTestVenue = testVenueKeywords.some(keyword => 
+                            venueName.toLowerCase().includes(keyword) || 
+                            venueSlug.toLowerCase().includes(keyword)
+                        );
+                        
+                        if (isTestVenue) {
+                            console.log(`Skipping test venue: ${venueName}`);
+                            return;
+                        }
+                        
+                        // Only include venues with Cloudinary images
+                        const imageData = extractImageUrl(data);
+                        if (imageData && imageData.url) {
+                            // Use slug as key to prevent duplicates, fallback to name
+                            const key = venueSlug || venueName;
+                            
+                            if (!venuesMap.has(key)) {
+                                venuesMap.set(key, {
+                                    id: doc.id,
+                                    name: venueName,
+                                    slug: venueSlug,
+                                    address: data.address || data['Address'] || '',
+                                    description: data.description || data['Description'] || '',
+                                    image: imageData
+                                });
+                            } else {
+                                console.log(`Skipping duplicate venue: ${venueName}`);
+                            }
+                        }
+                    } catch (docError) {
+                        console.error('Error processing venue document:', docError);
                     }
-                }
-            });
+                });
+                
+                // Convert Map to array and sort by name
+                const venuesList = Array.from(venuesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
             
-            // Convert Map to array and sort by name
-            const venuesList = Array.from(venuesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
-            
-            return {
-                statusCode: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
-                },
-                body: JSON.stringify({
-                    success: true,
-                    venues: venuesList
-                })
-            };
+                            return {
+                    statusCode: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                    },
+                    body: JSON.stringify({
+                        success: true,
+                        venues: venuesList
+                    })
+                };
+            } catch (venuesError) {
+                console.error('Error fetching venues:', venuesError);
+                return {
+                    statusCode: 500,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                    },
+                    body: JSON.stringify({
+                        success: false,
+                        error: 'Failed to fetch venues',
+                        message: venuesError.message
+                    })
+                };
+            }
         }
         
         // Build query for events
@@ -461,111 +593,3 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
     return count;
 }
 
-function extractImageUrl(data) {
-    console.log('Extracting image from data with keys:', Object.keys(data));
-    
-    // Use the same logic as SSG event pages - prioritize Cloudinary Public ID with specific transformations
-    if (data['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
-        console.log('Found Cloudinary Public ID:', data['Cloudinary Public ID']);
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data['Cloudinary Public ID']}`;
-        console.log('Generated Cloudinary URL:', cloudinaryUrl);
-        return { url: cloudinaryUrl };
-    }
-    
-    // Also check for camelCase version
-    if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
-        console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${data.cloudinaryPublicId}`;
-        console.log('Generated Cloudinary URL:', cloudinaryUrl);
-        return { url: cloudinaryUrl };
-    }
-    
-    // Handle Promo Image as array (from Airtable)
-    if (data['Promo Image'] && Array.isArray(data['Promo Image']) && data['Promo Image'].length > 0) {
-        console.log('Found Promo Image array:', data['Promo Image']);
-        const promoImage = data['Promo Image'][0];
-        if (promoImage && promoImage.url) {
-            return { url: promoImage.url };
-        }
-    }
-    
-    // Handle other image formats
-    if (data.promoImage && data.promoImage.url) {
-        console.log('Found promoImage object:', data.promoImage);
-        return data.promoImage;
-    }
-    if (data.image && data.image.url) {
-        console.log('Found image object:', data.image);
-        return data.image;
-    }
-    if (data['Image'] && data['Image'].url) {
-        console.log('Found Image object:', data['Image']);
-        return data['Image'];
-    }
-    if (data.thumbnail && data.thumbnail.url) {
-        console.log('Found thumbnail object:', data.thumbnail);
-        return data.thumbnail;
-    }
-    if (data['Thumbnail'] && data['Thumbnail'].url) {
-        console.log('Found Thumbnail object:', data['Thumbnail']);
-        return data['Thumbnail'];
-    }
-    if (data.venueImage && data.venueImage.url) {
-        console.log('Found venueImage object:', data.venueImage);
-        return data.venueImage;
-    }
-    if (data['Venue Image'] && data['Venue Image'].url) {
-        console.log('Found Venue Image object:', data['Venue Image']);
-        return data['Venue Image'];
-    }
-    if (data.promo_image && data.promo_image.url) {
-        console.log('Found promo_image object:', data.promo_image);
-        return data.promo_image;
-    }
-    if (data.venue_image && data.venue_image.url) {
-        console.log('Found venue_image object:', data.venue_image);
-        return data.venue_image;
-    }
-    
-    // Check for string formats (direct URLs)
-    if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
-        console.log('Found promoImage string:', data.promoImage);
-        return { url: data.promoImage };
-    }
-    if (typeof data.image === 'string' && data.image.includes('cloudinary')) {
-        console.log('Found image string:', data.image);
-        return { url: data.image };
-    }
-    if (typeof data.thumbnail === 'string' && data.thumbnail.includes('cloudinary')) {
-        console.log('Found thumbnail string:', data.thumbnail);
-        return { url: data.thumbnail };
-    }
-    if (typeof data.venueImage === 'string' && data.venueImage.includes('cloudinary')) {
-        console.log('Found venueImage string:', data.venueImage);
-        return { url: data.venueImage };
-    }
-    if (typeof data.promo_image === 'string' && data.promo_image.includes('cloudinary')) {
-        console.log('Found promo_image string:', data.promo_image);
-        return { url: data.promo_image };
-    }
-    if (typeof data.venue_image === 'string' && data.venue_image.includes('cloudinary')) {
-        console.log('Found venue_image string:', data.venue_image);
-        return { url: data.venue_image };
-    }
-    
-    // Check for any field that contains 'cloudinary' in the URL
-    for (const [key, value] of Object.entries(data)) {
-        if (typeof value === 'string' && value.includes('cloudinary')) {
-            console.log('Found cloudinary string in field', key, ':', value);
-            return { url: value };
-        }
-        if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
-            console.log('Found cloudinary object in field', key, ':', value);
-            return value;
-        }
-    }
-    
-    console.log('No image found in data, using placeholder');
-    // Return placeholder image (same as SSG pages)
-    return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };
-}
