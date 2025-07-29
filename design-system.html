@@ -548,17 +548,14 @@
                             <span>Venue</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
-                        <!-- Dropdown Content -->
+                                                <!-- Dropdown Content -->
                         <div class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
                             <div class="p-2 space-y-1">
                                 <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">All Venues</button>
                                 <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Nightingale Club</button>
                                 <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Village Inn</button>
                                 <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Rainbow Bar</button>
-                                                                 <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Loft</button>
-                                 <div class="border-t border-gray-600 my-1 nsfw-divider" style="display: none;"></div>
-                                 <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded nsfw-venue" style="display: none;">Club X</button>
-                                 <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded nsfw-venue" style="display: none;">The Eagle</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Loft</button>
                             </div>
                         </div>
                     </div>
@@ -585,7 +582,8 @@
                     <div class="text-xs text-blue-200 space-y-1">
                         <p><strong>Dropdowns:</strong> Use JavaScript to toggle visibility and handle selections</p>
                         <p><strong>Categories:</strong> NSFW categories (pink) separated by divider when NSFW mode is enabled</p>
-                        <p><strong>Venues:</strong> Adult venues (pink) separated by divider when NSFW mode is enabled</p>
+                        <p><strong>Venues:</strong> All venues are regular venues - no adult-specific venues</p>
+                        <p><strong>NSFW Events:</strong> Filtered by event.is_nsfw, event.age_restriction, event.tags containing kink/BDSM</p>
                         <p><strong>Dynamic Content:</strong> Dropdown options populated from event data on page load</p>
                     </div>
                 </div>
@@ -4543,24 +4541,20 @@
             });
 
             function showNsfwContent() {
-                // Show NSFW categories and venues in dropdowns
+                // Show NSFW categories in dropdowns
                 const nsfwCategories = document.querySelectorAll('.nsfw-category');
-                const nsfwVenues = document.querySelectorAll('.nsfw-venue');
                 const nsfwDividers = document.querySelectorAll('.nsfw-divider');
                 
                 nsfwCategories.forEach(item => item.style.display = 'block');
-                nsfwVenues.forEach(item => item.style.display = 'block');
                 nsfwDividers.forEach(item => item.style.display = 'block');
             }
 
             function hideNsfwContent() {
-                // Hide NSFW categories and venues in dropdowns
+                // Hide NSFW categories in dropdowns
                 const nsfwCategories = document.querySelectorAll('.nsfw-category');
-                const nsfwVenues = document.querySelectorAll('.nsfw-venue');
                 const nsfwDividers = document.querySelectorAll('.nsfw-divider');
                 
                 nsfwCategories.forEach(item => item.style.display = 'none');
-                nsfwVenues.forEach(item => item.style.display = 'none');
                 nsfwDividers.forEach(item => item.style.display = 'none');
             }
 
