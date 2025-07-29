@@ -77,24 +77,32 @@ exports.handler = async function (event, context) {
         };
         
         if (itemType === 'event') {
-            // Handle event-specific fields
-            if (updateData['event-name']) updateFields.name = updateData['event-name'];
+            // Handle event-specific fields with standardized names
+            if (updateData.name) updateFields.name = updateData.name;
             if (updateData.description) updateFields.description = updateData.description;
             if (updateData.date) {
                 // Convert date string to Firestore timestamp
                 updateFields.date = new Date(updateData.date);
             }
             if (updateData.category) {
-                // Handle category as array
-                updateFields.category = updateData.category.split(',').map(cat => cat.trim()).filter(cat => cat);
+                // Handle category as array (already processed by frontend)
+                updateFields.category = Array.isArray(updateData.category) ? updateData.category : [updateData.category];
             }
-            if (updateData['venue-name']) updateFields.venueName = updateData['venue-name'];
+            if (updateData.venueName) updateFields.venueName = updateData.venueName;
+            if (updateData.venue && updateData.venue.name) updateFields.venueName = updateData.venue.name;
+            if (updateData.link) updateFields.link = updateData.link;
+            if (updateData.price) updateFields.price = updateData.price;
+            if (updateData.ageRestriction) updateFields.ageRestriction = updateData.ageRestriction;
         } else if (itemType === 'venue') {
             // Handle venue-specific fields
             if (updateData.name) updateFields.name = updateData.name;
             if (updateData.description) updateFields.description = updateData.description;
             if (updateData.address) updateFields.address = updateData.address;
-            if (updateData.website) updateFields.website = updateData.website;
+            if (updateData.link) updateFields.link = updateData.link;
+            if (updateData.category) {
+                // Handle category as array (already processed by frontend)
+                updateFields.category = Array.isArray(updateData.category) ? updateData.category : [updateData.category];
+            }
         }
         
         // Update the document

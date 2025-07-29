@@ -460,6 +460,182 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelBtn.addEventListener('click', handleCancel);
     }
     
+    function openEditModal(id, type) {
+        const modal = document.getElementById('edit-modal');
+        const form = document.getElementById('edit-form');
+        const fieldsContainer = document.getElementById('edit-form-fields');
+        
+        // Find the item
+        const item = allItems.find(item => item.id === id);
+        if (!item) {
+            showNotification('Item not found', 'error');
+            return;
+        }
+        
+        console.log(`✏️ EDIT: Opening edit modal for ${type} ${id}`, item);
+        
+        // Populate form fields based on type
+        fieldsContainer.innerHTML = createEditFormFields(item);
+        
+        modal.classList.remove('hidden');
+        
+        // Handle form submission
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            await saveEditForm(id, type, form);
+            modal.classList.add('hidden');
+        };
+        
+        // Remove previous listener and add new one
+        form.removeEventListener('submit', handleSubmit);
+        form.addEventListener('submit', handleSubmit);
+    }
+    
+    function createEditFormFields(item) {
+        const isEvent = item.type === 'event';
+        
+        if (isEvent) {
+            // Handle Firestore timestamp for date
+            let dateValue = '';
+            if (item.date) {
+                if (item.date._seconds) {
+                    // Firestore timestamp
+                    dateValue = new Date(item.date._seconds * 1000).toISOString().slice(0, 16);
+                } else {
+                    // Regular date
+                    dateValue = new Date(item.date).toISOString().slice(0, 16);
+                }
+            }
+            
+            return `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Event Name</label>
+                        <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Description</label>
+                        <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">${item.description || ''}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Date & Time</label>
+                        <input type="datetime-local" name="date" value="${dateValue}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Category</label>
+                        <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Comma-separated categories">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Venue Name</label>
+                        <input type="text" name="venueName" value="${item.venue?.name || item.venueName || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Ticket Link</label>
+                        <input type="url" name="link" value="${item.link || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Price</label>
+                        <input type="text" name="price" value="${item.price || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Free, £10, etc.">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Age Restriction</label>
+                        <input type="text" name="ageRestriction" value="${item.ageRestriction || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="18+, All ages, etc.">
+                    </div>
+                    ${item.recurringInfo ? `
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-purple-400">Recurring Pattern</label>
+                            <input type="text" name="recurringInfo" value="${item.recurringInfo}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" readonly>
+                            <p class="text-xs text-gray-400 mt-1">Recurring patterns cannot be edited here</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        } else {
+            return `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Venue Name</label>
+                        <input type="text" name="name" value="${item.name || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Description</label>
+                        <textarea name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">${item.description || ''}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Address</label>
+                        <input type="text" name="address" value="${item.address || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Website</label>
+                        <input type="url" name="link" value="${item.link || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-purple-400">Category</label>
+                        <input type="text" name="category" value="${Array.isArray(item.category) ? item.category.join(', ') : item.category || ''}" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" placeholder="Comma-separated categories">
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    async function saveEditForm(id, type, form) {
+        try {
+            console.log(`💾 SAVE: Saving edits for ${type} ${id}`);
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Process category field (convert comma-separated to array)
+            if (data.category) {
+                data.category = data.category.split(',').map(cat => cat.trim()).filter(cat => cat);
+            }
+            
+            // Process venue name for events
+            if (type === 'event' && data.venueName) {
+                data.venue = { name: data.venueName };
+                delete data.venueName;
+            }
+            
+            console.log(`💾 SAVE: Processed data:`, data);
+            
+            const endpoint = 'update-item-firestore';
+            const response = await fetch(`/.netlify/functions/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    itemId: id,
+                    itemType: type,
+                    ...data
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                showNotification(`${type === 'event' ? 'Event' : 'Venue'} updated successfully!`, 'success');
+                
+                // Update the item in our local array
+                const itemIndex = allItems.findIndex(item => item.id === id);
+                if (itemIndex !== -1) {
+                    allItems[itemIndex] = { ...allItems[itemIndex], ...data };
+                }
+                
+                // Refresh the display
+                applyFiltersAndSorting();
+                displayItems();
+                
+                console.log(`✅ SAVE: ${type} ${id} updated successfully`);
+            } else {
+                const errorData = await response.json();
+                console.error('❌ SAVE: Server error:', errorData);
+                throw new Error(`Failed to update item: ${errorData.message || 'Unknown error'}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ SAVE: Error updating item:', error);
+            showNotification(`Error updating item: ${error.message}`, 'error');
+        }
+    }
+    
     async function rejectItem(id, type, reason) {
         try {
             console.log(`🔄 REJECT: Starting rejection for ${type} ${id}`);
