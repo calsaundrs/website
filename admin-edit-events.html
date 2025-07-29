@@ -13,7 +13,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
-    <script src="/js/admin-edit-events.js?v=3&t=1703123456"></script>
+    <script>
+        // Force cache refresh
+        if (performance.navigation.type === 1) {
+            // Page was refreshed, clear any cached data
+            localStorage.clear();
+            sessionStorage.clear();
+        }
+    </script>
+    <script src="/js/admin-edit-events.js?v=5&t=1703123456&r=1234"></script>
     <style>
         /* Modern card styles */
         .event-card {
