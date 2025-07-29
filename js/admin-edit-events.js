@@ -103,18 +103,6 @@ function filterEvents(filter) {
                 renderEvents(allEvents);
             }
             break;
-        case 'pending':
-            if (eventsContainer) {
-                eventsContainer.classList.remove('hidden');
-                renderEvents(pendingEvents);
-            }
-            break;
-        case 'approved':
-            if (eventsContainer) {
-                eventsContainer.classList.remove('hidden');
-                renderEvents(approvedEvents);
-            }
-            break;
         case 'recurring':
             if (recurringContainer) {
                 recurringContainer.classList.remove('hidden');
@@ -149,8 +137,8 @@ async function loadAllEvents() {
     try {
         console.log('Admin Edit Events: Loading all events...');
         
-        // Load all events using the new admin API
-        const response = await fetch('/.netlify/functions/get-admin-events');
+        // Load only approved events for manage events view
+        const response = await fetch('/.netlify/functions/get-admin-events?status=approved');
         console.log('Admin Edit Events: Response status:', response.status);
         
         if (response.ok) {
@@ -159,25 +147,21 @@ async function loadAllEvents() {
             
             if (data.success) {
                 allEvents = data.events || [];
-                pendingEvents = data.pendingEvents || [];
-                approvedEvents = data.approvedEvents || [];
+                approvedEvents = data.events || []; // All events are approved in this view
                 recurringEvents = data.recurringEvents || [];
                 
-                console.log(`Admin Edit Events: Loaded ${allEvents.length} total events`);
-                console.log(`  - Pending: ${pendingEvents.length}`);
+                console.log(`Admin Edit Events: Loaded ${allEvents.length} approved events`);
                 console.log(`  - Approved: ${approvedEvents.length}`);
                 console.log(`  - Recurring: ${recurringEvents.length}`);
             } else {
                 console.error('Admin Edit Events: Failed to load events:', data.error);
                 allEvents = [];
-                pendingEvents = [];
                 approvedEvents = [];
                 recurringEvents = [];
             }
         } else {
             console.error('Admin Edit Events: Failed to load events:', response.status, response.statusText);
             allEvents = [];
-            pendingEvents = [];
             approvedEvents = [];
             recurringEvents = [];
         }
@@ -197,12 +181,10 @@ async function loadAllEvents() {
 // Update statistics dashboard
 function updateStats() {
     const totalCount = document.getElementById('total-events-count');
-    const pendingCount = document.getElementById('pending-events-count');
     const approvedCount = document.getElementById('approved-events-count');
     const recurringCount = document.getElementById('recurring-events-count');
     
     if (totalCount) totalCount.textContent = allEvents.length;
-    if (pendingCount) pendingCount.textContent = pendingEvents.length;
     if (approvedCount) approvedCount.textContent = approvedEvents.length;
     if (recurringCount) recurringCount.textContent = recurringEvents.length;
 }
