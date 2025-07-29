@@ -964,6 +964,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             } else {
                 console.error('EventStore or updateFilters method not available');
             }
+
+            // Update active filters display
+            updateActiveFiltersDisplay();
         }
 
         // --- Rendering ---

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Test - Working | Brum Outloud</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(181, 100, 247, 0.3) 0%, rgba(181, 100, 247, 0.1) 100%);
+            border-color: rgba(181, 100, 247, 0.5);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(181, 100, 247, 0.3);
+        }
+
+        .accent-color { color: #E83A99; }
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                <span>Brum Outloud</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-8 py-8">
+        <div class="text-center mb-16">
+            <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider">FILTER <span class="accent-color">TEST</span></h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Testing the working filter functionality.</p>
+        </div>
+
+        <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
+            <div class="flex items-center gap-3">
+                <!-- Date Filter -->
+                <div class="relative">
+                    <button id="date-filter-btn" class="filter-btn flex items-center gap-2 text-xs">
+                        <i class="fas fa-calendar"></i>
+                        <span>When</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="date-filter-dropdown" class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
+                        <div class="p-2 space-y-1">
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="upcoming">All Events</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="today">Today</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="tomorrow">Tomorrow</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="this-weekend">This Weekend</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="this-week">This Week</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded date-option" data-value="next-week">Next Week</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="relative">
+                    <button id="category-filter-btn" class="filter-btn flex items-center gap-2 text-xs">
+                        <i class="fas fa-tags"></i>
+                        <span>Type</span>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="category-filter-dropdown" class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
+                        <div class="p-2 space-y-1">
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded category-option" data-value="all">All Types</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded category-option" data-value="Drag Shows">Drag Shows</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded category-option" data-value="Club Nights">Club Nights</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded category-option" data-value="Live Music">Live Music</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded category-option" data-value="Karaoke">Karaoke</button>
+                            <div class="border-t border-gray-600 my-1 nsfw-divider" style="display: none;"></div>
+                            <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded nsfw-category" style="display: none;" data-value="Kink Events">Kink Events</button>
+                            <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded nsfw-category" style="display: none;" data-value="BDSM">BDSM</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NSFW Toggle -->
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2">
+                        <div id="nsfw-toggle" class="w-8 h-5 bg-gray-600 rounded-full relative cursor-pointer transition-colors">
+                            <div id="nsfw-toggle-slider" class="w-3 h-3 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
+                        </div>
+                        <span class="text-sm font-semibold text-white">NSFW</span>
+                    </div>
+                </div>
+
+                <!-- Clear Filters -->
+                <button id="clear-filters-btn" class="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">
+                    <i class="fas fa-times mr-1"></i>Clear
+                </button>
+            </div>
+
+            <!-- Active Filters -->
+            <div id="active-filters" class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-700" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Debug Info -->
+        <div class="venue-card p-6 mb-8">
+            <h2 class="text-2xl font-bold text-white mb-4">Debug Information</h2>
+            <div id="debug-info" class="text-gray-300 space-y-2">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- Events Display -->
+        <div class="venue-card p-6">
+            <h2 class="text-2xl font-bold text-white mb-4">Events (<span id="event-count">0</span>)</h2>
+            <div id="events-display" class="space-y-4">
+                <p class="text-gray-400">Loading events...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Filter state
+        let activeDateFilter = { type: 'upcoming', from: null, to: null };
+        let activeCategoryFilter = 'all';
+        let isSfwMode = true;
+        let activeFilters = [];
+
+        // DOM Elements
+        const dateFilterBtn = document.getElementById('date-filter-btn');
+        const dateFilterDropdown = document.getElementById('date-filter-dropdown');
+        const categoryFilterBtn = document.getElementById('category-filter-btn');
+        const categoryFilterDropdown = document.getElementById('category-filter-dropdown');
+        const nsfwToggle = document.getElementById('nsfw-toggle');
+        const nsfwToggleSlider = document.getElementById('nsfw-toggle-slider');
+        const activeFiltersContainer = document.getElementById('active-filters');
+        const clearFiltersBtn = document.getElementById('clear-filters-btn');
+        const debugInfo = document.getElementById('debug-info');
+        const eventsDisplay = document.getElementById('events-display');
+        const eventCount = document.getElementById('event-count');
+
+        // SFW Mode Logic
+        function setSfwMode(newState) {
+            isSfwMode = newState;
+            
+            if (isSfwMode) {
+                nsfwToggle.style.backgroundColor = '#4B5563';
+                nsfwToggleSlider.style.transform = 'translateX(0)';
+            } else {
+                nsfwToggle.style.backgroundColor = '#E83A99';
+                nsfwToggleSlider.style.transform = 'translateX(12px)';
+            }
+
+            const nsfwDivider = document.querySelector('.nsfw-divider');
+            const nsfwCategories = document.querySelectorAll('.nsfw-category');
+            
+            if (isSfwMode) {
+                nsfwDivider.style.display = 'none';
+                nsfwCategories.forEach(cat => cat.style.display = 'none');
+            } else {
+                nsfwDivider.style.display = 'block';
+                nsfwCategories.forEach(cat => cat.style.display = 'block');
+            }
+
+            loadEvents();
+            updateActiveFiltersDisplay();
+        }
+
+        function updateActiveFiltersDisplay() {
+            activeFilters = [];
+            
+            if (activeDateFilter.type !== 'upcoming') {
+                const dateLabels = {
+                    'today': 'Today',
+                    'tomorrow': 'Tomorrow',
+                    'this-weekend': 'This Weekend',
+                    'this-week': 'This Week',
+                    'next-week': 'Next Week'
+                };
+                activeFilters.push({
+                    type: 'date',
+                    label: dateLabels[activeDateFilter.type] || 'Custom Date',
+                    value: activeDateFilter.type
+                });
+            }
+            
+            if (activeCategoryFilter !== 'all') {
+                activeFilters.push({
+                    type: 'category',
+                    label: activeCategoryFilter,
+                    value: activeCategoryFilter
+                });
+            }
+            
+            if (!isSfwMode) {
+                activeFilters.push({
+                    type: 'nsfw',
+                    label: 'NSFW',
+                    value: 'nsfw'
+                });
+            }
+
+            if (activeFilters.length > 0) {
+                activeFiltersContainer.style.display = 'flex';
+                activeFiltersContainer.innerHTML = activeFilters.map(filter => `
+                    <span class="inline-flex items-center bg-accent-color/20 text-accent-color text-xs px-2 py-1 rounded-full">
+                        <span>${filter.label}</span>
+                        <button class="ml-1 text-accent-color hover:text-white" onclick="removeFilter('${filter.type}')">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </span>
+                `).join('');
+            } else {
+                activeFiltersContainer.style.display = 'none';
+            }
+        }
+
+        function removeFilter(filterType) {
+            switch (filterType) {
+                case 'date':
+                    activeDateFilter = { type: 'upcoming', from: null, to: null };
+                    dateFilterBtn.querySelector('span').textContent = 'When';
+                    break;
+                case 'category':
+                    activeCategoryFilter = 'all';
+                    categoryFilterBtn.querySelector('span').textContent = 'Type';
+                    break;
+                case 'nsfw':
+                    setSfwMode(true);
+                    return;
+            }
+            loadEvents();
+            updateActiveFiltersDisplay();
+        }
+
+        function resetFilters() {
+            activeDateFilter = { type: 'upcoming', from: null, to: null };
+            activeCategoryFilter = 'all';
+            
+            dateFilterBtn.querySelector('span').textContent = 'When';
+            categoryFilterBtn.querySelector('span').textContent = 'Type';
+            
+            setSfwMode(true);
+            hideAllDropdowns();
+        }
+
+        function hideAllDropdowns() {
+            dateFilterDropdown.classList.add('hidden');
+            categoryFilterDropdown.classList.add('hidden');
+        }
+
+        async function loadEvents() {
+            const filters = {
+                dateRange: activeDateFilter,
+                categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
+                sfwMode: isSfwMode,
+                limit: 20
+            };
+
+            debugInfo.innerHTML = `
+                <p><strong>Current Filters:</strong></p>
+                <p>Date Range: ${JSON.stringify(filters.dateRange)}</p>
+                <p>Categories: ${JSON.stringify(filters.categories)}</p>
+                <p>SFW Mode: ${filters.sfwMode}</p>
+                <p><strong>API Call:</strong></p>
+                <p>URL: /.netlify/functions/get-events-firestore-simple</p>
+                <p>Params: ${new URLSearchParams(Object.entries(filters).map(([k,v]) => [k, Array.isArray(v) ? v.join(',') : JSON.stringify(v)]).flat()).toString()}</p>
+            `;
+
+            try {
+                const params = new URLSearchParams();
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value !== null && value !== undefined && value !== '') {
+                        if (Array.isArray(value)) {
+                            value.forEach(v => params.append(key, v));
+                        } else if (typeof value === 'object') {
+                            params.append(key, JSON.stringify(value));
+                        } else {
+                            params.append(key, value);
+                        }
+                    }
+                });
+
+                const response = await fetch(`/.netlify/functions/get-events-firestore-simple?${params}`);
+                const data = await response.json();
+
+                debugInfo.innerHTML += `
+                    <p><strong>API Response:</strong></p>
+                    <p>Status: ${response.status}</p>
+                    <p>Events Count: ${data.events ? data.events.length : 0}</p>
+                    <p>Success: ${data.success}</p>
+                `;
+
+                if (data.success && data.events) {
+                    eventCount.textContent = data.events.length;
+                    eventsDisplay.innerHTML = data.events.map(event => `
+                        <div class="p-4 bg-gray-800/50 rounded-lg">
+                            <h3 class="font-bold text-white">${event.name}</h3>
+                            <p class="text-gray-400 text-sm">${event.venueName || 'No venue'}</p>
+                            <p class="text-gray-400 text-sm">${new Date(event.date).toLocaleDateString()}</p>
+                            <p class="text-gray-400 text-sm">Categories: ${event.category ? event.category.join(', ') : 'None'}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    eventsDisplay.innerHTML = '<p class="text-gray-400">No events found or error occurred.</p>';
+                    eventCount.textContent = '0';
+                }
+            } catch (error) {
+                debugInfo.innerHTML += `<p><strong>Error:</strong> ${error.message}</p>`;
+                eventsDisplay.innerHTML = '<p class="text-red-400">Error loading events.</p>';
+                eventCount.textContent = '0';
+            }
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            dateFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideAllDropdowns();
+                dateFilterDropdown.classList.toggle('hidden');
+            });
+
+            categoryFilterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideAllDropdowns();
+                categoryFilterDropdown.classList.toggle('hidden');
+            });
+
+            dateFilterDropdown.addEventListener('click', (e) => {
+                const option = e.target.closest('.date-option');
+                if (!option) return;
+                
+                const value = option.dataset.value;
+                const label = option.textContent;
+                
+                activeDateFilter = { type: value, from: null, to: null };
+                dateFilterBtn.querySelector('span').textContent = label;
+                dateFilterDropdown.classList.add('hidden');
+                
+                loadEvents();
+                updateActiveFiltersDisplay();
+            });
+
+            categoryFilterDropdown.addEventListener('click', (e) => {
+                const option = e.target.closest('.category-option');
+                if (!option) return;
+                
+                const value = option.dataset.value;
+                const label = option.textContent;
+                
+                activeCategoryFilter = value;
+                categoryFilterBtn.querySelector('span').textContent = label;
+                categoryFilterDropdown.classList.add('hidden');
+                
+                loadEvents();
+                updateActiveFiltersDisplay();
+            });
+
+            nsfwToggle.addEventListener('click', () => {
+                setSfwMode(!isSfwMode);
+            });
+
+            clearFiltersBtn.addEventListener('click', resetFilters);
+            window.addEventListener('click', hideAllDropdowns);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            loadEvents();
+            updateActiveFiltersDisplay();
+        });
+    </script>
+</body>
+</html>

@@ -21,8 +21,11 @@ exports.handler = async function (event, context) {
         const limit = parseInt(queryParams.get('limit')) || 50;
         const view = queryParams.get('view');
         const venues = queryParams.getAll('venues'); // Get venue filters
+        const categories = queryParams.getAll('categories'); // Get category filters
+        const sfwMode = queryParams.get('sfwMode') !== 'false'; // Default to true (SFW mode)
+        const dateRange = queryParams.get('dateRange'); // Get date range filter
         
-        console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}`);
+        console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}, Categories: ${categories.join(', ')}, SFW Mode: ${sfwMode}, Date Range: ${dateRange}`);
         
         // If view=venues, return venues instead of events
         if (view === 'venues') {
@@ -134,6 +137,81 @@ exports.handler = async function (event, context) {
                 return venues.some(venueSlug => event.venueSlug === venueSlug);
             });
             console.log(`After venue filtering: ${events.length} events`);
+        }
+
+        // Filter by categories if specified
+        if (categories && categories.length > 0 && categories[0] !== 'all') {
+            console.log(`Filtering events by categories: ${categories.join(', ')}`);
+            events = events.filter(event => {
+                if (!event.category || !Array.isArray(event.category)) return false;
+                return categories.some(cat => event.category.includes(cat));
+            });
+            console.log(`After category filtering: ${events.length} events`);
+        }
+
+        // Filter by NSFW mode
+        if (sfwMode) {
+            console.log('Filtering out NSFW events (SFW mode enabled)');
+            const nsfwCategories = ['Kink Events', 'BDSM', 'Kink', 'Adult', 'NSFW'];
+            events = events.filter(event => {
+                if (!event.category || !Array.isArray(event.category)) return true;
+                // Check if any of the event's categories are NSFW
+                const hasNsfwCategory = event.category.some(cat => 
+                    nsfwCategories.some(nsfwCat => 
+                        cat.toLowerCase().includes(nsfwCat.toLowerCase())
+                    )
+                );
+                return !hasNsfwCategory;
+            });
+            console.log(`After NSFW filtering: ${events.length} events`);
+        }
+
+        // Filter by date range if specified
+        if (dateRange) {
+            try {
+                const dateRangeObj = typeof dateRange === 'string' ? JSON.parse(dateRange) : dateRange;
+                console.log(`Filtering events by date range:`, dateRangeObj);
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                events = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    
+                    switch (dateRangeObj.type) {
+                        case 'today':
+                            return eventDate.toDateString() === today.toDateString();
+                        case 'tomorrow':
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            return eventDate.toDateString() === tomorrow.toDateString();
+                        case 'this-weekend':
+                            const dayOfWeek = today.getDay();
+                            const daysUntilSaturday = 6 - dayOfWeek;
+                            const saturday = new Date(today);
+                            saturday.setDate(today.getDate() + daysUntilSaturday);
+                            const sunday = new Date(saturday);
+                            sunday.setDate(saturday.getDate() + 1);
+                            return eventDate >= saturday && eventDate <= sunday;
+                        case 'this-week':
+                            const endOfWeek = new Date(today);
+                            endOfWeek.setDate(today.getDate() + 7);
+                            return eventDate >= today && eventDate < endOfWeek;
+                        case 'next-week':
+                            const startOfNextWeek = new Date(today);
+                            startOfNextWeek.setDate(today.getDate() + 7);
+                            const endOfNextWeek = new Date(startOfNextWeek);
+                            endOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
+                            return eventDate >= startOfNextWeek && eventDate < endOfNextWeek;
+                        case 'upcoming':
+                        default:
+                            return eventDate >= today;
+                    }
+                });
+                console.log(`After date filtering: ${events.length} events`);
+            } catch (error) {
+                console.error('Error parsing date range filter:', error);
+            }
         }
         
         // Group recurring events

@@ -136,6 +136,9 @@ class EventAPI {
       }
     });
 
+    console.log('EventAPI: Sending filters to API:', filters);
+    console.log('EventAPI: URL params:', params.toString());
+
     console.log('EventAPI: Calling get-events-firestore-simple with params:', params.toString());
     const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
     
