@@ -104,7 +104,7 @@
     <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="apple-touch-icon" href="/faviconV2.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json?v=2">
     <meta name="theme-color" content="#8a2be2">
     
     <style>
@@ -275,7 +275,7 @@
     <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="apple-touch-icon" href="/faviconV2.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json?v=2">
     <meta name="theme-color" content="#8a2be2">
 
     <style>
@@ -383,7 +383,7 @@
         }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.json?v=2">
 
     <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
@@ -696,7 +696,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             try {
                 // Force cache refresh by adding timestamp
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/.netlify/functions/get-venue-list?t=${timestamp}`, {
+                const response = await fetch(`/.netlify/functions/get-venue-list-firestore?t=${timestamp}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
