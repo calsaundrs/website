@@ -968,18 +968,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 // Handle recurring event display
                 let recurringDisplay = '';
-                if (event.recurringInfo) {
-                    // Extract recurring pattern from recurringInfo
-                    const recurringText = event.recurringInfo.toLowerCase();
-                    if (recurringText.includes('weekly') || recurringText.includes('every week')) {
-                        recurringDisplay = 'Weekly Event';
-                    } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
-                        recurringDisplay = 'Monthly Event';
-                    } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
-                        recurringDisplay = 'Daily Event';
-                    } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
-                        recurringDisplay = 'Bi-Weekly Event';
-                    } else {
+                if (event.isRecurring || event.recurringInfo || event.recurringPattern) {
+                    // Check for explicit recurring pattern first
+                    if (event.recurringPattern) {
+                        switch (event.recurringPattern.toLowerCase()) {
+                            case 'weekly':
+                                recurringDisplay = 'Every Monday';
+                                break;
+                            case 'bi-weekly':
+                                recurringDisplay = 'Every 2 Weeks';
+                                break;
+                            case 'monthly':
+                                recurringDisplay = 'Every Month';
+                                break;
+                            case 'daily':
+                                recurringDisplay = 'Every Day';
+                                break;
+                            case 'yearly':
+                                recurringDisplay = 'Every Year';
+                                break;
+                            default:
+                                recurringDisplay = 'Recurring Event';
+                        }
+                    } else if (event.recurringInfo) {
+                        // Extract recurring pattern from recurringInfo
+                        const recurringText = event.recurringInfo.toLowerCase();
+                        if (recurringText.includes('weekly') || recurringText.includes('every week')) {
+                            recurringDisplay = 'Every Monday';
+                        } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
+                            recurringDisplay = 'Every Month';
+                        } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
+                            recurringDisplay = 'Every Day';
+                        } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
+                            recurringDisplay = 'Every 2 Weeks';
+                        } else if (recurringText.includes('yearly') || recurringText.includes('annual')) {
+                            recurringDisplay = 'Every Year';
+                        } else {
+                            recurringDisplay = 'Recurring Event';
+                        }
+                    } else if (event.isRecurring) {
+                        // Fallback for events marked as recurring but no pattern specified
                         recurringDisplay = 'Recurring Event';
                     }
                 }

@@ -80,6 +80,20 @@ exports.handler = async (event, context) => {
         updates.isRecurring = true;
         updates.recurringGroupId = seriesId;
         
+        // Determine recurring pattern
+        let pattern = null;
+        if (data.recurringPattern) {
+          pattern = data.recurringPattern;
+        } else if (data.recurringInfo) {
+          pattern = extractRecurringPattern(data.recurringInfo);
+        } else if (data['Recurring Info']) {
+          pattern = extractRecurringPattern(data['Recurring Info']);
+        }
+        
+        if (pattern) {
+          updates.recurringPattern = pattern;
+        }
+        
         // Find pattern from series group
         const seriesGroup = seriesGroups.get(seriesId);
         if (seriesGroup && seriesGroup.length > 1) {
@@ -153,4 +167,23 @@ function generateSlug(name) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+function extractRecurringPattern(recurringInfo) {
+  if (!recurringInfo) return null;
+  
+  const text = recurringInfo.toLowerCase();
+  if (text.includes('weekly') || text.includes('every week')) {
+    return 'weekly';
+  } else if (text.includes('monthly') || text.includes('every month')) {
+    return 'monthly';
+  } else if (text.includes('daily') || text.includes('every day')) {
+    return 'daily';
+  } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+    return 'bi-weekly';
+  } else if (text.includes('yearly') || text.includes('annual')) {
+    return 'yearly';
+  } else {
+    return 'recurring';
+  }
 } 
