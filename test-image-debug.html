@@ -25,6 +25,10 @@
         Debug Bear All Event
     </button>
     
+    <button onclick="migrateEventImages()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded mb-4 ml-2">
+        Migrate Event Images to Firestore
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -204,6 +208,34 @@
                     resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + JSON.stringify(data) + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function migrateEventImages() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Starting image migration...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/migrate-event-images-to-firestore');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Image Migration Results:</h2>';
+                    html += '<p class="text-green-400"><strong>Success:</strong> ' + data.message + '</p>';
+                    html += '<p><strong>Updated:</strong> ' + data.updated + ' events</p>';
+                    html += '<p><strong>Skipped:</strong> ' + data.skipped + ' events</p>';
+                    html += '<p><strong>Errors:</strong> ' + data.errors + ' events</p>';
+                    
+                    if (data.updated > 0) {
+                        html += '<p class="text-blue-400 mt-4">Migration completed! The events listing should now show proper images.</p>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Migration failed: ' + data.error + '</p>';
                 }
             } catch (error) {
                 resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
