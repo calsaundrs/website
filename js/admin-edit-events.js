@@ -149,41 +149,37 @@ async function loadAllEvents() {
     try {
         console.log('Admin Edit Events: Loading all events...');
         
-        // Load regular events
-        const eventsResponse = await fetch('/.netlify/functions/get-events-firestore-simple?view=admin');
-        console.log('Admin Edit Events: Events response status:', eventsResponse.status);
+        // Load all events using the new admin API
+        const response = await fetch('/.netlify/functions/get-admin-events');
+        console.log('Admin Edit Events: Response status:', response.status);
         
-        if (eventsResponse.ok) {
-            const eventsData = await eventsResponse.json();
-            console.log('Admin Edit Events: Events data received:', eventsData);
-            allEvents = eventsData.events || [];
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Admin Edit Events: Data received:', data);
             
-            // Separate pending and approved events
-            pendingEvents = allEvents.filter(event => {
-                const status = event.status || event.Status || event['Status'];
-                return status === 'pending' || status === 'pending review' || status === 'Pending Review';
-            });
-            approvedEvents = allEvents.filter(event => {
-                const status = event.status || event.Status || event['Status'];
-                return status === 'approved' || status === 'Approved';
-            });
-            
-            console.log(`Admin Edit Events: Loaded ${allEvents.length} total events (${pendingEvents.length} pending, ${approvedEvents.length} approved)`);
+            if (data.success) {
+                allEvents = data.events || [];
+                pendingEvents = data.pendingEvents || [];
+                approvedEvents = data.approvedEvents || [];
+                recurringEvents = data.recurringEvents || [];
+                
+                console.log(`Admin Edit Events: Loaded ${allEvents.length} total events`);
+                console.log(`  - Pending: ${pendingEvents.length}`);
+                console.log(`  - Approved: ${approvedEvents.length}`);
+                console.log(`  - Recurring: ${recurringEvents.length}`);
+            } else {
+                console.error('Admin Edit Events: Failed to load events:', data.error);
+                allEvents = [];
+                pendingEvents = [];
+                approvedEvents = [];
+                recurringEvents = [];
+            }
         } else {
-            console.error('Admin Edit Events: Failed to load events:', eventsResponse.status, eventsResponse.statusText);
-        }
-        
-        // Load recurring events
-        const recurringResponse = await fetch('/.netlify/functions/get-recurring-events');
-        console.log('Admin Edit Events: Recurring response status:', recurringResponse.status);
-        
-        if (recurringResponse.ok) {
-            const recurringData = await recurringResponse.json();
-            console.log('Admin Edit Events: Recurring data received:', recurringData);
-            recurringEvents = recurringData.recurringEvents || [];
-            console.log(`Admin Edit Events: Loaded ${recurringEvents.length} recurring events`);
-        } else {
-            console.error('Admin Edit Events: Failed to load recurring events:', recurringResponse.status, recurringResponse.statusText);
+            console.error('Admin Edit Events: Failed to load events:', response.status, response.statusText);
+            allEvents = [];
+            pendingEvents = [];
+            approvedEvents = [];
+            recurringEvents = [];
         }
         
         // Update stats
@@ -239,9 +235,52 @@ function renderEvents(events) {
         const isPast = eventDate < new Date();
         const isSelected = selectedEvents.has(event.id);
 
+        // Handle recurring event display
+        let recurringDisplay = '';
+        if (event.isRecurring || event.isRecurringGroup || event.recurringInfo || event.recurringPattern) {
+            if (event.recurringPattern) {
+                switch (event.recurringPattern.toLowerCase()) {
+                    case 'weekly':
+                        recurringDisplay = 'Every Monday';
+                        break;
+                    case 'bi-weekly':
+                        recurringDisplay = 'Every 2 Weeks';
+                        break;
+                    case 'monthly':
+                        recurringDisplay = 'Every Month';
+                        break;
+                    case 'daily':
+                        recurringDisplay = 'Every Day';
+                        break;
+                    case 'yearly':
+                        recurringDisplay = 'Every Year';
+                        break;
+                    default:
+                        recurringDisplay = 'Recurring Event';
+                }
+            } else if (event.recurringInfo) {
+                const recurringText = event.recurringInfo.toLowerCase();
+                if (recurringText.includes('weekly') || recurringText.includes('every week')) {
+                    recurringDisplay = 'Every Monday';
+                } else if (recurringText.includes('monthly') || recurringText.includes('every month')) {
+                    recurringDisplay = 'Every Month';
+                } else if (recurringText.includes('daily') || recurringText.includes('every day')) {
+                    recurringDisplay = 'Every Day';
+                } else if (recurringText.includes('bi-weekly') || recurringText.includes('every two weeks')) {
+                    recurringDisplay = 'Every 2 Weeks';
+                } else if (recurringText.includes('yearly') || recurringText.includes('annual')) {
+                    recurringDisplay = 'Every Year';
+                } else {
+                    recurringDisplay = 'Recurring Event';
+                }
+            } else if (event.isRecurring) {
+                recurringDisplay = 'Recurring Event';
+            }
+        }
+
         // Handle event image
         const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
-        const imageUrl = eventImage ? (Array.isArray(eventImage) ? eventImage[0].url : eventImage) : null;
+        const imageUrl = eventImage ? (typeof eventImage === 'string' ? eventImage : (eventImage.url || eventImage[0]?.url)) : null;
         const imageHtml = imageUrl ? 
             `<img src="${imageUrl}" alt="Event image" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` :
             `<div class="w-full h-48 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg mb-4 flex items-center justify-center">
@@ -261,6 +300,7 @@ function renderEvents(events) {
                                 ${statusBadge}
                                 ${isToday ? '<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
                                 ${isPast ? '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full">Past</span>' : ''}
+                                ${recurringDisplay ? `<span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -310,6 +350,17 @@ function renderEvents(events) {
                         <p class="detail-label">Submitted By</p>
                         <p class="detail-value">${event.submittedBy || event['Submitted By'] || 'Unknown'}</p>
                     </div>
+                    
+                    ${(event.isRecurring || event.isRecurringGroup) ? `
+                        <div class="event-card-detail-item">
+                            <p class="detail-label">Recurring Event</p>
+                            <p class="detail-value">
+                                ${recurringDisplay}
+                                ${event.totalInstances ? ` (${event.totalInstances} instances)` : ''}
+                                ${event.recurringInstance ? ` (Instance ${event.recurringInstance})` : ''}
+                            </p>
+                        </div>
+                    ` : ''}
                 </div>
                 
                 <div class="event-card-actions">
@@ -896,6 +947,62 @@ function populateEditForm(event) {
             newVenueFields.classList.add('hidden');
         }
     });
+    
+    // Populate recurring event fields
+    const isRecurringCheckbox = document.getElementById('edit-is-recurring');
+    const recurringFields = document.getElementById('edit-recurring-fields');
+    
+    if (isRecurringCheckbox) {
+        isRecurringCheckbox.checked = event.isRecurring || false;
+        
+        // Show/hide recurring fields based on checkbox
+        if (isRecurringCheckbox.checked) {
+            recurringFields.classList.remove('hidden');
+        } else {
+            recurringFields.classList.add('hidden');
+        }
+        
+        // Setup recurring checkbox handler
+        isRecurringCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                recurringFields.classList.remove('hidden');
+            } else {
+                recurringFields.classList.add('hidden');
+            }
+        });
+    }
+    
+    // Populate recurring pattern
+    const recurringPatternSelect = document.getElementById('edit-recurring-pattern');
+    if (recurringPatternSelect) {
+        recurringPatternSelect.value = event.recurringPattern || '';
+    }
+    
+    // Populate recurring info
+    const recurringInfoField = document.getElementById('edit-recurring-info');
+    if (recurringInfoField) {
+        recurringInfoField.value = event.recurringInfo || event['Recurring Info'] || '';
+    }
+    
+    // Populate recurring dates
+    const recurringStartDate = document.getElementById('edit-recurring-start-date');
+    const recurringEndDate = document.getElementById('edit-recurring-end-date');
+    if (recurringStartDate) {
+        recurringStartDate.value = event.recurringStartDate || event.date || '';
+    }
+    if (recurringEndDate) {
+        recurringEndDate.value = event.recurringEndDate || '';
+    }
+    
+    // Populate recurring instance info
+    const totalInstancesField = document.getElementById('edit-total-instances');
+    const recurringInstanceField = document.getElementById('edit-recurring-instance');
+    if (totalInstancesField) {
+        totalInstancesField.value = event.totalInstances || '';
+    }
+    if (recurringInstanceField) {
+        recurringInstanceField.value = event.recurringInstance || '';
+    }
 }
 
 async function handleEditFormSubmit(event) {
@@ -939,6 +1046,26 @@ async function handleEditFormSubmit(event) {
     const imageFile = document.getElementById('edit-image').files[0];
     if (imageFile) {
         formData.append('image', imageFile);
+    }
+    
+    // Recurring event data
+    const isRecurring = document.getElementById('edit-is-recurring')?.checked || false;
+    formData.append('isRecurring', isRecurring);
+    
+    if (isRecurring) {
+        const recurringPattern = document.getElementById('edit-recurring-pattern')?.value || '';
+        const recurringInfo = document.getElementById('edit-recurring-info')?.value || '';
+        const recurringStartDate = document.getElementById('edit-recurring-start-date')?.value || '';
+        const recurringEndDate = document.getElementById('edit-recurring-end-date')?.value || '';
+        const totalInstances = document.getElementById('edit-total-instances')?.value || '';
+        const recurringInstance = document.getElementById('edit-recurring-instance')?.value || '';
+        
+        formData.append('recurringPattern', recurringPattern);
+        formData.append('recurringInfo', recurringInfo);
+        formData.append('recurringStartDate', recurringStartDate);
+        formData.append('recurringEndDate', recurringEndDate);
+        formData.append('totalInstances', totalInstances);
+        formData.append('recurringInstance', recurringInstance);
     }
     
     // Add event ID if editing
