@@ -63,6 +63,12 @@ exports.handler = async function (event, context) {
                 return; // Skip non-approved venues
             }
             
+            // Filter out test venues
+            const venueName = (data.name || data['Name'] || '').toLowerCase();
+            if (venueName.includes('test') || venueName.includes('example') || venueName.includes('sample')) {
+                return; // Skip test venues
+            }
+            
             // Client-side search filtering
             if (search.trim()) {
                 const searchLower = search.toLowerCase();

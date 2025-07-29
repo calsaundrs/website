@@ -399,9 +399,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('contact-email').classList.add('border-red-500');
             }
             
-            if (!venueSelect || !venueSelect.value) {
+            // Check venue selection (support both old select and new search system)
+            const venueId = document.getElementById('venue-id');
+            const venueSearch = document.getElementById('venue-search');
+            
+            if (!venueId || !venueId.value) {
                 errors.push('Please select a venue.');
-                if (venueSelect) venueSelect.classList.add('border-red-500');
+                if (venueSearch) venueSearch.classList.add('border-red-500');
             }
             
             // Validate new venue fields if creating new venue
@@ -430,14 +434,17 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 console.log('🚀 FORM SUBMISSION: Starting form submission');
                 console.log('🔍 FORM SUBMISSION: Form data:', new FormData(form));
-                console.log('🏢 FORM SUBMISSION: Selected venue:', venueSelect ? venueSelect.value : 'N/A');
+                
+                // Get venue ID from the hidden input (new system) or select (old system)
+                const venueIdInput = document.getElementById('venue-id');
+                const finalVenueId = venueIdInput ? venueIdInput.value : (venueSelect ? venueSelect.value : '');
+                
+                console.log('🏢 FORM SUBMISSION: Selected venue ID:', finalVenueId);
                 console.log('📝 FORM SUBMISSION: Event name:', eventName);
                 console.log('📅 FORM SUBMISSION: Event date:', eventDate);
                 
-                let finalVenueId = venueSelect ? venueSelect.value : '';
-                
                 // If creating a new venue, create it first
-                if (isCreatingNewVenue) {
+                if (finalVenueId === 'new' || isCreatingNewVenue) {
                     const venueFormData = new FormData();
                     if (newVenueName) venueFormData.append('venue-name', newVenueName.value.trim());
                     if (newVenueAddress) venueFormData.append('address', newVenueAddress.value.trim());
