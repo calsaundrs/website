@@ -43,7 +43,7 @@ exports.handler = async function(event, context) {
         const venuesRef = db.collection('venues');
         
         console.log('Venue List Firestore: Fetching venues from Firestore');
-        const snapshot = await venuesRef.where('status', '==', 'approved').get();
+        const snapshot = await venuesRef.get(); // Removed status filter
 
         console.log(`Venue List Firestore: Found ${snapshot.size} venues`);
 
