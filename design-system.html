@@ -493,73 +493,100 @@
         <section class="ds-section">
             <h2 class="font-anton text-4xl text-white mb-8">Redesigned Event Filter Bar</h2>
             <div class="card-bg p-8 rounded-2xl">
-                <!-- Single Line Filter Bar -->
-                <div class="flex items-center gap-4 flex-wrap">
-                    <!-- Date Filters -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-gray-300 uppercase tracking-wider">When:</span>
-                        <div class="flex gap-1">
-                            <button class="filter-btn active text-xs">All</button>
-                            <button class="filter-btn text-xs">Today</button>
-                            <button class="filter-btn text-xs">Weekend</button>
-                            <button class="filter-btn text-xs">Week</button>
+                <!-- Single Line Filter Bar with Dropdowns -->
+                <div class="flex items-center gap-3">
+                    <!-- Date Filter Dropdown -->
+                    <div class="relative">
+                        <button class="filter-btn flex items-center gap-2 text-xs">
+                            <i class="fas fa-calendar"></i>
+                            <span>When</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <!-- Dropdown Content -->
+                        <div class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
+                            <div class="p-2 space-y-1">
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">All Events</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Today</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Tomorrow</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">This Weekend</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">This Week</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Next Week</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dynamic Category Filters -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Type:</span>
-                        <div class="flex gap-1" id="dynamic-categories">
-                            <!-- Dynamically populated from event data -->
-                            <button class="filter-btn text-xs">Drag Shows</button>
-                            <button class="filter-btn text-xs">Club Nights</button>
-                            <button class="filter-btn text-xs">Live Music</button>
-                            <button class="filter-btn text-xs">Karaoke</button>
-                            <button class="filter-btn text-xs">Quiz Nights</button>
-                            <button class="filter-btn text-xs">Comedy</button>
-                            <button class="filter-btn text-xs">Sports</button>
-                            <button class="filter-btn text-xs">Workshops</button>
-                            <button class="filter-btn text-xs">Kink Events</button>
-                            <button class="filter-btn text-xs">BDSM</button>
+                    <!-- Category Filter Dropdown -->
+                    <div class="relative">
+                        <button class="filter-btn flex items-center gap-2 text-xs">
+                            <i class="fas fa-tags"></i>
+                            <span>Type</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <!-- Dropdown Content -->
+                        <div class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
+                            <div class="p-2 space-y-1">
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">All Types</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Drag Shows</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Club Nights</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Live Music</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Karaoke</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Quiz Nights</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Comedy</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Sports</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">Workshops</button>
+                                <div class="border-t border-gray-600 my-1"></div>
+                                <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded">Kink Events</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded">BDSM</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dynamic Venue Filters -->
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Venue:</span>
-                        <div class="flex gap-1" id="dynamic-venues">
-                            <!-- Dynamically populated from event data -->
-                            <button class="filter-btn text-xs">The Nightingale Club</button>
-                            <button class="filter-btn text-xs">The Village Inn</button>
-                            <button class="filter-btn text-xs">The Rainbow Bar</button>
-                            <button class="filter-btn text-xs">The Loft</button>
-                            <button class="filter-btn text-xs">Club X</button>
-                            <button class="filter-btn text-xs">The Eagle</button>
+                    <!-- Venue Filter Dropdown -->
+                    <div class="relative">
+                        <button class="filter-btn flex items-center gap-2 text-xs">
+                            <i class="fas fa-building"></i>
+                            <span>Venue</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <!-- Dropdown Content -->
+                        <div class="absolute top-full left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 hidden">
+                            <div class="p-2 space-y-1">
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">All Venues</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Nightingale Club</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Village Inn</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Rainbow Bar</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-white hover:bg-gray-700 rounded">The Loft</button>
+                                <div class="border-t border-gray-600 my-1"></div>
+                                <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded">Club X</button>
+                                <button class="w-full text-left px-3 py-2 text-sm text-pink-400 hover:bg-gray-700 rounded">The Eagle</button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- NSFW Mode Toggle -->
-                    <div class="flex items-center gap-2 ml-auto">
+                    <div class="flex items-center gap-2">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-5 bg-gray-600 rounded-full relative cursor-pointer">
                                 <div class="w-3 h-3 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
                             </div>
                             <span class="text-sm font-semibold text-white">NSFW</span>
                         </div>
-                        <button class="btn-secondary text-white px-2 py-1 rounded text-xs">
-                            <i class="fas fa-times"></i>
-                        </button>
                     </div>
+
+                    <!-- Clear Filters Button -->
+                    <button class="btn-secondary text-white px-3 py-1 rounded text-xs">
+                        <i class="fas fa-times mr-1"></i>Clear
+                    </button>
                 </div>
 
                 <!-- Implementation Notes -->
                 <div class="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                    <h4 class="text-sm font-semibold text-blue-300 mb-2">Dynamic Filter Implementation</h4>
+                    <h4 class="text-sm font-semibold text-blue-300 mb-2">Dropdown Filter Implementation</h4>
                     <div class="text-xs text-blue-200 space-y-1">
-                        <p><strong>Categories:</strong> Extracted from event.tags, event.category, event.type fields</p>
-                        <p><strong>Venues:</strong> Extracted from event.venue.name, event.venue_id fields</p>
-                        <p><strong>NSFW Events:</strong> Filtered by event.is_nsfw, event.age_restriction, event.tags containing kink/BDSM</p>
-                        <p><strong>Date Ranges:</strong> Calculated from event.date, event.start_time fields</p>
+                        <p><strong>Dropdowns:</strong> Use JavaScript to toggle visibility and handle selections</p>
+                        <p><strong>Categories:</strong> NSFW categories (pink) separated by divider when NSFW mode is enabled</p>
+                        <p><strong>Venues:</strong> Adult venues (pink) separated by divider when NSFW mode is enabled</p>
+                        <p><strong>Dynamic Content:</strong> Dropdown options populated from event data on page load</p>
                     </div>
                 </div>
 
