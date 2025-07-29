@@ -143,6 +143,10 @@
         Test Basic Function
     </button>
     
+    <button onclick="testEventsListing()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded mb-4 ml-2">
+        Test Events Listing
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -350,6 +354,48 @@
                     resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p class="text-red-400">Migration failed: ' + data.error + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testEventsListing() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Testing events listing...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-events-listing');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Events Listing Test Results:</h2>';
+                    html += '<p><strong>Message:</strong> ' + data.message + '</p>';
+                    html += '<p><strong>Event Count:</strong> ' + data.eventCount + '</p>';
+                    html += '<p><strong>Cloudinary Cloud Name:</strong> ' + data.cloudinaryCloudName + '</p>';
+                    html += '<p><strong>Timestamp:</strong> ' + data.timestamp + '</p>';
+                    
+                    html += '<h3 class="font-bold mt-4 mb-2">Events Data:</h3>';
+                    data.events.forEach((event, index) => {
+                        html += `
+                            <div class="border border-gray-600 rounded p-4 mb-4">
+                                <h4 class="font-bold text-lg mb-2">${event.name}</h4>
+                                <p><strong>ID:</strong> ${event.id}</p>
+                                <p><strong>Slug:</strong> ${event.slug}</p>
+                                <p><strong>Date:</strong> ${event.date}</p>
+                                <p><strong>All Keys:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.allKeys, null, 2)}</pre>
+                                <p><strong>Image Keys:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.imageKeys, null, 2)}</pre>
+                                <p><strong>Raw Image Data:</strong></p>
+                                <pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.rawImageData, null, 2)}</pre>
+                            </div>
+                        `;
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Events listing test failed: ' + data.error + '</p>';
                 }
             } catch (error) {
                 resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
