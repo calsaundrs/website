@@ -1,17 +1,37 @@
+// Main application logic
 document.addEventListener('DOMContentLoaded', () => {
-    // Fix pride flag flashing issue
-    const fixPrideFlagFlash = () => {
-        // Add flag-loaded class to body after a short delay to ensure CSS is loaded
-        setTimeout(() => {
+    // FOUC prevention is handled by fouc-prevention.js
+    // Wait for content to be loaded before initializing other features
+    const initializeApp = () => {
+        // Fix pride flag flashing issue
+        const fixPrideFlagFlash = () => {
+            // Add flag-loaded class to body after a short delay to ensure CSS is loaded
+            setTimeout(() => {
+                document.body.classList.add('flag-loaded');
+            }, 100);
+            
+            // Also add it immediately for fast connections
             document.body.classList.add('flag-loaded');
-        }, 100);
+        };
         
-        // Also add it immediately for fast connections
-        document.body.classList.add('flag-loaded');
+        // Run the fix
+        fixPrideFlagFlash();
+        
+        // Initialize other features...
+        initializeMobileMenu();
+        initializeWelcomeModal();
+        initializeFormHandling();
     };
     
-    // Run the fix
-    fixPrideFlagFlash();
+    // Initialize immediately if FOUC prevention is not active
+    if (!document.body.classList.contains('fouc-prevention') || document.body.classList.contains('loaded')) {
+        initializeApp();
+    } else {
+        // Wait for FOUC prevention to complete
+        window.addEventListener('foucContentLoaded', initializeApp);
+    }
+    
+    // Enhanced Mobile menu functionality with accessibility
     
     // Enhanced Mobile menu functionality with accessibility
     const initializeMobileMenu = () => {
@@ -89,71 +109,104 @@ document.addEventListener('DOMContentLoaded', () => {
         menu.setAttribute('aria-hidden', 'true');
     };
     
-    // Initialize mobile menu
-    initializeMobileMenu();
-    
     // Welcome Modal Logic (only on homepage)
-    const modal = document.getElementById('welcomeModal');
-    const closeModalButton = document.getElementById('closeModalButton');
-    const exploreButton = document.getElementById('exploreButton');
-    const body = document.body;
+    const initializeWelcomeModal = () => {
+        const modal = document.getElementById('welcomeModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const exploreButton = document.getElementById('exploreButton');
+        const body = document.body;
 
-    if (modal) {
-        // Function to open the modal
-        const openModal = () => {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                body.classList.add('modal-open');
-            }, 10); // Short delay to allow display property to apply before transition
-        };
+        if (modal) {
+            // Function to open the modal
+            const openModal = () => {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    body.classList.add('modal-open');
+                }, 10); // Short delay to allow display property to apply before transition
+            };
 
-        // Function to close the modal
-        const closeModal = () => {
-            modal.classList.add('opacity-0');
-            body.classList.remove('modal-open');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300); // Wait for transition to finish
+            // Function to close the modal
+            const closeModal = () => {
+                modal.classList.add('opacity-0');
+                body.classList.remove('modal-open');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300); // Wait for transition to finish
+                
+                // Set a flag in localStorage so the modal doesn't show again
+                try {
+                    localStorage.setItem('brumOutloudVisited', 'true');
+                } catch (e) {
+                    console.error("LocalStorage is not available.", e);
+                }
+            };
+
+            // Check if the user has visited before
+            const hasVisited = localStorage.getItem('brumOutloudVisited');
+
+            if (!hasVisited) {
+                // If it's the first visit, show the modal after a short delay
+                setTimeout(openModal, 1000);
+            }
+
+            // Event listeners to close the modal
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', closeModal);
+            }
+            if (exploreButton) {
+                exploreButton.addEventListener('click', closeModal);
+            }
+
+            // Close modal when clicking outside of it
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
             
-            // Set a flag in localStorage so the modal doesn't show again
-            try {
-                localStorage.setItem('brumOutloudVisited', 'true');
-            } catch (e) {
-                console.error("LocalStorage is not available.", e);
-            }
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        }
+    };
+    
+    // Form handling and validation
+    const initializeFormHandling = () => {
+        // Handle form validation errors
+        const handleFormErrors = (form) => {
+            if (!form) return;
+            
+            form.addEventListener('submit', (e) => {
+                const requiredFields = form.querySelectorAll('[required]');
+                let hasErrors = false;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('border-red-500');
+                        hasErrors = true;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+                
+                if (hasErrors) {
+                    e.preventDefault();
+                    const firstError = form.querySelector('.border-red-500');
+                    if (firstError) {
+                        firstError.focus();
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
         };
-
-        // Check if the user has visited before
-        const hasVisited = localStorage.getItem('brumOutloudVisited');
-
-        if (!hasVisited) {
-            // If it's the first visit, show the modal after a short delay
-            setTimeout(openModal, 1000);
-        }
-
-        // Event listeners to close the modal
-        if (closeModalButton) {
-            closeModalButton.addEventListener('click', closeModal);
-        }
-        if (exploreButton) {
-            exploreButton.addEventListener('click', closeModal);
-        }
-
-        // Close modal when clicking outside of it
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
         
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                closeModal();
-            }
-        });
-    }
+        // Apply form validation to all forms
+        document.querySelectorAll('form').forEach(handleFormErrors);
+    };
 
     // Register Service Worker with error handling
     if ('serviceWorker' in navigator) {
@@ -181,40 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Global error handling for forms
+    // Global error handling
     window.addEventListener('error', (e) => {
         console.error('Global error:', e.error);
         // Don't show error to user unless it's critical
     });
-    
-    // Handle form validation errors
-    const handleFormErrors = (form) => {
-        if (!form) return;
-        
-        form.addEventListener('submit', (e) => {
-            const requiredFields = form.querySelectorAll('[required]');
-            let hasErrors = false;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('border-red-500');
-                    hasErrors = true;
-                } else {
-                    field.classList.remove('border-red-500');
-                }
-            });
-            
-            if (hasErrors) {
-                e.preventDefault();
-                const firstError = form.querySelector('.border-red-500');
-                if (firstError) {
-                    firstError.focus();
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-        });
-    };
-    
-    // Apply form validation to all forms
-    document.querySelectorAll('form').forEach(handleFormErrors);
 });
