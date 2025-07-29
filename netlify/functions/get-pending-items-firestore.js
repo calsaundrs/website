@@ -156,11 +156,26 @@ async function getPendingEvents(limit, offset) {
         console.log("🔍 GET PENDING EVENTS: Snapshot empty:", snapshot.empty);
 
         const events = [];
+        const now = new Date();
+        
         snapshot.forEach(doc => {
             const eventData = {
                 id: doc.id,
                 ...doc.data()
             };
+            
+            // Check if this is a past event
+            const eventDate = eventData.date ? new Date(eventData.date) : null;
+            const isPastEvent = eventDate && eventDate < now;
+            
+            // Check if this is a recurring event
+            const isRecurring = eventData.recurringInfo || eventData.series || eventData.isRecurring;
+            
+            // Skip past events unless they're recurring
+            if (isPastEvent && !isRecurring) {
+                console.log(`⏰ SKIPPING PAST EVENT: ${eventData.name} (${eventData.id}) - Date: ${eventDate}, Recurring: ${isRecurring}`);
+                return; // Skip this event
+            }
             
             events.push({
                 id: eventData.id,
@@ -185,7 +200,9 @@ async function getPendingEvents(limit, offset) {
                 updatedAt: eventData.updatedAt,
                 submittedBy: eventData.submittedBy,
                 submittedAt: eventData.submittedAt,
-                notes: eventData.notes || ''
+                notes: eventData.notes || '',
+                isPastEvent: isPastEvent,
+                isRecurring: isRecurring
             });
         });
 

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterEvents = document.getElementById('filter-events');
     const filterVenues = document.getElementById('filter-venues');
     const filterRecurring = document.getElementById('filter-recurring');
+    const filterPastRecurring = document.getElementById('filter-past-recurring');
     
     // Enhanced State Management
     let allItems = [];
@@ -101,6 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const recurring = allItems.filter(item => 
             item.type === 'event' && (item.recurringInfo || item.series)
         );
+        const pastRecurring = allItems.filter(item => 
+            item.type === 'event' && 
+            (item.recurringInfo || item.series) && 
+            item.isPastEvent
+        );
         
         totalPendingCount.textContent = allItems.length;
         pendingEventsCount.textContent = events.length;
@@ -112,6 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.add('loading-pulse');
             setTimeout(() => el.classList.remove('loading-pulse'), 1000);
         });
+        
+        // Log stats for debugging
+        console.log(`📊 Stats - Total: ${allItems.length}, Events: ${events.length}, Venues: ${venues.length}, Recurring: ${recurring.length}, Past Recurring: ${pastRecurring.length}`);
     }
     
     function applyFiltersAndSorting() {
@@ -140,6 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'recurring':
                 filtered = filtered.filter(item => 
                     item.type === 'event' && (item.recurringInfo || item.series)
+                );
+                break;
+            case 'past-recurring':
+                filtered = filtered.filter(item => 
+                    item.type === 'event' && 
+                    (item.recurringInfo || item.series) && 
+                    item.isPastEvent
                 );
                 break;
         }
@@ -241,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-label">Recurring Pattern</div>
                 <div class="detail-value text-purple-300">
                     <i class="fas fa-redo mr-2"></i>${item.recurringInfo || 'Series event'}
+                    ${item.isPastEvent ? '<span class="text-orange-400 ml-2">(Past event)</span>' : ''}
                 </div>
             </div>
         ` : '';
@@ -274,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${statusBadge}
                                 <span class="text-sm text-gray-400">${item.type}</span>
                                 ${isRecurring ? '<span class="text-sm text-purple-400"><i class="fas fa-redo mr-1"></i>Recurring</span>' : ''}
+                                ${item.isPastEvent ? '<span class="text-sm text-orange-400"><i class="fas fa-clock mr-1"></i>Past</span>' : ''}
                             </div>
                             ${categoryBadges ? `<div class="mt-2">${categoryBadges}</div>` : ''}
                         </div>
@@ -482,6 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterEvents.addEventListener('click', () => setFilter('events'));
         filterVenues.addEventListener('click', () => setFilter('venues'));
         filterRecurring.addEventListener('click', () => setFilter('recurring'));
+        filterPastRecurring.addEventListener('click', () => setFilter('past-recurring'));
         
         // Refresh button
         refreshBtn.addEventListener('click', loadPendingItems);
@@ -539,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFilter = filter;
         
         // Update active button
-        [filterAll, filterEvents, filterVenues, filterRecurring].forEach(btn => 
+        [filterAll, filterEvents, filterVenues, filterRecurring, filterPastRecurring].forEach(btn => 
             btn.classList.remove('active')
         );
         document.getElementById(`filter-${filter}`).classList.add('active');
