@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Event Images</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1f2937; color: white; }
+        .debug-section { margin: 20px 0; padding: 15px; background: #374151; border-radius: 8px; }
+        .event-data { margin: 10px 0; padding: 10px; background: #4b5563; border-radius: 4px; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <h1>Debug Event Images</h1>
+    
+    <div class="debug-section">
+        <button onclick="debugEventImages()">Debug Event Images</button>
+        <div id="debug-results"></div>
+    </div>
+
+    <script>
+        async function debugEventImages() {
+            const resultsDiv = document.getElementById('debug-results');
+            resultsDiv.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-event-images');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h3>Debug Results:</h3>';
+                    html += '<p><strong>Cloudinary Cloud Name:</strong> ' + data.cloudinaryCloudName + '</p>';
+                    
+                    data.debugData.forEach((event, index) => {
+                        html += '<div class="event-data">';
+                        html += '<h4>Event ' + (index + 1) + ': ' + event.name + '</h4>';
+                        html += '<p><strong>ID:</strong> ' + event.id + '</p>';
+                        html += '<p><strong>Image Fields:</strong></p>';
+                        html += '<pre>' + JSON.stringify(event.imageFields, null, 2) + '</pre>';
+                        html += '<p><strong>Cloudinary Fields:</strong></p>';
+                        html += '<pre>' + JSON.stringify(event.cloudinaryFields, null, 2) + '</pre>';
+                        html += '<p><strong>All Keys:</strong></p>';
+                        html += '<pre>' + JSON.stringify(event.allKeys, null, 2) + '</pre>';
+                        html += '</div>';
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p style="color: red;">Error: ' + data.message + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html> 
