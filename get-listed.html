@@ -116,8 +116,19 @@
             opacity: 1;
         }
     </style>
+    
+        <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
     </head>
-<body class="antialiased">
+<body class="fouc-prevention antialiased">
+        <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
+    
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
