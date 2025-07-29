@@ -1,96 +1,137 @@
-const EventService = require('./services/event-service');
+const admin = require('firebase-admin');
 
-const eventService = new EventService();
-
-exports.handler = async function(event, context) {
-  // Enable CORS
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS'
-  };
-
-  // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
-  }
-
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
+exports.handler = async (event, context) => {
   try {
-    console.log('🔍 Debugging get-recurring-events function...');
+    console.log('Debugging recurring events...');
     
-    // Test 1: Call EventService directly (same as get-recurring-events)
-    console.log('Testing EventService.getEvents with admin mode...');
-    const allEvents = await eventService.getEvents({}, { admin: true });
-    
-    console.log(`Found ${allEvents.length} total events`);
-
-    // Test 2: Filter for recurring events (same logic as get-recurring-events)
-    const recurringEvents = allEvents.filter(event => 
-        event.recurringInfo || event.series
-    );
-    
-    console.log(`Found ${recurringEvents.length} recurring events`);
-
-    // Test 3: Check the structure of recurring events
-    let recurringEventStructure = null;
-    if (recurringEvents.length > 0) {
-      const sampleEvent = recurringEvents[0];
-      recurringEventStructure = {
-        id: sampleEvent.id,
-        name: sampleEvent.name,
-        hasImage: !!sampleEvent.image,
-        imageUrl: sampleEvent.image?.url,
-        hasRecurringInfo: !!sampleEvent.recurringInfo,
-        hasSeries: !!sampleEvent.series,
-        venue: sampleEvent.venue?.name,
-        status: sampleEvent.status
-      };
+    // Initialize Firebase if not already done
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        })
+      });
     }
+    
+    const db = admin.firestore();
+    
+    // Get all events
+    const eventsRef = db.collection('events');
+    const snapshot = await eventsRef
+      .where('status', '==', 'approved')
+      .get();
+    
+    const allEvents = [];
+    const recurringEvents = [];
+    const standaloneEvents = [];
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const event = {
+        id: doc.id,
+        name: data.name || 'Untitled Event',
+        date: data.date,
+        // Recurring fields
+        isRecurring: data.isRecurring || false,
+        recurringInfo: data.recurringInfo || null,
+        recurringPattern: data.recurringPattern || null,
+        recurringGroupId: data.recurringGroupId || null,
+        recurringInstance: data.recurringInstance || null,
+        totalInstances: data.totalInstances || null,
+        recurringStartDate: data.recurringStartDate || null,
+        recurringEndDate: data.recurringEndDate || null,
+        // Legacy fields
+        seriesId: data.seriesId || null,
+        'Series ID': data['Series ID'] || null,
+        'Recurring Info': data['Recurring Info'] || null,
+        // All keys for debugging
+        allKeys: Object.keys(data)
+      };
+      
+      allEvents.push(event);
+      
+      // Categorize events
+      if (event.isRecurring || event.recurringInfo || event.recurringPattern || 
+          event.recurringGroupId || event.seriesId || event['Series ID'] || event['Recurring Info']) {
+        recurringEvents.push(event);
+      } else {
+        standaloneEvents.push(event);
+      }
+    });
+
+    // Group recurring events by pattern
+    const recurringGroups = new Map();
+    recurringEvents.forEach(event => {
+      const pattern = event.recurringPattern || 
+                     extractRecurringPattern(event.recurringInfo) || 
+                     extractRecurringPattern(event['Recurring Info']) || 
+                     'unknown';
+      
+      if (!recurringGroups.has(pattern)) {
+        recurringGroups.set(pattern, []);
+      }
+      recurringGroups.get(pattern).push(event);
+    });
 
     return {
       statusCode: 200,
       headers: {
-        ...headers,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
       },
-      body: JSON.stringify({
+      body: JSON.stringify({ 
         success: true,
-        message: 'get-recurring-events debug completed',
-        totalEvents: allEvents.length,
-        recurringEvents: recurringEvents.length,
-        sampleRecurringEvent: recurringEventStructure,
-        eventServiceVersion: '2025-07-25-v2'
+        message: 'Recurring events debug completed',
+        summary: {
+          totalEvents: allEvents.length,
+          recurringEvents: recurringEvents.length,
+          standaloneEvents: standaloneEvents.length,
+          recurringPatterns: Array.from(recurringGroups.keys())
+        },
+        recurringGroups: Object.fromEntries(recurringGroups),
+        sampleRecurringEvents: recurringEvents.slice(0, 5),
+        sampleStandaloneEvents: standaloneEvents.slice(0, 5),
+        timestamp: new Date().toISOString()
       })
     };
 
   } catch (error) {
-    console.error('❌ get-recurring-events debug failed:', error);
-    
+    console.error('Recurring events debug failed:', error);
     return {
       statusCode: 500,
       headers: {
-        ...headers,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
       },
-      body: JSON.stringify({
+      body: JSON.stringify({ 
         success: false,
-        error: error.message,
-        details: error.toString(),
-        stack: error.stack,
-        timestamp: new Date().toISOString()
+        error: error.message 
       })
     };
   }
 };
+
+function extractRecurringPattern(recurringInfo) {
+  if (!recurringInfo) return null;
+  
+  const text = recurringInfo.toLowerCase();
+  if (text.includes('weekly') || text.includes('every week')) {
+    return 'weekly';
+  } else if (text.includes('monthly') || text.includes('every month')) {
+    return 'monthly';
+  } else if (text.includes('daily') || text.includes('every day')) {
+    return 'daily';
+  } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+    return 'bi-weekly';
+  } else if (text.includes('yearly') || text.includes('annual')) {
+    return 'yearly';
+  } else {
+    return 'recurring';
+  }
+}

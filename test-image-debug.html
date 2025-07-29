@@ -147,6 +147,10 @@
         Test Events Listing
     </button>
     
+    <button onclick="testRecurringEvents()" class="bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded mb-4 ml-2">
+        Debug Recurring Events
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -354,6 +358,63 @@
                     resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p class="text-red-400">Migration failed: ' + data.error + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testRecurringEvents() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Debugging recurring events...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/debug-recurring-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Recurring Events Debug Results:</h2>';
+                    html += '<p><strong>Message:</strong> ' + data.message + '</p>';
+                    html += '<p><strong>Timestamp:</strong> ' + data.timestamp + '</p>';
+                    
+                    html += '<h3 class="font-bold mt-4 mb-2">Summary:</h3>';
+                    html += '<p><strong>Total Events:</strong> ' + data.summary.totalEvents + '</p>';
+                    html += '<p><strong>Recurring Events:</strong> ' + data.summary.recurringEvents + '</p>';
+                    html += '<p><strong>Standalone Events:</strong> ' + data.summary.standaloneEvents + '</p>';
+                    html += '<p><strong>Recurring Patterns:</strong> ' + data.summary.recurringPatterns.join(', ') + '</p>';
+                    
+                    html += '<h3 class="font-bold mt-4 mb-2">Recurring Groups:</h3>';
+                    Object.entries(data.recurringGroups).forEach(([pattern, events]) => {
+                        html += `<div class="border border-gray-600 rounded p-4 mb-4">`;
+                        html += `<h4 class="font-bold text-lg mb-2">${pattern} (${events.length} events)</h4>`;
+                        events.forEach(event => {
+                            html += `<div class="ml-4 mb-2">`;
+                            html += `<p><strong>${event.name}</strong> - ${event.date}</p>`;
+                            html += `<p class="text-sm text-gray-400">ID: ${event.id}</p>`;
+                            html += `<p class="text-sm text-gray-400">Pattern: ${event.recurringPattern || event.recurringInfo || 'unknown'}</p>`;
+                            html += `</div>`;
+                        });
+                        html += `</div>`;
+                    });
+                    
+                    html += '<h3 class="font-bold mt-4 mb-2">Sample Recurring Events:</h3>';
+                    data.sampleRecurringEvents.forEach(event => {
+                        html += `<div class="border border-gray-600 rounded p-4 mb-4">`;
+                        html += `<h4 class="font-bold text-lg mb-2">${event.name}</h4>`;
+                        html += `<p><strong>ID:</strong> ${event.id}</p>`;
+                        html += `<p><strong>Date:</strong> ${event.date}</p>`;
+                        html += `<p><strong>Is Recurring:</strong> ${event.isRecurring}</p>`;
+                        html += `<p><strong>Recurring Info:</strong> ${event.recurringInfo || 'null'}</p>`;
+                        html += `<p><strong>Recurring Pattern:</strong> ${event.recurringPattern || 'null'}</p>`;
+                        html += `<p><strong>Recurring Group ID:</strong> ${event.recurringGroupId || 'null'}</p>`;
+                        html += `<p><strong>All Keys:</strong></p>`;
+                        html += `<pre class="bg-gray-800 p-2 rounded text-xs overflow-auto">${JSON.stringify(event.allKeys, null, 2)}</pre>`;
+                        html += `</div>`;
+                    });
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Recurring events debug failed: ' + data.error + '</p>';
                 }
             } catch (error) {
                 resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
