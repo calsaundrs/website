@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadVenues() {
         try {
             console.log('🏢 Loading venues for edit form...');
-            const response = await fetch('/.netlify/functions/get-venue-list');
+            const response = await fetch('/.netlify/functions/get-admin-venues');
             
             if (response.ok) {
                 const data = await response.json();
-                window.allVenues = data.venues || [];
+                window.allVenues = data || [];
                 console.log(`🏢 Loaded ${window.allVenues.length} venues for edit form`);
             } else {
                 console.error('❌ Failed to load venues:', response.status);
