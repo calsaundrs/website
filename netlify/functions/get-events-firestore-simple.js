@@ -32,26 +32,48 @@ exports.handler = async function (event, context) {
             console.log('Returning venues list');
             const venuesRef = db.collection('venues');
             const venuesSnapshot = await venuesRef.get();
-            const venuesList = [];
+            const venuesMap = new Map(); // Use Map to prevent duplicates
+            const testVenueKeywords = ['test', 'demo', 'example', 'sample', 'temp', 'temporary'];
             
             venuesSnapshot.forEach(doc => {
                 const data = doc.data();
+                const venueName = data.name || data['Name'] || 'Unnamed Venue';
+                const venueSlug = data.slug || data['Slug'] || '';
+                
+                // Skip test venues
+                const isTestVenue = testVenueKeywords.some(keyword => 
+                    venueName.toLowerCase().includes(keyword) || 
+                    venueSlug.toLowerCase().includes(keyword)
+                );
+                
+                if (isTestVenue) {
+                    console.log(`Skipping test venue: ${venueName}`);
+                    return;
+                }
+                
                 // Only include venues with Cloudinary images
                 const imageData = extractImageUrl(data);
                 if (imageData && imageData.url) {
-                    venuesList.push({
-                        id: doc.id,
-                        name: data.name || data['Name'] || 'Unnamed Venue',
-                        slug: data.slug || data['Slug'] || '',
-                        address: data.address || data['Address'] || '',
-                        description: data.description || data['Description'] || '',
-                        image: imageData
-                    });
+                    // Use slug as key to prevent duplicates, fallback to name
+                    const key = venueSlug || venueName;
+                    
+                    if (!venuesMap.has(key)) {
+                        venuesMap.set(key, {
+                            id: doc.id,
+                            name: venueName,
+                            slug: venueSlug,
+                            address: data.address || data['Address'] || '',
+                            description: data.description || data['Description'] || '',
+                            image: imageData
+                        });
+                    } else {
+                        console.log(`Skipping duplicate venue: ${venueName}`);
+                    }
                 }
             });
             
-            // Sort venues by name
-            venuesList.sort((a, b) => a.name.localeCompare(b.name));
+            // Convert Map to array and sort by name
+            const venuesList = Array.from(venuesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
             
             return {
                 statusCode: 200,
@@ -187,12 +209,12 @@ exports.handler = async function (event, context) {
                             return eventDate.toDateString() === tomorrow.toDateString();
                         case 'this-weekend':
                             const dayOfWeek = today.getDay();
-                            const daysUntilSaturday = 6 - dayOfWeek;
-                            const saturday = new Date(today);
-                            saturday.setDate(today.getDate() + daysUntilSaturday);
-                            const sunday = new Date(saturday);
-                            sunday.setDate(saturday.getDate() + 1);
-                            return eventDate >= saturday && eventDate <= sunday;
+                            const daysUntilFriday = 5 - dayOfWeek;
+                            const friday = new Date(today);
+                            friday.setDate(today.getDate() + daysUntilFriday);
+                            const sunday = new Date(friday);
+                            sunday.setDate(friday.getDate() + 2);
+                            return eventDate >= friday && eventDate <= sunday;
                         case 'this-week':
                             const endOfWeek = new Date(today);
                             endOfWeek.setDate(today.getDate() + 7);
