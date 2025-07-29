@@ -1411,7 +1411,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
             } catch (error) {
                 console.error("Error initializing page:", error);
-                eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
+                
+                // Check if it's a quota exceeded error
+                if (error.message && error.message.includes('500')) {
+                    eventGrid.innerHTML = `
+                        <div class="col-span-full text-center p-8">
+                            <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6 max-w-md mx-auto">
+                                <h3 class="text-red-400 font-semibold mb-2">Service Temporarily Unavailable</h3>
+                                <p class="text-gray-300 text-sm mb-4">
+                                    We've hit our database usage limit for today. Please try again tomorrow or contact us if this persists.
+                                </p>
+                                <button onclick="location.reload()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">
+                                    Try Again
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
+                }
             }
         }
 
