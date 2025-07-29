@@ -52,27 +52,42 @@ exports.handler = async (event, context) => {
       
       allEvents.push(event);
       
-      // Categorize events
-      if (event.isRecurring || event.recurringInfo || event.recurringPattern || 
-          event.recurringGroupId || event.seriesId || event['Series ID'] || event['Recurring Info']) {
+      // Categorize events - check for any recurring indicators
+      const hasRecurringFields = event.isRecurring || 
+                                event.recurringInfo || 
+                                event.recurringPattern || 
+                                event.recurringGroupId || 
+                                event.seriesId || 
+                                event['Series ID'] || 
+                                event['Recurring Info'] ||
+                                (event.allKeys && event.allKeys.some(key => 
+                                  key.toLowerCase().includes('recurring') || 
+                                  key.toLowerCase().includes('series')
+                                ));
+      
+      if (hasRecurringFields) {
         recurringEvents.push(event);
       } else {
         standaloneEvents.push(event);
       }
     });
 
-    // Group recurring events by pattern
+    // Group recurring events by series ID or pattern
     const recurringGroups = new Map();
     recurringEvents.forEach(event => {
+      // Try to group by Series ID first
+      const seriesId = event.seriesId || event['Series ID'];
       const pattern = event.recurringPattern || 
                      extractRecurringPattern(event.recurringInfo) || 
                      extractRecurringPattern(event['Recurring Info']) || 
                      'unknown';
       
-      if (!recurringGroups.has(pattern)) {
-        recurringGroups.set(pattern, []);
+      const groupKey = seriesId || pattern;
+      
+      if (!recurringGroups.has(groupKey)) {
+        recurringGroups.set(groupKey, []);
       }
-      recurringGroups.get(pattern).push(event);
+      recurringGroups.get(groupKey).push(event);
     });
 
     return {

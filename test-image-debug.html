@@ -151,6 +151,10 @@
         Debug Recurring Events
     </button>
     
+    <button onclick="fixRecurringEvents()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded mb-4 ml-2">
+        Fix Recurring Events
+    </button>
+    
     <div id="results" class="space-y-4"></div>
     
     <script>
@@ -358,6 +362,36 @@
                     resultsDiv.innerHTML = html;
                 } else {
                     resultsDiv.innerHTML = '<p class="text-red-400">Migration failed: ' + data.error + '</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function fixRecurringEvents() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Fixing recurring events data structure...</p>';
+            
+            try {
+                const response = await fetch('/.netlify/functions/fix-recurring-events');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<h2 class="text-xl font-bold mb-4">Fix Recurring Events Results:</h2>';
+                    html += '<p class="text-green-400">✅ Recurring events data structure fixed successfully!</p>';
+                    html += '<p><strong>Message:</strong> ' + data.message + '</p>';
+                    html += '<p><strong>Series Groups Found:</strong> ' + data.seriesGroups + '</p>';
+                    html += '<p><strong>Timestamp:</strong> ' + data.timestamp + '</p>';
+                    html += '<p class="mt-4"><strong>Next Steps:</strong></p>';
+                    html += '<ol class="list-decimal list-inside ml-4">';
+                    html += '<li>Run "Debug Recurring Events" again to see the improvements</li>';
+                    html += '<li>Check the events listing page to see if recurring events are grouped properly</li>';
+                    html += '<li>Test creating new recurring events to ensure the system works</li>';
+                    html += '</ol>';
+                    
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p class="text-red-400">Fix recurring events failed: ' + data.error + '</p>';
                 }
             } catch (error) {
                 resultsDiv.innerHTML = '<p class="text-red-400">Error: ' + error.message + '</p>';
