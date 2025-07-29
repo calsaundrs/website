@@ -518,9 +518,31 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-name').value = event.name || '';
         document.getElementById('edit-description').value = event.description || '';
         
-        // Format date for HTML input
-        const eventDate = event.date || '';
-        const formattedDate = eventDate ? new Date(eventDate).toISOString().split('T')[0] : '';
+        // Format date for HTML input - handle Firestore timestamps
+        let formattedDate = '';
+        const eventDate = event.date;
+        if (eventDate) {
+            try {
+                let dateObj;
+                if (eventDate._seconds) {
+                    // Firestore timestamp
+                    dateObj = new Date(eventDate._seconds * 1000);
+                } else if (eventDate.toDate) {
+                    // Firestore Timestamp object
+                    dateObj = eventDate.toDate();
+                } else {
+                    // Regular date string or object
+                    dateObj = new Date(eventDate);
+                }
+                
+                if (!isNaN(dateObj.getTime())) {
+                    formattedDate = dateObj.toISOString().split('T')[0];
+                }
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                formattedDate = '';
+            }
+        }
         document.getElementById('edit-date').value = formattedDate;
         
         document.getElementById('edit-time').value = event.time || '';
