@@ -157,7 +157,7 @@ class EventAPI {
   }
 
   async getVenues() {
-            const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?view=venues`);
+    const response = await fetch(`${this.baseUrl}/get-venue-list`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
