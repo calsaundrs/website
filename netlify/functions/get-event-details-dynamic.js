@@ -327,18 +327,33 @@ async function getEventBySlug(slug) {
     
     try {
         const eventsRef = db.collection('events');
+        
+        // Try fetching with lowercase 'approved'
         const snapshot = await eventsRef
             .where('slug', '==', slug)
             .where('status', '==', 'approved')
             .limit(1)
             .get();
         
-        if (snapshot.empty) {
-            return null;
+        if (!snapshot.empty) {
+            const doc = snapshot.docs[0];
+            return processEventForPublic(doc.data(), doc.id);
         }
-        
-        const doc = snapshot.docs[0];
-        return processEventForPublic(doc.data(), doc.id);
+
+        // If not found, try fetching with uppercase 'Approved'
+        const snapshotUppercase = await eventsRef
+            .where('slug', '==', slug)
+            .where('Status', '==', 'Approved')
+            .limit(1)
+            .get();
+
+        if (!snapshotUppercase.empty) {
+            const doc = snapshotUppercase.docs[0];
+            return processEventForPublic(doc.data(), doc.id);
+        }
+
+        return null; // Event not found with either status
+
     } catch (error) {
         console.error('Error fetching event by slug:', error);
         return null;
