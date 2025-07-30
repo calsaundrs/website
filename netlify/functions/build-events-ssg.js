@@ -333,10 +333,23 @@ async function generateAllEventPages() {
     
     console.log('Generating ' + events.length + ' event pages...');
     
+    // Ensure the event directory exists
+    const eventDir = path.join(process.cwd(), 'event');
+    if (!fs.existsSync(eventDir)) {
+        fs.mkdirSync(eventDir, { recursive: true });
+        console.log('Created event directory:', eventDir);
+    }
+    
     for (const event of events) {
         try {
             const htmlContent = generateEventPage(event);
             const fileName = event.slug + '.html';
+            const filePath = path.join(eventDir, fileName);
+            
+            // Write the HTML file to disk
+            fs.writeFileSync(filePath, htmlContent, 'utf8');
+            console.log('Written file:', filePath);
+            console.log('File size:', fs.statSync(filePath).size, 'bytes');
             
             generatedPages.push({
                 fileName: fileName,
