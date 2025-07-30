@@ -16,10 +16,10 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages (Dynamic event handler)
+# Rule for individual EVENT pages (Test redirect)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details-dynamic"
+  to = "/.netlify/functions/test-redirect"
   status = 200
   force = true
   query = {slug = ":splat"}
