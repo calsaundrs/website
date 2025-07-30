@@ -333,8 +333,12 @@ async function generateAllEventPages() {
     
     console.log('Generating ' + events.length + ' event pages...');
     
-    // Ensure the event directory exists
-    const eventDir = path.join(process.cwd(), 'event');
+    // Use relative path instead of process.cwd()
+    const eventDir = path.join(__dirname, '..', '..', 'event');
+    console.log('Event directory path:', eventDir);
+    console.log('Current directory:', process.cwd());
+    console.log('__dirname:', __dirname);
+    
     if (!fs.existsSync(eventDir)) {
         fs.mkdirSync(eventDir, { recursive: true });
         console.log('Created event directory:', eventDir);
