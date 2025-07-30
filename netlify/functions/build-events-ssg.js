@@ -1,4 +1,6 @@
 const admin = require('firebase-admin');
+const fs = require('fs');
+const path = require('path');
 
 let firebaseInitialized = false;
 let db = null;
@@ -153,8 +155,44 @@ async function getAllEvents() {
     }
 }
 
+// Load the event template
+function loadEventTemplate() {
+    try {
+        const templatePath = path.join(__dirname, 'templates', 'event-details-template.html');
+        return fs.readFileSync(templatePath, 'utf8');
+    } catch (error) {
+        console.error('Failed to load event template:', error.message);
+        return null;
+    }
+}
+
 function generateEventPage(event) {
-    const template = '<!DOCTYPE html>' +
+    const template = loadEventTemplate();
+    if (!template) {
+        console.error('Failed to load event template, using fallback');
+        return generateFallbackEventPage(event);
+    }
+    
+    // Replace template placeholders with event data
+    let htmlContent = template
+        .replace(/\{\{event\.name\}\}/g, event.name || 'Unnamed Event')
+        .replace(/\{\{event\.description\}\}/g, event.description || 'No description available')
+        .replace(/\{\{event\.date\}\}/g, formatDate(event.date))
+        .replace(/\{\{event\.time\}\}/g, event.time || 'Time TBC')
+        .replace(/\{\{event\.venue\.name\}\}/g, event.venue?.name || 'Venue TBC')
+        .replace(/\{\{event\.venue\.slug\}\}/g, event.venue?.slug || '')
+        .replace(/\{\{event\.imageUrl\}\}/g, event.imageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
+        .replace(/\{\{event\.slug\}\}/g, event.slug || '')
+        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.categories))
+        .replace(/\{\{eventDetails\}\}/g, generateEventDetails(event))
+        .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(event))
+        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event));
+    
+    return htmlContent;
+}
+
+function generateFallbackEventPage(event) {
+    return '<!DOCTYPE html>' +
         '<html lang="en">' +
         '<head>' +
         '<meta charset="UTF-8">' +
@@ -177,8 +215,72 @@ function generateEventPage(event) {
         '</div>' +
         '</body>' +
         '</html>';
+}
+
+function generateCategoryTags(categories) {
+    if (!categories || categories.length === 0) return '';
     
-    return template;
+    return categories.map(category => 
+        '<span class="category-tag">' + category + '</span>'
+    ).join('');
+}
+
+function generateEventDetails(event) {
+    let details = '';
+    
+    if (event.date) {
+        details += '<div class="mb-4"><strong>Date:</strong> ' + formatDate(event.date) + '</div>';
+    }
+    if (event.time) {
+        details += '<div class="mb-4"><strong>Time:</strong> ' + event.time + '</div>';
+    }
+    if (event.venue?.name) {
+        details += '<div class="mb-4"><strong>Venue:</strong> <a href="/venue/' + (event.venue.slug || '') + '">' + event.venue.name + '</a></div>';
+    }
+    if (event.price) {
+        details += '<div class="mb-4"><strong>Price:</strong> ' + event.price + '</div>';
+    }
+    if (event.ageRestriction) {
+        details += '<div class="mb-4"><strong>Age Restriction:</strong> ' + event.ageRestriction + '</div>';
+    }
+    
+    return details;
+}
+
+function generateCalendarLinks(event) {
+    if (!event.date) return '';
+    
+    const eventDate = new Date(event.date);
+    const endDate = new Date(eventDate.getTime() + (3 * 60 * 60 * 1000)); // 3 hours later
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${eventDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.venue?.name || '')}`;
+    
+    const icalData = `BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:${eventDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z%0ADTEND:${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z%0ASUMMARY:${encodeURIComponent(event.name)}%0ADESCRIPTION:${encodeURIComponent(event.description || '')}%0ALOCATION:${encodeURIComponent(event.venue?.name || '')}%0AEND:VEVENT%0AEND:VCALENDAR`;
+    
+    return `
+        <a href="${googleCalendarUrl}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
+            <i class="fab fa-google mr-2"></i> Google Calendar
+        </a>
+        <a href="data:text/calendar;charset=utf8,${icalData}" download="${event.slug}.ics" class="calendar-link ical">
+            <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
+        </a>
+    `;
+}
+
+function generateActionButtons(event) {
+    let buttons = '';
+    
+    if (event.ticketLink) {
+        buttons += `<a href="${event.ticketLink}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block mb-3">
+            <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
+        </a>`;
+    }
+    
+    buttons += `<a href="/events.html" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Events
+    </a>`;
+    
+    return buttons;
 }
 
 async function generateAllEventPages() {
