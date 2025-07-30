@@ -259,7 +259,42 @@ function generateEventPage(event) {
     
     console.log('Template loaded successfully');
     
-    // Replace template placeholders with event data
+    // Test with hardcoded data to see if template replacement works
+    const testEvent = {
+        name: 'TEST EVENT NAME',
+        description: 'TEST EVENT DESCRIPTION',
+        date: '2025-08-01T19:30:00.000Z',
+        slug: 'test-event-slug',
+        venue: { name: 'Test Venue', slug: 'test-venue' },
+        image: { url: 'https://test-image.jpg' },
+        category: ['Test Category']
+    };
+    
+    console.log('Testing with hardcoded event data:', JSON.stringify(testEvent, null, 2));
+    
+    // Replace template placeholders with test event data first
+    let testHtmlContent = template
+        .replace(/\{\{event\.name\}\}/g, testEvent.name || 'Unnamed Event')
+        .replace(/\{\{event\.description\}\}/g, testEvent.description || 'No description available')
+        .replace(/\{\{event\.date\}\}/g, formatDate(testEvent.date))
+        .replace(/\{\{event\.time\}\}/g, testEvent.time || 'Time TBC')
+        .replace(/\{\{event\.venue\.name\}\}/g, testEvent.venue?.name || 'Venue TBC')
+        .replace(/\{\{event\.venue\.slug\}\}/g, testEvent.venue?.slug || '')
+        .replace(/\{\{event\.imageUrl\}\}/g, testEvent.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
+        .replace(/\{\{event\.slug\}\}/g, testEvent.slug || '')
+        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(testEvent.category))
+        .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(testEvent))
+        .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(testEvent))
+        .replace(/\{\{eventDetails\}\}/g, generateEventDetails(testEvent))
+        .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(testEvent))
+        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(testEvent))
+        .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(testEvent));
+    
+    console.log('Test template replacements completed');
+    console.log('Test title in HTML:', testHtmlContent.match(/<title>(.*?)<\/title>/)?.[1]);
+    console.log('Test description in HTML:', testHtmlContent.match(/<meta name="description" content="(.*?)">/)?.[1]);
+    
+    // Now replace with actual event data
     let htmlContent = template
         .replace(/\{\{event\.name\}\}/g, event.name || 'Unnamed Event')
         .replace(/\{\{event\.description\}\}/g, event.description || 'No description available')
