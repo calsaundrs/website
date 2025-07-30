@@ -60,100 +60,34 @@ function processEventForPublic(eventData, eventId) {
     console.log('Event ID:', eventId);
     console.log('Raw event data:', JSON.stringify(eventData, null, 2));
     
-    // Use standardized field names - no more legacy mapping
-    const eventName = eventData.name || 'Unnamed Event';
-    const eventSlug = eventData.slug || '';
-    const eventDescription = eventData.description || '';
-    const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
-    
-    console.log('Extracted name:', eventName);
-    console.log('Extracted description:', eventDescription);
-    console.log('Extracted date:', eventDate);
-    
-    // Extract image URL using standardized fields
-    let imageUrl = null;
-    if (eventData.cloudinaryPublicId) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
-    } else if (eventData.promoImage) {
-        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
-                  (eventData.promoImage.url || eventData.promoImage[0]?.url);
-    } else if (eventData.image) {
-        imageUrl = typeof eventData.image === 'string' ? eventData.image : 
-                  (eventData.image.url || eventData.image[0]?.url);
-    }
-    
-    console.log('Extracted image URL:', imageUrl);
-    
-    // Extract venue data using standardized fields
-    let venueData = {
-        id: '',
-        name: 'Venue TBC',
-        slug: ''
-    };
-    
-    if (eventData.venueId) {
-        // Handle venueName as either string or array
-        let venueName = 'Venue TBC';
-        if (eventData.venueName) {
-            if (Array.isArray(eventData.venueName)) {
-                venueName = eventData.venueName[0] || 'Venue TBC';
-            } else {
-                venueName = eventData.venueName;
-            }
-        }
-        
-        // Handle venueSlug as either string or array
-        let venueSlug = '';
-        if (eventData.venueSlug) {
-            if (Array.isArray(eventData.venueSlug)) {
-                venueSlug = eventData.venueSlug[0] || '';
-            } else {
-                venueSlug = eventData.venueSlug;
-            }
-        }
-        
-        venueData = {
-            id: eventData.venueId,
-            name: venueName,
-            slug: venueSlug
-        };
-    } else if (eventData.venue) {
-        venueData = {
-            id: eventData.venue.id || '',
-            name: eventData.venue.name || 'Venue TBC',
-            slug: eventData.venue.slug || ''
-        };
-    }
-    
-    console.log('Extracted venue data:', venueData);
-    
+    // TEMPORARY: Return hardcoded data to test if the issue is with data processing
     const event = {
         id: eventId,
-        name: eventName,
-        slug: eventSlug,
-        description: eventDescription,
-        date: eventDate,
-        venue: venueData,
-        image: imageUrl ? { url: imageUrl } : null,
-        category: eventData.category || [],
-        price: eventData.price || null,
-        ageRestriction: eventData.ageRestriction || null,
-        organizer: eventData.organizer || null,
-        accessibility: eventData.accessibility || null,
-        ticketLink: eventData.ticketLink || null,
-        eventLink: eventData.eventLink || null,
-        facebookEvent: eventData.facebookEvent || null,
-        recurringInfo: eventData.recurringInfo || null,
-        boostedListingStartDate: eventData.boostedListingStartDate || null,
-        boostedListingEndDate: eventData.boostedListingEndDate || null,
-        otherInstances: [] // Will be populated for recurring events
+        name: 'HARDCODED TEST EVENT NAME',
+        slug: eventData.slug || 'test-slug',
+        description: 'HARDCODED TEST EVENT DESCRIPTION - This is a test to see if the template replacement works with hardcoded data.',
+        date: eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : new Date().toISOString(),
+        venue: {
+            id: 'test-venue-id',
+            name: 'HARDCODED TEST VENUE',
+            slug: 'test-venue-slug'
+        },
+        image: { url: 'https://test-image.jpg' },
+        category: ['Test Category'],
+        price: null,
+        ageRestriction: null,
+        organizer: null,
+        accessibility: null,
+        ticketLink: null,
+        eventLink: null,
+        facebookEvent: null,
+        recurringInfo: null,
+        boostedListingStartDate: null,
+        boostedListingEndDate: null,
+        otherInstances: []
     };
     
-    if (!event.category || event.category.length === 0) {
-        event.category = ['Event'];
-    }
-    
-    console.log('Final processed event:', JSON.stringify(event, null, 2));
+    console.log('Returning hardcoded event data:', JSON.stringify(event, null, 2));
     console.log('=== END PROCESSING EVENT ===');
     
     return event;
