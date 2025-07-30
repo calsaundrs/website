@@ -155,7 +155,7 @@ function processEventForPublic(eventData, eventId) {
 
 async function generateEventPage(event, template) {
     try {
-        const eventDir = path.join(process.cwd(), 'event');
+        const eventDir = path.join('event');
         await fs.mkdir(eventDir, { recursive: true });
         
         const filePath = path.join(eventDir, `${event.slug}.html`);
