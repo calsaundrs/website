@@ -113,25 +113,24 @@ function processEventForPublic(eventData, eventId) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
     } else if (eventData.promoImage) {
         imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
-                  (eventData.promoImage.url || eventData.promoImage[0]?.url);
+                   (eventData.promoImage.url || eventData.promoImage[0]?.url);
     } else if (eventData.image) {
         imageUrl = typeof eventData.image === 'string' ? eventData.image : 
-                  (eventData.image.url || eventData.image[0]?.url);
+                   (eventData.image.url || eventData.image[0]?.url);
+    }
+    
+    // Correctly process venue data from raw fields
+    const venueData = { id: '', name: 'Venue TBC', slug: '' };
+    if (eventData.venueName && Array.isArray(eventData.venueName) && eventData.venueName.length > 0) {
+        venueData.name = eventData.venueName[0];
+    } else if (typeof eventData.venueName === 'string') {
+        venueData.name = eventData.venueName;
     }
 
-    let venueData = { id: '', name: 'Venue TBC', slug: '' };
-    if (eventData.venueId) {
-        let venueName = 'Venue TBC';
-        if (eventData.venueName) {
-            venueName = Array.isArray(eventData.venueName) ? (eventData.venueName[0] || 'Venue TBC') : eventData.venueName;
-        }
-        let venueSlug = '';
-        if (eventData.venueSlug) {
-            venueSlug = Array.isArray(eventData.venueSlug) ? (eventData.venueSlug[0] || '') : eventData.venueSlug;
-        }
-        venueData = { id: eventData.venueId, name: venueName, slug: venueSlug };
-    } else if (eventData.venue) {
-        venueData = { id: eventData.venue.id || '', name: eventData.venue.name || 'Venue TBC', slug: eventData.venue.slug || '' };
+    if (eventData.venueSlug) {
+        venueData.slug = eventData.venueSlug;
+    } else if (venueData.name !== 'Venue TBC') {
+        venueData.slug = venueData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     }
 
     const event = {

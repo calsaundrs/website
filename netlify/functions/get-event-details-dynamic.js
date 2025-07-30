@@ -36,56 +36,36 @@ function processEventForPublic(eventData, eventId) {
     const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
     
     // Extract image URL using standardized fields
-    let imageUrl = null;
-    if (eventData.cloudinaryPublicId) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
-    } else if (eventData.promoImage) {
-        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
-                  (eventData.promoImage.url || eventData.promoImage[0]?.url);
-    } else if (eventData.image) {
-        imageUrl = typeof eventData.image === 'string' ? eventData.image : 
-                  (eventData.image.url || eventData.image[0]?.url);
+    const imageUrl = eventData.image && eventData.image.length > 0 ? eventData.image[0].url : (eventData.imageUrl || null);
+    
+    // Correctly process venue data from raw fields
+    const venueData = { id: '', name: 'Venue TBC', slug: '' };
+    if (eventData.venueName && Array.isArray(eventData.venueName) && eventData.venueName.length > 0) {
+        venueData.name = eventData.venueName[0];
+    } else if (typeof eventData.venueName === 'string') {
+        venueData.name = eventData.venueName;
+    }
+
+    if (eventData.venueSlug) {
+        venueData.slug = eventData.venueSlug;
+    } else if (venueData.name !== 'Venue TBC') {
+        venueData.slug = venueData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     }
     
-    // Extract venue data using standardized fields
-    let venueData = {
-        id: '',
-        name: 'Venue TBC',
-        slug: ''
-    };
-    
-    if (eventData.venueId) {
-        let venueName = 'Venue TBC';
-        if (eventData.venueName) {
-            if (Array.isArray(eventData.venueName)) {
-                venueName = eventData.venueName[0] || 'Venue TBC';
-            } else {
-                venueName = eventData.venueName;
-            }
-        }
-        
-        let venueSlug = '';
-        if (eventData.venueSlug) {
-            if (Array.isArray(eventData.venueSlug)) {
-                venueSlug = eventData.venueSlug[0] || '';
-            } else {
-                venueSlug = eventData.venueSlug;
-            }
-        }
-        
-        venueData = {
-            id: eventData.venueId,
-            name: venueName,
-            slug: venueSlug
-        };
-    } else if (eventData.venue) {
-        venueData = {
-            id: eventData.venue.id || '',
-            name: eventData.venue.name || 'Venue TBC',
-            slug: eventData.venue.slug || ''
-        };
-    }
-    
+    // Standardize other fields
+    const category = eventData.category || [];
+    const price = eventData.price || null;
+    const ageRestriction = eventData.ageRestriction || null;
+    const organizer = eventData.organizer || null;
+    const accessibility = eventData.accessibility || null;
+    const ticketLink = eventData.ticketLink || null;
+    const eventLink = eventData.eventLink || null;
+    const facebookEvent = eventData.facebookEvent || null;
+    const recurringInfo = eventData.recurringInfo || null;
+    const boostedListingStartDate = eventData.boostedListingStartDate || null;
+    const boostedListingEndDate = eventData.boostedListingEndDate || null;
+    const otherInstances = []; // This field is not directly available in the raw eventData, so it's always empty.
+
     return {
         id: eventId,
         name: eventName,
@@ -94,18 +74,18 @@ function processEventForPublic(eventData, eventId) {
         date: eventDate,
         venue: venueData,
         image: imageUrl ? { url: imageUrl } : null,
-        category: eventData.category || ['Event'],
-        price: eventData.price || null,
-        ageRestriction: eventData.ageRestriction || null,
-        organizer: eventData.organizer || null,
-        accessibility: eventData.accessibility || null,
-        ticketLink: eventData.ticketLink || null,
-        eventLink: eventData.eventLink || null,
-        facebookEvent: eventData.facebookEvent || null,
-        recurringInfo: eventData.recurringInfo || null,
-        boostedListingStartDate: eventData.boostedListingStartDate || null,
-        boostedListingEndDate: eventData.boostedListingEndDate || null,
-        otherInstances: []
+        category: category,
+        price: price,
+        ageRestriction: ageRestriction,
+        organizer: organizer,
+        accessibility: accessibility,
+        ticketLink: ticketLink,
+        eventLink: eventLink,
+        facebookEvent: facebookEvent,
+        recurringInfo: recurringInfo,
+        boostedListingStartDate: boostedListingStartDate,
+        boostedListingEndDate: boostedListingEndDate,
+        otherInstances: otherInstances
     };
 }
 
