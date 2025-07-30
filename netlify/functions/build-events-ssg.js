@@ -194,9 +194,18 @@ async function getAllEvents() {
 function loadEventTemplate() {
     try {
         const templatePath = path.join(__dirname, 'templates', 'event-details-template.html');
-        return fs.readFileSync(templatePath, 'utf8');
+        console.log('Attempting to load template from:', templatePath);
+        
+        const template = fs.readFileSync(templatePath, 'utf8');
+        console.log('Template loaded successfully, length:', template.length);
+        console.log('Template starts with:', template.substring(0, 200));
+        console.log('Template contains event.name placeholder:', template.includes('{{event.name}}'));
+        console.log('Template contains event.description placeholder:', template.includes('{{event.description}}'));
+        
+        return template;
     } catch (error) {
         console.error('Failed to load event template:', error.message);
+        console.error('Error stack:', error.stack);
         return null;
     }
 }
