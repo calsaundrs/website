@@ -41,28 +41,47 @@ exports.handler = async function(event, context) {
     try {
         // Get a few events to see their structure
         const eventsRef = db.collection('events');
+        
+        // Fetch events with lowercase 'approved'
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .limit(3)
+            .limit(10)
+            .get();
+
+        // Fetch events with uppercase 'Approved'
+        const snapshotUppercase = await eventsRef
+            .where('Status', '==', 'Approved')
+            .limit(10)
             .get();
         
-        console.log('Found ' + snapshot.size + ' events');
+        console.log(`Found ${snapshot.size} events with lowercase 'approved'`);
+        console.log(`Found ${snapshotUppercase.size} events with uppercase 'Approved'`);
         
         const events = [];
-        snapshot.forEach(function(doc) {
-            const data = doc.data();
-            console.log('Raw event data for', doc.id, ':', JSON.stringify(data, null, 2));
-            
-            // Test the processEventForPublic function
-            const processedEvent = processEventForPublic(data, doc.id);
-            console.log('Processed event for', doc.id, ':', JSON.stringify(processedEvent, null, 2));
-            
-            events.push({
-                id: doc.id,
-                raw: data,
-                processed: processedEvent
+        const processedIds = new Set();
+
+        const processSnapshot = (snap) => {
+            snap.forEach(function(doc) {
+                if (processedIds.has(doc.id)) return;
+
+                const data = doc.data();
+                console.log('Raw event data for', doc.id, ':', JSON.stringify(data, null, 2));
+                
+                // Test the processEventForPublic function
+                const processedEvent = processEventForPublic(data, doc.id);
+                console.log('Processed event for', doc.id, ':', JSON.stringify(processedEvent, null, 2));
+                
+                events.push({
+                    id: doc.id,
+                    raw: data,
+                    processed: processedEvent
+                });
+                processedIds.add(doc.id);
             });
-        });
+        };
+
+        processSnapshot(snapshot);
+        processSnapshot(snapshotUppercase);
         
         return {
             statusCode: 200,
