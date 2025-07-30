@@ -127,47 +127,31 @@ async function getAllEvents() {
 // Load the event template
 function loadEventTemplate() {
     try {
-        // Try multiple possible paths for the template
-        const possiblePaths = [
-            path.join(__dirname, 'templates', 'simple-test-template.html'),
-            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'simple-test-template.html'),
-            path.join(process.cwd(), 'templates', 'simple-test-template.html'),
-            './templates/simple-test-template.html',
-            '../templates/simple-test-template.html'
-        ];
+        // Use inline template to test if file system access is the issue
+        const inlineTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{event.name}} - INLINE TEST</title>
+    <meta name="description" content="{{event.description}}">
+</head>
+<body>
+    <h1>{{event.name}}</h1>
+    <p>{{event.description}}</p>
+    <p>Venue: {{event.venue.name}}</p>
+    <p>This is an inline template test.</p>
+</body>
+</html>`;
         
-        console.log('Attempting to load SIMPLE TEST template from multiple paths...');
-        console.log('Current directory:', process.cwd());
-        console.log('__dirname:', __dirname);
+        console.log('Using INLINE template');
+        console.log('INLINE template length:', inlineTemplate.length);
+        console.log('INLINE template contains event.name placeholder:', inlineTemplate.includes('{{event.name}}'));
+        console.log('INLINE template contains event.description placeholder:', inlineTemplate.includes('{{event.description}}'));
         
-        let template = null;
-        let successfulPath = null;
-        
-        for (const templatePath of possiblePaths) {
-            try {
-                console.log('Trying path:', templatePath);
-                template = fs.readFileSync(templatePath, 'utf8');
-                successfulPath = templatePath;
-                console.log('Successfully loaded SIMPLE TEST template from:', templatePath);
-                break;
-            } catch (pathError) {
-                console.log('Failed to load from:', templatePath, '-', pathError.message);
-            }
-        }
-        
-        if (!template) {
-            console.error('Failed to load SIMPLE TEST template from any path');
-            return null;
-        }
-        
-        console.log('SIMPLE TEST template loaded successfully, length:', template.length);
-        console.log('SIMPLE TEST template starts with:', template.substring(0, 200));
-        console.log('SIMPLE TEST template contains event.name placeholder:', template.includes('{{event.name}}'));
-        console.log('SIMPLE TEST template contains event.description placeholder:', template.includes('{{event.description}}'));
-        
-        return template;
+        return inlineTemplate;
     } catch (error) {
-        console.error('Failed to load SIMPLE TEST template:', error.message);
+        console.error('Failed to create inline template:', error.message);
         console.error('Error stack:', error.stack);
         return null;
     }
