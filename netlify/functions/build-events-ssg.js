@@ -166,16 +166,38 @@ async function getAllEvents() {
     
     try {
         const eventsRef = db.collection('events');
-        const snapshot = await eventsRef
-            .where('status', '==', 'approved')
-            .get();
         
-        console.log('Found ' + snapshot.size + ' approved events');
+        // Get current date at the beginning of the day in UTC
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+
+        // Query for events with 'approved' status (case-insensitive)
+        const approvedSnapshot = await eventsRef
+            .where('status', '==', 'approved')
+            .where('startDate', '>=', today)
+            .get();
+
+        const ApprovedSnapshot = await eventsRef
+            .where('Status', '==', 'Approved')
+            .where('startDate', '>=', today)
+            .get();
+
+        console.log(`- Found ${approvedSnapshot.size} events with status: 'approved'`);
+        console.log(`- Found ${ApprovedSnapshot.size} events with Status: 'Approved'`);
+
+        const allApprovedEvents = [];
+        approvedSnapshot.forEach(doc => allApprovedEvents.push({ id: doc.id, ...doc.data() }));
+        ApprovedSnapshot.forEach(doc => {
+            if (!allApprovedEvents.some(event => event.id === doc.id)) {
+                allApprovedEvents.push({ id: doc.id, ...doc.data() });
+            }
+        });
+
+        console.log('Found ' + allApprovedEvents.length + ' total approved events');
         
         const events = [];
-        snapshot.forEach(function(doc) {
-            const data = doc.data();
-            const processedEvent = processEventForPublic(data, doc.id);
+        allApprovedEvents.forEach(eventData => {
+            const processedEvent = processEventForPublic(eventData, eventData.id);
             if (processedEvent && processedEvent.slug) {
                 events.push(processedEvent);
             }
