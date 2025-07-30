@@ -43,16 +43,13 @@ if (!admin.apps.length) {
 // Function to get real venues from Firebase
 async function getRealVenues() {
     try {
-        console.log('🔍 Fetching venues from API...');
-        
-        // Use the API endpoint instead of direct Firebase connection
-        const response = await fetch('/.netlify/functions/get-venues-firestore');
+        console.log("🔍 Fetching venues from API...");
+        // Use a placeholder URL to avoid crashing the build when running locally
+        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-venues-firestore');
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            throw new Error(`API responded with ${response.status}`);
         }
-        
-        const data = await response.json();
-        const venues = data.venues || [];
+        const venues = await response.json();
         
         console.log(`✅ Found ${venues.length} real venues from API`);
         return venues;
