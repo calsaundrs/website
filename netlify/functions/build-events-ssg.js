@@ -193,10 +193,39 @@ async function getAllEvents() {
 // Load the event template
 function loadEventTemplate() {
     try {
-        const templatePath = path.join(__dirname, 'templates', 'event-details-template.html');
-        console.log('Attempting to load template from:', templatePath);
+        // Try multiple possible paths for the template
+        const possiblePaths = [
+            path.join(__dirname, 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'templates', 'event-details-template.html'),
+            './templates/event-details-template.html',
+            '../templates/event-details-template.html'
+        ];
         
-        const template = fs.readFileSync(templatePath, 'utf8');
+        console.log('Attempting to load template from multiple paths...');
+        console.log('Current directory:', process.cwd());
+        console.log('__dirname:', __dirname);
+        
+        let template = null;
+        let successfulPath = null;
+        
+        for (const templatePath of possiblePaths) {
+            try {
+                console.log('Trying path:', templatePath);
+                template = fs.readFileSync(templatePath, 'utf8');
+                successfulPath = templatePath;
+                console.log('Successfully loaded template from:', templatePath);
+                break;
+            } catch (pathError) {
+                console.log('Failed to load from:', templatePath, '-', pathError.message);
+            }
+        }
+        
+        if (!template) {
+            console.error('Failed to load template from any path');
+            return null;
+        }
+        
         console.log('Template loaded successfully, length:', template.length);
         console.log('Template starts with:', template.substring(0, 200));
         console.log('Template contains event.name placeholder:', template.includes('{{event.name}}'));
