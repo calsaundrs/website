@@ -184,9 +184,12 @@ function generateEventPage(event) {
         .replace(/\{\{event\.imageUrl\}\}/g, event.imageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
         .replace(/\{\{event\.slug\}\}/g, event.slug || '')
         .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.categories))
+        .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(event))
+        .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(event))
         .replace(/\{\{eventDetails\}\}/g, generateEventDetails(event))
         .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(event))
-        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event));
+        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event))
+        .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(event));
     
     return htmlContent;
 }
@@ -223,6 +226,16 @@ function generateCategoryTags(categories) {
     return categories.map(category => 
         '<span class="category-tag">' + category + '</span>'
     ).join('');
+}
+
+function generateRecurringTag(event) {
+    if (!event.recurringInfo) return '';
+    return '<span class="recurring-event-tag">RECURRING</span>';
+}
+
+function generateBoostedTag(event) {
+    if (!event.boostedListingStartDate || !event.boostedListingEndDate) return '';
+    return '<span class="boosted-listing-tag">BOOSTED</span>';
 }
 
 function generateEventDetails(event) {
@@ -281,6 +294,37 @@ function generateActionButtons(event) {
     </a>`;
     
     return buttons;
+}
+
+function generateOtherInstances(event) {
+    if (!event.otherInstances || event.otherInstances.length === 0) return '';
+
+    const instancesHtml = event.otherInstances.map(instance => {
+        const instanceDate = new Date(instance.date);
+        const endDate = new Date(instanceDate.getTime() + (3 * 60 * 60 * 1000)); // 3 hours later
+
+        const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${instanceDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.venue?.name || '')}`;
+        const icalData = `BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:${instanceDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z%0ADTEND:${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z%0ASUMMARY:${encodeURIComponent(event.name)}%0ADESCRIPTION:${encodeURIComponent(event.description || '')}%0ALOCATION:${encodeURIComponent(event.venue?.name || '')}%0AEND:VEVENT%0AEND:VCALENDAR`;
+
+        return `
+            <div class="other-instance">
+                <p>Other instance on ${formatDate(instance.date)} at ${instance.time || 'Time TBC'}</p>
+                <div class="calendar-links">
+                    <a href="${googleCalendarUrl}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
+                        <i class="fab fa-google mr-2"></i> Google Calendar
+                    </a>
+                    <a href="data:text/calendar;charset=utf8,${icalData}" download="${event.slug}-${instance.date.replace(/[-:]/g, '')}.ics" class="calendar-link ical">
+                        <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
+                    </a>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Other Instances</h3>
+        ${instancesHtml}
+    `;
 }
 
 async function generateAllEventPages() {

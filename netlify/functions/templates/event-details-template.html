@@ -11,71 +11,96 @@
     <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
     <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
-    {{#if event.image}}
-    <meta property="og:image" content="{{event.image.url}}">
-    {{/if}}
+    <meta property="og:image" content="{{event.imageUrl}}">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{event.name}}">
     <meta name="twitter:description" content="{{event.description}}">
-    {{#if event.image}}
-    <meta name="twitter:image" content="{{event.image.url}}">
-    {{/if}}
+    <meta name="twitter:image" content="{{event.imageUrl}}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
     
     <style>
-        :root {
-            --accent-color: #ff6b6b;
-            --accent-color-secondary: #4ecdc4;
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
         }
-        
-        .accent-color { color: var(--accent-color); }
-        .accent-color-secondary { color: var(--accent-color-secondary); }
-        .bg-accent-color { background-color: var(--accent-color); }
-        .bg-accent-color-secondary { background-color: var(--accent-color-secondary); }
-        
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .event-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-1px);
+        }
+
         .heading-gradient {
-            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        /* Mobile-specific heading gradient fix */
-        @media (max-width: 768px) {
-            .heading-gradient {
-                background: none;
-                -webkit-background-clip: initial;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                color: #FFFFFF;
-                text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
-            }
-        }
-        
-        .card-bg {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            border: 1px solid #333;
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
         .category-tag {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -84,9 +109,9 @@
             display: inline-block;
             margin: 0.125rem;
         }
-        
+
         .recurring-event-tag {
-            background: linear-gradient(135deg, #4ecdc4 0%, #6ee7df 100%);
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -95,10 +120,10 @@
             display: inline-block;
             margin: 0.125rem;
         }
-        
+
         .boosted-listing-tag {
-            background: linear-gradient(135deg, #ffd93d 0%, #ffe066 100%);
-            color: #333;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
@@ -106,12 +131,12 @@
             display: inline-block;
             margin: 0.125rem;
         }
-        
+
         .calendar-link {
             display: inline-flex;
             align-items: center;
             padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #4ecdc4 0%, #6ee7df 100%);
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: white;
             text-decoration: none;
             border-radius: 0.5rem;
@@ -119,18 +144,41 @@
             margin: 0.5rem;
             transition: all 0.3s ease;
         }
-        
+
         .calendar-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        
+
         .calendar-link.google {
             background: linear-gradient(135deg, #4285f4 0%, #5a9eff 100%);
         }
-        
+
         .calendar-link.ical {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+        }
+
+        /* Loading Animation */
+        .loader {
+            border: 3px solid rgba(75, 85, 99, 0.3);
+            border-top: 3px solid #E83A99;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
         }
     </style>
 
@@ -244,45 +292,28 @@
     <!-- Header -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
                 <span>Brum Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
             </a>
             <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-            </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <a class='text-gray-300 hover:text-white' href='/events'>WHAT'S ON</a>
+                <a class='text-gray-300 hover:text-white' href='/all-venues'>VENUES</a>
+                <a class='text-gray-300 hover:text-white' href='/community'>COMMUNITY</a>
+                <a class='text-gray-300 hover:text-white' href='/contact'>CONTACT</a>
+                <a class='inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200' href='/promoter-tool'>GET LISTED</a>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
-        </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-8 py-8">
         <!-- Breadcrumb -->
         <nav class="mb-8">
             <ol class="flex items-center space-x-2 text-sm text-gray-400">
                 <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li><a href="/events.html" class="hover:text-white transition-colors">Events</a></li>
+                <li><a href="/events" class="hover:text-white transition-colors">Events</a></li>
                 <li><span class="mx-2">/</span></li>
                 <li class="text-white">{{event.name}}</li>
             </ol>
@@ -292,125 +323,87 @@
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Main Event Info -->
             <div class="lg:col-span-2">
-                <div class="card-bg rounded-lg p-8 mb-8">
-                    <!-- Event Header -->
-                    <div class="mb-6">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            {{{categoryTags}}}
-                            {{#if event.recurringInfo}}
-                            <span class="recurring-event-tag">RECURRING</span>
-                            {{/if}}
-                            {{#if event.promotion.boosted}}
-                            <span class="boosted-listing-tag">BOOSTED</span>
-                            {{/if}}
-                        </div>
-                        
-                        <h1 class="text-4xl font-bold text-white mb-4">{{event.name}}</h1>
-                        
-                        <div class="flex items-center text-gray-400 mb-4">
-                            <i class="fas fa-calendar-alt mr-2"></i>
-                            <span>{{formatDate event.date}}</span>
-                        </div>
-                        
-                        <div class="flex items-center text-gray-400 mb-6">
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            <span>{{event.venue.name}}</span>
+                <div class="event-card rounded-xl overflow-hidden">
+                    <!-- Hero Image -->
+                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                        <img src="{{event.imageUrl}}" 
+                             alt="{{event.name}}" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4">
+                            <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                                <i class="fas fa-share mr-1"></i>Share
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Event Image -->
-                    {{#if event.image}}
-                    <div class="mb-6">
-                        <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-64 object-cover rounded-lg">
-                    </div>
-                    {{/if}}
-
-                    <!-- Event Description -->
-                    {{#if event.description}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">About This Event</h2>
-                        <p class="text-gray-300 leading-relaxed">{{event.description}}</p>
-                    </div>
-                    {{/if}}
-
-                    <!-- Calendar Links -->
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Add to Calendar</h2>
-                        <div class="flex flex-wrap">
-                            <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
-                                <i class="fab fa-google mr-2"></i> Google Calendar
-                            </a>
-                            <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="calendar-link ical">
-                                <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
-                            </a>
+                    
+                    <div class="p-8">
+                        <!-- Event Header -->
+                        <div class="mb-8">
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                {{categoryTags}}
+                                {{recurringTag}}
+                                {{boostedTag}}
+                            </div>
+                            
+                            <h1 class="text-4xl font-bold text-white mb-4">{{event.name}}</h1>
+                            
+                            <div class="flex items-center text-gray-400 mb-4">
+                                <i class="fas fa-calendar-alt mr-2 text-accent-color"></i>
+                                <span>{{event.date}}</span>
+                            </div>
+                            
+                            <div class="flex items-center text-gray-400 mb-6">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                <a href="/venue/{{event.venue.slug}}" class="hover:text-white transition-colors">{{event.venue.name}}</a>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Event Link -->
-                    {{#if event.details.link}}
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Event Link</h2>
-                        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-accent-color text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-external-link-alt mr-2"></i>
-                            Visit Event Page
-                        </a>
-                    </div>
-                    {{/if}}
-                </div>
-
-                <!-- Other Instances (for recurring events) -->
-                {{#if hasOtherInstances}}
-                <div class="card-bg rounded-lg p-8">
-                    <h2 class="text-2xl font-bold text-white mb-6">Other Instances</h2>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        {{#each otherInstances}}
-                        <div class="bg-gray-800 rounded-lg p-4">
-                            <h3 class="font-semibold text-white mb-2">{{name}}</h3>
-                            <p class="text-gray-400 text-sm">{{formatDate date}}</p>
-                            <p class="text-gray-400 text-sm">{{venue.name}}</p>
+                        <!-- Event Description -->
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                            </h2>
+                            <div class="text-gray-300 leading-relaxed">
+                                {{event.description}}
+                            </div>
                         </div>
-                        {{/each}}
+
+                        <!-- Calendar Links -->
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar-plus mr-3 text-accent-color"></i>Add to Calendar
+                            </h2>
+                            <div class="flex flex-wrap">
+                                {{calendarLinks}}
+                            </div>
+                        </div>
+
+                        <!-- Event Links -->
+                        {{actionButtons}}
+
+                        <!-- Other Instances (for recurring events) -->
+                        {{otherInstances}}
                     </div>
                 </div>
-                {{/if}}
             </div>
 
             <!-- Sidebar -->
             <div class="lg:col-span-1">
-                <div class="card-bg rounded-lg p-6 sticky top-8">
-                    <h2 class="text-xl font-bold text-white mb-4">Event Details</h2>
+                <div class="event-card p-6 sticky top-8">
+                    <h2 class="text-xl font-bold text-white mb-4">
+                        <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
+                    </h2>
                     
                     <div class="space-y-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Date & Time</h3>
-                            <p class="text-white">{{formatDate event.date}}</p>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Venue</h3>
-                            <p class="text-white">{{event.venue.name}}</p>
-                        </div>
-                        
-                        {{#if event.details.price}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Price</h3>
-                            <p class="text-white">{{event.details.price}}</p>
-                        </div>
-                        {{/if}}
-                        
-                        {{#if event.details.ageRestriction}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Age Restriction</h3>
-                            <p class="text-white">{{event.details.ageRestriction}}</p>
-                        </div>
-                        {{/if}}
-                        
-                        {{#if event.recurringInfo}}
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Recurring Info</h3>
-                            <p class="text-white">{{event.recurringInfo}}</p>
-                        </div>
-                        {{/if}}
+                        {{eventDetails}}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 space-y-3">
+                        {{actionButtons}}
+                        <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Events
+                        </a>
                     </div>
                 </div>
             </div>
@@ -423,26 +416,26 @@
             <div>
                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
                     <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/events'>Events</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/all-venues'>Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                     <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/community'>Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/privacy-policy'>Privacy Policy</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/terms-and-conditions'>Terms and Conditions</a></li>
                     </ul>
                 </div>
             </div>
