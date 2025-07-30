@@ -129,14 +129,14 @@ function loadEventTemplate() {
     try {
         // Try multiple possible paths for the template
         const possiblePaths = [
-            path.join(__dirname, 'templates', 'event-details-template.html'),
-            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html'),
-            path.join(process.cwd(), 'templates', 'event-details-template.html'),
-            './templates/event-details-template.html',
-            '../templates/event-details-template.html'
+            path.join(__dirname, 'templates', 'simple-test-template.html'),
+            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'simple-test-template.html'),
+            path.join(process.cwd(), 'templates', 'simple-test-template.html'),
+            './templates/simple-test-template.html',
+            '../templates/simple-test-template.html'
         ];
         
-        console.log('Attempting to load template from multiple paths...');
+        console.log('Attempting to load SIMPLE TEST template from multiple paths...');
         console.log('Current directory:', process.cwd());
         console.log('__dirname:', __dirname);
         
@@ -148,7 +148,7 @@ function loadEventTemplate() {
                 console.log('Trying path:', templatePath);
                 template = fs.readFileSync(templatePath, 'utf8');
                 successfulPath = templatePath;
-                console.log('Successfully loaded template from:', templatePath);
+                console.log('Successfully loaded SIMPLE TEST template from:', templatePath);
                 break;
             } catch (pathError) {
                 console.log('Failed to load from:', templatePath, '-', pathError.message);
@@ -156,18 +156,18 @@ function loadEventTemplate() {
         }
         
         if (!template) {
-            console.error('Failed to load template from any path');
+            console.error('Failed to load SIMPLE TEST template from any path');
             return null;
         }
         
-        console.log('Template loaded successfully, length:', template.length);
-        console.log('Template starts with:', template.substring(0, 200));
-        console.log('Template contains event.name placeholder:', template.includes('{{event.name}}'));
-        console.log('Template contains event.description placeholder:', template.includes('{{event.description}}'));
+        console.log('SIMPLE TEST template loaded successfully, length:', template.length);
+        console.log('SIMPLE TEST template starts with:', template.substring(0, 200));
+        console.log('SIMPLE TEST template contains event.name placeholder:', template.includes('{{event.name}}'));
+        console.log('SIMPLE TEST template contains event.description placeholder:', template.includes('{{event.description}}'));
         
         return template;
     } catch (error) {
-        console.error('Failed to load event template:', error.message);
+        console.error('Failed to load SIMPLE TEST template:', error.message);
         console.error('Error stack:', error.stack);
         return null;
     }
