@@ -56,11 +56,19 @@ function getOrdinalSuffix(day) {
 }
 
 function processEventForPublic(eventData, eventId) {
+    console.log('=== PROCESSING EVENT ===');
+    console.log('Event ID:', eventId);
+    console.log('Raw event data:', JSON.stringify(eventData, null, 2));
+    
     // Use standardized field names - no more legacy mapping
     const eventName = eventData.name || 'Unnamed Event';
     const eventSlug = eventData.slug || '';
     const eventDescription = eventData.description || '';
     const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
+    
+    console.log('Extracted name:', eventName);
+    console.log('Extracted description:', eventDescription);
+    console.log('Extracted date:', eventDate);
     
     // Extract image URL using standardized fields
     let imageUrl = null;
@@ -74,6 +82,8 @@ function processEventForPublic(eventData, eventId) {
                   (eventData.image.url || eventData.image[0]?.url);
     }
     
+    console.log('Extracted image URL:', imageUrl);
+    
     // Extract venue data using standardized fields
     let venueData = {
         id: '',
@@ -82,10 +92,30 @@ function processEventForPublic(eventData, eventId) {
     };
     
     if (eventData.venueId) {
+        // Handle venueName as either string or array
+        let venueName = 'Venue TBC';
+        if (eventData.venueName) {
+            if (Array.isArray(eventData.venueName)) {
+                venueName = eventData.venueName[0] || 'Venue TBC';
+            } else {
+                venueName = eventData.venueName;
+            }
+        }
+        
+        // Handle venueSlug as either string or array
+        let venueSlug = '';
+        if (eventData.venueSlug) {
+            if (Array.isArray(eventData.venueSlug)) {
+                venueSlug = eventData.venueSlug[0] || '';
+            } else {
+                venueSlug = eventData.venueSlug;
+            }
+        }
+        
         venueData = {
             id: eventData.venueId,
-            name: eventData.venueName || 'Venue TBC',
-            slug: eventData.venueSlug || ''
+            name: venueName,
+            slug: venueSlug
         };
     } else if (eventData.venue) {
         venueData = {
@@ -94,6 +124,8 @@ function processEventForPublic(eventData, eventId) {
             slug: eventData.venue.slug || ''
         };
     }
+    
+    console.log('Extracted venue data:', venueData);
     
     const event = {
         id: eventId,
@@ -120,6 +152,9 @@ function processEventForPublic(eventData, eventId) {
     if (!event.category || event.category.length === 0) {
         event.category = ['Event'];
     }
+    
+    console.log('Final processed event:', JSON.stringify(event, null, 2));
+    console.log('=== END PROCESSING EVENT ===');
     
     return event;
 }
