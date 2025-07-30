@@ -16,12 +16,11 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages (Dynamic event handler)
+# Rule for individual EVENT pages (Static-first with dynamic fallback)
 [[redirects]]
   from = "/event/*"
   to = "/.netlify/functions/get-event-details-dynamic?slug=:splat"
   status = 200
-  force = true
 
 # Rule for individual VENUE pages (Static SSG-based)
 [[redirects]]
