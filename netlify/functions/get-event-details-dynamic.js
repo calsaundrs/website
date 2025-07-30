@@ -25,7 +25,13 @@ try {
 // Process event data for public display
 function processEventForPublic(eventData, eventId) {
     const eventName = eventData.name || 'Unnamed Event';
-    const eventSlug = eventData.slug || '';
+    
+    // Robust slug generation
+    let eventSlug = eventData.slug || '';
+    if (!eventSlug && eventName) {
+        eventSlug = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
     const eventDescription = eventData.description || '';
     const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
     
