@@ -16,10 +16,10 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages (Static SSG-based)
+# Rule for individual EVENT pages (Dynamic 404 handler)
 [[redirects]]
   from = "/event/*"
-  to = "/event/:splat.html"
+  to = "/.netlify/functions/404-handler"
   status = 200
 
 # Rule for individual VENUE pages (Static SSG-based)
