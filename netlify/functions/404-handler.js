@@ -346,16 +346,27 @@ async function getEventBySlug(slug) {
 }
 
 exports.handler = async function(event, context) {
-    const path = event.path;
+    console.log('404 handler called with event:', JSON.stringify(event, null, 2));
+    
+    // Get path from multiple possible sources
+    let path = event.path;
+    if (event.queryStringParameters && event.queryStringParameters.path) {
+        path = event.queryStringParameters.path;
+    }
+    
+    console.log('Processing path:', path);
     
     // Check if this is an event URL
-    if (path.startsWith('/event/')) {
+    if (path && path.startsWith('/event/')) {
         const slug = path.replace('/event/', '');
+        console.log('Extracted slug:', slug);
         
         // Try to get the event from Firestore
         const eventData = await getEventBySlug(slug);
+        console.log('Event data found:', eventData ? 'yes' : 'no');
         
         if (eventData) {
+            console.log('Generating event page for:', eventData.name);
             // Generate and return the event page
             const html = generateEventPage(eventData);
             
@@ -367,7 +378,11 @@ exports.handler = async function(event, context) {
                 },
                 body: html
             };
+        } else {
+            console.log('No event found for slug:', slug);
         }
+    } else {
+        console.log('Path does not start with /event/:', path);
     }
     
     // If not an event or event not found, return the static 404 page
@@ -385,6 +400,7 @@ exports.handler = async function(event, context) {
             body: static404Content
         };
     } catch (error) {
+        console.error('Error reading static 404 page:', error);
         // Fallback 404 response
         return {
             statusCode: 404,
