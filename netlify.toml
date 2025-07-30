@@ -16,10 +16,10 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages (Firestore-based)
+# Rule for individual EVENT pages (Static SSG-based)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
+  to = "/event/:splat.html"
   status = 200
 
 # Rule for individual VENUE pages (Static SSG-based)
@@ -146,7 +146,7 @@
 # Custom 404 page
 [[redirects]]
   from = "/*"
-  to = "/404.html"
+  to = "/.netlify/functions/404-handler"
   status = 404
 
 # Scheduled Functions
