@@ -19,7 +19,7 @@
 # Rule for individual EVENT pages (Dynamic 404 handler)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/404-handler"
+  to = "/.netlify/functions/404-handler?path=/event/:splat"
   status = 200
 
 # Rule for individual VENUE pages (Static SSG-based)
