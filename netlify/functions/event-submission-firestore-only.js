@@ -299,41 +299,43 @@ exports.handler = async function (event, context) {
             let ssgRebuildResult = null;
             if (process.env.AUTO_APPROVE_EVENTS === 'true') {
                 try {
-                    console.log('Auto-approval enabled - triggering SSG rebuild...');
+                    console.log('Auto-approval enabled - triggering build hook...');
                     
-                    // Call the SSG rebuild function
-                    const response = await fetch(`${process.env.URL || 'https://new.brumoutloud.co.uk'}/.netlify/functions/build-events-ssg`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            action: 'rebuild',
-                            source: 'event-submission',
-                            eventId: firestoreDoc.id
-                        })
-                    });
+                    // Check if build hook URL is configured
+                    const buildHookUrl = process.env.NETLIFY_BUILD_HOOK_URL;
                     
-                    if (response.ok) {
-                        const result = await response.json();
-                        ssgRebuildResult = {
-                            success: true,
-                            generatedFiles: result.generatedFiles || 0,
-                            message: 'SSG rebuild triggered successfully'
-                        };
-                        console.log('SSG rebuild completed:', result);
+                    if (buildHookUrl) {
+                        // Trigger the build hook
+                        const response = await fetch(buildHookUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const buildId = await response.text();
+                            ssgRebuildResult = {
+                                success: true,
+                                message: 'Build triggered successfully',
+                                buildId: buildId
+                            };
+                            console.log('Build hook triggered successfully:', buildId);
+                        } else {
+                            throw new Error(`Build hook failed: ${response.status} ${response.statusText}`);
+                        }
                     } else {
-                        console.warn('SSG rebuild failed:', response.status, response.statusText);
+                        console.log('NETLIFY_BUILD_HOOK_URL not configured - skipping build trigger');
                         ssgRebuildResult = {
                             success: false,
-                            message: 'SSG rebuild failed'
+                            message: 'Build hook not configured'
                         };
                     }
-                } catch (ssgError) {
-                    console.error('Error triggering SSG rebuild:', ssgError);
+                } catch (error) {
+                    console.error('Error triggering build hook:', error);
                     ssgRebuildResult = {
                         success: false,
-                        message: 'SSG rebuild error: ' + ssgError.message
+                        message: error.message
                     };
                 }
             }
