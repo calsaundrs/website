@@ -167,6 +167,16 @@ function loadEventTemplate() {
 }
 
 function generateEventPage(event) {
+    console.log('Generating page for event:', {
+        name: event.name,
+        description: event.description,
+        date: event.date,
+        slug: event.slug,
+        venue: event.venue,
+        categories: event.category,
+        image: event.image
+    });
+    
     const template = loadEventTemplate();
     if (!template) {
         console.error('Failed to load event template, using fallback');
@@ -181,9 +191,9 @@ function generateEventPage(event) {
         .replace(/\{\{event\.time\}\}/g, event.time || 'Time TBC')
         .replace(/\{\{event\.venue\.name\}\}/g, event.venue?.name || 'Venue TBC')
         .replace(/\{\{event\.venue\.slug\}\}/g, event.venue?.slug || '')
-        .replace(/\{\{event\.imageUrl\}\}/g, event.imageUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
+        .replace(/\{\{event\.imageUrl\}\}/g, event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
         .replace(/\{\{event\.slug\}\}/g, event.slug || '')
-        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.categories))
+        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.category))
         .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(event))
         .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(event))
         .replace(/\{\{eventDetails\}\}/g, generateEventDetails(event))
@@ -191,6 +201,7 @@ function generateEventPage(event) {
         .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event))
         .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(event));
     
+    console.log('Template replacements completed for:', event.name);
     return htmlContent;
 }
 
