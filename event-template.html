@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{EVENT_NAME}} - BrumOutLoud</title>
-    <meta name="description" content="{{EVENT_DESCRIPTION}}">
+    <title>{{event.name}} - BrumOutLoud</title>
+    <meta name="description" content="{{event.description}}">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{EVENT_NAME}}">
-    <meta property="og:description" content="{{EVENT_DESCRIPTION}}">
+    <meta property="og:title" content="{{event.name}}">
+    <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
-    <meta property="og:url" content="https://brumoutloud.co.uk/event/{{EVENT_SLUG}}">
-    <meta property="og:image" content="{{EVENT_IMAGE_URL}}">
+    <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
+    <meta property="og:image" content="{{event.image.url}}">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{EVENT_NAME}}">
-    <meta name="twitter:description" content="{{EVENT_DESCRIPTION}}">
-    <meta name="twitter:image" content="{{EVENT_IMAGE_URL}}">
+    <meta name="twitter:title" content="{{event.name}}">
+    <meta name="twitter:description" content="{{event.description}}">
+    <meta name="twitter:image" content="{{event.image.url}}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -434,7 +434,7 @@
                 <li><span class="mx-2">/</span></li>
                 <li><a href="/events" class="hover:text-white transition-colors">Events</a></li>
                 <li><span class="mx-2">/</span></li>
-                <li class="text-white">{{EVENT_NAME}}</li>
+                <li class="text-white">{{event.name}}</li>
             </ol>
         </nav>
 
@@ -445,8 +445,8 @@
                 <div class="event-card rounded-xl overflow-hidden">
                     <!-- Hero Image -->
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
-                        <img src="{{EVENT_IMAGE_URL}}" 
-                             alt="{{EVENT_NAME}}" 
+                        <img src="{{event.image.url}}" 
+                             alt="{{event.name}}" 
                              class="w-full h-full object-cover">
                         <div class="absolute top-4 right-4">
                             <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
@@ -459,26 +459,32 @@
                         <!-- Event Header -->
                         <div class="mb-8">
                             <div class="flex flex-wrap gap-2 mb-4">
-                                {{EVENT_TAGS}}
-                                {{EVENT_RECURRING_BADGE}}
-                                {{EVENT_BOOSTED_BADGE}}
+                                {{#each event.tags}}
+                                    <span class="category-tag">{{this}}</span>
+                                {{/each}}
+                                {{#if event.isRecurring}}
+                                    <span class="recurring-event-tag">Recurring</span>
+                                {{/if}}
+                                {{#if event.isBoosted}}
+                                    <span class="boosted-listing-tag">Boosted</span>
+                                {{/if}}
                             </div>
                             
-                            <h1 class="text-4xl font-bold text-white mb-4">{{EVENT_NAME}}</h1>
+                            <h1 class="text-4xl font-bold text-white mb-4">{{event.name}}</h1>
                             
                             <div class="flex items-center text-gray-400 mb-4">
                                 <i class="fas fa-calendar-alt mr-2 text-accent-color"></i>
-                                <span>{{EVENT_DATE}}</span>
+                                <span data-date="{{event.date}}">{{event.date}}</span>
                             </div>
                             
                             <div class="flex items-center text-gray-400 mb-6">
                                 <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
-                                <a href="/venue/{{EVENT_VENUE_SLUG}}" class="hover:text-white transition-colors">{{EVENT_VENUE_NAME}}</a>
+                                <a href="/venue/{{event.venue.slug}}" class="hover:text-white transition-colors">{{event.venue.name}}</a>
                             </div>
                         </div>
 
                         <!-- Event Description -->
-                        {{EVENT_DESCRIPTION_SECTION}}
+                        {{event.description}}
 
                         <!-- Calendar Links -->
                         <div class="mb-6">
@@ -486,20 +492,54 @@
                                 <i class="fas fa-calendar-plus mr-3 text-accent-color"></i>Add to Calendar
                             </h2>
                             <div class="flex flex-wrap">
-                                <a href="{{EVENT_GOOGLE_CALENDAR_URL}}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
+                                <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
                                     <i class="fab fa-google mr-2"></i> Google Calendar
                                 </a>
-                                <a href="{{EVENT_ICAL_URL}}" download="{{EVENT_SLUG}}.ics" class="calendar-link ical">
+                                <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="calendar-link ical">
                                     <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
                                 </a>
                             </div>
                         </div>
 
                         <!-- Event Links -->
-                        {{EVENT_LINKS_SECTION}}
+                        {{#if event.links}}
+                            <div class="mb-6">
+                                <h2 class="text-2xl font-bold text-white mb-4">
+                                    <i class="fas fa-link mr-3 text-accent-color"></i>Event Links
+                                </h2>
+                                <ul class="space-y-3">
+                                    {{#each event.links}}
+                                        <li>
+                                            <a href="{{this.url}}" target="_blank" rel="noopener noreferrer" class="text-white hover:text-accent-color transition-colors">
+                                                {{this.name}}
+                                            </a>
+                                        </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        {{/if}}
 
                         <!-- Other Instances (for recurring events) -->
-                        {{EVENT_OTHER_INSTANCES_SECTION}}
+                        {{#if event.otherInstances}}
+                            <div class="mb-6">
+                                <h2 class="text-2xl font-bold text-white mb-4">
+                                    <i class="fas fa-history mr-3 text-accent-color"></i>Other Instances
+                                </h2>
+                                <ul class="space-y-3">
+                                    {{#each event.otherInstances}}
+                                        <li>
+                                            <div class="flex items-center text-gray-400 text-sm">
+                                                <i class="fas fa-calendar-alt mr-2"></i>
+                                                <span data-date="{{this.date}}">{{this.date}}</span>
+                                            </div>
+                                            <a href="/event/{{../event.slug}}/{{this.slug}}" class="text-white hover:text-accent-color transition-colors">
+                                                {{this.name}}
+                                            </a>
+                                        </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        {{/if}}
                     </div>
                 </div>
             </div>
@@ -514,24 +554,53 @@
                     <div class="space-y-4">
                         <div>
                             <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Date & Time</h3>
-                            <p class="text-white">{{EVENT_DATE}}</p>
+                            <p class="text-white" data-date="{{event.date}}">{{event.date}}</p>
                         </div>
                         
                         <div>
                             <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Venue</h3>
-                            <a href="/venue/{{EVENT_VENUE_SLUG}}" class="text-white hover:text-accent-color transition-colors">{{EVENT_VENUE_NAME}}</a>
+                            <a href="/venue/{{event.venue.slug}}" class="text-white hover:text-accent-color transition-colors">{{event.venue.name}}</a>
                         </div>
                         
-                        {{EVENT_PRICE_SECTION}}
-                        {{EVENT_AGE_RESTRICTION_SECTION}}
-                        {{EVENT_ORGANIZER_SECTION}}
-                        {{EVENT_RECURRING_INFO_SECTION}}
-                        {{EVENT_ACCESSIBILITY_SECTION}}
+                        {{#if event.price}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Price</h3>
+                                <p class="text-white">{{event.price}}</p>
+                            </div>
+                        {{/if}}
+                        {{#if event.ageRestriction}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Age Restriction</h3>
+                                <p class="text-white">{{event.ageRestriction}}</p>
+                            </div>
+                        {{/if}}
+                        {{#if event.organizer}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Organizer</h3>
+                                <p class="text-white">{{event.organizer}}</p>
+                            </div>
+                        {{/if}}
+                        {{#if event.recurringInfo}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Recurring</h3>
+                                <p class="text-white">{{event.recurringInfo}}</p>
+                            </div>
+                        {{/if}}
+                        {{#if event.accessibility}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Accessibility</h3>
+                                <p class="text-white">{{event.accessibility}}</p>
+                            </div>
+                        {{/if}}
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="mt-6 space-y-3">
-                        {{EVENT_TICKET_BUTTON}}
+                        {{#if event.ticketUrl}}
+                            <a href="{{event.ticketUrl}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                                <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
+                            </a>
+                        {{/if}}
                         <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
                             <i class="fas fa-arrow-left mr-2"></i>Back to Events
                         </a>
