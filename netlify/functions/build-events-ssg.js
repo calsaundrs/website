@@ -60,34 +60,100 @@ function processEventForPublic(eventData, eventId) {
     console.log('Event ID:', eventId);
     console.log('Raw event data:', JSON.stringify(eventData, null, 2));
     
-    // TEMPORARY: Return hardcoded data to test if the issue is with data processing
-    const event = {
-        id: eventId,
-        name: 'HARDCODED TEST EVENT NAME',
-        slug: eventData.slug || 'test-slug',
-        description: 'HARDCODED TEST EVENT DESCRIPTION - This is a test to see if the template replacement works with hardcoded data.',
-        date: eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : new Date().toISOString(),
-        venue: {
-            id: 'test-venue-id',
-            name: 'HARDCODED TEST VENUE',
-            slug: 'test-venue-slug'
-        },
-        image: { url: 'https://test-image.jpg' },
-        category: ['Test Category'],
-        price: null,
-        ageRestriction: null,
-        organizer: null,
-        accessibility: null,
-        ticketLink: null,
-        eventLink: null,
-        facebookEvent: null,
-        recurringInfo: null,
-        boostedListingStartDate: null,
-        boostedListingEndDate: null,
-        otherInstances: []
+    // Use standardized field names - no more legacy mapping
+    const eventName = eventData.name || 'Unnamed Event';
+    const eventSlug = eventData.slug || '';
+    const eventDescription = eventData.description || '';
+    const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
+    
+    console.log('Extracted name:', eventName);
+    console.log('Extracted description:', eventDescription);
+    console.log('Extracted date:', eventDate);
+    
+    // Extract image URL using standardized fields
+    let imageUrl = null;
+    if (eventData.cloudinaryPublicId) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
+    } else if (eventData.promoImage) {
+        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
+                  (eventData.promoImage.url || eventData.promoImage[0]?.url);
+    } else if (eventData.image) {
+        imageUrl = typeof eventData.image === 'string' ? eventData.image : 
+                  (eventData.image.url || eventData.image[0]?.url);
+    }
+    
+    console.log('Extracted image URL:', imageUrl);
+    
+    // Extract venue data using standardized fields
+    let venueData = {
+        id: '',
+        name: 'Venue TBC',
+        slug: ''
     };
     
-    console.log('Returning hardcoded event data:', JSON.stringify(event, null, 2));
+    if (eventData.venueId) {
+        // Handle venueName as either string or array
+        let venueName = 'Venue TBC';
+        if (eventData.venueName) {
+            if (Array.isArray(eventData.venueName)) {
+                venueName = eventData.venueName[0] || 'Venue TBC';
+            } else {
+                venueName = eventData.venueName;
+            }
+        }
+        
+        // Handle venueSlug as either string or array
+        let venueSlug = '';
+        if (eventData.venueSlug) {
+            if (Array.isArray(eventData.venueSlug)) {
+                venueSlug = eventData.venueSlug[0] || '';
+            } else {
+                venueSlug = eventData.venueSlug;
+            }
+        }
+        
+        venueData = {
+            id: eventData.venueId,
+            name: venueName,
+            slug: venueSlug
+        };
+    } else if (eventData.venue) {
+        venueData = {
+            id: eventData.venue.id || '',
+            name: eventData.venue.name || 'Venue TBC',
+            slug: eventData.venue.slug || ''
+        };
+    }
+    
+    console.log('Extracted venue data:', venueData);
+    
+    const event = {
+        id: eventId,
+        name: eventName,
+        slug: eventSlug,
+        description: eventDescription,
+        date: eventDate,
+        venue: venueData,
+        image: imageUrl ? { url: imageUrl } : null,
+        category: eventData.category || [],
+        price: eventData.price || null,
+        ageRestriction: eventData.ageRestriction || null,
+        organizer: eventData.organizer || null,
+        accessibility: eventData.accessibility || null,
+        ticketLink: eventData.ticketLink || null,
+        eventLink: eventData.eventLink || null,
+        facebookEvent: eventData.facebookEvent || null,
+        recurringInfo: eventData.recurringInfo || null,
+        boostedListingStartDate: eventData.boostedListingStartDate || null,
+        boostedListingEndDate: eventData.boostedListingEndDate || null,
+        otherInstances: [] // Will be populated for recurring events
+    };
+    
+    if (!event.category || event.category.length === 0) {
+        event.category = ['Event'];
+    }
+    
+    console.log('Final processed event:', JSON.stringify(event, null, 2));
     console.log('=== END PROCESSING EVENT ===');
     
     return event;
@@ -127,31 +193,47 @@ async function getAllEvents() {
 // Load the event template
 function loadEventTemplate() {
     try {
-        // Use inline template to test if file system access is the issue
-        const inlineTemplate = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{event.name}} - INLINE TEST</title>
-    <meta name="description" content="{{event.description}}">
-</head>
-<body>
-    <h1>{{event.name}}</h1>
-    <p>{{event.description}}</p>
-    <p>Venue: {{event.venue.name}}</p>
-    <p>This is an inline template test.</p>
-</body>
-</html>`;
+        // Try multiple possible paths for the template
+        const possiblePaths = [
+            path.join(__dirname, 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'netlify', 'functions', 'templates', 'event-details-template.html'),
+            path.join(process.cwd(), 'templates', 'event-details-template.html'),
+            './templates/event-details-template.html',
+            '../templates/event-details-template.html'
+        ];
         
-        console.log('Using INLINE template');
-        console.log('INLINE template length:', inlineTemplate.length);
-        console.log('INLINE template contains event.name placeholder:', inlineTemplate.includes('{{event.name}}'));
-        console.log('INLINE template contains event.description placeholder:', inlineTemplate.includes('{{event.description}}'));
+        console.log('Attempting to load template from multiple paths...');
+        console.log('Current directory:', process.cwd());
+        console.log('__dirname:', __dirname);
         
-        return inlineTemplate;
+        let template = null;
+        let successfulPath = null;
+        
+        for (const templatePath of possiblePaths) {
+            try {
+                console.log('Trying path:', templatePath);
+                template = fs.readFileSync(templatePath, 'utf8');
+                successfulPath = templatePath;
+                console.log('Successfully loaded template from:', templatePath);
+                break;
+            } catch (pathError) {
+                console.log('Failed to load from:', templatePath, '-', pathError.message);
+            }
+        }
+        
+        if (!template) {
+            console.error('Failed to load template from any path');
+            return null;
+        }
+        
+        console.log('Template loaded successfully, length:', template.length);
+        console.log('Template starts with:', template.substring(0, 200));
+        console.log('Template contains event.name placeholder:', template.includes('{{event.name}}'));
+        console.log('Template contains event.description placeholder:', template.includes('{{event.description}}'));
+        
+        return template;
     } catch (error) {
-        console.error('Failed to create inline template:', error.message);
+        console.error('Failed to load event template:', error.message);
         console.error('Error stack:', error.stack);
         return null;
     }
@@ -169,29 +251,38 @@ function generateEventPage(event) {
     console.log('Event Image:', event.image);
     console.log('Full Event Object:', JSON.stringify(event, null, 2));
     
-    // TEMPORARY: Return a simple HTML string to test if the function is being called
-    const simpleHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${event.name} - SIMPLE TEST</title>
-    <meta name="description" content="${event.description}">
-</head>
-<body>
-    <h1>${event.name}</h1>
-    <p>${event.description}</p>
-    <p>Venue: ${event.venue?.name || 'No venue'}</p>
-    <p>This is a simple test page.</p>
-</body>
-</html>`;
+    const template = loadEventTemplate();
+    if (!template) {
+        console.error('Failed to load event template, using fallback');
+        return generateFallbackEventPage(event);
+    }
     
-    console.log('Returning simple HTML for:', event.name);
-    console.log('Simple HTML title:', simpleHtml.match(/<title>(.*?)<\/title>/)?.[1]);
-    console.log('Simple HTML description:', simpleHtml.match(/<meta name="description" content="(.*?)">/)?.[1]);
+    console.log('Template loaded successfully');
+    
+    // Replace template placeholders with event data
+    let htmlContent = template
+        .replace(/\{\{event\.name\}\}/g, event.name || 'Unnamed Event')
+        .replace(/\{\{event\.description\}\}/g, event.description || 'No description available')
+        .replace(/\{\{event\.date\}\}/g, formatDate(event.date))
+        .replace(/\{\{event\.time\}\}/g, event.time || 'Time TBC')
+        .replace(/\{\{event\.venue\.name\}\}/g, event.venue?.name || 'Venue TBC')
+        .replace(/\{\{event\.venue\.slug\}\}/g, event.venue?.slug || '')
+        .replace(/\{\{event\.imageUrl\}\}/g, event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
+        .replace(/\{\{event\.slug\}\}/g, event.slug || '')
+        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.category))
+        .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(event))
+        .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(event))
+        .replace(/\{\{eventDetails\}\}/g, generateEventDetails(event))
+        .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(event))
+        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event))
+        .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(event));
+    
+    console.log('Template replacements completed for:', event.name);
+    console.log('Final title in HTML:', htmlContent.match(/<title>(.*?)<\/title>/)?.[1]);
+    console.log('Final description in HTML:', htmlContent.match(/<meta name="description" content="(.*?)">/)?.[1]);
     console.log('=== END GENERATING PAGE ===');
     
-    return simpleHtml;
+    return htmlContent;
 }
 
 function generateFallbackEventPage(event) {
