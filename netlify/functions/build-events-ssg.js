@@ -167,21 +167,24 @@ function loadEventTemplate() {
 }
 
 function generateEventPage(event) {
-    console.log('Generating page for event:', {
-        name: event.name,
-        description: event.description,
-        date: event.date,
-        slug: event.slug,
-        venue: event.venue,
-        categories: event.category,
-        image: event.image
-    });
+    console.log('=== GENERATING PAGE FOR EVENT ===');
+    console.log('Event ID:', event.id);
+    console.log('Event Name:', event.name);
+    console.log('Event Description:', event.description);
+    console.log('Event Date:', event.date);
+    console.log('Event Slug:', event.slug);
+    console.log('Event Venue:', event.venue);
+    console.log('Event Category:', event.category);
+    console.log('Event Image:', event.image);
+    console.log('Full Event Object:', JSON.stringify(event, null, 2));
     
     const template = loadEventTemplate();
     if (!template) {
         console.error('Failed to load event template, using fallback');
         return generateFallbackEventPage(event);
     }
+    
+    console.log('Template loaded successfully');
     
     // Replace template placeholders with event data
     let htmlContent = template
@@ -202,6 +205,10 @@ function generateEventPage(event) {
         .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(event));
     
     console.log('Template replacements completed for:', event.name);
+    console.log('Final title in HTML:', htmlContent.match(/<title>(.*?)<\/title>/)?.[1]);
+    console.log('Final description in HTML:', htmlContent.match(/<meta name="description" content="(.*?)">/)?.[1]);
+    console.log('=== END GENERATING PAGE ===');
+    
     return htmlContent;
 }
 
