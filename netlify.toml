@@ -19,10 +19,8 @@
 # Rule for individual EVENT pages (Dynamic event handler)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details-dynamic"
+  to = "/.netlify/functions/get-event-details-dynamic?slug=:splat"
   status = 200
-  force = true
-  query = {slug = ":splat"}
 
 # Rule for individual VENUE pages (Static SSG-based)
 [[redirects]]
