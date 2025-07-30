@@ -1,5 +1,8 @@
 # Squarespace to Netlify Redirects for brumoutloud.co.uk (301 Permanent)
 
+# SSG Event Pages - Redirect /event/slug to /event/slug.html
+/event/* /event/:splat.html 200
+
 # Homepage redirect (if old homepage was different, unlikely but good to have)
 /       /   301
 
