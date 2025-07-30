@@ -169,73 +169,29 @@ function generateEventPage(event) {
     console.log('Event Image:', event.image);
     console.log('Full Event Object:', JSON.stringify(event, null, 2));
     
-    const template = loadEventTemplate();
-    if (!template) {
-        console.error('Failed to load event template, using fallback');
-        return generateFallbackEventPage(event);
-    }
+    // TEMPORARY: Return a simple HTML string to test if the function is being called
+    const simpleHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${event.name} - SIMPLE TEST</title>
+    <meta name="description" content="${event.description}">
+</head>
+<body>
+    <h1>${event.name}</h1>
+    <p>${event.description}</p>
+    <p>Venue: ${event.venue?.name || 'No venue'}</p>
+    <p>This is a simple test page.</p>
+</body>
+</html>`;
     
-    console.log('Template loaded successfully');
-    
-    // Test with hardcoded data to see if template replacement works
-    const testEvent = {
-        name: 'TEST EVENT NAME',
-        description: 'TEST EVENT DESCRIPTION',
-        date: '2025-08-01T19:30:00.000Z',
-        slug: 'test-event-slug',
-        venue: { name: 'Test Venue', slug: 'test-venue' },
-        image: { url: 'https://test-image.jpg' },
-        category: ['Test Category']
-    };
-    
-    console.log('Testing with hardcoded event data:', JSON.stringify(testEvent, null, 2));
-    
-    // Replace template placeholders with test event data first
-    let testHtmlContent = template
-        .replace(/\{\{event\.name\}\}/g, testEvent.name || 'Unnamed Event')
-        .replace(/\{\{event\.description\}\}/g, testEvent.description || 'No description available')
-        .replace(/\{\{event\.date\}\}/g, formatDate(testEvent.date))
-        .replace(/\{\{event\.time\}\}/g, testEvent.time || 'Time TBC')
-        .replace(/\{\{event\.venue\.name\}\}/g, testEvent.venue?.name || 'Venue TBC')
-        .replace(/\{\{event\.venue\.slug\}\}/g, testEvent.venue?.slug || '')
-        .replace(/\{\{event\.imageUrl\}\}/g, testEvent.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
-        .replace(/\{\{event\.slug\}\}/g, testEvent.slug || '')
-        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(testEvent.category))
-        .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(testEvent))
-        .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(testEvent))
-        .replace(/\{\{eventDetails\}\}/g, generateEventDetails(testEvent))
-        .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(testEvent))
-        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(testEvent))
-        .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(testEvent));
-    
-    console.log('Test template replacements completed');
-    console.log('Test title in HTML:', testHtmlContent.match(/<title>(.*?)<\/title>/)?.[1]);
-    console.log('Test description in HTML:', testHtmlContent.match(/<meta name="description" content="(.*?)">/)?.[1]);
-    
-    // Now replace with actual event data
-    let htmlContent = template
-        .replace(/\{\{event\.name\}\}/g, event.name || 'Unnamed Event')
-        .replace(/\{\{event\.description\}\}/g, event.description || 'No description available')
-        .replace(/\{\{event\.date\}\}/g, formatDate(event.date))
-        .replace(/\{\{event\.time\}\}/g, event.time || 'Time TBC')
-        .replace(/\{\{event\.venue\.name\}\}/g, event.venue?.name || 'Venue TBC')
-        .replace(/\{\{event\.venue\.slug\}\}/g, event.venue?.slug || '')
-        .replace(/\{\{event\.imageUrl\}\}/g, event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80')
-        .replace(/\{\{event\.slug\}\}/g, event.slug || '')
-        .replace(/\{\{categoryTags\}\}/g, generateCategoryTags(event.category))
-        .replace(/\{\{recurringTag\}\}/g, generateRecurringTag(event))
-        .replace(/\{\{boostedTag\}\}/g, generateBoostedTag(event))
-        .replace(/\{\{eventDetails\}\}/g, generateEventDetails(event))
-        .replace(/\{\{calendarLinks\}\}/g, generateCalendarLinks(event))
-        .replace(/\{\{actionButtons\}\}/g, generateActionButtons(event))
-        .replace(/\{\{otherInstances\}\}/g, generateOtherInstances(event));
-    
-    console.log('Template replacements completed for:', event.name);
-    console.log('Final title in HTML:', htmlContent.match(/<title>(.*?)<\/title>/)?.[1]);
-    console.log('Final description in HTML:', htmlContent.match(/<meta name="description" content="(.*?)">/)?.[1]);
+    console.log('Returning simple HTML for:', event.name);
+    console.log('Simple HTML title:', simpleHtml.match(/<title>(.*?)<\/title>/)?.[1]);
+    console.log('Simple HTML description:', simpleHtml.match(/<meta name="description" content="(.*?)">/)?.[1]);
     console.log('=== END GENERATING PAGE ===');
     
-    return htmlContent;
+    return simpleHtml;
 }
 
 function generateFallbackEventPage(event) {
