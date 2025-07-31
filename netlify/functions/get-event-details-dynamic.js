@@ -338,6 +338,29 @@ async function getEventBySlug(slug) {
             return processEventForPublic(doc.data(), doc.id);
         }
 
+        // Fallback: try to find the first upcoming event whose slug STARTS WITH the provided slug.
+        // This helps when legacy links omit the date suffix (e.g. "/event/bear-all" vs "bear-all-2025-07-19").
+        try {
+            const today = new Date();
+            today.setUTCHours(0,0,0,0);
+
+            // Fetch up to 20 future approved events and search in memory for prefix match
+            const rangeSnapshot = await eventsRef
+                .where('status', '==', 'approved')
+                .where('startDate', '>=', today)
+                .limit(20)
+                .get();
+
+            for (const doc of rangeSnapshot.docs) {
+                const data = doc.data();
+                if (typeof data.slug === 'string' && data.slug.startsWith(slug)) {
+                    return processEventForPublic(data, doc.id);
+                }
+            }
+        } catch (prefixErr) {
+            console.error('Prefix fallback search failed:', prefixErr);
+        }
+
         return null; // Event not found with either status
 
     } catch (error) {
