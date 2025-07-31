@@ -9,15 +9,35 @@ let db = null;
 // Pre-load the full event template once at cold-start
 let compiledTemplate = null;
 try {
-    const templatePath = path.join(__dirname, '..', '..', 'event-template.html');
-    console.log('Attempting to load template from:', templatePath);
-    const rawTemplate = fs.readFileSync(templatePath, 'utf8');
-    compiledTemplate = Handlebars.compile(rawTemplate);
-    console.log('✅ Successfully loaded and compiled event-template.html for dynamic rendering');
+    // Try multiple possible paths for the template
+    const possiblePaths = [
+        path.join(__dirname, '..', '..', 'event-template.html'), // Local development
+        path.join(process.cwd(), 'event-template.html'), // Netlify build root
+        path.join(__dirname, 'event-template.html'), // Same directory
+        '/opt/build/repo/event-template.html' // Netlify absolute path
+    ];
+    
+    let templatePath = null;
+    let rawTemplate = null;
+    
+    for (const testPath of possiblePaths) {
+        console.log('Testing template path:', testPath);
+        if (fs.existsSync(testPath)) {
+            templatePath = testPath;
+            rawTemplate = fs.readFileSync(templatePath, 'utf8');
+            console.log('✅ Found template at:', templatePath);
+            break;
+        }
+    }
+    
+    if (rawTemplate) {
+        compiledTemplate = Handlebars.compile(rawTemplate);
+        console.log('✅ Successfully loaded and compiled event-template.html for dynamic rendering');
+    } else {
+        throw new Error('Template file not found in any expected location');
+    }
 } catch (err) {
     console.error('❌ Could not load full event template, falling back to inline minimal template:', err.message);
-    console.error('Template path attempted:', path.join(__dirname, '..', '..', 'event-template.html'));
-    console.error('Current __dirname:', __dirname);
 }
 
 // Initialize Firebase if credentials are available
