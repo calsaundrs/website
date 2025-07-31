@@ -347,8 +347,7 @@ async function getEventBySlug(slug) {
             // Fetch up to 20 future approved events and search in memory for prefix match
             const rangeSnapshot = await eventsRef
                 .where('status', '==', 'approved')
-                .where('date', '>=', today)
-                .limit(20)
+                .limit(40)
                 .get();
 
             for (const doc of rangeSnapshot.docs) {

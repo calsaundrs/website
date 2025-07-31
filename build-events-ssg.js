@@ -56,12 +56,10 @@ async function getAllEvents() {
 
         const approvedSnapshot = await eventsRef
             .where('status', '==', 'approved')
-            .where('date', '>=', today)
             .get();
 
         const ApprovedSnapshot = await eventsRef
             .where('Status', '==', 'Approved')
-            .where('date', '>=', today)
             .get();
 
         console.log(`- Found ${approvedSnapshot.size} events with status: 'approved'`);
@@ -79,9 +77,18 @@ async function getAllEvents() {
         
         const events = [];
         allApprovedEvents.forEach(eventData => {
-            const processedEvent = processEventForPublic(eventData, eventData.id);
-            if (processedEvent && processedEvent.slug) {
-                events.push(processedEvent);
+            // Only include events that are today or in the future
+            try {
+                const eventDateObj = new Date(eventData.date);
+                today.setHours(0,0,0,0);
+                if (!isNaN(eventDateObj) && eventDateObj >= today) {
+                    const processedEvent = processEventForPublic(eventData, eventData.id);
+                    if (processedEvent && processedEvent.slug) {
+                        events.push(processedEvent);
+                    }
+                }
+            } catch (e) {
+                console.warn('Skipping event with unparsable date', eventData.date);
             }
         });
         
