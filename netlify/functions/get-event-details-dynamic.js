@@ -377,6 +377,14 @@ exports.handler = async function(event, context) {
         slug = slug.slice(0, -5);
     }
     
+    // If still no slug, attempt to derive from path (/event/<slug> or ...?splat)
+    if (!slug) {
+        const pathParts = event.rawUrl ? new URL(event.rawUrl).pathname.split('/') : (event.path || '').split('/');
+        if (pathParts.length >= 3 && pathParts[1] === 'event') {
+            slug = pathParts.slice(2).join('/').replace(/\.html$/, '');
+        }
+    }
+
     if (!slug) {
         return {
             statusCode: 400,
