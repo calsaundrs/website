@@ -8,6 +8,143 @@ let db = null;
 
 // Pre-load the full event template once at cold-start
 let compiledTemplate = null;
+
+// Embedded template as fallback
+const embeddedTemplate = `<!DOCTYPE html>
+<html lang="en" class="loaded">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{event.name}} - BrumOutLoud</title>
+    <meta name="description" content="{{event.description}}">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .venue-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .accent-color { color: #E83A99; }
+    </style>
+</head>
+<body class="fouc-prevention bg-gray-900 text-white min-h-screen loaded">
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                {{#if event.imageUrl}}
+                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover">
+                {{else}}
+                <i class="fas fa-image text-6xl text-gray-600"></i>
+                {{/if}}
+            </div>
+            
+            <div class="p-8">
+                <!-- Event Header -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-center w-20 flex-shrink-0">
+                            <div class="text-4xl font-bold text-white">{{event.dayOfMonth}}</div>
+                            <div class="text-sm text-gray-400">{{event.monthAbbr}}</div>
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
+                            <p class="text-xl text-gray-300 mb-2">
+                                <i class="fas fa-map-marker-alt mr-2 accent-color"></i>
+                                {{event.venue.name}}
+                            </p>
+                            <p class="text-gray-400">
+                                <i class="fas fa-clock mr-2"></i>
+                                {{event.formattedDate}}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {{#each event.category}}
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <!-- Event Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 accent-color"></i>About This Event
+                            </h2>
+                            <div class="text-gray-300 leading-relaxed">
+                                {{event.description}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Date & Time -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-2 accent-color"></i>Date & Time
+                            </h3>
+                            <p class="text-2xl font-semibold text-white">{{event.formattedDate}}</p>
+                            <p class="text-xl text-gray-400">{{event.time}}</p>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-map-marker-alt mr-2 accent-color"></i>Location
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                </div>
+                                {{#if event.venue.slug}}
+                                <a href="/venue/{{event.venue.slug}}" class="bg-gray-600 text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>View Venue
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Back to Events -->
+                        <a href="/events" class="bg-gray-600 text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>`;
+
 try {
     // Try multiple possible paths for the template
     const possiblePaths = [
@@ -34,10 +171,12 @@ try {
         compiledTemplate = Handlebars.compile(rawTemplate);
         console.log('✅ Successfully loaded and compiled event-template.html for dynamic rendering');
     } else {
-        throw new Error('Template file not found in any expected location');
+        console.log('Using embedded template as fallback');
+        compiledTemplate = Handlebars.compile(embeddedTemplate);
     }
 } catch (err) {
-    console.error('❌ Could not load full event template, falling back to inline minimal template:', err.message);
+    console.error('❌ Could not load full event template, using embedded template:', err.message);
+    compiledTemplate = Handlebars.compile(embeddedTemplate);
 }
 
 // Initialize Firebase if credentials are available
