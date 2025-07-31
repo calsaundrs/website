@@ -10,11 +10,14 @@ let db = null;
 let compiledTemplate = null;
 try {
     const templatePath = path.join(__dirname, '..', '..', 'event-template.html');
+    console.log('Attempting to load template from:', templatePath);
     const rawTemplate = fs.readFileSync(templatePath, 'utf8');
     compiledTemplate = Handlebars.compile(rawTemplate);
-    console.log('Loaded event-template.html for dynamic rendering');
+    console.log('✅ Successfully loaded and compiled event-template.html for dynamic rendering');
 } catch (err) {
-    console.warn('Could not load full event template, falling back to inline minimal template:', err.message);
+    console.error('❌ Could not load full event template, falling back to inline minimal template:', err.message);
+    console.error('Template path attempted:', path.join(__dirname, '..', '..', 'event-template.html'));
+    console.error('Current __dirname:', __dirname);
 }
 
 // Initialize Firebase if credentials are available
@@ -501,6 +504,7 @@ exports.handler = async function(event, context) {
         console.log('Found event:', eventData.name);
         // Enrich event data for template
         const enrichedEvent = enrichEventForTemplate(eventData);
+        console.log('Using template compilation:', !!compiledTemplate ? 'Handlebars template' : 'fallback generateEventPage');
         const html = compiledTemplate ? compiledTemplate({ event: enrichedEvent }) : generateEventPage(enrichedEvent);
         
         return {
