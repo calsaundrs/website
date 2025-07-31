@@ -372,7 +372,10 @@ exports.handler = async function(event, context) {
     console.log('Event handler called with event:', JSON.stringify(event, null, 2));
     
     // Get slug from query parameters
-    const slug = event.queryStringParameters?.slug;
+    let slug = event.queryStringParameters?.slug;
+    if (slug && slug.endsWith('.html')) {
+        slug = slug.slice(0, -5);
+    }
     
     if (!slug) {
         return {
