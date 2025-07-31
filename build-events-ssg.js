@@ -56,12 +56,12 @@ async function getAllEvents() {
 
         const approvedSnapshot = await eventsRef
             .where('status', '==', 'approved')
-            .where('startDate', '>=', today)
+            .where('date', '>=', today)
             .get();
 
         const ApprovedSnapshot = await eventsRef
             .where('Status', '==', 'Approved')
-            .where('startDate', '>=', today)
+            .where('date', '>=', today)
             .get();
 
         console.log(`- Found ${approvedSnapshot.size} events with status: 'approved'`);
