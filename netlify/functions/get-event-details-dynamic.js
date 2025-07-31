@@ -109,7 +109,7 @@ function formatDate(dateString) {
 // Generate event page HTML
 function generateEventPage(event) {
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loaded">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -191,7 +191,7 @@ function generateEventPage(event) {
         }
     </style>
 </head>
-<body>
+<body class="loaded">
     <!-- Header -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
