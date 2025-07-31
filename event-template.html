@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loaded">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,135 +11,22 @@
     <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
     <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
-    <meta property="og:image" content="{{event.image.url}}">
+    <meta property="og:image" content="{{event.imageUrl}}">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{event.name}}">
     <meta name="twitter:description" content="{{event.description}}">
-    <meta name="twitter:image" content="{{event.image.url}}">
+    <meta name="twitter:image" content="{{event.imageUrl}}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
-        }
-    </style>
-    
-    <!-- Performance: Optimized external resource loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-    
-    <link rel="preload" href="/css/main.css" as="style">
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
     
     <style>
         /* Base Styles */
@@ -169,11 +56,15 @@
             border-radius: 1.25rem;
         }
 
-        .event-card {
-            background: rgba(31, 41, 55, 0.8);
+        .venue-card, .submission-card, .result-card {
+            background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover, .submission-card:hover, .result-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
         }
 
         .btn-primary {
@@ -195,16 +86,6 @@
             background: rgba(75, 85, 99, 0.5);
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transform: translateY(-1px);
-        }
-
         .heading-gradient {
             background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
             -webkit-background-clip: text;
@@ -212,202 +93,23 @@
             background-clip: text;
         }
 
-        .category-tag {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            color: white;
+        .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
-            display: inline-block;
-            margin: 0.125rem;
         }
-
-        .recurring-event-tag {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin: 0.125rem;
-        }
-
-        .boosted-listing-tag {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin: 0.125rem;
-        }
-
-        .calendar-link {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            margin: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .calendar-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .calendar-link.google {
-            background: linear-gradient(135deg, #4285f4 0%, #5a9eff 100%);
-        }
-
-        .calendar-link.ical {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-        }
-
-        /* Loading Animation */
-        .loader {
-            border: 3px solid rgba(75, 85, 99, 0.3);
-            border-top: 3px solid #E83A99;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-        }
-    </style>
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
     </style>
     
     <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
-    </head>
-<body class="fouc-prevention">
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
-        <div class="loading-text">Loading Brum Outloud...</div>
-        <div class="loading-spinner"></div>
-    </div>
+</head>
+<body class="fouc-prevention bg-gray-900 text-white min-h-screen loaded">
     <!-- Header -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
@@ -438,169 +140,214 @@
             </ol>
         </nav>
 
-        <!-- Event Details -->
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Main Event Info -->
-            <div class="lg:col-span-2">
-                <div class="event-card rounded-xl overflow-hidden">
-                    <!-- Hero Image -->
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
-                        <img src="{{event.image.url}}" 
-                             alt="{{event.name}}" 
-                             class="w-full h-full object-cover">
-                        <div class="absolute top-4 right-4">
-                            <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                                <i class="fas fa-share mr-1"></i>Share
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="p-8">
-                        <!-- Event Header -->
-                        <div class="mb-8">
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                {{#each event.tags}}
-                                    <span class="category-tag">{{this}}</span>
-                                {{/each}}
-                                {{#if event.isRecurring}}
-                                    <span class="recurring-event-tag">Recurring</span>
-                                {{/if}}
-                                {{#if event.isBoosted}}
-                                    <span class="boosted-listing-tag">Boosted</span>
-                                {{/if}}
-                            </div>
-                            
-                            <h1 class="text-4xl font-bold text-white mb-4">{{event.name}}</h1>
-                            
-                            <div class="flex items-center text-gray-400 mb-4">
-                                <i class="fas fa-calendar-alt mr-2 text-accent-color"></i>
-                                <span data-date="{{event.date}}">{{event.date}}</span>
-                            </div>
-                            
-                            <div class="flex items-center text-gray-400 mb-6">
-                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
-                                <a href="/venue/{{event.venue.slug}}" class="hover:text-white transition-colors">{{event.venue.name}}</a>
-                            </div>
-                        </div>
-
-                        <!-- Event Description -->
-                        {{event.description}}
-
-                        <!-- Calendar Links -->
-                        <div class="mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar-plus mr-3 text-accent-color"></i>Add to Calendar
-                            </h2>
-                            <div class="flex flex-wrap">
-                                <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="calendar-link google">
-                                    <i class="fab fa-google mr-2"></i> Google Calendar
-                                </a>
-                                <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="calendar-link ical">
-                                    <i class="fas fa-calendar-plus mr-2"></i> Apple/Outlook/Other
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Event Links -->
-                        {{#if event.links}}
-                            <div class="mb-6">
-                                <h2 class="text-2xl font-bold text-white mb-4">
-                                    <i class="fas fa-link mr-3 text-accent-color"></i>Event Links
-                                </h2>
-                                <ul class="space-y-3">
-                                    {{#each event.links}}
-                                        <li>
-                                            <a href="{{this.url}}" target="_blank" rel="noopener noreferrer" class="text-white hover:text-accent-color transition-colors">
-                                                {{this.name}}
-                                            </a>
-                                        </li>
-                                    {{/each}}
-                                </ul>
-                            </div>
-                        {{/if}}
-
-                        <!-- Other Instances (for recurring events) -->
-                        {{#if event.otherInstances}}
-                            <div class="mb-6">
-                                <h2 class="text-2xl font-bold text-white mb-4">
-                                    <i class="fas fa-history mr-3 text-accent-color"></i>Other Instances
-                                </h2>
-                                <ul class="space-y-3">
-                                    {{#each event.otherInstances}}
-                                        <li>
-                                            <div class="flex items-center text-gray-400 text-sm">
-                                                <i class="fas fa-calendar-alt mr-2"></i>
-                                                <span data-date="{{this.date}}">{{this.date}}</span>
-                                            </div>
-                                            <a href="/event/{{../event.slug}}/{{this.slug}}" class="text-white hover:text-accent-color transition-colors">
-                                                {{this.name}}
-                                            </a>
-                                        </li>
-                                    {{/each}}
-                                </ul>
-                            </div>
-                        {{/if}}
-                    </div>
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                {{#if event.imageUrl}}
+                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover">
+                {{else}}
+                <i class="fas fa-image text-6xl text-gray-600"></i>
+                {{/if}}
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+                <div class="absolute bottom-4 left-4">
+                    <span class="status-badge approved">Approved</span>
                 </div>
             </div>
-
-            <!-- Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="event-card p-6 sticky top-8">
-                    <h2 class="text-xl font-bold text-white mb-4">
-                        <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
-                    </h2>
+            
+            <div class="p-8">
+                <!-- Event Header -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-center w-20 flex-shrink-0">
+                            <div class="text-4xl font-bold text-white">{{event.dayOfMonth}}</div>
+                            <div class="text-sm text-gray-400">{{event.monthAbbr}}</div>
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
+                            <p class="text-xl text-gray-300 mb-2">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                                {{event.venue.name}}
+                            </p>
+                            <p class="text-gray-400">
+                                <i class="fas fa-clock mr-2"></i>
+                                {{event.formattedDate}}
+                            </p>
+                        </div>
+                    </div>
                     
-                    <div class="space-y-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Date & Time</h3>
-                            <p class="text-white" data-date="{{event.date}}">{{event.date}}</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        {{#each event.category}}
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                        {{/each}}
+                    </div>
+                </div>
+
+                <!-- Event Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                            </h2>
+                            <div class="text-gray-300 leading-relaxed">
+                                {{event.description}}
+                            </div>
                         </div>
-                        
-                        <div>
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Venue</h3>
-                            <a href="/venue/{{event.venue.slug}}" class="text-white hover:text-accent-color transition-colors">{{event.venue.name}}</a>
+
+                        {{#if event.otherInstances}}
+                        <!-- Other Events in Series -->
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Other Events in this Series
+                            </h2>
+                            <div class="space-y-4">
+                                {{#each event.otherInstances}}
+                                <a href="/event/{{this.slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                    <div class="text-center w-20 flex-shrink-0">
+                                        <p class="text-2xl font-bold text-white">{{this.dayOfMonth}}</p>
+                                        <p class="text-lg text-gray-400">{{this.monthAbbr}}</p>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="font-bold text-white text-xl">{{this.name}}</h4>
+                                        <p class="text-sm text-gray-400">{{this.time}}</p>
+                                    </div>
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                </a>
+                                {{/each}}
+                            </div>
                         </div>
-                        
-                        {{#if event.price}}
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Price</h3>
-                                <p class="text-white">{{event.price}}</p>
-                            </div>
-                        {{/if}}
-                        {{#if event.ageRestriction}}
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Age Restriction</h3>
-                                <p class="text-white">{{event.ageRestriction}}</p>
-                            </div>
-                        {{/if}}
-                        {{#if event.organizer}}
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Organizer</h3>
-                                <p class="text-white">{{event.organizer}}</p>
-                            </div>
-                        {{/if}}
-                        {{#if event.recurringInfo}}
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Recurring</h3>
-                                <p class="text-white">{{event.recurringInfo}}</p>
-                            </div>
-                        {{/if}}
-                        {{#if event.accessibility}}
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Accessibility</h3>
-                                <p class="text-white">{{event.accessibility}}</p>
-                            </div>
                         {{/if}}
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="mt-6 space-y-3">
-                        {{#if event.ticketUrl}}
-                            <a href="{{event.ticketUrl}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
-                                <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
-                            </a>
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Date & Time -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
+                            </h3>
+                            <p class="text-2xl font-semibold text-white">{{event.formattedDate}}</p>
+                            <p class="text-xl text-gray-400">{{event.time}}</p>
+                            {{#if event.isRecurring}}
+                            <div class="mt-2">
+                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
+                            </div>
+                            {{/if}}
+                        </div>
+
+                        <!-- Location -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                    {{#if event.venue.address}}
+                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
+                                    {{/if}}
+                                </div>
+                                {{#if event.venue.slug}}
+                                <a href="/venue/{{event.venue.slug}}" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>View Venue
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {{#each event.category}}
+                                <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">{{this}}</span>
+                                {{/each}}
+                            </div>
+                        </div>
+
+                        {{#if event.ticketLink}}
+                        <!-- Action Buttons -->
+                        <div class="venue-card p-6">
+                            <div class="space-y-3">
+                                <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                                    <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
+                                </a>
+                            </div>
+                        </div>
                         {{/if}}
+
+                        <!-- Add to Calendar -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if event.googleCalendarUrl}}
+                                <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fab fa-google mr-2"></i>Google Calendar
+                                </a>
+                                {{/if}}
+                                {{#if event.icalUrl}}
+                                <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Apple/Outlook/Other
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Share Event -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Event
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Event
+                            </button>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if event.price}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Price:</span>
+                                    <span class="text-white font-semibold">{{event.price}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.ageRestriction}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Age Restriction:</span>
+                                    <span class="text-white font-semibold">{{event.ageRestriction}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.organizer}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Organizer:</span>
+                                    <span class="text-white font-semibold">{{event.organizer}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.accessibility}}
+                                <div>
+                                    <span class="text-gray-400">Accessibility:</span>
+                                    <p class="text-white text-sm mt-1">{{event.accessibility}}</p>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Back to Events -->
                         <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
                             <i class="fas fa-arrow-left mr-2"></i>Back to Events
                         </a>
@@ -623,8 +370,8 @@
                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
                     <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/events'>Events</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/all-venues'>Venues</a></li>
                         <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
                         <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
                     </ul>
@@ -632,10 +379,10 @@
                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                     <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/community'>Community & FAQ</a></li>
                         <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/privacy-policy'>Privacy Policy</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/terms-and-conditions'>Terms and Conditions</a></li>
                     </ul>
                 </div>
             </div>

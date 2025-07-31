@@ -319,6 +319,91 @@ function generateEventPage(event) {
 </html>`;
 }
 
+// Enrich event data for template rendering
+function enrichEventForTemplate(eventData) {
+    const eventDate = eventData.date ? new Date(eventData.date) : null;
+    
+    // Format date components
+    const dayOfMonth = eventDate ? eventDate.getDate() : '';
+    const monthAbbr = eventDate ? eventDate.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase() : '';
+    const formattedDate = eventDate ? eventDate.toLocaleDateString('en-GB', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+    }) : 'Date TBC';
+    const time = eventDate ? eventDate.toLocaleTimeString('en-GB', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+    }) : '';
+
+    // Generate calendar URLs
+    const googleCalendarUrl = eventDate ? generateGoogleCalendarUrl(eventData) : null;
+    const icalUrl = eventDate ? generateICalUrl(eventData) : null;
+    
+    // Check if recurring/boosted
+    const isRecurring = !!eventData.recurringInfo;
+    const today = new Date();
+    const isBoosted = eventData.boostedListingStartDate && eventData.boostedListingEndDate &&
+        new Date(eventData.boostedListingStartDate) <= today &&
+        new Date(eventData.boostedListingEndDate) >= today;
+
+    return {
+        ...eventData,
+        dayOfMonth,
+        monthAbbr,
+        formattedDate,
+        time,
+        googleCalendarUrl,
+        icalUrl,
+        isRecurring,
+        isBoosted,
+        imageUrl: eventData.image?.url || null
+    };
+}
+
+function generateGoogleCalendarUrl(event) {
+    if (!event.date || !event.name) return null;
+    
+    const startDate = new Date(event.date);
+    const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000); // 3 hours later
+    
+    const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: event.name,
+        dates: `${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+        details: event.description || '',
+        location: event.venue?.name || ''
+    });
+    
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function generateICalUrl(event) {
+    if (!event.date || !event.name) return null;
+    
+    const startDate = new Date(event.date);
+    const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
+    
+    const ical = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//BrumOutloud//Event//EN',
+        'BEGIN:VEVENT',
+        `DTSTART:${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+        `DTEND:${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+        `SUMMARY:${event.name}`,
+        `DESCRIPTION:${(event.description || '').replace(/\n/g, '\\n')}`,
+        `LOCATION:${event.venue?.name || ''}`,
+        `URL:https://brumoutloud.co.uk/event/${event.slug}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\r\n');
+    
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(ical)}`;
+}
+
 // Get event by slug
 async function getEventBySlug(slug) {
     if (!firebaseInitialized || !db) {
@@ -414,8 +499,9 @@ exports.handler = async function(event, context) {
     
     if (eventData) {
         console.log('Found event:', eventData.name);
-        // Generate and return the event page
-        const html = compiledTemplate ? compiledTemplate({ event: eventData }) : generateEventPage(eventData);
+        // Enrich event data for template
+        const enrichedEvent = enrichEventForTemplate(eventData);
+        const html = compiledTemplate ? compiledTemplate({ event: enrichedEvent }) : generateEventPage(enrichedEvent);
         
         return {
             statusCode: 200,
