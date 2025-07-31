@@ -664,7 +664,14 @@ exports.handler = async function(event, context) {
         // Enrich event data for template
         const enrichedEvent = enrichEventForTemplate(eventData);
         console.log('Using template compilation:', !!compiledTemplate ? 'Handlebars template' : 'fallback generateEventPage');
-        const html = compiledTemplate ? compiledTemplate({ event: enrichedEvent }) : generateEventPage(enrichedEvent);
+        
+        // Force use of new template
+        if (!compiledTemplate) {
+            console.log('Compiling embedded template as fallback');
+            compiledTemplate = Handlebars.compile(embeddedTemplate);
+        }
+        
+        const html = compiledTemplate({ event: enrichedEvent });
         
         return {
             statusCode: 200,
