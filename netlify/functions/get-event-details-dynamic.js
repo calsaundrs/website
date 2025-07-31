@@ -1,7 +1,21 @@
 const admin = require('firebase-admin');
+const fs = require('fs');
+const path = require('path');
+const Handlebars = require('handlebars');
 
 let firebaseInitialized = false;
 let db = null;
+
+// Pre-load the full event template once at cold-start
+let compiledTemplate = null;
+try {
+    const templatePath = path.join(__dirname, '..', '..', 'event-template.html');
+    const rawTemplate = fs.readFileSync(templatePath, 'utf8');
+    compiledTemplate = Handlebars.compile(rawTemplate);
+    console.log('Loaded event-template.html for dynamic rendering');
+} catch (err) {
+    console.warn('Could not load full event template, falling back to inline minimal template:', err.message);
+}
 
 // Initialize Firebase if credentials are available
 try {
@@ -401,7 +415,7 @@ exports.handler = async function(event, context) {
     if (eventData) {
         console.log('Found event:', eventData.name);
         // Generate and return the event page
-        const html = generateEventPage(eventData);
+        const html = compiledTemplate ? compiledTemplate({ event: eventData }) : generateEventPage(eventData);
         
         return {
             statusCode: 200,
