@@ -9,12 +9,19 @@
 
 /* Critical CSS - Above the fold styles */
 body {
-    background-color: #121212;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
     color: #EAEAEA;
     font-family: 'Poppins', system-ui, -apple-system, sans-serif; /* Added fallbacks */
     line-height: 1.6;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+/* Keep home page with original background */
+body.fouc-prevention {
+    background-color: #121212;
+    background-image: none;
 }
 
 /* Prevent pride flag from flashing at full size - Universal fix */
