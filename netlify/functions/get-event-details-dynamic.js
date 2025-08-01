@@ -43,7 +43,7 @@ const embeddedTemplate = `<!DOCTYPE html>
     <style>
         /* Base Styles */
         body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
             color: #EAEAEA;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
