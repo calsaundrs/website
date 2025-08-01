@@ -390,7 +390,7 @@ try {
 }
 
 // Enrich event data for template rendering
-function enrichEventForTemplate(eventData) {
+async function enrichEventForTemplate(eventData, event) {
     const eventDate = eventData.date ? new Date(eventData.date) : null;
     
     // Format date components
@@ -408,46 +408,35 @@ function enrichEventForTemplate(eventData) {
         hour12: true 
     }) : '';
 
-    // Use exact same image logic as events listing API
+    // Fetch image URL from events listing API to ensure consistency
     let imageUrl = null;
     
-    // Call the same extractImageUrl logic as events listing API
-    // Check for Cloudinary Public ID first
-    if (eventData.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
-    } else if (eventData['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData['Cloudinary Public ID']}`;
-    } else if (eventData.image) {
-        imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
-    } else {
-        // Check for any field that contains 'cloudinary' in the URL (same as events listing API)
-        for (const [key, value] of Object.entries(eventData)) {
-            if (typeof value === 'string' && value.includes('cloudinary')) {
-                console.log('Found existing cloudinary URL in field', key, ':', value);
-                imageUrl = value;
-                break;
-            }
-            if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
-                console.log('Found existing cloudinary object in field', key, ':', value);
-                imageUrl = value.url;
-                break;
+    try {
+        // Call the events listing API to get the same event and use its image URL
+        const eventsResponse = await fetch(`https://${event.headers.host}/.netlify/functions/get-events-firestore-simple?limit=50`);
+        if (eventsResponse.ok) {
+            const eventsData = await eventsResponse.json();
+            const matchingEvent = eventsData.events?.find(e => e.slug === eventData.slug || e.id === eventData.id);
+            if (matchingEvent && matchingEvent.image?.url) {
+                imageUrl = matchingEvent.image.url;
+                console.log('Found matching event in listing API with image:', imageUrl);
             }
         }
-    }
-    
-    if (!imageUrl && eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // Try Cloudinary URL from airtableId (same pattern as events listing)
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.airtableId}`;
-        console.log('Using airtableId-based Cloudinary URL for event details:', imageUrl);
-    } else if (!imageUrl && eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
-        // Try using document ID as airtableId fallback (for events like Bear All where doc ID is the airtable record ID)
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.id}`;
-        console.log('Using document ID as airtableId for Cloudinary URL:', imageUrl);
+    } catch (error) {
+        console.log('Failed to fetch from events listing API:', error.message);
     }
     
     if (!imageUrl) {
-        // Final fallback to Unsplash
-        imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+        // Fallback to original logic if API call fails
+        if (eventData.image) {
+            imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
+        } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
+            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.airtableId}`;
+        } else if (eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
+            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.id}`;
+        } else {
+            imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+        }
     }
 
     // Format description with line breaks
@@ -683,7 +672,7 @@ exports.handler = async function(event, context) {
     console.log("Event data retrieved:", eventData.name);
 
     // Enrich event data for template
-    const enrichedEvent = enrichEventForTemplate(eventData);
+            const enrichedEvent = await enrichEventForTemplate(eventData, event);
 
     console.log("Enriched event data:", {
         name: enrichedEvent.name,
