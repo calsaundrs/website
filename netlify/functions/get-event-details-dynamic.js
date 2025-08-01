@@ -417,10 +417,19 @@ async function enrichEventForTemplate(eventData, event) {
         if (eventsResponse.ok) {
             const eventsData = await eventsResponse.json();
             const matchingEvent = eventsData.events?.find(e => e.slug === eventData.slug || e.id === eventData.id);
-            if (matchingEvent && matchingEvent.image?.url) {
-                imageUrl = matchingEvent.image.url;
-                console.log('Found matching event in listing API with image:', imageUrl);
-            }
+                         if (matchingEvent && matchingEvent.image?.url) {
+                 imageUrl = matchingEvent.image.url;
+                 // Upgrade any Cloudinary URLs to high quality
+                 if (imageUrl.includes('cloudinary.com')) {
+                     const match = imageUrl.match(/https:\/\/res\.cloudinary\.com\/([^\/]+)\/image\/upload\/([^\/]+)\/(.*)/);
+                     if (match) {
+                         const [, cloudName, , publicId] = match;
+                         imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${publicId}`;
+                         console.log('Upgraded image URL to high quality:', imageUrl);
+                     }
+                 }
+                 console.log('Using final image URL:', imageUrl);
+             }
         }
     } catch (error) {
         console.log('Failed to fetch from events listing API:', error.message);
