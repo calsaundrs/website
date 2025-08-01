@@ -595,8 +595,8 @@ function processEventData(rawData) {
             name: venueName,
             slug: venueSlug
         },
-        // Note: No image data in current dataset, so will use fallback
-        image: null,
+        // Handle image data - could be string or object
+        image: rawData.image || rawData['Image'] || null,
         price: rawData.price || rawData['Price'] || null,
         link: rawData.link || rawData['Link'] || null,
         ticketLink: rawData.ticketLink || rawData['Ticket Link'] || null,
