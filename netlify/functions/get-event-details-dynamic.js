@@ -150,9 +150,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                         <i class="fas fa-share mr-1"></i>Share
                     </button>
                 </div>
-                <div class="absolute bottom-4 left-4">
-                    <span class="status-badge approved">Approved</span>
-                </div>
+
             </div>
             
             <div class="p-8">
@@ -225,63 +223,6 @@ const embeddedTemplate = `<!DOCTYPE html>
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Date & Time -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
-                            </h3>
-                            <p class="text-2xl font-semibold text-white">{{event.formattedDate}}</p>
-                            <p class="text-xl text-gray-400">{{event.time}}</p>
-                            {{#if event.isRecurring}}
-                            <div class="mt-2">
-                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
-                            </div>
-                            {{/if}}
-                        </div>
-
-                        <!-- Location -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
-                            </h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
-                                    {{#if event.venue.address}}
-                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
-                                    {{/if}}
-                                </div>
-                                {{#if event.venue.phone}}
-                                <div class="flex items-center gap-2 text-gray-400 text-sm">
-                                    <i class="fas fa-phone"></i>
-                                    <span>{{event.venue.phone}}</span>
-                                </div>
-                                {{/if}}
-                                {{#if event.venue.website}}
-                                <div class="flex items-center gap-2 text-gray-400 text-sm">
-                                    <i class="fas fa-globe"></i>
-                                    <a href="{{event.venue.website}}" target="_blank" class="text-accent-color hover:underline">Visit Website</a>
-                                </div>
-                                {{/if}}
-                                {{#if event.venue.slug}}
-                                <a href="/venue/{{event.venue.slug}}" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
-                                    <i class="fas fa-map-marker-alt mr-1"></i>View Venue
-                                </a>
-                                {{/if}}
-                            </div>
-                        </div>
-
-                        <!-- Tags -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
-                            </h3>
-                            <div class="flex flex-wrap gap-2">
-                                {{#each event.category}}
-                                <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">{{this}}</span>
-                                {{/each}}
-                            </div>
-                        </div>
 
                         {{#if event.ticketLink}}
                         <!-- Action Buttons -->
@@ -323,38 +264,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                             </button>
                         </div>
 
-                        <!-- Event Details -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
-                            </h3>
-                            <div class="space-y-3">
-                                {{#if event.price}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Price:</span>
-                                    <span class="text-white font-semibold">{{event.price}}</span>
-                                </div>
-                                {{/if}}
-                                {{#if event.ageRestriction}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Age Restriction:</span>
-                                    <span class="text-white font-semibold">{{event.ageRestriction}}</span>
-                                </div>
-                                {{/if}}
-                                {{#if event.organizer}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-gray-400">Organizer:</span>
-                                    <span class="text-white font-semibold">{{event.organizer}}</span>
-                                </div>
-                                {{/if}}
-                                {{#if event.accessibility}}
-                                <div>
-                                    <span class="text-gray-400">Accessibility:</span>
-                                    <p class="text-white text-sm mt-1">{{event.accessibility}}</p>
-                                </div>
-                                {{/if}}
-                            </div>
-                        </div>
+
 
                         <!-- Back to Events -->
                         <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">

@@ -934,13 +934,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         function renderEvents(events) {
             if (!eventGrid) return; // Exit if eventGrid doesn't exist yet
             
+            // Filter out events without images
+            const eventsWithImages = events ? events.filter(event => {
+                const hasImage = event.image && 
+                    ((typeof event.image === 'string' && event.image.trim() !== '') || 
+                     (typeof event.image === 'object' && event.image.url && event.image.url.trim() !== ''));
+                if (!hasImage) {
+                    console.log('Filtering out event without image:', event.name);
+                }
+                return hasImage;
+            }) : [];
+            
             // Update event count display
             const eventCountElement = document.querySelector('.event-count');
             if (eventCountElement) {
-                eventCountElement.textContent = events ? events.length : 0;
+                eventCountElement.textContent = eventsWithImages ? eventsWithImages.length : 0;
             }
             
-            if (!events || events.length === 0) {
+            if (!eventsWithImages || eventsWithImages.length === 0) {
                 eventGrid.innerHTML = `
                     <div class="col-span-full text-center card-bg p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
@@ -958,7 +969,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 return;
             }
 
-            eventGrid.innerHTML = events.map(event => {
+            eventGrid.innerHTML = eventsWithImages.map(event => {
                 const tagsHTML = event.category && event.category.length > 0 ? 
                     event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
                 
