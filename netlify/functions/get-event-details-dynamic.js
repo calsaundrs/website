@@ -419,11 +419,29 @@ function enrichEventForTemplate(eventData) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData['Cloudinary Public ID']}`;
     } else if (eventData.image) {
         imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
-    } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
+    } else {
+        // Check for any field that contains 'cloudinary' in the URL (same as events listing API)
+        for (const [key, value] of Object.entries(eventData)) {
+            if (typeof value === 'string' && value.includes('cloudinary')) {
+                console.log('Found existing cloudinary URL in field', key, ':', value);
+                imageUrl = value;
+                break;
+            }
+            if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
+                console.log('Found existing cloudinary object in field', key, ':', value);
+                imageUrl = value.url;
+                break;
+            }
+        }
+    }
+    
+    if (!imageUrl && eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
         // Try Cloudinary URL from airtableId (same pattern as events listing)
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.airtableId}`;
         console.log('Using airtableId-based Cloudinary URL for event details:', imageUrl);
-    } else {
+    }
+    
+    if (!imageUrl) {
         // Final fallback to Unsplash
         imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
     }
