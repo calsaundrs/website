@@ -439,6 +439,10 @@ function enrichEventForTemplate(eventData) {
         // Try Cloudinary URL from airtableId (same pattern as events listing)
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.airtableId}`;
         console.log('Using airtableId-based Cloudinary URL for event details:', imageUrl);
+    } else if (!imageUrl && eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
+        // Try using document ID as airtableId fallback (for events like Bear All where doc ID is the airtable record ID)
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.id}`;
+        console.log('Using document ID as airtableId for Cloudinary URL:', imageUrl);
     }
     
     if (!imageUrl) {
