@@ -94,6 +94,7 @@ exports.handler = async function (event, context) {
                     venueId: data.venueId || null,
                     venueName: data.venueName || '',
                     venueSlug: data.venueSlug || '',
+                    airtableId: data.airtableId || null,
                     image: extractImageUrl(data),
                     link: data.link || '',
                     ticketLink: data.ticketLink || '',
