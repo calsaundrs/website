@@ -50,13 +50,34 @@ exports.handler = async function(event, context) {
         const venues = [];
         snapshot.forEach(doc => {
             const data = doc.data();
+            
+            // Extract image URL using same logic as events
+            let imageUrl = null;
+            
+            // 1. Try explicit image fields
+            if (data.image) {
+                imageUrl = typeof data.image === 'string' ? data.image : data.image.url;
+            } else if (data['Image']) {
+                imageUrl = typeof data['Image'] === 'string' ? data['Image'] : data['Image'].url;
+            } else if (data.venueImage) {
+                imageUrl = typeof data.venueImage === 'string' ? data.venueImage : data.venueImage.url;
+            } else if (data['Venue Image']) {
+                imageUrl = typeof data['Venue Image'] === 'string' ? data['Venue Image'] : data['Venue Image'].url;
+            } else if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
+                // Try Cloudinary URL from airtableId (venues might be in events folder)
+                imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/venue_${data.airtableId}`;
+                console.log('Trying airtableId-based Cloudinary URL for venue:', imageUrl);
+            }
+            
             venues.push({
                 id: doc.id,
                 name: data.name || data['Venue Name'] || 'Unnamed Venue',
                 address: data.address || data['Address'] || '',
                 description: data.description || data['Description'] || '',
                 website: data.website || data['Website'] || '',
-                phone: data.phone || data['Phone'] || ''
+                phone: data.phone || data['Phone'] || '',
+                airtableId: data.airtableId || null,
+                image: imageUrl ? { url: imageUrl } : null
             });
         });
 
