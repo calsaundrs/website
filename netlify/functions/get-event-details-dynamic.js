@@ -430,10 +430,10 @@ async function enrichEventForTemplate(eventData, event) {
         // Fallback to original logic if API call fails
         if (eventData.image) {
             imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
-        } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.airtableId}`;
-        } else if (eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
-            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${eventData.id}`;
+                 } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
+             imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${eventData.airtableId}`;
+         } else if (eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
+             imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${eventData.id}`;
         } else {
             imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
         }

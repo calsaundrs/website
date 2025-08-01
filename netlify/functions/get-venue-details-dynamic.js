@@ -417,9 +417,9 @@ function processVenueForDetails(venueData) {
     } else if (venueData['Venue Image']) {
         imageUrl = typeof venueData['Venue Image'] === 'string' ? venueData['Venue Image'] : venueData['Venue Image'].url;
     } else if (venueData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // Try Cloudinary URL from airtableId (venues might be in events folder)
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/venue_${venueData.airtableId}`;
-        console.log('Using airtableId-based Cloudinary URL for venue details:', imageUrl);
+        // Try high-quality Cloudinary URL from airtableId (venues might be in events folder)  
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/venue_${venueData.airtableId}`;
+        console.log('Using high-quality airtableId-based Cloudinary URL for venue details:', imageUrl);
     }
 
     // Handle tags

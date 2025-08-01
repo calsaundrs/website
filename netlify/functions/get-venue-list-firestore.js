@@ -64,9 +64,9 @@ exports.handler = async function(event, context) {
             } else if (data['Venue Image']) {
                 imageUrl = typeof data['Venue Image'] === 'string' ? data['Venue Image'] : data['Venue Image'].url;
             } else if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-                // Try Cloudinary URL from airtableId (venues might be in events folder)
-                imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/venue_${data.airtableId}`;
-                console.log('Trying airtableId-based Cloudinary URL for venue:', imageUrl);
+                // Try high-quality Cloudinary URL from airtableId (venues might be in events folder)
+                imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/venue_${data.airtableId}`;
+                console.log('Trying high-quality airtableId-based Cloudinary URL for venue:', imageUrl);
             }
             
             venues.push({
