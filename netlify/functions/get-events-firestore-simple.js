@@ -132,6 +132,35 @@ exports.handler = async function (event, context) {
             console.log(`After venue filtering: ${events.length} events`);
         }
         
+        // Deduplicate events (prefer Firestore-native events over migrated Airtable events)
+        const deduplicatedEvents = [];
+        const seenEvents = new Map();
+        
+        events.forEach(event => {
+            const key = `${event.name}-${event.date}`;
+            const existing = seenEvents.get(key);
+            
+            if (!existing) {
+                // First time seeing this event
+                seenEvents.set(key, event);
+                deduplicatedEvents.push(event);
+            } else {
+                // Prefer events without airtableId (pure Firestore) over migrated ones
+                if (!event.airtableId && existing.airtableId) {
+                    // Replace the migrated event with the Firestore-native one
+                    const index = deduplicatedEvents.findIndex(e => e.id === existing.id);
+                    if (index !== -1) {
+                        deduplicatedEvents[index] = event;
+                        seenEvents.set(key, event);
+                    }
+                }
+                // If both have airtableId or both don't, keep the first one (existing)
+            }
+        });
+        
+        console.log(`After deduplication: ${deduplicatedEvents.length} events (removed ${events.length - deduplicatedEvents.length} duplicates)`);
+        events = deduplicatedEvents;
+        
         // Group recurring events
         const groupedEvents = groupRecurringEvents(events);
         
