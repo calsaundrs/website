@@ -511,6 +511,13 @@ function extractImageUrl(data) {
         }
     }
     
+    // Try generating Cloudinary URL from airtableId as fallback (pattern: brumoutloud_events/event_[airtableId])
+    if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
+        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_${data.airtableId}`;
+        console.log('Trying airtableId-based Cloudinary URL:', cloudinaryUrl);
+        return { url: cloudinaryUrl };
+    }
+    
     console.log('No image found in data, using placeholder');
     // Return placeholder image (same as SSG pages)
     return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };
