@@ -437,6 +437,23 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
     return count;
 }
 
+function upgradeCloudinaryQuality(url) {
+    if (!url || !url.includes('cloudinary.com')) {
+        return url;
+    }
+    
+    // Extract the base URL and public ID
+    const match = url.match(/https:\/\/res\.cloudinary\.com\/([^\/]+)\/image\/upload\/([^\/]+)\/(.*)/);
+    if (match) {
+        const [, cloudName, , publicId] = match;
+        // Return high-quality URL with new settings
+        return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${publicId}`;
+    }
+    
+    // If we can't parse it, return original
+    return url;
+}
+
 function extractImageUrl(data) {
     console.log('Extracting image from data with keys:', Object.keys(data));
     
@@ -529,15 +546,19 @@ function extractImageUrl(data) {
         return { url: data.venue_image };
     }
     
-    // Check for any field that contains 'cloudinary' in the URL
+    // Check for any field that contains 'cloudinary' in the URL and upgrade quality
     for (const [key, value] of Object.entries(data)) {
         if (typeof value === 'string' && value.includes('cloudinary')) {
             console.log('Found cloudinary string in field', key, ':', value);
-            return { url: value };
+            // Upgrade existing cloudinary URLs to high quality settings
+            const upgradedUrl = upgradeCloudinaryQuality(value);
+            return { url: upgradedUrl };
         }
         if (typeof value === 'object' && value && value.url && value.url.includes('cloudinary')) {
             console.log('Found cloudinary object in field', key, ':', value);
-            return value;
+            // Upgrade existing cloudinary URLs to high quality settings
+            const upgradedUrl = upgradeCloudinaryQuality(value.url);
+            return { url: upgradedUrl, ...value };
         }
     }
     
