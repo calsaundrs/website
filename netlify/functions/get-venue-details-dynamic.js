@@ -398,6 +398,8 @@ async function getVenueBySlug(slug) {
 }
 
 function processVenueForDetails(venueData) {
+    console.log("Processing venue data:", venueData.name || venueData['Venue Name'], "Keys:", Object.keys(venueData));
+    
     // Extract image URL from various possible formats
     let imageUrl = null;
     if (venueData.image) {
@@ -410,7 +412,15 @@ function processVenueForDetails(venueData) {
         }
     }
 
-    return {
+    // Handle tags
+    let tags = [];
+    if (venueData.tags) {
+        tags = Array.isArray(venueData.tags) ? venueData.tags : [venueData.tags];
+    } else if (venueData.Tags) {
+        tags = Array.isArray(venueData.Tags) ? venueData.Tags : [venueData.Tags];
+    }
+
+    const processedData = {
         id: venueData.id,
         name: venueData.name || venueData['Venue Name'] || 'Unknown Venue',
         slug: venueData.slug || '',
@@ -419,8 +429,17 @@ function processVenueForDetails(venueData) {
         phone: venueData.phone || venueData.Phone || '',
         website: venueData.website || venueData.Website || '',
         imageUrl: imageUrl,
-        tags: venueData.tags || venueData.Tags || []
+        tags: tags
     };
+
+    console.log("Processed venue data:", {
+        name: processedData.name,
+        hasDescription: !!processedData.description,
+        hasImage: !!processedData.imageUrl,
+        tagCount: processedData.tags.length
+    });
+
+    return processedData;
 }
 
 async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
