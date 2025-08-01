@@ -408,9 +408,16 @@ function enrichEventForTemplate(eventData) {
         hour12: true 
     }) : '';
 
-    // Use exact same image logic as events listing with Cloudinary fallback
+    // Use exact same image logic as events listing API
     let imageUrl = null;
-    if (eventData.image) {
+    
+    // Call the same extractImageUrl logic as events listing API
+    // Check for Cloudinary Public ID first
+    if (eventData.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
+    } else if (eventData['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData['Cloudinary Public ID']}`;
+    } else if (eventData.image) {
         imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
     } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
         // Try Cloudinary URL from airtableId (same pattern as events listing)
