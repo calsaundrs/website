@@ -603,6 +603,7 @@ function processEventData(rawData) {
         },
         // Handle image data - could be string or object
         image: rawData.image || rawData['Image'] || null,
+        airtableId: rawData.airtableId || rawData['Airtable ID'] || null,
         price: rawData.price || rawData['Price'] || null,
         link: rawData.link || rawData['Link'] || null,
         ticketLink: rawData.ticketLink || rawData['Ticket Link'] || null,
