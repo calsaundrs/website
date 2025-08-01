@@ -142,16 +142,17 @@ const embeddedTemplate = `<!DOCTYPE html>
     <!-- Main Content -->
     <main class="container mx-auto px-8 py-8">
         <div class="venue-card rounded-xl overflow-hidden">
+            {{#if event.imageUrl}}
             <!-- Hero Image -->
             <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
+                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy">
                 <div class="absolute top-4 right-4">
                     <button onclick="shareEvent()" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
                         <i class="fas fa-share mr-1"></i>Share
                     </button>
                 </div>
-
             </div>
+            {{/if}}
             
             <div class="p-8">
                 <!-- Event Header -->
@@ -185,7 +186,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Main Content -->
                     <div class="lg:col-span-2">
-                        <div class="venue-card p-6 mb-6">
+                        <div class="venue-card p-6 mb-6 rounded-xl">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
                             </h2>
@@ -196,13 +197,13 @@ const embeddedTemplate = `<!DOCTYPE html>
 
                         {{#if event.otherInstances}}
                         <!-- Other Events in Series -->
-                        <div class="venue-card p-6 mb-6">
+                        <div class="venue-card p-6 mb-6 rounded-xl">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-calendar mr-3 text-accent-color"></i>Other Events in this Series
                             </h2>
                             <div class="space-y-4">
                                 {{#each event.otherInstances}}
-                                <a href="/event/{{this.slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                <a href="/event/{{this.slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block rounded-lg">
                                     <div class="text-center w-20 flex-shrink-0">
                                         <p class="text-2xl font-bold text-white">{{this.dayOfMonth}}</p>
                                         <p class="text-lg text-gray-400">{{this.monthAbbr}}</p>
@@ -226,7 +227,7 @@ const embeddedTemplate = `<!DOCTYPE html>
 
                         {{#if event.ticketLink}}
                         <!-- Action Buttons -->
-                        <div class="venue-card p-6">
+                        <div class="venue-card p-6 rounded-xl">
                             <div class="space-y-3">
                                 <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
                                     <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
@@ -236,7 +237,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                         {{/if}}
 
                         <!-- Add to Calendar -->
-                        <div class="venue-card p-6">
+                        <div class="venue-card p-6 rounded-xl">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
                             </h3>
@@ -255,7 +256,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                         </div>
 
                         <!-- Share Event -->
-                        <div class="venue-card p-6">
+                        <div class="venue-card p-6 rounded-xl">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Event
                             </h3>
@@ -409,10 +410,10 @@ function enrichEventForTemplate(eventData) {
         hour12: true 
     }) : '';
 
-    // Use exact same image logic as events listing
+    // Use exact same image logic as events listing (no fallback)
     const imageUrl = eventData.image ? 
         (typeof eventData.image === 'string' ? eventData.image : eventData.image.url) : 
-        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+        null;
 
     // Format description with line breaks
     const formattedDescription = eventData.description ? 

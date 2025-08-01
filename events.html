@@ -977,7 +977,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 console.log('Event image data for', event.name, ':', event.image);
                 console.log('Full event data for', event.name, ':', event);
                 
-                const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+                const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : null;
                 console.log('Final imageUrl for', event.name, ':', imageUrl);
                 
                 const isBoosted = event.promotion && event.promotion.boosted;
@@ -1040,7 +1040,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
                         ${recurringDisplay ? `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span></div>` : ''}
                         <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy">
                         </div>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-3">
@@ -1329,7 +1329,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 slideDiv.classList.add('slide');
                 if (index === 0) slideDiv.classList.add('active');
 
-                const imageUrl = event.image || 'https://placehold.co/1200x350/1e1e1e/EAEAEA?text=Featured+Event';
+                const imageUrl = event.image || null;
                 const formattedDate = new Date(event.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
                 slideDiv.innerHTML = `
