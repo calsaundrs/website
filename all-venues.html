@@ -635,7 +635,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Rendering Venue Cards ---
         function renderVenues(venuesToDisplay) {
-            if (!venuesToDisplay || venuesToDisplay.length === 0) {
+            // Filter out venues without images (like events page does)
+            const venuesWithImages = venuesToDisplay ? venuesToDisplay.filter(venue => {
+                const hasImage = venue.image && 
+                    ((typeof venue.image === 'string' && venue.image.trim() !== '') || 
+                     (typeof venue.image === 'object' && venue.image.url && venue.image.url.trim() !== ''));
+                if (!hasImage) {
+                    console.log('Filtering out venue without image:', venue.name);
+                }
+                return hasImage;
+            }) : [];
+            
+            if (!venuesWithImages || venuesWithImages.length === 0) {
                 venueGrid.innerHTML = `
                     <div class="col-span-full text-center venue-card p-12">
                         <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400 mb-4">
@@ -649,13 +660,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 return;
             }
 
-            venueGrid.innerHTML = venuesToDisplay.map(venue => {
+            venueGrid.innerHTML = venuesWithImages.map(venue => {
                 // Debug: Log venue data for debugging
                 console.log('Rendering venue:', venue.name, 'slug:', venue.slug, 'link will be:', `/venue/${venue.slug}`);
                 
                 const tagsHTML = (venue.tags || venue.category || []).length > 0 ? 
                     (venue.tags || venue.category || []).map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
-                const imageUrl = venue.image && venue.image.url ? venue.image.url : 'https://placehold.co/400x300/1e1e1e/EAEAEA?text=Venue';
+                const imageUrl = venue.image ? (typeof venue.image === 'string' ? venue.image : venue.image.url) : null;
                 const isPopular = venue.popular || false;
                 const venueType = venue.type || 'venue';
 
