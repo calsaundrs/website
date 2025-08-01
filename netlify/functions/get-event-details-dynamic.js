@@ -142,17 +142,15 @@ const embeddedTemplate = `<!DOCTYPE html>
     <!-- Main Content -->
     <main class="container mx-auto px-8 py-8">
         <div class="venue-card rounded-xl overflow-hidden">
-            {{#if event.imageUrl}}
             <!-- Hero Image -->
             <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy">
+                <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                 <div class="absolute top-4 right-4">
                     <button onclick="shareEvent()" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
                         <i class="fas fa-share mr-1"></i>Share
                     </button>
                 </div>
             </div>
-            {{/if}}
             
             <div class="p-8">
                 <!-- Event Header -->
@@ -410,10 +408,10 @@ function enrichEventForTemplate(eventData) {
         hour12: true 
     }) : '';
 
-    // Use exact same image logic as events listing (no fallback)
+    // Use exact same image logic as events listing
     const imageUrl = eventData.image ? 
         (typeof eventData.image === 'string' ? eventData.image : eventData.image.url) : 
-        null;
+        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
 
     // Format description with line breaks
     const formattedDescription = eventData.description ? 
