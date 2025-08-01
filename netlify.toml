@@ -23,11 +23,12 @@
   status = 200
   force = true
 
-# Rule for individual VENUE pages (Static SSG-based)
+# Rule for individual VENUE pages (Dynamic fallback like events)
 [[redirects]]
   from = "/venue/*"
-  to = "/venue/:splat.html"
+  to = "/.netlify/functions/get-venue-details-dynamic?slug=:splat"
   status = 200
+  force = true
 
 # Rule for the SSG build page
 [[redirects]]

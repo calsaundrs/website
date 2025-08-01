@@ -18,6 +18,22 @@ const embeddedTemplate = `<!DOCTYPE html>
     <title>{{event.name}} - BrumOutLoud</title>
     <meta name="description" content="{{event.description}}">
     
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{event.name}}">
+    <meta property="og:description" content="{{event.description}}">
+    <meta property="og:type" content="event">
+    <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
+    <meta property="og:image" content="{{event.imageUrl}}">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{event.name}}">
+    <meta name="twitter:description" content="{{event.description}}">
+    <meta name="twitter:image" content="{{event.imageUrl}}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -25,34 +41,117 @@ const embeddedTemplate = `<!DOCTYPE html>
     <link rel="stylesheet" href="/css/main.css">
     
     <style>
+        /* Base Styles */
         body {
             background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
             color: #EAEAEA;
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
         }
-        .venue-card {
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .venue-card, .submission-card, .result-card {
             background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.2);
             transition: all 0.3s ease;
         }
-        .accent-color { color: #E83A99; }
+        .venue-card:hover, .submission-card:hover, .result-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge.approved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
     </style>
+    
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
 </head>
 <body class="fouc-prevention bg-gray-900 text-white min-h-screen loaded">
     <!-- Header -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
                 <span>Brum Outloud</span>
                 <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
             </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a class='text-gray-300 hover:text-white' href='/events'>WHAT'S ON</a>
+                <a class='text-gray-300 hover:text-white' href='/all-venues'>VENUES</a>
+                <a class='text-gray-300 hover:text-white' href='/community'>COMMUNITY</a>
+                <a class='text-gray-300 hover:text-white' href='/contact'>CONTACT</a>
+                <a class='inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200' href='/promoter-tool'>GET LISTED</a>
+            </div>
         </nav>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-8 py-8">
+        <!-- Breadcrumb -->
+        <nav class="mb-8">
+            <ol class="flex items-center space-x-2 text-sm text-gray-400">
+                <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+                <li><span class="mx-2">/</span></li>
+                <li><a href="/events" class="hover:text-white transition-colors">Events</a></li>
+                <li><span class="mx-2">/</span></li>
+                <li class="text-white">{{event.name}}</li>
+            </ol>
+        </nav>
+
         <div class="venue-card rounded-xl overflow-hidden">
             <!-- Hero Image -->
             <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
@@ -61,6 +160,14 @@ const embeddedTemplate = `<!DOCTYPE html>
                 {{else}}
                 <i class="fas fa-image text-6xl text-gray-600"></i>
                 {{/if}}
+                <div class="absolute top-4 right-4">
+                    <button onclick="shareEvent()" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+                <div class="absolute bottom-4 left-4">
+                    <span class="status-badge approved">Approved</span>
+                </div>
             </div>
             
             <div class="p-8">
@@ -74,12 +181,12 @@ const embeddedTemplate = `<!DOCTYPE html>
                         <div class="flex-1">
                             <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
                             <p class="text-xl text-gray-300 mb-2">
-                                <i class="fas fa-map-marker-alt mr-2 accent-color"></i>
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
                                 {{event.venue.name}}
                             </p>
                             <p class="text-gray-400">
                                 <i class="fas fa-clock mr-2"></i>
-                                {{event.formattedDate}}
+                                {{event.formattedDate}} • {{event.time}}
                             </p>
                         </div>
                     </div>
@@ -97,12 +204,38 @@ const embeddedTemplate = `<!DOCTYPE html>
                     <div class="lg:col-span-2">
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 accent-color"></i>About This Event
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
                             </h2>
                             <div class="text-gray-300 leading-relaxed">
-                                {{event.description}}
+                                {{{event.formattedDescription}}}
                             </div>
                         </div>
+
+                        {{#if event.otherInstances}}
+                        <!-- Other Events in Series -->
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Other Events in this Series
+                            </h2>
+                            <div class="space-y-4">
+                                {{#each event.otherInstances}}
+                                <a href="/event/{{this.slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                    <div class="text-center w-20 flex-shrink-0">
+                                        <p class="text-2xl font-bold text-white">{{this.dayOfMonth}}</p>
+                                        <p class="text-lg text-gray-400">{{this.monthAbbr}}</p>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="font-bold text-white text-xl">{{this.name}}</h4>
+                                        <p class="text-sm text-gray-400">{{this.time}}</p>
+                                    </div>
+                                    <div class="text-accent-color">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                </a>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
                     </div>
 
                     <!-- Sidebar -->
@@ -110,31 +243,136 @@ const embeddedTemplate = `<!DOCTYPE html>
                         <!-- Date & Time -->
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-2 accent-color"></i>Date & Time
+                                <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
                             </h3>
                             <p class="text-2xl font-semibold text-white">{{event.formattedDate}}</p>
                             <p class="text-xl text-gray-400">{{event.time}}</p>
+                            {{#if event.isRecurring}}
+                            <div class="mt-2">
+                                <span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">{{event.recurringInfo}}</span>
+                            </div>
+                            {{/if}}
                         </div>
 
                         <!-- Location -->
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-map-marker-alt mr-2 accent-color"></i>Location
+                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
                             </h3>
                             <div class="space-y-3">
                                 <div>
                                     <h4 class="font-semibold text-white">{{event.venue.name}}</h4>
+                                    {{#if event.venue.address}}
+                                    <p class="text-gray-400 text-sm">{{event.venue.address}}</p>
+                                    {{/if}}
                                 </div>
+                                {{#if event.venue.phone}}
+                                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{event.venue.phone}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.venue.website}}
+                                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                    <i class="fas fa-globe"></i>
+                                    <a href="{{event.venue.website}}" target="_blank" class="text-accent-color hover:underline">Visit Website</a>
+                                </div>
+                                {{/if}}
                                 {{#if event.venue.slug}}
-                                <a href="/venue/{{event.venue.slug}}" class="bg-gray-600 text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                <a href="/venue/{{event.venue.slug}}" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
                                     <i class="fas fa-map-marker-alt mr-1"></i>View Venue
                                 </a>
                                 {{/if}}
                             </div>
                         </div>
 
+                        <!-- Tags -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-tags mr-2 text-accent-color"></i>Tags
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {{#each event.category}}
+                                <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">{{this}}</span>
+                                {{/each}}
+                            </div>
+                        </div>
+
+                        {{#if event.ticketLink}}
+                        <!-- Action Buttons -->
+                        <div class="venue-card p-6">
+                            <div class="space-y-3">
+                                <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                                    <i class="fas fa-ticket-alt mr-2"></i>Get Tickets / Info
+                                </a>
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        <!-- Add to Calendar -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if event.googleCalendarUrl}}
+                                <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fab fa-google mr-2"></i>Google Calendar
+                                </a>
+                                {{/if}}
+                                {{#if event.icalUrl}}
+                                <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                    <i class="fas fa-calendar-plus mr-2"></i>Apple/Outlook/Other
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        <!-- Share Event -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Event
+                            </h3>
+                            <button onclick="shareEvent()" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Event
+                            </button>
+                        </div>
+
+                        <!-- Event Details -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-2 text-accent-color"></i>Event Details
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if event.price}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Price:</span>
+                                    <span class="text-white font-semibold">{{event.price}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.ageRestriction}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Age Restriction:</span>
+                                    <span class="text-white font-semibold">{{event.ageRestriction}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.organizer}}
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400">Organizer:</span>
+                                    <span class="text-white font-semibold">{{event.organizer}}</span>
+                                </div>
+                                {{/if}}
+                                {{#if event.accessibility}}
+                                <div>
+                                    <span class="text-gray-400">Accessibility:</span>
+                                    <p class="text-white text-sm mt-1">{{event.accessibility}}</p>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+
                         <!-- Back to Events -->
-                        <a href="/events" class="bg-gray-600 text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                        <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
                             <i class="fas fa-arrow-left mr-2"></i>Back to Events
                         </a>
                     </div>
@@ -142,6 +380,65 @@ const embeddedTemplate = `<!DOCTYPE html>
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/events'>Events</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/all-venues'>Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/community'>Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/privacy-policy'>Privacy Policy</a></li>
+                        <li class="mb-2"><a class='text-gray-400 hover:text-white transition-colors' href='/terms-and-conditions'>Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Share functionality
+        function shareEvent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{event.name}} - BrumOutLoud',
+                    text: '{{event.description}}',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Event link copied to clipboard!');
+                }).catch(() => {
+                    // Further fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = window.location.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Event link copied to clipboard!');
+                });
+            }
+        }
+    </script>
 </body>
 </html>`;
 
@@ -500,6 +797,16 @@ function enrichEventForTemplate(eventData) {
         hour12: true 
     }) : '';
 
+    // Use same image logic as events listing
+    const imageUrl = eventData.image ? 
+        (typeof eventData.image === 'string' ? eventData.image : eventData.image.url) : 
+        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+
+    // Format description with line breaks
+    const formattedDescription = eventData.description ? 
+        eventData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') : 
+        '';
+
     // Generate calendar URLs
     const googleCalendarUrl = eventDate ? generateGoogleCalendarUrl(eventData) : null;
     const icalUrl = eventDate ? generateICalUrl(eventData) : null;
@@ -521,7 +828,8 @@ function enrichEventForTemplate(eventData) {
         icalUrl,
         isRecurring,
         isBoosted,
-        imageUrl: eventData.image?.url || null
+        imageUrl,
+        formattedDescription
     };
 }
 
