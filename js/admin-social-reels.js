@@ -16,6 +16,7 @@ class SocialReelsGenerator {
             includeLogo: true,
             includeHashtags: true
         };
+        this.currentVideoData = null;
         
         this.init();
     }
@@ -32,7 +33,7 @@ class SocialReelsGenerator {
         // Initialize UI
         this.selectTemplate('modern');
         this.setupTryDifferentRangeButton();
-        this.setupCreateExamplesButton();
+        // this.setupCreateExamplesButton(); // Removed - now using real events
     }
 
     setupEventListeners() {
@@ -116,38 +117,61 @@ class SocialReelsGenerator {
     }
 
     async loadEvents(preset = 'this-week', customStart = null, customEnd = null) {
-        console.log('📅 Loading events for date range:', preset, customStart, customEnd);
+        console.log('📅 Loading real events from main system for date range:', preset, customStart, customEnd);
         
         this.showLoading(true);
         
         try {
-            // Build query parameters
-            let url = '/.netlify/functions/get-events-for-reels';
+            // Use the same endpoint as the main events page
+            const url = '/.netlify/functions/get-events-firestore-simple';
             const params = new URLSearchParams();
             
-            if (customStart && customEnd) {
-                params.append('startDate', customStart);
-                params.append('endDate', customEnd);
-            } else {
-                params.append('preset', preset);
-            }
+            // Set up date range filtering
+            const dateRange = this.getDateRangeFromPreset(preset, customStart, customEnd);
+            params.append('dateRange', JSON.stringify({
+                type: 'between',
+                start: dateRange.start.toISOString(),
+                end: dateRange.end.toISOString()
+            }));
             
-            if (params.toString()) {
-                url += '?' + params.toString();
-            }
+            // Only get approved events
+            params.append('status', 'approved');
             
-            const response = await fetch(url);
+            // Increase limit for Social Reels Generator
+            params.append('limit', '100');
+            
+            console.log('📡 Fetching from:', `${url}?${params.toString()}`);
+            
+            const response = await fetch(`${url}?${params.toString()}`);
             const data = await response.json();
             
-            if (data.success) {
-                this.events = data.events;
+            if (data.success !== false && data.events) {
+                // Filter events to only include future events in our date range
+                const dateRange = this.getDateRangeFromPreset(preset, customStart, customEnd);
+                this.events = data.events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    return eventDate >= dateRange.start && eventDate <= dateRange.end;
+                });
+                
+                // Process events for Social Reels format
+                this.events = this.events.map(event => this.processEventForReels(event));
+                
                 this.renderEvents();
                 this.updateStats();
-                this.updateDateRangeDisplay(data);
                 
-                const rangeDesc = data.dateRange.isCustomRange ? 'custom range' : data.dateRange.preset.replace('-', ' ');
-                this.showStatus('success', `Loaded ${this.events.length} events for ${rangeDesc}`);
-                console.log(`✅ Loaded ${this.events.length} events`, this.events);
+                // Create fake date range display data for compatibility
+                this.updateDateRangeDisplay({
+                    dateRange: {
+                        start: dateRange.start.toISOString(),
+                        end: dateRange.end.toISOString(),
+                        preset: preset,
+                        isCustomRange: !!(customStart && customEnd)
+                    }
+                });
+                
+                const rangeDesc = (customStart && customEnd) ? 'custom range' : preset.replace('-', ' ');
+                this.showStatus('success', `Loaded ${this.events.length} real events for ${rangeDesc}`);
+                console.log(`✅ Loaded ${this.events.length} real events from main system`, this.events);
             } else {
                 throw new Error(data.error || 'Failed to load events');
             }
@@ -334,35 +358,87 @@ class SocialReelsGenerator {
             button.innerHTML = '<i class="fas fa-spinner loading-spinner mr-2"></i>Generating...';
             button.disabled = true;
             
-            // Simulate video generation (replace with actual Remotion integration)
-            const videoData = await this.generateVideoData(this.selectedEvent);
+            // Generate actual video using Remotion
+            const videoData = await this.generateActualVideo(this.selectedEvent);
             
-            // For now, show a preview placeholder
-            this.showVideoPreview(videoData);
-            
-            // Enable download button
-            document.getElementById('download-video').disabled = false;
-            
-            this.generatedVideos++;
-            this.updateStats();
-            
-            this.showStatus('success', 'Video preview generated!');
+            if (videoData.success) {
+                // Show actual video player
+                this.showVideoPlayer(videoData);
+                
+                // Enable download button
+                document.getElementById('download-video').disabled = false;
+                
+                this.generatedVideos++;
+                this.updateStats();
+                
+                this.showStatus('success', 'Video preview generated and ready to play!');
+            } else {
+                throw new Error(videoData.error || 'Video generation failed');
+            }
             
         } catch (error) {
             console.error('❌ Error generating preview:', error);
-            this.showStatus('error', 'Failed to generate preview');
+            this.showStatus('error', 'Failed to generate preview: ' + error.message);
+            
+            // Fallback to preview placeholder for demo
+            const previewData = await this.generateVideoData(this.selectedEvent);
+            this.showVideoPreview(previewData);
         } finally {
             button.innerHTML = originalText;
             button.disabled = false;
         }
     }
 
-    async generateVideoData(event) {
-        // This is a placeholder for the actual Remotion integration
-        // In a real implementation, this would call a Netlify function
-        // that uses Remotion to generate the video
+    async generateActualVideo(event) {
+        // Try the full Remotion generator first, fallback to demo generator
+        console.log('🎯 Generating actual video for template:', this.selectedTemplate);
         
-        console.log('🎯 Generating video data for template:', this.selectedTemplate);
+        try {
+            // First try the full Remotion integration
+            const response = await fetch('/.netlify/functions/generate-social-reel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    eventId: event.id,
+                    template: this.selectedTemplate,
+                    settings: this.videoSettings
+                })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                return result;
+            }
+            
+            // If Remotion fails, fallback to demo generator
+            console.log('🔄 Remotion failed, trying demo generator...');
+            throw new Error('Remotion unavailable');
+            
+        } catch (error) {
+            console.log('🎭 Using demo video generator for immediate preview');
+            
+            // Fallback to demo generator for immediate functionality
+            const demoResponse = await fetch('/.netlify/functions/generate-demo-video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    eventId: event.id,
+                    template: this.selectedTemplate,
+                    settings: this.videoSettings
+                })
+            });
+            
+            return await demoResponse.json();
+        }
+    }
+
+    async generateVideoData(event) {
+        // This is a fallback placeholder for the actual Remotion integration
+        console.log('🎯 Generating fallback video data for template:', this.selectedTemplate);
         
         const videoData = {
             event: event,
@@ -377,11 +453,103 @@ class SocialReelsGenerator {
         return videoData;
     }
 
+    showVideoPlayer(videoData) {
+        const placeholder = document.getElementById('video-placeholder');
+        const player = document.getElementById('video-player');
+        
+        // Hide placeholder and show video player
+        placeholder.classList.add('hidden');
+        player.classList.remove('hidden');
+        
+        if (videoData.mockMode || videoData.demoMode) {
+            // Show interactive demo player with enhanced preview
+            player.innerHTML = `
+                <div id="remotion-player-container" class="w-full h-full">
+                    <div class="w-full h-full bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex flex-col items-center justify-center text-white p-4 relative overflow-hidden">
+                        <div class="absolute top-2 right-2 bg-black bg-opacity-50 px-2 py-1 rounded text-xs">
+                            ${videoData.demoMode ? 'DEMO MODE' : 'PREVIEW MODE'}
+                        </div>
+                        
+                        <!-- Background animation elements -->
+                        <div class="absolute inset-0 opacity-10">
+                            <div class="absolute top-10 left-10 w-32 h-32 bg-white rounded-full animate-pulse"></div>
+                            <div class="absolute bottom-20 right-10 w-24 h-24 bg-white rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                        </div>
+                        
+                        <div class="text-center relative z-10">
+                            <div class="mb-4">
+                                <div class="w-20 h-20 mx-auto mb-3 bg-white bg-opacity-20 rounded-full flex items-center justify-center relative">
+                                    <i class="fas fa-video text-3xl"></i>
+                                    <div class="absolute inset-0 border-2 border-white border-opacity-30 rounded-full animate-spin"></div>
+                                </div>
+                                <h3 class="font-bold text-xl mb-1">${videoData.event.name}</h3>
+                                <p class="text-sm opacity-90 mb-1">${videoData.event.venue.name}</p>
+                                <p class="text-xs opacity-75">${videoData.event.formattedDate}</p>
+                            </div>
+                            
+                            <div class="mt-4 bg-black bg-opacity-30 rounded-lg p-4 backdrop-blur-sm">
+                                <div class="grid grid-cols-2 gap-3 text-xs">
+                                    <div>
+                                        <span class="opacity-60">Template:</span><br>
+                                        <span class="font-semibold">${this.getTemplateName(videoData.template)}</span>
+                                    </div>
+                                    <div>
+                                        <span class="opacity-60">Duration:</span><br>
+                                        <span class="font-semibold">${videoData.duration}s</span>
+                                    </div>
+                                    <div>
+                                        <span class="opacity-60">Resolution:</span><br>
+                                        <span class="font-semibold">${videoData.resolution.width}x${videoData.resolution.height}</span>
+                                    </div>
+                                    <div>
+                                        <span class="opacity-60">Format:</span><br>
+                                        <span class="font-semibold">${videoData.format.toUpperCase()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 space-y-2">
+                                <button class="w-full bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-3 rounded-lg text-sm transition-all flex items-center justify-center" onclick="window.reelsGenerator.playPreviewAnimation()">
+                                    <i class="fas fa-play mr-2"></i>Play Preview Animation
+                                </button>
+                                <p class="text-xs opacity-60">Interactive preview • Click to animate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show actual video player for real video
+            player.innerHTML = `
+                <video 
+                    controls 
+                    autoplay 
+                    muted 
+                    loop 
+                    class="w-full h-full object-cover rounded-lg"
+                    src="${videoData.videoUrl}"
+                    poster="${videoData.thumbnailUrl || ''}"
+                >
+                    <p class="text-center text-gray-400 p-4">
+                        Your browser does not support the video tag.
+                        <a href="${videoData.videoUrl}" class="text-purple-400 underline">Download video</a>
+                    </p>
+                </video>
+                <div class="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                    ${videoData.resolution.width}x${videoData.resolution.height} • ${videoData.duration}s
+                </div>
+            `;
+        }
+        
+        // Store video data for download
+        this.currentVideoData = videoData;
+    }
+
     showVideoPreview(videoData) {
         const placeholder = document.getElementById('video-placeholder');
         const player = document.getElementById('video-player');
         
-        // For now, show a static preview
+        // Show fallback static preview
         placeholder.innerHTML = `
             <div class="w-full h-full bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex flex-col items-center justify-center text-white p-4">
                 <div class="text-center">
@@ -401,23 +569,110 @@ class SocialReelsGenerator {
         `;
     }
 
+    playPreviewAnimation() {
+        // Enhanced preview animation that simulates video playback
+        const container = document.getElementById('remotion-player-container');
+        const button = container?.querySelector('button');
+        
+        if (container && button) {
+            // Disable button during animation
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Playing Preview...';
+            
+            // Add visual effects
+            container.style.transform = 'scale(1.02)';
+            container.style.transition = 'transform 0.3s ease';
+            
+            // Simulate video frames with color transitions
+            let frame = 0;
+            const totalFrames = 60; // 2 seconds at 30fps
+            
+            const animationInterval = setInterval(() => {
+                frame++;
+                const progress = frame / totalFrames;
+                
+                // Create color transitions
+                const hue = (progress * 360) % 360;
+                const saturation = 50 + (Math.sin(progress * Math.PI * 4) * 20);
+                const lightness = 40 + (Math.sin(progress * Math.PI * 2) * 10);
+                
+                const gradientDiv = container.querySelector('.bg-gradient-to-br');
+                if (gradientDiv) {
+                    gradientDiv.style.background = `linear-gradient(135deg, 
+                        hsl(${hue}, ${saturation}%, ${lightness}%) 0%, 
+                        hsl(${(hue + 60) % 360}, ${saturation + 10}%, ${lightness + 10}%) 50%, 
+                        hsl(${(hue + 120) % 360}, ${saturation}%, ${lightness}%) 100%)`;
+                }
+                
+                // Add scale animation
+                const videoIcon = container.querySelector('.fas.fa-video');
+                if (videoIcon) {
+                    const scale = 1 + (Math.sin(progress * Math.PI * 8) * 0.1);
+                    videoIcon.style.transform = `scale(${scale})`;
+                }
+                
+                if (frame >= totalFrames) {
+                    clearInterval(animationInterval);
+                    
+                    // Reset styles
+                    container.style.transform = 'scale(1)';
+                    if (gradientDiv) {
+                        gradientDiv.style.background = '';
+                        gradientDiv.className = 'w-full h-full bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex flex-col items-center justify-center text-white p-4 relative overflow-hidden';
+                    }
+                    
+                    // Reset button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-play mr-2"></i>Play Preview Animation';
+                    
+                    // Show completion message
+                    this.showStatus('success', 'Preview animation completed!');
+                }
+            }, 33); // ~30fps
+        }
+    }
+
     async downloadVideo() {
         if (!this.selectedEvent) return;
         
         console.log('📥 Downloading video for:', this.selectedEvent.name);
         
-        // For now, simulate download
         const filename = `${this.selectedEvent.slug || this.selectedEvent.name.toLowerCase().replace(/\s+/g, '-')}_reel.mp4`;
         
-        this.showStatus('info', `Preparing download: ${filename}`);
-        
-        // In a real implementation, this would download the generated video
-        // For now, just increment the download counter
-        setTimeout(() => {
-            this.downloadCount++;
-            this.updateStats();
-            this.showStatus('success', 'Video download started!');
-        }, 1000);
+        if (this.currentVideoData && this.currentVideoData.videoUrl && !this.currentVideoData.mockMode) {
+            // Download actual video file
+            try {
+                const response = await fetch(this.currentVideoData.videoUrl);
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                this.downloadCount++;
+                this.updateStats();
+                this.showStatus('success', 'Video downloaded successfully!');
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                this.showStatus('error', 'Failed to download video');
+            }
+        } else {
+            // Simulate download for preview mode
+            this.showStatus('info', `Preparing download: ${filename}`);
+            
+            setTimeout(() => {
+                this.downloadCount++;
+                this.updateStats();
+                this.showStatus('success', 'Video download started! (Preview mode)');
+            }, 1000);
+        }
     }
 
     selectAllEvents() {
@@ -603,6 +858,161 @@ class SocialReelsGenerator {
         });
     }
 
+    getDateRangeFromPreset(preset, customStart = null, customEnd = null) {
+        if (customStart && customEnd) {
+            return {
+                start: new Date(customStart),
+                end: new Date(customEnd + 'T23:59:59.999Z')
+            };
+        }
+        
+        const now = new Date();
+        let start, end;
+        
+        switch (preset) {
+            case 'today':
+                start = new Date(now);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(now);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'tomorrow':
+                start = new Date(now);
+                start.setDate(start.getDate() + 1);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(start);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'this-week':
+                start = new Date(now);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(now);
+                end.setDate(end.getDate() + 7);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'next-week':
+                start = new Date(now);
+                start.setDate(start.getDate() + 7);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(start);
+                end.setDate(end.getDate() + 7);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'this-month':
+                start = new Date(now.getFullYear(), now.getMonth(), 1);
+                end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'next-month':
+                start = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'next-30-days':
+                start = new Date(now);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(now);
+                end.setDate(end.getDate() + 30);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            case 'next-60-days':
+                start = new Date(now);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(now);
+                end.setDate(end.getDate() + 60);
+                end.setHours(23, 59, 59, 999);
+                break;
+                
+            default:
+                // Default to this week
+                start = new Date(now);
+                start.setHours(0, 0, 0, 0);
+                end = new Date(now);
+                end.setDate(end.getDate() + 7);
+                end.setHours(23, 59, 59, 999);
+        }
+        
+        return { start, end };
+    }
+
+    processEventForReels(event) {
+        // Convert the main events format to Social Reels format
+        const eventDate = new Date(event.date);
+        
+        return {
+            id: event.id,
+            name: event.name || 'Untitled Event',
+            description: event.description || '',
+            date: event.date,
+            dayOfWeek: eventDate.toLocaleDateString('en-GB', { weekday: 'long' }),
+            time: eventDate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }),
+            venue: {
+                id: event.venueId || null,
+                name: event.venue || event.venueName || 'TBA',
+                address: event.venueAddress || '',
+                slug: event.venueSlug || ''
+            },
+            category: event.category || event.categories || [],
+            image: event.image?.url || event.cloudinaryPublicId ? 
+                `https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1080,h_1080,c_fill,g_center/${event.cloudinaryPublicId || event.image?.cloudinaryId}` : 
+                'https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1080,h_1080,c_fill,g_center/sample-event-placeholder',
+            slug: event.slug || '',
+            ticketLink: event.link || event.ticketLink || '',
+            priceInfo: event.priceInfo || event.price || 'Free',
+            ageRestriction: event.ageRestriction || '18+',
+            shortDescription: this.truncateText(event.description || '', 100),
+            hashtags: this.generateHashtags(event.category || event.categories || [], event.venue || event.venueName || ''),
+            formattedDate: this.formatDateForVideo(eventDate)
+        };
+    }
+
+    truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + '...';
+    }
+
+    generateHashtags(categories, venueName) {
+        const hashtags = ['#BrumOutLoud', '#LGBTQ', '#Birmingham'];
+        
+        // Add category hashtags
+        categories.forEach(cat => {
+            const tag = '#' + cat.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+            if (tag.length > 1) hashtags.push(tag);
+        });
+        
+        // Add venue hashtag
+        if (venueName) {
+            const venueTag = '#' + venueName.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+            if (venueTag.length > 1) hashtags.push(venueTag);
+        }
+        
+        return hashtags.slice(0, 8); // Limit to 8 hashtags
+    }
+
+    formatDateForVideo(date) {
+        const options = { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        };
+        
+        return date.toLocaleDateString('en-GB', options);
+    }
+
     setupTryDifferentRangeButton() {
         document.getElementById('try-different-range').addEventListener('click', () => {
             // Suggest a broader range
@@ -627,47 +1037,24 @@ class SocialReelsGenerator {
         });
     }
 
-    setupCreateExamplesButton() {
-        document.getElementById('create-examples').addEventListener('click', async () => {
-            const button = document.getElementById('create-examples');
-            const originalText = button.innerHTML;
-            
-            try {
-                button.innerHTML = '<i class="fas fa-spinner loading-spinner mr-2"></i>Creating...';
-                button.disabled = true;
-                
-                const response = await fetch('/.netlify/functions/create-example-events', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    this.showStatus('success', `Created ${data.events.length} example events!`);
-                    
-                    // Reload events with a suitable date range
-                    this.currentDateRange.preset = 'next-30-days';
-                    document.getElementById('date-preset').value = 'next-30-days';
-                    this.loadEvents('next-30-days');
-                } else {
-                    throw new Error(data.error || 'Failed to create example events');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error creating example events:', error);
-                this.showStatus('error', 'Failed to create example events');
-            } finally {
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }
-        });
-    }
+    // setupCreateExamplesButton() {
+    //     // Removed - now using real events from the main events system
+    // }
 }
+
+// Debug logging
+console.log('🎬 Social Reels Generator JavaScript loaded');
+console.log('📅 Loading timestamp:', new Date().toISOString());
 
 // Initialize the Social Reels Generator when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    window.reelsGenerator = new SocialReelsGenerator();
+    console.log('🎯 DOM Content Loaded - Initializing Social Reels Generator');
+    
+    try {
+        window.reelsGenerator = new SocialReelsGenerator();
+        console.log('✅ Social Reels Generator initialized successfully');
+    } catch (error) {
+        console.error('❌ Error initializing Social Reels Generator:', error);
+        alert('Error initializing Social Reels Generator: ' + error.message);
+    }
 }); 

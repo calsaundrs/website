@@ -912,25 +912,69 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             applyFilters();
         }
 
-        // --- Filtering Logic ---
+        // --- Filtering Logic for SSG ---
         function applyFilters() {
-            // Convert legacy filter format to store format
-            const filters = {
-                dateRange: activeDateFilter,
-                categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
-                venues: activeVenueFilter !== 'all' ? [activeVenueFilter] : [],
-                sfwMode: isSfwMode,
-                limit: 50
-            };
+            console.log('Applying filters to static events...');
+            console.log('Active filters:', {
+                date: activeDateFilter,
+                category: activeCategoryFilter,
+                venue: activeVenueFilter,
+                sfw: isSfwMode
+            });
             
-            console.log('Applying filters:', filters);
-            console.log('EventStore available:', typeof eventStore !== 'undefined');
-            console.log('EventStore instance:', eventStore);
+            if (allStaticEvents.length === 0) {
+                console.log('No static events found, skipping filter');
+                return;
+            }
             
-            if (eventStore && typeof eventStore.updateFilters === 'function') {
-                eventStore.updateFilters(filters);
-            } else {
-                console.error('EventStore or updateFilters method not available');
+            // Filter the static events
+            let filteredEvents = allStaticEvents.filter(event => {
+                // Category filter
+                if (activeCategoryFilter !== 'all') {
+                    const hasCategory = event.categories.some(cat => 
+                        cat.toLowerCase().includes(activeCategoryFilter.toLowerCase())
+                    );
+                    if (!hasCategory) return false;
+                }
+                
+                // Venue filter
+                if (activeVenueFilter !== 'all') {
+                    if (!event.venue || !event.venue.toLowerCase().includes(activeVenueFilter.toLowerCase())) {
+                        return false;
+                    }
+                }
+                
+                // Date filter (simplified for now)
+                if (activeDateFilter && activeDateFilter.type) {
+                    // For now, just show all events - could add more sophisticated date filtering later
+                    // TODO: Add proper date filtering based on activeDateFilter.type
+                }
+                
+                return true;
+            });
+            
+            console.log(`Filtered from ${allStaticEvents.length} to ${filteredEvents.length} events`);
+            
+            // Show/hide event cards based on filter results
+            allStaticEvents.forEach(event => {
+                const isVisible = filteredEvents.includes(event);
+                event.element.style.display = isVisible ? '' : 'none';
+            });
+            
+            // Update event count
+            const eventCountElement = document.querySelector('.event-count');
+            if (eventCountElement) {
+                eventCountElement.textContent = filteredEvents.length;
+            }
+            
+            // Show no results message if needed
+            const noResultsMessage = document.getElementById('no-results-message');
+            if (noResultsMessage) {
+                if (filteredEvents.length === 0) {
+                    noResultsMessage.classList.remove('hidden');
+                } else {
+                    noResultsMessage.classList.add('hidden');
+                }
             }
         }
 
@@ -1058,14 +1102,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         function renderCategoryOptions() {
-            if (!categoryPopover || !eventStore) {
-                console.log('Category popover or eventStore not available');
+            if (!categoryPopover) {
+                console.log('Category popover not available');
                 return;
             }
             
-            // Get categories from current events
-            const categories = [...new Set(eventStore.state.events.flatMap(event => event.category))].filter(Boolean).sort();
-            console.log('Rendering category options:', categories);
+            // Get categories from static events
+            const categories = getAllCategories();
+            console.log('Rendering category options from static events:', categories);
             categoryPopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -1083,13 +1127,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         }
 
-        function renderVenueOptions(venues = []) {
+        function renderVenueOptions() {
             if (!venuePopover) {
                 console.log('Venue popover not available');
                 return;
             }
             
-            console.log('Rendering venue options:', venues);
+            // Get venues from static events
+            const venues = getAllVenues();
+            console.log('Rendering venue options from static events:', venues);
             venuePopover.innerHTML = '';
 
             const allButton = document.createElement('button');
@@ -1098,11 +1144,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             allButton.dataset.filterValue = 'all';
             venuePopover.appendChild(allButton);
 
-            venues.forEach(venue => {
+            venues.forEach(venueName => {
                 const button = document.createElement('button');
                 button.className = 'popover-option';
-                button.textContent = venue.name;
-                button.dataset.filterValue = venue.slug || venue.name; // Use slug if available, fallback to name
+                button.textContent = venueName;
+                button.dataset.filterValue = venueName;
                 venuePopover.appendChild(button);
             });
             
@@ -1359,38 +1405,81 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
 
+        // --- SSG Static Events Data ---
+        let allStaticEvents = [];
+        
+        function parseStaticEvents() {
+            console.log('Parsing static events from SSG content...');
+            const eventCards = document.querySelectorAll('.event-card');
+            
+            allStaticEvents = Array.from(eventCards).map(card => {
+                // Extract data from the static HTML
+                const titleElement = card.querySelector('h3');
+                const venueInfo = card.querySelector('.fa-map-marker-alt')?.parentElement?.textContent;
+                const dateElement = card.querySelector('.bg-accent-color');
+                const categoryElements = card.querySelectorAll('.bg-blue-100\\/20');
+                const imageElement = card.querySelector('img');
+                const onclickAttr = card.getAttribute('onclick');
+                
+                // Parse venue from the venue info text (format: "time • venue")
+                const venue = venueInfo ? venueInfo.split('•').pop()?.trim() : '';
+                
+                // Parse date from date element or card content
+                let eventDate = '';
+                if (dateElement) {
+                    eventDate = dateElement.textContent.trim();
+                }
+                
+                // Parse categories
+                const categories = Array.from(categoryElements).map(el => el.textContent.trim());
+                
+                // Extract slug from onclick attribute
+                let slug = '';
+                if (onclickAttr) {
+                    const slugMatch = onclickAttr.match(/\/event\/([^']+)/);
+                    slug = slugMatch ? slugMatch[1] : '';
+                }
+                
+                return {
+                    element: card,
+                    name: titleElement ? titleElement.textContent.trim() : '',
+                    venue: venue,
+                    date: eventDate,
+                    categories: categories,
+                    imageUrl: imageElement ? imageElement.src : '',
+                    slug: slug
+                };
+            });
+            
+            console.log(`Parsed ${allStaticEvents.length} static events:`, allStaticEvents);
+            return allStaticEvents;
+        }
+        
+        function getAllCategories() {
+            const categories = new Set();
+            allStaticEvents.forEach(event => {
+                event.categories.forEach(cat => {
+                    if (cat) categories.add(cat);
+                });
+            });
+            return Array.from(categories).sort();
+        }
+        
+        function getAllVenues() {
+            const venues = new Set();
+            allStaticEvents.forEach(event => {
+                if (event.venue) venues.add(event.venue);
+            });
+            return Array.from(venues).sort();
+        }
+
         // --- Initial Data Fetch & Processing ---
         async function initializePage() {
             try {
-                console.log('Initializing events page...');
+                console.log('Initializing SSG events page...');
                 
-                // Check if EventStore is available
-                if (typeof EventStore === 'undefined') {
-                    throw new Error('EventStore class is not available. Check if event-store.js is loaded correctly.');
-                }
-                
-                // Initialize event store
-                eventStore = new EventStore();
-                console.log('EventStore initialized:', eventStore);
-                
-                // Subscribe to store changes
-                eventStore.subscribe((state) => {
-                    console.log('Event store state updated:', state);
-                    renderEvents(state.events);
-                    updateLoadingState(state.loading);
-                    updateErrorState(state.error);
-                    updateFilterUI(state.filters);
-                    
-                    // Re-render filter options when events change
-                    if (state.events && state.events.length > 0) {
-                        renderCategoryOptions();
-                    }
-                });
-
-                // Load venues for filtering first
-                console.log('Loading venues for filtering...');
-                const venues = await eventStore.api.getVenues();
-                console.log('Venues loaded:', venues);
+                // Parse events from static HTML content
+                parseStaticEvents();
                 
                 setSfwMode(true);
 
@@ -1398,30 +1487,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 createSlideshowElements(); 
 
-                // Set up event listeners first
+                // Set up event listeners
                 setupEventListeners();
                 
-                // Load initial events first
-                console.log('Loading initial events...');
-                await eventStore.loadEvents(eventStore.state.filters);
-                
-                // Now render filter options after events are loaded
+                // Render filter options from static data
                 renderCategoryOptions();
-                renderVenueOptions(venues);
+                renderVenueOptions();
+                
+                // Apply initial filters
+                applyFilters();
                 
                 // Check for venue parameter in URL and apply filter
                 const urlParams = new URLSearchParams(window.location.search);
                 const venueParam = urlParams.get('venue');
                 if (venueParam) {
                     console.log('Venue parameter found:', venueParam);
-                    // Find the venue button and trigger the filter
+                    // Set the venue filter and apply
+                    activeVenueFilter = venueParam;
+                    // Find the venue button and update UI
                     const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
                     if (venueButton) {
-                        console.log('Found venue button, clicking it...');
-                        venueButton.click();
+                        console.log('Found venue button, updating filter...');
+                        venueButton.classList.add('active');
+                        venueBtn.querySelector('span').textContent = venueParam;
+                        applyFilters();
                     } else {
                         console.log('Venue button not found for:', venueParam);
-                        console.log('Available venue buttons:', document.querySelectorAll('[data-filter-value]'));
                     }
                 }
                 

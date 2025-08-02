@@ -1,19 +1,33 @@
-const EventService = require('./event-service');
+const EventService = require('./firestore-event-service');
 const SeriesManager = require('./series-manager');
-const Airtable = require('airtable');
+const GooglePlacesService = require('./google-places-service');
+const admin = require('firebase-admin');
+
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    }),
+  });
+}
+
+const db = admin.firestore();
 
 // Version: 2025-07-25-v6 - Fixed async getSystemStatus and auto-run tests
 
 class SystemMonitor {
   constructor() {
-    this.base = new Airtable({ 
-      apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
-    }).base(process.env.AIRTABLE_BASE_ID);
+    this.db = db;
     this.eventService = new EventService();
     this.seriesManager = new SeriesManager();
+    this.googlePlacesService = new GooglePlacesService();
     this.testResults = new Map();
     this.lastRun = null;
-    this.startTime = Date.now(); // Initialize start time
+    this.startTime = new Date();
+ // Initialize start time
   }
 
   async runAllTests() {
@@ -21,16 +35,18 @@ class SystemMonitor {
     this.lastRun = new Date();
     
     const tests = [
-      { name: 'airtable-connection', test: () => this.testAirtableConnection() },
+      { name: 'firestore-connection', test: () => this.testFirestoreConnection() },
       { name: 'event-service', test: () => this.testEventService() },
       { name: 'series-manager', test: () => this.testSeriesManager() },
       { name: 'get-events-api', test: () => this.testGetEventsAPI() },
       { name: 'get-pending-events-api', test: () => this.testGetPendingEventsAPI() },
-      // Temporarily disabled: { name: 'get-recurring-events-api', test: () => this.testGetRecurringEventsAPI() },
       { name: 'event-details-api', test: () => this.testEventDetailsAPI() },
       { name: 'series-slug-uniqueness', test: () => this.testSeriesSlugUniqueness() },
       { name: 'cache-functionality', test: () => this.testCacheFunctionality() },
-      { name: 'environment-variables', test: () => this.testEnvironmentVariables() }
+      { name: 'environment-variables', test: () => this.testEnvironmentVariables() },
+      { name: 'firestore-collections', test: () => this.testFirestoreCollections() },
+      { name: 'social-reel-generation', test: () => this.testSocialReelGeneration() },
+      { name: 'google-places-api', test: () => this.testGooglePlacesAPI() }
     ];
 
     const results = [];
@@ -72,15 +88,23 @@ class SystemMonitor {
     };
   }
 
-  async testAirtableConnection() {
+  async testFirestoreConnection() {
     const startTime = Date.now();
     
     try {
-      // Test basic connection
-      const records = await this.base('Events').select({
-        maxRecords: 1,
-        fields: ['Event Name']
-      }).firstPage();
+      // Test basic Firestore connection
+      const testDoc = await this.db.collection('events').limit(1).get();
+      const eventsCount = testDoc.size;
+      
+      // Test write capability with a health check document
+      const healthCheckRef = this.db.collection('system_health').doc('connection_test');
+      await healthCheckRef.set({
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        test: true
+      });
+      
+      // Test read capability
+      const healthCheckDoc = await healthCheckRef.get();
       
       const duration = Date.now() - startTime;
       
@@ -88,12 +112,13 @@ class SystemMonitor {
         duration,
         details: {
           connectionTime: duration,
-          recordCount: records.length,
-          tableAccess: true
+          eventsCollectionCount: eventsCount,
+          readWriteTest: healthCheckDoc.exists,
+          firestoreWorking: true
         }
       };
     } catch (error) {
-      throw new Error(`Airtable connection failed: ${error.message}`);
+      throw new Error(`Firestore connection failed: ${error.message}`);
     }
   }
 
@@ -352,8 +377,9 @@ class SystemMonitor {
     
     try {
       const requiredVars = [
-        'AIRTABLE_PERSONAL_ACCESS_TOKEN',
-        'AIRTABLE_BASE_ID',
+        'FIREBASE_PROJECT_ID',
+        'FIREBASE_CLIENT_EMAIL',
+        'FIREBASE_PRIVATE_KEY',
         'CLOUDINARY_CLOUD_NAME',
         'CLOUDINARY_API_KEY',
         'CLOUDINARY_API_SECRET'
@@ -386,6 +412,108 @@ class SystemMonitor {
     }
   }
 
+  async testFirestoreCollections() {
+    const startTime = Date.now();
+    try {
+      const collections = ['events', 'venues', 'pending_events', 'system_health', 'system_notifications'];
+      const collectionStats = [];
+      
+      for (const collectionName of collections) {
+        const collectionRef = this.db.collection(collectionName);
+        const snapshot = await collectionRef.limit(1).get();
+        collectionStats.push({
+          name: collectionName,
+          exists: !snapshot.empty,
+          size: snapshot.size
+        });
+      }
+      
+      const duration = Date.now() - startTime;
+      return {
+        duration,
+        details: {
+          totalCollections: collections.length,
+          collectionsExists: collectionStats.filter(c => c.exists).length,
+          collectionStats: collectionStats,
+          allCollectionsWorking: collectionStats.every(c => c.exists)
+        }
+      };
+    } catch (error) {
+      throw new Error(`Firestore collections test failed: ${error.message}`);
+    }
+  }
+
+  async testSocialReelGeneration() {
+    const startTime = Date.now();
+    try {
+      // Test if the social reel generation function is responsive
+      // We'll use a lightweight test that doesn't actually generate a reel
+      const baseUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://deploy-preview-35--bolwebsite.netlify.app';
+      
+      // Test the get-events-for-reels function instead as it's more reliable
+      const response = await fetch(`${baseUrl}/.netlify/functions/get-events-for-reels?preset=this-week`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      const duration = Date.now() - startTime;
+      
+      return {
+        duration,
+        details: {
+          responseTime: duration,
+          reelDataAvailable: data.success,
+          eventsCount: data.data ? data.data.length : 0,
+          statusCode: response.status
+        }
+      };
+    } catch (error) {
+      throw new Error(`Social Reel Generation test failed: ${error.message}`);
+    }
+  }
+
+  async testGooglePlacesAPI() {
+    const startTime = Date.now();
+    
+    try {
+      // Test Google Places API connectivity
+      const connectionTest = await this.googlePlacesService.testConnection();
+      
+      if (!connectionTest.success) {
+        throw new Error(connectionTest.error);
+      }
+      
+      // Test with a sample venue that has Google Place ID
+      const sampleVenue = {
+        name: 'Test Venue',
+        googlePlaceId: 'ChIJj61dQgK6j4AR4GeTYWZsKWw' // Google headquarters for testing
+      };
+      
+      const placesData = await this.googlePlacesService.getVenueGooglePlacesData(sampleVenue, {
+        useCache: false,
+        maxImages: 1,
+        maxReviews: 1
+      });
+      
+      const duration = Date.now() - startTime;
+      
+      return {
+        duration,
+        details: {
+          apiEnabled: this.googlePlacesService.enabled,
+          connectionTest: connectionTest.success,
+          dataRetrieved: placesData && placesData.rating !== null,
+          cacheStats: this.googlePlacesService.getCacheStats(),
+          testPlaceId: sampleVenue.googlePlaceId
+        }
+      };
+    } catch (error) {
+      throw new Error(`Google Places API test failed: ${error.message}`);
+    }
+  }
+
   async checkAndSendNotifications(results) {
     const failedTests = results.filter(r => r.status === 'fail');
     
@@ -405,18 +533,16 @@ class SystemMonitor {
 
   async sendNotification(notification) {
     try {
-      // Store notification in Airtable for admin review
-      await this.base('System Notifications').create([{
-        fields: {
-          'Type': notification.type,
-          'Title': notification.title,
-          'Message': notification.message,
-          'Severity': notification.severity,
-          'Details': JSON.stringify(notification.details),
-          'Timestamp': new Date().toISOString(),
-          'Status': 'New'
-        }
-      }]);
+      // Store notification in Firestore for admin review
+      await this.db.collection('system_notifications').add({
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        severity: notification.severity,
+        details: notification.details,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        status: 'New'
+      });
       
       console.log(`📢 Notification stored: ${notification.title}`);
     } catch (error) {

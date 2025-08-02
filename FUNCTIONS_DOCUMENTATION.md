@@ -6,7 +6,7 @@ This documentation covers all Netlify serverless functions that power the BrumOu
 
 **Architecture:** Netlify Functions (AWS Lambda)
 **Runtime:** Node.js 18.x
-**Database:** Airtable
+**Database:** Firestore (Firebase)
 **File Storage:** Cloudinary
 **AI Integration:** Google Gemini API
 
@@ -27,8 +27,8 @@ Helper functions for data processing, migration, and maintenance.
 
 ## Public API Functions
 
-### `get-events.js`
-**Purpose:** Retrieve events for public display and admin management.
+### `get-events-firestore-simple.js`
+**Purpose:** Retrieve events from Firestore for public display and admin management.
 
 **HTTP Method:** GET
 
@@ -71,7 +71,7 @@ Helper functions for data processing, migration, and maintenance.
 **Example Usage:**
 ```javascript
 // Get public events
-const response = await fetch('/.netlify/functions/get-events');
+const response = await fetch('/.netlify/functions/get-events-firestore-simple');
 const data = await response.json();
 
 // Get admin view

@@ -4,8 +4,8 @@
 
 Welcome to the BrumOutLoud documentation hub! This index provides a comprehensive guide to all documentation resources for the Birmingham LGBTQ+ events platform.
 
-**Last Updated:** July 2025  
-**Platform Version:** 1.1.0
+**Last Updated:** December 2024  
+**Platform Version:** 2.0.0
 
 ---
 
@@ -20,6 +20,7 @@ Welcome to the BrumOutLoud documentation hub! This index provides a comprehensiv
 - **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** - Complete API reference and examples
 - **[FUNCTIONS_DOCUMENTATION.md](FUNCTIONS_DOCUMENTATION.md)** - Serverless functions reference
 - **[FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md)** - Frontend components and usage
+- **[SSG_AND_FOUC_GUIDE.md](SSG_AND_FOUC_GUIDE.md)** - Static site generation and FOUC prevention
 
 ### 🛠️ Operations & Maintenance
 - **[MAINTENANCE_GUIDE.md](MAINTENANCE_GUIDE.md)** - System maintenance and troubleshooting
@@ -129,9 +130,10 @@ brumoutloud-site/
 ├── 📄 README.md                    # Main project overview
 ├── 📄 DEVELOPER_GUIDE.md           # Development setup and guide
 ├── 📄 USER_GUIDES.md               # User-specific guides
-├── 📄 API_DOCUMENTATION.md         # API reference
+├── 📄 API_DOCUMENTATION.md         # API reference (Firestore-based)
 ├── 📄 FUNCTIONS_DOCUMENTATION.md   # Serverless functions
 ├── 📄 FRONTEND_DOCUMENTATION.md    # Frontend components
+├── 📄 SSG_AND_FOUC_GUIDE.md        # SSG and FOUC prevention
 ├── 📄 MAINTENANCE_GUIDE.md         # System maintenance
 ├── 📄 SEO_PERFORMANCE_GUIDE.md     # SEO and performance
 ├── 📄 GEMINI.md                    # Project overview
@@ -215,12 +217,12 @@ To improve the documentation:
 
 ## 🔄 Documentation Updates
 
-### Recent Updates (July 2025)
-- **Updated README.md** - Current version and features
-- **Created USER_GUIDES.md** - Comprehensive user guides
-- **Created MAINTENANCE_GUIDE.md** - System maintenance guide
-- **Created SEO_PERFORMANCE_GUIDE.md** - SEO and performance guide
-- **Updated all documentation** - Current as of July 2025
+### Recent Updates (December 2024)
+- **Updated README.md** - Current version and features, fixed badge links and venue references
+- **Consolidated SSG/FOUC Documentation** - Created comprehensive SSG_AND_FOUC_GUIDE.md
+- **Updated API Documentation** - Migrated from Airtable to Firestore references
+- **Removed Obsolete Files** - Cleaned up redundant and outdated documentation
+- **Standardized Documentation** - Consistent formatting and structure across all files
 
 ### Planned Updates
 - **Regular reviews** - Monthly documentation audits

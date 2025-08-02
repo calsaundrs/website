@@ -33,19 +33,66 @@ exports.handler = async function (event, context) {
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ error: 'Method not allowed' })
         };
     }
     
     try {
-        const { eventId, template, settings } = JSON.parse(event.body);
+        let eventId, template, settings;
         
-        console.log(`🎯 Generating reel for event: ${eventId}, template: ${template}`);
+        // Handle both JSON and form data
+        if (event.body) {
+            try {
+                const parsed = JSON.parse(event.body);
+                eventId = parsed.eventId;
+                template = parsed.template;
+                settings = parsed.settings;
+            } catch (parseError) {
+                // If JSON parsing fails, try to extract from query parameters
+                const params = new URLSearchParams(event.body);
+                eventId = params.get('eventId');
+                template = params.get('template');
+                settings = params.get('settings') ? JSON.parse(params.get('settings')) : {};
+            }
+        }
+        
+        // Validate input
+        if (!eventId) {
+            return {
+                statusCode: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    success: false,
+                    error: 'Missing eventId parameter' 
+                })
+            };
+        }
+        
+        console.log(`🎯 Generating reel for event: ${eventId}, template: ${template || 'modern'}`);
         
         // Fetch event data from Firestore
         const eventDoc = await db.collection('events').doc(eventId).get();
         if (!eventDoc.exists) {
-            throw new Error('Event not found');
+            console.error(`❌ Event not found: ${eventId}`);
+            return {
+                statusCode: 404,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    success: false,
+                    error: 'Event not found',
+                    eventId: eventId
+                })
+            };
         }
         
         const eventData = eventDoc.data();
@@ -56,7 +103,7 @@ exports.handler = async function (event, context) {
                 id: eventDoc.id,
                 name: eventData.name || 'Untitled Event',
                 description: eventData.description || '',
-                date: eventData.date.toDate().toISOString(),
+                date: eventData.date ? eventData.date.toDate().toISOString() : new Date().toISOString(),
                 venue: {
                     name: eventData.venueName || 'TBA',
                     address: eventData.venueAddress || ''
@@ -64,7 +111,7 @@ exports.handler = async function (event, context) {
                 category: eventData.category || [],
                 image: extractImageUrl(eventData),
                 hashtags: generateHashtags(eventData.category || [], eventData.venueName || ''),
-                formattedDate: formatDateForVideo(eventData.date.toDate())
+                formattedDate: formatDateForVideo(eventData.date ? eventData.date.toDate() : new Date())
             },
             branding: {
                 primaryColor: '#E83A99',
@@ -125,6 +172,7 @@ exports.handler = async function (event, context) {
         return {
             statusCode: 200,
             headers: {
+                'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(videoMetadata)
@@ -136,6 +184,7 @@ exports.handler = async function (event, context) {
         return {
             statusCode: 500,
             headers: {
+                'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Reels Generator - DEBUG | Admin Panel</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        .debug-section { background: #1f2937; border: 2px solid #10b981; margin: 1rem 0; padding: 1rem; border-radius: 8px; }
+        .debug-log { background: #111827; color: #10b981; font-family: monospace; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-green-400 mb-6">🔧 Social Reels Generator - DEBUG MODE</h1>
+        
+        <div class="debug-section">
+            <h2 class="text-xl font-bold text-green-400 mb-4">📡 Backend Connection Test</h2>
+            <button id="test-backend" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Test Backend</button>
+            <div id="backend-result" class="debug-log mt-4">Ready to test...</div>
+        </div>
+        
+        <div class="debug-section">
+            <h2 class="text-xl font-bold text-green-400 mb-4">📅 Events Loading Test</h2>
+            <button id="test-events" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Load Events</button>
+            <div id="events-result" class="debug-log mt-4">Ready to load events...</div>
+        </div>
+        
+        <div class="debug-section">
+            <h2 class="text-xl font-bold text-green-400 mb-4">🎬 Video Generation Test</h2>
+            <select id="test-event-select" class="bg-gray-800 text-white px-3 py-2 rounded mr-4">
+                <option value="">Select an event...</option>
+            </select>
+            <button id="test-video" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Generate Demo Video</button>
+            <div id="video-result" class="debug-log mt-4">Ready to generate video...</div>
+        </div>
+        
+        <div class="debug-section">
+            <h2 class="text-xl font-bold text-green-400 mb-4">🎯 Quick Actions</h2>
+            <div class="space-x-4">
+                <a href="/admin-social-reels.html" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded inline-block">Go to Main App</a>
+                <a href="/events.html" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded inline-block">View Main Events Page</a>
+                <button id="clear-cache" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Force Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let debugEvents = [];
+        
+        // Debug logging function
+        function debugLog(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const color = isError ? '#ef4444' : '#10b981';
+            const prefix = isError ? '❌' : '✅';
+            
+            element.innerHTML += `<div style="color: ${color};">[${timestamp}] ${prefix} ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+            console.log(`${prefix} ${message}`);
+        }
+        
+        // Test backend connection
+        document.getElementById('test-backend').addEventListener('click', async () => {
+            debugLog('backend-result', 'Testing REAL events backend connection...', false);
+            
+            try {
+                // Test the same endpoint used by the main events page
+                const params = new URLSearchParams();
+                params.append('limit', '10');
+                params.append('status', 'approved');
+                
+                const response = await fetch(`/.netlify/functions/get-events-firestore-simple?${params.toString()}`);
+                const data = await response.json();
+                
+                if (data.events && data.events.length > 0) {
+                    debugLog('backend-result', `Real events backend working! Found ${data.events.length} events`, false);
+                    debugLog('backend-result', `Sample event: ${data.events[0].name} at ${data.events[0].venue || data.events[0].venueName}`, false);
+                } else {
+                    debugLog('backend-result', `Backend returned but no events found`, true);
+                }
+            } catch (error) {
+                debugLog('backend-result', `Connection failed: ${error.message}`, true);
+            }
+        });
+        
+        // Test events loading
+        document.getElementById('test-events').addEventListener('click', async () => {
+            debugLog('events-result', 'Loading REAL events from main system...', false);
+            
+            try {
+                // Use the same endpoint as the main events page
+                const params = new URLSearchParams();
+                params.append('dateRange', JSON.stringify({
+                    type: 'between',
+                    start: new Date().toISOString(),
+                    end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                }));
+                params.append('status', 'approved');
+                params.append('limit', '50');
+                
+                const response = await fetch(`/.netlify/functions/get-events-firestore-simple?${params.toString()}`);
+                const data = await response.json();
+                
+                if (data.success && data.events.length > 0) {
+                    debugEvents = data.events;
+                    debugLog('events-result', `Loaded ${data.events.length} events successfully`, false);
+                    
+                    // Populate event selector
+                    const select = document.getElementById('test-event-select');
+                    select.innerHTML = '<option value="">Select an event...</option>';
+                    data.events.forEach(event => {
+                        const option = document.createElement('option');
+                        option.value = event.id;
+                        option.textContent = `${event.name} (${event.venue.name})`;
+                        select.appendChild(option);
+                    });
+                    
+                    // Show first few events
+                    data.events.slice(0, 3).forEach(event => {
+                        debugLog('events-result', `• ${event.name} at ${event.venue.name} - ${event.formattedDate}`, false);
+                    });
+                } else {
+                    debugLog('events-result', 'No events found or error occurred', true);
+                }
+            } catch (error) {
+                debugLog('events-result', `Error loading events: ${error.message}`, true);
+            }
+        });
+        
+        // Test video generation
+        document.getElementById('test-video').addEventListener('click', async () => {
+            const selectedEventId = document.getElementById('test-event-select').value;
+            
+            if (!selectedEventId) {
+                debugLog('video-result', 'Please select an event first', true);
+                return;
+            }
+            
+            debugLog('video-result', `Generating demo video for event: ${selectedEventId}`, false);
+            
+            try {
+                const response = await fetch('/.netlify/functions/generate-demo-video', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        eventId: selectedEventId,
+                        template: 'modern',
+                        settings: { duration: 5, includeLogo: true, includeHashtags: true }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    debugLog('video-result', `Video generated successfully!`, false);
+                    debugLog('video-result', `Event: ${data.event.name}`, false);
+                    debugLog('video-result', `Venue: ${data.event.venue.name}`, false);
+                    debugLog('video-result', `Template: ${data.template}`, false);
+                    debugLog('video-result', `Duration: ${data.duration}s`, false);
+                    debugLog('video-result', `Resolution: ${data.resolution.width}x${data.resolution.height}`, false);
+                    debugLog('video-result', `Mode: ${data.demoMode ? 'Demo' : 'Production'}`, false);
+                } else {
+                    debugLog('video-result', `Video generation failed: ${data.error}`, true);
+                }
+            } catch (error) {
+                debugLog('video-result', `Error generating video: ${error.message}`, true);
+            }
+        });
+        
+        // (Create examples functionality removed - now using real events)
+        
+        // Force refresh
+        document.getElementById('clear-cache').addEventListener('click', () => {
+            if (confirm('This will force refresh the page and clear cache. Continue?')) {
+                window.location.reload(true);
+            }
+        });
+        
+        // Auto-run backend test on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('test-backend').click();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

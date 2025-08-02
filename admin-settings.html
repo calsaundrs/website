@@ -773,9 +773,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         async function updateServiceStatus() {
             try {
-                // Test API status with timing
+                // Test API status with timing (using Firestore endpoint)
                 const apiStart = Date.now();
-                const apiResponse = await fetch('/.netlify/functions/get-events');
+                const apiResponse = await fetch('/.netlify/functions/get-events-firestore-simple');
                 const apiDuration = Date.now() - apiStart;
                 
                 const apiIndicator = document.getElementById('api-status-indicator');
@@ -794,9 +794,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     responseTimeElement.textContent = 'Error';
                 }
 
-                // Test DB status (using a simple endpoint)
+                // Test Firestore status (using Firestore endpoint)
                 const dbStart = Date.now();
-                const dbResponse = await fetch('/.netlify/functions/get-pending-events');
+                const dbResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 const dbDuration = Date.now() - dbStart;
                 
                 const dbIndicator = document.getElementById('db-status-indicator');
@@ -805,12 +805,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 if (dbResponse.ok) {
                     dbIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
-                    dbText.textContent = 'Connected';
+                    dbText.textContent = 'Firestore Connected';
                     dbText.className = 'text-green-400 text-sm';
                     cacheStatusElement.textContent = 'Active';
                 } else {
                     dbIndicator.className = 'w-3 h-3 bg-red-500 rounded-full';
-                    dbText.textContent = 'Error';
+                    dbText.textContent = 'Firestore Error';
                     dbText.className = 'text-red-400 text-sm';
                     cacheStatusElement.textContent = 'Error';
                 }
@@ -849,7 +849,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 document.getElementById('api-status-text').className = 'text-red-400 text-sm';
                 
                 document.getElementById('db-status-indicator').className = 'w-3 h-3 bg-red-500 rounded-full';
-                document.getElementById('db-status-text').textContent = 'Error';
+                document.getElementById('db-status-text').textContent = 'Firestore Error';
                 document.getElementById('db-status-text').className = 'text-red-400 text-sm';
             }
         }

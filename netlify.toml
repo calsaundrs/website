@@ -12,6 +12,17 @@
   # Main directory for all serverless functions
   directory = "netlify/functions/"
   node_bundler = "esbuild"
+  external_node_modules = [
+    "@remotion/compositor-win32-x64-msvc",
+    "@remotion/compositor-darwin-x64", 
+    "@remotion/compositor-linux-x64-musl",
+    "@remotion/compositor-linux-x64-gnu",
+    "@remotion/compositor-linux-arm64-musl",
+    "@remotion/compositor-linux-arm64-gnu",
+    "@swc/core",
+    "esbuild",
+    "source-map"
+  ]
 
 
 # --- Page Redirect and Rewrite Rules ---
@@ -23,10 +34,10 @@
   status = 200
   force = true
 
-# Rule for individual VENUE pages (Static SSG-based)
+# Rule for individual VENUE pages (Firestore-based with Google Places)
 [[redirects]]
   from = "/venue/*"
-  to = "/venue/:splat.html"
+  to = "/.netlify/functions/get-venue-details-firestore?slug=:splat"
   status = 200
   force = true
 

@@ -79,6 +79,10 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -183,12 +187,12 @@
                                 <button id="try-different-range" class="btn-secondary px-4 py-2 rounded-lg">
                                     <i class="fas fa-calendar-alt mr-2"></i>Try Different Date Range
                                 </button>
-                                <button id="create-examples" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all">
-                                    <i class="fas fa-plus-circle mr-2"></i>Create Example Events
-                                </button>
+                                <a href="/events.html" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all">
+                                    <i class="fas fa-external-link-alt mr-2"></i>View All Events
+                                </a>
                             </div>
                             <p class="text-xs text-gray-500">
-                                No events in database? Create some example events to test the reels generator.
+                                Try a broader date range or check the main events page to see all available events.
                             </p>
                         </div>
                     </div>
@@ -201,13 +205,13 @@
                     <!-- Video Preview -->
                     <div class="card-bg rounded-xl p-6">
                         <h3 class="text-lg font-bold mb-4">Video Preview</h3>
-                        <div class="video-preview flex items-center justify-center">
-                            <div id="video-placeholder" class="text-center">
-                                <i class="fas fa-video text-gray-500 text-4xl mb-4"></i>
-                                <p class="text-gray-400">Select an event to preview</p>
-                            </div>
-                            <div id="video-player" class="w-full h-full hidden"></div>
-                        </div>
+                                        <div class="video-preview flex items-center justify-center relative">
+                    <div id="video-placeholder" class="text-center">
+                        <i class="fas fa-video text-gray-500 text-4xl mb-4"></i>
+                        <p class="text-gray-400">Select an event to preview</p>
+                    </div>
+                    <div id="video-player" class="w-full h-full hidden relative overflow-hidden rounded-lg"></div>
+                </div>
                         
                         <div class="mt-4 space-y-3">
                             <button id="preview-video" class="w-full btn-secondary py-3 rounded-lg transition-all" disabled>
@@ -316,6 +320,34 @@
     <!-- Status Messages -->
     <div id="status-messages" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
 
-    <script src="/js/admin-social-reels.js"></script>
+    <script>
+        // Cache busting for JavaScript
+        const timestamp = new Date().getTime();
+        const script = document.createElement('script');
+        script.src = `/js/admin-social-reels.js?v=${timestamp}`;
+        document.head.appendChild(script);
+    </script>
+    <!-- Debug console output -->
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.error);
+            alert('JavaScript Error: ' + e.error.message + '\n\nCheck console for details.');
+        });
+        
+        // Debug logging
+        console.log('🎬 Admin Social Reels page loaded');
+        console.log('📍 Current URL:', window.location.href);
+        console.log('🕐 Timestamp:', new Date().toISOString());
+        
+        // Test if class exists
+        setTimeout(() => {
+            if (typeof SocialReelsGenerator === 'undefined') {
+                console.error('❌ SocialReelsGenerator class not found!');
+                alert('SocialReelsGenerator class not loaded! Check JavaScript file.');
+            } else {
+                console.log('✅ SocialReelsGenerator class loaded successfully');
+            }
+        }, 1000);
+    </script>
 </body>
 </html> 

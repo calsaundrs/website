@@ -196,9 +196,10 @@ const branding = {
 
 3. **Generate Single Video**
    - Select an event from the filtered list
-   - Choose a template style
-   - Adjust duration and settings
-   - Click "Generate Preview"
+   - Choose a template style (Modern, Minimalist, Image Focus)
+   - Adjust duration (3-15 seconds) and settings
+   - Click "Generate Preview" for interactive video player
+   - **Play animated preview** to see simulated video effects
    - Download when satisfied
 
 4. **Batch Generation**
@@ -237,9 +238,14 @@ const branding = {
 - Brand-consistent design system
 - Remotion template architecture
 - Backend integration structure
+- **Interactive video preview system**
+- **Animated demo player with playback simulation**
+- **Flexible date range selection (9 presets + custom)**
+- **Fallback demo video generation**
+- **Enhanced UI with real-time feedback**
 
 ### 🔄 In Development
-- Full Remotion video rendering
+- Full Remotion video rendering (serverless optimization)
 - Cloudinary video uploads
 - ZIP download functionality
 - Advanced template customization
@@ -272,8 +278,19 @@ const branding = {
 1. **Template Quantity**: Currently 3 templates (expandable)
 2. **Video Length**: 15-second maximum
 3. **Customization**: Limited to predefined options
-4. **Real-time Preview**: Placeholder only (actual video generation required)
+4. **Remotion Bundling**: Full video rendering limited by serverless constraints
 5. **Mobile Interface**: Optimized for desktop admin use
+
+## 🎭 Current Preview System
+
+**Demo Mode Features:**
+- ✅ Interactive animated preview player
+- ✅ Real-time color transitions and effects
+- ✅ Simulated video playback with frame animations
+- ✅ Professional UI with video metadata display
+- ✅ Play button with engaging visual feedback
+- ✅ Template-specific preview customization
+- ✅ Immediate functionality without video files
 
 ## 📝 Contributing
 
