@@ -40,13 +40,13 @@ async function generateEventsListingPage() {
         const eventsHtmlPath = path.join(process.cwd(), 'events.html');
         let eventsHtml = await fs.readFile(eventsHtmlPath, 'utf8');
         
-        // Generate event cards HTML
+        // Generate event cards HTML matching design system
         const eventCardsHtml = events.map(event => {
             const imageUrl = event.imageUrl || event.image?.url || '';
             const categories = Array.isArray(event.category) ? event.category : (event.category ? [event.category] : []);
             
             const categoryTags = categories.map(cat => 
-                `<span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
+                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
             ).join(' ');
             
             // Format date safely
@@ -55,7 +55,7 @@ async function generateEventsListingPage() {
             try {
                 const eventDate = new Date(event.date || event.startDate);
                 if (!isNaN(eventDate.getTime())) {
-                    dateDisplay = eventDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                    dateDisplay = eventDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' });
                     timeDisplay = eventDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
                 }
             } catch (e) {
@@ -64,27 +64,28 @@ async function generateEventsListingPage() {
             }
             
             return `
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
+                <div class="venue-card rounded-xl overflow-hidden cursor-pointer" 
                      onclick="window.location.href='/event/${event.slug}'">
-                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">` : ''}
+                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">` : '<i class="fas fa-image text-4xl text-gray-600"></i>'}
                     </div>
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
-                                ${dateDisplay}
-                            </span>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">${dateDisplay}</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">${event.name}</h3>
-                        <p class="text-gray-400 text-sm mb-3 flex items-center">
-                            <i class="fas fa-clock text-xs mr-1"></i>
-                            ${timeDisplay}
-                            • 
-                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
-                            ${event.venueName || event.venue?.name || 'TBC'}
-                        </p>
-                        <div class="flex flex-wrap gap-1">
+                        <h3 class="text-xl font-bold text-white mb-2">${event.name}</h3>
+                        <p class="text-gray-400 text-sm mb-3">${event.venueName || event.venue?.name || 'TBC'}</p>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">${event.description || 'Click to view event details and get tickets.'}</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
                             ${categoryTags}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-share"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

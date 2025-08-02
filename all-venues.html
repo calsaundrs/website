@@ -130,10 +130,15 @@
         }
 
         .venue-card {
-            background: rgba(31, 41, 55, 0.8);
+            background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.2);
             border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
         }
 
         .btn-primary {
@@ -226,15 +231,7 @@
             aspect-ratio: 2 / 1;
         }
 
-        /* Enhanced venue card hover effects */
-        .venue-card {
-            transition: all 0.3s ease;
-        }
-        
-        .venue-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-        }
+        /* Enhanced venue card hover effects - matches design system */
 
         /* Ensure calendar button maintains its styling and doesn't inherit card hover effects */
         .venue-card .btn-secondary {
@@ -919,10 +916,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             } catch (error) {
                 console.error("Error initializing venues page:", error);
                 venueGrid.innerHTML = `
-                    <div class="col-span-full text-center venue-card p-12">
-                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-red-500 mb-4">
-                            <i class="fas fa-exclamation-triangle fa-2x"></i>
-                        </div>
+                    
                         <h3 class="text-xl font-semibold text-white mb-2">Error Loading Venues</h3>
                         <p class="text-gray-400">Please try refreshing the page.</p>
                     </div>

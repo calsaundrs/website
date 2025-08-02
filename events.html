@@ -158,10 +158,15 @@
             background-color: #374151;
         }
         .venue-card {
-            background: rgba(31, 41, 55, 0.8);
+            background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.2);
             border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
         }
 
         .btn-primary {

@@ -40,34 +40,39 @@ async function generateVenuesListingPage() {
         const venuesHtmlPath = path.join(process.cwd(), 'all-venues.html');
         let venuesHtml = await fs.readFile(venuesHtmlPath, 'utf8');
         
-        // Generate venue cards HTML
+        // Generate venue cards HTML matching design system
         const venueCardsHtml = venues.map(venue => {
             const imageUrl = venue.image?.url || '';
             const categories = Array.isArray(venue.category) ? venue.category : (venue.category ? [venue.category] : []);
             
             const categoryTags = categories.map(cat => 
-                `<span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
+                `<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
             ).join(' ');
             
             return `
-                <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
+                <div class="venue-card rounded-xl overflow-hidden cursor-pointer" 
                      onclick="window.location.href='/venue/${venue.slug}'">
-                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover">` : ''}
+                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover">` : '<i class="fas fa-building text-4xl text-gray-600"></i>'}
                     </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">${venue.name}</h3>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">${venue.name}</h3>
                         ${venue.address ? `
-                        <p class="text-gray-400 text-sm mb-3 flex items-center">
-                            <i class="fas fa-map-marker-alt text-xs mr-1"></i>
-                            ${venue.address}
+                        <p class="text-gray-400 text-sm mb-3">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${venue.address}
                         </p>
                         ` : ''}
-                        ${venue.description ? `
-                        <p class="text-gray-300 text-sm mb-3 line-clamp-2">${venue.description}</p>
-                        ` : ''}
-                        <div class="flex flex-wrap gap-1">
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">${venue.description || 'A fantastic LGBTQ+ venue in Birmingham.'}</p>
+                        <div class="flex flex-wrap gap-1 mb-4">
                             ${categoryTags}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Venue
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-calendar"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
