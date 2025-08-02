@@ -16,17 +16,17 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
-# Rule for individual EVENT pages (Static-first with dynamic fallback)
+# Rule for individual EVENT pages (Firestore-based)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details-dynamic?slug=:splat"
+  to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
   status = 200
   force = true
 
-# Rule for individual VENUE pages (Dynamic fallback like events)
+# Rule for individual VENUE pages (Static SSG-based)
 [[redirects]]
   from = "/venue/*"
-  to = "/.netlify/functions/get-venue-details-dynamic?slug=:splat"
+  to = "/venue/:splat.html"
   status = 200
   force = true
 

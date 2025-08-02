@@ -61,7 +61,7 @@ class FirestoreEventService {
     try {
       const eventsRef = this.db.collection('events');
       const snapshot = await eventsRef
-        .where('Slug', '==', slug)
+        .where('slug', '==', slug)
         .limit(10)
         .get();
 

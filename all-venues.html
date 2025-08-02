@@ -696,7 +696,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             try {
                 // Force cache refresh by adding timestamp
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/.netlify/functions/get-venue-list-firestore?t=${timestamp}`, {
+                const response = await fetch(`/.netlify/functions/get-venues-firestore?t=${timestamp}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -707,7 +707,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 if (!response.ok) throw new Error('Failed to fetch venues. Status: ' + response.status);
                 const data = await response.json();
                 
-                allVenues = data || []; 
+                allVenues = data.venues || []; 
                 
                 // Debug: Log the first venue to see image data
                 if (allVenues.length > 0) {

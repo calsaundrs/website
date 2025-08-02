@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Reels Generator | Admin Panel | Brum Out Loud</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script type="module" src="/js/auth-guard.js"></script>
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    
+    <!-- Remotion Player CDN -->
+    <script src="https://unpkg.com/@remotion/player@4.0.330/dist/bundle.js"></script>
+    
+    <style>
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .event-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .event-card:hover {
+            border-color: rgba(232, 58, 153, 0.5);
+            transform: translateY(-2px);
+        }
+        .event-card.selected {
+            border-color: #E83A99;
+            background: rgba(232, 58, 153, 0.1);
+        }
+        .video-preview {
+            aspect-ratio: 9/16;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
+            border: 2px solid rgba(232, 58, 153, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .template-option {
+            transition: all 0.3s ease;
+            border: 2px solid rgba(75, 85, 99, 0.3);
+        }
+        .template-option:hover {
+            border-color: rgba(232, 58, 153, 0.5);
+        }
+        .template-option.selected {
+            border-color: #E83A99;
+            background: rgba(232, 58, 153, 0.1);
+        }
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="card-bg border-b border-gray-700 sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="/admin-settings.html" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <h1 class="text-3xl font-bold heading-gradient">Social Reels Generator</h1>
+                    <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">EXPERIMENTAL</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400" id="week-range"></span>
+                    <button id="refresh-events" class="btn-secondary px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Overview Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card-bg rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-purple-400" id="total-events">-</div>
+                <div class="text-sm text-gray-400">Events This Week</div>
+            </div>
+            <div class="card-bg rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-pink-400" id="generated-videos">0</div>
+                <div class="text-sm text-gray-400">Videos Generated</div>
+            </div>
+            <div class="card-bg rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-blue-400" id="download-count">0</div>
+                <div class="text-sm text-gray-400">Downloads</div>
+            </div>
+            <div class="card-bg rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold text-green-400">MP4</div>
+                <div class="text-sm text-gray-400">Export Format</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Events List -->
+            <div class="lg:col-span-1">
+                <div class="card-bg rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">This Week's Events</h2>
+                        <div class="text-sm text-gray-400">
+                            <span id="events-count">0</span> events
+                        </div>
+                    </div>
+                    
+                    <div id="events-loading" class="text-center py-8">
+                        <i class="fas fa-spinner loading-spinner text-purple-400 text-3xl mb-4"></i>
+                        <p class="text-gray-400">Loading events...</p>
+                    </div>
+                    
+                    <div id="events-list" class="space-y-4 max-h-96 overflow-y-auto"></div>
+                    
+                    <div id="no-events" class="text-center py-8 hidden">
+                        <i class="fas fa-calendar-times text-gray-500 text-3xl mb-4"></i>
+                        <p class="text-gray-400">No events found for this week</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Video Generator -->
+            <div class="lg:col-span-2">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Video Preview -->
+                    <div class="card-bg rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4">Video Preview</h3>
+                        <div class="video-preview flex items-center justify-center">
+                            <div id="video-placeholder" class="text-center">
+                                <i class="fas fa-video text-gray-500 text-4xl mb-4"></i>
+                                <p class="text-gray-400">Select an event to preview</p>
+                            </div>
+                            <div id="video-player" class="w-full h-full hidden"></div>
+                        </div>
+                        
+                        <div class="mt-4 space-y-3">
+                            <button id="preview-video" class="w-full btn-secondary py-3 rounded-lg transition-all" disabled>
+                                <i class="fas fa-play mr-2"></i>Generate Preview
+                            </button>
+                            <button id="download-video" class="w-full btn-primary py-3 rounded-lg transition-all" disabled>
+                                <i class="fas fa-download mr-2"></i>Download Video
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Template Options -->
+                    <div class="card-bg rounded-xl p-6">
+                        <h3 class="text-lg font-bold mb-4">Video Templates</h3>
+                        <div class="space-y-4" id="template-options">
+                            <div class="template-option p-4 rounded-lg cursor-pointer" data-template="modern">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-16 bg-gradient-to-b from-pink-500 to-purple-600 rounded"></div>
+                                    <div>
+                                        <h4 class="font-semibold">Modern Gradient</h4>
+                                        <p class="text-sm text-gray-400">Bold gradient background with animated text</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="template-option p-4 rounded-lg cursor-pointer" data-template="minimalist">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-16 bg-gray-800 border border-pink-500 rounded"></div>
+                                    <div>
+                                        <h4 class="font-semibold">Minimalist</h4>
+                                        <p class="text-sm text-gray-400">Clean design with focus on text and date</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="template-option p-4 rounded-lg cursor-pointer" data-template="image-focus">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-16 bg-gradient-to-t from-black via-transparent to-black rounded relative">
+                                        <div class="absolute inset-2 bg-purple-400 rounded-sm opacity-60"></div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Image Focus</h4>
+                                        <p class="text-sm text-gray-400">Event image with overlay branding</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Customization -->
+                        <div class="mt-6 pt-6 border-t border-gray-700">
+                            <h4 class="font-semibold mb-3">Customization</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-1">Duration (seconds)</label>
+                                    <input type="range" id="video-duration" min="3" max="15" value="5" class="w-full">
+                                    <div class="text-center text-sm text-gray-400 mt-1">
+                                        <span id="duration-value">5</span>s
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="include-logo" checked class="rounded">
+                                    <label for="include-logo" class="text-sm">Include Brum Outloud logo</label>
+                                </div>
+                                
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="include-hashtags" checked class="rounded">
+                                    <label for="include-hashtags" class="text-sm">Include hashtags</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Batch Generation -->
+                <div class="card-bg rounded-xl p-6 mt-8">
+                    <h3 class="text-lg font-bold mb-4">Batch Generation</h3>
+                    <p class="text-gray-400 mb-4">Generate videos for multiple events at once</p>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <button id="select-all-events" class="btn-secondary px-4 py-2 rounded-lg transition-all">
+                            <i class="fas fa-check-double mr-2"></i>Select All
+                        </button>
+                        <button id="generate-batch" class="btn-primary px-4 py-2 rounded-lg transition-all" disabled>
+                            <i class="fas fa-play-circle mr-2"></i>Generate All Selected
+                        </button>
+                        <button id="download-batch" class="btn-secondary px-4 py-2 rounded-lg transition-all" disabled>
+                            <i class="fas fa-file-archive mr-2"></i>Download ZIP
+                        </button>
+                    </div>
+                    
+                    <div id="batch-progress" class="mt-4 hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-400">Generating videos...</span>
+                            <span class="text-sm text-gray-400" id="progress-text">0/0</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-purple-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="status-messages" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+
+    <script src="/js/admin-social-reels.js"></script>
+</body>
+</html> 
