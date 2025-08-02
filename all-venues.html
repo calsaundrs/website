@@ -130,15 +130,17 @@
         }
 
         .venue-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.2);
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.4);
             border-radius: 1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         .venue-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
+            transform: translateY(-4px);
+            border-color: rgba(232, 58, 153, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 58, 153, 0.2);
         }
 
         .btn-primary {
@@ -158,6 +160,22 @@
         }
         .btn-secondary:hover {
             background: rgba(75, 85, 99, 0.5);
+        }
+
+        /* Enhanced card content styling */
+        .venue-card h3 {
+            color: #FFFFFF;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .venue-card p {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Enhanced category tags */
+        .venue-card .inline-block {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .filter-button {
