@@ -79,11 +79,11 @@ exports.handler = async function (event, context) {
         
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
         
-        // Trigger SSG rebuild if an event was approved
+        // Trigger SSG rebuild if an event or venue was approved
         let ssgRebuildResult = null;
-        if (itemType === 'event' && newStatus.toLowerCase() === 'approved') {
+        if (newStatus.toLowerCase() === 'approved') {
             try {
-                console.log('Event approved - triggering build hook...');
+                console.log(`${itemType} approved - triggering build hook...`);
                 
                 // Check if build hook URL is configured
                 const buildHookUrl = process.env.NETLIFY_BUILD_HOOK_URL;

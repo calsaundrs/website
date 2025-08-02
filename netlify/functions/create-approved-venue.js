@@ -69,9 +69,56 @@ exports.handler = async function (event, context) {
 
         await venuesTable.create([{ fields: record }]);
 
+        // Trigger SSG rebuild for new venue
+        let ssgRebuildResult = null;
+        try {
+            console.log('New venue created - triggering build hook...');
+            
+            // Check if build hook URL is configured
+            const buildHookUrl = process.env.NETLIFY_BUILD_HOOK_URL;
+            
+            if (buildHookUrl) {
+                // Trigger the build hook
+                const response = await fetch(buildHookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const buildId = await response.text();
+                    ssgRebuildResult = {
+                        success: true,
+                        message: 'Build triggered successfully',
+                        buildId: buildId
+                    };
+                    console.log('Build hook triggered successfully:', buildId);
+                } else {
+                    throw new Error(`Build hook failed: ${response.status} ${response.statusText}`);
+                }
+            } else {
+                console.log('NETLIFY_BUILD_HOOK_URL not configured - skipping build trigger');
+                ssgRebuildResult = {
+                    success: false,
+                    message: 'Build hook not configured'
+                };
+            }
+        } catch (error) {
+            console.error('Error triggering build hook:', error);
+            ssgRebuildResult = {
+                success: false,
+                message: error.message
+            };
+        }
+
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true, message: `Venue "${submission.name}" created successfully.` }),
+            body: JSON.stringify({ 
+                success: true, 
+                message: `Venue "${submission.name}" created successfully.`,
+                ssgRebuild: ssgRebuildResult
+            }),
         };
 
     } catch (error) {
