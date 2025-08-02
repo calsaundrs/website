@@ -8,7 +8,7 @@ BrumOutLoud is a comprehensive LGBTQ+ events platform for Birmingham. This docum
 
 **Technology Stack:**
 - **Backend:** Netlify Functions (Node.js serverless)
-- **Database:** Airtable
+- **Database:** Firestore (Firebase)
 - **Authentication:** Firebase Authentication
 - **Image Storage:** Cloudinary
 - **AI Integration:** Google Gemini API
@@ -31,9 +31,9 @@ const token = await user.getIdToken();
 
 ## Public Events API
 
-### GET /get-events
+### GET /get-events-firestore-simple
 
-Retrieves events based on specified parameters.
+Retrieves events from Firestore based on specified parameters.
 
 **Parameters:**
 - `view` (string, optional): 
@@ -66,19 +66,19 @@ Retrieves events based on specified parameters.
 **Example Usage:**
 ```javascript
 // Get public events
-fetch('/.netlify/functions/get-events')
+fetch('/.netlify/functions/get-events-firestore-simple')
   .then(response => response.json())
   .then(data => console.log(data.events));
 
 // Get admin view
-fetch('/.netlify/functions/get-events?view=admin')
+fetch('/.netlify/functions/get-events-firestore?view=admin')
   .then(response => response.json())
   .then(data => console.log(data.events));
 ```
 
-### GET /get-event-details
+### GET /get-event-details-firestore
 
-Retrieves detailed information for a specific event by slug.
+Retrieves detailed information for a specific event by slug from Firestore.
 
 **Parameters:**
 - `slug` (string, required): Event slug identifier
@@ -427,7 +427,7 @@ All APIs return consistent error responses:
 - `MISSING_PARAMETERS`: Required parameters missing
 - `AUTHENTICATION_REQUIRED`: Firebase auth token required
 - `INVALID_TOKEN`: Invalid or expired auth token
-- `AIRTABLE_ERROR`: Database operation failed
+- `FIRESTORE_ERROR`: Database operation failed
 - `CLOUDINARY_ERROR`: Image upload failed
 - `AI_ERROR`: AI processing failed
 
@@ -501,15 +501,15 @@ async function getUpcomingEvents() {
 
 ## Webhooks
 
-### Airtable Webhooks
+### Firestore Real-time Updates
 
-The platform supports webhooks for real-time updates:
+The platform uses Firestore real-time listeners for live updates:
 
-- **Event Status Changes**: Triggered when event status changes
-- **Venue Approvals**: Triggered when venues are approved/rejected
-- **New Submissions**: Triggered on new event/venue submissions
+- **Event Status Changes**: Real-time updates when event status changes
+- **Venue Approvals**: Live notifications for venue approvals/rejections
+- **New Submissions**: Instant updates for new event/venue submissions
 
-Configure webhooks in your Airtable base to call appropriate endpoints.
+Configure Firestore rules and use real-time listeners in your frontend code.
 
 ---
 

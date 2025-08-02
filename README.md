@@ -1,8 +1,9 @@
 # BrumOutLoud - Birmingham's LGBTQ+ Events Platform
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-badge-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 [![License](https://img.shields.io/badge/license-Private-red.svg)]()
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
+[![Firebase](https://img.shields.io/badge/database-Firestore-orange.svg)]()
+[![Netlify](https://img.shields.io/badge/hosting-Netlify-00AD9F.svg)]()
 
 > The definitive, bold, and unapologetic guide to Birmingham's LGBTQ+ scene
 
@@ -78,6 +79,7 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - **[Frontend Documentation](FRONTEND_DOCUMENTATION.md)** - Frontend components and usage
 - **[Functions Documentation](FUNCTIONS_DOCUMENTATION.md)** - Serverless functions reference
 - **[Developer Guide](DEVELOPER_GUIDE.md)** - Setup, development, and deployment guide
+- **[SSG & FOUC Guide](SSG_AND_FOUC_GUIDE.md)** - Static site generation and performance optimization
 
 ### User Guides
 - **[User Journey Testing Report](USER_JOURNEY_TESTING_REPORT.md)** - Comprehensive testing results
@@ -209,7 +211,7 @@ const result = await fetch('/.netlify/functions/event-submission-firestore-only'
 #### Public Pages
 - **Homepage** (`index.html`) - Landing page with featured events
 - **Events** (`events.html`) - Searchable event listings
-- **Venues** (`venues.html`) - Venue directory
+- **Venues** (`all-venues.html`) - Venue directory
 - **Community** (`community.html`) - Community information
 - **Submission Forms** (`promoter-submit.html`, `get-listed.html`)
 

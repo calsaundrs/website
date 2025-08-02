@@ -213,7 +213,7 @@ exports.handler = async function (event, context) {
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="mx-auto px-4 py-8 max-w-4xl">
 
         <!-- Venue Details -->
         <div class="venue-card rounded-xl overflow-hidden">

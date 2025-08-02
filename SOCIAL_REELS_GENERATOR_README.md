@@ -18,7 +18,7 @@ The Social Reels Generator is an experimental admin panel feature that automatic
 1. **Admin Panel Interface** (`admin-social-reels.html`)
 2. **JavaScript Controller** (`js/admin-social-reels.js`)
 3. **Backend Functions**:
-   - `get-upcoming-events-week.js` - Fetches events for current week
+   - `get-events-for-reels.js` - Fetches events for flexible date ranges
    - `generate-social-reel.js` - Handles video generation with Remotion
 4. **Remotion Templates** (`remotion-templates/`):
    - Modern Gradient Template
@@ -72,7 +72,7 @@ Weekly Events → Template Selection → Remotion Rendering → Video Export
 ## 🚀 Features
 
 ### Admin Interface
-- **Weekly Event Overview**: Displays upcoming events
+- **Flexible Date Ranges**: Choose from presets or custom date ranges
 - **Template Selection**: Choose from 3 video styles
 - **Real-time Preview**: See video before generating
 - **Customization Options**:
@@ -81,6 +81,17 @@ Weekly Events → Template Selection → Remotion Rendering → Video Export
   - Hashtag display toggle
 - **Batch Operations**: Generate multiple videos at once
 - **Download Management**: Individual or ZIP downloads
+
+### Date Range Options
+- **Today**: Events happening today
+- **Tomorrow**: Events happening tomorrow  
+- **This Week**: Next 7 days
+- **Next Week**: Days 8-14 ahead
+- **This Month**: All events in current month
+- **Next Month**: All events in next month
+- **Next 30 Days**: Rolling 30-day window
+- **Next 60 Days**: Rolling 60-day window
+- **Custom Range**: Pick any start and end date
 
 ### Event Data Integration
 - Pulls from existing Firestore database
@@ -92,9 +103,11 @@ Weekly Events → Template Selection → Remotion Rendering → Video Export
 
 ### Backend Functions
 
-**get-upcoming-events-week.js**
+**get-events-for-reels.js**
 ```javascript
-// Fetches approved events for next 7 days
+// Fetches approved events for flexible date ranges
+// Supports presets: today, this-week, this-month, next-30-days, etc.
+// Handles custom date range queries
 // Processes event data for video templates
 // Optimizes images via Cloudinary
 // Generates hashtags and formatted dates
@@ -174,20 +187,30 @@ const branding = {
 
 1. **Access the Tool**
    - Navigate to Admin Panel → Social Reels Generator
-   - View automatically loaded upcoming events
+   - Choose date range from dropdown (defaults to "This Week")
 
-2. **Generate Single Video**
-   - Select an event from the list
+2. **Select Date Range**
+   - **Quick Presets**: Choose from Today, This Week, This Month, etc.
+   - **Custom Range**: Select "Custom Range" and pick specific dates
+   - **Smart Suggestions**: If no events found, click "Try Different Date Range"
+
+3. **Generate Single Video**
+   - Select an event from the filtered list
    - Choose a template style
    - Adjust duration and settings
    - Click "Generate Preview"
    - Download when satisfied
 
-3. **Batch Generation**
-   - Check multiple events
+4. **Batch Generation**
+   - Check multiple events across your selected date range
    - Click "Generate All Selected"
    - Wait for batch processing
    - Download as ZIP file
+
+5. **Plan Ahead**
+   - Use "Next Month" or "Next 60 Days" for advance planning
+   - Generate content for upcoming campaigns
+   - Schedule social media posts in advance
 
 ### For Developers:
 

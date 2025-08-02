@@ -94,7 +94,20 @@
                     <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">EXPERIMENTAL</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-400" id="week-range"></span>
+                    <div class="flex items-center space-x-3">
+                        <select id="date-preset" class="bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg text-sm">
+                            <option value="today">Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="this-week" selected>This Week</option>
+                            <option value="next-week">Next Week</option>
+                            <option value="this-month">This Month</option>
+                            <option value="next-month">Next Month</option>
+                            <option value="next-30-days">Next 30 Days</option>
+                            <option value="next-60-days">Next 60 Days</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <span class="text-sm text-gray-400" id="date-range-display"></span>
+                    </div>
                     <button id="refresh-events" class="btn-secondary px-4 py-2 rounded-lg transition-all">
                         <i class="fas fa-sync-alt mr-2"></i>Refresh
                     </button>
@@ -104,6 +117,26 @@
     </header>
 
     <div class="container mx-auto px-6 py-8">
+        <!-- Custom Date Range Controls (Hidden by default) -->
+        <div id="custom-date-range" class="card-bg rounded-xl p-6 mb-6 hidden">
+            <h3 class="text-lg font-bold mb-4">Custom Date Range</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label for="start-date" class="block text-sm text-gray-400 mb-2">Start Date</label>
+                    <input type="date" id="start-date" class="w-full bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg">
+                </div>
+                <div>
+                    <label for="end-date" class="block text-sm text-gray-400 mb-2">End Date</label>
+                    <input type="date" id="end-date" class="w-full bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg">
+                </div>
+                <div>
+                    <button id="apply-custom-range" class="w-full btn-primary py-2 rounded-lg transition-all">
+                        <i class="fas fa-calendar-check mr-2"></i>Apply Range
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Overview Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="card-bg rounded-xl p-6 text-center">
@@ -129,7 +162,7 @@
             <div class="lg:col-span-1">
                 <div class="card-bg rounded-xl p-6">
                     <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold">This Week's Events</h2>
+                        <h2 class="text-xl font-bold" id="events-section-title">This Week's Events</h2>
                         <div class="text-sm text-gray-400">
                             <span id="events-count">0</span> events
                         </div>
@@ -144,7 +177,20 @@
                     
                     <div id="no-events" class="text-center py-8 hidden">
                         <i class="fas fa-calendar-times text-gray-500 text-3xl mb-4"></i>
-                        <p class="text-gray-400">No events found for this week</p>
+                        <p class="text-gray-400" id="no-events-message">No events found for the selected date range</p>
+                        <div class="mt-4 space-y-3">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <button id="try-different-range" class="btn-secondary px-4 py-2 rounded-lg">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Try Different Date Range
+                                </button>
+                                <button id="create-examples" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all">
+                                    <i class="fas fa-plus-circle mr-2"></i>Create Example Events
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500">
+                                No events in database? Create some example events to test the reels generator.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

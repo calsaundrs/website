@@ -6,6 +6,11 @@ class SocialReelsGenerator {
         this.generatedVideos = 0;
         this.downloadCount = 0;
         this.selectedEvents = new Set();
+        this.currentDateRange = {
+            preset: 'this-week',
+            customStart: null,
+            customEnd: null
+        };
         this.videoSettings = {
             duration: 5,
             includeLogo: true,
@@ -25,14 +30,41 @@ class SocialReelsGenerator {
         this.loadEvents();
         
         // Initialize UI
-        this.updateWeekRange();
         this.selectTemplate('modern');
+        this.setupTryDifferentRangeButton();
+        this.setupCreateExamplesButton();
     }
 
     setupEventListeners() {
         // Refresh events
         document.getElementById('refresh-events').addEventListener('click', () => {
-            this.loadEvents();
+            this.loadEvents(this.currentDateRange.preset, this.currentDateRange.customStart, this.currentDateRange.customEnd);
+        });
+
+        // Date range controls
+        document.getElementById('date-preset').addEventListener('change', (e) => {
+            const preset = e.target.value;
+            if (preset === 'custom') {
+                document.getElementById('custom-date-range').classList.remove('hidden');
+            } else {
+                document.getElementById('custom-date-range').classList.add('hidden');
+                this.currentDateRange.preset = preset;
+                this.currentDateRange.customStart = null;
+                this.currentDateRange.customEnd = null;
+                this.loadEvents(preset);
+            }
+        });
+
+        document.getElementById('apply-custom-range').addEventListener('click', () => {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            
+            if (startDate && endDate) {
+                this.currentDateRange.preset = 'custom';
+                this.currentDateRange.customStart = startDate;
+                this.currentDateRange.customEnd = endDate;
+                this.loadEvents('custom', startDate, endDate);
+            }
         });
 
         // Template selection
@@ -83,21 +115,38 @@ class SocialReelsGenerator {
         });
     }
 
-    async loadEvents() {
-        console.log('📅 Loading events for the week...');
+    async loadEvents(preset = 'this-week', customStart = null, customEnd = null) {
+        console.log('📅 Loading events for date range:', preset, customStart, customEnd);
         
         this.showLoading(true);
         
         try {
-            const response = await fetch('/.netlify/functions/get-upcoming-events-week');
+            // Build query parameters
+            let url = '/.netlify/functions/get-events-for-reels';
+            const params = new URLSearchParams();
+            
+            if (customStart && customEnd) {
+                params.append('startDate', customStart);
+                params.append('endDate', customEnd);
+            } else {
+                params.append('preset', preset);
+            }
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            const response = await fetch(url);
             const data = await response.json();
             
             if (data.success) {
                 this.events = data.events;
                 this.renderEvents();
                 this.updateStats();
+                this.updateDateRangeDisplay(data);
                 
-                this.showStatus('success', `Loaded ${this.events.length} events for this week`);
+                const rangeDesc = data.dateRange.isCustomRange ? 'custom range' : data.dateRange.preset.replace('-', ' ');
+                this.showStatus('success', `Loaded ${this.events.length} events for ${rangeDesc}`);
                 console.log(`✅ Loaded ${this.events.length} events`, this.events);
             } else {
                 throw new Error(data.error || 'Failed to load events');
@@ -473,20 +522,36 @@ class SocialReelsGenerator {
         document.getElementById('events-count').textContent = this.events.length;
     }
 
-    updateWeekRange() {
-        const now = new Date();
-        const endOfWeek = new Date(now);
-        endOfWeek.setDate(endOfWeek.getDate() + 7);
-        
+    updateDateRangeDisplay(data) {
         const formatDate = (date) => {
-            return date.toLocaleDateString('en-GB', { 
+            return new Date(date).toLocaleDateString('en-GB', { 
                 day: 'numeric', 
-                month: 'short' 
+                month: 'short',
+                year: 'numeric'
             });
         };
         
-        document.getElementById('week-range').textContent = 
-            `${formatDate(now)} - ${formatDate(endOfWeek)}`;
+        const startFormatted = formatDate(data.dateRange.start);
+        const endFormatted = formatDate(data.dateRange.end);
+        
+        document.getElementById('date-range-display').textContent = 
+            `${startFormatted} - ${endFormatted}`;
+            
+        // Update section title based on preset
+        const titles = {
+            'today': 'Today\'s Events',
+            'tomorrow': 'Tomorrow\'s Events', 
+            'this-week': 'This Week\'s Events',
+            'next-week': 'Next Week\'s Events',
+            'this-month': 'This Month\'s Events',
+            'next-month': 'Next Month\'s Events',
+            'next-30-days': 'Next 30 Days Events',
+            'next-60-days': 'Next 60 Days Events',
+            'custom': 'Custom Range Events'
+        };
+        
+        const title = titles[data.dateRange.preset] || 'Selected Events';
+        document.getElementById('events-section-title').textContent = title;
     }
 
     showStatus(type, message) {
@@ -535,6 +600,69 @@ class SocialReelsGenerator {
                     statusEl.parentNode.removeChild(statusEl);
                 }
             }, 300);
+        });
+    }
+
+    setupTryDifferentRangeButton() {
+        document.getElementById('try-different-range').addEventListener('click', () => {
+            // Suggest a broader range
+            const suggestions = ['this-month', 'next-month', 'next-30-days', 'next-60-days'];
+            const currentPreset = this.currentDateRange.preset;
+            
+            // Find next suggestion that's broader than current
+            let nextPreset = 'next-30-days';
+            if (currentPreset === 'today' || currentPreset === 'tomorrow') {
+                nextPreset = 'this-week';
+            } else if (currentPreset === 'this-week') {
+                nextPreset = 'this-month';
+            } else if (currentPreset === 'this-month') {
+                nextPreset = 'next-month';
+            }
+            
+            document.getElementById('date-preset').value = nextPreset;
+            this.currentDateRange.preset = nextPreset;
+            this.currentDateRange.customStart = null;
+            this.currentDateRange.customEnd = null;
+            this.loadEvents(nextPreset);
+        });
+    }
+
+    setupCreateExamplesButton() {
+        document.getElementById('create-examples').addEventListener('click', async () => {
+            const button = document.getElementById('create-examples');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.innerHTML = '<i class="fas fa-spinner loading-spinner mr-2"></i>Creating...';
+                button.disabled = true;
+                
+                const response = await fetch('/.netlify/functions/create-example-events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.showStatus('success', `Created ${data.events.length} example events!`);
+                    
+                    // Reload events with a suitable date range
+                    this.currentDateRange.preset = 'next-30-days';
+                    document.getElementById('date-preset').value = 'next-30-days';
+                    this.loadEvents('next-30-days');
+                } else {
+                    throw new Error(data.error || 'Failed to create example events');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error creating example events:', error);
+                this.showStatus('error', 'Failed to create example events');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
         });
     }
 }

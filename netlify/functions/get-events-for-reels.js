@@ -14,28 +14,40 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 exports.handler = async function (event, context) {
-    console.log('🎬 Getting upcoming events for current week for reels generator');
+    console.log('🎬 Getting upcoming events for reels generator with flexible date range');
     
     try {
-        // Calculate date range for current week (next 7 days)
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setHours(0, 0, 0, 0);
+        // Get query parameters for date range
+        const queryParams = event.queryStringParameters || {};
+        const preset = queryParams.preset || 'this-week';
+        const customStart = queryParams.startDate;
+        const customEnd = queryParams.endDate;
         
-        const endOfWeek = new Date(now);
-        endOfWeek.setDate(endOfWeek.getDate() + 7);
-        endOfWeek.setHours(23, 59, 59, 999);
+        let startDate, endDate;
+        
+        // Handle date range presets or custom dates
+        if (customStart && customEnd) {
+            console.log('📅 Using custom date range');
+            startDate = new Date(customStart);
+            endDate = new Date(customEnd);
+            endDate.setHours(23, 59, 59, 999);
+        } else {
+            console.log(`📅 Using preset: ${preset}`);
+            const dateRange = getDateRangeFromPreset(preset);
+            startDate = dateRange.start;
+            endDate = dateRange.end;
+        }
 
-        console.log(`📅 Fetching events from ${startOfWeek.toISOString()} to ${endOfWeek.toISOString()}`);
+        console.log(`📅 Fetching events from ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
-        // Query Firestore for approved events in the next week
+        // Query Firestore for approved events in the specified date range
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
-            .where('date', '>=', startOfWeek)
-            .where('date', '<=', endOfWeek)
+            .where('date', '>=', startDate)
+            .where('date', '<=', endDate)
             .orderBy('date', 'asc')
-            .limit(20) // Limit to prevent too many events
+            .limit(50) // Increased limit for longer date ranges
             .get();
 
         console.log(`📊 Found ${snapshot.size} events for the week`);
@@ -89,8 +101,10 @@ exports.handler = async function (event, context) {
                 success: true,
                 events: events,
                 dateRange: {
-                    start: startOfWeek.toISOString(),
-                    end: endOfWeek.toISOString()
+                    start: startDate.toISOString(),
+                    end: endDate.toISOString(),
+                    preset: preset,
+                    isCustomRange: !!(customStart && customEnd)
                 },
                 totalEvents: events.length,
                 generatedAt: new Date().toISOString()
@@ -157,6 +171,84 @@ function generateHashtags(categories, venueName) {
     }
     
     return hashtags.slice(0, 8); // Limit to 8 hashtags
+}
+
+// Helper function to get date range from preset
+function getDateRangeFromPreset(preset) {
+    const now = new Date();
+    let start, end;
+    
+    switch (preset) {
+        case 'today':
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(now);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'tomorrow':
+            start = new Date(now);
+            start.setDate(start.getDate() + 1);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(start);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'this-week':
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(now);
+            end.setDate(end.getDate() + 7);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'next-week':
+            start = new Date(now);
+            start.setDate(start.getDate() + 7);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(start);
+            end.setDate(end.getDate() + 7);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'this-month':
+            start = new Date(now.getFullYear(), now.getMonth(), 1);
+            end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'next-month':
+            start = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'next-30-days':
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(now);
+            end.setDate(end.getDate() + 30);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'next-60-days':
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(now);
+            end.setDate(end.getDate() + 60);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        default:
+            // Default to this week
+            start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            end = new Date(now);
+            end.setDate(end.getDate() + 7);
+            end.setHours(23, 59, 59, 999);
+    }
+    
+    return { start, end };
 }
 
 // Helper function to format date for video display

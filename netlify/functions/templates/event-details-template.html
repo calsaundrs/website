@@ -307,25 +307,14 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-8 py-8">
-        <!-- Breadcrumb -->
-        <nav class="mb-8">
-            <ol class="flex items-center space-x-2 text-sm text-gray-400">
-                <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li><a href="/events" class="hover:text-white transition-colors">Events</a></li>
-                <li><span class="mx-2">/</span></li>
-                <li class="text-white">{{event.name}}</li>
-            </ol>
-        </nav>
-
+    <main class="mx-auto px-8 py-8 max-w-4xl">
         <!-- Event Details -->
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Main Event Info -->
             <div class="lg:col-span-2">
                 <div class="event-card rounded-xl overflow-hidden">
                     <!-- Hero Image -->
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                    <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
                         <img src="{{event.imageUrl}}" 
                              alt="{{event.name}}" 
                              class="w-full h-full object-cover">
