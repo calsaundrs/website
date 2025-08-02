@@ -6,9 +6,18 @@
     "build:venues": "node build-venues-ssg.js",
     "build:venues:simple": "node build-venues-simple.js",
     "build:events": "node build-events-ssg.js",
-    "build": "npm run build:venues:simple && npm run build:events"
+    "build:events-listing": "node build-events-listing-ssg.js",
+    "build:venues-listing": "node build-venues-listing-ssg.js",
+    "build:remotion": "cd remotion-templates && npm run build",
+    "dev:remotion": "cd remotion-templates && npm run dev",
+    "render:reel": "cd remotion-templates && npm run render",
+    "build": "npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing"
   },
   "dependencies": {
+    "@remotion/bundler": "^4.0.330",
+    "@remotion/cli": "^4.0.330",
+    "@remotion/player": "^4.0.330",
+    "@remotion/renderer": "^4.0.330",
     "airtable": "^0.12.2",
     "cheerio": "^1.0.0-rc.12",
     "cloudinary": "^1.41.3",
@@ -19,12 +28,17 @@
     "lambda-multipart-parser": "^1.0.1",
     "node-fetch": "^2.7.0",
     "parse-multipart": "^1.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sharp": "^0.33.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "netlify-cli": "^22.1.6",
-    "tailwindcss": "^3.4.4"
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.0.0"
   },
   "engines": {
     "node": "18"
