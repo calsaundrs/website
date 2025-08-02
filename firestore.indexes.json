@@ -97,6 +97,16 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "google_places_cache",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cachedAt",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

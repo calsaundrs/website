@@ -912,9 +912,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             applyFilters();
         }
 
-        // --- Filtering Logic for SSG ---
+        // --- Hybrid Filtering Logic (SSG + Dynamic) ---
         function applyFilters() {
-            console.log('Applying filters to static events...');
+            console.log('Applying filters...');
             console.log('Active filters:', {
                 date: activeDateFilter,
                 category: activeCategoryFilter,
@@ -922,11 +922,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 sfw: isSfwMode
             });
             
-            if (allStaticEvents.length === 0) {
-                console.log('No static events found, skipping filter');
-                return;
+            if (allStaticEvents.length > 0) {
+                // SSG Mode: Filter static events by showing/hiding
+                console.log('Using SSG filtering mode');
+                applyStaticFilters();
+            } else if (eventStore) {
+                // Dynamic Mode: Use EventStore filtering
+                console.log('Using dynamic filtering mode');
+                const filters = {
+                    dateRange: activeDateFilter,
+                    categories: activeCategoryFilter !== 'all' ? [activeCategoryFilter] : [],
+                    venues: activeVenueFilter !== 'all' ? [activeVenueFilter] : [],
+                    sfwMode: isSfwMode,
+                    limit: 50
+                };
+                eventStore.updateFilters(filters);
+            } else {
+                console.log('No filtering available - no static events or EventStore');
             }
-            
+        }
+
+        function applyStaticFilters() {
             // Filter the static events
             let filteredEvents = allStaticEvents.filter(event => {
                 // Category filter
@@ -1473,47 +1489,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             return Array.from(venues).sort();
         }
 
-        // --- Initial Data Fetch & Processing ---
+        // --- Hybrid Initialization (SSG + Dynamic Fallback) ---
         async function initializePage() {
             try {
-                console.log('Initializing SSG events page...');
+                console.log('Initializing events page...');
                 
-                // Parse events from static HTML content
+                // First try to parse static events from SSG content
                 parseStaticEvents();
                 
                 setSfwMode(true);
-
                 featuredEvents = []; 
-
                 createSlideshowElements(); 
-
-                // Set up event listeners
                 setupEventListeners();
                 
-                // Render filter options from static data
-                renderCategoryOptions();
-                renderVenueOptions();
-                
-                // Apply initial filters
-                applyFilters();
+                if (allStaticEvents.length > 0) {
+                    console.log('✅ Using SSG static events');
+                    // Render filter options from static data
+                    renderCategoryOptions();
+                    renderVenueOptions();
+                    
+                    // Apply initial filters
+                    applyFilters();
+                    
+                    // Hide loading state
+                    const loadingElement = eventGrid.querySelector('.loader');
+                    if (loadingElement) {
+                        loadingElement.parentElement.style.display = 'none';
+                    }
+                } else {
+                    console.log('⚠️ No static events found, falling back to dynamic loading...');
+                    await initializeDynamicMode();
+                }
                 
                 // Check for venue parameter in URL and apply filter
                 const urlParams = new URLSearchParams(window.location.search);
                 const venueParam = urlParams.get('venue');
                 if (venueParam) {
                     console.log('Venue parameter found:', venueParam);
-                    // Set the venue filter and apply
                     activeVenueFilter = venueParam;
-                    // Find the venue button and update UI
-                    const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
-                    if (venueButton) {
-                        console.log('Found venue button, updating filter...');
-                        venueButton.classList.add('active');
-                        venueBtn.querySelector('span').textContent = venueParam;
-                        applyFilters();
-                    } else {
-                        console.log('Venue button not found for:', venueParam);
+                    
+                    if (allStaticEvents.length > 0) {
+                        // SSG mode: update UI and apply filters
+                        const venueButton = document.querySelector(`[data-filter-value="${venueParam}"]`);
+                        if (venueButton) {
+                            venueButton.classList.add('active');
+                            venueBtn.querySelector('span').textContent = venueParam;
+                            applyFilters();
+                        }
                     }
+                    // Note: In dynamic mode, venue parameter will be handled by EventStore
                 }
                 
             } catch (error) {
@@ -1538,6 +1562,161 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
                 }
             }
+        }
+
+        // --- Dynamic Fallback Mode ---
+        async function initializeDynamicMode() {
+            console.log('Initializing dynamic mode...');
+            
+            // Check if EventStore is available
+            if (typeof EventStore === 'undefined') {
+                console.error('EventStore not available for dynamic fallback');
+                eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Unable to load events. EventStore not available.</p>';
+                return;
+            }
+            
+            try {
+                // Initialize event store
+                eventStore = new EventStore();
+                console.log('EventStore initialized:', eventStore);
+                
+                // Subscribe to store changes - but modify filters to work with both modes
+                eventStore.subscribe((state) => {
+                    console.log('Event store state updated:', state);
+                    renderDynamicEvents(state.events);
+                    updateLoadingState(state.loading);
+                    updateErrorState(state.error);
+                    
+                    // Re-render filter options when events change
+                    if (state.events && state.events.length > 0) {
+                        renderCategoryOptionsFromDynamic(state.events);
+                    }
+                });
+
+                // Load venues for filtering
+                console.log('Loading venues for filtering...');
+                const venues = await eventStore.api.getVenues();
+                console.log('Venues loaded:', venues);
+                
+                // Load initial events
+                console.log('Loading initial events...');
+                await eventStore.loadEvents(eventStore.state.filters);
+                
+                // Render filter options
+                renderVenueOptionsFromDynamic(venues);
+                
+            } catch (error) {
+                console.error('Error in dynamic mode:', error);
+                eventGrid.innerHTML = '<p class="col-span-full text-center text-red-400">Failed to load events.</p>';
+            }
+        }
+
+        function renderCategoryOptionsFromDynamic(events) {
+            if (!categoryPopover) return;
+            
+            const categories = [...new Set(events.flatMap(event => event.category))].filter(Boolean).sort();
+            console.log('Rendering category options from dynamic events:', categories);
+            categoryPopover.innerHTML = '';
+
+            const allButton = document.createElement('button');
+            allButton.className = 'popover-option';
+            allButton.textContent = 'All Categories';
+            allButton.dataset.filterValue = 'all';
+            categoryPopover.appendChild(allButton);
+
+            categories.forEach(cat => {
+                const button = document.createElement('button');
+                button.className = 'popover-option';
+                button.textContent = cat;
+                button.dataset.filterValue = cat;
+                categoryPopover.appendChild(button);
+            });
+        }
+
+        function renderVenueOptionsFromDynamic(venues) {
+            if (!venuePopover) return;
+            
+            console.log('Rendering venue options from dynamic venues:', venues);
+            venuePopover.innerHTML = '';
+
+            const allButton = document.createElement('button');
+            allButton.className = 'popover-option';
+            allButton.textContent = 'All Venues';
+            allButton.dataset.filterValue = 'all';
+            venuePopover.appendChild(allButton);
+
+            venues.forEach(venue => {
+                const button = document.createElement('button');
+                button.className = 'popover-option';
+                button.textContent = venue.name;
+                button.dataset.filterValue = venue.slug || venue.name;
+                venuePopover.appendChild(button);
+            });
+        }
+
+        function renderDynamicEvents(events) {
+            if (!eventGrid) return;
+            
+            // Update event count display
+            const eventCountElement = document.querySelector('.event-count');
+            if (eventCountElement) {
+                eventCountElement.textContent = events ? events.length : 0;
+            }
+            
+            if (!events || events.length === 0) {
+                eventGrid.innerHTML = `
+                    <div class="col-span-full text-center card-bg p-12">
+                        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-accent-color">
+                            <i class="fas fa-calendar-times fa-2x"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-white">No Events Found</h3>
+                        <p class="mt-2 text-gray-400">Check back soon for upcoming events or try different filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Create event cards HTML (similar to SSG format)
+            const eventsHtml = events.map(event => {
+                const imageUrl = event.imageUrl || '/images/event-placeholder.jpg';
+                const categories = Array.isArray(event.category) ? event.category : (event.category ? [event.category] : []);
+                
+                const categoryTags = categories.map(cat => 
+                    `<span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
+                ).join(' ');
+                
+                return `
+                    <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
+                         onclick="window.location.href='/event/${event.slug}'">
+                        <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                    ${new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">${event.name}</h3>
+                            <p class="text-gray-400 text-sm mb-3 flex items-center">
+                                <i class="fas fa-clock text-xs mr-1"></i>
+                                ${new Date(event.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                • 
+                                <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                                ${event.venueName || event.venue?.name || 'TBC'}
+                            </p>
+                            <div class="flex flex-wrap gap-1">
+                                ${categoryTags}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            eventGrid.innerHTML = eventsHtml;
+            
+            // Re-parse the new dynamic events for filtering
+            parseStaticEvents();
         }
 
         document.addEventListener('DOMContentLoaded', initializePage);

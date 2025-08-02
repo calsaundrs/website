@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Places Admin - Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="antialiased">
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+    </div>
+
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/admin-settings.html" class="text-gray-300 hover:text-white">Admin Dashboard</a>
+                <a href="/admin-system-status.html" class="text-gray-300 hover:text-white">System Status</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-8 py-8 relative z-10">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol role="list" class="flex items-center space-x-4">
+                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <a href="/admin-settings.html" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                        <span class="ml-4 font-medium text-white">Google Places</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <section class="text-center mb-8">
+            <div class="text-center mb-16">
+                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
+                    <i class="fab fa-google mr-4"></i>GOOGLE PLACES <span class="accent-color">ADMIN</span>
+                </h1>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage Google Places API integration, cache, and venue data.</p>
+            </div>
+
+            <!-- Status Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="stats-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">API Status</p>
+                            <p class="text-3xl font-bold text-white" id="api-status">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fab fa-google"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Cache Size</p>
+                            <p class="text-3xl font-bold text-white" id="cache-size">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Last Test</p>
+                            <p class="text-3xl font-bold text-white" id="last-test">-</p>
+                        </div>
+                        <div class="text-4xl text-accent-color">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button id="load-status-btn" class="btn-primary text-white py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                    <i class="fas fa-sync mr-2"></i>Load Status
+                </button>
+                
+                <button id="test-connection-btn" class="btn-secondary text-white py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                    <i class="fas fa-plug mr-2"></i>Test Connection
+                </button>
+                
+                <button id="clear-cache-btn" class="btn-warning text-white py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                    <i class="fas fa-trash mr-2"></i>Clear All Cache
+                </button>
+                
+                <button id="refresh-venue-btn" class="btn-success text-white py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                    <i class="fas fa-refresh mr-2"></i>Test Venue
+                </button>
+            </div>
+        </section>
+
+        <!-- Status Display -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- API Status -->
+            <div class="status-card rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fab fa-google mr-3 text-accent-color"></i>API Status
+                </h2>
+                <div id="api-status-details" class="space-y-3">
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <div>Click "Load Status" to check API status</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cache Information -->
+            <div class="status-card rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-database mr-3 text-accent-color"></i>Cache Status
+                </h2>
+                <div id="cache-details" class="space-y-3">
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-info-circle text-2xl mb-2"></i>
+                        <div>Cache information will appear here</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Test Results -->
+        <section class="mb-12">
+            <div class="status-card rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-vial mr-3 text-accent-color"></i>Test Results
+                </h2>
+                <div id="test-results" class="space-y-3">
+                    <div class="text-center text-gray-400 py-8">
+                        <i class="fas fa-play-circle text-2xl mb-2"></i>
+                        <div>Run tests to see results here</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manual Testing -->
+        <section class="mb-12">
+            <div class="status-card rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-white mb-4">
+                    <i class="fas fa-tools mr-3 text-accent-color"></i>Manual Testing
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="test-place-id" class="block text-sm font-medium text-gray-300 mb-2">Google Place ID</label>
+                        <input type="text" id="test-place-id" 
+                               placeholder="ChIJj61dQgK6j4AR4GeTYWZsKWw"
+                               class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-accent-color">
+                    </div>
+                    
+                    <div>
+                        <label for="test-venue-slug" class="block text-sm font-medium text-gray-300 mb-2">Venue Slug (Optional)</label>
+                        <input type="text" id="test-venue-slug" 
+                               placeholder="venue-name"
+                               class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-accent-color">
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex gap-4">
+                    <button id="test-custom-venue-btn" class="btn-primary text-white py-2 px-4 rounded-lg font-bold flex items-center">
+                        <i class="fas fa-search mr-2"></i>Test Custom Venue
+                    </button>
+                    
+                    <button id="clear-specific-cache-btn" class="btn-warning text-white py-2 px-4 rounded-lg font-bold flex items-center">
+                        <i class="fas fa-trash mr-2"></i>Clear Specific Cache
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Admin</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/admin-settings.html" class="text-gray-400 hover:text-white transition-colors">Dashboard</a></li>
+                        <li class="mb-2"><a href="/admin-system-status.html" class="text-gray-400 hover:text-white transition-colors">System Status</a></li>
+                        <li class="mb-2"><a href="/admin-approvals.html" class="text-gray-400 hover:text-white transition-colors">Approvals</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Tools</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/admin-social-reels.html" class="text-gray-400 hover:text-white transition-colors">Social Reels</a></li>
+                        <li class="mb-2"><a href="/admin-google-places.html" class="text-gray-400 hover:text-white transition-colors">Google Places</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let lastStatusData = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadStatus(); // Auto-load status on page load
+        });
+
+        function setupEventListeners() {
+            document.getElementById('load-status-btn').addEventListener('click', loadStatus);
+            document.getElementById('test-connection-btn').addEventListener('click', testConnection);
+            document.getElementById('clear-cache-btn').addEventListener('click', clearAllCache);
+            document.getElementById('refresh-venue-btn').addEventListener('click', testVenue);
+            document.getElementById('test-custom-venue-btn').addEventListener('click', testCustomVenue);
+            document.getElementById('clear-specific-cache-btn').addEventListener('click', clearSpecificCache);
+        }
+
+        async function loadStatus() {
+            const btn = document.getElementById('load-status-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/google-places-admin?action=status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    lastStatusData = data.data;
+                    updateStatusDisplay(data.data);
+                    showSuccess('Status loaded successfully');
+                } else {
+                    showError('Failed to load status: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+                showError('Error loading status: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function testConnection() {
+            const btn = document.getElementById('test-connection-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/google-places-admin?action=test');
+                const data = await response.json();
+                
+                updateTestResults(data);
+                
+                if (data.success) {
+                    showSuccess('Google Places API connection successful');
+                    document.getElementById('last-test').textContent = 'Success';
+                } else {
+                    showError('Google Places API connection failed: ' + data.data.error);
+                    document.getElementById('last-test').textContent = 'Failed';
+                }
+            } catch (error) {
+                console.error('Error testing connection:', error);
+                showError('Error testing connection: ' + error.message);
+                document.getElementById('last-test').textContent = 'Error';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function clearAllCache() {
+            if (!confirm('Are you sure you want to clear ALL Google Places cache? This cannot be undone.')) {
+                return;
+            }
+
+            const btn = document.getElementById('clear-cache-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Clearing...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/google-places-admin?action=clear-cache');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('All cache cleared successfully');
+                    document.getElementById('cache-size').textContent = '0';
+                    loadStatus(); // Refresh status
+                } else {
+                    showError('Failed to clear cache: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error clearing cache:', error);
+                showError('Error clearing cache: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function testVenue() {
+            const btn = document.getElementById('refresh-venue-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/google-places-admin?action=refresh-venue&placeId=ChIJj61dQgK6j4AR4GeTYWZsKWw');
+                const data = await response.json();
+                
+                updateTestResults(data);
+                
+                if (data.success) {
+                    showSuccess('Test venue data retrieved successfully');
+                } else {
+                    showError('Failed to retrieve test venue data: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error testing venue:', error);
+                showError('Error testing venue: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function testCustomVenue() {
+            const placeId = document.getElementById('test-place-id').value.trim();
+            const venueSlug = document.getElementById('test-venue-slug').value.trim();
+            
+            if (!placeId) {
+                showError('Please enter a Google Place ID to test');
+                return;
+            }
+
+            const btn = document.getElementById('test-custom-venue-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            
+            try {
+                const params = new URLSearchParams({
+                    action: 'refresh-venue',
+                    placeId: placeId
+                });
+                
+                if (venueSlug) {
+                    params.append('venueSlug', venueSlug);
+                }
+                
+                const response = await fetch(`/.netlify/functions/google-places-admin?${params}`);
+                const data = await response.json();
+                
+                updateTestResults(data);
+                
+                if (data.success) {
+                    showSuccess(`Custom venue data retrieved successfully for Place ID: ${placeId}`);
+                } else {
+                    showError('Failed to retrieve custom venue data: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error testing custom venue:', error);
+                showError('Error testing custom venue: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function clearSpecificCache() {
+            const placeId = document.getElementById('test-place-id').value.trim();
+            
+            if (!placeId) {
+                showError('Please enter a Google Place ID to clear its cache');
+                return;
+            }
+
+            const btn = document.getElementById('clear-specific-cache-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Clearing...';
+            
+            try {
+                const response = await fetch(`/.netlify/functions/google-places-admin?action=clear-cache&placeId=${encodeURIComponent(placeId)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`Cache cleared for Place ID: ${placeId}`);
+                    loadStatus(); // Refresh status
+                } else {
+                    showError('Failed to clear specific cache: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error clearing specific cache:', error);
+                showError('Error clearing specific cache: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function updateStatusDisplay(statusData) {
+            // Update main status cards
+            document.getElementById('api-status').textContent = statusData.apiEnabled ? 'Enabled' : 'Disabled';
+            document.getElementById('cache-size').textContent = statusData.cacheStats.memoryCache.size;
+            
+            // Update API status details
+            const apiStatusDetails = document.getElementById('api-status-details');
+            apiStatusDetails.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-gray-300">API Status</span>
+                        <span class="font-bold ${statusData.apiEnabled ? 'text-green-400' : 'text-red-400'}">
+                            ${statusData.apiEnabled ? 'Enabled' : 'Disabled'}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-gray-300">Cache Expiration</span>
+                        <span class="text-white">${Math.round(statusData.cacheStats.cacheExpiration / (1000 * 60 * 60))} hours</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-gray-300">Last Updated</span>
+                        <span class="text-white">${new Date(statusData.timestamp).toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Update cache details
+            const cacheDetails = document.getElementById('cache-details');
+            cacheDetails.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-gray-300">Memory Cache Size</span>
+                        <span class="text-white">${statusData.cacheStats.memoryCache.size} items</span>
+                    </div>
+                    <div class="p-3 bg-gray-800 rounded-lg">
+                        <span class="text-gray-300 block mb-2">Cached Place IDs:</span>
+                        <div class="text-sm text-gray-400 max-h-32 overflow-y-auto">
+                            ${statusData.cacheStats.memoryCache.entries.length > 0 
+                                ? statusData.cacheStats.memoryCache.entries.map(id => `<div>• ${id}</div>`).join('')
+                                : '<div class="text-center text-gray-500">No cached items</div>'
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateTestResults(data) {
+            const testResults = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleString();
+            
+            let resultHtml = `
+                <div class="p-4 bg-gray-800 rounded-lg mb-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold ${data.success ? 'text-green-400' : 'text-red-400'}">
+                            ${data.success ? '✅ Success' : '❌ Failed'}
+                        </span>
+                        <span class="text-sm text-gray-400">${timestamp}</span>
+                    </div>
+                    <div class="text-sm text-gray-300">
+                        <pre class="whitespace-pre-wrap">${JSON.stringify(data.data || data, null, 2)}</pre>
+                    </div>
+                </div>
+            `;
+            
+            testResults.innerHTML = resultHtml + testResults.innerHTML;
+            
+            // Keep only last 5 results
+            const results = testResults.children;
+            while (results.length > 5) {
+                testResults.removeChild(results[results.length - 1]);
+            }
+        }
+
+        function showSuccess(message) {
+            console.log('✅', message);
+            // You can implement a toast notification here
+            alert('Success: ' + message);
+        }
+
+        function showError(message) {
+            console.error('❌', message);
+            // You can implement a toast notification here
+            alert('Error: ' + message);
+        }
+    </script>
+</body>
+</html> 
