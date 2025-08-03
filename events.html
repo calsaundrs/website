@@ -1692,6 +1692,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 </div>
             
+            <!-- No results message -->
+            <div id="no-results-message" class="hidden col-span-full text-center py-12">
+                <div class="text-gray-400">
+                    <i class="fas fa-search text-4xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">No events found</h3>
+                    <p class="text-gray-500">Try adjusting your filters or check back later for new events.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- Global State ---
         let eventStore;
@@ -1715,8 +1726,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         const categoryPopover = document.getElementById('category-popover');
         const clearFiltersBtn = document.getElementById('clear-filters-btn');
         const featuredEventsSection = document.getElementById('featured-events-section');
-        const slideshowContainer = document.querySelector('#featured-banner .slideshow-container');
-        const slideshowDotsContainer = document.querySelector('#featured-banner .slideshow-dots');
+        const slideshowContainer = document.querySelector('#featured-events-section .slideshow-container');
+        const slideshowDotsContainer = document.querySelector('#featured-events-section .slideshow-dots');
         const venueBtn = document.getElementById('venue-btn');
         const venuePopover = document.getElementById('venue-popover');
         const nsfwToggle = document.getElementById('nsfw-toggle');
