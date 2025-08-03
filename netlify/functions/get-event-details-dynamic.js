@@ -153,7 +153,7 @@ const embeddedTemplate = `<!DOCTYPE html>
             </div>
             
             <div class="p-8">
-                <!-- Event Header -->
+            <!-- Event Header -->
                 <div class="mb-8">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="text-center w-20 flex-shrink-0">
@@ -192,7 +192,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                                 {{{event.formattedDescription}}}
                             </div>
                         </div>
-
+                        
                         {{#if event.otherInstances}}
                         <!-- Other Events in Series -->
                         <div class="venue-card p-6 mb-6 rounded-xl">
@@ -218,8 +218,8 @@ const embeddedTemplate = `<!DOCTYPE html>
                             </div>
                         </div>
                         {{/if}}
-                    </div>
-
+            </div>
+            
                     <!-- Sidebar -->
                     <div class="space-y-6">
 
@@ -269,7 +269,7 @@ const embeddedTemplate = `<!DOCTYPE html>
                         <a href="/events" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
                             <i class="fas fa-arrow-left mr-2"></i>Back to Events
                         </a>
-                    </div>
+                        </div>
                 </div>
             </div>
         </div>
@@ -546,7 +546,7 @@ async function getEventBySlug(slug) {
         }
         
         if (!snapshot.empty) {
-            const doc = snapshot.docs[0];
+        const doc = snapshot.docs[0];
             const eventData = doc.data();
             console.log("Found event by exact slug:", eventData.name);
             return processEventData({
@@ -656,7 +656,7 @@ exports.handler = async function(event, context) {
             slug = pathParts.slice(2).join('/').replace(/\.html$/, '');
         }
     }
-
+    
     if (!slug) {
         return {
             statusCode: 400,

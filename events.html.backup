@@ -833,865 +833,907 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
 
             <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 items-start">
-                
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <!-- EVENTS_GRID_SSG_PLACEHOLDER -->
+            </div>
+            
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">4 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                4 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">11 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                11 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/the-haus-of-aja'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recedveXXuNmt7sWq" alt="The Haus of Aja" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">15 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                15 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">The Haus of Aja</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Glee Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">The Haus of Aja</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            00:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Glee Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/victoria-scone-davinci-code-special'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/juzph9yj9ssmjkxl9or5" alt="Victoria Scone - Davinci Code Special" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">15 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                15 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Victoria Scone - Davinci Code Special</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Village Inn</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Victoria Scone - Davinci Code Special</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            01:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Village Inn
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">18 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                18 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/turnt-up-tuesday'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">19 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                19 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Turnt Up Tuesday</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Turnt Up Tuesday</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/walsall-pride-2025'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recl3tQDcYrVOxFwk" alt="Walsall Pride 2025" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">23 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                23 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Walsall Pride 2025</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Walsall Pride 2025</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            15:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            TBC
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/hard-on-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recmrxvTWJ484h5Uc" alt="Hard On Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">24 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                24 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Hard On Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">Eden Bar</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Hard On Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            02:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Eden Bar
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                25 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/queer-mendhi-nights'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rechitCeExzQHAotK" alt="Queer Mendhi Nights" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                25 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Queer Mendhi Nights</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Social</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Queer Mendhi Nights</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            22:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            TBC
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Social</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/lgbt-craft-fayre'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recbz2uGFXTNy3xig" alt="LGBT+ Craft Fayre" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">30 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                30 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">LGBT+ Craft Fayre</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Fox & Equator Bar</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">LGBT+ Craft Fayre</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            18:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Fox & Equator Bar
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mids-bears-bear-market'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec248vGLwj62bKZx" alt="Mids Bears Bear Market" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">30 Aug 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                30 Aug
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mids Bears Bear Market</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Mids Bears Bear Market</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mids Bears Bear Market</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            18:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            TBC
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/ajgimf7km5vmtgiu5evq" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">2 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                2 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            01:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/solihull-pride-2025'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recjWUbtXGXmm4QMA" alt="Solihull Pride 2025" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">6 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                6 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Solihull Pride 2025</h3>
-                        <p class="text-gray-400 text-sm mb-3">Mell Square</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Solihull Pride 2025</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            04:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Mell Square
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">8 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                8 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/turnt-up-tuesday'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">9 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                9 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Turnt Up Tuesday</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Turnt Up Tuesday</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/send-in-the-clowns-little-flop-of-horrors'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recpzZe8A1cC6BxhC" alt="Send In The Clowns: Little Flop of Horrors" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">10 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                10 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Send In The Clowns: Little Flop of Horrors</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Old Joint Stock Pub & Theatre</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Theatre</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Send In The Clowns: Little Flop of Horrors</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:55
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Old Joint Stock Pub & Theatre
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Theatre</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/myra-dubois-cosmic-empath'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recAfK8f5P1vcsGnM" alt="Myra DuBois: Cosmic Empath" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">19 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                19 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Myra DuBois: Cosmic Empath</h3>
-                        <p class="text-gray-400 text-sm mb-3">Town Hall</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Myra DuBois: Cosmic Empath</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            23:30
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Town Hall
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">29 Sept 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                29 Sept
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Oct 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Oct
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">6 Oct 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                6 Oct
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/mash-up-mondays'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">13 Oct 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                13 Oct
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Mash Up Mondays</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Glamorous
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/bad-bear-leather-and-fetish-night'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recSske21N94Sd8v0" alt="Bad Bear (Leather and Fetish Night)" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">17 Oct 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                17 Oct
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Bad Bear (Leather and Fetish Night)</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Bad Bear (Leather and Fetish Night)</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            23:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            TBC
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/-chills-thrills-a-nsfw-halloween-special-'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/tfruqza8f1b9o4xjwsfb" alt="🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Oct 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                25 Oct
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈</h3>
-                        <p class="text-gray-400 text-sm mb-3">Eden Bar</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            23:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            Eden Bar
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Nov 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Nov
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            02:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/fatt-butchers-big-meaty-gameshow'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec8nqZRFvSN628tT" alt="Fatt Butcher's Big Meaty Gameshow" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">21 Nov 2025</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                21 Nov
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Fatt Butcher's Big Meaty Gameshow</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Old Joint Stock Pub & Theatre</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Fatt Butcher's Big Meaty Gameshow</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            21:30
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Old Joint Stock Pub & Theatre
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Jan 2026</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Jan
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            02:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Feb 2026</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Feb
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            02:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Apr 2026</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Apr
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 May 2026</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 May
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
-                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/event/xxl-birmingham'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Jun 2026</span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                1 Jun
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
+                        <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">XXL Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-3 flex items-center">
+                            <i class="fas fa-clock text-xs mr-1"></i>
+                            03:00
+                            • 
+                            <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
+                            The Nightingale Club
+                        </p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
                         </div>
                     </div>
                 </div>
             
+                
+                    <span class="text-lg">Loading events...</span>
+                </div>
+            </div>
+            <div id="no-results-message" class="hidden text-center venue-card p-12 col-span-full">
+                <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-800 text-pink-400">
+                    <i class="fas fa-search fa-2x"></i>
+                </div>
+                <h3 class="mt-4 text-xl font-semibold text-white">No Results Found</h3>
+                <p class="mt-2 text-gray-400">We couldn't find any events matching your filters. Try adjusting your search.</p>
+                <button id="clear-filters-btn" class="mt-6 filter-button active">Clear Filters</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="event-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="w-full max-w-4xl">
+               <form name="event-submission" class="card-bg p-8 md:p-12 space-y-6 relative" method="POST" action="/.netlify/functions/event-submission-firestore-only" enctype="multipart/form-data">
+                    <button type="button" onclick="hideEventModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl">&times;</button>
+                    <h3 class="font-anton text-4xl text-center heading-gradient mb-6">Submit an <span class="accent-color">Event</span></h3>
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div class="space-y-6">
+                            <div><label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label><input type="text" id="event-name" name="event-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                            <div><label for="venue" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label><input type="text" id="venue" name="venue" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                            <div><label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea id="description" name="description" rows="8" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea></div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input type="date" id="date" name="date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                                <div><label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">Start Time</label><input type="time" id="start-time" name="start-time" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                            </div>
+                            <div><label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link (Optional)</label><input type="url" id="link" name="link" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://"></div>
+                            <div><label for="recurring-info" class="block text-sm font-semibold mb-2 accent-color-secondary">Recurring Info (Optional)</label><input type="text" id="recurring-info" name="recurring-info" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="e.g., Every Thursday, or First Sunday of the month"></div>
+                            <div><label for="promo-image" class="block text-sm font-semibold mb-2 accent-color-secondary">Promo Image</label><input type="file" id="promo-image" name="promo-image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/webp"></div>
+                        </div>
+                    </div>
+                    <div class="text-right pt-4"><button type="submit" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity">Submit Event</button></div>
+                </form>
+        </div>
+    </div>
+
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/event-store.js?v=4"></script>
     <script>
         // --- Global State ---
         let eventStore;
