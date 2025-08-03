@@ -1,0 +1,15 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:8888",
+  "executionArgs": {
+    "projectName": "brumoutloud-website",
+    "projectPath": "/Users/callumsaunders/Projects/Brum Outloud/website",
+    "testIds": [],
+    "additionalInstruction": "Test the main user flows: home page, events listing, venue listing, event details, venue details, and admin functionality",
+    "envs": {
+      "API_KEY": ""
+    }
+  }
+}

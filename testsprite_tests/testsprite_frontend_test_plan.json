@@ -1,0 +1,121 @@
+{
+  "testPlan": {
+    "name": "Brum Outloud Frontend Test Plan",
+    "description": "Comprehensive testing of the Brum Outloud LGBTQ+ events and venues website",
+    "baseUrl": "http://localhost:8888",
+    "tests": [
+      {
+        "id": "home-page-test",
+        "name": "Home Page Load Test",
+        "description": "Test that the home page loads correctly with all elements",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/",
+            "description": "Navigate to home page"
+          },
+          {
+            "action": "assert",
+            "selector": "h1",
+            "description": "Check that page title is present"
+          },
+          {
+            "action": "assert",
+            "selector": "nav",
+            "description": "Check that navigation is present"
+          }
+        ]
+      },
+      {
+        "id": "events-listing-test",
+        "name": "Events Listing Page Test",
+        "description": "Test the events listing page functionality",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/events.html",
+            "description": "Navigate to events page"
+          },
+          {
+            "action": "assert",
+            "selector": ".venue-card, .event-card",
+            "description": "Check that event cards are present"
+          },
+          {
+            "action": "click",
+            "selector": "button[onclick*='event']",
+            "description": "Click on an event card"
+          }
+        ]
+      },
+      {
+        "id": "venues-listing-test",
+        "name": "Venues Listing Page Test",
+        "description": "Test the venues listing page functionality",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/all-venues.html",
+            "description": "Navigate to venues page"
+          },
+          {
+            "action": "assert",
+            "selector": ".venue-card",
+            "description": "Check that venue cards are present"
+          }
+        ]
+      },
+      {
+        "id": "event-details-test",
+        "name": "Event Details Page Test",
+        "description": "Test individual event detail pages",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/event/glittershit-summer-ball",
+            "description": "Navigate to a specific event page"
+          },
+          {
+            "action": "assert",
+            "selector": "h1",
+            "description": "Check that event title is present"
+          }
+        ]
+      },
+      {
+        "id": "venue-details-test",
+        "name": "Venue Details Page Test",
+        "description": "Test individual venue detail pages",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/venue/nightingale-club",
+            "description": "Navigate to a specific venue page"
+          },
+          {
+            "action": "assert",
+            "selector": "h1",
+            "description": "Check that venue title is present"
+          }
+        ]
+      },
+      {
+        "id": "admin-login-test",
+        "name": "Admin Login Test",
+        "description": "Test admin login functionality",
+        "steps": [
+          {
+            "action": "navigate",
+            "url": "/admin-login.html",
+            "description": "Navigate to admin login page"
+          },
+          {
+            "action": "assert",
+            "selector": "form",
+            "description": "Check that login form is present"
+          }
+        ]
+      }
+    ]
+  }
+} 

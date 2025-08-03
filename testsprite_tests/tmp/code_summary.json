@@ -1,0 +1,292 @@
+{
+  "tech_stack": [
+    "JavaScript",
+    "Node.js", 
+    "HTML5",
+    "CSS3",
+    "Tailwind CSS",
+    "Firebase Firestore",
+    "Netlify Functions",
+    "Cloudinary",
+    "Handlebars",
+    "Service Worker"
+  ],
+  "features": [
+    {
+      "name": "Event Management System",
+      "description": "Complete event creation, approval, and display system with SSG and dynamic fallbacks",
+      "files": [
+        "netlify/functions/event-submission-firestore-only.js",
+        "netlify/functions/update-item-status-firestore-only.js",
+        "netlify/functions/get-events-firestore-simple.js",
+        "netlify/functions/get-event-details-dynamic.js",
+        "build-events-listing-api.js",
+        "events.html",
+        "event-template.html"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Event Management API",
+          "version": "1.0.0",
+          "description": "API for managing LGBTQ+ events in Birmingham"
+        },
+        "paths": {
+          "/.netlify/functions/event-submission-firestore-only": {
+            "post": {
+              "summary": "Submit new event",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "event-name": {"type": "string"},
+                        "description": {"type": "string"},
+                        "date": {"type": "string"},
+                        "venueId": {"type": "string"},
+                        "categoryIds": {"type": "array", "items": {"type": "string"}}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/.netlify/functions/get-events-firestore-simple": {
+            "get": {
+              "summary": "Get all approved events",
+              "responses": {
+                "200": {
+                  "description": "List of events",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "events": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {"type": "string"},
+                                "slug": {"type": "string"},
+                                "date": {"type": "string"},
+                                "venueName": {"type": "string"},
+                                "imageUrl": {"type": "string"}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Venue Management System", 
+      "description": "Venue creation, approval, and display system with image uploads",
+      "files": [
+        "netlify/functions/venue-submission-firestore-only.js",
+        "netlify/functions/create-approved-venue.js",
+        "netlify/functions/get-venues-firestore.js",
+        "netlify/functions/get-venue-details-dynamic.js",
+        "build-venues-listing-api.js",
+        "all-venues.html",
+        "venue-template.html"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Venue Management API",
+          "version": "1.0.0",
+          "description": "API for managing LGBTQ+ venues in Birmingham"
+        },
+        "paths": {
+          "/.netlify/functions/venue-submission-firestore-only": {
+            "post": {
+              "summary": "Submit new venue",
+              "requestBody": {
+                "content": {
+                  "multipart/form-data": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "description": {"type": "string"},
+                        "address": {"type": "string"},
+                        "photo": {"type": "string", "format": "binary"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/.netlify/functions/get-venues-firestore": {
+            "get": {
+              "summary": "Get all approved venues with images",
+              "responses": {
+                "200": {
+                  "description": "List of venues",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "venues": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {"type": "string"},
+                                "slug": {"type": "string"},
+                                "address": {"type": "string"},
+                                "image": {"type": "object"}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Static Site Generation (SSG)",
+      "description": "Pre-builds HTML pages for events and venues during deployment",
+      "files": [
+        "build-events-listing-api.js",
+        "build-venues-listing-api.js",
+        "build-events-ssg.js",
+        "build-venues-simple.js",
+        "package.json"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "SSG Build System",
+          "version": "1.0.0",
+          "description": "Static site generation for performance optimization"
+        },
+        "paths": {
+          "/build": {
+            "post": {
+              "summary": "Trigger SSG build process",
+              "responses": {
+                "200": {
+                  "description": "Build completed successfully"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Admin interface for managing events, venues, and approvals",
+      "files": [
+        "admin-approvals.html",
+        "admin-edit-events.html",
+        "admin-manage-venues.html",
+        "admin-login.html",
+        "js/admin-dashboard.js",
+        "js/admin-approvals-enhanced.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Admin Dashboard API",
+          "version": "1.0.0",
+          "description": "Admin interface for content management"
+        },
+        "paths": {
+          "/admin": {
+            "get": {
+              "summary": "Admin dashboard",
+              "responses": {
+                "200": {
+                  "description": "Admin interface"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Image Management",
+      "description": "Cloudinary integration for image uploads and optimization",
+      "files": [
+        "netlify/functions/process-poster.js",
+        "netlify/functions/migrate-event-images-to-firestore.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Image Management API",
+          "version": "1.0.0",
+          "description": "Cloudinary image processing and optimization"
+        },
+        "paths": {
+          "/.netlify/functions/process-poster": {
+            "post": {
+              "summary": "Process and optimize event poster images",
+              "requestBody": {
+                "content": {
+                  "multipart/form-data": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "image": {"type": "string", "format": "binary"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Rebuild Trigger System",
+      "description": "Automatic rebuild triggers when content is updated",
+      "files": [
+        "netlify/functions/trigger-rebuild.js",
+        "netlify/functions/update-item-status-firestore-only.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Rebuild Trigger API",
+          "version": "1.0.0",
+          "description": "Automatic SSG rebuilds on content changes"
+        },
+        "paths": {
+          "/.netlify/functions/trigger-rebuild": {
+            "post": {
+              "summary": "Manually trigger site rebuild",
+              "responses": {
+                "200": {
+                  "description": "Build triggered successfully"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+} 

@@ -64,7 +64,7 @@ async function generateEventsListingPage() {
             }
             
             return `
-                <div class="venue-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
                      onclick="window.location.href='/event/${event.slug}'">
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">` : '<i class="fas fa-image text-4xl text-gray-600"></i>'}
