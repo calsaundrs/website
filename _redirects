@@ -1,12 +1,8 @@
 # Squarespace to Netlify Redirects for brumoutloud.co.uk (301 Permanent)
 
-# Event Pages - Firestore function
-/event/:slug.html /.netlify/functions/get-event-details-firestore?slug=:slug 200!
-/event/* /.netlify/functions/get-event-details-firestore?slug=:splat 200!
+# Event Pages - Handled by netlify.toml
 
-# Venue Pages - Static SSG files
-/venue/:slug.html /venue/:slug.html 200!
-/venue/* /venue/:splat.html 200!
+# Venue Pages - Handled by netlify.toml
 
 # Homepage redirect (if old homepage was different, unlikely but good to have)
 /       /   301

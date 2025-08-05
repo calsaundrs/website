@@ -1,0 +1,31 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "netlify/**",
+      "**/*.md",
+      "**/package*.json",
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/testsprite_tests/**",
+      "**/remotion-templates/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/venue/**",
+        "destination": "/.netlify/functions/get-venue-details-firestore?slug=:splat"
+      },
+      {
+        "source": "/event/**",
+        "destination": "/.netlify/functions/get-event-details-firestore?slug=:splat"
+      }
+    ]
+  }
+} 

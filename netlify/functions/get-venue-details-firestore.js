@@ -46,9 +46,25 @@ exports.handler = async function(event, context) {
     }
 
     // Get Google Places data for the venue
+    console.log(`🔍 Venue Google Place ID: ${venue.googlePlaceId}`);
+    console.log(`🔍 Venue data for Google Places:`, {
+      name: venue.name,
+      address: venue.address,
+      googlePlaceId: venue.googlePlaceId
+    });
+    
     const googlePlacesData = await googlePlacesService.getVenueGooglePlacesData(venue, {
-      maxImages: 12,
-      maxReviews: 6
+      maxImages: 6,
+      maxReviews: 3
+    });
+    
+    console.log(`🔍 Google Places data result:`, {
+      hasImages: googlePlacesData.images && googlePlacesData.images.length > 0,
+      imageCount: googlePlacesData.images ? googlePlacesData.images.length : 0,
+      hasReviews: googlePlacesData.reviews && googlePlacesData.reviews.length > 0,
+      reviewCount: googlePlacesData.reviews ? googlePlacesData.reviews.length : 0,
+      hasRating: !!googlePlacesData.rating,
+      rating: googlePlacesData.rating
     });
 
     // Get upcoming events for this venue
@@ -98,37 +114,65 @@ exports.handler = async function(event, context) {
 
 async function getVenueBySlug(slug) {
   try {
+    console.log(`🔍 Looking for venue with slug: ${slug}`);
     const venuesRef = db.collection('venues');
-    const snapshot = await venuesRef
-      .where('slug', '==', slug)
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) return null;
-
-    const doc = snapshot.docs[0];
-    const venueData = doc.data();
+    
+    // Get all venues and find the one with matching slug
+    const allVenues = await venuesRef.get();
+    let foundVenue = null;
+    
+    allVenues.forEach(doc => {
+      const data = doc.data();
+      
+      // Use the same processing logic as the venue listing function
+      const processedVenue = processVenueForPublic({
+        id: doc.id,
+        ...data
+      });
+      
+      console.log(`🔍 Checking venue: "${processedVenue.name}" - slug: "${processedVenue.slug}" - looking for: "${slug}"`);
+      
+      if (processedVenue.slug === slug) {
+        foundVenue = processedVenue;
+        console.log(`✅ Found venue: ${processedVenue.name}`);
+      }
+    });
+    
+    if (!foundVenue) {
+      console.log(`❌ No venue found with slug: ${slug}`);
+      return null;
+    }
+    
+    console.log(`✅ Found venue: ${foundVenue.name}`);
+    console.log(`🔍 Venue data fields:`, Object.keys(foundVenue));
+    
+    // Get the raw venue data to access Google Place ID
+    const rawVenueData = foundVenue;
+    const googlePlaceId = rawVenueData.googlePlaceId || rawVenueData['Google Place ID'] || rawVenueData['googlePlaceId'];
+    
+    console.log(`🔍 Raw venue data fields:`, Object.keys(rawVenueData));
+    console.log(`🔍 Google Place ID from raw data:`, googlePlaceId);
     
     return {
-      id: doc.id,
-      name: venueData.name || venueData['Venue Name'] || 'Unnamed Venue',
-      description: venueData.description || venueData['Description'] || '',
-      address: venueData.address || venueData['Address'] || '',
-      website: venueData.website || venueData['Website'] || '',
-      contactPhone: venueData.contactPhone || venueData['Contact Phone'] || '',
-      slug: venueData.slug,
-      category: venueData.category || venueData['Tags'] || [],
-      image: extractImageUrl(venueData),
-      accessibility: venueData.accessibility || venueData['Accessibility'] || '',
-      features: venueData.features || venueData['Features'] || [],
+      id: foundVenue.id,
+      name: foundVenue.name,
+      description: foundVenue.description,
+      address: foundVenue.address,
+      website: foundVenue.website || '',
+      contactPhone: foundVenue.contactPhone || '',
+      slug: foundVenue.slug,
+      category: foundVenue.category,
+      image: foundVenue.image,
+      accessibility: foundVenue.accessibility || '',
+      features: foundVenue.features || [],
       socialMedia: {
-        instagram: venueData.instagram || venueData['Instagram'] || '',
-        facebook: venueData.facebook || venueData['Facebook'] || '',
-        twitter: venueData.twitter || venueData['Twitter'] || ''
+        instagram: foundVenue.instagram || '',
+        facebook: foundVenue.facebook || '',
+        twitter: foundVenue.twitter || ''
       },
-      googlePlaceId: venueData.googlePlaceId || venueData['Google Place ID'] || '',
-      openingHours: venueData.openingHours || venueData['Opening Hours'] || '',
-      status: venueData.status || 'approved'
+      googlePlaceId: googlePlaceId,
+      openingHours: foundVenue.openingHours,
+      status: foundVenue.status
     };
   } catch (error) {
     console.error('Error finding venue by slug:', error);
@@ -136,31 +180,71 @@ async function getVenueBySlug(slug) {
   }
 }
 
-function extractImageUrl(venueData) {
-  // Handle Cloudinary Public ID
-  if (venueData.cloudinaryPublicId || venueData['Cloudinary Public ID']) {
-    const publicId = venueData.cloudinaryPublicId || venueData['Cloudinary Public ID'];
-    return {
-      url: `https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${publicId}`,
-      cloudinaryPublicId: publicId
+function processVenueForPublic(venueData) {
+    // Extract image URL from various possible formats
+    let imageUrl = null;
+    
+    // 1. First try Cloudinary public ID
+    const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
+    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
+        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
+    } else {
+        // 2. Try to find any image field that might contain a Cloudinary URL
+        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
+        for (const field of possibleImageFields) {
+            const imageData = venueData[field];
+            if (imageData) {
+                // Check if it's already a Cloudinary URL
+                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                    imageUrl = imageData;
+                    break;
+                }
+                // Check if it's an object with a Cloudinary URL
+                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                    imageUrl = imageData.url;
+                    break;
+                }
+            }
+        }
+        
+        // 3. If still no image, generate a consistent placeholder based on venue name
+        if (!imageUrl) {
+            const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+            const encodedName = encodeURIComponent(venueName);
+            imageUrl = `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodedName}`;
+        }
+    }
+    
+    // Generate slug from venue name if not provided
+    const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
     };
-  }
-
-  // Handle direct image URL
-  if (venueData.image && venueData.image.url) {
-    return venueData.image;
-  }
-
-  // Handle legacy image fields
-  if (venueData.promoImage || venueData['Promo Image']) {
-    const imageUrl = venueData.promoImage || venueData['Promo Image'];
-    return { url: imageUrl };
-  }
-
-  // Return placeholder
-  return {
-    url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(venueData.name || 'Venue Image')}`
-  };
+    
+    const venue = {
+        id: venueData.id,
+        name: venueName,
+        slug: venueData.slug || venueData['Venue Slug'] || venueData['Slug'] || generateSlug(venueName),
+        description: venueData.description || venueData['Description'] || `Venue hosting events`,
+        address: venueData.address || venueData['Venue Address'] || venueData['Address'] || 'Address TBC',
+        link: venueData.link || venueData['Venue Link'] || venueData['Link'],
+        image: imageUrl ? { url: imageUrl } : null,
+        category: venueData.category || venueData.tags || venueData['Tags'] || [],
+        type: venueData.type || venueData['Type'] || 'venue',
+        status: venueData.status || 'listed',
+        openingHours: venueData.openingHours || venueData['Opening Hours'],
+        popular: venueData.popular || venueData['Popular'] || false,
+        googlePlaceId: venueData.googlePlaceId || venueData['Google Place ID'] || venueData['googlePlaceId'] || ''
+    };
+    
+    if (!venue.category || venue.category.length === 0) {
+        venue.category = ['LGBTQ+', 'Venue'];
+    }
+    
+    return venue;
 }
 
 async function getUpcomingEventsForVenue(venueId, limit = 6) {
@@ -396,16 +480,10 @@ function getVenueTemplate() {
             background: rgba(75, 85, 99, 0.5);
         }
 
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
         .gallery-item {
             aspect-ratio: 1;
             overflow: hidden;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
@@ -505,10 +583,10 @@ function getVenueTemplate() {
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
                             </h2>
-                            <div class="gallery-grid">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {{#each googlePlaces.images}}
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover" onclick="openImageModal('{{url}}')">
+                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105" onclick="openImageModal('{{url}}')">
+                                    <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover">
                                 </div>
                                 {{/each}}
                             </div>
@@ -547,9 +625,6 @@ function getVenueTemplate() {
                                 </div>
                                 {{/each}}
                             </div>
-                            <div class="mt-6 text-center">
-                                <img src="https://developers.google.com/static/maps/images/google_on_white.png" alt="Powered by Google" class="h-8 mx-auto opacity-75">
-                            </div>
                         </div>
                         {{/if}}
 
@@ -583,17 +658,6 @@ function getVenueTemplate() {
                     <!-- Sidebar -->
                     <div class="space-y-6">
 
-                        <!-- Action Buttons -->
-                        {{#if venue.website}}
-                        <div class="venue-card p-6">
-                            <div class="space-y-3">
-                                <a href="{{venue.website}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
-                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
-                                </a>
-                            </div>
-                        </div>
-                        {{/if}}
-
                         <!-- Current Status -->
                         {{#if googlePlaces.isOpen}}
                         <div class="venue-card p-6">
@@ -615,7 +679,16 @@ function getVenueTemplate() {
                         {{/if}}
 
                         <!-- Opening Hours -->
-                        {{#if googlePlaces.openingHours.length}}
+                        {{#if venue.openingHours}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <pre class="whitespace-pre-wrap">{{venue.openingHours}}</pre>
+                            </div>
+                        </div>
+                        {{else if googlePlaces.openingHours.length}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
@@ -624,15 +697,6 @@ function getVenueTemplate() {
                                 {{#each googlePlaces.openingHours}}
                                 <p>{{this}}</p>
                                 {{/each}}
-                            </div>
-                        </div>
-                        {{else if venue.openingHours}}
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
-                            </h3>
-                            <div class="space-y-2 text-gray-300 text-sm">
-                                <pre class="whitespace-pre-wrap">{{venue.openingHours}}</pre>
                             </div>
                         </div>
                         {{/if}}
@@ -717,11 +781,17 @@ function getVenueTemplate() {
     </main>
 
     <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
-        <div class="relative max-w-4xl max-h-full">
-            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center">
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
+        <div class="relative max-w-5xl max-h-full">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black bg-opacity-70 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-90 transition-all duration-200">
                 <i class="fas fa-times"></i>
+            </button>
+            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black bg-opacity-70 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-90 transition-all duration-200">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black bg-opacity-70 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-90 transition-all duration-200">
+                <i class="fas fa-chevron-right"></i>
             </button>
         </div>
     </div>
@@ -764,16 +834,44 @@ function getVenueTemplate() {
             document.getElementById('menu').classList.toggle('flex');
         });
 
+        // Enhanced lightbox functionality
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
         // Image modal functions
         function openImageModal(imageUrl) {
+            // Get all gallery images
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+            galleryImages = Array.from(galleryItems).map(img => img.src);
+            currentImageIndex = galleryImages.indexOf(imageUrl);
+            
             document.getElementById('modalImage').src = imageUrl;
             document.getElementById('imageModal').classList.remove('hidden');
             document.getElementById('imageModal').classList.add('flex');
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').classList.add('hidden');
             document.getElementById('imageModal').classList.remove('flex');
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        function nextImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        function previousImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
         }
 
         // Share function
@@ -795,6 +893,19 @@ function getVenueTemplate() {
         document.getElementById('imageModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeImageModal();
+            }
+        });
+
+        // Keyboard navigation for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('imageModal').classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === 'ArrowRight') {
+                    nextImage();
+                } else if (e.key === 'ArrowLeft') {
+                    previousImage();
+                }
             }
         });
     </script>
