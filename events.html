@@ -200,6 +200,7 @@
             font-size: 1.25rem !important;
             line-height: 1.4 !important;
             margin-bottom: 0.75rem !important;
+            text-align: left !important;
         }
         .event-card p {
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
@@ -755,7 +756,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="lg:hidden relative z-[60]">
             <button id="menu-btn" class="text-white text-2xl">
                 <i class="fas fa-bars"></i>
-            </button>
+            </a>
         </div>
     </nav>
     <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
@@ -832,15 +833,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             <div id="filter-bar-container" class="mb-8 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 relative z-10">
                 <div class="flex flex-wrap gap-3 items-center">
-                    <button class="filter-button active" data-filter-type="date" data-filter-value="upcoming">Upcoming</button>
-                    <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</button>
-                    <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</button>
+                    <button class="filter-button active" data-filter-type="date" data-filter-value="upcoming">Upcoming</a>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="today">Today</a>
+                    <button class="filter-button" data-filter-type="date" data-filter-value="this-weekend">This Weekend</a>
                     
                     <div class="relative z-20">
                         <button id="custom-date-btn" class="filter-button">
                             <span>Custom Date</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
-                        </button>
+                        </a>
                         <div id="custom-date-popover" class="popover">
                             <label for="date-from" class="block text-sm font-semibold mb-1 text-gray-400">From</label>
                             <input type="date" id="date-from" class="w-full p-2 bg-gray-800 rounded-md mb-3 text-white">
@@ -853,7 +854,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <button id="category-btn" class="filter-button">
                             <span>All Categories</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
-                        </button>
+                        </a>
                         <div id="category-popover" class="popover max-h-80 overflow-y-auto">
                             <p class="text-gray-400">Loading categories...</p>
                         </div>
@@ -863,7 +864,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <button id="venue-btn" class="filter-button">
                             <span>All Venues</span>
                             <i class="fas fa-chevron-down text-xs ml-2"></i>
-                        </button>
+                        </a>
                         <div id="venue-popover" class="popover max-h-80 overflow-y-auto">
                             <p class="text-gray-400">Loading venues...</p>
                         </div>
@@ -873,7 +874,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <button id="clear-filters-btn" class="filter-button text-red-400 hover:text-red-300">
                         <i class="fas fa-times mr-1"></i>
                         Clear Filters
-                    </button>
+                    </a>
 
                     <!-- SFW Toggle -->
                     <div id="nsfw-toggle-container" class="flex items-center bg-gray-800/50 border border-gray-600/50 rounded-lg px-3 py-2">
@@ -914,7 +915,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 items-start">
                 
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -930,23 +931,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
                             <span>Glamorous</span>
                         </div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -956,23 +957,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/the-haus-of-aja'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recedveXXuNmt7sWq" alt="The Haus of Aja" class="w-full h-full object-cover">
                     </div>
@@ -982,23 +983,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">The Haus of Aja</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Glee Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/victoria-scone-davinci-code-special'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/juzph9yj9ssmjkxl9or5" alt="Victoria Scone - Davinci Code Special" class="w-full h-full object-cover">
                     </div>
@@ -1008,23 +1009,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Victoria Scone - Davinci Code Special</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Village Inn</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1034,23 +1035,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/turnt-up-tuesday'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
@@ -1060,23 +1061,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Turnt Up Tuesday</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/walsall-pride-2025'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recl3tQDcYrVOxFwk" alt="Walsall Pride 2025" class="w-full h-full object-cover">
                     </div>
@@ -1086,23 +1087,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Walsall Pride 2025</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/hard-on-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recmrxvTWJ484h5Uc" alt="Hard On Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1112,23 +1113,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Hard On Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Eden Bar</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1138,23 +1139,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/queer-mendhi-nights'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rechitCeExzQHAotK" alt="Queer Mendhi Nights" class="w-full h-full object-cover">
                     </div>
@@ -1164,23 +1165,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Queer Mendhi Nights</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Social</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/lgbt-craft-fayre'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recbz2uGFXTNy3xig" alt="LGBT+ Craft Fayre" class="w-full h-full object-cover">
                     </div>
@@ -1190,23 +1191,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">LGBT+ Craft Fayre</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Fox & Equator Bar</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mids-bears-bear-market'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec248vGLwj62bKZx" alt="Mids Bears Bear Market" class="w-full h-full object-cover">
                     </div>
@@ -1221,18 +1222,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1242,23 +1243,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1268,23 +1269,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/ajgimf7km5vmtgiu5evq" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1294,23 +1295,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/solihull-pride-2025'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recjWUbtXGXmm4QMA" alt="Solihull Pride 2025" class="w-full h-full object-cover">
                     </div>
@@ -1320,23 +1321,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Solihull Pride 2025</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Mell Square</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1346,23 +1347,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/turnt-up-tuesday'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
@@ -1372,23 +1373,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Turnt Up Tuesday</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/send-in-the-clowns-little-flop-of-horrors'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recpzZe8A1cC6BxhC" alt="Send In The Clowns: Little Flop of Horrors" class="w-full h-full object-cover">
                     </div>
@@ -1398,23 +1399,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Send In The Clowns: Little Flop of Horrors</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Old Joint Stock Pub & Theatre</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Theatre</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/myra-dubois-cosmic-empath'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recAfK8f5P1vcsGnM" alt="Myra DuBois: Cosmic Empath" class="w-full h-full object-cover">
                     </div>
@@ -1424,23 +1425,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Myra DuBois: Cosmic Empath</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Town Hall</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Comedy</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1450,23 +1451,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1476,23 +1477,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1502,23 +1503,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/mash-up-mondays'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
@@ -1528,23 +1529,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/bad-bear-leather-and-fetish-night'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recSske21N94Sd8v0" alt="Bad Bear (Leather and Fetish Night)" class="w-full h-full object-cover">
                     </div>
@@ -1554,23 +1555,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Bad Bear (Leather and Fetish Night)</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/-chills-thrills-a-nsfw-halloween-special-'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/tfruqza8f1b9o4xjwsfb" alt="🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈" class="w-full h-full object-cover">
                     </div>
@@ -1580,23 +1581,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Eden Bar</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1606,23 +1607,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/fatt-butchers-big-meaty-gameshow'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec8nqZRFvSN628tT" alt="Fatt Butcher's Big Meaty Gameshow" class="w-full h-full object-cover">
                     </div>
@@ -1632,23 +1633,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">Fatt Butcher's Big Meaty Gameshow</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Old Joint Stock Pub & Theatre</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Comedy</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1658,23 +1659,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1684,23 +1685,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1710,23 +1711,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1736,23 +1737,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
             
                 <div class="event-card rounded-xl overflow-hidden cursor-pointer" 
-                     onclick="window.location.href='/event/xxl-birmingham'">
+                     >
                     <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
@@ -1762,17 +1763,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
                         <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
+                        
                         <div class="flex flex-wrap gap-2 mb-5">
                             <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                            <a href="/event/mash-up-mondays" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                 <i class="fas fa-eye mr-1"></i>View Details
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                            </a>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                 <i class="fas fa-share"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -2051,9 +2052,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                     <i class="fas fa-eye mr-1"></i>View Details
                                 </a>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, 'Mash Up Mondays', '/event/mash-up-mondays')">
                                     <i class="fas fa-share"></i>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>`;
@@ -2136,7 +2137,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="mt-4 text-xl font-semibold text-white">Error Loading Events</h3>
                         <p class="mt-2 text-gray-400">${error}</p>
-                        <button onclick="location.reload()" class="mt-4 filter-button active">Retry</button>
+                        <button onclick="location.reload()" class="mt-4 filter-button active">Retry</a>
                     </div>
                 `;
             }
@@ -2497,7 +2498,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 </p>
                                 <button onclick="location.reload()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">
                                     Try Again
-                                </button>
+                                </a>
                             </div>
                         </div>
                     `;
@@ -2630,7 +2631,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 
                 return `
                     <div class="event-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
-                         onclick="window.location.href='/event/${event.slug}'">
+                         >
                         <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">
                         </div>
@@ -2648,8 +2649,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <i class="fas fa-map-marker-alt text-xs ml-2 mr-1"></i>
                                 ${event.venueName || event.venue?.name || 'TBC'}
                             </p>
-                            <div class="flex flex-wrap gap-1">
+                            <div class="flex flex-wrap gap-1 mb-4">
                                 ${categoryTags}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-eye mr-1"></i>View Details
+                                </a>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
+                                    <i class="fas fa-share"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -2660,6 +2669,31 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             // Re-parse the new dynamic events for filtering
             parseStaticEvents();
+        }
+
+        // --- Share Functionality ---
+        function shareEvent(event, eventName, eventUrl) {
+            event.stopPropagation(); // Prevent card click
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: eventName,
+                    text: `Check out this event: ${eventName}`,
+                    url: window.location.origin + eventUrl,
+                })
+                .then(() => console.log('Successful share'))
+                .catch((error) => console.log('Error sharing', error));
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const shareUrl = window.location.origin + eventUrl;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Event URL copied to clipboard!');
+                    });
+                } else {
+                    alert(`Share this event: ${shareUrl}`);
+                }
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initializePage);
