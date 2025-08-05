@@ -171,6 +171,79 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 58, 153, 0.2) !important;
         }
 
+        /* Event Card Styles */
+        .event-card {
+            background: rgba(31, 41, 55, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 1rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+        .event-card:hover {
+            transform: translateY(-6px) !important;
+            border-color: rgba(232, 58, 153, 0.6) !important;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 58, 153, 0.3) !important;
+        }
+        .event-card img {
+            transition: transform 0.4s ease !important;
+        }
+        .event-card:hover img {
+            transform: scale(1.08) !important;
+        }
+        .event-card h3 {
+            color: #FFFFFF !important;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+            font-weight: 700 !important;
+            font-size: 1.25rem !important;
+            line-height: 1.4 !important;
+            margin-bottom: 0.75rem !important;
+        }
+        .event-card p {
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+            line-height: 1.5 !important;
+        }
+        .event-card .text-gray-400 {
+            color: #9CA3AF !important;
+            font-weight: 500 !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+        }
+        .event-card .text-gray-300 {
+            color: #D1D5DB !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+        }
+        .event-card .inline-block {
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            font-weight: 500 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+        }
+        .event-card .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%) !important;
+            border: none !important;
+            font-weight: 600 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+            transition: all 0.3s ease !important;
+        }
+        .event-card .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(232, 58, 153, 0.4) !important;
+        }
+        .event-card .btn-secondary {
+            background: rgba(75, 85, 99, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease !important;
+        }
+        .event-card .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
             border: 1px solid rgba(232, 58, 153, 0.3);
@@ -846,14 +919,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">4 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-2 text-accent-color"></i>
+                                <span>4 Aug 2025</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4">
+                            <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                            <span>Glamorous</span>
+                        </div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -872,14 +951,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">11 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>11 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -898,14 +977,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recedveXXuNmt7sWq" alt="The Haus of Aja" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">15 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>15 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">The Haus of Aja</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Glee Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">The Haus of Aja</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Glee Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -924,14 +1003,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/juzph9yj9ssmjkxl9or5" alt="Victoria Scone - Davinci Code Special" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">15 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>15 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Victoria Scone - Davinci Code Special</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Village Inn</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Victoria Scone - Davinci Code Special</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Village Inn</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -950,14 +1029,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">18 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>18 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -976,14 +1055,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">19 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>19 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Turnt Up Tuesday</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Turnt Up Tuesday</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1002,14 +1081,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recl3tQDcYrVOxFwk" alt="Walsall Pride 2025" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">23 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>23 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Walsall Pride 2025</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Walsall Pride 2025</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1028,14 +1107,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recmrxvTWJ484h5Uc" alt="Hard On Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">24 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>24 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Hard On Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">Eden Bar</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Hard On Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Eden Bar</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1054,14 +1133,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>25 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1080,14 +1159,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rechitCeExzQHAotK" alt="Queer Mendhi Nights" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>25 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Queer Mendhi Nights</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Queer Mendhi Nights</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Social</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Pride</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Social</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1106,14 +1185,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recbz2uGFXTNy3xig" alt="LGBT+ Craft Fayre" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">30 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>30 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">LGBT+ Craft Fayre</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Fox & Equator Bar</p>
+                        <h3 class="text-xl font-bold text-white mb-3">LGBT+ Craft Fayre</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Fox & Equator Bar</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1132,14 +1211,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec248vGLwj62bKZx" alt="Mids Bears Bear Market" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">30 Aug 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>30 Aug 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mids Bears Bear Market</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mids Bears Bear Market</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Mids Bears Bear Market</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Community</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Community</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1158,14 +1237,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1184,14 +1263,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1210,14 +1289,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/ajgimf7km5vmtgiu5evq" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">2 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>2 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1236,14 +1315,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recjWUbtXGXmm4QMA" alt="Solihull Pride 2025" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">6 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>6 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Solihull Pride 2025</h3>
-                        <p class="text-gray-400 text-sm mb-3">Mell Square</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Solihull Pride 2025</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Mell Square</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1262,14 +1341,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">8 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>8 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1288,14 +1367,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Turnt%20Up%20Tuesday" alt="Turnt Up Tuesday" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">9 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>9 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Turnt Up Tuesday</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Turnt Up Tuesday</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1314,14 +1393,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recpzZe8A1cC6BxhC" alt="Send In The Clowns: Little Flop of Horrors" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">10 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>10 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Send In The Clowns: Little Flop of Horrors</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Old Joint Stock Pub & Theatre</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Send In The Clowns: Little Flop of Horrors</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Old Joint Stock Pub & Theatre</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Theatre</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Theatre</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1340,14 +1419,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recAfK8f5P1vcsGnM" alt="Myra DuBois: Cosmic Empath" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">19 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>19 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Myra DuBois: Cosmic Empath</h3>
-                        <p class="text-gray-400 text-sm mb-3">Town Hall</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Myra DuBois: Cosmic Empath</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Town Hall</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Comedy</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1366,14 +1445,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">29 Sept 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>29 Sept 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1392,14 +1471,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Oct 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Oct 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1418,14 +1497,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">6 Oct 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>6 Oct 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1444,14 +1523,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=Mash%20Up%20Mondays" alt="Mash Up Mondays" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">13 Oct 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>13 Oct 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Mash Up Mondays</h3>
-                        <p class="text-gray-400 text-sm mb-3">Glamorous</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Mash Up Mondays</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Glamorous</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Drag</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Live Music</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1470,14 +1549,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_recSske21N94Sd8v0" alt="Bad Bear (Leather and Fetish Night)" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">17 Oct 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>17 Oct 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Bad Bear (Leather and Fetish Night)</h3>
-                        <p class="text-gray-400 text-sm mb-3">TBC</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Bad Bear (Leather and Fetish Night)</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>TBC</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span> <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1496,14 +1575,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/tfruqza8f1b9o4xjwsfb" alt="🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">25 Oct 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>25 Oct 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈</h3>
-                        <p class="text-gray-400 text-sm mb-3">Eden Bar</p>
+                        <h3 class="text-xl font-bold text-white mb-3">🎃 CHILLS & THRILLS – A NSFW Halloween Special 😈</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>Eden Bar</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Party</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Party</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1522,14 +1601,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Nov 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Nov 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1548,14 +1627,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/brumoutloud_events/event_rec8nqZRFvSN628tT" alt="Fatt Butcher's Big Meaty Gameshow" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">21 Nov 2025</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>21 Nov 2025</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Fatt Butcher's Big Meaty Gameshow</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Old Joint Stock Pub & Theatre</p>
+                        <h3 class="text-xl font-bold text-white mb-3">Fatt Butcher's Big Meaty Gameshow</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Old Joint Stock Pub & Theatre</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Comedy</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Comedy</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1574,14 +1653,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Jan 2026</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Jan 2026</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1600,14 +1679,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Feb 2026</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Feb 2026</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1626,14 +1705,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Apr 2026</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Apr 2026</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1652,14 +1731,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 May 2026</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 May 2026</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1678,14 +1757,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <img src="https://placehold.co/1200x675/1e1e1e/EAEAEA?text=XXL%20Birmingham" alt="XXL Birmingham" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">1 Jun 2026</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>1 Jun 2026</span></div>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">XXL Birmingham</h3>
-                        <p class="text-gray-400 text-sm mb-3">The Nightingale Club</p>
+                        <h3 class="text-xl font-bold text-white mb-3">XXL Birmingham</h3>
+                        <div class="flex items-center text-gray-400 text-sm mb-4"><i class="fas fa-map-marker-alt mr-2 text-accent-color"></i><span>The Nightingale Club</span></div>
                         <p class="text-gray-300 text-sm mb-4 line-clamp-2">Click to view event details and get tickets.</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Kink</span>
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">Kink</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -1888,7 +1967,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             eventGrid.innerHTML = events.map(event => {
                 const tagsHTML = event.category && event.category.length > 0 ? 
-                    event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
+                    event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
                 
                 // Debug image data
                 console.log('Event image data for', event.name, ':', event.image);
@@ -1960,8 +2039,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
                         </div>
                         <div class="p-6">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm text-gray-400">${formattedDate}</span>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center text-sm text-gray-400"><i class="fas fa-calendar-alt mr-2 text-accent-color"></i><span>${formattedDate}</span></div>
                             </div>
                             <h3 class="text-xl font-bold text-white mb-2 text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem; line-height: 1.5rem;">${event.name}</h3>
                             <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
@@ -2546,7 +2625,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const categories = Array.isArray(event.category) ? event.category : (event.category ? [event.category] : []);
                 
                 const categoryTags = categories.map(cat => 
-                    `<span class="bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
+                    `<span class="bg-blue-100/20 text-blue-300 text-xs px-3 py-1.5 rounded-full">${cat}</span>`
                 ).join(' ');
                 
                 return `
@@ -2557,7 +2636,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-2">
-                                <span class="bg-accent-color text-white text-xs px-2 py-1 rounded-full font-bold">
+                                <span class="bg-accent-color text-white text-xs px-3 py-1.5 rounded-full font-bold">
                                     ${new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                                 </span>
                             </div>
