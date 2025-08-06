@@ -108,7 +108,7 @@ async function handlePublicView(queryParams) {
                 cloudinaryId: rawData['Cloudinary Public ID']
             });
             
-            // Map Firestore field names to expected field names
+            // Map Firestore field names to expected field names (support both legacy and new field names)
             const eventData = {
                 id: doc.id,
                 name: rawData['Event Name'] || rawData.name,
@@ -131,7 +131,10 @@ async function handlePublicView(queryParams) {
                 updatedAt: rawData.updatedAt,
                 submittedBy: rawData['Submitter Email'] || rawData.submittedBy,
                 approvedBy: rawData.approvedBy,
-                approvedAt: rawData.approvedAt
+                approvedAt: rawData.approvedAt,
+                // Add new standardized fields for compatibility
+                cloudinaryPublicId: rawData.cloudinaryPublicId || rawData['Cloudinary Public ID'],
+                promoImage: rawData.promoImage || rawData['Promo Image']
             };
             
             // Convert venue object to venueName string for compatibility with live events page
@@ -320,14 +323,14 @@ async function handleAdminView(queryParams) {
 function extractImageInfo(eventData, venueData = null) {
     console.log(`Extracting image for event: ${eventData['Event Name'] || eventData.name}`);
     console.log(`Available image fields:`, {
-        cloudinaryId: eventData['Cloudinary Public ID'],
-        promoImage: eventData['Promo Image'],
+        cloudinaryId: eventData['Cloudinary Public ID'] || eventData.cloudinaryPublicId,
+        promoImage: eventData['Promo Image'] || eventData.promoImage,
         image: eventData.image,
         legacyCloudinaryId: eventData['Cloudinary Public ID']
     });
     
-    // Check for standardized Cloudinary Public ID first
-    const cloudinaryId = eventData['Cloudinary Public ID'];
+    // Check for standardized Cloudinary Public ID first (new field name)
+    const cloudinaryId = eventData.cloudinaryPublicId || eventData['Cloudinary Public ID'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
         console.log(`Using Cloudinary ID: ${cloudinaryId}`);
         return {
@@ -336,8 +339,8 @@ function extractImageInfo(eventData, venueData = null) {
         };
     }
     
-    // Check for standardized promo image
-    const promoImage = eventData['Promo Image'];
+    // Check for standardized promo image (new field name)
+    const promoImage = eventData.promoImage || eventData['Promo Image'];
     if (promoImage) {
         let imageUrl = null;
         if (typeof promoImage === 'string') {
