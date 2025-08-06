@@ -369,7 +369,7 @@ exports.handler = async function (event, context) {
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Main Content -->
                     <div class="lg:col-span-2">
-                        {{#if event.description}}
+                        {{#if (hasDescription event.description)}}
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
@@ -561,6 +561,10 @@ exports.handler = async function (event, context) {
         
         Handlebars.registerHelper('hasValidLink', function(link) {
             return link && link !== null && link !== '';
+        });
+        
+        Handlebars.registerHelper('hasDescription', function(description) {
+            return description && description !== null && description !== '' && description.trim() !== '';
         });
 
         // Compile the template
