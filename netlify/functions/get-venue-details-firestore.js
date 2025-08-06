@@ -18,7 +18,26 @@ const googlePlacesService = new GooglePlacesService();
 
 exports.handler = async function(event, context) {
   try {
-    const slug = event.queryStringParameters?.slug;
+    console.log('🔍 Event object:', JSON.stringify(event, null, 2));
+    console.log('🔍 Query string parameters:', event.queryStringParameters);
+    console.log('🔍 Path parameters:', event.pathParameters);
+    console.log('🔍 Raw query string:', event.rawQuery);
+    
+    // Try multiple ways to get the slug
+    let slug = event.queryStringParameters?.slug;
+    
+    // If not in query params, try path parameters (for :splat)
+    if (!slug && event.pathParameters) {
+      slug = event.pathParameters.splat || event.pathParameters.slug;
+    }
+    
+    // If still no slug, try to extract from the path
+    if (!slug && event.path) {
+      const pathParts = event.path.split('/');
+      slug = pathParts[pathParts.length - 1];
+    }
+    
+    console.log('🔍 Extracted slug:', slug);
     
     if (!slug) {
       return {
@@ -26,7 +45,15 @@ exports.handler = async function(event, context) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ error: 'Venue slug is required' })
+        body: JSON.stringify({ 
+          error: 'Venue slug is required',
+          debug: {
+            queryStringParameters: event.queryStringParameters,
+            pathParameters: event.pathParameters,
+            path: event.path,
+            rawQuery: event.rawQuery
+          }
+        })
       };
     }
 
