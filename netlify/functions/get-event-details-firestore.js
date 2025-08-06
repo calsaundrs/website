@@ -133,6 +133,8 @@ exports.handler = async function (event, context) {
         console.log("Event description:", eventData.description);
         console.log("Description length:", eventData.description ? eventData.description.length : 0);
         console.log("Description type:", typeof eventData.description);
+        console.log("All event fields:", Object.keys(eventData));
+        console.log("Raw event data:", JSON.stringify(eventData, null, 2));
 
         // Get other instances if this is a series event
         let otherInstances = [];
