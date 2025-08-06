@@ -130,6 +130,9 @@ exports.handler = async function (event, context) {
 
         console.log("Event found:", eventData.name);
         console.log("Event date:", eventData.date, "Type:", typeof eventData.date);
+        console.log("Event description:", eventData.description);
+        console.log("Description length:", eventData.description ? eventData.description.length : 0);
+        console.log("Description type:", typeof eventData.description);
 
         // Get other instances if this is a series event
         let otherInstances = [];
