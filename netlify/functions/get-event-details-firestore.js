@@ -120,10 +120,6 @@ exports.handler = async function (event, context) {
         // Use the new Firestore service to get event data
         const eventData = await eventService.getEventBySlug(slug);
         
-        // Debug: Log all available fields
-        console.log("All event data fields:", Object.keys(eventData));
-        console.log("Raw event data:", JSON.stringify(eventData, null, 2));
-        
         if (!eventData) {
             console.log("No event found with slug:", slug);
             return { 
@@ -134,17 +130,6 @@ exports.handler = async function (event, context) {
 
         console.log("Event found:", eventData.name);
         console.log("Event date:", eventData.date, "Type:", typeof eventData.date);
-        console.log("Event description:", eventData.description);
-        console.log("Event data structure:", JSON.stringify({
-          id: eventData.id,
-          name: eventData.name,
-          slug: eventData.slug,
-          description: eventData.description,
-          hasDate: !!eventData.date,
-          hasSeries: !!eventData.series,
-          seriesType: eventData.series?.type,
-          venue: eventData.venue?.name
-        }, null, 2));
 
         // Get other instances if this is a series event
         let otherInstances = [];
