@@ -131,37 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (posterPreview) posterPreview.classList.remove('hidden');
         if (uploadArea) uploadArea.classList.add('hidden');
         
-        // Show processing status
-        if (aiProcessing) aiProcessing.classList.remove('hidden');
-        
-        // Create FormData for upload
-        const formData = new FormData();
-        formData.append('poster', file);
-        
-        try {
-            const response = await fetch('/.netlify/functions/process-poster', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.success && result.data) {
-                extractedEventData = result.data;
-                showExtractedData(result.data);
-            } else {
-                showUploadSuccess();
-            }
-        } catch (error) {
-            console.error('Error processing poster:', error);
-            showUploadSuccess();
-        } finally {
-            if (aiProcessing) aiProcessing.classList.add('hidden');
-        }
+        // For now, just show upload success without AI processing
+        // The poster will be uploaded directly with the event submission
+        showUploadSuccess();
     }
 
     function showExtractedData(data) {
@@ -404,19 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const venueSearch = document.getElementById('venue-search');
             const venueSelect = document.getElementById('venue-select');
             
-            // Debug venue selection
-            console.log('🔍 VENUE VALIDATION:');
-            console.log('  - venueId element:', venueId);
-            console.log('  - venueId value:', venueId ? venueId.value : 'N/A');
-            console.log('  - venueSearch element:', venueSearch);
-            console.log('  - venueSearch value:', venueSearch ? venueSearch.value : 'N/A');
-            console.log('  - venueSelect element:', venueSelect);
-            console.log('  - venueSelect value:', venueSelect ? venueSelect.value : 'N/A');
-            
             // Check if venue is selected (either through search or select)
             const hasVenueSelected = (venueId && venueId.value) || (venueSelect && venueSelect.value);
-            
-            console.log('  - hasVenueSelected:', hasVenueSelected);
             
             if (!hasVenueSelected) {
                 errors.push('Please select a venue.');
@@ -448,16 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Submit form
             try {
-                console.log('🚀 FORM SUBMISSION: Starting form submission');
-                console.log('🔍 FORM SUBMISSION: Form data:', new FormData(form));
-                
                 // Get venue ID from the hidden input (new system) or select (old system)
                 const venueIdInput = document.getElementById('venue-id');
                 const finalVenueId = venueIdInput ? venueIdInput.value : (venueSelect ? venueSelect.value : '');
-                
-                console.log('🏢 FORM SUBMISSION: Selected venue ID:', finalVenueId);
-                console.log('📝 FORM SUBMISSION: Event name:', eventName);
-                console.log('📅 FORM SUBMISSION: Event date:', eventDate);
                 
                 // If creating a new venue, create it first
                 if (finalVenueId === 'new' || isCreatingNewVenue) {
@@ -495,31 +449,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Add poster if uploaded
                 if (posterUpload && posterUpload.files.length > 0) {
-                    eventFormData.append('promo-image', posterUpload.files[0]);
+                    eventFormData.append('image', posterUpload.files[0]);
                 }
                 
                 // Add the venue ID
                 eventFormData.append('venueId', finalVenueId);
                 
-                console.log('🌐 FORM SUBMISSION: Sending request to event-submission-firestore-simple');
-                console.log('🌐 FORM SUBMISSION: Request URL:', '/.netlify/functions/event-submission-firestore-simple');
-                console.log('🌐 FORM SUBMISSION: Request method: POST');
-                
-                const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+                const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
                     method: 'POST',
                     body: eventFormData
                 });
                 
-                console.log('🌐 FORM SUBMISSION: Response status:', response.status);
-                console.log('🌐 FORM SUBMISSION: Response ok:', response.ok);
-                
                 if (!response.ok) {
-                    console.error('❌ FORM SUBMISSION: Response not ok:', response.status);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const result = await response.json();
-                console.log('✅ FORM SUBMISSION: Response received:', result);
                 
                 if (result.success) {
                     alert('Event submitted successfully! We\'ll review it within 24-48 hours.');
