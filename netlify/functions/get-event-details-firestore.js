@@ -1,5 +1,5 @@
 const FirestoreEventService = require('./services/firestore-event-service');
-const SeriesManager = require('./services/series-manager');
+const RecurringEventsManager = require('./services/recurring-events-manager');
 const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
@@ -7,7 +7,7 @@ const path = require('path');
 // Version: 2025-01-27-v1 - Firestore-based event details function
 
 const eventService = new FirestoreEventService();
-const seriesManager = new SeriesManager();
+const recurringManager = new RecurringEventsManager();
 
 /**
  * Converts a date object to an ISO string suitable for ICS files (YYYYMMDDTHHMMSSZ).
@@ -138,19 +138,19 @@ exports.handler = async function (event, context) {
         console.log("All event fields:", Object.keys(eventData));
         console.log("Raw event data:", JSON.stringify(eventData, null, 2));
 
-        // Get other instances if this is a series event
+        // Get other instances if this is a recurring event
         let otherInstances = [];
-        if (eventData.series && eventData.series.type === 'recurring') {
+        if (eventData.isRecurring && eventData.recurringGroupId) {
             try {
-                const seriesWithInstances = await seriesManager.getSeriesWithInstances(
-                    eventData.series.id, 
+                const instances = await recurringManager.getRecurringSeriesInstances(
+                    eventData.recurringGroupId, 
                     { limit: 6, futureOnly: true }
                 );
-                otherInstances = seriesWithInstances.events.filter(instance => 
+                otherInstances = instances.filter(instance => 
                     instance.id !== eventData.id
                 );
             } catch (error) {
-                console.error('Error getting series instances:', error);
+                console.error('Error getting recurring instances:', error);
             }
         }
 

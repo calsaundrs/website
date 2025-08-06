@@ -1,5 +1,6 @@
 const FirestoreEventService = require('./services/firestore-event-service');
 const admin = require('firebase-admin');
+const RecurringEventsManager = require('./services/recurring-events-manager');
 
 // Version: 2025-01-27-v1 - Firestore-based events listing function
 
@@ -227,6 +228,11 @@ async function handlePublicView(queryParams) {
 
         console.log(`Sorted ${events.length} events by date`);
 
+        // Group recurring events using the new manager
+        const recurringManager = new RecurringEventsManager();
+        const groupedEvents = recurringManager.groupRecurringEvents(events);
+        console.log(`Grouped ${events.length} events into ${groupedEvents.length} display items`);
+
         // Get total count for pagination
         console.log("Getting total count...");
         const countQuery = eventsRef.where('status', '==', 'approved');
@@ -242,7 +248,7 @@ async function handlePublicView(queryParams) {
             },
             body: JSON.stringify({
                 success: true,
-                events: events,
+                events: groupedEvents,
                 totalCount: totalCount,
                 hasMore: events.length === filters.limit,
                 filters: filters

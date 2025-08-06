@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
+const RecurringEventsManager = require('./services/recurring-events-manager');
 
 exports.handler = async function (event, context) {
     console.log('Firestore-only event submission called');
@@ -205,58 +206,30 @@ exports.handler = async function (event, context) {
         
         // Handle recurring events
         if (submission['is-recurring'] === 'on' || submission['is-recurring'] === 'true') {
-            // This is a recurring event
-            const recurringData = {
-                isRecurring: true,
-                recurringPattern: submission['recurrence-pattern'] || null,
-                recurringStartDate: submission['recurrence-start-date'] || submission.date,
-                recurringEndDate: submission['recurrence-end-date'] || null,
+            // This is a recurring event - use the new recurring events manager
+            const recurringManager = new RecurringEventsManager();
+            
+            const seriesData = {
+                name: submission['event-name'],
+                description: submission['event-description'],
+                category: submission['event-category'] ? [submission['event-category']] : [],
+                venueSlug: firestoreData.venueSlug,
+                venueName: firestoreData.venueName,
+                recurringPattern: submission['recurrence-pattern'] || 'weekly',
+                startDate: submission['recurrence-start-date'] || submission.date,
+                endDate: submission['recurrence-end-date'] || null,
                 maxInstances: parseInt(submission['max-instances']) || 52,
-                customRecurrenceDesc: submission['custom-recurrence-desc'] || null,
-                recurringInfo: submission['custom-recurrence-desc'] || submission['recurrence-pattern'] || 'Recurring event'
+                time: submission['event-time'] || '20:00',
+                image: uploadedImage ? uploadedImage.url : null,
+                link: submission['event-link'] || '',
+                price: submission['event-price'] || null,
+                ageRestriction: submission['event-age-restriction'] || null
             };
             
-            // Merge recurring data
-            Object.assign(firestoreData, recurringData);
+            // Create the recurring series
+            const result = await recurringManager.createRecurringSeries(seriesData);
             
-            // Generate recurring event instances
-            let instances;
-            if (recurringData.recurringPattern === 'custom' && recurringData.customRecurrenceDesc) {
-                // Use enhanced custom recurrence parser
-                instances = await generateCustomRecurringInstances(recurringData);
-            } else {
-                // Use standard pattern generation
-                instances = generateRecurringInstances(recurringData);
-            }
-            
-            // Create all instances in a batch
-            const batch = db.batch();
-            const createdEvents = [];
-            
-            instances.forEach((instance, index) => {
-                const eventRef = db.collection('events').doc();
-                const instanceData = {
-                    ...firestoreData,
-                    date: instance.toISOString(),
-                    slug: `${slug}-${index + 1}`,
-                    recurringInstance: index + 1,
-                    totalInstances: instances.length,
-                    recurringGroupId: `group_${Date.now()}`,
-                    createdAt: new Date(),
-                    updatedAt: new Date()
-                };
-                
-                batch.set(eventRef, instanceData);
-                createdEvents.push({
-                    id: eventRef.id,
-                    date: instance.toISOString(),
-                    slug: `${slug}-${index + 1}`
-                });
-            });
-            
-            await batch.commit();
-            
-            console.log(`Created ${instances.length} recurring event instances`);
+            console.log(`Created ${result.totalInstances} recurring event instances`);
             
             return {
                 statusCode: 200,
@@ -280,11 +253,11 @@ exports.handler = async function (event, context) {
                 </head>
                 <body>
                     <h1 class="success">Recurring Events Created Successfully!</h1>
-                    <p>Your recurring event "${submission['event-name']}" has been created with <span class="highlight">${instances.length} instances</span>.</p>
-                    <p class="info">Pattern: ${recurringData.recurringPattern === 'custom' ? recurringData.customRecurrenceDesc : recurringData.recurringPattern}</p>
+                    <p>Your recurring event "${submission['event-name']}" has been created with <span class="highlight">${result.totalInstances} instances</span>.</p>
+                    <p class="info">Pattern: ${seriesData.recurringPattern}</p>
                     <p class="info">All events have been submitted for review.</p>
                     <p class="info">You will be redirected to the events page shortly.</p>
-                    <p class="info">Note: This submission was processed using Firestore only.</p>
+                    <p class="info">Note: This submission was processed using the new recurring events system.</p>
                 </body>
                 </html>`
             };
