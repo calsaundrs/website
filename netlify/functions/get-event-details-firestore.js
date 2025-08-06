@@ -378,7 +378,9 @@ exports.handler = async function (event, context) {
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
                             </h2>
-                            <p class="text-gray-300 leading-relaxed">{{event.description}}</p>
+                            <div class="text-gray-300 leading-relaxed prose prose-invert max-w-none">
+                                {{{formatDescription event.description}}}
+                            </div>
                         </div>
                         {{/if}}
 
@@ -569,6 +571,17 @@ exports.handler = async function (event, context) {
         
         Handlebars.registerHelper('hasDescription', function(description) {
             return description && description !== null && description !== '' && description.trim() !== '';
+        });
+        
+        Handlebars.registerHelper('formatDescription', function(description) {
+            if (!description) return '';
+            
+            // Convert line breaks to HTML
+            return description
+                .replace(/\n\n/g, '</p><p>') // Double line breaks become new paragraphs
+                .replace(/\n/g, '<br>') // Single line breaks become <br> tags
+                .replace(/^/, '<p>') // Start with <p>
+                .replace(/$/, '</p>'); // End with </p>
         });
 
         // Compile the template
