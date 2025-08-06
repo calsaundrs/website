@@ -84,8 +84,8 @@ async function handlePublicView(queryParams) {
         // We'll add ordering back once the basic index is created
         console.log("Using simple query without ordering to avoid index requirements");
 
-        // Apply pagination
-        query = query.limit(filters.limit).offset(filters.offset);
+        // Apply pagination (Firestore doesn't support offset, so we'll get all and slice)
+        query = query.limit(filters.limit);
 
         console.log("Executing Firestore query...");
         const snapshot = await query.get();
@@ -95,8 +95,17 @@ async function handlePublicView(queryParams) {
         let processedCount = 0;
         let skippedCount = 0;
         
-        snapshot.forEach(doc => {
+        // Process events and fetch venue data for each
+        for (const doc of snapshot.docs) {
             const rawData = doc.data();
+            console.log(`Raw event data for ${rawData['Event Name'] || rawData.name}:`, {
+                venue: rawData.venue,
+                venueName: rawData['Venue Name'],
+                venueSlug: rawData['Venue Slug'],
+                image: rawData.image,
+                promoImage: rawData['Promo Image'],
+                cloudinaryId: rawData['Cloudinary Public ID']
+            });
             
             // Map Firestore field names to expected field names
             const eventData = {
@@ -110,6 +119,7 @@ async function handlePublicView(queryParams) {
                 venueId: rawData['venueId'] || rawData.venueId,
                 venueName: rawData['Venue Name'] || rawData.venueName,
                 venueSlug: rawData['Venue Slug'] || rawData.venueSlug,
+                venue: rawData.venue, // Pass the venue object directly
                 image: extractImageInfo(rawData),
                 link: rawData['Link'] || rawData.link,
                 ticketLink: rawData['Ticket Link'] || rawData.ticketLink,
@@ -123,20 +133,58 @@ async function handlePublicView(queryParams) {
                 approvedAt: rawData.approvedAt
             };
             
-            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, image: ${JSON.stringify(eventData.image)})`);
+            // Convert venue object to venueName string for compatibility with live events page
+            if (eventData.venue && eventData.venue.name && !eventData.venueName) {
+                eventData.venueName = Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name;
+            }
+            
+            // Fetch venue data if we have a venue slug
+            let venueData = null;
+            if (eventData.venueSlug) {
+                try {
+                    const venueRef = db.collection('venues');
+                    const venueQuery = venueRef.where('slug', '==', eventData.venueSlug);
+                    const venueSnapshot = await venueQuery.get();
+                    if (!venueSnapshot.empty) {
+                        const venueDoc = venueSnapshot.docs[0];
+                        venueData = processVenueForPublic({
+                            id: venueDoc.id,
+                            ...venueDoc.data()
+                        });
+                        console.log(`Found venue data for ${eventData.name}:`, venueData.name);
+                    }
+                } catch (error) {
+                    console.log(`Error fetching venue data for ${eventData.name}:`, error);
+                }
+            }
+            
+            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, venue: ${JSON.stringify(eventData.venue)}, image: ${JSON.stringify(eventData.image)})`);
             
             // Apply date filtering client-side
             if (eventData.date) {
-                const eventDate = new Date(eventData.date);
-                const now = new Date();
-                
-                console.log(`Date comparison for ${eventData.name}: eventDate=${eventDate.toISOString()}, now=${now.toISOString()}, isPast=${eventDate < now}`);
-                
-                // Filter out past events (events before today)
-                if (eventDate < now) {
-                    console.log(`Skipping past event ${eventData.name} (date: ${eventDate.toISOString()})`);
+                try {
+                    const eventDate = new Date(eventData.date);
+                    const now = new Date();
+                    
+                    // Check if the date is valid
+                    if (isNaN(eventDate.getTime())) {
+                        console.log(`Invalid date for event ${eventData.name}: ${eventData.date}`);
+                        skippedCount++;
+                        continue; // Skip this event
+                    }
+                    
+                    console.log(`Date comparison for ${eventData.name}: eventDate=${eventDate.toISOString()}, now=${now.toISOString()}, isPast=${eventDate < now}`);
+                    
+                    // Filter out past events (events before today)
+                    if (eventDate < now) {
+                        console.log(`Skipping past event ${eventData.name} (date: ${eventDate.toISOString()})`);
+                        skippedCount++;
+                        continue; // Skip this event
+                    }
+                } catch (dateError) {
+                    console.log(`Error processing date for event ${eventData.name}: ${eventData.date}`, dateError);
                     skippedCount++;
-                    return; // Skip this event
+                    continue; // Skip this event
                 }
             }
             
@@ -148,22 +196,33 @@ async function handlePublicView(queryParams) {
                 if (!nameMatch && !descMatch) {
                     console.log(`Skipping event ${eventData.name} due to search filter`);
                     skippedCount++;
-                    return; // Skip this event
+                    continue; // Skip this event
                 }
             }
             
-            const processedEvent = processEventForPublic(eventData);
+            const processedEvent = await processEventForPublic(eventData, venueData);
             events.push(processedEvent);
             processedCount++;
-        });
+        }
         
         console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
 
         // Sort events by date (client-side since we can't orderBy in Firestore yet)
         events.sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            return dateA - dateB;
+            try {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                
+                // Handle invalid dates
+                if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+                if (isNaN(dateA.getTime())) return 1; // Invalid dates go to the end
+                if (isNaN(dateB.getTime())) return -1;
+                
+                return dateA - dateB;
+            } catch (error) {
+                console.log('Error sorting events by date:', error);
+                return 0; // Keep original order if sorting fails
+            }
         });
 
         console.log(`Sorted ${events.length} events by date`);
@@ -182,6 +241,7 @@ async function handlePublicView(queryParams) {
                 'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
             },
             body: JSON.stringify({
+                success: true,
                 events: events,
                 totalCount: totalCount,
                 hasMore: events.length === filters.limit,
@@ -216,8 +276,8 @@ async function handleAdminView(queryParams) {
         // Order by creation date (newest first)
         query = query.orderBy('createdAt', 'desc');
 
-        // Apply pagination
-        query = query.limit(filters.limit).offset(filters.offset);
+        // Apply pagination (Firestore doesn't support offset, so we'll get all and slice)
+        query = query.limit(filters.limit);
 
         const snapshot = await query.get();
         
@@ -237,6 +297,7 @@ async function handleAdminView(queryParams) {
                 'Cache-Control': 'no-cache'
             },
             body: JSON.stringify({
+                success: true,
                 events: events,
                 totalCount: events.length,
                 hasMore: events.length === filters.limit,
@@ -248,6 +309,80 @@ async function handleAdminView(queryParams) {
         console.error('Error fetching admin events:', error);
         throw error;
     }
+}
+
+function extractImageInfo(eventData, venueData = null) {
+    console.log(`Extracting image for event: ${eventData['Event Name'] || eventData.name}`);
+    console.log(`Available image fields:`, {
+        cloudinaryId: eventData['Cloudinary Public ID'],
+        promoImage: eventData['Promo Image'],
+        image: eventData.image,
+        legacyCloudinaryId: eventData['Cloudinary Public ID']
+    });
+    
+    // Check for standardized Cloudinary Public ID first
+    const cloudinaryId = eventData['Cloudinary Public ID'];
+    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
+        console.log(`Using Cloudinary ID: ${cloudinaryId}`);
+        return {
+            url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
+            alt: eventData['Event Name'] || eventData.name
+        };
+    }
+    
+    // Check for standardized promo image
+    const promoImage = eventData['Promo Image'];
+    if (promoImage) {
+        let imageUrl = null;
+        if (typeof promoImage === 'string') {
+            imageUrl = promoImage;
+        } else if (Array.isArray(promoImage) && promoImage.length > 0) {
+            imageUrl = promoImage[0].url || promoImage[0];
+        } else if (promoImage && typeof promoImage === 'object') {
+            imageUrl = promoImage.url || promoImage[0]?.url;
+        }
+        
+        if (imageUrl) {
+            console.log(`Using promo image: ${imageUrl}`);
+            return {
+                url: imageUrl,
+                alt: eventData['Event Name'] || eventData.name
+            };
+        }
+    }
+    
+    // Check for generic image field
+    const image = eventData.image;
+    if (image) {
+        let imageUrl = null;
+        if (typeof image === 'string') {
+            imageUrl = image;
+        } else if (Array.isArray(image) && image.length > 0) {
+            imageUrl = image[0].url || image[0];
+        } else if (image && typeof image === 'object') {
+            imageUrl = image.url || image[0]?.url;
+        }
+        
+        if (imageUrl) {
+            console.log(`Using image field: ${imageUrl}`);
+            return {
+                url: imageUrl,
+                alt: eventData['Event Name'] || eventData.name
+            };
+        }
+    }
+    
+    // Fallback to venue image if available
+    if (venueData && venueData.image && venueData.image.url) {
+        console.log(`Using venue image as fallback: ${venueData.image.url}`);
+        return {
+            url: venueData.image.url,
+            alt: `${eventData['Event Name'] || eventData.name} at ${venueData.name}`
+        };
+    }
+    
+    console.log(`No valid image found, returning null`);
+    return null;
 }
 
 async function handleVenuesView() {
@@ -373,7 +508,7 @@ function processVenueForPublic(venueData) {
 
 // This function is deprecated - using processVenueForPublic and processEventForPublic instead
 
-function processEventForPublic(eventData) {
+async function processEventForPublic(eventData, venueData = null) {
     // Map Firestore field names to expected field names (same as service)
     const mappedData = {
         id: eventData.id,
@@ -383,7 +518,7 @@ function processEventForPublic(eventData) {
         category: eventData['categories'] || eventData.category || [],
         date: eventData['Date'] || eventData.date,
         venueId: eventData['venueId'] || eventData.venueId,
-        venueName: eventData['Venue Name'] || eventData.venueName,
+        venueName: eventData['Venue Name'] || eventData.venueName || (eventData.venue && eventData.venue.name ? (Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name) : null),
         venueSlug: eventData['Venue Slug'] || eventData.venueSlug,
         venueAddress: eventData['Venue Address'] || eventData.venueAddress,
         venueLink: eventData['Venue Link'] || eventData.venueLink,
@@ -422,32 +557,51 @@ function processEventForPublic(eventData) {
             }
         }
         
-        // 3. If still no image, generate a consistent placeholder based on event name
+        // 3. If still no image, try to get venue image as fallback
+        if (!imageUrl && venueData && venueData.image && venueData.image.url) {
+            imageUrl = venueData.image.url;
+        }
+        
+        // 4. If still no image, generate a consistent placeholder based on event name
         if (!imageUrl) {
             const eventName = mappedData.name || 'Event';
             const encodedName = encodeURIComponent(eventName);
             imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
         }
     }
-    // Handle venue data - check for venue object first, then fallback to individual fields
-    let venueData = null;
     
-    if (eventData.venue && eventData.venue.name && eventData.venue.slug) {
-        // New format: venue object with arrays
-        venueData = {
-            id: eventData.venue.id,
-            name: Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name,
-            slug: Array.isArray(eventData.venue.slug) ? eventData.venue.slug[0] : eventData.venue.slug,
-            address: eventData.venue.address || mappedData.venueAddress
-        };
-    } else if (mappedData.venueName && mappedData.venueSlug) {
-        // Old format: individual venue fields
-        venueData = {
-            id: mappedData.venueId,
-            name: mappedData.venueName,
-            slug: mappedData.venueSlug,
-            address: mappedData.venueAddress
-        };
+    // Use passed venue data or fallback to event venue data
+    let finalVenueData = venueData;
+    
+    if (!finalVenueData) {
+        // Handle venue data - check for venue object first, then fallback to individual fields
+        if (eventData.venue && eventData.venue.name && eventData.venue.slug) {
+            // New format: venue object with arrays
+            finalVenueData = {
+                id: eventData.venue.id,
+                name: Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name,
+                slug: Array.isArray(eventData.venue.slug) ? eventData.venue.slug[0] : eventData.venue.slug,
+                address: eventData.venue.address || mappedData.venueAddress
+            };
+        } else if (mappedData.venueName && mappedData.venueSlug) {
+            // Old format: individual venue fields
+            finalVenueData = {
+                id: mappedData.venueId,
+                name: mappedData.venueName,
+                slug: mappedData.venueSlug,
+                address: mappedData.venueAddress
+            };
+        }
+    }
+    
+    // Extract venue name for compatibility with live events page
+    let venueName = null;
+    if (finalVenueData && finalVenueData.name) {
+        venueName = finalVenueData.name;
+    } else if (mappedData.venueName) {
+        venueName = Array.isArray(mappedData.venueName) ? mappedData.venueName[0] : mappedData.venueName;
+    } else if (eventData.venue && eventData.venue.name) {
+        venueName = Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name;
     }
     
     return {
@@ -457,7 +611,8 @@ function processEventForPublic(eventData) {
         description: mappedData.description,
         date: mappedData.date,
         category: mappedData.category,
-        venue: venueData,
+        venue: finalVenueData,
+        venueName: venueName, // Add venueName for compatibility
         image: imageUrl ? { url: imageUrl } : null,
         price: mappedData.price,
         ageRestriction: mappedData.ageRestriction,

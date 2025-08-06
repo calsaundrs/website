@@ -489,6 +489,86 @@ exports.handler = async function (event, context) {
 </body>
 </html>`;
 
+        // Register Handlebars helpers
+        Handlebars.registerHelper('formatDay', function(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return '--';
+                }
+                return date.getDate();
+            } catch (error) {
+                return '--';
+            }
+        });
+        
+        Handlebars.registerHelper('formatMonth', function(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return '---';
+                }
+                return date.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
+            } catch (error) {
+                return '---';
+            }
+        });
+        
+        Handlebars.registerHelper('formatTime', function(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return 'Time TBC';
+                }
+                return date.toLocaleTimeString('en-GB', { 
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return 'Time TBC';
+            }
+        });
+        
+        Handlebars.registerHelper('formatDate', function(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return 'Date TBC';
+                }
+                return date.toLocaleDateString('en-GB', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return 'Date TBC';
+            }
+        });
+        
+        Handlebars.registerHelper('formatDateOnly', function(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return 'Date TBC';
+                }
+                return date.toLocaleDateString('en-GB', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric'
+                });
+            } catch (error) {
+                return 'Date TBC';
+            }
+        });
+        
+        Handlebars.registerHelper('hasValidLink', function(link) {
+            return link && link !== null && link !== '';
+        });
+
         // Compile the template
         const template = Handlebars.compile(templateContent);
 
@@ -501,80 +581,7 @@ exports.handler = async function (event, context) {
             calendarLinks: generateCalendarLinks(eventData),
             categoryTags: (eventData.category || []).map(tag => 
                 '<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">' + tag + '</span>'
-            ).join(''),
-            formatDate: (dateString) => {
-                try {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return 'Date TBC';
-                    }
-                    return date.toLocaleDateString('en-GB', { 
-                        weekday: 'long', 
-                        day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    });
-                } catch (error) {
-                    return 'Date TBC';
-                }
-            },
-            formatDateOnly: (dateString) => {
-                try {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return 'Date TBC';
-                    }
-                    return date.toLocaleDateString('en-GB', { 
-                        weekday: 'long', 
-                        day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric'
-                    });
-                } catch (error) {
-                    return 'Date TBC';
-                }
-            },
-            formatTime: (dateString) => {
-                try {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return 'Time TBC';
-                    }
-                    return date.toLocaleTimeString('en-GB', { 
-                        hour: 'numeric',
-                        minute: '2-digit'
-                    });
-                } catch (error) {
-                    return 'Time TBC';
-                }
-            },
-            formatDay: (dateString) => {
-                try {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return '--';
-                    }
-                    return date.getDate();
-                } catch (error) {
-                    return '--';
-                }
-            },
-            formatMonth: (dateString) => {
-                try {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return '---';
-                    }
-                    return date.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
-                } catch (error) {
-                    return '---';
-                }
-            },
-            hasValidLink: (link) => {
-                return link && link !== null && link !== '';
-            }
+            ).join('')
         };
 
         // Render the page

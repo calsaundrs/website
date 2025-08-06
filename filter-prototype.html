@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Filters Prototype - Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-color: #e83a9b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(31, 41, 55, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+            --border-color: rgba(75, 85, 99, 0.4);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+        }
+
+        .filter-section {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: rgba(75, 85, 99, 0.6);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(28px);
+        }
+
+        .filter-chip {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip:hover {
+            background: #d61f69;
+        }
+
+        .quick-filter-btn {
+            background: rgba(75, 85, 99, 0.4);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .quick-filter-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(75, 85, 99, 0.2);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-color);
+        }
+
+        .mobile-filter-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            border-radius: 1rem 1rem 0 0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .mobile-filter-modal.active {
+            transform: translateY(0);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sticky-apply {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #d61f69;
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.4);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.6);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-content {
+            padding: 0 1rem 1rem 1rem;
+            display: block;
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
+        .section-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .section-header.collapsed .section-icon {
+            transform: rotate(-90deg);
+        }
+
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-filters {
+                display: none;
+            }
+            
+            .mobile-filter-btn {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-filter-btn {
+                display: none;
+            }
+            
+            .desktop-filters {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Desktop Layout -->
+    <div class="hidden md:flex min-h-screen">
+        <!-- Desktop Filter Panel -->
+        <div class="w-80 p-6 filter-panel m-6">
+            <h2 class="text-xl font-bold mb-6">Filters</h2>
+            
+            <!-- SFW Filter - Prominent at top -->
+            <div class="filter-section">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center gap-3">
+                        <span class="font-semibold">Show Adult Content</span>
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle text-gray-400 cursor-help"></i>
+                            <span class="tooltip-text">Includes events with adult themes, nudity, or strong language</span>
+                        </div>
+                    </div>
+                    <div class="toggle-switch" id="sfw-toggle" onclick="toggleSFW()"></div>
+                </div>
+            </div>
+
+            <!-- Quick Filters -->
+            <div class="filter-section">
+                <div class="section-header" onclick="toggleSection('quick-filters')">
+                    <span>Quick Filters</span>
+                    <i class="fas fa-chevron-down section-icon"></i>
+                </div>
+                <div class="section-content" id="quick-filters">
+                    <div class="flex flex-wrap gap-2 p-4">
+                        <button class="quick-filter-btn active" onclick="toggleQuickFilter(this, 'today')">Today</button>
+                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'tomorrow')">Tomorrow</button>
+                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'weekend')">This Weekend</button>
+                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'free')">Free Events</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Type -->
+            <div class="filter-section">
+                <div class="section-header" onclick="toggleSection('event-type')">
+                    <span>Event Type</span>
+                    <i class="fas fa-chevron-down section-icon"></i>
+                </div>
+                <div class="section-content" id="event-type">
+                    <div class="checkbox-group p-4">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="club-night">
+                            <span>Club Night</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="drag-show">
+                            <span>Drag Show</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="live-music">
+                            <span>Live Music</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="workshop">
+                            <span>Workshop / Talk</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="social">
+                            <span>Social / Mixer</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="theatre">
+                            <span>Theatre / Performance</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="community">
+                            <span>Community Group</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vibe / Atmosphere -->
+            <div class="filter-section">
+                <div class="section-header" onclick="toggleSection('vibe')">
+                    <span>Vibe / Atmosphere</span>
+                    <i class="fas fa-chevron-down section-icon"></i>
+                </div>
+                <div class="section-content" id="vibe">
+                    <div class="checkbox-group p-4">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="chill">
+                            <span>Chill & Social</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="high-energy">
+                            <span>High-Energy / Party</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="sober">
+                            <span>Sober Event</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="kink-positive">
+                            <span>Kink-Positive</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="community">
+                            <span>Community-Focused</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div class="filter-section">
+                <div class="section-header" onclick="toggleSection('price')">
+                    <span>Price</span>
+                    <i class="fas fa-chevron-down section-icon"></i>
+                </div>
+                <div class="section-content" id="price">
+                    <div class="checkbox-group p-4">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="free">
+                            <span>Free</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="under-10">
+                            <span>Under £10</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="10-20">
+                            <span>£10 - £20</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="20-plus">
+                            <span>£20+</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venue -->
+            <div class="filter-section">
+                <div class="section-header" onclick="toggleSection('venue')">
+                    <span>Venue</span>
+                    <i class="fas fa-chevron-down section-icon"></i>
+                </div>
+                <div class="section-content" id="venue">
+                    <div class="p-4">
+                        <select class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white">
+                            <option value="">All Venues</option>
+                            <option value="eden-bar">Eden Bar</option>
+                            <option value="glamorous">Glamorous</option>
+                            <option value="village-inn">The Village Inn</option>
+                            <option value="nightingale">The Nightingale</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clear Filters -->
+            <div class="p-4">
+                <button class="btn-secondary w-full" onclick="clearAllFilters()">
+                    <i class="fas fa-times mr-2"></i>Clear All Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Content Area -->
+        <div class="flex-1 p-6">
+            <!-- Active Filters Chips -->
+            <div class="mb-6" id="active-filters">
+                <div class="filter-chip">
+                    <span>Today</span>
+                    <i class="fas fa-times" onclick="removeFilter('today')"></i>
+                </div>
+                <div class="filter-chip">
+                    <span>Free</span>
+                    <i class="fas fa-times" onclick="removeFilter('free')"></i>
+                </div>
+            </div>
+
+            <!-- Event Count -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold mb-2">Events</h1>
+                <p class="text-gray-400">Showing <span class="text-accent-color font-semibold">12</span> events</p>
+            </div>
+
+            <!-- Event Grid Placeholder -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div class="bg-gray-800 rounded-lg p-4 h-64 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 h-64 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 h-64 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Layout -->
+    <div class="md:hidden">
+        <!-- Mobile Header -->
+        <div class="p-4 border-b border-gray-700">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold">Events</h1>
+                <button class="mobile-filter-btn btn-primary" onclick="openMobileFilters()">
+                    <i class="fas fa-filter mr-2"></i>Filters
+                </button>
+            </div>
+            
+            <!-- Active Filters Chips -->
+            <div class="mt-4" id="mobile-active-filters">
+                <div class="filter-chip">
+                    <span>Today</span>
+                    <i class="fas fa-times" onclick="removeFilter('today')"></i>
+                </div>
+                <div class="filter-chip">
+                    <span>Free</span>
+                    <i class="fas fa-times" onclick="removeFilter('free')"></i>
+                </div>
+            </div>
+
+            <!-- Event Count -->
+            <p class="text-gray-400 mt-2">Showing <span class="text-accent-color font-semibold">12</span> events</p>
+        </div>
+
+        <!-- Mobile Event Grid Placeholder -->
+        <div class="p-4">
+            <div class="space-y-4">
+                <div class="bg-gray-800 rounded-lg p-4 h-32 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 h-32 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 h-32 flex items-center justify-center">
+                    <p class="text-gray-400">Event Card Placeholder</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Filter Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeMobileFilters()"></div>
+    <div class="mobile-filter-modal" id="mobile-filter-modal">
+        <div class="p-4 border-b border-gray-700">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">Filters</h2>
+                <button onclick="closeMobileFilters()" class="text-gray-400">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4 space-y-6">
+            <!-- SFW Filter -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="font-semibold">Show Adult Content</span>
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle text-gray-400 cursor-help"></i>
+                        <span class="tooltip-text">Includes events with adult themes, nudity, or strong language</span>
+                    </div>
+                </div>
+                <div class="toggle-switch" id="mobile-sfw-toggle" onclick="toggleSFW()"></div>
+            </div>
+
+            <!-- Quick Filters -->
+            <div>
+                <h3 class="font-semibold mb-3">Quick Filters</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="quick-filter-btn active" onclick="toggleQuickFilter(this, 'today')">Today</button>
+                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'tomorrow')">Tomorrow</button>
+                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'weekend')">This Weekend</button>
+                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'free')">Free Events</button>
+                </div>
+            </div>
+
+            <!-- Event Type -->
+            <div>
+                <h3 class="font-semibold mb-3">Event Type</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="club-night">
+                        <span>Club Night</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="drag-show">
+                        <span>Drag Show</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="live-music">
+                        <span>Live Music</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="workshop">
+                        <span>Workshop / Talk</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="social">
+                        <span>Social / Mixer</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="theatre">
+                        <span>Theatre / Performance</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="community">
+                        <span>Community Group</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Vibe / Atmosphere -->
+            <div>
+                <h3 class="font-semibold mb-3">Vibe / Atmosphere</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="chill">
+                        <span>Chill & Social</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="high-energy">
+                        <span>High-Energy / Party</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="sober">
+                        <span>Sober Event</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="kink-positive">
+                        <span>Kink-Positive</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="community">
+                        <span>Community-Focused</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <h3 class="font-semibold mb-3">Price</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="free">
+                        <span>Free</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="under-10">
+                        <span>Under £10</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="10-20">
+                        <span>£10 - £20</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="20-plus">
+                        <span>£20+</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Venue -->
+            <div>
+                <h3 class="font-semibold mb-3">Venue</h3>
+                <select class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white">
+                    <option value="">All Venues</option>
+                    <option value="eden-bar">Eden Bar</option>
+                    <option value="glamorous">Glamorous</option>
+                    <option value="village-inn">The Village Inn</option>
+                    <option value="nightingale">The Nightingale</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Sticky Apply Button -->
+        <div class="sticky-apply">
+            <div class="flex gap-3">
+                <button class="btn-secondary flex-1" onclick="clearAllFilters()">
+                    Clear All
+                </button>
+                <button class="btn-primary flex-1" onclick="applyMobileFilters()">
+                    Show <span id="mobile-event-count">12</span> Events
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SFW Toggle
+        function toggleSFW() {
+            const desktopToggle = document.getElementById('sfw-toggle');
+            const mobileToggle = document.getElementById('mobile-sfw-toggle');
+            
+            desktopToggle.classList.toggle('active');
+            mobileToggle.classList.toggle('active');
+            
+            // Update event count (simulate filtering)
+            updateEventCount();
+        }
+
+        // Quick Filter Toggle (mutually exclusive)
+        function toggleQuickFilter(button, filter) {
+            // Remove active class from all quick filter buttons
+            const allButtons = button.parentElement.querySelectorAll('.quick-filter-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            updateEventCount();
+        }
+
+        // Section Toggle
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const header = section.previousElementSibling;
+            
+            section.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        }
+
+        // Mobile Filter Modal
+        function openMobileFilters() {
+            document.getElementById('modal-overlay').classList.add('active');
+            document.getElementById('mobile-filter-modal').classList.add('active');
+        }
+
+        function closeMobileFilters() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.getElementById('mobile-filter-modal').classList.remove('active');
+        }
+
+        function applyMobileFilters() {
+            closeMobileFilters();
+            updateEventCount();
+        }
+
+        // Remove Filter Chip
+        function removeFilter(filter) {
+            // Remove the filter chip
+            const chips = document.querySelectorAll('.filter-chip');
+            chips.forEach(chip => {
+                if (chip.textContent.includes(filter)) {
+                    chip.remove();
+                }
+            });
+            
+            updateEventCount();
+        }
+
+        // Clear All Filters
+        function clearAllFilters() {
+            // Reset all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset quick filters
+            document.querySelectorAll('.quick-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.quick-filter-btn').classList.add('active'); // Set "Today" as default
+            
+            // Reset SFW toggle
+            document.getElementById('sfw-toggle').classList.remove('active');
+            document.getElementById('mobile-sfw-toggle').classList.remove('active');
+            
+            // Clear filter chips
+            document.getElementById('active-filters').innerHTML = '';
+            document.getElementById('mobile-active-filters').innerHTML = '';
+            
+            updateEventCount();
+        }
+
+        // Update Event Count (simulate filtering)
+        function updateEventCount() {
+            const count = Math.floor(Math.random() * 20) + 5; // Random count for demo
+            document.querySelector('.text-accent-color').textContent = count;
+            document.getElementById('mobile-event-count').textContent = count;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default state
+            updateEventCount();
+        });
+    </script>
+</body>
+</html> 
