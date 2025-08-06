@@ -131,8 +131,10 @@ exports.handler = async function (event, context) {
         console.log("Event found:", eventData.name);
         console.log("Event date:", eventData.date, "Type:", typeof eventData.date);
         console.log("Event description:", eventData.description);
+        console.log("Event details:", eventData.details);
         console.log("Description length:", eventData.description ? eventData.description.length : 0);
         console.log("Description type:", typeof eventData.description);
+        console.log("Details type:", typeof eventData.details);
         console.log("All event fields:", Object.keys(eventData));
         console.log("Raw event data:", JSON.stringify(eventData, null, 2));
 
