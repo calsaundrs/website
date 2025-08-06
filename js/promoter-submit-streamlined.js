@@ -402,10 +402,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check venue selection (support both old select and new search system)
             const venueId = document.getElementById('venue-id');
             const venueSearch = document.getElementById('venue-search');
+            const venueSelect = document.getElementById('venue-select');
             
-            if (!venueId || !venueId.value) {
+            // Debug venue selection
+            console.log('🔍 VENUE VALIDATION:');
+            console.log('  - venueId element:', venueId);
+            console.log('  - venueId value:', venueId ? venueId.value : 'N/A');
+            console.log('  - venueSearch element:', venueSearch);
+            console.log('  - venueSearch value:', venueSearch ? venueSearch.value : 'N/A');
+            console.log('  - venueSelect element:', venueSelect);
+            console.log('  - venueSelect value:', venueSelect ? venueSelect.value : 'N/A');
+            
+            // Check if venue is selected (either through search or select)
+            const hasVenueSelected = (venueId && venueId.value) || (venueSelect && venueSelect.value);
+            
+            console.log('  - hasVenueSelected:', hasVenueSelected);
+            
+            if (!hasVenueSelected) {
                 errors.push('Please select a venue.');
                 if (venueSearch) venueSearch.classList.add('border-red-500');
+                if (venueSelect) venueSelect.classList.add('border-red-500');
             }
             
             // Validate new venue fields if creating new venue
