@@ -166,7 +166,7 @@ class FirestoreEventService {
       id: eventData.id,
       name: eventData.name,
       slug: eventData.slug,
-      description: eventData.description,
+      description: eventData['Description'] || eventData.description,
       category: eventData.category || [],
       date: eventData.date,
       venueId: eventData.venueId,
