@@ -1463,27 +1463,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             return chip;
         }
 
-        // Mobile menu functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.getElementById('menu-btn');
-            const menu = document.getElementById('menu');
-            
-            if (menuBtn && menu) {
-                menuBtn.addEventListener('click', function() {
-                    menu.classList.toggle('hidden');
-                    menu.classList.toggle('flex');
-                });
-                
-                // Close menu when clicking on a link
-                const menuLinks = menu.querySelectorAll('a');
-                menuLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        menu.classList.add('hidden');
-                        menu.classList.remove('flex');
-                    });
-                });
-            }
-            
             // Fetch events on page load
             fetchEvents();
             
