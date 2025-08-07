@@ -197,22 +197,18 @@
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    <!-- Google Tag Manager -->
+<!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
 <!-- End Google Tag Manager -->
-
 <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
     <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
 </div>
+
+<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
 <header class="p-8">
     <nav class="container mx-auto flex justify-between items-center">
@@ -221,7 +217,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            style="font-family: 'Omnes Pro', sans-serif;">
             <span>Brum Outloud</span>
             <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
                  onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
         </a>
         <div class="hidden lg:flex items-center space-x-8">
@@ -233,12 +229,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl" aria-expanded="false" aria-controls="menu" aria-label="Toggle navigation menu">
+            <button id="menu-btn" class="text-white text-2xl">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6" role="navigation" aria-hidden="true">
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
         <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
         <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
         <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
@@ -321,7 +317,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </section>
 </main>
 
-<!-- Include the footer component -->
 <footer class="border-t-2 border-gray-800 p-8">
     <div class="container mx-auto grid md:grid-cols-2">
         <div>
