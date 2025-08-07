@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
-const { formidable } = require('formidable');
+// Remove formidable - not compatible with Netlify Functions
+// const { formidable } = require('formidable');
 const RecurringEventsManager = require('./services/recurring-events-manager');
 
 exports.handler = async function (event, context) {
@@ -49,37 +50,55 @@ exports.handler = async function (event, context) {
             api_secret: process.env.CLOUDINARY_API_SECRET,
         });
         
-        // Parse form data using formidable with explicit configuration
-        const form = formidable({
-            keepExtensions: true,
-            maxFileSize: 10 * 1024 * 1024, // 10MB limit
-            multiples: false
-        });
+        // Parse multipart form data manually for Netlify Functions compatibility
+        let submission = {};
+        let imageBuffer = null;
+        let imageFileName = null;
         
-        return new Promise((resolve, reject) => {
-            form.parse(event, async (err, fields, files) => {
-                if (err) {
-                    console.error('Error parsing form data:', err);
-                    resolve({
-                        statusCode: 400,
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            error: 'Failed to parse form data',
-                            message: err.message
-                        })
-                    });
-                    return;
+        try {
+            if (event.body && event.headers['content-type'] && event.headers['content-type'].includes('multipart/form-data')) {
+                const boundary = event.headers['content-type'].split('boundary=')[1];
+                if (boundary) {
+                    const parts = event.body.split(`--${boundary}`);
+                    
+                    for (const part of parts) {
+                        if (part.includes('Content-Disposition: form-data')) {
+                            const nameMatch = part.match(/name="([^"]+)"/);
+                            if (nameMatch) {
+                                const fieldName = nameMatch[1];
+                                
+                                if (fieldName === 'image') {
+                                    // Handle file upload
+                                    const filenameMatch = part.match(/filename="([^"]+)"/);
+                                    if (filenameMatch) {
+                                        imageFileName = filenameMatch[1];
+                                        const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                                        if (valueMatch) {
+                                            imageBuffer = Buffer.from(valueMatch[1], 'base64');
+                                        }
+                                    }
+                                } else {
+                                    // Handle regular form fields
+                                    const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                                    if (valueMatch) {
+                                        submission[fieldName] = valueMatch[1].trim();
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                
-                console.log('Formidable parsed successfully');
-                console.log('Fields received:', Object.keys(fields));
-                console.log('Files received:', Object.keys(files));
-                
-                // Formidable returns fields as arrays, convert to single values
-                const submission = {};
-                for (const key in fields) {
-                    submission[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+            } else {
+                // Handle URL-encoded form data
+                const params = new URLSearchParams(event.body);
+                for (const [key, value] of params) {
+                    submission[key] = value;
                 }
+            }
+            
+            console.log('Form data parsed successfully');
+            console.log('Fields received:', Object.keys(submission));
+            console.log('Image file:', imageFileName ? { name: imageFileName, size: imageBuffer?.length } : 'No image');
                 
                 console.log('Parsed submission fields:', Object.keys(submission));
                 console.log('Sample field values:', {
@@ -88,22 +107,29 @@ exports.handler = async function (event, context) {
                     'new-venue-name': submission['new-venue-name']
                 });
                 
-                try {
+        } catch (parseError) {
+            console.error('Error parsing form data:', parseError);
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Failed to parse form data',
+                    message: parseError.message
+                })
+            };
+        }
         
-                        // Handle image upload
-        console.log('Files object:', Object.keys(files));
-        const imageFile = files.image; // Formidable structures files by field name
-        console.log('Image file:', imageFile ? {
-            size: imageFile.size,
-            filepath: imageFile.filepath,
-            originalName: imageFile.originalName
-        } : 'No image file');
-        
+        // Handle image upload
+        console.log('Processing image upload...');
         let uploadedImage = null;
         
-        if (imageFile && imageFile.size > 0) {
+        if (imageBuffer && imageFileName) {
             try {
-                const result = await cloudinary.uploader.upload(imageFile.filepath, {
+                // Convert buffer to base64 string for Cloudinary
+                const base64Image = imageBuffer.toString('base64');
+                const dataURI = `data:image/jpeg;base64,${base64Image}`;
+                
+                const result = await cloudinary.uploader.upload(dataURI, {
                     folder: 'events',
                     transformation: [
                         { width: 800, height: 400, crop: 'fill', gravity: 'auto' },
@@ -117,11 +143,14 @@ exports.handler = async function (event, context) {
                     original: result.secure_url
                 };
                 console.log('Image uploaded successfully:', uploadedImage.publicId);
+                
             } catch (uploadError) {
                 console.error('Image upload failed:', uploadError);
                 // Continue without image
             }
         }
+        
+
         
         // Generate slug
         const slug = generateSlug(submission['event-name'], submission.date);
