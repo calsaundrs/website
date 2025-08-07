@@ -73,7 +73,7 @@ exports.handler = async function (event, context) {
                 try {
         
         // Handle image upload
-        const imageFile = submission.files.find(f => f.fieldname === 'image');
+        const imageFile = files.image; // Formidable structures files by field name
         let uploadedImage = null;
         
         if (imageFile && imageFile.size > 0) {
