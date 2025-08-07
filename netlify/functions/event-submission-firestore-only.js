@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
+const formidable = require('formidable');
 const RecurringEventsManager = require('./services/recurring-events-manager');
 
 exports.handler = async function (event, context) {
@@ -48,38 +49,28 @@ exports.handler = async function (event, context) {
             api_secret: process.env.CLOUDINARY_API_SECRET,
         });
         
-        // Parse form data manually (no formidable dependency)
-        let fields = {};
-        let files = {};
+        // Parse form data using formidable
+        const form = formidable({});
         
-        if (event.body) {
-            // Handle multipart form data
-            const boundary = event.headers['content-type']?.split('boundary=')[1];
-            if (boundary) {
-                const parts = event.body.split(`--${boundary}`);
-                for (const part of parts) {
-                    if (part.includes('Content-Disposition: form-data')) {
-                        const nameMatch = part.match(/name="([^"]+)"/);
-                        if (nameMatch) {
-                            const fieldName = nameMatch[1];
-                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                            if (valueMatch) {
-                                fields[fieldName] = valueMatch[1].trim();
-                            }
-                        }
-                    }
+        return new Promise((resolve, reject) => {
+            form.parse(event, async (err, fields, files) => {
+                if (err) {
+                    console.error('Error parsing form data:', err);
+                    resolve({
+                        statusCode: 400,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            error: 'Failed to parse form data',
+                            message: err.message
+                        })
+                    });
+                    return;
                 }
-            } else {
-                // Handle URL-encoded form data
-                const params = new URLSearchParams(event.body);
-                for (const [key, value] of params) {
-                    fields[key] = value;
-                }
-            }
-        }
-        
-        const submission = { ...fields, files: Object.values(files) };
-        console.log('Parsed submission:', Object.keys(submission));
+                
+                const submission = { ...fields, files: Object.values(files) };
+                console.log('Parsed submission:', Object.keys(submission));
+                
+                try {
         
         // Handle image upload
         const imageFile = submission.files.find(f => f.fieldname === 'image');
@@ -313,7 +304,7 @@ exports.handler = async function (event, context) {
                 }
             }
             
-            return {
+            resolve({
                 statusCode: 200,
                 headers: { 'Content-Type': 'text/html' },
                 body: `<!DOCTYPE html>
@@ -336,9 +327,23 @@ exports.handler = async function (event, context) {
                     ${ssgRebuildResult ? `<p class="info">SSG Rebuild: ${ssgRebuildResult.message}</p>` : ''}
                 </body>
                 </html>`
-            };
+            });
         }
         
+                } catch (error) {
+                    console.error('Error in Firestore-only event submission:', error);
+                    resolve({
+                        statusCode: 500,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            error: 'Event submission failed',
+                            message: error.message,
+                            type: error.constructor.name
+                        })
+                    });
+                }
+            });
+        });
     } catch (error) {
         console.error('Error in Firestore-only event submission:', error);
         return {
