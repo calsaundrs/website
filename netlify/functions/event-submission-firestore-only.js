@@ -49,8 +49,12 @@ exports.handler = async function (event, context) {
             api_secret: process.env.CLOUDINARY_API_SECRET,
         });
         
-        // Parse form data using formidable
-        const form = formidable({});
+        // Parse form data using formidable with explicit configuration
+        const form = formidable({
+            keepExtensions: true,
+            maxFileSize: 10 * 1024 * 1024, // 10MB limit
+            multiples: false
+        });
         
         return new Promise((resolve, reject) => {
             form.parse(event, async (err, fields, files) => {
@@ -67,6 +71,10 @@ exports.handler = async function (event, context) {
                     return;
                 }
                 
+                console.log('Formidable parsed successfully');
+                console.log('Fields received:', Object.keys(fields));
+                console.log('Files received:', Object.keys(files));
+                
                 // Formidable returns fields as arrays, convert to single values
                 const submission = {};
                 for (const key in fields) {
@@ -82,8 +90,15 @@ exports.handler = async function (event, context) {
                 
                 try {
         
-        // Handle image upload
+                        // Handle image upload
+        console.log('Files object:', Object.keys(files));
         const imageFile = files.image; // Formidable structures files by field name
+        console.log('Image file:', imageFile ? {
+            size: imageFile.size,
+            filepath: imageFile.filepath,
+            originalName: imageFile.originalName
+        } : 'No image file');
+        
         let uploadedImage = null;
         
         if (imageFile && imageFile.size > 0) {
