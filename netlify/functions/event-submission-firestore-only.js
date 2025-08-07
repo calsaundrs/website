@@ -67,8 +67,18 @@ exports.handler = async function (event, context) {
                     return;
                 }
                 
-                const submission = { ...fields, files: Object.values(files) };
-                console.log('Parsed submission:', Object.keys(submission));
+                // Formidable returns fields as arrays, convert to single values
+                const submission = {};
+                for (const key in fields) {
+                    submission[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+                }
+                
+                console.log('Parsed submission fields:', Object.keys(submission));
+                console.log('Sample field values:', {
+                    'event-name': submission['event-name'],
+                    'venue-id': submission['venue-id'],
+                    'new-venue-name': submission['new-venue-name']
+                });
                 
                 try {
         
