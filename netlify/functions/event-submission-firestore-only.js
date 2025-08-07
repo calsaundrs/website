@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
-const formidable = require('formidable');
+const { formidable } = require('formidable');
 const RecurringEventsManager = require('./services/recurring-events-manager');
 
 exports.handler = async function (event, context) {
