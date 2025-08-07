@@ -449,8 +449,8 @@ async function enrichEventForTemplate(eventData, event) {
     }
 
     // Format description with line breaks
-    const formattedDescription = eventData.description ? 
-        eventData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') : 
+    const formattedDescription = eventData.description ?
+        Handlebars.escapeExpression(eventData.description).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') :
         '';
 
     // Generate calendar URLs

@@ -490,8 +490,8 @@ async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
 
 function enrichVenueForTemplate(venueData, upcomingEvents = []) {
     // Format description with line breaks
-    const formattedDescription = venueData.description ? 
-        venueData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') : 
+    const formattedDescription = venueData.description ?
+        Handlebars.escapeExpression(venueData.description).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') :
         '';
 
     return {
