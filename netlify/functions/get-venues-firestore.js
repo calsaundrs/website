@@ -44,13 +44,8 @@ exports.handler = async (event, context) => {
                 processedImage: processedVenue.image
             });
             
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-                venues.push(processedVenue);
-                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
-            } else {
-                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
-            }
+            venues.push(processedVenue);
+            console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
         });
         
         console.log(`Found ${venues.length} venues to display - CLOUDINARY ONLY`);
@@ -120,6 +115,11 @@ function processVenueForPublic(venueData) {
         }
     }
     
+    // If after all checks, imageUrl is still null, assign a generic fallback
+    if (!imageUrl) {
+        imageUrl = 'https://brumoutloud.co.uk/progressflag.svg.png';
+    }
+
     // Generate slug from venue name if not provided
     const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
     const generateSlug = (name) => {

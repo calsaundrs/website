@@ -440,6 +440,51 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div id="loading-screen" class="loading-screen">
+    <img src="/assets/icons/BrumOutLoud-Logo-v1-Pink.png" alt="BrumOutLoud Logo" class="loading-logo">
+    <div class="loading-spinner"></div>
+</div>
+
+<div class="fouc-prevention">
+    <!-- DEVELOPMENT BANNER -->
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+    </div>
+
+    <!-- HEADER -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" onerror="this.style.display='none'">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        </div>
+    </header>
+
     <!-- Desktop Layout -->
     <div class="hidden md:flex min-h-screen">
         <!-- Desktop Filter Panel -->
