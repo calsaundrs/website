@@ -139,6 +139,7 @@ exports.handler = async function (event, context) {
         const eventName = submission['event-name'] || submission.name || '';
         const dateStr = submission.date || '';
         const startTimeStr = submission['start-time'] || '00:00';
+        const venueIdSubmitted = submission['venue-id'] || submission.venueId || submission['venueId'] || null;
         
         if (!eventName) {
             return {
@@ -174,20 +175,20 @@ exports.handler = async function (event, context) {
             venueSlug: ''
         };
         
-        if (submission['venue-id'] && submission['venue-id'] !== 'new') {
+        if (venueIdSubmitted && venueIdSubmitted !== 'new') {
             // Existing venue selected
             try {
-                const venueDoc = await db.collection('venues').doc(submission['venue-id']).get();
+                const venueDoc = await db.collection('venues').doc(venueIdSubmitted).get();
                 if (venueDoc.exists) {
                     const venue = venueDoc.data();
                     venueData = {
-                        venueId: submission['venue-id'],
+                        venueId: venueIdSubmitted,
                         venueName: venue.name || venue['Name'] || '',
                         venueAddress: venue.address || venue['Address'] || '',
                         venueSlug: venue.slug || ''
                     };
                 } else {
-                    console.warn(`Venue ID ${submission['venue-id']} not found, falling back to text input`);
+                    console.warn(`Venue ID ${venueIdSubmitted} not found, falling back to text input`);
                     venueData.venueName = submission['venue-name'] || '';
                 }
             } catch (venueError) {
@@ -304,30 +305,16 @@ exports.handler = async function (event, context) {
             }
         }
         
-        // Return success response
+        // Return success response as JSON for client script
         return {
             statusCode: 200,
-            headers: { 'Content-Type': 'text/html' },
-            body: `<!DOCTYPE html>
-            <html>
-            <head>
-                <title>Event Submitted Successfully</title>
-                <meta http-equiv="refresh" content="3;url=/events.html">
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1f2937; color: white; }
-                    .success { color: #10B981; }
-                    .info { color: #9CA3AF; }
-                </style>
-            </head>
-            <body>
-                <h1 class="success">Event Submitted Successfully!</h1>
-                <p>Your event "${submission['event-name']}" has been submitted for review.</p>
-                <p class="info">You will be redirected to the events page shortly.</p>
-                <p class="info">Firestore ID: ${firestoreDoc.id}</p>
-                <p class="info">Note: This submission was processed using Firestore only.</p>
-                ${ssgRebuildResult ? `<p class="info">SSG Rebuild: ${ssgRebuildResult.message}</p>` : ''}
-            </body>
-            </html>`
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                success: true,
+                id: firestoreDoc.id,
+                slug,
+                ssg: ssgRebuildResult || null
+            })
         };
         
     } catch (error) {
