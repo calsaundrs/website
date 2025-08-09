@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
 const RecurringEventsManager = require('./services/recurring-events-manager');
+const multipart = require('lambda-multipart-parser');
 
 exports.handler = async function (event, context) {
     console.log('Firestore-only event submission called');
@@ -52,43 +53,36 @@ exports.handler = async function (event, context) {
         let submission = {};
         let imageBuffer = null;
         let imageFileName = null;
+        let imageContentType = null;
         
         try {
-            if (event.body && event.headers['content-type'] && event.headers['content-type'].includes('multipart/form-data')) {
-                const boundary = event.headers['content-type'].split('boundary=')[1];
-                if (boundary) {
-                    const parts = event.body.split(`--${boundary}`);
-                    
-                    for (const part of parts) {
-                        if (part.includes('Content-Disposition: form-data')) {
-                            const nameMatch = part.match(/name="([^"]+)"/);
-                            if (nameMatch) {
-                                const fieldName = nameMatch[1];
-                                
-                                if (fieldName === 'image') {
-                                    // Handle file upload
-                                    const filenameMatch = part.match(/filename="([^"]+)"/);
-                                    if (filenameMatch) {
-                                        imageFileName = filenameMatch[1];
-                                        const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                                        if (valueMatch) {
-                                            imageBuffer = Buffer.from(valueMatch[1], 'base64');
-                                        }
-                                    }
-                                } else {
-                                    // Handle regular form fields
-                                    const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                                    if (valueMatch) {
-                                        submission[fieldName] = valueMatch[1].trim();
-                                    }
-                                }
-                            }
-                        }
-                    }
+            const headers = event.headers || {};
+            const contentType = (headers['content-type'] || headers['Content-Type'] || '').toLowerCase();
+            
+            if (contentType.includes('multipart/form-data')) {
+                const parsed = await multipart.parse(event);
+                const { files = [], ...fields } = parsed || {};
+                submission = fields || {};
+                
+                const imageFile = files.find(f => f.fieldname === 'image' || f.name === 'image') || files[0];
+                if (imageFile && imageFile.content && imageFile.content.length) {
+                    imageBuffer = Buffer.from(imageFile.content);
+                    imageFileName = imageFile.filename || imageFile.fileName || 'upload.jpg';
+                    imageContentType = imageFile.contentType || 'image/jpeg';
                 }
+            } else if (contentType.includes('application/x-www-form-urlencoded')) {
+                const rawBody = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : (event.body || '');
+                const params = new URLSearchParams(rawBody);
+                for (const [key, value] of params) {
+                    submission[key] = value;
+                }
+            } else if (contentType.includes('application/json')) {
+                const rawBody = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : (event.body || '{}');
+                submission = JSON.parse(rawBody || '{}');
             } else {
-                // Handle URL-encoded form data
-                const params = new URLSearchParams(event.body);
+                // Fallback: try urlencoded
+                const rawBody = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : (event.body || '');
+                const params = new URLSearchParams(rawBody);
                 for (const [key, value] of params) {
                     submission[key] = value;
                 }
@@ -118,7 +112,7 @@ exports.handler = async function (event, context) {
             try {
                 // Convert buffer to base64 string for Cloudinary
                 const base64Image = imageBuffer.toString('base64');
-                const dataURI = `data:image/jpeg;base64,${base64Image}`;
+                const dataURI = `data:${imageContentType};base64,${base64Image}`;
                 
                 const result = await cloudinary.uploader.upload(dataURI, {
                     folder: 'events',
@@ -141,8 +135,36 @@ exports.handler = async function (event, context) {
             }
         }
         
-        // Generate slug
-        const slug = generateSlug(submission['event-name'], submission.date);
+        // Generate slug and validate required fields
+        const eventName = submission['event-name'] || submission.name || '';
+        const dateStr = submission.date || '';
+        const startTimeStr = submission['start-time'] || '00:00';
+        
+        if (!eventName) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: 'Validation error', message: 'Missing event name' })
+            };
+        }
+        if (!dateStr) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: 'Validation error', message: 'Missing event date' })
+            };
+        }
+        
+        const constructedDate = new Date(`${dateStr}T${startTimeStr}`);
+        if (isNaN(constructedDate.getTime())) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: 'Validation error', message: 'Invalid date or time' })
+            };
+        }
+        const eventDateIso = constructedDate.toISOString();
+        const slug = generateSlug(eventName, dateStr);
         
         // Handle venue linking
         let venueData = {
@@ -206,7 +228,7 @@ exports.handler = async function (event, context) {
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
             description: submission.description || '',
-            date: new Date(`${submission.date}T${submission['start-time'] || '00:00'}`).toISOString(),
+            date: eventDateIso,
             status: 'pending',
             
             // Venue Fields (Standardized)
@@ -323,9 +345,10 @@ exports.handler = async function (event, context) {
 };
 
 function generateSlug(eventName, date) {
-    const datePart = new Date(date).toISOString().split('T')[0];
-    const namePart = eventName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    return `${namePart}-${datePart}`;
+    const safeName = String(eventName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const d = new Date(date);
+    const datePart = isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
+    return `${safeName}-${datePart}`;
 }
 
 function generateVenueSlug(venueName) {
