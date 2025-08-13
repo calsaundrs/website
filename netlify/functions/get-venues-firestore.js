@@ -175,7 +175,10 @@ function processVenueForPublic(venueData) {
         
         // Image fields for admin
         photoUrl: venueData.photoUrl || venueData['Photo URL'],
-        cloudinaryPublicId: venueData.cloudinaryPublicId || venueData['Cloudinary Public ID']
+        cloudinaryPublicId: venueData.cloudinaryPublicId || venueData['Cloudinary Public ID'],
+        
+        // Google Places integration
+        googlePlaceId: venueData.googlePlaceId || venueData['Google Place ID'] || venueData['googlePlaceId'] || ''
     };
     
     if (!venue.category || venue.category.length === 0) {
