@@ -44,12 +44,17 @@ exports.handler = async (event, context) => {
                 processedImage: processedVenue.image
             });
             
-            // Include all venues regardless of image status
-            venues.push(processedVenue);
-            console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug} (image: ${processedVenue.image ? 'yes' : 'no'})`);
+            // Only include approved venues on the public venues page
+            const venueStatus = venueData.status || 'pending';
+            if (venueStatus === 'approved') {
+                venues.push(processedVenue);
+                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug} (status: ${venueStatus}, image: ${processedVenue.image ? 'yes' : 'no'})`);
+            } else {
+                console.log(`❌ EXCLUDED: ${processedVenue.name} - status: ${venueStatus} (not approved)`);
+            }
         });
         
-        console.log(`Found ${venues.length} venues to display - ALL VENUES INCLUDED`);
+        console.log(`Found ${venues.length} venues to display - APPROVED VENUES ONLY`);
         
         return {
             statusCode: 200,
