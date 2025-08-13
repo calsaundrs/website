@@ -411,36 +411,41 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // Get venue ID from the hidden input (new system) or select (old system)
                 const venueIdInput = document.getElementById('venue-id');
-                const finalVenueId = venueIdInput ? venueIdInput.value : (venueSelect ? venueSelect.value : '');
+                let finalVenueId = venueIdInput ? venueIdInput.value : (venueSelect ? venueSelect.value : '');
                 
                 // If creating a new venue, create it first
                 if (finalVenueId === 'new' || isCreatingNewVenue) {
-                    const venueFormData = new FormData();
-                    if (newVenueName) venueFormData.append('venue-name', newVenueName.value.trim());
-                    if (newVenueAddress) venueFormData.append('address', newVenueAddress.value.trim());
-                    if (contactEmail) venueFormData.append('contact-email', contactEmail);
-                    if (newVenueWebsite) venueFormData.append('website', newVenueWebsite.value.trim());
-                    venueFormData.append('description', `Venue created during event submission for: ${eventName}`);
+                    const venueParams = new URLSearchParams();
+                    if (newVenueName) venueParams.append('venue-name', newVenueName.value.trim());
+                    if (newVenueAddress) venueParams.append('address', newVenueAddress.value.trim());
+                    if (contactEmail) venueParams.append('contact-email', contactEmail);
+                    if (newVenueWebsite) venueParams.append('website', newVenueWebsite.value.trim());
+                    venueParams.append('description', `Venue created during event submission for: ${eventName}`);
                     
                     const venueResponse = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
                         method: 'POST',
-                        body: venueFormData
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: venueParams.toString()
                     });
                     
                     if (!venueResponse.ok) {
                         throw new Error(`Venue creation failed: ${venueResponse.status}`);
                     }
                     
-                    // For now, we'll need to find the venue by name to get its ID
-                    // This is a limitation - ideally the venue submission would return the venue ID
-                    const venuesResponse = await fetch('/.netlify/functions/get-venue-list');
-                    const venues = await venuesResponse.json();
-                    const newVenue = venues.find(v => v.name === newVenueName.value.trim());
-                    
-                    if (newVenue) {
-                        finalVenueId = newVenue.id;
+                    // Parse response JSON and use returned ID when available
+                    const createdVenue = await venueResponse.json().catch(() => null);
+                    if (createdVenue && (createdVenue.firestoreId || createdVenue.id)) {
+                        finalVenueId = createdVenue.firestoreId || createdVenue.id;
                     } else {
-                        throw new Error('New venue was created but could not be found');
+                        // Fallback: fetch list and match by name
+                        const venuesResponse = await fetch('/.netlify/functions/get-venue-list');
+                        const venues = await venuesResponse.json();
+                        const newVenue = Array.isArray(venues) ? venues.find(v => v.name === newVenueName.value.trim()) : null;
+                        if (newVenue) {
+                            finalVenueId = newVenue.id;
+                        } else {
+                            throw new Error('New venue was created but could not be found');
+                        }
                     }
                 }
                 
@@ -460,11 +465,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: eventFormData
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const contentType = response.headers.get('content-type') || '';
+                let result;
+                if (contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Unexpected response (expected JSON). Status ${response.status}. Body: ${text.slice(0, 200)}...`);
                 }
                 
-                const result = await response.json();
+                if (!response.ok || result.success === false) {
+                    const message = (result && (result.error || result.message)) || `HTTP error! status: ${response.status}`;
+                    throw new Error(message);
+                }
                 
                 if (result.success) {
                     alert('Event submitted successfully! We\'ll review it within 24-48 hours.');

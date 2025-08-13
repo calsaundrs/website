@@ -6,15 +6,17 @@
     <title>Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud</title>
     <meta name="description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/css/tailwind.css" as="style">
+    <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/main.css">
     
     <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js" defer></script>
+    <script src="/js/main.js?v=2" defer></script>
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
     <style>
@@ -720,7 +722,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </section>
     </main>
 
-    <script src="/js/promoter-submit-streamlined.js?v=2"></script>
+    <script src="/js/promoter-submit-streamlined.js?v=3"></script>
     
     <script>
         // Venue Search and Selection System
@@ -771,11 +773,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             async loadInitialVenues() {
                 try {
-                    const response = await fetch('/.netlify/functions/get-venue-list-for-events');
+                    const response = await fetch('/.netlify/functions/get-venue-list');
+                    const contentType = response.headers.get('content-type') || '';
+                    if (!contentType.includes('application/json')) {
+                        const text = await response.text();
+                        throw new Error(`Unexpected response fetching venues. Status ${response.status}. Body: ${text.slice(0,200)}...`);
+                    }
                     const data = await response.json();
-                    
-                    if (data.success) {
-                        this.venues = data.venues;
+                    if (Array.isArray(data)) {
+                        this.venues = data.map(v => ({ id: v.id, name: v.name, address: v.address || '' }));
                         this.renderDropdown(this.venues);
                     }
                 } catch (error) {
@@ -790,12 +796,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 }
                 
                 try {
-                    const response = await fetch(`/.netlify/functions/get-venue-list-for-events?search=${encodeURIComponent(query)}`);
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        this.renderDropdown(data.venues);
-                    }
+                    // Simple client-side filter against preloaded venues
+                    const q = query.toLowerCase();
+                    const filtered = this.venues.filter(v => v.name.toLowerCase().includes(q) || (v.address || '').toLowerCase().includes(q));
+                    this.renderDropdown(filtered);
                 } catch (error) {
                     console.error('Error searching venues:', error);
                 }

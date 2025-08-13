@@ -5,7 +5,7 @@
 # Venue Pages - Handled by netlify.toml
 
 # Homepage redirect (if old homepage was different, unlikely but good to have)
-/       /   301
+/       /index.html   301
 
 # Fix common 404 errors
 /settings    /admin-settings.html    301

@@ -239,7 +239,7 @@ exports.handler = async function (event, context) {
             venueSlug: venueData.venueSlug,
             
             // Categorization (Standardized)
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : [],
+            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : (Array.isArray(submission.categoryIds) ? submission.categoryIds : []),
             
             // Links (Standardized)
             link: submission.link || '',
@@ -249,7 +249,9 @@ exports.handler = async function (event, context) {
             promoImage: uploadedImage ? uploadedImage.url : null,
             
             // Metadata (Standardized)
-            submittedBy: submission.email || 'anonymous@brumoutloud.co.uk',
+            submittedBy: submission.email || submission['contact-email'] || 'anonymous@brumoutloud.co.uk',
+            submitterEmail: submission['contact-email'] || submission.email || '',
+            createdAt: new Date(),
             submittedAt: new Date(),
             approvedBy: null,
             approvedAt: null,

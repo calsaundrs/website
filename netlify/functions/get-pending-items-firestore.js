@@ -94,26 +94,41 @@ async function getPendingEvents(limit, offset) {
         const eventsRef = db.collection('events');
         console.log("🔍 GET PENDING EVENTS: Created events reference");
         
-        // Simple query - just get pending events directly
-        console.log("🔍 GET PENDING EVENTS: Querying for pending events...");
-        const pendingSnapshot = await eventsRef
-            .where('status', '==', 'pending')
-            .limit(50)
-            .get();
-        console.log("🔍 GET PENDING EVENTS: Pending events found:", pendingSnapshot.size);
-        
-        // Also get pending review events
-        console.log("🔍 GET PENDING EVENTS: Querying for pending review events...");
-        const pendingReviewSnapshot = await eventsRef
-            .where('status', '==', 'pending review')
-            .limit(50)
-            .get();
-        console.log("🔍 GET PENDING EVENTS: Pending review events found:", pendingReviewSnapshot.size);
-        
-        // Combine the results
-        const pendingDocs = [];
-        pendingSnapshot.forEach(doc => pendingDocs.push(doc));
-        pendingReviewSnapshot.forEach(doc => pendingDocs.push(doc));
+        // Primary query: status in common pending variants
+        console.log("🔍 GET PENDING EVENTS: Querying status 'in' for pending variants...");
+        let pendingDocs = [];
+        try {
+            const statusVariants = ['pending', 'Pending', 'pending review', 'Pending Review'];
+            const inSnapshot = await eventsRef
+                .where('status', 'in', statusVariants)
+                .limit(100)
+                .get();
+            console.log("🔍 GET PENDING EVENTS: 'in' query found:", inSnapshot.size);
+            inSnapshot.forEach(doc => pendingDocs.push(doc));
+        } catch (inError) {
+            console.log('ℹ️ GET PENDING EVENTS: status "in" query not supported or failed, falling back to separate queries:', inError.message);
+            const pendingSnapshot = await eventsRef.where('status', '==', 'pending').limit(50).get();
+            const pendingReviewSnapshot = await eventsRef.where('status', '==', 'pending review').limit(50).get();
+            pendingSnapshot.forEach(doc => pendingDocs.push(doc));
+            pendingReviewSnapshot.forEach(doc => pendingDocs.push(doc));
+        }
+
+        // Fallback: If still empty, pull recent and filter in memory
+        if (pendingDocs.length === 0) {
+            console.log('🔍 GET PENDING EVENTS: No pending found; fetching recent for in-memory filter...');
+            const recentSnapshot = await eventsRef
+                .orderBy('createdAt', 'desc')
+                .limit(100)
+                .get();
+            recentSnapshot.forEach(doc => {
+                const d = doc.data() || {};
+                const status = String(d.status || '').toLowerCase();
+                if (!status || status === 'pending' || status === 'pending review' || status === 'submitted') {
+                    pendingDocs.push(doc);
+                }
+            });
+            console.log('🔍 GET PENDING EVENTS: Fallback produced pendingDocs:', pendingDocs.length);
+        }
         
         console.log("🔍 GET PENDING EVENTS: Total pending events:", pendingDocs.length);
         
@@ -171,10 +186,9 @@ async function getPendingEvents(limit, offset) {
             // Check if this is a recurring event
             const isRecurring = eventData.recurringInfo || eventData.series || eventData.isRecurring;
             
-            // Skip past events unless they're recurring
+            // Include past events for admin review; mark flag for UI
             if (isPastEvent && !isRecurring) {
-                console.log(`⏰ SKIPPING PAST EVENT: ${eventData.name} (${eventData.id}) - Date: ${eventDate}, Recurring: ${isRecurring}`);
-                return; // Skip this event
+                console.log(`⏰ PAST EVENT (included for review): ${eventData.name} (${eventData.id}) - Date: ${eventDate}`);
             }
             
             events.push({
@@ -188,15 +202,15 @@ async function getPendingEvents(limit, offset) {
                     name: eventData.venue?.name || eventData.venueName,
                     address: eventData.venue?.address || eventData.venueAddress
                 },
-                category: eventData.category || [],
-                image: eventData.image,
+                category: Array.isArray(eventData.category) ? eventData.category : (eventData.categoryIds || []),
+                image: eventData.image || (eventData.promoImage ? (typeof eventData.promoImage === 'string' ? { url: eventData.promoImage } : eventData.promoImage) : null),
                 price: eventData.price,
                 ageRestriction: eventData.ageRestriction,
                 link: eventData.link || eventData.ticketLink,
                 recurringInfo: eventData.recurringInfo,
                 series: eventData.series,
                 status: eventData.status,
-                createdAt: eventData.createdAt,
+                createdAt: eventData.createdAt || eventData.submittedAt || new Date(),
                 updatedAt: eventData.updatedAt,
                 submittedBy: eventData.submittedBy,
                 submittedAt: eventData.submittedAt,

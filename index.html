@@ -44,7 +44,7 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -275,20 +275,19 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-    
-    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="/css/main.css" as="style">
-    <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/HouseOfAllureReel.mp4" as="video" type="video/mp4">
-    
-    <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js" defer></script>
-    
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+         <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+     
+     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+     <link rel="preload" href="/css/tailwind.css" as="style">
+     <link rel="preload" href="/css/main.css" as="style">
+     <link rel="stylesheet" href="/css/tailwind.css">
+     <link rel="stylesheet" href="/css/main.css">
+     
+     <!-- Preload critical resources -->
+     <link rel="preload" href="/HouseOfAllureReel.mp4" as="video" type="video/mp4">
+     
+     <script src="/js/fouc-prevention.js"></script>
+     <script src="/js/main.js?v=2" defer></script>
     
     <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
