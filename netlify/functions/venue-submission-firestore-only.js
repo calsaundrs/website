@@ -5,23 +5,28 @@ const cloudinary = require('cloudinary').v2;
 function extractGooglePlaceId(input) {
     if (!input || typeof input !== 'string') return null;
     
-    // If it's already a Place ID (starts with ChIJ), return as is
-    if (input.startsWith('ChIJ')) {
+    // If it's already a Place ID (starts with ChIJ or 0x), return as is
+    if (input.startsWith('ChIJ') || input.startsWith('0x')) {
         return input;
     }
     
     // Try to extract from Google Maps URL
     const urlPatterns = [
-        /\/place\/[^\/]+\/([^\/\?]+)/,  // /place/name/ChIJ...
-        /\/maps\/place\/[^\/]+\/([^\/\?]+)/,  // /maps/place/name/ChIJ...
-        /[?&]cid=([^&]+)/,  // ?cid=ChIJ...
-        /[?&]place_id=([^&]+)/,  // ?place_id=ChIJ...
+        /\/place\/[^\/]+\/([^\/\?]+)/,  // /place/name/ChIJ... or 0x...
+        /\/maps\/place\/[^\/]+\/([^\/\?]+)/,  // /maps/place/name/ChIJ... or 0x...
+        /[?&]cid=([^&]+)/,  // ?cid=ChIJ... or 0x...
+        /[?&]place_id=([^&]+)/,  // ?place_id=ChIJ... or 0x...
+        /!1s([^!]+)!/,  // !1s0x4870bc632404df1b:0x30887b950fadaed5!
     ];
     
     for (const pattern of urlPatterns) {
         const match = input.match(pattern);
-        if (match && match[1] && match[1].startsWith('ChIJ')) {
-            return match[1];
+        if (match && match[1]) {
+            const placeId = match[1];
+            // Check if it looks like a valid Place ID (ChIJ or 0x format)
+            if (placeId.startsWith('ChIJ') || placeId.startsWith('0x')) {
+                return placeId;
+            }
         }
     }
     
