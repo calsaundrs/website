@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Pending Events Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #7f1d1d;
+            border: 1px solid #ef4444;
+        }
+        .warning {
+            background: #92400e;
+            border: 1px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Clear Pending Events</h1>
+        <p><strong>Warning:</strong> This will permanently delete ALL pending and pending review events from the database. Approved events will be preserved.</p>
+        
+        <div>
+            <button id="clearBtn" onclick="clearPendingEvents()">
+                🗑️ Clear All Pending Events
+            </button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function clearPendingEvents() {
+            const btn = document.getElementById('clearBtn');
+            const result = document.getElementById('result');
+            
+            // Confirm action
+            if (!confirm('Are you absolutely sure you want to delete ALL pending events? This action cannot be undone.')) {
+                return;
+            }
+            
+            if (!confirm('Final confirmation: This will delete ALL pending events. Are you sure?')) {
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Clearing events...';
+            result.innerHTML = '';
+            
+            try {
+                const response = await fetch('/.netlify/functions/clear-pending-events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    result.className = 'result success';
+                    result.innerHTML = `✅ SUCCESS!\n\n${data.message}\n\nDeleted ${data.deletedCount} events.\n\nFirst few deleted events:\n${data.deletedEvents ? data.deletedEvents.join('\n') : 'None'}`;
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `❌ ERROR!\n\n${data.error || 'Unknown error'}\n\n${data.message || ''}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `❌ NETWORK ERROR!\n\n${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🗑️ Clear All Pending Events';
+            }
+        }
+    </script>
+</body>
+</html>
