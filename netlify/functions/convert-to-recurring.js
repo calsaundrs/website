@@ -102,14 +102,23 @@ exports.handler = async function (event, context) {
             };
         }
         
-        // Prepare recurring event data
+        // Prepare recurring event data - map to RecurringEventsManager expected fields
         const recurringEventData = {
             ...eventData,
-            isRecurring: true,
+            name: eventData.name || eventData.Name,
+            description: eventData.description || eventData.Description,
+            category: eventData.category || eventData.Category || [],
+            venueSlug: eventData.venueSlug || eventData['Venue Slug'],
+            venueName: eventData.venueName || eventData['Venue Name'],
+            startDate: recurringStartDate || eventData.date, // RecurringEventsManager expects startDate
+            endDate: recurringEndDate || null,
+            maxInstances: maxInstances ? parseInt(maxInstances) : 52,
+            time: eventData.time || '20:00',
+            image: eventData.image || eventData.Image,
+            link: eventData.link || eventData.Link,
+            price: eventData.price || eventData.Price,
+            ageRestriction: eventData.ageRestriction || eventData['Age Restriction'],
             recurringPattern: recurringPattern,
-            recurringStartDate: recurringStartDate || eventData.date,
-            recurringEndDate: recurringEndDate || null,
-            maxInstances: maxInstances ? parseInt(maxInstances) : null,
             customRecurrenceDesc: customRecurrenceDesc || null
         };
         
