@@ -131,9 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (posterPreview) posterPreview.classList.remove('hidden');
         if (uploadArea) uploadArea.classList.add('hidden');
         
-        // For now, just show upload success without AI processing
-        // The poster will be uploaded directly with the event submission
+        // Show upload success - poster will be uploaded with event submission
         showUploadSuccess();
+        
+        // Skip AI processing for now to avoid 500 errors
+        // The poster will be uploaded directly with the event submission
     }
 
     function showExtractedData(data) {
@@ -377,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const venueSelect = document.getElementById('venue-select');
             
             // Check if venue is selected (either through search or select)
-            const hasVenueSelected = (venueId && venueId.value) || (venueSelect && venueSelect.value);
+            const hasVenueSelected = (venueId && venueId.value && venueId.value !== '') || (venueSelect && venueSelect.value && venueSelect.value !== '');
             
             if (!hasVenueSelected) {
                 errors.push('Please select a venue.');
