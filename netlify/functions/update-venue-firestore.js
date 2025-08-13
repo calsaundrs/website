@@ -135,31 +135,54 @@ exports.handler = async function (event, context) {
         if (files.photo && files.photo.content) {
             try {
                 console.log('Uploading new venue image to Cloudinary...');
-                const uploadResult = await new Promise((resolve, reject) => {
-                    cloudinary.uploader.upload_stream(
-                        {
-                            folder: 'venues',
-                            transformation: [
-                                { width: 800, height: 400, crop: 'fill' },
-                                { quality: 'auto' }
-                            ]
-                        },
-                        (error, result) => {
-                            if (error) reject(error);
-                            else resolve(result);
-                        }
-                    ).end(Buffer.from(files.photo.content, 'base64'));
+                console.log('Photo file info:', {
+                    filename: files.photo.filename,
+                    contentLength: files.photo.content.length,
+                    contentType: files.photo.contentType || 'unknown'
                 });
                 
-                uploadedImage = {
-                    url: uploadResult.secure_url,
-                    publicId: uploadResult.public_id
-                };
-                console.log('Venue image uploaded successfully:', uploadedImage.url);
+                // Validate that we have actual image content
+                if (!files.photo.content || files.photo.content.length < 100) {
+                    console.log('Skipping image upload - content too small or empty');
+                } else {
+                    const uploadResult = await new Promise((resolve, reject) => {
+                        cloudinary.uploader.upload_stream(
+                            {
+                                folder: 'venues',
+                                transformation: [
+                                    { width: 800, height: 400, crop: 'fill' },
+                                    { quality: 'auto' }
+                                ]
+                            },
+                            (error, result) => {
+                                if (error) {
+                                    console.error('Cloudinary upload error:', error);
+                                    reject(error);
+                                } else {
+                                    console.log('Cloudinary upload success:', result);
+                                    resolve(result);
+                                }
+                            }
+                        ).end(Buffer.from(files.photo.content, 'base64'));
+                    });
+                    
+                    uploadedImage = {
+                        url: uploadResult.secure_url,
+                        publicId: uploadResult.public_id
+                    };
+                    console.log('Venue image uploaded successfully:', uploadedImage.url);
+                }
             } catch (uploadError) {
                 console.error('Error uploading venue image:', uploadError);
+                console.error('Upload error details:', {
+                    message: uploadError.message,
+                    http_code: uploadError.http_code,
+                    name: uploadError.name
+                });
                 // Continue without image - don't fail the update
             }
+        } else {
+            console.log('No photo file found in upload');
         }
         
         // Prepare update fields
