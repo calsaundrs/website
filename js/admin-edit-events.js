@@ -60,6 +60,35 @@ function initializeEventListeners() {
     // Bulk actions button
     const bulkActionsBtn = document.getElementById('bulk-actions-btn');
     if (bulkActionsBtn) bulkActionsBtn.addEventListener('click', handleBulkActions);
+    
+    // Recurring event field toggles
+    const isRecurringCheckbox = document.getElementById('edit-is-recurring');
+    if (isRecurringCheckbox) {
+        isRecurringCheckbox.addEventListener('change', function() {
+            const recurringFields = document.getElementById('edit-recurring-fields');
+            if (recurringFields) {
+                if (this.checked) {
+                    recurringFields.classList.remove('hidden');
+                } else {
+                    recurringFields.classList.add('hidden');
+                }
+            }
+        });
+    }
+    
+    const recurringPatternSelect = document.getElementById('edit-recurring-pattern');
+    if (recurringPatternSelect) {
+        recurringPatternSelect.addEventListener('change', function() {
+            const customPatternField = document.getElementById('edit-custom-pattern-field');
+            if (customPatternField) {
+                if (this.value === 'custom') {
+                    customPatternField.classList.remove('hidden');
+                } else {
+                    customPatternField.classList.add('hidden');
+                }
+            }
+        });
+    }
 }
 
 // Set active filter button
@@ -952,6 +981,28 @@ function populateEditForm(event) {
     if (editTotalInstances) editTotalInstances.value = event.totalInstances || '';
     if (editRecurringInstance) editRecurringInstance.value = event.recurringInstance || '';
     
+    // Show/hide recurring fields based on checkbox state
+    const recurringFields = document.getElementById('edit-recurring-fields');
+    const isRecurringCheckbox = document.getElementById('edit-is-recurring');
+    if (recurringFields && isRecurringCheckbox) {
+        if (isRecurringCheckbox.checked) {
+            recurringFields.classList.remove('hidden');
+        } else {
+            recurringFields.classList.add('hidden');
+        }
+    }
+    
+    // Show/hide custom pattern field based on pattern selection
+    const customPatternField = document.getElementById('edit-custom-pattern-field');
+    const recurringPatternSelect = document.getElementById('edit-recurring-pattern');
+    if (customPatternField && recurringPatternSelect) {
+        if (recurringPatternSelect.value === 'custom') {
+            customPatternField.classList.remove('hidden');
+        } else {
+            customPatternField.classList.add('hidden');
+        }
+    }
+    
     // Store current event for editing
     currentEventForEdit = event;
     
@@ -1060,13 +1111,41 @@ async function handleEditFormSubmit(event) {
             eventData.venueId = venueSelect.value;
         }
         
-        const response = await fetch('/.netlify/functions/update-item-firestore', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(eventData)
-        });
+        // Check if this is a recurring event update
+        const isRecurring = editIsRecurring?.checked || false;
+        
+        let response;
+        if (isRecurring && currentEventForEdit) {
+            // Use the recurring update function
+            const recurringData = {
+                eventId: currentEventForEdit.id,
+                isRecurring: true,
+                recurringPattern: editRecurringPattern?.value || '',
+                recurringInfo: editRecurringInfo?.value || '',
+                recurringStartDate: editRecurringStartDate?.value || '',
+                recurringEndDate: editRecurringEndDate?.value || '',
+                totalInstances: editTotalInstances?.value || '',
+                recurringInstance: editRecurringInstance?.value || '',
+                updateSeries: true // Update all instances in the series
+            };
+            
+            response = await fetch('/.netlify/functions/update-recurring-event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(recurringData)
+            });
+        } else {
+            // Use the regular update function
+            response = await fetch('/.netlify/functions/update-item-firestore', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(eventData)
+            });
+        }
         
         if (response.ok) {
             showSuccess('Event updated successfully!');
