@@ -51,41 +51,62 @@ exports.handler = async function (event, context) {
         let fields = {};
         let files = {};
         
+        console.log('Content-Type:', event.headers['content-type']);
+        console.log('Body length:', event.body ? event.body.length : 0);
+        console.log('Body preview:', event.body ? event.body.substring(0, 200) : 'No body');
+        
         if (event.body) {
             const contentType = event.headers['content-type'] || '';
             
             if (contentType.includes('multipart/form-data')) {
                 // Handle multipart form data
                 const boundary = contentType.split('boundary=')[1];
+                console.log('Boundary:', boundary);
+                
                 if (boundary) {
                     const parts = event.body.split(`--${boundary}`);
-                    for (const part of parts) {
+                    console.log('Number of parts:', parts.length);
+                    
+                    for (let i = 0; i < parts.length; i++) {
+                        const part = parts[i];
+                        console.log(`Part ${i} preview:`, part.substring(0, 100));
+                        
                         if (part.includes('Content-Disposition: form-data')) {
                             const nameMatch = part.match(/name="([^"]+)"/);
                             if (nameMatch) {
                                 const fieldName = nameMatch[1];
+                                console.log('Found field:', fieldName);
                                 
                                 // Check if this is a file field
                                 const filenameMatch = part.match(/filename="([^"]+)"/);
                                 if (filenameMatch) {
                                     // This is a file field
                                     const filename = filenameMatch[1];
+                                    console.log('Found file:', filename);
+                                    
                                     const contentTypeMatch = part.match(/Content-Type: ([^\r\n]+)/);
                                     const contentStart = part.indexOf('\r\n\r\n') + 4;
                                     const contentEnd = part.lastIndexOf('\r\n');
-                                    const fileContent = part.substring(contentStart, contentEnd);
                                     
-                                    files[fieldName] = {
-                                        fieldname: fieldName,
-                                        filename: filename,
-                                        contentType: contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream',
-                                        content: fileContent
-                                    };
+                                    if (contentStart > 3 && contentEnd > contentStart) {
+                                        const fileContent = part.substring(contentStart, contentEnd);
+                                        files[fieldName] = {
+                                            fieldname: fieldName,
+                                            filename: filename,
+                                            contentType: contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream',
+                                            content: fileContent
+                                        };
+                                        console.log('File stored for:', fieldName);
+                                    }
                                 } else {
                                     // This is a regular field
                                     const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
                                     if (valueMatch) {
-                                        fields[fieldName] = valueMatch[1].trim();
+                                        const value = valueMatch[1].trim();
+                                        fields[fieldName] = value;
+                                        console.log('Field stored:', fieldName, '=', value.substring(0, 50));
+                                    } else {
+                                        console.log('No value found for field:', fieldName);
                                     }
                                 }
                             }
@@ -94,16 +115,18 @@ exports.handler = async function (event, context) {
                 }
             } else {
                 // Handle URL-encoded form data
+                console.log('Handling URL-encoded form data');
                 const params = new URLSearchParams(event.body);
                 for (const [key, value] of params) {
                     fields[key] = value;
+                    console.log('URL param:', key, '=', value);
                 }
             }
         }
         
         const submission = { ...fields, files: Object.values(files) };
-        console.log('Parsed submission fields:', Object.keys(fields));
-        console.log('Parsed submission files:', Object.keys(files));
+        console.log('Final parsed submission fields:', Object.keys(fields));
+        console.log('Final parsed submission files:', Object.keys(files));
         console.log('Sample field values:', { name: fields.name, address: fields.address, description: fields.description });
         
         // Handle image upload - simplified approach
