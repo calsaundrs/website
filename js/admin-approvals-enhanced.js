@@ -303,6 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         ` : '';
         
+        // Image display
+        const imageInfo = item.image && item.image.url ? `
+            <div class="approval-card-detail-item">
+                <div class="detail-label">Image</div>
+                <div class="detail-value">
+                    <img src="${item.image.url}" alt="${item.name}" class="w-32 h-20 object-cover rounded-lg border border-gray-600 hover:scale-105 transition-transform cursor-pointer" onclick="openImageModal('${item.image.url}', '${item.name}')">
+                </div>
+            </div>
+        ` : '';
+        
         return `
             <div class="approval-card ${compactClass} ${selectedClass}" data-id="${item.id}" data-type="${item.type}">
                 <input type="checkbox" class="selection-checkbox" ${isSelected ? 'checked' : ''} data-id="${item.id}">
@@ -335,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${recurringInfo}
                     ${submittedInfo}
                     ${createdAtInfo}
+                    ${imageInfo}
                 </div>
                 
                 <div class="approval-card-actions">
@@ -591,6 +602,51 @@ document.addEventListener('DOMContentLoaded', () => {
             venueSelect.lastElementChild.textContent = '➕ Create New Venue';
         }
         
+        // Handle image display and editing
+        const currentImageContainer = document.getElementById('current-image-container');
+        const currentImage = document.getElementById('current-image');
+        const uploadImageBtn = document.getElementById('upload-image-btn');
+        const editImageUpload = document.getElementById('edit-image-upload');
+        const removeImageBtn = document.getElementById('remove-image-btn');
+        
+        if (event.image && event.image.url) {
+            // Show current image
+            currentImage.src = event.image.url;
+            currentImageContainer.classList.remove('hidden');
+            
+            // Store current image data
+            window.currentEventImage = event.image;
+        } else {
+            // Hide current image section
+            currentImageContainer.classList.add('hidden');
+            window.currentEventImage = null;
+        }
+        
+        // Set up image upload button
+        uploadImageBtn.onclick = () => editImageUpload.click();
+        
+        // Handle file selection
+        editImageUpload.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Show preview of new image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage.src = e.target.result;
+                    currentImageContainer.classList.remove('hidden');
+                    window.currentEventImage = { url: e.target.result, file: file };
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        // Handle image removal
+        removeImageBtn.onclick = function() {
+            currentImageContainer.classList.add('hidden');
+            editImageUpload.value = '';
+            window.currentEventImage = null;
+        };
+        
         // Store current event for editing
         window.currentEventForEdit = event;
     }
@@ -642,13 +698,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventData.venueId = venueSelect.value;
             }
             
+            // Handle image
+            if (window.currentEventImage) {
+                if (window.currentEventImage.file) {
+                    // New image uploaded - we'll need to handle this in the backend
+                    eventData.newImage = true;
+                    eventData.imageFile = window.currentEventImage.file;
+                } else {
+                    // Existing image - keep the current image data
+                    eventData.image = window.currentEventImage;
+                }
+            } else {
+                // No image - clear the image
+                eventData.image = null;
+            }
+            
             console.log(`💾 SAVE: Processed data:`, eventData);
             
-            const response = await fetch('/.netlify/functions/update-item-firestore', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(eventData)
-            });
+            let response;
+            if (eventData.newImage && eventData.imageFile) {
+                // Use FormData for file upload
+                const formData = new FormData();
+                formData.append('image', eventData.imageFile);
+                
+                // Add other data as JSON string
+                const { imageFile, newImage, ...otherData } = eventData;
+                formData.append('data', JSON.stringify(otherData));
+                
+                response = await fetch('/.netlify/functions/update-item-firestore', {
+                    method: 'POST',
+                    body: formData
+                });
+            } else {
+                // Use JSON for non-file updates
+                const { imageFile, newImage, ...jsonData } = eventData;
+                response = await fetch('/.netlify/functions/update-item-firestore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
+                });
+            }
             
             if (response.ok) {
                 const result = await response.json();
@@ -929,4 +1018,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Global function for clear search
     window.clearSearch = clearSearch;
+    
+    // Image modal function
+    window.openImageModal = function(imageUrl, title) {
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        
+        modalImage.src = imageUrl;
+        modalTitle.textContent = title;
+        modal.classList.remove('hidden');
+        
+        // Close modal when clicking outside or on close button
+        modal.onclick = function(e) {
+            if (e.target === modal || e.target.classList.contains('close-modal')) {
+                modal.classList.add('hidden');
+            }
+        };
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                modal.classList.add('hidden');
+            }
+        });
+    };
 });
