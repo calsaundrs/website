@@ -51,6 +51,11 @@ exports.handler = async function (event, context) {
         let body;
         let files = {};
         
+        console.log('Request headers:', event.headers);
+        console.log('Request body type:', typeof event.body);
+        console.log('Body length:', event.body ? event.body.length : 'undefined');
+        console.log('Is base64 encoded:', event.isBase64Encoded);
+        
         if (event.headers['content-type'] && event.headers['content-type'].includes('multipart/form-data')) {
             // Handle multipart form data
             const boundary = event.headers['content-type'].split('boundary=')[1];
@@ -110,12 +115,21 @@ exports.handler = async function (event, context) {
             }
             
             body = fields;
+            console.log('Parsed multipart fields:', Object.keys(body));
+            console.log('Sample field values:', {
+                venueId: body.venueId,
+                id: body.id,
+                name: body.name,
+                address: body.address
+            });
         } else {
             // Handle JSON data
             body = JSON.parse(event.body);
+            console.log('Parsed JSON body:', Object.keys(body));
         }
         
-        const { venueId, ...updateData } = body;
+        // Extract venueId from either body or fields
+        const venueId = body.venueId || body.id;
         
         if (!venueId) {
             return {
@@ -123,10 +137,14 @@ exports.handler = async function (event, context) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     error: 'Missing required parameters',
-                    message: 'venueId is required'
+                    message: 'venueId is required',
+                    receivedBody: body
                 })
             };
         }
+        
+        // Remove venueId from updateData to avoid conflicts
+        const { venueId: _, id: __, ...updateData } = body;
         
         console.log(`Updating venue ${venueId} with data:`, updateData);
         
