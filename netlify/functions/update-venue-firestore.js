@@ -160,8 +160,20 @@ exports.handler = async function (event, context) {
                 if (!files.photo.content || files.photo.content.length < 100) {
                     console.log('Skipping image upload - content too small or empty');
                 } else {
+                    // Check if content is already base64 encoded
+                    const isBase64 = /^[A-Za-z0-9+/]*={0,2}$/.test(files.photo.content);
+                    console.log('Content analysis:', {
+                        isBase64: isBase64,
+                        contentStart: files.photo.content.substring(0, 20),
+                        contentEnd: files.photo.content.substring(files.photo.content.length - 20)
+                    });
+                    // Try uploading with data URL approach
+                    const dataUrl = `data:${files.photo.contentType};base64,${files.photo.content}`;
+                    console.log('Attempting upload with data URL, length:', dataUrl.length);
+                    
                     const uploadResult = await new Promise((resolve, reject) => {
-                        cloudinary.uploader.upload_stream(
+                        cloudinary.uploader.upload(
+                            dataUrl,
                             {
                                 folder: 'venues',
                                 transformation: [
@@ -178,7 +190,7 @@ exports.handler = async function (event, context) {
                                     resolve(result);
                                 }
                             }
-                        ).end(Buffer.from(files.photo.content, 'base64'));
+                        );
                     });
                     
                     uploadedImage = {
