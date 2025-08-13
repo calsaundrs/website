@@ -37,15 +37,18 @@ exports.handler = async function(event, context) {
         
         const missing = required.filter(varName => !process.env[varName]);
         if (missing.length > 0) {
-            return {
-                statusCode: 500,
-                headers,
-                body: JSON.stringify({
-                    error: 'Environment configuration error',
-                    message: `Missing environment variables: ${missing.join(', ')}`,
-                    missing: missing
-                })
-            };
+                    return {
+            statusCode: 500,
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                error: 'Environment configuration error',
+                message: `Missing environment variables: ${missing.join(', ')}`,
+                missing: missing
+            })
+        };
         }
         
         // Initialize Firebase
@@ -101,7 +104,10 @@ exports.handler = async function(event, context) {
         
         return {
             statusCode: 200,
-            headers,
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(venues)
         };
 
@@ -110,7 +116,10 @@ exports.handler = async function(event, context) {
         console.error('Venue List: Error stack:', error.stack);
         return {
             statusCode: 500,
-            headers,
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ 
                 error: 'Failed to fetch venues',
                 details: error.message,
