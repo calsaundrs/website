@@ -909,32 +909,55 @@ function closeRecurringModal() {
 // Form handling
 function populateEditForm(event) {
     console.log('Admin Edit Events: Populating form with event:', event);
+    console.log('Admin Edit Events: Event fields - name:', event.name, 'time:', event.time, 'status:', event.status, 'category:', event.category, 'image:', event.image);
     
-    // Use standardized field names
-    document.getElementById('edit-name').value = event.name || '';
-    document.getElementById('edit-description').value = event.description || '';
+    // Use standardized field names with fallbacks
+    document.getElementById('edit-name').value = event.name || event['Event Name'] || '';
+    document.getElementById('edit-description').value = event.description || event.Description || '';
     
     // Format date for HTML input
-    const eventDate = event.date || '';
+    const eventDate = event.date || event.Date || '';
     const formattedDate = eventDate ? new Date(eventDate).toISOString().split('T')[0] : '';
     document.getElementById('edit-date').value = formattedDate;
     
-    document.getElementById('edit-time').value = event.time || '';
-    document.getElementById('edit-link').value = event.link || '';
-    document.getElementById('edit-status').value = event.status || 'pending';
+    // Handle time field with multiple possible formats
+    const eventTime = event.time || event.Time || '';
+    document.getElementById('edit-time').value = eventTime;
     
-    // Handle categories (standardized array format)
-    const eventCategories = event.category || [];
+    document.getElementById('edit-link').value = event.link || event.Link || '';
+    
+    // Handle status field with multiple possible formats
+    const eventStatus = event.status || event.Status || 'pending';
+    document.getElementById('edit-status').value = eventStatus;
+    
+    // Handle categories (standardized array format) with multiple possible formats
+    let eventCategories = [];
+    if (event.category) {
+        if (Array.isArray(event.category)) {
+            eventCategories = event.category;
+        } else if (typeof event.category === 'string') {
+            eventCategories = event.category.split(',').map(cat => cat.trim());
+        }
+    } else if (event.Category) {
+        if (Array.isArray(event.Category)) {
+            eventCategories = event.Category;
+        } else if (typeof event.Category === 'string') {
+            eventCategories = event.Category.split(',').map(cat => cat.trim());
+        }
+    }
+    
     const categoriesContainer = document.getElementById('edit-categories');
-    categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
-        const isChecked = eventCategories.includes(category);
-        return `
-            <label class="flex items-center space-x-2">
-                <input type="checkbox" value="${category}" ${isChecked ? 'checked' : ''} class="rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500">
-                <span class="text-sm text-gray-300">${category}</span>
-            </label>
-        `;
-    }).join('');
+    if (categoriesContainer) {
+        categoriesContainer.innerHTML = VALID_CATEGORIES.map(category => {
+            const isChecked = eventCategories.includes(category);
+            return `
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" value="${category}" ${isChecked ? 'checked' : ''} class="rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500">
+                    <span class="text-sm text-gray-300">${category}</span>
+                </label>
+            `;
+        }).join('');
+    }
     
     // Handle venue selection (standardized field names)
     const venueSelect = document.getElementById('edit-venue-select');
@@ -956,18 +979,33 @@ function populateEditForm(event) {
         });
     }
     
-    // Handle current image display
+    // Handle current image display with multiple possible formats
     const currentImage = document.getElementById('edit-current-image');
     const imageContainer = currentImage?.parentElement;
     const imageIcon = imageContainer?.querySelector('.fas.fa-image');
     
     if (currentImage && imageContainer) {
-        const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
+        // Try multiple possible image field names
+        const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'] || event['image'] || event['Image'];
+        
         if (eventImage) {
-            const imageUrl = Array.isArray(eventImage) ? eventImage[0].url : eventImage;
-            currentImage.src = imageUrl;
-            currentImage.style.display = 'block';
-            if (imageIcon) imageIcon.style.display = 'none';
+            let imageUrl;
+            if (Array.isArray(eventImage)) {
+                imageUrl = eventImage[0]?.url || eventImage[0];
+            } else if (typeof eventImage === 'object' && eventImage.url) {
+                imageUrl = eventImage.url;
+            } else if (typeof eventImage === 'string') {
+                imageUrl = eventImage;
+            }
+            
+            if (imageUrl) {
+                currentImage.src = imageUrl;
+                currentImage.style.display = 'block';
+                if (imageIcon) imageIcon.style.display = 'none';
+            } else {
+                currentImage.style.display = 'none';
+                if (imageIcon) imageIcon.style.display = 'flex';
+            }
         } else {
             currentImage.style.display = 'none';
             if (imageIcon) imageIcon.style.display = 'flex';
