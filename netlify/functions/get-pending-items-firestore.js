@@ -141,22 +141,34 @@ async function getPendingEvents(limit, offset) {
         
         console.log("🔍 GET PENDING EVENTS: Total pending events:", pendingDocs.length);
         
-        // Sort by creation date (newest first)
+        // Sort by creation date (newest first) with safe handling of missing dates
         pendingDocs.sort((a, b) => {
             const dateA = a.data().createdAt;
             const dateB = b.data().createdAt;
             
+            // Handle missing dates - put them at the end
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;  // a goes after b
+            if (!dateB) return -1; // b goes after a
+            
             // Handle Firestore timestamp objects
-            if (dateA && dateA._seconds) {
+            if (dateA && typeof dateA === 'object' && dateA._seconds) {
                 const timeA = dateA._seconds * 1000 + (dateA._nanoseconds || 0) / 1000000;
-                const timeB = dateB._seconds * 1000 + (dateB._nanoseconds || 0) / 1000000;
+                const timeB = dateB && typeof dateB === 'object' && dateB._seconds 
+                    ? dateB._seconds * 1000 + (dateB._nanoseconds || 0) / 1000000
+                    : new Date(dateB).getTime();
                 return timeB - timeA;
             }
             
             // Handle regular Date objects or strings
-            const timeA = new Date(dateA).getTime();
-            const timeB = new Date(dateB).getTime();
-            return timeB - timeA;
+            try {
+                const timeA = new Date(dateA).getTime();
+                const timeB = new Date(dateB).getTime();
+                return timeB - timeA;
+            } catch (error) {
+                console.warn('Error parsing dates for sorting:', { dateA, dateB, error: error.message });
+                return 0; // Keep original order if date parsing fails
+            }
         });
         
         // Apply pagination
