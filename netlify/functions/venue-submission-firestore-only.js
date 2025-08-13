@@ -252,26 +252,15 @@ exports.handler = async function (event, context) {
         
         return {
             statusCode: 200,
-            headers: { 'Content-Type': 'text/html' },
-            body: `<!DOCTYPE html>
-            <html>
-            <head>
-                <title>Venue Submitted Successfully</title>
-                <meta http-equiv="refresh" content="3;url=/venues.html">
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                    .success { color: #10B981; }
-                    .info { color: #6B7280; }
-                </style>
-            </head>
-            <body>
-                <h1 class="success">Venue Submitted Successfully!</h1>
-                <p>Your venue "${venueName}" has been submitted for review.</p>
-                <p class="info">You will be redirected to the venues page shortly.</p>
-                <p class="info">Firestore ID: ${firestoreDoc.id}</p>
-                <p class="info">Note: This submission was processed using Firestore only.</p>
-            </body>
-            </html>`
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                success: true,
+                message: 'Venue submitted successfully',
+                venueId: firestoreDoc.id,
+                venueName: venueName,
+                status: firestoreData.status,
+                ssgRebuild: ssgRebuildResult
+            })
         };
         
     } catch (error) {
