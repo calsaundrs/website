@@ -134,6 +134,7 @@ function processVenueForPublic(venueData) {
                 imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
             }
         }
+    }
     
     // Generate slug from venue name if not provided
     const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
