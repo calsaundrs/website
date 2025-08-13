@@ -61,6 +61,9 @@ exports.handler = async function (event, context) {
             }
             
             const parts = decodedBody.split(`--${boundary}`);
+            console.log('Multipart parsing - Number of parts:', parts.length);
+            console.log('First part preview:', parts[0] ? parts[0].substring(0, 200) : 'No parts');
+            
             const fields = {};
             
             for (const part of parts) {
@@ -73,13 +76,25 @@ exports.handler = async function (event, context) {
                         if (filenameMatch) {
                             // This is a file
                             const filename = filenameMatch[1];
+                            
+                            // Extract content type
+                            const contentTypeMatch = part.match(/Content-Type: ([^\r\n]+)/);
+                            const contentType = contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream';
+                            
                             const contentStart = part.indexOf('\r\n\r\n') + 4;
                             const contentEnd = part.lastIndexOf('\r\n');
                             
                             if (contentStart > 3 && contentEnd > contentStart) {
                                 const fileContent = part.substring(contentStart, contentEnd);
+                                console.log(`File parsed: ${fieldName}`, {
+                                    filename: filename,
+                                    contentType: contentType,
+                                    contentLength: fileContent.length,
+                                    contentPreview: fileContent.substring(0, 50)
+                                });
                                 files[fieldName] = {
                                     filename: filename,
+                                    contentType: contentType,
                                     content: fileContent
                                 };
                             }
