@@ -102,6 +102,10 @@ exports.handler = async function (event, context) {
             };
         }
         
+        // Get the actual event date - prioritize the form date if provided, otherwise use event date
+        const actualEventDate = recurringStartDate || eventData.date || eventData.Date;
+        console.log(`Event original date: ${eventData.date}, Form start date: ${recurringStartDate}, Using: ${actualEventDate}`);
+        
         // Prepare recurring event data - map to RecurringEventsManager expected fields
         const recurringEventData = {
             ...eventData,
@@ -110,7 +114,7 @@ exports.handler = async function (event, context) {
             category: eventData.category || eventData.Category || [],
             venueSlug: eventData.venueSlug || eventData['Venue Slug'],
             venueName: eventData.venueName || eventData['Venue Name'],
-            startDate: recurringStartDate || eventData.date, // RecurringEventsManager expects startDate
+            startDate: actualEventDate, // Use the actual event date as start date
             endDate: recurringEndDate || null,
             maxInstances: maxInstances ? parseInt(maxInstances) : 52,
             time: eventData.time || '20:00',

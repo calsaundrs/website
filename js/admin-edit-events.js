@@ -1628,9 +1628,18 @@ function openConvertToRecurringModal(eventId) {
     // Set the event ID
     eventIdInput.value = eventId;
     
-    // Set default start date to today
-    const today = new Date().toISOString().split('T')[0];
-    startDateInput.value = today;
+    // Find the event data to get the actual event date
+    const event = allEvents.find(e => e.id === eventId);
+    if (event && event.date) {
+        // Convert event date to YYYY-MM-DD format for the date input
+        const eventDate = new Date(event.date);
+        const formattedDate = eventDate.toISOString().split('T')[0];
+        startDateInput.value = formattedDate;
+    } else {
+        // Fallback to today if no event date found
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.value = today;
+    }
     
     // Show the modal
     modal.classList.remove('hidden');
