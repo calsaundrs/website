@@ -191,10 +191,15 @@ async function getVenueBySlug(slug) {
       category: foundVenue.category,
       image: foundVenue.image,
       accessibility: foundVenue.accessibility || '',
+      accessibilityRating: foundVenue.accessibilityRating || '',
+      accessibilityFeatures: foundVenue.accessibilityFeatures || [],
+      vibeTags: foundVenue.vibeTags || [],
+      venueFeatures: foundVenue.venueFeatures || [],
       features: foundVenue.features || [],
       socialMedia: {
         instagram: foundVenue.instagram || '',
         facebook: foundVenue.facebook || '',
+        tiktok: foundVenue.tiktok || '',
         twitter: foundVenue.twitter || ''
       },
       googlePlaceId: googlePlaceId,
@@ -604,6 +609,58 @@ function getVenueTemplate() {
                         </div>
                         {{/if}}
 
+                        <!-- Venue Features -->
+                        {{#if venue.vibeTags.length}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-tags mr-3 text-accent-color"></i>Vibe & Atmosphere
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                {{#each venue.vibeTags}}
+                                <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        {{#if venue.venueFeatures.length}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-star mr-3 text-accent-color"></i>Venue Features
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                {{#each venue.venueFeatures}}
+                                <span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        {{#if venue.accessibility}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">{{venue.accessibility}}</p>
+                            {{#if venue.accessibilityRating}}
+                            <div class="mt-3">
+                                <span class="text-sm text-gray-400">Rating: </span>
+                                <span class="text-accent-color font-semibold">{{venue.accessibilityRating}}</span>
+                            </div>
+                            {{/if}}
+                            {{#if venue.accessibilityFeatures.length}}
+                            <div class="mt-3">
+                                <p class="text-sm text-gray-400 mb-2">Features:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    {{#each venue.accessibilityFeatures}}
+                                    <span class="inline-block bg-green-100/20 text-green-300 text-sm px-3 py-1 rounded-full">{{this}}</span>
+                                    {{/each}}
+                                </div>
+                            </div>
+                            {{/if}}
+                        </div>
+                        {{/if}}
+
                         <!-- Google Places Gallery -->
                         {{#if googlePlaces.images.length}}
                         <div class="venue-card p-6 mb-6">
@@ -791,6 +848,11 @@ function getVenueTemplate() {
                                 {{#if venue.socialMedia.facebook}}
                                 <a href="{{venue.socialMedia.facebook}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-2xl">
                                     <i class="fab fa-facebook"></i>
+                                </a>
+                                {{/if}}
+                                {{#if venue.socialMedia.tiktok}}
+                                <a href="{{venue.socialMedia.tiktok}}" target="_blank" rel="noopener noreferrer" class="text-black hover:text-gray-700 text-2xl">
+                                    <i class="fab fa-tiktok"></i>
                                 </a>
                                 {{/if}}
                                 {{#if venue.socialMedia.twitter}}
