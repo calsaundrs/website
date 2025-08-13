@@ -2,6 +2,34 @@ const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
 const multipart = require('lambda-multipart-parser');
 
+// Function to extract Google Place ID from various URL formats
+function extractGooglePlaceId(input) {
+    if (!input || typeof input !== 'string') return null;
+    
+    // If it's already a Place ID (starts with ChIJ), return as is
+    if (input.startsWith('ChIJ')) {
+        return input;
+    }
+    
+    // Try to extract from Google Maps URL
+    const urlPatterns = [
+        /\/place\/[^\/]+\/([^\/\?]+)/,  // /place/name/ChIJ...
+        /\/maps\/place\/[^\/]+\/([^\/\?]+)/,  // /maps/place/name/ChIJ...
+        /[?&]cid=([^&]+)/,  // ?cid=ChIJ...
+        /[?&]place_id=([^&]+)/,  // ?place_id=ChIJ...
+    ];
+    
+    for (const pattern of urlPatterns) {
+        const match = input.match(pattern);
+        if (match && match[1] && match[1].startsWith('ChIJ')) {
+            return match[1];
+        }
+    }
+    
+    // If no Place ID found, return the original input (might be a valid Place ID in a different format)
+    return input;
+}
+
 exports.handler = async function (event, context) {
     console.log('Venue update function called');
     
@@ -211,7 +239,16 @@ exports.handler = async function (event, context) {
         if (updateData.accessibility) updateFields.accessibility = updateData.accessibility;
         if (updateData['accessibility-rating'] || updateData.accessibilityRating) updateFields.accessibilityRating = updateData['accessibility-rating'] || updateData.accessibilityRating;
         if (updateData['parking-exception'] || updateData.parkingException) updateFields.parkingException = updateData['parking-exception'] || updateData.parkingException;
-        if (updateData['google-place-id'] || updateData.googlePlaceId) updateFields.googlePlaceId = updateData['google-place-id'] || updateData.googlePlaceId;
+        
+        // Handle Google Places ID - extract from URL if needed
+        if (updateData['google-place-id'] || updateData.googlePlaceId) {
+            const googleInput = updateData['google-place-id'] || updateData.googlePlaceId;
+            const extractedPlaceId = extractGooglePlaceId(googleInput);
+            if (extractedPlaceId) {
+                updateFields.googlePlaceId = extractedPlaceId;
+            }
+        }
+        
         if (updateData.status) updateFields.status = updateData.status;
         
         // Handle array fields with proper field name mapping

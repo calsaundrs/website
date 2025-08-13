@@ -1,6 +1,34 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
 
+// Function to extract Google Place ID from various URL formats
+function extractGooglePlaceId(input) {
+    if (!input || typeof input !== 'string') return null;
+    
+    // If it's already a Place ID (starts with ChIJ), return as is
+    if (input.startsWith('ChIJ')) {
+        return input;
+    }
+    
+    // Try to extract from Google Maps URL
+    const urlPatterns = [
+        /\/place\/[^\/]+\/([^\/\?]+)/,  // /place/name/ChIJ...
+        /\/maps\/place\/[^\/]+\/([^\/\?]+)/,  // /maps/place/name/ChIJ...
+        /[?&]cid=([^&]+)/,  // ?cid=ChIJ...
+        /[?&]place_id=([^&]+)/,  // ?place_id=ChIJ...
+    ];
+    
+    for (const pattern of urlPatterns) {
+        const match = input.match(pattern);
+        if (match && match[1] && match[1].startsWith('ChIJ')) {
+            return match[1];
+        }
+    }
+    
+    // If no Place ID found, return the original input (might be a valid Place ID in a different format)
+    return input;
+}
+
 exports.handler = async function (event, context) {
     console.log('Firestore-only venue submission called');
     
@@ -220,7 +248,7 @@ exports.handler = async function (event, context) {
             accessibilityFeatures: submission['accessibility-features'] ? submission['accessibility-features'].split(',').map(feature => feature.trim()) : [],
             
             // Google Places integration
-            googlePlaceId: submission['google-place-id'] || '',
+            googlePlaceId: extractGooglePlaceId(submission['google-place-id'] || ''),
             
             // Image information
             photoUrl: uploadedImage ? uploadedImage.url : null,

@@ -641,9 +641,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <h3 class="font-bold text-xl mb-4 text-white text-center">Google Places Integration</h3>
                     <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <label for="google-place-id" class="${labelClass}">Google Places ID</label>
-                            <input type="text" id="google-place-id" name="google-place-id" value="${item.googlePlaceId || ''}" class="${inputClass}" placeholder="e.g., ChIJN1t_tDeuEmsRUsoyG83frY4">
-                            <p class="text-xs text-gray-400 mt-1">Find the Google Places ID by searching for your venue on Google Maps and copying the ID from the URL</p>
+                            <label for="google-place-id" class="${labelClass}">Google Maps URL</label>
+                            <input type="url" id="google-place-id" name="google-place-id" value="${item.googlePlaceId || ''}" class="${inputClass}" placeholder="https://maps.google.com/... or Google Places ID">
+                            <p class="text-xs text-gray-400 mt-1">Paste the Google Maps URL for your venue, or the Places ID directly</p>
                         </div>
                     </div>
                 </div>
