@@ -114,13 +114,20 @@ exports.handler = async function (event, context) {
             endDate: recurringEndDate || null,
             maxInstances: maxInstances ? parseInt(maxInstances) : 52,
             time: eventData.time || '20:00',
-            image: eventData.image || eventData.Image,
-            link: eventData.link || eventData.Link,
-            price: eventData.price || eventData.Price,
-            ageRestriction: eventData.ageRestriction || eventData['Age Restriction'],
+            image: eventData.image || eventData.Image || null,
+            link: eventData.link || eventData.Link || null,
+            price: eventData.price || eventData.Price || null,
+            ageRestriction: eventData.ageRestriction || eventData['Age Restriction'] || null,
             recurringPattern: recurringPattern,
             customRecurrenceDesc: customRecurrenceDesc || null
         };
+        
+        // Remove undefined values to prevent Firestore errors
+        Object.keys(recurringEventData).forEach(key => {
+            if (recurringEventData[key] === undefined) {
+                delete recurringEventData[key];
+            }
+        });
         
         // Create recurring series using the RecurringEventsManager
         const recurringManager = new RecurringEventsManager(db);
