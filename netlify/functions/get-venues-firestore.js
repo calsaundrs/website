@@ -109,31 +109,31 @@ function processVenueForPublic(venueData) {
         if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
             imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${cloudinaryId}`;
         } else {
-        // 2. Try to find any image field that might contain a Cloudinary URL
-        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
-        for (const field of possibleImageFields) {
-            const imageData = venueData[field];
-            if (imageData) {
-                // Check if it's already a Cloudinary URL
-                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
-                    imageUrl = imageData;
-                    break;
-                }
-                // Check if it's an object with a Cloudinary URL
-                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
-                    imageUrl = imageData.url;
-                    break;
+            // 3. Try to find any image field that might contain a Cloudinary URL
+            const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
+            for (const field of possibleImageFields) {
+                const imageData = venueData[field];
+                if (imageData) {
+                    // Check if it's already a Cloudinary URL
+                    if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                        imageUrl = imageData;
+                        break;
+                    }
+                    // Check if it's an object with a Cloudinary URL
+                    if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                        imageUrl = imageData.url;
+                        break;
+                    }
                 }
             }
+            
+            // 4. If still no image, generate a consistent placeholder based on venue name
+            if (!imageUrl) {
+                const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+                const encodedName = encodeURIComponent(venueName);
+                imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
+            }
         }
-        
-        // 3. If still no image, generate a consistent placeholder based on venue name
-        if (!imageUrl) {
-            const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
-            const encodedName = encodeURIComponent(venueName);
-            imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
-        }
-    }
     
     // Generate slug from venue name if not provided
     const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
