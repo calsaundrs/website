@@ -197,7 +197,7 @@ exports.handler = async function (event, context) {
             updatedAt: new Date()
         };
         
-        // Basic venue fields
+        // Basic venue fields with proper field name mapping
         if (updateData.name) updateFields.name = updateData.name;
         if (updateData.description) updateFields.description = updateData.description;
         if (updateData.address) updateFields.address = updateData.address;
@@ -205,29 +205,32 @@ exports.handler = async function (event, context) {
         if (updateData.instagram) updateFields.instagram = updateData.instagram;
         if (updateData.facebook) updateFields.facebook = updateData.facebook;
         if (updateData.tiktok) updateFields.tiktok = updateData.tiktok;
-        if (updateData.contactEmail) updateFields.contactEmail = updateData.contactEmail;
-        if (updateData.contactPhone) updateFields.contactPhone = updateData.contactPhone;
-        if (updateData.openingHours) updateFields.openingHours = updateData.openingHours;
+        if (updateData['contact-email'] || updateData.contactEmail) updateFields.contactEmail = updateData['contact-email'] || updateData.contactEmail;
+        if (updateData['contact-phone'] || updateData.contactPhone) updateFields.contactPhone = updateData['contact-phone'] || updateData.contactPhone;
+        if (updateData['opening-hours'] || updateData.openingHours) updateFields.openingHours = updateData['opening-hours'] || updateData.openingHours;
         if (updateData.accessibility) updateFields.accessibility = updateData.accessibility;
-        if (updateData.accessibilityRating) updateFields.accessibilityRating = updateData.accessibilityRating;
-        if (updateData.parkingException) updateFields.parkingException = updateData.parkingException;
+        if (updateData['accessibility-rating'] || updateData.accessibilityRating) updateFields.accessibilityRating = updateData['accessibility-rating'] || updateData.accessibilityRating;
+        if (updateData['parking-exception'] || updateData.parkingException) updateFields.parkingException = updateData['parking-exception'] || updateData.parkingException;
         if (updateData.status) updateFields.status = updateData.status;
         
-        // Handle array fields
-        if (updateData.vibeTags) {
-            updateFields.vibeTags = typeof updateData.vibeTags === 'string' 
-                ? updateData.vibeTags.split(',').map(tag => tag.trim()) 
-                : updateData.vibeTags;
+        // Handle array fields with proper field name mapping
+        if (updateData['vibe-tags'] || updateData.vibeTags) {
+            const vibeTagsData = updateData['vibe-tags'] || updateData.vibeTags;
+            updateFields.vibeTags = typeof vibeTagsData === 'string' 
+                ? vibeTagsData.split(',').map(tag => tag.trim()) 
+                : vibeTagsData;
         }
-        if (updateData.venueFeatures) {
-            updateFields.venueFeatures = typeof updateData.venueFeatures === 'string' 
-                ? updateData.venueFeatures.split(',').map(feature => feature.trim()) 
-                : updateData.venueFeatures;
+        if (updateData['venue-features'] || updateData.venueFeatures) {
+            const venueFeaturesData = updateData['venue-features'] || updateData.venueFeatures;
+            updateFields.venueFeatures = typeof venueFeaturesData === 'string' 
+                ? venueFeaturesData.split(',').map(feature => feature.trim()) 
+                : venueFeaturesData;
         }
-        if (updateData.accessibilityFeatures) {
-            updateFields.accessibilityFeatures = typeof updateData.accessibilityFeatures === 'string' 
-                ? updateData.accessibilityFeatures.split(',').map(feature => feature.trim()) 
-                : updateData.accessibilityFeatures;
+        if (updateData['accessibility-features'] || updateData.accessibilityFeatures) {
+            const accessibilityFeaturesData = updateData['accessibility-features'] || updateData.accessibilityFeatures;
+            updateFields.accessibilityFeatures = typeof accessibilityFeaturesData === 'string' 
+                ? accessibilityFeaturesData.split(',').map(feature => feature.trim()) 
+                : accessibilityFeaturesData;
         }
         
         // Handle image fields
