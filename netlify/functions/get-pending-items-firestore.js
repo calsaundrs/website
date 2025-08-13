@@ -109,6 +109,8 @@ async function getPendingEvents(limit, offset) {
             console.log('ℹ️ GET PENDING EVENTS: status "in" query not supported or failed, falling back to separate queries:', inError.message);
             const pendingSnapshot = await eventsRef.where('status', '==', 'pending').limit(50).get();
             const pendingReviewSnapshot = await eventsRef.where('status', '==', 'pending review').limit(50).get();
+            console.log("🔍 GET PENDING EVENTS: 'pending' query found:", pendingSnapshot.size);
+            console.log("🔍 GET PENDING EVENTS: 'pending review' query found:", pendingReviewSnapshot.size);
             pendingSnapshot.forEach(doc => pendingDocs.push(doc));
             pendingReviewSnapshot.forEach(doc => pendingDocs.push(doc));
         }
@@ -120,13 +122,20 @@ async function getPendingEvents(limit, offset) {
                 .orderBy('createdAt', 'desc')
                 .limit(100)
                 .get();
+            console.log('🔍 GET PENDING EVENTS: Recent events found:', recentSnapshot.size);
+            
+            // Log all statuses for debugging
+            const statuses = {};
             recentSnapshot.forEach(doc => {
                 const d = doc.data() || {};
-                const status = String(d.status || '').toLowerCase();
+                const status = String(d.status || 'no-status');
+                statuses[status] = (statuses[status] || 0) + 1;
+                
                 if (!status || status === 'pending' || status === 'pending review' || status === 'submitted') {
                     pendingDocs.push(doc);
                 }
             });
+            console.log('🔍 GET PENDING EVENTS: Status breakdown:', statuses);
             console.log('🔍 GET PENDING EVENTS: Fallback produced pendingDocs:', pendingDocs.length);
         }
         
