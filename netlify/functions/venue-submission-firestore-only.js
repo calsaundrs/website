@@ -52,18 +52,42 @@ exports.handler = async function (event, context) {
         let files = {};
         
         if (event.body) {
-            // Handle multipart form data
-            const boundary = event.headers['content-type']?.split('boundary=')[1];
-            if (boundary) {
-                const parts = event.body.split(`--${boundary}`);
-                for (const part of parts) {
-                    if (part.includes('Content-Disposition: form-data')) {
-                        const nameMatch = part.match(/name="([^"]+)"/);
-                        if (nameMatch) {
-                            const fieldName = nameMatch[1];
-                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                            if (valueMatch) {
-                                fields[fieldName] = valueMatch[1].trim();
+            const contentType = event.headers['content-type'] || '';
+            
+            if (contentType.includes('multipart/form-data')) {
+                // Handle multipart form data
+                const boundary = contentType.split('boundary=')[1];
+                if (boundary) {
+                    const parts = event.body.split(`--${boundary}`);
+                    for (const part of parts) {
+                        if (part.includes('Content-Disposition: form-data')) {
+                            const nameMatch = part.match(/name="([^"]+)"/);
+                            if (nameMatch) {
+                                const fieldName = nameMatch[1];
+                                
+                                // Check if this is a file field
+                                const filenameMatch = part.match(/filename="([^"]+)"/);
+                                if (filenameMatch) {
+                                    // This is a file field
+                                    const filename = filenameMatch[1];
+                                    const contentTypeMatch = part.match(/Content-Type: ([^\r\n]+)/);
+                                    const contentStart = part.indexOf('\r\n\r\n') + 4;
+                                    const contentEnd = part.lastIndexOf('\r\n');
+                                    const fileContent = part.substring(contentStart, contentEnd);
+                                    
+                                    files[fieldName] = {
+                                        fieldname: fieldName,
+                                        filename: filename,
+                                        contentType: contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream',
+                                        content: fileContent
+                                    };
+                                } else {
+                                    // This is a regular field
+                                    const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
+                                    if (valueMatch) {
+                                        fields[fieldName] = valueMatch[1].trim();
+                                    }
+                                }
                             }
                         }
                     }
@@ -78,39 +102,33 @@ exports.handler = async function (event, context) {
         }
         
         const submission = { ...fields, files: Object.values(files) };
-        console.log('Parsed submission:', Object.keys(submission));
+        console.log('Parsed submission fields:', Object.keys(fields));
+        console.log('Parsed submission files:', Object.keys(files));
+        console.log('Sample field values:', { name: fields.name, address: fields.address, description: fields.description });
         
-        // Handle image upload
-        const photoFile = submission.files.find(f => f.fieldname === 'photo');
+        // Handle image upload - simplified approach
         let uploadedImage = null;
         
-        if (photoFile && photoFile.size > 0) {
-            try {
-                const result = await cloudinary.uploader.upload(photoFile.filepath, {
-                    folder: 'venues',
-                    transformation: [
-                        { width: 800, height: 400, crop: 'fill', gravity: 'auto' },
-                        { quality: 'auto', fetch_format: 'auto' }
-                    ]
-                });
-                
-                uploadedImage = {
-                    publicId: result.public_id,
-                    url: result.secure_url,
-                    original: result.secure_url
-                };
-                console.log('Image uploaded successfully:', uploadedImage.publicId);
-            } catch (uploadError) {
-                console.error('Image upload failed:', uploadError);
-                // Continue without image
-            }
-        }
+        // For now, skip image upload to focus on form data parsing
+        // Image upload can be added back once form data is working correctly
+        console.log('Image upload temporarily disabled - focusing on form data parsing');
         
         // Determine if submission is from admin form (auto-approves)
         const isFromAdmin = submission['accessibility-rating'] !== undefined || submission['vibe-tags'] !== undefined;
         
-        // Generate slug
+        // Generate slug with validation
         const venueName = submission.name || submission['venue-name'];
+        if (!venueName) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    success: false,
+                    error: 'Missing venue name',
+                    message: 'Venue name is required'
+                })
+            };
+        }
         const slug = generateSlug(venueName);
         
         // Prepare Firestore data (no Airtable dependency)
