@@ -193,9 +193,10 @@ exports.handler = async function (event, context) {
                         contentEnd: base64Content.substring(base64Content.length - 50)
                     });
                     
-                    // Convert binary content to Buffer for upload_stream
-                    const imageBuffer = Buffer.from(files.photo.content, 'binary');
-                    console.log('Image buffer created, length:', imageBuffer.length);
+                    // The content is already base64 encoded from multipart parsing
+                    // Convert base64 content to Buffer for upload_stream
+                    const imageBuffer = Buffer.from(files.photo.content, 'base64');
+                    console.log('Image buffer created from base64, length:', imageBuffer.length);
                     
                     const uploadResult = await new Promise((resolve, reject) => {
                         const uploadStream = cloudinary.uploader.upload_stream(
