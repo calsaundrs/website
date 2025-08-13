@@ -193,13 +193,12 @@ exports.handler = async function (event, context) {
                         contentEnd: base64Content.substring(base64Content.length - 50)
                     });
                     
-                    // Create data URL with properly encoded base64
-                    const dataUrl = `data:${files.photo.contentType};base64,${base64Content}`;
-                    console.log('Attempting upload with data URL, length:', dataUrl.length);
+                    // Convert binary content to Buffer for upload_stream
+                    const imageBuffer = Buffer.from(files.photo.content, 'binary');
+                    console.log('Image buffer created, length:', imageBuffer.length);
                     
                     const uploadResult = await new Promise((resolve, reject) => {
-                        cloudinary.uploader.upload(
-                            dataUrl,
+                        const uploadStream = cloudinary.uploader.upload_stream(
                             {
                                 folder: 'brumoutloud_venues',
                                 transformation: [
@@ -217,6 +216,9 @@ exports.handler = async function (event, context) {
                                 }
                             }
                         );
+                        
+                        // Write the buffer to the upload stream
+                        uploadStream.end(imageBuffer);
                     });
                     
                     uploadedImage = {
