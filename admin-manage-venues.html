@@ -546,7 +546,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             modalTitle.textContent = 'Edit Venue'; // Set modal title
 
             // Use the Photo URL directly from the item, or fallbacks
-            const currentPhotoUrl = item.photo?.medium || item.photo?.original || 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=No+Photo';
+            const currentPhotoUrl = item.photoUrl || item.image?.url || item.photo?.medium || item.photo?.original || 'https://placehold.co/400x400/1e1e1e/EAEAEA?text=No+Photo';
 
             // Form element classes (copied directly from admin-add-venue.html)
             const inputClass = "w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-accent-color focus:border-transparent outline-none";
