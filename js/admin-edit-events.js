@@ -990,7 +990,7 @@ function populateEditForm(event) {
     // Set day of week based on event date
     if (editRecurringDay && event.date) {
         const eventDate = new Date(event.date);
-        const dayOfWeek = eventDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+        const dayOfWeek = eventDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
         editRecurringDay.value = dayOfWeek;
     }
     
