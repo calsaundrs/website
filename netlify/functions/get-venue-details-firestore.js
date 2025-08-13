@@ -186,6 +186,7 @@ async function getVenueBySlug(slug) {
       description: foundVenue.description,
       address: foundVenue.address,
       website: foundVenue.website || '',
+      contactEmail: foundVenue.contactEmail || '',
       contactPhone: foundVenue.contactPhone || '',
       slug: foundVenue.slug,
       category: foundVenue.category,
@@ -193,6 +194,7 @@ async function getVenueBySlug(slug) {
       accessibility: foundVenue.accessibility || '',
       accessibilityRating: foundVenue.accessibilityRating || '',
       accessibilityFeatures: foundVenue.accessibilityFeatures || [],
+      parkingException: foundVenue.parkingException || '',
       vibeTags: foundVenue.vibeTags || [],
       venueFeatures: foundVenue.venueFeatures || [],
       features: foundVenue.features || [],
@@ -204,7 +206,9 @@ async function getVenueBySlug(slug) {
       },
       googlePlaceId: foundVenue.googlePlaceId || googlePlaceId,
       openingHours: foundVenue.openingHours,
-      status: foundVenue.status
+      status: foundVenue.status,
+      photoUrl: foundVenue.photoUrl || '',
+      cloudinaryPublicId: foundVenue.cloudinaryPublicId || ''
     };
   } catch (error) {
     console.error('Error finding venue by slug:', error);
@@ -269,7 +273,31 @@ function processVenueForPublic(venueData) {
         status: venueData.status || 'listed',
         openingHours: venueData.openingHours || venueData['Opening Hours'],
         popular: venueData.popular || venueData['Popular'] || false,
-        googlePlaceId: venueData.googlePlaceId || venueData['Google Place ID'] || venueData['googlePlaceId'] || ''
+        googlePlaceId: venueData.googlePlaceId || venueData['Google Place ID'] || venueData['googlePlaceId'] || '',
+        
+        // Contact information
+        website: venueData.website || '',
+        contactEmail: venueData.contactEmail || venueData['contact-email'] || '',
+        contactPhone: venueData.contactPhone || venueData['contact-phone'] || '',
+        
+        // Social media
+        instagram: venueData.instagram || '',
+        facebook: venueData.facebook || '',
+        tiktok: venueData.tiktok || '',
+        
+        // Accessibility and features
+        accessibility: venueData.accessibility || '',
+        accessibilityRating: venueData.accessibilityRating || venueData['accessibility-rating'] || '',
+        accessibilityFeatures: venueData.accessibilityFeatures || venueData['accessibility-features'] || [],
+        parkingException: venueData.parkingException || venueData['parking-exception'] || '',
+        
+        // Tags and features
+        vibeTags: venueData.vibeTags || venueData['vibe-tags'] || [],
+        venueFeatures: venueData.venueFeatures || venueData['venue-features'] || [],
+        
+        // Image data
+        photoUrl: venueData.photoUrl || '',
+        cloudinaryPublicId: venueData.cloudinaryPublicId || ''
     };
     
     if (!venue.category || venue.category.length === 0) {
@@ -833,31 +861,141 @@ function getVenueTemplate() {
                         </div>
                         {{/if}}
 
+                        <!-- Vibe & Atmosphere -->
+                        {{#if venue.vibeTags.length}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-heart mr-2 text-accent-color"></i>Vibe & Atmosphere
+                            </h3>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                {{#each venue.vibeTags}}
+                                <span class="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm border border-pink-500/30">
+                                    {{this}}
+                                </span>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        <!-- Venue Features -->
+                        {{#if venue.venueFeatures.length}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-list mr-2 text-accent-color"></i>Venue Features
+                            </h3>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                {{#each venue.venueFeatures}}
+                                <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm border border-purple-500/30">
+                                    {{this}}
+                                </span>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        <!-- Accessibility Information -->
+                        {{#if venue.accessibility}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-universal-access mr-2 text-accent-color"></i>Accessibility
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if venue.accessibility}}
+                                <div class="text-gray-300 text-sm">
+                                    <p>{{venue.accessibility}}</p>
+                                </div>
+                                {{/if}}
+                                {{#if venue.accessibilityRating}}
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-sm mb-1">Accessibility Rating</p>
+                                    <div class="flex justify-center space-x-1">
+                                        {{#times venue.accessibilityRating}}
+                                        <i class="fas fa-star text-blue-400"></i>
+                                        {{/times}}
+                                        {{#times (subtract 5 venue.accessibilityRating)}}
+                                        <i class="far fa-star text-blue-400"></i>
+                                        {{/times}}
+                                    </div>
+                                    <p class="text-white text-sm mt-1">{{venue.accessibilityRating}}/5</p>
+                                </div>
+                                {{/if}}
+                                {{#if venue.accessibilityFeatures.length}}
+                                <div class="mt-3">
+                                    <p class="text-gray-400 text-sm mb-2">Accessibility Features:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        {{#each venue.accessibilityFeatures}}
+                                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs border border-blue-500/30">
+                                            {{this}}
+                                        </span>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                {{/if}}
+                                {{#if venue.parkingException}}
+                                <div class="mt-3">
+                                    <p class="text-gray-400 text-sm mb-1">Parking Information:</p>
+                                    <p class="text-gray-300 text-sm">{{venue.parkingException}}</p>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        <!-- Contact Information -->
+                        {{#if venue.website}}
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-globe mr-2 text-accent-color"></i>Contact Information
+                            </h3>
+                            <div class="space-y-3">
+                                {{#if venue.website}}
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="{{venue.website}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                                {{/if}}
+                                {{#if venue.contactEmail}}
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-sm">Email</p>
+                                    <a href="mailto:{{venue.contactEmail}}" class="text-blue-400 hover:underline">
+                                        {{venue.contactEmail}}
+                                    </a>
+                                </div>
+                                {{/if}}
+                                {{#if venue.contactPhone}}
+                                <div class="text-center">
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:{{venue.contactPhone}}" class="text-blue-400 hover:underline">
+                                        {{venue.contactPhone}}
+                                    </a>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        {{/if}}
+
                         <!-- Social Media -->
-                        {{#if venue.socialMedia}}
+                        {{#if venue.instagram}}
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
                                 <i class="fas fa-share-alt mr-2 text-accent-color"></i>Follow Us
                             </h3>
                             <div class="flex justify-center space-x-4">
-                                {{#if venue.socialMedia.instagram}}
-                                <a href="{{venue.socialMedia.instagram}}" target="_blank" rel="noopener noreferrer" class="text-pink-400 hover:text-pink-300 text-2xl">
+                                {{#if venue.instagram}}
+                                <a href="{{venue.instagram}}" target="_blank" rel="noopener noreferrer" class="text-pink-400 hover:text-pink-300 text-2xl">
                                     <i class="fab fa-instagram"></i>
                                 </a>
                                 {{/if}}
-                                {{#if venue.socialMedia.facebook}}
-                                <a href="{{venue.socialMedia.facebook}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-2xl">
+                                {{#if venue.facebook}}
+                                <a href="{{venue.facebook}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-2xl">
                                     <i class="fab fa-facebook"></i>
                                 </a>
                                 {{/if}}
-                                {{#if venue.socialMedia.tiktok}}
-                                <a href="{{venue.socialMedia.tiktok}}" target="_blank" rel="noopener noreferrer" class="text-black hover:text-gray-700 text-2xl">
+                                {{#if venue.tiktok}}
+                                <a href="{{venue.tiktok}}" target="_blank" rel="noopener noreferrer" class="text-black hover:text-gray-700 text-2xl">
                                     <i class="fab fa-tiktok"></i>
-                                </a>
-                                {{/if}}
-                                {{#if venue.socialMedia.twitter}}
-                                <a href="{{venue.socialMedia.twitter}}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 text-2xl">
-                                    <i class="fab fa-twitter"></i>
                                 </a>
                                 {{/if}}
                             </div>
