@@ -139,16 +139,25 @@ exports.handler = async function(event, context) {
 };
 
 function extractImageUrl(data) {
-    // Check for Cloudinary Public ID first (new format)
+    // Check for photoUrl first (new venue submission format)
+    const photoUrl = data.photoUrl;
+    if (photoUrl) {
+        return {
+            url: photoUrl,
+            alt: data.name || 'Venue image'
+        };
+    }
+    
+    // Check for Cloudinary Public ID (legacy format)
     const cloudinaryId = data.cloudinaryPublicId || data['Cloudinary Public ID'];
-    if (cloudinaryId) {
+    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
         return {
             url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
             alt: data.name || 'Venue image'
         };
     }
     
-    // Check for image field (various formats)
+    // Check for image field (various legacy formats)
     const image = data.image || data.venueImage || data.venue_image;
     if (image) {
         const imageUrl = typeof image === 'string' ? image : 
