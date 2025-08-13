@@ -937,7 +937,7 @@ function populateEditForm(event) {
     }).join('');
     
     // Handle venue selection (standardized field names)
-    const venueSelect = document.getElementById('edit-venue');
+    const venueSelect = document.getElementById('edit-venue-select');
     if (venueSelect) {
         venueSelect.innerHTML = '<option value="">Select a venue</option>';
         allVenues.forEach(venue => {
@@ -956,9 +956,28 @@ function populateEditForm(event) {
         });
     }
     
+    // Handle current image display
+    const currentImage = document.getElementById('edit-current-image');
+    const imageContainer = currentImage?.parentElement;
+    const imageIcon = imageContainer?.querySelector('.fas.fa-image');
+    
+    if (currentImage && imageContainer) {
+        const eventImage = event.image || event.Image || event['Promo Image'] || event['promo-image'];
+        if (eventImage) {
+            const imageUrl = Array.isArray(eventImage) ? eventImage[0].url : eventImage;
+            currentImage.src = imageUrl;
+            currentImage.style.display = 'block';
+            if (imageIcon) imageIcon.style.display = 'none';
+        } else {
+            currentImage.style.display = 'none';
+            if (imageIcon) imageIcon.style.display = 'flex';
+        }
+    }
+    
     // Handle recurring event fields (standardized) - with null checks
     const editIsRecurring = document.getElementById('edit-is-recurring');
     const editRecurringPattern = document.getElementById('edit-recurring-pattern');
+    const editRecurringDay = document.getElementById('edit-recurring-day');
     const editRecurringInfo = document.getElementById('edit-recurring-info');
     const editRecurringStartDate = document.getElementById('edit-recurring-start-date');
     const editRecurringEndDate = document.getElementById('edit-recurring-end-date');
@@ -967,6 +986,14 @@ function populateEditForm(event) {
     
     if (editIsRecurring) editIsRecurring.checked = event.isRecurring || false;
     if (editRecurringPattern) editRecurringPattern.value = event.recurringPattern || '';
+    
+    // Set day of week based on event date
+    if (editRecurringDay && event.date) {
+        const eventDate = new Date(event.date);
+        const dayOfWeek = eventDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+        editRecurringDay.value = dayOfWeek;
+    }
+    
     if (editRecurringInfo) editRecurringInfo.value = event.recurringInfo || '';
     
     // Format recurring dates
@@ -1121,6 +1148,7 @@ async function handleEditFormSubmit(event) {
                 eventId: currentEventForEdit.id,
                 isRecurring: true,
                 recurringPattern: editRecurringPattern?.value || '',
+                recurringDay: editRecurringDay?.value || '',
                 recurringInfo: editRecurringInfo?.value || '',
                 recurringStartDate: editRecurringStartDate?.value || '',
                 recurringEndDate: editRecurringEndDate?.value || '',

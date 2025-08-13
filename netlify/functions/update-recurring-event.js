@@ -47,6 +47,7 @@ exports.handler = async function (event, context) {
             eventId, 
             isRecurring, 
             recurringPattern, 
+            recurringDay,
             recurringInfo, 
             recurringStartDate, 
             recurringEndDate, 
@@ -95,6 +96,7 @@ exports.handler = async function (event, context) {
         
         if (isRecurring) {
             updateData.recurringPattern = recurringPattern || null;
+            updateData.recurringDay = recurringDay || null;
             updateData.recurringInfo = recurringInfo || null;
             updateData.recurringStartDate = recurringStartDate || null;
             updateData.recurringEndDate = recurringEndDate || null;
@@ -103,6 +105,7 @@ exports.handler = async function (event, context) {
         } else {
             // If turning off recurring, clear recurring fields
             updateData.recurringPattern = null;
+            updateData.recurringDay = null;
             updateData.recurringInfo = null;
             updateData.recurringStartDate = null;
             updateData.recurringEndDate = null;
@@ -127,6 +130,7 @@ exports.handler = async function (event, context) {
                 const instanceRef = db.collection('events').doc(instance.id);
                 batch.update(instanceRef, {
                     recurringPattern: recurringPattern || null,
+                    recurringDay: recurringDay || null,
                     recurringInfo: recurringInfo || null,
                     recurringStartDate: recurringStartDate || null,
                     recurringEndDate: recurringEndDate || null,

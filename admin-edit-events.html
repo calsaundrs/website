@@ -704,7 +704,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         
                         <div id="edit-recurring-fields" class="hidden space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-2">
                                         <i class="fas fa-redo mr-1"></i>Recurring Pattern
@@ -715,6 +715,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <option value="biweekly">Bi-weekly</option>
                                         <option value="monthly">Monthly</option>
                                         <option value="custom">Custom</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        <i class="fas fa-calendar-day mr-1"></i>Day of Week
+                                    </label>
+                                    <select id="edit-recurring-day" name="recurringDay" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                                        <option value="">Select day...</option>
+                                        <option value="monday">Monday</option>
+                                        <option value="tuesday">Tuesday</option>
+                                        <option value="wednesday">Wednesday</option>
+                                        <option value="thursday">Thursday</option>
+                                        <option value="friday">Friday</option>
+                                        <option value="saturday">Saturday</option>
+                                        <option value="sunday">Sunday</option>
                                     </select>
                                 </div>
                                 <div>
