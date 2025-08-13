@@ -149,9 +149,27 @@ function processVenueForPublic(venueData) {
         image: imageUrl ? { url: imageUrl } : null,
         category: venueData.category || venueData.tags || venueData['Tags'] || [],
         type: venueData.type || venueData['Type'] || 'venue',
-                    status: venueData.status || 'listed',
+        status: venueData.status || 'listed',
         openingHours: venueData.openingHours || venueData['Opening Hours'],
-        popular: venueData.popular || venueData['Popular'] || false
+        popular: venueData.popular || venueData['Popular'] || false,
+        
+        // Additional fields for admin editing
+        website: venueData.website || venueData['Website'],
+        instagram: venueData.instagram || venueData['Instagram'],
+        facebook: venueData.facebook || venueData['Facebook'],
+        tiktok: venueData.tiktok || venueData['TikTok'],
+        contactEmail: venueData.contactEmail || venueData['Contact Email'],
+        contactPhone: venueData.contactPhone || venueData['Contact Phone'],
+        accessibility: venueData.accessibility || venueData['Accessibility'],
+        accessibilityRating: venueData.accessibilityRating || venueData['Accessibility Rating'],
+        parkingException: venueData.parkingException || venueData['Parking Exception'],
+        vibeTags: venueData.vibeTags || venueData['Vibe Tags'] || [],
+        venueFeatures: venueData.venueFeatures || venueData['Venue Features'] || [],
+        accessibilityFeatures: venueData.accessibilityFeatures || venueData['Accessibility Features'] || [],
+        
+        // Image fields for admin
+        photoUrl: venueData.photoUrl || venueData['Photo URL'],
+        cloudinaryPublicId: venueData.cloudinaryPublicId || venueData['Cloudinary Public ID']
     };
     
     if (!venue.category || venue.category.length === 0) {

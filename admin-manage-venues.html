@@ -727,38 +727,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 formData.append('type', 'Venue'); // Indicate that this is a venue update
 
                 try {
-                    // Convert form data to JSON for Firestore function
-                    const venueData = {
-                        itemId: currentItemForAction.id,
-                        itemType: 'venue',
-                        name: formData.get('name'),
-                        description: formData.get('description'),
-                        address: formData.get('address'),
-                        openingHours: formData.get('opening-hours'),
-                        accessibility: formData.get('accessibility'),
-                        website: formData.get('website'),
-                        contactEmail: formData.get('contact-email'),
-                        contactPhone: formData.get('contact-phone'),
-                        instagram: formData.get('instagram'),
-                        facebook: formData.get('facebook'),
-                        tiktok: formData.get('tiktok'),
-                        parkingException: formData.get('parking-exception'),
-                        accessibilityRating: formData.get('accessibility-rating'),
-                        vibeTags: Array.from(formData.getAll('vibe-tags')),
-                        venueFeatures: Array.from(formData.getAll('venue-features')),
-                        accessibilityFeatures: Array.from(formData.getAll('accessibility-features'))
-                    };
+                    // Add venue ID to form data
+                    formData.append('venueId', currentItemForAction.id);
 
-                    // Send the data to the dedicated venue update function
+                    // Send the data as multipart form data to support image uploads
                     const response = await fetch('/.netlify/functions/update-venue-firestore', { 
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            venueId: currentItemForAction.id,
-                            ...venueData
-                        })
+                        body: formData // Send FormData directly for multipart support
                     });
 
                     if (!response.ok) {
