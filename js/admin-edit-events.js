@@ -366,6 +366,11 @@ function renderEvents(events) {
                     <button onclick="openEditModal('${event.id}')" class="button-edit">
                         <i class="fas fa-edit mr-2"></i>Edit
                     </button>
+                    ${!(event.isRecurring || event.isRecurringGroup || event.recurringGroupId) ? `
+                        <button onclick="openConvertToRecurringModal('${event.id}')" class="button-convert">
+                            <i class="fas fa-redo mr-2"></i>Make Recurring
+                        </button>
+                    ` : ''}
                     <button onclick="handleDeleteEvent('${event.id}')" class="button-delete">
                         <i class="fas fa-trash mr-2"></i>Delete
                     </button>
@@ -1614,9 +1619,99 @@ function debounce(func, wait) {
     };
 }
 
+// Convert to Recurring Functions
+function openConvertToRecurringModal(eventId) {
+    const modal = document.getElementById('convert-to-recurring-modal');
+    const eventIdInput = document.getElementById('convert-event-id');
+    const startDateInput = document.getElementById('convert-recurring-start-date');
+    
+    // Set the event ID
+    eventIdInput.value = eventId;
+    
+    // Set default start date to today
+    const today = new Date().toISOString().split('T')[0];
+    startDateInput.value = today;
+    
+    // Show the modal
+    modal.classList.remove('hidden');
+    
+    // Add event listeners
+    document.getElementById('close-convert-modal-btn').onclick = closeConvertToRecurringModal;
+    document.getElementById('cancel-convert-btn').onclick = closeConvertToRecurringModal;
+    document.getElementById('convert-to-recurring-form').onsubmit = handleConvertToRecurringSubmit;
+    
+    // Handle custom pattern selection
+    document.getElementById('convert-recurring-pattern').onchange = function() {
+        const customPattern = document.getElementById('convert-custom-pattern');
+        if (this.value === 'custom') {
+            customPattern.classList.remove('hidden');
+        } else {
+            customPattern.classList.add('hidden');
+        }
+    };
+}
+
+function closeConvertToRecurringModal() {
+    const modal = document.getElementById('convert-to-recurring-modal');
+    modal.classList.add('hidden');
+}
+
+async function handleConvertToRecurringSubmit(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const eventId = formData.get('eventId');
+    const recurringPattern = formData.get('recurringPattern');
+    const customRecurrenceDesc = formData.get('customRecurrenceDesc');
+    const recurringStartDate = formData.get('recurringStartDate');
+    const recurringEndDate = formData.get('recurringEndDate');
+    const maxInstances = formData.get('maxInstances');
+    
+    if (!recurringPattern) {
+        showError('Please select a recurring pattern');
+        return;
+    }
+    
+    if (recurringPattern === 'custom' && !customRecurrenceDesc) {
+        showError('Please provide a custom pattern description');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/.netlify/functions/convert-to-recurring', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                eventId: eventId,
+                recurringPattern: recurringPattern,
+                customRecurrenceDesc: customRecurrenceDesc,
+                recurringStartDate: recurringStartDate,
+                recurringEndDate: recurringEndDate || null,
+                maxInstances: maxInstances ? parseInt(maxInstances) : null
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            showSuccess(`Successfully converted event to recurring with ${result.totalInstances} instances`);
+            closeConvertToRecurringModal();
+            await loadAllEvents(); // Refresh the events list
+        } else {
+            showError(result.message || 'Failed to convert event to recurring');
+        }
+    } catch (error) {
+        console.error('Error converting to recurring:', error);
+        showError(`Error converting event to recurring: ${error.message}`);
+    }
+}
+
 // Global functions for onclick handlers
 window.openEditModal = openEditModal;
 window.handleDeleteEvent = handleDeleteEvent;
 window.openRecurringModal = openRecurringModal;
 window.handleEndRecurringSeries = handleEndRecurringSeries;
 window.saveRecurringChanges = saveRecurringChanges;
+window.openConvertToRecurringModal = openConvertToRecurringModal;

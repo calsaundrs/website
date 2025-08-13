@@ -726,6 +726,75 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
 
+    <!-- Convert to Recurring Modal -->
+    <div id="convert-to-recurring-modal" class="fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50 hidden">
+        <div class="modal-content rounded-2xl p-8 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-anton text-3xl text-white">
+                    <i class="fas fa-redo mr-3"></i>Convert to Recurring Event
+                </h3>
+                <button id="close-convert-modal-btn" class="text-gray-400 hover:text-white text-2xl transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="convert-to-recurring-form" class="space-y-6">
+                <input type="hidden" id="convert-event-id" name="eventId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        <i class="fas fa-redo mr-1"></i>Recurring Pattern
+                    </label>
+                    <select id="convert-recurring-pattern" name="recurringPattern" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" required>
+                        <option value="">Select a pattern...</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Bi-weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                
+                <div id="convert-custom-pattern" class="hidden">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        <i class="fas fa-edit mr-1"></i>Custom Pattern Description
+                    </label>
+                    <textarea id="convert-custom-recurrence-desc" name="customRecurrenceDesc" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none" placeholder="e.g., Every other Tuesday, First Friday of the month, etc."></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-calendar mr-1"></i>Start Date
+                        </label>
+                        <input type="date" id="convert-recurring-start-date" name="recurringStartDate" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-calendar mr-1"></i>End Date (Optional)
+                        </label>
+                        <input type="date" id="convert-recurring-end-date" name="recurringEndDate" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        <i class="fas fa-hashtag mr-1"></i>Maximum Instances (Optional)
+                    </label>
+                    <input type="number" id="convert-max-instances" name="maxInstances" min="1" max="52" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., 12 for 3 months of weekly events">
+                </div>
+                
+                <div class="flex justify-end gap-4 pt-6 border-t border-gray-700">
+                    <button type="button" id="cancel-convert-btn" class="btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn-primary text-white font-bold px-8 py-3 rounded-lg transition-all">
+                        <i class="fas fa-redo mr-2"></i>Convert to Recurring
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Recurring Series Modal -->
     <div id="recurring-modal" class="fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50 hidden">
         <div class="modal-content rounded-2xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
