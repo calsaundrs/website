@@ -211,6 +211,7 @@ exports.handler = async function (event, context) {
         if (updateData.accessibility) updateFields.accessibility = updateData.accessibility;
         if (updateData['accessibility-rating'] || updateData.accessibilityRating) updateFields.accessibilityRating = updateData['accessibility-rating'] || updateData.accessibilityRating;
         if (updateData['parking-exception'] || updateData.parkingException) updateFields.parkingException = updateData['parking-exception'] || updateData.parkingException;
+        if (updateData['google-place-id'] || updateData.googlePlaceId) updateFields.googlePlaceId = updateData['google-place-id'] || updateData.googlePlaceId;
         if (updateData.status) updateFields.status = updateData.status;
         
         // Handle array fields with proper field name mapping

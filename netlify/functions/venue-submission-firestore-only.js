@@ -219,6 +219,9 @@ exports.handler = async function (event, context) {
             venueFeatures: submission['venue-features'] ? submission['venue-features'].split(',').map(feature => feature.trim()) : [],
             accessibilityFeatures: submission['accessibility-features'] ? submission['accessibility-features'].split(',').map(feature => feature.trim()) : [],
             
+            // Google Places integration
+            googlePlaceId: submission['google-place-id'] || '',
+            
             // Image information
             photoUrl: uploadedImage ? uploadedImage.url : null,
             cloudinaryPublicId: uploadedImage ? uploadedImage.publicId : null,

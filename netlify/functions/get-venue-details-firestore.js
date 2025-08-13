@@ -202,7 +202,7 @@ async function getVenueBySlug(slug) {
         tiktok: foundVenue.tiktok || '',
         twitter: foundVenue.twitter || ''
       },
-      googlePlaceId: googlePlaceId,
+      googlePlaceId: foundVenue.googlePlaceId || googlePlaceId,
       openingHours: foundVenue.openingHours,
       status: foundVenue.status
     };
