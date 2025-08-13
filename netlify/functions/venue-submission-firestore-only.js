@@ -138,12 +138,41 @@ exports.handler = async function (event, context) {
         console.log('Final parsed submission files:', Object.keys(files));
         console.log('Sample field values:', { name: fields.name, address: fields.address, description: fields.description });
         
-        // Handle image upload - simplified approach
+        // Handle image upload
         let uploadedImage = null;
         
-        // For now, skip image upload to focus on form data parsing
-        // Image upload can be added back once form data is working correctly
-        console.log('Image upload temporarily disabled - focusing on form data parsing');
+        if (submission.files && submission.files.length > 0) {
+            const photoFile = submission.files.find(file => file.fieldname === 'photo');
+            if (photoFile && photoFile.content) {
+                try {
+                    console.log('Uploading image to Cloudinary...');
+                    const uploadResult = await new Promise((resolve, reject) => {
+                        cloudinary.uploader.upload_stream(
+                            {
+                                folder: 'venues',
+                                transformation: [
+                                    { width: 800, height: 400, crop: 'fill' },
+                                    { quality: 'auto' }
+                                ]
+                            },
+                            (error, result) => {
+                                if (error) reject(error);
+                                else resolve(result);
+                            }
+                        ).end(Buffer.from(photoFile.content, 'base64'));
+                    });
+                    
+                    uploadedImage = {
+                        url: uploadResult.secure_url,
+                        publicId: uploadResult.public_id
+                    };
+                    console.log('Image uploaded successfully:', uploadedImage.url);
+                } catch (uploadError) {
+                    console.error('Error uploading image:', uploadError);
+                    // Continue without image - don't fail the submission
+                }
+            }
+        }
         
         // Determine if submission is from admin form (auto-approves)
         const isFromAdmin = submission['accessibility-rating'] !== undefined || submission['vibe-tags'] !== undefined;

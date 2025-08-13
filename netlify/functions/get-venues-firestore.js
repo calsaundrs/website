@@ -44,16 +44,12 @@ exports.handler = async (event, context) => {
                 processedImage: processedVenue.image
             });
             
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
-                venues.push(processedVenue);
-                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
-            } else {
-                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
-            }
+            // Include all venues regardless of image status
+            venues.push(processedVenue);
+            console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug} (image: ${processedVenue.image ? 'yes' : 'no'})`);
         });
         
-        console.log(`Found ${venues.length} venues to display - CLOUDINARY ONLY`);
+        console.log(`Found ${venues.length} venues to display - ALL VENUES INCLUDED`);
         
         return {
             statusCode: 200,
