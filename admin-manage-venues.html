@@ -511,8 +511,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             allAdminVenues = []; // Reset stored data
 
             try {
-                // Call the admin venues function to get all venues for admin management
-                const response = await fetch('/.netlify/functions/get-admin-venues');
+                // Call the venues function with admin parameter to get all venues for admin management
+                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({details: 'Server returned an invalid response'}));
                     throw new Error(errorData.details || 'Failed to fetch venues.');
@@ -520,8 +520,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const data = await response.json();
                 loadingState.style.display = 'none'; // Hide loading spinner
                 
-                if (data && data.length > 0) {
-                    allAdminVenues = data;
+                if (data && data.venues && data.venues.length > 0) {
+                    allAdminVenues = data.venues;
                     // Render each venue
                     allAdminVenues.forEach(item => venueList.appendChild(renderVenue(item)));
                 } else {

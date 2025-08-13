@@ -44,16 +44,26 @@ exports.handler = async (event, context) => {
                 processedImage: processedVenue.image
             });
             
-            // Only include venues that have actual images (not placeholders)
-            if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
+            // Check if this is an admin request (include all venues)
+            const isAdminRequest = event.queryStringParameters && event.queryStringParameters.admin === 'true';
+            
+            if (isAdminRequest) {
+                // For admin requests, include all venues regardless of image status
                 venues.push(processedVenue);
-                console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
+                console.log(`✅ INCLUDED (ADMIN): ${processedVenue.name} with slug: ${processedVenue.slug} (image: ${processedVenue.image ? 'yes' : 'no'})`);
             } else {
-                console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
+                // For public requests, only include venues with actual images (not placeholders)
+                if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
+                    venues.push(processedVenue);
+                    console.log(`✅ INCLUDED: ${processedVenue.name} with slug: ${processedVenue.slug}`);
+                } else {
+                    console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
+                }
             }
         });
         
-        console.log(`Found ${venues.length} venues to display - CLOUDINARY ONLY`);
+        const isAdminRequest = event.queryStringParameters && event.queryStringParameters.admin === 'true';
+        console.log(`Found ${venues.length} venues to display - ${isAdminRequest ? 'ALL VENUES (ADMIN)' : 'CLOUDINARY ONLY'}`);
         
         return {
             statusCode: 200,
