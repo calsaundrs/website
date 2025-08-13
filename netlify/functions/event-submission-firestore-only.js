@@ -3,6 +3,71 @@ const cloudinary = require('cloudinary').v2;
 const RecurringEventsManager = require('./services/recurring-events-manager');
 const multipart = require('lambda-multipart-parser');
 
+// AI Poster Parsing Function
+async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
+    try {
+        console.log('🤖 Starting AI poster parsing for:', imageUrl);
+        
+        const prompt = `Analyze this event poster and extract the following information in JSON format:
+{
+  "eventName": "The name of the event",
+  "date": "Event date in YYYY-MM-DD format if found",
+  "time": "Event time in HH:MM format if found", 
+  "venue": "Venue name if found",
+  "description": "Brief description or tagline if found",
+  "price": "Price information if found",
+  "ageRestriction": "Age restriction if found",
+  "categories": ["array", "of", "relevant", "categories"],
+  "confidence": "high/medium/low based on how clear the information is"
+}
+
+Only return valid JSON. If information is not found, use null for that field. Be conservative - only extract information you're confident about.`;
+
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: prompt },
+                    {
+                        inline_data: {
+                            mime_type: "image/jpeg",
+                            data: imageUrl.split(',')[1] || imageUrl // Handle both data URLs and direct URLs
+                        }
+                    }
+                ]
+            }]
+        };
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorBody = await response.text();
+            console.error("AI API Error Response:", errorBody);
+            throw new Error(`AI API call failed with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const extractedText = data.candidates[0].content.parts[0].text.trim();
+        
+        // Try to parse the JSON response
+        try {
+            const parsedData = JSON.parse(extractedText);
+            console.log('🤖 AI extracted data:', parsedData);
+            return parsedData;
+        } catch (parseError) {
+            console.error('Failed to parse AI response as JSON:', extractedText);
+            return null;
+        }
+
+    } catch (error) {
+        console.error('AI poster parsing failed:', error);
+        return null;
+    }
+}
+
 exports.handler = async function (event, context) {
     console.log('Firestore-only event submission called');
     
@@ -104,9 +169,10 @@ exports.handler = async function (event, context) {
             };
         }
         
-        // Handle image upload
+        // Handle image upload and AI parsing
         console.log('Processing image upload...');
         let uploadedImage = null;
+        let aiExtractedData = null;
         
         if (imageBuffer && imageFileName) {
             try {
@@ -129,16 +195,38 @@ exports.handler = async function (event, context) {
                 };
                 console.log('Image uploaded successfully:', uploadedImage.publicId);
                 
+                // Parse poster with AI if Gemini API key is available
+                if (process.env.GEMINI_API_KEY) {
+                    try {
+                        aiExtractedData = await parsePosterWithAI(dataURI);
+                        console.log('AI parsing completed:', aiExtractedData ? 'Success' : 'Failed');
+                    } catch (aiError) {
+                        console.error('AI parsing failed, continuing without extracted data:', aiError);
+                    }
+                } else {
+                    console.log('GEMINI_API_KEY not available, skipping AI parsing');
+                }
+                
             } catch (uploadError) {
                 console.error('Image upload failed:', uploadError);
                 // Continue without image
             }
         }
         
+        // Use AI extracted data to pre-fill fields if available and not already provided
+        const aiEventName = aiExtractedData?.eventName && !submission['event-name'] ? aiExtractedData.eventName : null;
+        const aiDate = aiExtractedData?.date && !submission.date ? aiExtractedData.date : null;
+        const aiTime = aiExtractedData?.time && !submission['start-time'] ? aiExtractedData.time : null;
+        const aiVenue = aiExtractedData?.venue && !submission['venue-name'] ? aiExtractedData.venue : null;
+        const aiDescription = aiExtractedData?.description && !submission.description ? aiExtractedData.description : null;
+        const aiPrice = aiExtractedData?.price && !submission.price ? aiExtractedData.price : null;
+        const aiAgeRestriction = aiExtractedData?.ageRestriction && !submission['age-restriction'] ? aiExtractedData.ageRestriction : null;
+        const aiCategories = aiExtractedData?.categories && !submission.category ? aiExtractedData.categories : null;
+        
         // Generate slug and validate required fields
-        const eventName = submission['event-name'] || submission.name || '';
-        const dateStr = submission.date || '';
-        const startTimeStr = submission['start-time'] || '00:00';
+        const eventName = submission['event-name'] || aiEventName || submission.name || '';
+        const dateStr = submission.date || aiDate || '';
+        const startTimeStr = submission['start-time'] || aiTime || '00:00';
         const venueIdSubmitted = submission['venue-id'] || submission.venueId || submission['venueId'] || null;
         
         if (!eventName) {
@@ -226,9 +314,9 @@ exports.handler = async function (event, context) {
         // Prepare Firestore data
         const firestoreData = {
             // Core Fields (Standardized)
-            name: submission['event-name'] || 'Untitled Event',
+            name: submission['event-name'] || aiEventName || 'Untitled Event',
             slug: slug,
-            description: submission.description || '',
+            description: submission.description || aiDescription || '',
             date: eventDateIso,
             status: 'pending',
             
@@ -239,7 +327,9 @@ exports.handler = async function (event, context) {
             venueSlug: venueData.venueSlug,
             
             // Categorization (Standardized)
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : (Array.isArray(submission.categoryIds) ? submission.categoryIds : []),
+            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : 
+                     (aiCategories && Array.isArray(aiCategories) ? aiCategories : 
+                     (Array.isArray(submission.categoryIds) ? submission.categoryIds : [])),
             
             // Links (Standardized)
             link: submission.link || '',
@@ -257,11 +347,18 @@ exports.handler = async function (event, context) {
             approvedAt: null,
             
             // Additional Fields
-            startTime: submission['start-time'] || '00:00',
+            startTime: submission['start-time'] || aiTime || '00:00',
             endTime: submission['end-time'] || '23:59',
-            price: submission.price || '',
-            ageRestriction: submission['age-restriction'] || '',
+            price: submission.price || aiPrice || '',
+            ageRestriction: submission['age-restriction'] || aiAgeRestriction || '',
             featured: submission.featured === 'true',
+            
+            // AI Extraction Metadata
+            aiExtracted: aiExtractedData ? {
+                confidence: aiExtractedData.confidence,
+                extractedAt: new Date(),
+                model: 'gemini-1.5-flash'
+            } : null,
             
             // Recurring Event Fields
             isRecurring: submission['is-recurring'] === 'true',
@@ -315,7 +412,14 @@ exports.handler = async function (event, context) {
                 success: true,
                 id: firestoreDoc.id,
                 slug,
-                ssg: ssgRebuildResult || null
+                ssg: ssgRebuildResult || null,
+                aiExtraction: aiExtractedData ? {
+                    success: true,
+                    confidence: aiExtractedData.confidence,
+                    extractedFields: Object.keys(aiExtractedData).filter(key => 
+                        aiExtractedData[key] && key !== 'confidence'
+                    )
+                } : null
             })
         };
         

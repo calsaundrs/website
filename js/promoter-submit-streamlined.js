@@ -482,7 +482,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (result.success) {
-                    alert('Event submitted successfully! We\'ll review it within 24-48 hours.');
+                    let successMessage = 'Event submitted successfully! We\'ll review it within 24-48 hours.';
+                    
+                    // Add AI extraction feedback if available
+                    if (result.aiExtraction && result.aiExtraction.success) {
+                        const extractedCount = result.aiExtraction.extractedFields.length;
+                        const confidence = result.aiExtraction.confidence;
+                        successMessage += `\n\n🤖 AI extracted ${extractedCount} fields from your poster (confidence: ${confidence}).`;
+                    }
+                    
+                    alert(successMessage);
                     form.reset();
                     if (posterPreview) posterPreview.classList.add('hidden');
                     if (uploadArea) uploadArea.classList.remove('hidden');
