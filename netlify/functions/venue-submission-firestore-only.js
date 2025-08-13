@@ -55,7 +55,16 @@ exports.handler = async function (event, context) {
         console.log('Body length:', event.body ? event.body.length : 0);
         console.log('Body preview:', event.body ? event.body.substring(0, 200) : 'No body');
         
-        if (event.body) {
+        // Decode base64 body if needed
+        let decodedBody = event.body;
+        if (event.body && event.isBase64Encoded) {
+            console.log('Body is base64 encoded, decoding...');
+            decodedBody = Buffer.from(event.body, 'base64').toString('utf8');
+            console.log('Decoded body length:', decodedBody.length);
+            console.log('Decoded body preview:', decodedBody.substring(0, 200));
+        }
+        
+        if (decodedBody) {
             const contentType = event.headers['content-type'] || '';
             
             if (contentType.includes('multipart/form-data')) {
@@ -64,7 +73,7 @@ exports.handler = async function (event, context) {
                 console.log('Boundary:', boundary);
                 
                 if (boundary) {
-                    const parts = event.body.split(`--${boundary}`);
+                    const parts = decodedBody.split(`--${boundary}`);
                     console.log('Number of parts:', parts.length);
                     
                     for (let i = 0; i < parts.length; i++) {
@@ -116,7 +125,7 @@ exports.handler = async function (event, context) {
             } else {
                 // Handle URL-encoded form data
                 console.log('Handling URL-encoded form data');
-                const params = new URLSearchParams(event.body);
+                const params = new URLSearchParams(decodedBody);
                 for (const [key, value] of params) {
                     fields[key] = value;
                     console.log('URL param:', key, '=', value);
