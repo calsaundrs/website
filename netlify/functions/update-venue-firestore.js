@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
+const multipart = require('lambda-multipart-parser');
 
 exports.handler = async function (event, context) {
     console.log('Venue update function called');
@@ -52,85 +53,66 @@ exports.handler = async function (event, context) {
             api_secret: process.env.CLOUDINARY_API_SECRET,
         });
         
-        // Parse request body
+        // Parse request body using lambda-multipart-parser
         let body;
-        let files = {};
+        let imageFile = null;
         
         console.log('Request headers:', event.headers);
         console.log('Request body type:', typeof event.body);
         console.log('Body length:', event.body ? event.body.length : 'undefined');
         console.log('Is base64 encoded:', event.isBase64Encoded);
         
-        if (event.headers['content-type'] && event.headers['content-type'].includes('multipart/form-data')) {
-            // Handle multipart form data
-            const boundary = event.headers['content-type'].split('boundary=')[1];
-            let decodedBody = event.body;
+        try {
+            const headers = event.headers || {};
+            const contentType = (headers['content-type'] || headers['Content-Type'] || '').toLowerCase();
             
-            if (event.isBase64Encoded) {
-                decodedBody = Buffer.from(event.body, 'base64').toString('utf8');
-            }
-            
-            const parts = decodedBody.split(`--${boundary}`);
-            console.log('Multipart parsing - Number of parts:', parts.length);
-            console.log('First part preview:', parts[0] ? parts[0].substring(0, 200) : 'No parts');
-            
-            const fields = {};
-            
-            for (const part of parts) {
-                if (part.includes('Content-Disposition: form-data')) {
-                    const nameMatch = part.match(/name="([^"]+)"/);
-                    if (nameMatch) {
-                        const fieldName = nameMatch[1];
-                        const filenameMatch = part.match(/filename="([^"]+)"/);
-                        
-                        if (filenameMatch) {
-                            // This is a file
-                            const filename = filenameMatch[1];
-                            
-                            // Extract content type
-                            const contentTypeMatch = part.match(/Content-Type: ([^\r\n]+)/);
-                            const contentType = contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream';
-                            
-                            const contentStart = part.indexOf('\r\n\r\n') + 4;
-                            const contentEnd = part.lastIndexOf('\r\n');
-                            
-                            if (contentStart > 3 && contentEnd > contentStart) {
-                                const fileContent = part.substring(contentStart, contentEnd);
-                                console.log(`File parsed: ${fieldName}`, {
-                                    filename: filename,
-                                    contentType: contentType,
-                                    contentLength: fileContent.length,
-                                    contentPreview: fileContent.substring(0, 50)
-                                });
-                                files[fieldName] = {
-                                    filename: filename,
-                                    contentType: contentType,
-                                    content: fileContent
-                                };
-                            }
-                        } else {
-                            // This is a text field
-                            const valueMatch = part.match(/\r?\n\r?\n([\s\S]*?)(?=\r?\n--|$)/);
-                            if (valueMatch) {
-                                fields[fieldName] = valueMatch[1].trim();
-                            }
-                        }
-                    }
+            if (contentType.includes('multipart/form-data')) {
+                const parsed = await multipart.parse(event);
+                const { files = [], ...fields } = parsed || {};
+                body = fields || {};
+                
+                // Find the photo file
+                imageFile = files.find(f => f.fieldname === 'photo' || f.name === 'photo') || files[0];
+                if (imageFile && imageFile.content && imageFile.content.length) {
+                    console.log('Photo file found:', {
+                        fieldname: imageFile.fieldname,
+                        filename: imageFile.filename,
+                        contentType: imageFile.contentType,
+                        contentLength: imageFile.content.length
+                    });
+                } else {
+                    console.log('No photo file found in upload');
+                }
+            } else if (contentType.includes('application/json')) {
+                body = JSON.parse(event.body);
+            } else {
+                // Fallback: try urlencoded
+                const rawBody = event.isBase64Encoded ? Buffer.from(event.body || '', 'base64').toString('utf8') : (event.body || '');
+                const params = new URLSearchParams(rawBody);
+                body = {};
+                for (const [key, value] of params) {
+                    body[key] = value;
                 }
             }
             
-            body = fields;
-            console.log('Parsed multipart fields:', Object.keys(body));
+            console.log('Parsed fields:', Object.keys(body));
             console.log('Sample field values:', {
                 venueId: body.venueId,
                 id: body.id,
                 name: body.name,
                 address: body.address
             });
-        } else {
-            // Handle JSON data
-            body = JSON.parse(event.body);
-            console.log('Parsed JSON body:', Object.keys(body));
+            
+        } catch (parseError) {
+            console.error('Error parsing form data:', parseError);
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: 'Failed to parse form data',
+                    message: parseError.message
+                })
+            };
         }
         
         // Extract venueId from either body or fields
@@ -170,73 +152,41 @@ exports.handler = async function (event, context) {
         
         // Handle image upload if present
         let uploadedImage = null;
-        if (files.photo && files.photo.content) {
+        if (imageFile && imageFile.content && imageFile.content.length > 100) {
             console.log('Photo file detected, attempting upload...');
             console.log('Photo file info:', {
-                filename: files.photo.filename,
-                contentLength: files.photo.content.length,
-                contentType: files.photo.contentType || 'unknown'
+                filename: imageFile.filename,
+                contentLength: imageFile.content.length,
+                contentType: imageFile.contentType || 'image/jpeg'
             });
             
-            // Validate that we have actual image content
-            if (!files.photo.content || files.photo.content.length < 100) {
-                console.log('Skipping image upload - content too small or empty');
-            } else {
-                try {
-                    // The content is raw binary data, not base64 encoded
-                    // We need to convert it to base64 first
-                    const base64Content = Buffer.from(files.photo.content, 'binary').toString('base64');
-                    console.log('Content analysis:', {
-                        originalLength: files.photo.content.length,
-                        base64Length: base64Content.length,
-                        contentStart: base64Content.substring(0, 50),
-                        contentEnd: base64Content.substring(base64Content.length - 50)
-                    });
-                    
-                    // The content is already base64 encoded from multipart parsing
-                    // Convert base64 content to Buffer for upload_stream
-                    const imageBuffer = Buffer.from(files.photo.content, 'base64');
-                    console.log('Image buffer created from base64, length:', imageBuffer.length);
-                    
-                    const uploadResult = await new Promise((resolve, reject) => {
-                        const uploadStream = cloudinary.uploader.upload_stream(
-                            {
-                                folder: 'brumoutloud_venues',
-                                transformation: [
-                                    { width: 800, height: 400, crop: 'fill' },
-                                    { quality: 'auto' }
-                                ]
-                            },
-                            (error, result) => {
-                                if (error) {
-                                    console.error('Cloudinary upload error:', error);
-                                    reject(error);
-                                } else {
-                                    console.log('Cloudinary upload success:', result);
-                                    resolve(result);
-                                }
-                            }
-                        );
-                        
-                        // Write the buffer to the upload stream
-                        uploadStream.end(imageBuffer);
-                    });
-                    
-                    uploadedImage = {
-                        url: uploadResult.secure_url,
-                        publicId: uploadResult.public_id
-                    };
-                    console.log('Venue image uploaded successfully:', uploadedImage.url);
-                } catch (uploadError) {
-                    console.error('Error uploading venue image:', uploadError);
-                    console.error('Upload error details:', {
-                        message: uploadError.message,
-                        http_code: uploadError.http_code,
-                        name: uploadError.name
-                    });
-                    // Continue without image - don't fail the update
-                    uploadedImage = null;
-                }
+            try {
+                // Convert buffer to base64 string for Cloudinary (same as event submission)
+                const base64Image = imageFile.content.toString('base64');
+                const dataURI = `data:${imageFile.contentType || 'image/jpeg'};base64,${base64Image}`;
+                
+                const result = await cloudinary.uploader.upload(dataURI, {
+                    folder: 'brumoutloud_venues',
+                    transformation: [
+                        { width: 800, height: 400, crop: 'fill' },
+                        { quality: 'auto' }
+                    ]
+                });
+                
+                uploadedImage = {
+                    url: result.secure_url,
+                    publicId: result.public_id
+                };
+                console.log('Venue image uploaded successfully:', uploadedImage.url);
+            } catch (uploadError) {
+                console.error('Error uploading venue image:', uploadError);
+                console.error('Upload error details:', {
+                    message: uploadError.message,
+                    http_code: uploadError.http_code,
+                    name: uploadError.name
+                });
+                // Continue without image - don't fail the update
+                uploadedImage = null;
             }
         } else {
             console.log('No photo file found in upload');
