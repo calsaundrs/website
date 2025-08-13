@@ -250,40 +250,178 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
             
             <div class="card-bg p-8 md:p-12 rounded-2xl">
-                <form id="add-venue-form" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                <i class="fas fa-building mr-1"></i>Venue Name
-                            </label>
-                            <input type="text" id="venue-name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue name">
+                <form id="add-venue-form" class="space-y-8">
+                    <!-- Basic Information -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold accent-color-secondary border-b border-gray-700 pb-2">
+                            <i class="fas fa-info-circle mr-2"></i>Basic Information
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-building mr-1"></i>Venue Name *
+                                </label>
+                                <input type="text" id="venue-name" name="name" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue name">
+                            </div>
+                            <div>
+                                <label for="venue-description" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-align-left mr-1"></i>Description
+                                </label>
+                                <textarea id="venue-description" name="description" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none" placeholder="Describe the venue, its atmosphere, and what makes it special..."></textarea>
+                            </div>
+                            <div>
+                                <label for="venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-map mr-1"></i>Address *
+                                </label>
+                                <input type="text" id="venue-address" name="address" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue address">
+                            </div>
+                            <div>
+                                <label for="venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-mail-bulk mr-1"></i>Postcode *
+                                </label>
+                                <input type="text" id="venue-postcode" name="postcode" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., B1 1AA">
+                            </div>
                         </div>
-                        <div>
-                            <label for="venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                <i class="fas fa-map mr-1"></i>Address
-                            </label>
-                            <input type="text" id="venue-address" name="address" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Enter venue address">
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold accent-color-secondary border-b border-gray-700 pb-2">
+                            <i class="fas fa-address-book mr-2"></i>Contact Information
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-globe mr-1"></i>Website
+                                </label>
+                                <input type="url" id="venue-website" name="website" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="https://">
+                            </div>
+                            <div>
+                                <label for="venue-instagram" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fab fa-instagram mr-1"></i>Instagram
+                                </label>
+                                <input type="text" id="venue-instagram" name="instagram" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="@venuehandle">
+                            </div>
+                            <div>
+                                <label for="venue-facebook" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fab fa-facebook mr-1"></i>Facebook
+                                </label>
+                                <input type="text" id="venue-facebook" name="facebook" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="Facebook page URL">
+                            </div>
+                            <div>
+                                <label for="venue-tiktok" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fab fa-tiktok mr-1"></i>TikTok
+                                </label>
+                                <input type="text" id="venue-tiktok" name="tiktok" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="@venuehandle">
+                            </div>
+                            <div>
+                                <label for="venue-contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-envelope mr-1"></i>Contact Email
+                                </label>
+                                <input type="email" id="venue-contact-email" name="contact-email" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="contact@venue.com">
+                            </div>
+                            <div>
+                                <label for="venue-contact-phone" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-phone mr-1"></i>Contact Phone
+                                </label>
+                                <input type="tel" id="venue-contact-phone" name="contact-phone" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="0121 123 4567">
+                            </div>
                         </div>
-                        <div>
-                            <label for="venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                <i class="fas fa-mail-bulk mr-1"></i>Postcode
-                            </label>
-                            <input type="text" id="venue-postcode" name="postcode" required class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., B1 1AA">
+                    </div>
+
+                    <!-- Venue Details -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold accent-color-secondary border-b border-gray-700 pb-2">
+                            <i class="fas fa-cog mr-2"></i>Venue Details
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="venue-opening-hours" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-clock mr-1"></i>Opening Hours
+                                </label>
+                                <textarea id="venue-opening-hours" name="opening-hours" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none" placeholder="e.g., Mon-Fri: 12pm-2am, Sat-Sun: 11am-3am"></textarea>
+                            </div>
+                            <div>
+                                <label for="venue-accessibility" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-wheelchair mr-1"></i>Accessibility Information
+                                </label>
+                                <textarea id="venue-accessibility" name="accessibility" rows="3" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none resize-none" placeholder="Describe accessibility features, entry points, facilities..."></textarea>
+                            </div>
+                            <div>
+                                <label for="venue-accessibility-rating" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-star mr-1"></i>Accessibility Rating
+                                </label>
+                                <select id="venue-accessibility-rating" name="accessibility-rating" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                                    <option value="">Select rating...</option>
+                                    <option value="1">1 - Limited accessibility</option>
+                                    <option value="2">2 - Some accessibility features</option>
+                                    <option value="3">3 - Good accessibility</option>
+                                    <option value="4">4 - Very accessible</option>
+                                    <option value="5">5 - Fully accessible</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="venue-parking-exception" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-parking mr-1"></i>Parking Information
+                                </label>
+                                <input type="text" id="venue-parking-exception" name="parking-exception" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., Free parking after 6pm, Disabled parking available">
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Tags and Features -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold accent-color-secondary border-b border-gray-700 pb-2">
+                            <i class="fas fa-tags mr-2"></i>Tags and Features
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="venue-vibe-tags" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-heart mr-1"></i>Vibe Tags
+                                </label>
+                                <input type="text" id="venue-vibe-tags" name="vibe-tags" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., LGBTQ+, Drag, Live Music, Cocktails, Dancing">
+                                <p class="text-xs text-gray-400 mt-1">Separate multiple tags with commas</p>
+                            </div>
+                            <div>
+                                <label for="venue-features" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-list mr-1"></i>Venue Features
+                                </label>
+                                <input type="text" id="venue-features" name="venue-features" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., Dance Floor, Stage, Outdoor Area, Food Service">
+                                <p class="text-xs text-gray-400 mt-1">Separate multiple features with commas</p>
+                            </div>
+                            <div>
+                                <label for="venue-accessibility-features" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                    <i class="fas fa-universal-access mr-1"></i>Accessibility Features
+                                </label>
+                                <input type="text" id="venue-accessibility-features" name="accessibility-features" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="e.g., Ramp Access, Disabled Toilets, Hearing Loop, Guide Dogs Welcome">
+                                <p class="text-xs text-gray-400 mt-1">Separate multiple features with commas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Venue Image -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold accent-color-secondary border-b border-gray-700 pb-2">
+                            <i class="fas fa-image mr-2"></i>Venue Image
+                        </h3>
                         <div>
-                            <label for="venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                <i class="fas fa-globe mr-1"></i>Website (Optional)
+                            <label for="venue-photo" class="block text-sm font-semibold mb-2 accent-color-secondary">
+                                <i class="fas fa-camera mr-1"></i>Venue Photo
                             </label>
-                            <input type="url" id="venue-website" name="website" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" placeholder="https://">
+                            <input type="file" id="venue-photo" name="photo" accept="image/*" class="form-input w-full px-4 py-3 rounded-lg text-white focus:outline-none">
+                            <p class="text-xs text-gray-400 mt-1">Upload a high-quality image of the venue (recommended: 800x400px)</p>
                         </div>
                     </div>
                     
                     <div class="flex justify-end pt-6">
-                        <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg transition-all">
+                        <button type="submit" id="submit-button" class="btn-primary text-white font-bold py-3 px-8 rounded-lg transition-all">
                             <i class="fas fa-plus mr-2"></i>Add Venue
                         </button>
                     </div>
                 </form>
+                
+                <!-- Status message -->
+                <div id="form-status" class="hidden mt-6"></div>
             </div>
         </section>
     </main>
