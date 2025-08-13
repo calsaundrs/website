@@ -511,8 +511,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             allAdminVenues = []; // Reset stored data
 
             try {
-                // Call the Firestore function to get all venues for admin management
-                const response = await fetch('/.netlify/functions/get-venue-list');
+                // Call the admin venues function to get all venues for admin management
+                const response = await fetch('/.netlify/functions/get-admin-venues');
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({details: 'Server returned an invalid response'}));
                     throw new Error(errorData.details || 'Failed to fetch venues.');
@@ -749,13 +749,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         accessibilityFeatures: Array.from(formData.getAll('accessibility-features'))
                     };
 
-                    // Send the data to the Firestore update function
-                    const response = await fetch('/.netlify/functions/update-item-firestore', { 
+                    // Send the data to the dedicated venue update function
+                    const response = await fetch('/.netlify/functions/update-venue-firestore', { 
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(venueData)
+                        body: JSON.stringify({
+                            venueId: currentItemForAction.id,
+                            ...venueData
+                        })
                     });
 
                     if (!response.ok) {
