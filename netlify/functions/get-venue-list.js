@@ -76,29 +76,28 @@ exports.handler = async function(event, context) {
             const imageData = extractImageUrl(data);
             console.log(`Venue List: Image data for ${data.name || data['Name'] || 'Unnamed'}:`, imageData);
             
-            // Only include venues that have Cloudinary image data
-            if (imageData && imageData.url) {
-                venues.push({
-                    id: doc.id,
-                    name: data.name || data['Name'] || 'Unnamed Venue',
-                    address: data.address || data['Address'] || '',
-                    description: data.description || data['Description'] || '',
-                    website: data.website || data['Website'] || '',
-                    phone: data.contactPhone || data['Contact Phone'] || data.phone || '',
-                    status: data.status || 'pending',
-                    slug: data.slug || data['Slug'] || '',
-                    category: data.category || data['Tags'] || [],
-                    image: imageData,
-                    popular: data.popular || false
-                });
-            }
+            // Include all venues, with or without images
+            venues.push({
+                id: doc.id,
+                name: data.name || data['Name'] || 'Unnamed Venue',
+                address: data.address || data['Address'] || '',
+                description: data.description || data['Description'] || '',
+                website: data.website || data['Website'] || '',
+                phone: data.contactPhone || data['Contact Phone'] || data.phone || '',
+                status: data.status || 'pending',
+                slug: data.slug || data['Slug'] || '',
+                category: data.category || data['Tags'] || [],
+                image: imageData || null,
+                popular: data.popular || false
+            });
         });
         
         // Sort venues by name
         venues.sort((a, b) => a.name.localeCompare(b.name));
         
-        console.log(`Venue List: Returning ${venues.length} venues with Cloudinary images successfully`);
-        console.log('Venues with images:', venues.map(v => ({ name: v.name, hasImage: !!v.image })));
+        console.log(`Venue List: Returning ${venues.length} venues successfully`);
+        console.log('Venues with images:', venues.filter(v => v.image).map(v => v.name));
+        console.log('Venues without images:', venues.filter(v => !v.image).map(v => v.name));
         
         return {
             statusCode: 200,
