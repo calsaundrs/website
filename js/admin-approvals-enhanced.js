@@ -249,7 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createEnhancedItemCard(item) {
         const isSelected = selectedItems.has(item.id);
-        const isRecurring = item.type === 'event' && (item.recurringInfo || item.series);
+        const isRecurring = item.type === 'event' && (item.recurringInfo || item.series || item.isRecurring || 
+                                                     item.recurringPattern || item.recurringGroupId || item.seriesId);
         const compactClass = isCompactView ? 'compact' : '';
         const selectedClass = isSelected ? 'selected' : '';
         
@@ -283,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="approval-card-detail-item">
                 <div class="detail-label">Recurring Pattern</div>
                 <div class="detail-value text-purple-300">
-                    <i class="fas fa-redo mr-2"></i>${item.recurringInfo || 'Series event'}
+                    <i class="fas fa-redo mr-2"></i>${item.recurringInfo || item.recurringPattern || item.customRecurrenceDesc || 'Series event'}
                     ${item.isPastEvent ? '<span class="text-orange-400 ml-2">(Past event)</span>' : ''}
                 </div>
             </div>

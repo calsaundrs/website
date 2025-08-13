@@ -205,7 +205,8 @@ async function getPendingEvents(limit, offset) {
             const isPastEvent = eventDate && eventDate < now;
             
             // Check if this is a recurring event
-            const isRecurring = eventData.recurringInfo || eventData.series || eventData.isRecurring;
+            const isRecurring = eventData.recurringInfo || eventData.series || eventData.isRecurring || 
+                               eventData.recurringPattern || eventData.recurringGroupId || eventData.seriesId;
             
             // Include past events for admin review; mark flag for UI
             if (isPastEvent && !isRecurring) {
@@ -228,8 +229,12 @@ async function getPendingEvents(limit, offset) {
                 price: eventData.price,
                 ageRestriction: eventData.ageRestriction,
                 link: eventData.link || eventData.ticketLink,
-                recurringInfo: eventData.recurringInfo,
+                recurringInfo: eventData.recurringInfo || eventData.customRecurrenceDesc,
                 series: eventData.series,
+                recurringPattern: eventData.recurringPattern,
+                recurringGroupId: eventData.recurringGroupId,
+                seriesId: eventData.seriesId,
+                isRecurring: eventData.isRecurring,
                 status: eventData.status,
                 createdAt: eventData.createdAt || eventData.submittedAt || new Date(),
                 updatedAt: eventData.updatedAt,
