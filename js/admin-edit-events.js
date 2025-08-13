@@ -927,22 +927,30 @@ function populateEditForm(event) {
         });
     }
     
-    // Handle recurring event fields (standardized)
-    document.getElementById('edit-is-recurring').checked = event.isRecurring || false;
-    document.getElementById('edit-recurring-pattern').value = event.recurringPattern || '';
-    document.getElementById('edit-recurring-info').value = event.recurringInfo || '';
+    // Handle recurring event fields (standardized) - with null checks
+    const editIsRecurring = document.getElementById('edit-is-recurring');
+    const editRecurringPattern = document.getElementById('edit-recurring-pattern');
+    const editRecurringInfo = document.getElementById('edit-recurring-info');
+    const editRecurringStartDate = document.getElementById('edit-recurring-start-date');
+    const editRecurringEndDate = document.getElementById('edit-recurring-end-date');
+    const editTotalInstances = document.getElementById('edit-total-instances');
+    const editRecurringInstance = document.getElementById('edit-recurring-instance');
+    
+    if (editIsRecurring) editIsRecurring.checked = event.isRecurring || false;
+    if (editRecurringPattern) editRecurringPattern.value = event.recurringPattern || '';
+    if (editRecurringInfo) editRecurringInfo.value = event.recurringInfo || '';
     
     // Format recurring dates
     const recurringStartDate = event.recurringStartDate || '';
     const formattedStartDate = recurringStartDate ? new Date(recurringStartDate).toISOString().split('T')[0] : '';
-    document.getElementById('edit-recurring-start-date').value = formattedStartDate;
+    if (editRecurringStartDate) editRecurringStartDate.value = formattedStartDate;
     
     const recurringEndDate = event.recurringEndDate || '';
     const formattedEndDate = recurringEndDate ? new Date(recurringEndDate).toISOString().split('T')[0] : '';
-    document.getElementById('edit-recurring-end-date').value = formattedEndDate;
+    if (editRecurringEndDate) editRecurringEndDate.value = formattedEndDate;
     
-    document.getElementById('edit-total-instances').value = event.totalInstances || '';
-    document.getElementById('edit-recurring-instance').value = event.recurringInstance || '';
+    if (editTotalInstances) editTotalInstances.value = event.totalInstances || '';
+    if (editRecurringInstance) editRecurringInstance.value = event.recurringInstance || '';
     
     // Store current event for editing
     currentEventForEdit = event;
@@ -994,17 +1002,25 @@ async function handleEditFormSubmit(event) {
         formData.append('image', imageFile);
     }
     
-    // Recurring event data
-    const isRecurring = document.getElementById('edit-is-recurring')?.checked || false;
+    // Recurring event data - with null checks
+    const editIsRecurring = document.getElementById('edit-is-recurring');
+    const isRecurring = editIsRecurring?.checked || false;
     formData.append('isRecurring', isRecurring);
     
     if (isRecurring) {
-        const recurringPattern = document.getElementById('edit-recurring-pattern')?.value || '';
-        const recurringInfo = document.getElementById('edit-recurring-info')?.value || '';
-        const recurringStartDate = document.getElementById('edit-recurring-start-date')?.value || '';
-        const recurringEndDate = document.getElementById('edit-recurring-end-date')?.value || '';
-        const totalInstances = document.getElementById('edit-total-instances')?.value || '';
-        const recurringInstance = document.getElementById('edit-recurring-instance')?.value || '';
+        const editRecurringPattern = document.getElementById('edit-recurring-pattern');
+        const editRecurringInfo = document.getElementById('edit-recurring-info');
+        const editRecurringStartDate = document.getElementById('edit-recurring-start-date');
+        const editRecurringEndDate = document.getElementById('edit-recurring-end-date');
+        const editTotalInstances = document.getElementById('edit-total-instances');
+        const editRecurringInstance = document.getElementById('edit-recurring-instance');
+        
+        const recurringPattern = editRecurringPattern?.value || '';
+        const recurringInfo = editRecurringInfo?.value || '';
+        const recurringStartDate = editRecurringStartDate?.value || '';
+        const recurringEndDate = editRecurringEndDate?.value || '';
+        const totalInstances = editTotalInstances?.value || '';
+        const recurringInstance = editRecurringInstance?.value || '';
         
         formData.append('recurringPattern', recurringPattern);
         formData.append('recurringInfo', recurringInfo);
