@@ -133,17 +133,8 @@ exports.handler = async function (event, context) {
         const recurringManager = new RecurringEventsManager(db);
         const recurringResult = await recurringManager.createRecurringSeries(recurringEventData);
         
-        if (!recurringResult.success) {
-            return {
-                statusCode: 500,
-                headers,
-                body: JSON.stringify({
-                    success: false,
-                    error: 'Failed to create recurring series',
-                    message: recurringResult.error
-                })
-            };
-        }
+        // RecurringEventsManager returns { recurringGroupId, instances, totalInstances }
+        // If it throws an error, it will be caught in the catch block below
         
         // Update the original event with recurring information
         const updateData = {
@@ -153,7 +144,7 @@ exports.handler = async function (event, context) {
             recurringEndDate: recurringEndDate || null,
             maxInstances: maxInstances ? parseInt(maxInstances) : null,
             customRecurrenceDesc: customRecurrenceDesc || null,
-            recurringGroupId: recurringResult.groupId,
+            recurringGroupId: recurringResult.recurringGroupId,
             recurringInstance: 1,
             totalInstances: recurringResult.totalInstances,
             updatedAt: new Date()
@@ -170,7 +161,7 @@ exports.handler = async function (event, context) {
                 success: true,
                 message: `Successfully converted event to recurring with ${recurringResult.totalInstances} instances`,
                 eventId: eventId,
-                groupId: recurringResult.groupId,
+                groupId: recurringResult.recurringGroupId,
                 totalInstances: recurringResult.totalInstances,
                 instances: recurringResult.instances
             })
