@@ -183,16 +183,18 @@ exports.handler = async function (event, context) {
                 console.log('Skipping image upload - content too small or empty');
             } else {
                 try {
-                    // Check if content is already base64 encoded
-                    const isBase64 = /^[A-Za-z0-9+/]*={0,2}$/.test(files.photo.content);
+                    // The content is raw binary data, not base64 encoded
+                    // We need to convert it to base64 first
+                    const base64Content = Buffer.from(files.photo.content, 'binary').toString('base64');
                     console.log('Content analysis:', {
-                        isBase64: isBase64,
-                        contentStart: files.photo.content.substring(0, 20),
-                        contentEnd: files.photo.content.substring(files.photo.content.length - 20)
+                        originalLength: files.photo.content.length,
+                        base64Length: base64Content.length,
+                        contentStart: base64Content.substring(0, 50),
+                        contentEnd: base64Content.substring(base64Content.length - 50)
                     });
                     
-                    // Try uploading with data URL approach
-                    const dataUrl = `data:${files.photo.contentType};base64,${files.photo.content}`;
+                    // Create data URL with properly encoded base64
+                    const dataUrl = `data:${files.photo.contentType};base64,${base64Content}`;
                     console.log('Attempting upload with data URL, length:', dataUrl.length);
                     
                     const uploadResult = await new Promise((resolve, reject) => {
