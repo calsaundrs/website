@@ -4,6 +4,11 @@ const cloudinary = require('cloudinary').v2;
 exports.handler = async function (event, context) {
     console.log('Venue update function called');
     
+    // Add global error handler to prevent unhandled promise rejections
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+    
     try {
         // Check environment variables
         const required = [
@@ -166,18 +171,18 @@ exports.handler = async function (event, context) {
         // Handle image upload if present
         let uploadedImage = null;
         if (files.photo && files.photo.content) {
-            try {
-                console.log('Uploading new venue image to Cloudinary...');
-                console.log('Photo file info:', {
-                    filename: files.photo.filename,
-                    contentLength: files.photo.content.length,
-                    contentType: files.photo.contentType || 'unknown'
-                });
-                
-                // Validate that we have actual image content
-                if (!files.photo.content || files.photo.content.length < 100) {
-                    console.log('Skipping image upload - content too small or empty');
-                } else {
+            console.log('Photo file detected, attempting upload...');
+            console.log('Photo file info:', {
+                filename: files.photo.filename,
+                contentLength: files.photo.content.length,
+                contentType: files.photo.contentType || 'unknown'
+            });
+            
+            // Validate that we have actual image content
+            if (!files.photo.content || files.photo.content.length < 100) {
+                console.log('Skipping image upload - content too small or empty');
+            } else {
+                try {
                     // Check if content is already base64 encoded
                     const isBase64 = /^[A-Za-z0-9+/]*={0,2}$/.test(files.photo.content);
                     console.log('Content analysis:', {
@@ -185,6 +190,7 @@ exports.handler = async function (event, context) {
                         contentStart: files.photo.content.substring(0, 20),
                         contentEnd: files.photo.content.substring(files.photo.content.length - 20)
                     });
+                    
                     // Try uploading with data URL approach
                     const dataUrl = `data:${files.photo.contentType};base64,${files.photo.content}`;
                     console.log('Attempting upload with data URL, length:', dataUrl.length);
@@ -193,7 +199,7 @@ exports.handler = async function (event, context) {
                         cloudinary.uploader.upload(
                             dataUrl,
                             {
-                                folder: 'venues',
+                                folder: 'brumoutloud_venues',
                                 transformation: [
                                     { width: 800, height: 400, crop: 'fill' },
                                     { quality: 'auto' }
@@ -216,15 +222,16 @@ exports.handler = async function (event, context) {
                         publicId: uploadResult.public_id
                     };
                     console.log('Venue image uploaded successfully:', uploadedImage.url);
+                } catch (uploadError) {
+                    console.error('Error uploading venue image:', uploadError);
+                    console.error('Upload error details:', {
+                        message: uploadError.message,
+                        http_code: uploadError.http_code,
+                        name: uploadError.name
+                    });
+                    // Continue without image - don't fail the update
+                    uploadedImage = null;
                 }
-            } catch (uploadError) {
-                console.error('Error uploading venue image:', uploadError);
-                console.error('Upload error details:', {
-                    message: uploadError.message,
-                    http_code: uploadError.http_code,
-                    name: uploadError.name
-                });
-                // Continue without image - don't fail the update
             }
         } else {
             console.log('No photo file found in upload');
