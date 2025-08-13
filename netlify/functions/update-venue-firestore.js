@@ -270,6 +270,17 @@ exports.handler = async function (event, context) {
         await venueRef.update(updateFields);
         
         console.log(`Successfully updated venue ${venueId}`);
+        console.log('Updated fields:', updateFields);
+        
+        // Verify the update by fetching the updated document
+        const updatedDoc = await venueRef.get();
+        const updatedData = updatedDoc.data();
+        console.log('Updated venue data:', {
+            name: updatedData.name,
+            photoUrl: updatedData.photoUrl,
+            cloudinaryPublicId: updatedData.cloudinaryPublicId,
+            image: updatedData.image
+        });
         
         return {
             statusCode: 200,

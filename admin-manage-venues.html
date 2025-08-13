@@ -740,9 +740,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         const err = await response.json().catch(() => ({message: 'Unknown server error'}));
                         throw new Error(err.message || 'Server returned an error');
                     }
+                    
+                    const result = await response.json();
+                    console.log('Venue update result:', result);
+                    
                     // Using a custom modal/message box is preferred over alert()
                     alert('Venue updated successfully!');
-                    location.reload(); // Reload page to reflect changes
+                    
+                    // Close the modal
+                    editModal.classList.add('hidden');
+                    
+                    // Refresh the venue list instead of reloading the page
+                    await fetchAndRenderVenues();
                 } catch (error) {
                     console.error("Error saving changes:", error);
                     // Using a custom modal/message box is preferred over alert()
