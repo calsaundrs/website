@@ -100,7 +100,7 @@ exports.handler = async function(event, context) {
         const venueGroups = new Map(); // Group venues by similar names
         
         venues.forEach(venue => {
-            // Skip test venues
+            // Skip test venues and specific unwanted venues
             if (venue.name.toLowerCase().includes('test') || 
                 venue.name.toLowerCase().includes('untitled') ||
                 venue.name.toLowerCase().includes('minimal') ||
@@ -109,8 +109,10 @@ exports.handler = async function(event, context) {
                 venue.name.toLowerCase().includes('unified') ||
                 venue.name.toLowerCase().includes('fixed') ||
                 venue.name.toLowerCase().includes('link-only') ||
-                venue.name.toLowerCase().includes('admin workflow')) {
-                console.log(`Venue List: Skipping test venue: ${venue.name}`);
+                venue.name.toLowerCase().includes('admin workflow') ||
+                venue.name.toLowerCase().includes('marcs room') ||
+                venue.name.toLowerCase().includes('the village (new venue)')) {
+                console.log(`Venue List: Skipping venue: ${venue.name}`);
                 return;
             }
             
