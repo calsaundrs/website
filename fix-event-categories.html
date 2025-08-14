@@ -19,16 +19,20 @@
             <div class="bg-gray-800 rounded-lg p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">What this does:</h2>
                 <ul class="space-y-2 text-gray-300">
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Uses Gemini AI for intelligent category assignment</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Normalizes category data for all existing events</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Converts string categories to arrays</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Auto-detects categories from event names and descriptions</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Improves existing categories with AI analysis</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Ensures all events have proper category tags</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Makes the filter bar functional</li>
                 </ul>
             </div>
             
             <div class="bg-gray-800 rounded-lg p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">Auto-detection includes:</h2>
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-robot mr-2 text-purple-400"></i>
+                    AI-Powered Categories:
+                </h2>
                 <div class="grid grid-cols-2 gap-2 text-sm">
                     <span class="bg-blue-900/50 px-2 py-1 rounded">Drag</span>
                     <span class="bg-blue-900/50 px-2 py-1 rounded">Nightclub</span>
@@ -43,6 +47,10 @@
                     <span class="bg-blue-900/50 px-2 py-1 rounded">Community</span>
                     <span class="bg-blue-900/50 px-2 py-1 rounded">Educational</span>
                 </div>
+                <p class="text-sm text-gray-400 mt-3">
+                    <i class="fas fa-brain mr-1"></i>
+                    Gemini AI analyzes event names and descriptions to intelligently assign the most appropriate categories.
+                </p>
             </div>
             
             <button id="fix-categories-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-4">

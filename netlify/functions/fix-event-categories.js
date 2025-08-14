@@ -13,6 +13,60 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+// Gemini API integration
+async function getCategoriesFromGemini(eventName, description) {
+    if (!process.env.GEMINI_API_KEY) {
+        console.log('No Gemini API key found, using fallback detection');
+        return null;
+    }
+    
+    try {
+        const prompt = `Analyze this LGBTQ+ event and assign appropriate categories from this list:
+Drag, Nightclub, Bar, Social, Live Music, Theatre, Workshop, Kink, Family, Party, Community, Educational, Entertainment
+
+Event Name: ${eventName}
+Description: ${description}
+
+Please respond with ONLY the category names separated by commas, no other text. For example: "Drag, Social, Entertainment"
+
+If the event doesn't clearly fit any specific category, use "Entertainment" as a fallback.`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Gemini API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const categoriesText = data.candidates[0].content.parts[0].text.trim();
+        
+        // Parse the response
+        const categories = categoriesText
+            .split(',')
+            .map(cat => cat.trim())
+            .filter(cat => cat && cat.length > 0);
+        
+        console.log(`Gemini suggested categories: ${categories.join(', ')}`);
+        return categories;
+        
+    } catch (error) {
+        console.error('Error calling Gemini API:', error);
+        return null;
+    }
+}
+
 exports.handler = async (event, context) => {
     console.log("=== FIX EVENT CATEGORIES FUNCTION CALLED ===");
     
@@ -57,50 +111,67 @@ exports.handler = async (event, context) => {
                         .map(cat => cat.trim());
                 }
                 
-                // If no categories found, add default categories based on event type
+                // If no categories found, use Gemini API for intelligent category assignment
                 if (normalizedCategories.length === 0) {
-                    const eventName = (eventData['Event Name'] || eventData.name || '').toLowerCase();
-                    const description = (eventData['Description'] || eventData.description || '').toLowerCase();
+                    const eventName = eventData['Event Name'] || eventData.name || '';
+                    const description = eventData['Description'] || eventData.description || '';
                     
-                    // Auto-detect categories based on content
-                    if (eventName.includes('drag') || description.includes('drag')) {
-                        normalizedCategories.push('Drag');
-                    }
-                    if (eventName.includes('club') || eventName.includes('night') || description.includes('club') || description.includes('night')) {
-                        normalizedCategories.push('Nightclub');
-                    }
-                    if (eventName.includes('bar') || description.includes('bar')) {
-                        normalizedCategories.push('Bar');
-                    }
-                    if (eventName.includes('social') || description.includes('social') || description.includes('meet')) {
-                        normalizedCategories.push('Social');
-                    }
-                    if (eventName.includes('music') || description.includes('music') || description.includes('live')) {
-                        normalizedCategories.push('Live Music');
-                    }
-                    if (eventName.includes('theatre') || description.includes('theatre') || description.includes('show')) {
-                        normalizedCategories.push('Theatre');
-                    }
-                    if (eventName.includes('workshop') || description.includes('workshop') || description.includes('learn')) {
-                        normalizedCategories.push('Workshop');
-                    }
-                    if (eventName.includes('kink') || description.includes('kink') || description.includes('bdsm')) {
-                        normalizedCategories.push('Kink');
-                    }
-                    if (eventName.includes('family') || description.includes('family') || description.includes('kids')) {
-                        normalizedCategories.push('Family');
-                    }
-                    if (eventName.includes('party') || description.includes('party')) {
-                        normalizedCategories.push('Party');
-                    }
-                    if (eventName.includes('community') || description.includes('community')) {
-                        normalizedCategories.push('Community');
-                    }
-                    if (eventName.includes('educational') || description.includes('educational') || description.includes('learn')) {
-                        normalizedCategories.push('Educational');
+                    console.log(`No categories found for "${eventName}", using Gemini API for intelligent detection...`);
+                    
+                    // Try Gemini API first
+                    const geminiCategories = await getCategoriesFromGemini(eventName, description);
+                    
+                    if (geminiCategories && geminiCategories.length > 0) {
+                        normalizedCategories = geminiCategories;
+                        console.log(`✅ Gemini assigned categories: ${normalizedCategories.join(', ')}`);
+                    } else {
+                        // Fallback to keyword detection if Gemini fails
+                        console.log('Gemini API failed, using fallback keyword detection...');
+                        const eventNameLower = eventName.toLowerCase();
+                        const descriptionLower = description.toLowerCase();
+                        
+                        // Auto-detect categories based on content
+                        if (eventNameLower.includes('drag') || descriptionLower.includes('drag')) {
+                            normalizedCategories.push('Drag');
+                        }
+                        if (eventNameLower.includes('club') || eventNameLower.includes('night') || descriptionLower.includes('club') || descriptionLower.includes('night')) {
+                            normalizedCategories.push('Nightclub');
+                        }
+                        if (eventNameLower.includes('bar') || descriptionLower.includes('bar')) {
+                            normalizedCategories.push('Bar');
+                        }
+                        if (eventNameLower.includes('social') || descriptionLower.includes('social') || descriptionLower.includes('meet')) {
+                            normalizedCategories.push('Social');
+                        }
+                        if (eventNameLower.includes('music') || descriptionLower.includes('music') || descriptionLower.includes('live')) {
+                            normalizedCategories.push('Live Music');
+                        }
+                        if (eventNameLower.includes('theatre') || descriptionLower.includes('theatre') || descriptionLower.includes('show')) {
+                            normalizedCategories.push('Theatre');
+                        }
+                        if (eventNameLower.includes('workshop') || descriptionLower.includes('workshop') || descriptionLower.includes('learn')) {
+                            normalizedCategories.push('Workshop');
+                        }
+                        if (eventNameLower.includes('kink') || descriptionLower.includes('kink') || descriptionLower.includes('bdsm')) {
+                            normalizedCategories.push('Kink');
+                        }
+                        if (eventNameLower.includes('family') || descriptionLower.includes('family') || descriptionLower.includes('kids')) {
+                            normalizedCategories.push('Family');
+                        }
+                        if (eventNameLower.includes('party') || descriptionLower.includes('party')) {
+                            normalizedCategories.push('Party');
+                        }
+                        if (eventNameLower.includes('community') || descriptionLower.includes('community')) {
+                            normalizedCategories.push('Community');
+                        }
+                        if (eventNameLower.includes('educational') || descriptionLower.includes('educational') || descriptionLower.includes('learn')) {
+                            normalizedCategories.push('Educational');
+                        }
+                        
+                        console.log(`✅ Fallback assigned categories: ${normalizedCategories.join(', ')}`);
                     }
                     
-                    // Always add LGBTQ+ as default category
+                    // Always add LGBTQ+ as default category if not already present
                     if (!normalizedCategories.includes('LGBTQ+')) {
                         normalizedCategories.push('LGBTQ+');
                     }
@@ -117,6 +188,24 @@ exports.handler = async (event, context) => {
                 }
                 
                 console.log(`Normalized categories:`, normalizedCategories);
+                
+                // Also try to improve existing categories using Gemini
+                if (normalizedCategories.length > 0 && normalizedCategories.length < 3) {
+                    const eventName = eventData['Event Name'] || eventData.name || '';
+                    const description = eventData['Description'] || eventData.description || '';
+                    
+                    console.log(`Improving existing categories for "${eventName}"...`);
+                    const geminiCategories = await getCategoriesFromGemini(eventName, description);
+                    
+                    if (geminiCategories && geminiCategories.length > 0) {
+                        // Merge existing and Gemini categories, removing duplicates
+                        const allCategories = [...new Set([...normalizedCategories, ...geminiCategories])];
+                        if (allCategories.length > normalizedCategories.length) {
+                            console.log(`✅ Gemini improved categories: ${normalizedCategories.join(', ')} → ${allCategories.join(', ')}`);
+                            normalizedCategories = allCategories;
+                        }
+                    }
+                }
                 
                 // Check if update is needed
                 const needsUpdate = !Array.isArray(currentCategories) || 
