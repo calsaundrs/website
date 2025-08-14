@@ -134,6 +134,20 @@ exports.handler = async function (event, context) {
             console.log(`After venue filtering: ${events.length} events`);
         }
         
+        // Filter events to only include those with actual images (not placeholders)
+        const eventsWithImages = [];
+        events.forEach(event => {
+            if (event.image && event.image.url && !event.image.url.includes('placehold.co')) {
+                eventsWithImages.push(event);
+                console.log(`✅ INCLUDED: ${event.name} - has valid image`);
+            } else {
+                console.log(`❌ EXCLUDED: ${event.name} - no valid image (image: ${JSON.stringify(event.image)})`);
+            }
+        });
+        
+        console.log(`After image filtering: ${eventsWithImages.length} events (removed ${events.length - eventsWithImages.length} events without images)`);
+        events = eventsWithImages;
+        
         // Deduplicate events (prefer Firestore-native events over migrated Airtable events)
         const deduplicatedEvents = [];
         const seenEvents = new Map();
