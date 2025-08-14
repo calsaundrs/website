@@ -278,14 +278,16 @@ select:focus-visible {
     /* Make homepage hero text much larger on mobile */
     h1.font-anton.text-8xl {
         font-size: 8rem !important; /* 10x larger than default */
-        line-height: 0.8 !important;
+        line-height: 1.1 !important; /* Better spacing */
+        letter-spacing: -0.02em !important; /* Slightly tighter letter spacing */
     }
     
     /* Ensure mobile hero text is extremely prominent */
     @media (max-width: 640px) {
         h1.font-anton.text-8xl {
             font-size: 10rem !important; /* Even larger on small mobile */
-            line-height: 0.7 !important;
+            line-height: 1.0 !important; /* Better spacing for large text */
+            letter-spacing: -0.03em !important; /* Tighter letter spacing for large text */
         }
     }
 }
