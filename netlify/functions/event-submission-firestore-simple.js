@@ -179,7 +179,9 @@ exports.handler = async function (event, context) {
             name: submission['event-name'] || 'Untitled Event',
             slug: slug,
             description: submission.description || '',
-            date: eventDateTime,
+            date: eventDateTime, // Keep for backward compatibility and sorting
+            eventDate: eventDate, // Separate date field
+            eventTime: eventTime, // Separate time field
             status: 'pending',
             venueName: venueName,
             category: submission.categoryIds ? [submission.categoryIds] : [],

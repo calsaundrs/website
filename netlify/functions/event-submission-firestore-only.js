@@ -340,7 +340,9 @@ exports.handler = async function (event, context) {
             name: submission['event-name'] || aiEventName || 'Untitled Event',
             slug: slug,
             description: submission.description || aiDescription || '',
-            date: eventDateIso,
+            date: eventDateIso, // Keep for backward compatibility and sorting
+            eventDate: dateStr, // Separate date field
+            eventTime: startTimeStr, // Separate time field
             status: 'pending',
             
             // Venue Fields (Standardized)

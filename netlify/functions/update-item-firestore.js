@@ -81,24 +81,32 @@ exports.handler = async function (event, context) {
             if (updateData.name) updateFields.name = updateData.name;
             if (updateData.description) updateFields.description = updateData.description;
             
-            // Handle date and time combination for UK timezone
+            // Handle date and time as separate fields for Firestore
             if (updateData.date) {
-                let combinedDateTime;
+                // Store date as a separate field
+                updateFields.eventDate = updateData.date;
+                
+                // If time is provided, store it separately
                 if (updateData.time) {
-                    // Combine date and time for UK timezone
+                    updateFields.eventTime = updateData.time;
+                    
+                    // Also store the combined datetime for sorting/filtering
                     const dateStr = updateData.date;
                     const timeStr = updateData.time;
-                    combinedDateTime = new Date(`${dateStr}T${timeStr}:00+00:00`); // Treat as GMT/UTC
-                    console.log('Event update - Combined date/time:', {
-                        dateStr,
-                        timeStr,
+                    const combinedDateTime = new Date(`${dateStr}T${timeStr}:00+00:00`); // Treat as GMT/UTC
+                    updateFields.date = combinedDateTime; // Keep for backward compatibility
+                    
+                    console.log('Event update - Separate date/time fields:', {
+                        eventDate: updateData.date,
+                        eventTime: updateData.time,
                         combinedDateTime: combinedDateTime.toISOString()
                     });
                 } else {
-                    // Only date provided, set to start of day
-                    combinedDateTime = new Date(`${updateData.date}T00:00:00+00:00`);
+                    // Only date provided, set time to 00:00 for sorting
+                    const combinedDateTime = new Date(`${updateData.date}T00:00:00+00:00`);
+                    updateFields.date = combinedDateTime; // Keep for backward compatibility
+                    updateFields.eventTime = '00:00';
                 }
-                updateFields.date = combinedDateTime;
             }
             
             if (updateData.category) {
