@@ -244,8 +244,8 @@ exports.handler = async function (event, context) {
             };
         }
         
-        // Create date and handle timezone conversion properly
-        // The server runs in UTC, but we want to preserve the UK time as entered
+        // Create date in UK timezone
+        // Since this is a UK site, all times should be treated as UK time
         const constructedDate = new Date(`${dateStr}T${startTimeStr}:00`);
         if (isNaN(constructedDate.getTime())) {
             return {
@@ -265,8 +265,17 @@ exports.handler = async function (event, context) {
             isDST: constructedDate.getTimezoneOffset() < new Date(constructedDate.getFullYear(), 0, 1).getTimezoneOffset()
         });
         
-        // Store the date as intended (the timezone conversion should be handled by the client)
-        const eventDateIso = constructedDate.toISOString();
+        // For UK events, we want to preserve the time as entered
+        // The server runs in UTC, but we want to store the time as if it's UK time
+        // We'll create a proper UK timezone date
+        const ukDate = new Date(`${dateStr}T${startTimeStr}:00+00:00`); // Treat as GMT/UTC
+        const eventDateIso = ukDate.toISOString();
+        
+        console.log('UK timezone fix:', {
+            originalTime: `${dateStr}T${startTimeStr}:00`,
+            ukDate: ukDate.toString(),
+            finalISO: eventDateIso
+        });
         const slug = generateSlug(eventName, dateStr);
         
         // Handle venue linking

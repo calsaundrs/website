@@ -120,7 +120,8 @@ exports.handler = async function (event, context) {
         // Validate and create date
         let eventDateTime;
         try {
-            // Create date and add debugging
+            // Create date in UK timezone (Europe/London)
+            // Since this is a UK site, all times should be treated as UK time
             const constructedDate = new Date(`${eventDate}T${eventTime}:00`);
             
             // Debug: Log the timezone information
@@ -133,7 +134,18 @@ exports.handler = async function (event, context) {
                 isDST: constructedDate.getTimezoneOffset() < new Date(constructedDate.getFullYear(), 0, 1).getTimezoneOffset()
             });
             
-            eventDateTime = constructedDate.toISOString();
+            // For UK events, we want to preserve the time as entered
+            // The server runs in UTC, but we want to store the time as if it's UK time
+            // We'll create a proper UK timezone date
+            const ukDate = new Date(`${eventDate}T${eventTime}:00+00:00`); // Treat as GMT/UTC
+            eventDateTime = ukDate.toISOString();
+            
+            console.log('⏰ EVENT SUBMISSION: UK timezone fix:', {
+                originalTime: `${eventDate}T${eventTime}:00`,
+                ukDate: ukDate.toString(),
+                finalISO: eventDateTime
+            });
+            
         } catch (dateError) {
             console.error('Date parsing error:', dateError);
             // Fallback to current date/time
