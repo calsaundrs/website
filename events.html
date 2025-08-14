@@ -1283,6 +1283,10 @@
                 `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
             ).join('') : '';
             
+            const categoryTagsDesktop = event.category ? event.category.map(cat => 
+                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
+            ).join('') : '';
+            
                     // Handle image like the live events page
         const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
         
@@ -1316,8 +1320,8 @@
                                 <i class="fas fa-map-marker-alt text-xs mr-1"></i>
                                 ${venueName}
                             </p>
-                            <div class="flex flex-wrap gap-1 mb-4 overflow-hidden">
-                                ${categoryTags}
+                            <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
+                                ${categoryTagsDesktop}
                             </div>
                             <div class="flex justify-between items-center mt-auto">
                                 <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
