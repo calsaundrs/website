@@ -79,18 +79,20 @@
             const eventsHtml = events.map(event => {
                 // Parse the date and time
                 const eventDate = new Date(event.date);
+                
+                // For UK events, display times as stored (no timezone conversion)
                 const timeString = eventDate.toLocaleTimeString('en-GB', { 
                     hour: '2-digit', 
-                    minute: '2-digit',
-                    timeZone: 'Europe/London'
+                    minute: '2-digit'
+                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                 });
                 
                 const dateString = eventDate.toLocaleDateString('en-GB', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric',
-                    timeZone: 'Europe/London'
+                    day: 'numeric'
+                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                 });
 
                 // Get the original time from the date string

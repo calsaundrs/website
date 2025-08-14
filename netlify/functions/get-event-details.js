@@ -814,9 +814,11 @@ exports.handler = async function (event, context) {
                     if (isNaN(date.getTime())) {
                         return 'Time TBC';
                     }
+                    // For UK events, display times as stored (no timezone conversion)
                     return date.toLocaleTimeString('en-GB', { 
                         hour: 'numeric',
                         minute: '2-digit'
+                        // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                     });
                 } catch (error) {
                     return 'Time TBC';

@@ -520,9 +520,11 @@ exports.handler = async function (event, context) {
                 if (isNaN(date.getTime())) {
                     return 'Time TBC';
                 }
+                // For UK events, display times as stored (no timezone conversion)
                 return date.toLocaleTimeString('en-GB', { 
                     hour: 'numeric',
                     minute: '2-digit'
+                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                 });
             } catch (error) {
                 return 'Time TBC';
@@ -535,6 +537,7 @@ exports.handler = async function (event, context) {
                 if (isNaN(date.getTime())) {
                     return 'Date TBC';
                 }
+                // For UK events, display dates as stored (no timezone conversion)
                 return date.toLocaleDateString('en-GB', { 
                     weekday: 'long', 
                     day: 'numeric', 
@@ -542,6 +545,7 @@ exports.handler = async function (event, context) {
                     year: 'numeric',
                     hour: 'numeric',
                     minute: '2-digit'
+                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                 });
             } catch (error) {
                 return 'Date TBC';
