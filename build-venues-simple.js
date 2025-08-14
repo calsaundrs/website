@@ -51,6 +51,12 @@ async function getRealVenues() {
         }
         const venues = await response.json();
         
+        // Ensure venues is an array
+        if (!Array.isArray(venues)) {
+            console.warn('⚠️ API returned non-array venues, using fallback...');
+            return getSampleVenues();
+        }
+        
         console.log(`✅ Found ${venues.length} real venues from API`);
         return venues;
         
@@ -905,6 +911,42 @@ async function generateAllVenuePages() {
         
         // Get real venues from Firebase
         const venues = await getRealVenues();
+        
+        // Ensure venues is an array
+        if (!venues || !Array.isArray(venues)) {
+            console.warn('⚠️ No venues found, using sample venues...');
+            const sampleVenues = getSampleVenues();
+            console.log(`📄 Found ${sampleVenues.length} sample venues to generate`);
+            
+            const generatedFiles = [];
+            
+            for (const venue of sampleVenues) {
+                try {
+                    const filePath = await generateVenuePage(venue);
+                    generatedFiles.push(filePath);
+                } catch (error) {
+                    console.error(`Failed to generate page for ${venue.name}:`, error);
+                }
+            }
+            
+            console.log(`✅ Successfully generated ${generatedFiles.length} venue pages`);
+            
+            // Create a sitemap entry for venues
+            const sitemapEntries = generatedFiles.map(filePath => {
+                const slug = path.basename(filePath, '.html');
+                return `https://www.brumoutloud.co.uk/venue/${slug}`;
+            });
+            
+            console.log('📋 Venue URLs for sitemap:');
+            sitemapEntries.forEach(url => console.log(`  ${url}`));
+            
+            return {
+                totalVenues: sampleVenues.length,
+                generatedFiles: generatedFiles.length,
+                sitemapEntries: sitemapEntries
+            };
+        }
+        
         console.log(`📄 Found ${venues.length} venues to generate`);
         
         const generatedFiles = [];
