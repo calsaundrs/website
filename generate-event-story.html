@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Event Story - Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center">
+                <i class="fas fa-camera mr-3 text-purple-400"></i>
+                Generate Event Story
+            </h1>
+            
+            <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4">What this does:</h2>
+                <ul class="space-y-2 text-gray-300">
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Creates Instagram story images for events</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Uses site's design style and colors</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Includes event image, name, date, venue, and categories</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Perfect 9:16 aspect ratio for Instagram stories</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Professional branding with Brum Outloud logo</li>
+                </ul>
+            </div>
+            
+            <!-- Event Selection -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">Select an Event:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="events-grid">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Story Preview -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">Story Preview:</h3>
+                <div class="flex justify-center">
+                    <div id="story-preview" class="hidden">
+                        <div class="relative">
+                            <img id="story-image" class="w-64 h-auto rounded-lg shadow-lg" alt="Event Story">
+                            <div class="absolute top-2 right-2">
+                                <button id="download-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-download mr-1"></i>Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="no-preview" class="text-gray-400 text-center py-8">
+                        <i class="fas fa-image text-4xl mb-4"></i>
+                        <p>Select an event above to generate a story</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loading" class="hidden">
+                <div class="bg-gray-800 rounded-lg p-6 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+                    <p>Generating story image...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allEvents = [];
+        let selectedEvent = null;
+        
+        // Load events
+        async function loadEvents() {
+            try {
+                const response = await fetch('/.netlify/functions/get-events-firestore?limit=20');
+                const data = await response.json();
+                allEvents = data.events || [];
+                displayEvents();
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+        
+        // Display events in grid
+        function displayEvents() {
+            const grid = document.getElementById('events-grid');
+            grid.innerHTML = allEvents.map(event => {
+                const eventName = event.name || 'Unknown Event';
+                const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-GB') : 'Date TBC';
+                const venueName = event.venueName || 'Venue TBC';
+                const imageUrl = event.image?.url || 'https://placehold.co/300x200/1e1e1e/EAEAEA?text=Event';
+                
+                return `
+                    <div class="event-card bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors" 
+                         onclick="selectEvent('${event.id}', '${event.slug}')">
+                        <img src="${imageUrl}" alt="${eventName}" class="w-full h-32 object-cover rounded mb-3">
+                        <h4 class="font-semibold text-sm mb-1 line-clamp-2">${eventName}</h4>
+                        <p class="text-gray-400 text-xs mb-1">${eventDate}</p>
+                        <p class="text-gray-400 text-xs">${venueName}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Select event and generate story
+        async function selectEvent(eventId, eventSlug) {
+            selectedEvent = { id: eventId, slug: eventSlug };
+            
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('story-preview').classList.add('hidden');
+            document.getElementById('no-preview').classList.add('hidden');
+            
+            try {
+                const response = await fetch('/.netlify/functions/generate-event-story', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        eventId: eventId,
+                        eventSlug: eventSlug
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                // Display the story
+                document.getElementById('story-image').src = imageUrl;
+                document.getElementById('story-preview').classList.remove('hidden');
+                document.getElementById('no-preview').classList.add('hidden');
+                
+                // Setup download button
+                document.getElementById('download-btn').onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = imageUrl;
+                    link.download = `event-story-${eventSlug || eventId}.png`;
+                    link.click();
+                };
+                
+            } catch (error) {
+                console.error('Error generating story:', error);
+                alert('Error generating story image. Please try again.');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+        
+        // Load events on page load
+        document.addEventListener('DOMContentLoaded', loadEvents);
+    </script>
+</body>
+</html>
