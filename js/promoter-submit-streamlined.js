@@ -126,6 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Poster Processing
     async function handlePosterUpload(file) {
+        // Clear any validation errors
+        if (uploadArea) uploadArea.classList.remove('border-red-500');
+        
         // Show poster preview
         if (posterFilename) posterFilename.textContent = file.name;
         if (posterPreview) posterPreview.classList.remove('hidden');
@@ -371,6 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!contactEmail) {
                 errors.push('Contact email is required.');
                 document.getElementById('contact-email').classList.add('border-red-500');
+            }
+            
+            // Check poster upload
+            if (!posterUpload || !posterUpload.files || posterUpload.files.length === 0) {
+                errors.push('Event poster is required.');
+                if (uploadArea) uploadArea.classList.add('border-red-500');
             }
             
             // Check venue selection (support both old select and new search system)

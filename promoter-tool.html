@@ -275,7 +275,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <!-- Poster Upload Section -->
                     <div class="space-y-4">
                         <h3 class="text-lg sm:text-xl font-bold accent-color-secondary">
-                            <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster (Optional)
+                            <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster <span class="text-red-400">*</span>
                         </h3>
                         
                         <div class="relative inline-block mb-4">
@@ -300,8 +300,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <div id="upload-area" class="upload-area rounded-lg p-6 sm:p-8 text-center cursor-pointer">
                             <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-gray-400 mb-3 sm:mb-4"></i>
                             <p class="text-base sm:text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
-                            <p class="text-xs sm:text-sm text-gray-500">We'll attempt to extract event details automatically</p>
-                            <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
+                            <p class="text-xs sm:text-sm text-gray-500">Required - We'll attempt to extract event details automatically</p>
+                            <input type="file" id="poster-upload" name="promo-image" accept="image/*" required class="hidden">
                         </div>
 
                         <!-- Poster Preview -->
