@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Design System Brand Styles -->
     <style>
@@ -304,114 +305,30 @@
             }
             
             try {
-                // Create canvas with Instagram story dimensions (1080x1920)
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 1080;
-                canvas.height = 1920;
-                
-                // Scale factor for high resolution
-                const scale = 1080 / 320; // 320px is the display width
-                
-                // Set background
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Load and draw background image if exists
-                const event = allEvents.find(e => e.id === selectedEvent.id);
-                if (event && event.image?.url) {
-                    try {
-                        const img = new Image();
-                        img.crossOrigin = 'anonymous';
-                        await new Promise((resolve, reject) => {
-                            img.onload = resolve;
-                            img.onerror = reject;
-                            img.src = event.image.url;
-                        });
-                        
-                        // Draw background image
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        // Add gradient overlay
-                        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                        gradient.addColorStop(0, 'rgba(0,0,0,0.1)');
-                        gradient.addColorStop(0.5, 'rgba(0,0,0,0.4)');
-                        gradient.addColorStop(1, 'rgba(0,0,0,0.9)');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    } catch (error) {
-                        console.log('Background image failed to load, using gradient background');
-                        // Fallback gradient background
-                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                        gradient.addColorStop(0, '#0f172a');
-                        gradient.addColorStop(0.5, '#8B5CF6');
-                        gradient.addColorStop(1, '#E83A99');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    }
-                } else {
-                    // Gradient background
-                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                    gradient.addColorStop(0, '#0f172a');
-                    gradient.addColorStop(0.5, '#8B5CF6');
-                    gradient.addColorStop(1, '#E83A99');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Temporarily hide the download button to avoid capturing it
+                const downloadBtn = document.querySelector('#story-preview button');
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'none';
                 }
                 
-                // Set up text styles
-                ctx.textAlign = 'center';
-                ctx.font = `bold ${60 * scale}px 'Anton', sans-serif`;
+                // Capture the story container as an image
+                const canvas = await html2canvas(storyContainer, {
+                    width: 320,
+                    height: 569,
+                    scale: 3, // High resolution (960x1707)
+                    backgroundColor: '#000000',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false
+                });
                 
-                // Draw BRUM OUTLOUD header
-                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-                gradient.addColorStop(0, '#FFFFFF');
-                gradient.addColorStop(0.5, '#E83A99');
-                gradient.addColorStop(1, '#8B5CF6');
-                ctx.fillStyle = gradient;
-                ctx.fillText('BRUM OUTLOUD', canvas.width / 2, 120 * scale);
-                
-                // Subtitle
-                ctx.font = `${20 * scale}px 'Poppins', sans-serif`;
-                ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                ctx.fillText('LGBTQ+ EVENTS IN BIRMINGHAM', canvas.width / 2, 150 * scale);
-                
-                // Event name
-                ctx.font = `bold ${48 * scale}px 'Anton', sans-serif`;
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillText(event.name.toUpperCase(), canvas.width / 2, canvas.height - 400 * scale);
-                
-                // Venue
-                ctx.font = `bold ${32 * scale}px 'Poppins', sans-serif`;
-                ctx.fillStyle = '#E83A99';
-                ctx.fillText(event.venueName, canvas.width / 2, canvas.height - 320 * scale);
-                
-                // Date and time
-                if (event.date) {
-                    const date = new Date(event.date);
-                    const dateStr = date.toLocaleDateString('en-GB', { 
-                        weekday: 'short', 
-                        day: 'numeric', 
-                        month: 'short' 
-                    }).toUpperCase();
-                    
-                    ctx.font = `bold ${28 * scale}px 'Poppins', sans-serif`;
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillText(dateStr, canvas.width / 2, canvas.height - 240 * scale);
+                // Show the download button again
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'block';
                 }
-                
-                if (event.time) {
-                    ctx.font = `bold ${32 * scale}px 'Poppins', sans-serif`;
-                    ctx.fillStyle = '#E83A99';
-                    ctx.fillText(event.time, canvas.width / 2, canvas.height - 200 * scale);
-                }
-                
-                // Website
-                ctx.font = `bold ${24 * scale}px 'Poppins', sans-serif`;
-                ctx.fillStyle = '#E83A99';
-                ctx.fillText('BRUMOUTLOUD.CO.UK', canvas.width / 2, canvas.height - 120 * scale);
                 
                 // Download the image
+                const event = allEvents.find(e => e.id === selectedEvent.id);
                 canvas.toBlob((blob) => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -424,6 +341,12 @@
             } catch (error) {
                 console.error('Error generating image:', error);
                 alert('Error generating image. Please try again.');
+                
+                // Make sure download button is visible again
+                const downloadBtn = document.querySelector('#story-preview button');
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'block';
+                }
             }
         }
         
