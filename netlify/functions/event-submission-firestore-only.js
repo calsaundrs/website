@@ -354,7 +354,7 @@ exports.handler = async function (event, context) {
             // Categorization (Standardized)
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : 
                      (aiCategories && Array.isArray(aiCategories) ? aiCategories : 
-                     (submission.categoryIds ? [submission.categoryIds] : [])),
+                     (submission['category-select'] ? [submission['category-select']] : [])),
             
             // Links (Standardized)
             link: submission.link || '',
