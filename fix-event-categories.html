@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Event Categories - Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center">
+                <i class="fas fa-tags mr-3 text-purple-400"></i>
+                Fix Event Categories
+            </h1>
+            
+            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">What this does:</h2>
+                <ul class="space-y-2 text-gray-300">
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Normalizes category data for all existing events</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Converts string categories to arrays</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Auto-detects categories from event names and descriptions</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Ensures all events have proper category tags</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Makes the filter bar functional</li>
+                </ul>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Auto-detection includes:</h2>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Drag</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Nightclub</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Bar</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Social</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Live Music</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Theatre</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Workshop</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Kink</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Family</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Party</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Community</span>
+                    <span class="bg-blue-900/50 px-2 py-1 rounded">Educational</span>
+                </div>
+            </div>
+            
+            <button id="fix-categories-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-4">
+                <i class="fas fa-magic mr-2"></i>
+                Fix All Event Categories
+            </button>
+            
+            <div id="status" class="hidden">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Processing Status:</h3>
+                    <div id="status-content" class="space-y-2">
+                        <div class="flex items-center">
+                            <i class="fas fa-spinner fa-spin text-blue-400 mr-2"></i>
+                            <span>Initializing...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="results" class="hidden">
+                <div class="bg-green-900/50 border border-green-500 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-green-400">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Categories Fixed Successfully!
+                    </h3>
+                    <div id="results-content" class="space-y-2 text-green-300">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="error" class="hidden">
+                <div class="bg-red-900/50 border border-red-500 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-red-400">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Error Occurred
+                    </h3>
+                    <div id="error-content" class="text-red-300">
+                        <!-- Error will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fix-categories-btn').addEventListener('click', async function() {
+            const button = this;
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            const errorDiv = document.getElementById('error');
+            const statusContent = document.getElementById('status-content');
+            const resultsContent = document.getElementById('results-content');
+            const errorContent = document.getElementById('error-content');
+            
+            // Reset UI
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+            statusDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            
+            // Update status
+            statusContent.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-spinner fa-spin text-blue-400 mr-2"></i>
+                    <span>Connecting to database...</span>
+                </div>
+            `;
+            
+            try {
+                // Call the fix function
+                const response = await fetch('/.netlify/functions/fix-event-categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success results
+                    resultsContent.innerHTML = `
+                        <div class="space-y-2">
+                            <div><strong>Total Events:</strong> ${result.summary.totalEvents}</div>
+                            <div><strong>Updated:</strong> ${result.summary.updated}</div>
+                            <div><strong>Skipped (already correct):</strong> ${result.summary.skipped}</div>
+                            <div><strong>Errors:</strong> ${result.summary.errors}</div>
+                        </div>
+                    `;
+                    
+                    statusDiv.classList.add('hidden');
+                    resultsDiv.classList.remove('hidden');
+                    
+                    // Reset button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-check mr-2"></i>Categories Fixed!';
+                    button.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                    button.classList.add('bg-green-600', 'hover:bg-green-700');
+                    
+                } else {
+                    throw new Error(result.message || 'Unknown error occurred');
+                }
+                
+            } catch (error) {
+                console.error('Error fixing categories:', error);
+                
+                errorContent.innerHTML = `
+                    <div class="space-y-2">
+                        <div><strong>Error:</strong> ${error.message}</div>
+                        <div class="text-sm">Please check the console for more details.</div>
+                    </div>
+                `;
+                
+                statusDiv.classList.add('hidden');
+                errorDiv.classList.remove('hidden');
+                
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Try Again';
+                button.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                button.classList.add('bg-red-600', 'hover:bg-red-700');
+            }
+        });
+    </script>
+</body>
+</html>
