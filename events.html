@@ -1279,13 +1279,39 @@
                 minute: '2-digit' 
             });
             
-            const categoryTags = event.category ? event.category.map(cat => 
-                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
-            ).join('') : '';
+            // Create tag display for mobile - allow wrapping but limit to 5 tags max
+            const categoryTags = event.category && event.category.length > 0 ? (() => {
+                const maxVisibleTags = 5;
+                const visibleTags = event.category.slice(0, maxVisibleTags);
+                const remainingCount = event.category.length - maxVisibleTags;
+                
+                const tagElements = visibleTags.map(cat => 
+                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+                ).join('');
+                
+                if (remainingCount > 0) {
+                    return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full mr-1 mb-1">+${remainingCount} more</span>`;
+                }
+                
+                return tagElements;
+            })() : '';
             
-            const categoryTagsDesktop = event.category ? event.category.map(cat => 
-                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
-            ).join('') : '';
+            // Create elegant tag display for desktop - show max 3 tags + count
+            const categoryTagsDesktop = event.category && event.category.length > 0 ? (() => {
+                const maxVisibleTags = 3;
+                const visibleTags = event.category.slice(0, maxVisibleTags);
+                const remainingCount = event.category.length - maxVisibleTags;
+                
+                const tagElements = visibleTags.map(cat => 
+                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
+                ).join('');
+                
+                if (remainingCount > 0) {
+                    return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full flex-shrink-0">+${remainingCount} more</span>`;
+                }
+                
+                return tagElements;
+            })() : '';
             
                     // Handle image like the live events page
         const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
