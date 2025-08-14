@@ -95,12 +95,41 @@ exports.handler = async function(event, context) {
             });
         });
         
-        // Sort venues by name
-        venues.sort((a, b) => a.name.localeCompare(b.name));
+        // Filter out test venues and duplicates
+        const filteredVenues = [];
+        const seenNames = new Set();
         
-        console.log(`Venue List: Returning ${venues.length} venues successfully`);
-        console.log('Venues with images:', venues.filter(v => v.image).map(v => v.name));
-        console.log('Venues without images:', venues.filter(v => !v.image).map(v => v.name));
+        venues.forEach(venue => {
+            // Skip test venues
+            if (venue.name.toLowerCase().includes('test') || 
+                venue.name.toLowerCase().includes('untitled') ||
+                venue.name.toLowerCase().includes('minimal') ||
+                venue.name.toLowerCase().includes('enhanced') ||
+                venue.name.toLowerCase().includes('comprehensive') ||
+                venue.name.toLowerCase().includes('unified') ||
+                venue.name.toLowerCase().includes('fixed') ||
+                venue.name.toLowerCase().includes('link-only') ||
+                venue.name.toLowerCase().includes('admin workflow')) {
+                console.log(`Venue List: Skipping test venue: ${venue.name}`);
+                return;
+            }
+            
+            // Skip duplicates - keep the first one we see
+            if (seenNames.has(venue.name)) {
+                console.log(`Venue List: Skipping duplicate venue: ${venue.name}`);
+                return;
+            }
+            
+            seenNames.add(venue.name);
+            filteredVenues.push(venue);
+        });
+        
+        // Sort venues by name
+        filteredVenues.sort((a, b) => a.name.localeCompare(b.name));
+        
+        console.log(`Venue List: Returning ${filteredVenues.length} filtered venues successfully`);
+        console.log('Venues with images:', filteredVenues.filter(v => v.image).map(v => v.name));
+        console.log('Venues without images:', filteredVenues.filter(v => !v.image).map(v => v.name));
         
         return {
             statusCode: 200,
@@ -108,7 +137,7 @@ exports.handler = async function(event, context) {
                 ...headers,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(venues)
+            body: JSON.stringify(filteredVenues)
         };
 
     } catch (error) {
