@@ -93,6 +93,8 @@ function prepareStoryData(eventData) {
     // Extract event data
     const eventName = eventData['Event Name'] || eventData.name || 'Event';
     const eventDate = eventData['Date'] || eventData.date;
+    const eventTime = eventData['Time'] || eventData.time || eventData.startTime;
+    const doorsTime = eventData['Doors'] || eventData.doors || eventData.doorsTime;
     const eventDescription = eventData['Description'] || eventData.description || '';
     const venueName = eventData['Venue Name'] || eventData.venueName || 'Venue TBC';
     const eventImage = eventData.image?.url || eventData.promoImage || null;
@@ -110,12 +112,43 @@ function prepareStoryData(eventData) {
         });
     }
     
+    // Format time
+    let formattedTime = '';
+    if (eventTime) {
+        // Handle different time formats
+        if (typeof eventTime === 'string') {
+            formattedTime = eventTime;
+        } else if (eventTime instanceof Date) {
+            formattedTime = eventTime.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        }
+    }
+    
+    // Format doors time
+    let formattedDoorsTime = '';
+    if (doorsTime) {
+        if (typeof doorsTime === 'string') {
+            formattedDoorsTime = doorsTime;
+        } else if (doorsTime instanceof Date) {
+            formattedDoorsTime = doorsTime.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        }
+    }
+    
     // Prepare category text
     const categoryText = categories.slice(0, 3).join(' • ');
     
     return {
         eventName: eventName,
         eventDate: formattedDate,
+        eventTime: formattedTime,
+        doorsTime: formattedDoorsTime,
         eventDescription: eventDescription,
         venueName: venueName,
         eventImage: eventImage,
