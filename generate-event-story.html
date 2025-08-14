@@ -58,7 +58,7 @@
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Showcases beautiful poster images as backgrounds</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Professional Instagram story layout (9:16 ratio)</li>
                     <li><i class="fas fa-check text-green-400 mr-2"></i>Full Brum Outloud branding and colors</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Exports complete event data for external tools</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Downloads as high-quality PNG images (1080x1920)</li>
                 </ul>
             </div>
             
@@ -287,53 +287,144 @@
                     
                     <!-- Download Button with Brand Styling -->
                     <div class="absolute top-2 right-2">
-                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 text-accent-color px-3 py-1 rounded text-sm font-semibold hover:bg-accent-color/30 transition-all">
-                            <i class="fas fa-download mr-1"></i>DOWNLOAD
+                        <button onclick="downloadStoryImage()" class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 text-accent-color px-3 py-1 rounded text-sm font-semibold hover:bg-accent-color/30 transition-all">
+                            <i class="fas fa-download mr-1"></i>DOWNLOAD IMAGE
                         </button>
                     </div>
                 </div>
             `;
         }
         
-        // Download story data
-        function downloadStoryData(eventSlug) {
-            // Find the selected event data
-            const event = allEvents.find(e => e.id === selectedEvent.id);
-            if (!event) return;
+        // Download story as image
+        async function downloadStoryImage() {
+            const storyContainer = document.querySelector('#story-preview .bg-black');
+            if (!storyContainer) {
+                alert('No story to download');
+                return;
+            }
             
-            const storyData = {
-                eventName: event.name,
-                eventDate: event.date,
-                eventDescription: event.description,
-                venueName: event.venueName,
-                venueAddress: event.venue?.address,
-                categories: event.category || event.categories || [],
-                eventImage: event.image?.url || event.promoImage,
-                eventSlug: event.slug,
-                eventId: event.id,
-                website: 'https://brumoutloud.co.uk',
-                eventUrl: `https://brumoutloud.co.uk/event/${event.slug}`,
-                branding: {
-                    name: 'BRUM OUTLOUD',
-                    tagline: 'LGBTQ+ Events in Birmingham',
-                    colors: {
-                        primary: '#e83a9b',
-                        secondary: '#B564F7',
-                        background: '#0f172a'
+            try {
+                // Create canvas with Instagram story dimensions (1080x1920)
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 1080;
+                canvas.height = 1920;
+                
+                // Scale factor for high resolution
+                const scale = 1080 / 320; // 320px is the display width
+                
+                // Set background
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Load and draw background image if exists
+                const event = allEvents.find(e => e.id === selectedEvent.id);
+                if (event && event.image?.url) {
+                    try {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = event.image.url;
+                        });
+                        
+                        // Draw background image
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Add gradient overlay
+                        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                        gradient.addColorStop(0, 'rgba(0,0,0,0.1)');
+                        gradient.addColorStop(0.5, 'rgba(0,0,0,0.4)');
+                        gradient.addColorStop(1, 'rgba(0,0,0,0.9)');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    } catch (error) {
+                        console.log('Background image failed to load, using gradient background');
+                        // Fallback gradient background
+                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                        gradient.addColorStop(0, '#0f172a');
+                        gradient.addColorStop(0.5, '#8B5CF6');
+                        gradient.addColorStop(1, '#E83A99');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
                     }
+                } else {
+                    // Gradient background
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    gradient.addColorStop(0, '#0f172a');
+                    gradient.addColorStop(0.5, '#8B5CF6');
+                    gradient.addColorStop(1, '#E83A99');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
-            };
-            
-            const dataStr = JSON.stringify(storyData, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `event-story-${eventSlug}.json`;
-            link.click();
-            
-            URL.revokeObjectURL(url);
+                
+                // Set up text styles
+                ctx.textAlign = 'center';
+                ctx.font = `bold ${60 * scale}px 'Anton', sans-serif`;
+                
+                // Draw BRUM OUTLOUD header
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                gradient.addColorStop(0, '#FFFFFF');
+                gradient.addColorStop(0.5, '#E83A99');
+                gradient.addColorStop(1, '#8B5CF6');
+                ctx.fillStyle = gradient;
+                ctx.fillText('BRUM OUTLOUD', canvas.width / 2, 120 * scale);
+                
+                // Subtitle
+                ctx.font = `${20 * scale}px 'Poppins', sans-serif`;
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                ctx.fillText('LGBTQ+ EVENTS IN BIRMINGHAM', canvas.width / 2, 150 * scale);
+                
+                // Event name
+                ctx.font = `bold ${48 * scale}px 'Anton', sans-serif`;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillText(event.name.toUpperCase(), canvas.width / 2, canvas.height - 400 * scale);
+                
+                // Venue
+                ctx.font = `bold ${32 * scale}px 'Poppins', sans-serif`;
+                ctx.fillStyle = '#E83A99';
+                ctx.fillText(event.venueName, canvas.width / 2, canvas.height - 320 * scale);
+                
+                // Date and time
+                if (event.date) {
+                    const date = new Date(event.date);
+                    const dateStr = date.toLocaleDateString('en-GB', { 
+                        weekday: 'short', 
+                        day: 'numeric', 
+                        month: 'short' 
+                    }).toUpperCase();
+                    
+                    ctx.font = `bold ${28 * scale}px 'Poppins', sans-serif`;
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(dateStr, canvas.width / 2, canvas.height - 240 * scale);
+                }
+                
+                if (event.time) {
+                    ctx.font = `bold ${32 * scale}px 'Poppins', sans-serif`;
+                    ctx.fillStyle = '#E83A99';
+                    ctx.fillText(event.time, canvas.width / 2, canvas.height - 200 * scale);
+                }
+                
+                // Website
+                ctx.font = `bold ${24 * scale}px 'Poppins', sans-serif`;
+                ctx.fillStyle = '#E83A99';
+                ctx.fillText('BRUMOUTLOUD.CO.UK', canvas.width / 2, canvas.height - 120 * scale);
+                
+                // Download the image
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `brum-outloud-story-${event.slug || event.id}.png`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error generating image:', error);
+                alert('Error generating image. Please try again.');
+            }
         }
         
         // Load events on page load
