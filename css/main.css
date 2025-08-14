@@ -263,6 +263,17 @@ select:focus-visible {
         color: #FFFFFF;
         text-shadow: none;
     }
+    
+    /* Improve mobile text sizing for homepage hero */
+    .font-anton {
+        font-weight: 900 !important;
+    }
+    
+    /* Ensure mobile headings are bold and readable */
+    h1.font-anton {
+        font-weight: 900 !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
 }
 
 .filter-button {
