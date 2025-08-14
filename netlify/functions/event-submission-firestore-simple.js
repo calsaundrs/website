@@ -120,7 +120,20 @@ exports.handler = async function (event, context) {
         // Validate and create date
         let eventDateTime;
         try {
-            eventDateTime = new Date(`${eventDate}T${eventTime}`).toISOString();
+            // Create date and add debugging
+            const constructedDate = new Date(`${eventDate}T${eventTime}:00`);
+            
+            // Debug: Log the timezone information
+            console.log('⏰ EVENT SUBMISSION: Date construction debug:', {
+                eventDate,
+                eventTime,
+                constructedDate: constructedDate.toString(),
+                constructedDateISO: constructedDate.toISOString(),
+                timezoneOffset: constructedDate.getTimezoneOffset(),
+                isDST: constructedDate.getTimezoneOffset() < new Date(constructedDate.getFullYear(), 0, 1).getTimezoneOffset()
+            });
+            
+            eventDateTime = constructedDate.toISOString();
         } catch (dateError) {
             console.error('Date parsing error:', dateError);
             // Fallback to current date/time
