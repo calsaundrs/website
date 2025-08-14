@@ -376,11 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('contact-email').classList.add('border-red-500');
             }
             
-            // Check poster upload
-            if (!posterUpload || !posterUpload.files || posterUpload.files.length === 0) {
-                errors.push('Event poster is required.');
-                if (uploadArea) uploadArea.classList.add('border-red-500');
-            }
+            // Check poster upload (temporarily disabled for debugging)
+            // if (!posterUpload || !posterUpload.files || posterUpload.files.length === 0) {
+            //     errors.push('Event poster is required.');
+            //     if (uploadArea) uploadArea.classList.add('border-red-500');
+            // }
             
             // Check venue selection (support both old select and new search system)
             const venueId = document.getElementById('venue-id');
