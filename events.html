@@ -1252,7 +1252,31 @@
 
         // Create event card
         function createEventCard(event, type) {
-            const eventDate = new Date(event.date);
+            // Debug: Log the event data to see what we're working with
+            console.log('Creating event card for:', event.name, 'Date field:', event.date, 'EventDate field:', event.eventDate, 'EventTime field:', event.eventTime);
+            
+            // Try to get the date from multiple possible sources
+            let eventDate;
+            if (event.date) {
+                eventDate = new Date(event.date);
+            } else if (event.eventDate && event.eventTime) {
+                // Use the new separate date/time fields
+                eventDate = new Date(`${event.eventDate}T${event.eventTime}:00+00:00`);
+            } else if (event.eventDate) {
+                // Only date available
+                eventDate = new Date(`${event.eventDate}T00:00:00+00:00`);
+            } else {
+                // Fallback to current date
+                console.warn('No date found for event:', event.name);
+                eventDate = new Date();
+            }
+            
+            // Check if date is valid
+            if (isNaN(eventDate.getTime())) {
+                console.error('Invalid date for event:', event.name, 'Date value:', event.date);
+                eventDate = new Date(); // Fallback
+            }
+            
             const formattedDate = eventDate.toLocaleDateString('en-GB', { 
                 weekday: 'short', 
                 day: 'numeric', 
