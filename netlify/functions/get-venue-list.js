@@ -95,9 +95,9 @@ exports.handler = async function(event, context) {
             });
         });
         
-        // Filter out test venues and duplicates
+        // Filter out test venues and handle duplicates intelligently
         const filteredVenues = [];
-        const seenNames = new Set();
+        const venueGroups = new Map(); // Group venues by similar names
         
         venues.forEach(venue => {
             // Skip test venues
@@ -114,14 +114,72 @@ exports.handler = async function(event, context) {
                 return;
             }
             
-            // Skip duplicates - keep the first one we see
-            if (seenNames.has(venue.name)) {
-                console.log(`Venue List: Skipping duplicate venue: ${venue.name}`);
-                return;
+            // Create a normalized name for grouping (remove "The" prefix and common variations)
+            let normalizedName = venue.name.toLowerCase()
+                .replace(/^the\s+/, '') // Remove "The" prefix
+                .replace(/\s+club$/, '') // Remove "Club" suffix
+                .replace(/\s+complex$/, '') // Remove "Complex" suffix
+                .replace(/\s+bar$/, '') // Remove "Bar" suffix
+                .replace(/\s+pub$/, '') // Remove "Pub" suffix
+                .replace(/\s+inn$/, '') // Remove "Inn" suffix
+                .trim();
+            
+            // Special cases for known venue groups
+            if (normalizedName.includes('nightingale')) {
+                normalizedName = 'nightingale';
+            }
+            if (normalizedName.includes('glee')) {
+                normalizedName = 'glee';
+            }
+            if (normalizedName.includes('mac') || normalizedName.includes('midlands art')) {
+                normalizedName = 'mac';
             }
             
-            seenNames.add(venue.name);
-            filteredVenues.push(venue);
+            // Group venues by normalized name
+            if (!venueGroups.has(normalizedName)) {
+                venueGroups.set(normalizedName, []);
+            }
+            venueGroups.get(normalizedName).push(venue);
+        });
+        
+        // For each group, select the best venue
+        venueGroups.forEach((venueGroup, normalizedName) => {
+            if (venueGroup.length === 1) {
+                // Only one venue in group, keep it
+                filteredVenues.push(venueGroup[0]);
+            } else {
+                // Multiple venues in group, select the best one
+                console.log(`Venue List: Multiple venues for "${normalizedName}":`, venueGroup.map(v => v.name));
+                
+                // Priority order: venues with images > venues with complete profiles > approved status > first alphabetically
+                const sortedVenues = venueGroup.sort((a, b) => {
+                    // First priority: venues with images
+                    const aHasImage = a.image && a.image.url;
+                    const bHasImage = b.image && b.image.url;
+                    if (aHasImage && !bHasImage) return -1;
+                    if (!aHasImage && bHasImage) return 1;
+                    
+                    // Second priority: venues with more complete profiles (address, description, website)
+                    const aCompleteness = (a.address && a.address !== 'Address to be added' ? 1 : 0) + 
+                                        (a.description && a.description.trim() !== '' ? 1 : 0) + 
+                                        (a.website && a.website.trim() !== '' ? 1 : 0);
+                    const bCompleteness = (b.address && b.address !== 'Address to be added' ? 1 : 0) + 
+                                        (b.description && b.description.trim() !== '' ? 1 : 0) + 
+                                        (b.website && b.website.trim() !== '' ? 1 : 0);
+                    if (aCompleteness !== bCompleteness) return bCompleteness - aCompleteness;
+                    
+                    // Third priority: approved status
+                    if (a.status === 'approved' && b.status !== 'approved') return -1;
+                    if (a.status !== 'approved' && b.status === 'approved') return 1;
+                    
+                    // Fourth priority: alphabetical order
+                    return a.name.localeCompare(b.name);
+                });
+                
+                const selectedVenue = sortedVenues[0];
+                console.log(`Venue List: Selected "${selectedVenue.name}" for group "${normalizedName}"`);
+                filteredVenues.push(selectedVenue);
+            }
         });
         
         // Sort venues by name
