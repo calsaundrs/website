@@ -1282,11 +1282,13 @@
             const formattedDate = eventDate.toLocaleDateString('en-GB', { 
                 weekday: 'short', 
                 day: 'numeric', 
-                month: 'short' 
+                month: 'short',
+                timeZone: 'UTC' // Display dates as stored (no timezone conversion)
             });
             const formattedTime = eventDate.toLocaleTimeString('en-GB', { 
                 hour: '2-digit', 
-                minute: '2-digit' 
+                minute: '2-digit',
+                timeZone: 'UTC' // Display times as stored (no timezone conversion)
             });
             
             // Create tag display for mobile - allow wrapping but limit to 5 tags max
