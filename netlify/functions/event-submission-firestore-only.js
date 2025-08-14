@@ -155,6 +155,7 @@ exports.handler = async function (event, context) {
             
             console.log('Form data parsed successfully');
             console.log('Fields received:', Object.keys(submission));
+            console.log('Category field:', submission['category-select']);
             console.log('Image file:', imageFileName ? { name: imageFileName, size: imageBuffer?.length } : 'No image');
             
         } catch (parseError) {
@@ -354,7 +355,13 @@ exports.handler = async function (event, context) {
             // Categorization (Standardized)
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : 
                      (aiCategories && Array.isArray(aiCategories) ? aiCategories : 
-                     (submission['category-select'] ? [submission['category-select']] : [])),
+                     (submission['category-select'] ? (() => {
+                         console.log('Processing category:', submission['category-select']);
+                         return [submission['category-select']];
+                     })() : (() => {
+                         console.log('No category found in submission');
+                         return [];
+                     })())),
             
             // Links (Standardized)
             link: submission.link || '',

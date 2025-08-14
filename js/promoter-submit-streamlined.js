@@ -473,7 +473,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add the venue ID
                 eventData.venueId = finalVenueId;
                 
+                // Debug: Check specific fields
                 console.log('Submitting event data:', eventData);
+                console.log('Category field value:', eventData['category-select']);
+                console.log('All form fields:', Object.keys(eventData));
                 
                 // For now, let's try sending as JSON to see if that works
                 const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
