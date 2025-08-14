@@ -128,28 +128,101 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
+                const result = await response.json();
                 
-                // Display the story
-                document.getElementById('story-image').src = imageUrl;
-                document.getElementById('story-preview').classList.remove('hidden');
-                document.getElementById('no-preview').classList.add('hidden');
-                
-                // Setup download button
-                document.getElementById('download-btn').onclick = () => {
-                    const link = document.createElement('a');
-                    link.href = imageUrl;
-                    link.download = `event-story-${eventSlug || eventId}.png`;
-                    link.click();
-                };
+                if (result.success) {
+                    // Display the story data
+                    displayStoryPreview(result.storyData);
+                    document.getElementById('story-preview').classList.remove('hidden');
+                    document.getElementById('no-preview').classList.add('hidden');
+                } else {
+                    throw new Error(result.error || 'Failed to generate story data');
+                }
                 
             } catch (error) {
                 console.error('Error generating story:', error);
-                alert('Error generating story image. Please try again.');
+                alert('Error generating story data. Please try again.');
             } finally {
                 document.getElementById('loading').classList.add('hidden');
             }
+        }
+        
+        // Display story preview
+        function displayStoryPreview(storyData) {
+            const previewContainer = document.getElementById('story-preview');
+            
+            previewContainer.innerHTML = `
+                <div class="relative">
+                    <div class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 rounded-lg p-6 w-80 h-96 flex flex-col justify-between relative overflow-hidden">
+                        <!-- Background pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="grid grid-cols-8 gap-1">
+                                ${Array(64).fill('<div class="w-2 h-2 bg-white rounded"></div>').join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Top accent line -->
+                        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-pink-500 rounded"></div>
+                        
+                        <!-- Event image or placeholder -->
+                        <div class="flex justify-center mt-8">
+                            ${storyData.eventImage ? 
+                                `<img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-32 h-32 rounded-full object-cover border-4 border-pink-500">` :
+                                `<div class="w-32 h-32 rounded-full bg-pink-500 flex items-center justify-center">
+                                    <i class="fas fa-calendar text-white text-2xl"></i>
+                                </div>`
+                            }
+                        </div>
+                        
+                        <!-- Event content -->
+                        <div class="text-center mt-4 flex-1">
+                            <h3 class="text-white font-bold text-lg mb-2 leading-tight">${storyData.eventName}</h3>
+                            ${storyData.eventDate ? `<p class="text-gray-300 text-sm mb-2">${storyData.eventDate}</p>` : ''}
+                            <p class="text-purple-400 font-semibold text-sm mb-2">${storyData.venueName}</p>
+                            ${storyData.categoryText ? `<p class="text-white text-xs">${storyData.categoryText}</p>` : ''}
+                        </div>
+                        
+                        <!-- Bottom branding -->
+                        <div class="text-center mt-4">
+                            <p class="text-white font-bold text-sm">BRUM OUTLOUD</p>
+                            <p class="text-pink-500 text-xs">LGBTQ+ EVENTS IN BIRMINGHAM</p>
+                            <p class="text-white text-xs mt-2">TAP TO VIEW DETAILS</p>
+                        </div>
+                        
+                        <!-- Bottom accent line -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-pink-500 rounded"></div>
+                    </div>
+                    
+                    <div class="absolute top-2 right-2">
+                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm">
+                            <i class="fas fa-download mr-1"></i>Copy Data
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Download story data
+        function downloadStoryData(eventSlug) {
+            const storyData = {
+                eventName: selectedEvent.name,
+                eventDate: selectedEvent.date,
+                venueName: selectedEvent.venueName,
+                categories: selectedEvent.categories,
+                eventSlug: eventSlug,
+                website: 'https://brumoutloud.co.uk'
+            };
+            
+            const dataStr = JSON.stringify(storyData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `event-story-${eventSlug}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
         }
         
         // Load events on page load

@@ -234,15 +234,14 @@ async function getPendingEvents(limit, offset) {
                 recurringPattern: eventData.recurringPattern,
                 recurringGroupId: eventData.recurringGroupId,
                 seriesId: eventData.seriesId,
-                isRecurring: eventData.isRecurring,
+                isRecurring: isRecurring,
                 status: eventData.status,
                 createdAt: eventData.createdAt || eventData.submittedAt || new Date(),
                 updatedAt: eventData.updatedAt,
                 submittedBy: eventData.submittedBy,
                 submittedAt: eventData.submittedAt,
                 notes: eventData.notes || '',
-                isPastEvent: isPastEvent,
-                isRecurring: isRecurring
+                isPastEvent: isPastEvent
             });
         });
 

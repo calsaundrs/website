@@ -284,7 +284,6 @@ exports.handler = async (event, context) => {
                         }
                     }
                 }
-                }
                 
                 // Check if update is needed
                 const needsUpdate = !Array.isArray(currentCategories) || 
