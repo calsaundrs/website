@@ -836,21 +836,7 @@ function getVenueTemplate() {
                         </div>
                         {{/if}}
 
-                        <!-- Vibe & Atmosphere -->
-                        {{#if venue.vibeTags.length}}
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-heart mr-2 text-accent-color"></i>Vibe & Atmosphere
-                            </h3>
-                            <div class="flex flex-wrap justify-center gap-2">
-                                {{#each venue.vibeTags}}
-                                <span class="px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full text-sm border border-pink-500/30">
-                                    {{this}}
-                                </span>
-                                {{/each}}
-                            </div>
-                        </div>
-                        {{/if}}
+
 
                         <!-- Venue Features -->
                         {{#if venue.venueFeatures.length}}
