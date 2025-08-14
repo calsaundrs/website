@@ -19,11 +19,11 @@
             <div class="bg-gray-800 rounded-lg p-6 mb-8">
                 <h2 class="text-xl font-semibold mb-4">What this does:</h2>
                 <ul class="space-y-2 text-gray-300">
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Creates Instagram story images for events</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Uses site's design style and colors</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Includes event image, name, date, venue, and categories</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Perfect 9:16 aspect ratio for Instagram stories</li>
-                    <li><i class="fas fa-check text-green-400 mr-2"></i>Professional branding with Brum Outloud logo</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Loads all events like the main events page</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Showcases beautiful poster images as backgrounds</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Professional Instagram story layout (9:16 ratio)</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Full Brum Outloud branding and colors</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Exports complete event data for external tools</li>
                 </ul>
             </div>
             
@@ -73,9 +73,11 @@
         // Load events
         async function loadEvents() {
             try {
-                const response = await fetch('/.netlify/functions/get-events-firestore?limit=20');
+                // Use the same API as the main events page
+                const response = await fetch('/.netlify/functions/get-events-firestore');
                 const data = await response.json();
                 allEvents = data.events || [];
+                console.log(`Loaded ${allEvents.length} events`);
                 displayEvents();
             } catch (error) {
                 console.error('Error loading events:', error);
@@ -105,7 +107,8 @@
         
         // Select event and generate story
         async function selectEvent(eventId, eventSlug) {
-            selectedEvent = { id: eventId, slug: eventSlug };
+            const event = allEvents.find(e => e.id === eventId);
+            selectedEvent = event;
             
             // Show loading
             document.getElementById('loading').classList.remove('hidden');
@@ -153,49 +156,79 @@
             
             previewContainer.innerHTML = `
                 <div class="relative">
-                    <div class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 rounded-lg p-6 w-80 h-96 flex flex-col justify-between relative overflow-hidden">
-                        <!-- Background pattern -->
-                        <div class="absolute inset-0 opacity-5">
-                            <div class="grid grid-cols-8 gap-1">
-                                ${Array(64).fill('<div class="w-2 h-2 bg-white rounded"></div>').join('')}
+                    <!-- Instagram Story Container (9:16 aspect ratio) -->
+                    <div class="bg-black rounded-lg overflow-hidden w-80 h-[426px] relative">
+                        <!-- Background Image or Gradient -->
+                        ${storyData.eventImage ? 
+                            `<div class="absolute inset-0">
+                                <img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                            </div>` :
+                            `<div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900"></div>`
+                        }
+                        
+                        <!-- Top Branding Bar -->
+                        <div class="absolute top-0 left-0 right-0 bg-gradient-to-r from-pink-500 to-purple-600 p-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                        <span class="text-pink-500 font-bold text-xs">BO</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-bold text-sm">BRUM OUTLOUD</p>
+                                        <p class="text-white/80 text-xs">LGBTQ+ Events</p>
+                                    </div>
+                                </div>
+                                <div class="text-white text-xs">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    ${storyData.eventDate ? new Date(storyData.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'TBC'}
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Top accent line -->
-                        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-pink-500 rounded"></div>
-                        
-                        <!-- Event image or placeholder -->
-                        <div class="flex justify-center mt-8">
-                            ${storyData.eventImage ? 
-                                `<img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-32 h-32 rounded-full object-cover border-4 border-pink-500">` :
-                                `<div class="w-32 h-32 rounded-full bg-pink-500 flex items-center justify-center">
-                                    <i class="fas fa-calendar text-white text-2xl"></i>
-                                </div>`
+                        <!-- Event Content -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6">
+                            <!-- Event Name -->
+                            <h2 class="text-white font-bold text-2xl mb-3 leading-tight drop-shadow-lg">
+                                ${storyData.eventName}
+                            </h2>
+                            
+                            <!-- Venue -->
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-map-marker-alt text-pink-400 mr-2"></i>
+                                <p class="text-white font-semibold text-lg">${storyData.venueName}</p>
+                            </div>
+                            
+                            <!-- Categories -->
+                            ${storyData.categoryText ? 
+                                `<div class="flex flex-wrap gap-2 mb-4">
+                                    ${storyData.categories.slice(0, 3).map(cat => 
+                                        `<span class="bg-pink-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">${cat}</span>`
+                                    ).join('')}
+                                </div>` : ''
                             }
+                            
+                            <!-- Call to Action -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-arrow-right text-pink-400"></i>
+                                    <span class="text-white font-semibold">View Details</span>
+                                </div>
+                                <div class="text-white/80 text-sm">
+                                    brumoutloud.co.uk
+                                </div>
+                            </div>
                         </div>
                         
-                        <!-- Event content -->
-                        <div class="text-center mt-4 flex-1">
-                            <h3 class="text-white font-bold text-lg mb-2 leading-tight">${storyData.eventName}</h3>
-                            ${storyData.eventDate ? `<p class="text-gray-300 text-sm mb-2">${storyData.eventDate}</p>` : ''}
-                            <p class="text-purple-400 font-semibold text-sm mb-2">${storyData.venueName}</p>
-                            ${storyData.categoryText ? `<p class="text-white text-xs">${storyData.categoryText}</p>` : ''}
-                        </div>
-                        
-                        <!-- Bottom branding -->
-                        <div class="text-center mt-4">
-                            <p class="text-white font-bold text-sm">BRUM OUTLOUD</p>
-                            <p class="text-pink-500 text-xs">LGBTQ+ EVENTS IN BIRMINGHAM</p>
-                            <p class="text-white text-xs mt-2">TAP TO VIEW DETAILS</p>
-                        </div>
-                        
-                        <!-- Bottom accent line -->
-                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-pink-500 rounded"></div>
+                        <!-- Decorative Elements -->
+                        <div class="absolute top-20 left-4 w-1 h-16 bg-gradient-to-b from-pink-500 to-transparent"></div>
+                        <div class="absolute top-20 right-4 w-1 h-16 bg-gradient-to-b from-purple-500 to-transparent"></div>
                     </div>
                     
+                    <!-- Download Button -->
                     <div class="absolute top-2 right-2">
-                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-download mr-1"></i>Copy Data
+                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm shadow-lg">
+                            <i class="fas fa-download mr-1"></i>Download
                         </button>
                     </div>
                 </div>
@@ -204,13 +237,31 @@
         
         // Download story data
         function downloadStoryData(eventSlug) {
+            // Find the selected event data
+            const event = allEvents.find(e => e.id === selectedEvent.id);
+            if (!event) return;
+            
             const storyData = {
-                eventName: selectedEvent.name,
-                eventDate: selectedEvent.date,
-                venueName: selectedEvent.venueName,
-                categories: selectedEvent.categories,
-                eventSlug: eventSlug,
-                website: 'https://brumoutloud.co.uk'
+                eventName: event.name,
+                eventDate: event.date,
+                eventDescription: event.description,
+                venueName: event.venueName,
+                venueAddress: event.venue?.address,
+                categories: event.category || event.categories || [],
+                eventImage: event.image?.url || event.promoImage,
+                eventSlug: event.slug,
+                eventId: event.id,
+                website: 'https://brumoutloud.co.uk',
+                eventUrl: `https://brumoutloud.co.uk/event/${event.slug}`,
+                branding: {
+                    name: 'BRUM OUTLOUD',
+                    tagline: 'LGBTQ+ Events in Birmingham',
+                    colors: {
+                        primary: '#e83a9b',
+                        secondary: '#B564F7',
+                        background: '#0f172a'
+                    }
+                }
             };
             
             const dataStr = JSON.stringify(storyData, null, 2);
