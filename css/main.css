@@ -275,17 +275,17 @@ select:focus-visible {
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
     
-    /* Make homepage hero text much larger on mobile */
+    /* Make homepage hero text larger on mobile (reduced by half) */
     h1.font-anton.text-8xl {
-        font-size: 8rem !important; /* 10x larger than default */
+        font-size: 4rem !important; /* Reduced by half from 8rem */
         line-height: 1.1 !important; /* Better spacing */
         letter-spacing: -0.02em !important; /* Slightly tighter letter spacing */
     }
     
-    /* Ensure mobile hero text is extremely prominent */
+    /* Ensure mobile hero text is prominent but not overwhelming */
     @media (max-width: 640px) {
         h1.font-anton.text-8xl {
-            font-size: 10rem !important; /* Even larger on small mobile */
+            font-size: 5rem !important; /* Reduced by half from 10rem */
             line-height: 1.0 !important; /* Better spacing for large text */
             letter-spacing: -0.03em !important; /* Tighter letter spacing for large text */
         }
