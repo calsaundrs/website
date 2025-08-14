@@ -100,22 +100,9 @@ exports.handler = async function(event, context) {
     // Register Handlebars helpers
     registerHandlebarsHelpers();
 
-    // Use Google Places image as fallback if venue has no Cloudinary image
-    let venueWithImage = venue;
-    if ((!venue.image || venue.image.url.includes('placehold.co')) && googlePlacesData.images && googlePlacesData.images.length > 0) {
-      console.log(`🖼️ Using Google Places image for ${venue.name} (no Cloudinary image found)`);
-      venueWithImage = {
-        ...venue,
-        image: {
-          url: googlePlacesData.images[0].url,
-          source: 'google_places'
-        }
-      };
-    }
-
     // Prepare template data
     const templateData = {
-      venue: venueWithImage,
+      venue: venue,
       googlePlaces: googlePlacesData,
       upcomingEvents: upcomingEvents,
       hasUpcomingEvents: upcomingEvents.length > 0,
@@ -233,34 +220,40 @@ function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
     
-    // 1. First try Cloudinary public ID
-    const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
-    if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
+    // 1. First try photoUrl (new venue format) - same as venue listing function
+    const photoUrl = venueData.photoUrl || venueData['Photo URL'];
+    if (photoUrl) {
+        imageUrl = photoUrl;
     } else {
-        // 2. Try to find any image field that might contain a Cloudinary URL
-        const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
-        for (const field of possibleImageFields) {
-            const imageData = venueData[field];
-            if (imageData) {
-                // Check if it's already a Cloudinary URL
-                if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
-                    imageUrl = imageData;
-                    break;
-                }
-                // Check if it's an object with a Cloudinary URL
-                if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
-                    imageUrl = imageData.url;
-                    break;
+        // 2. Try Cloudinary public ID (legacy format)
+        const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
+        if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
+            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`;
+        } else {
+            // 3. Try to find any image field that might contain a Cloudinary URL
+            const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl'];
+            for (const field of possibleImageFields) {
+                const imageData = venueData[field];
+                if (imageData) {
+                    // Check if it's already a Cloudinary URL
+                    if (typeof imageData === 'string' && imageData.includes('cloudinary.com')) {
+                        imageUrl = imageData;
+                        break;
+                    }
+                    // Check if it's an object with a Cloudinary URL
+                    if (imageData && typeof imageData === 'object' && imageData.url && imageData.url.includes('cloudinary.com')) {
+                        imageUrl = imageData.url;
+                        break;
+                    }
                 }
             }
-        }
-        
-        // 3. If still no image, generate a consistent placeholder based on venue name
-        if (!imageUrl) {
-            const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
-            const encodedName = encodeURIComponent(venueName);
-            imageUrl = `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodedName}`;
+            
+            // 4. If still no image, generate a consistent placeholder based on venue name
+            if (!imageUrl) {
+                const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
+                const encodedName = encodeURIComponent(venueName);
+                imageUrl = `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodedName}`;
+            }
         }
     }
     
