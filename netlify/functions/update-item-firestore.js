@@ -80,10 +80,27 @@ exports.handler = async function (event, context) {
             // Handle event-specific fields with standardized names
             if (updateData.name) updateFields.name = updateData.name;
             if (updateData.description) updateFields.description = updateData.description;
+            
+            // Handle date and time combination for UK timezone
             if (updateData.date) {
-                // Convert date string to Firestore timestamp
-                updateFields.date = new Date(updateData.date);
+                let combinedDateTime;
+                if (updateData.time) {
+                    // Combine date and time for UK timezone
+                    const dateStr = updateData.date;
+                    const timeStr = updateData.time;
+                    combinedDateTime = new Date(`${dateStr}T${timeStr}:00+00:00`); // Treat as GMT/UTC
+                    console.log('Event update - Combined date/time:', {
+                        dateStr,
+                        timeStr,
+                        combinedDateTime: combinedDateTime.toISOString()
+                    });
+                } else {
+                    // Only date provided, set to start of day
+                    combinedDateTime = new Date(`${updateData.date}T00:00:00+00:00`);
+                }
+                updateFields.date = combinedDateTime;
             }
+            
             if (updateData.category) {
                 // Handle category as array (already processed by frontend)
                 updateFields.category = Array.isArray(updateData.category) ? updateData.category : [updateData.category];
