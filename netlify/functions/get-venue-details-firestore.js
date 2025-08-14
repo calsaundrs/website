@@ -100,9 +100,22 @@ exports.handler = async function(event, context) {
     // Register Handlebars helpers
     registerHandlebarsHelpers();
 
+    // Use Google Places image as fallback if venue has no Cloudinary image
+    let venueWithImage = venue;
+    if ((!venue.image || venue.image.url.includes('placehold.co')) && googlePlacesData.images && googlePlacesData.images.length > 0) {
+      console.log(`🖼️ Using Google Places image for ${venue.name} (no Cloudinary image found)`);
+      venueWithImage = {
+        ...venue,
+        image: {
+          url: googlePlacesData.images[0].url,
+          source: 'google_places'
+        }
+      };
+    }
+
     // Prepare template data
     const templateData = {
-      venue: venue,
+      venue: venueWithImage,
       googlePlaces: googlePlacesData,
       upcomingEvents: upcomingEvents,
       hasUpcomingEvents: upcomingEvents.length > 0,

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Venues with Google Places Images</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Update Venues with Google Places Images</h1>
+        
+        <div class="bg-blue-900 p-6 rounded-lg mb-6">
+            <h2 class="text-xl font-bold mb-4">What this does:</h2>
+            <ul class="list-disc list-inside space-y-2 text-sm">
+                <li>Finds venues with placeholder images</li>
+                <li>Checks if they have Google Places data</li>
+                <li>Updates them with Google Places images</li>
+                <li>Makes them appear in venue listings</li>
+            </ul>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Step 1: Find Venues with Placeholders</h3>
+                <button id="findVenues" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Find Venues with Placeholders
+                </button>
+                <div id="venuesList" class="mt-4 text-sm max-h-60 overflow-y-auto"></div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Step 2: Update with Google Images</h3>
+                <button id="updateVenues" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" disabled>
+                    Update Selected Venues
+                </button>
+                <div id="updateResults" class="mt-4 text-sm"></div>
+            </div>
+        </div>
+        
+        <div class="mt-8 bg-gray-800 p-6 rounded-lg">
+            <h3 class="text-lg font-bold mb-4">Progress Log</h3>
+            <div id="progressLog" class="text-sm space-y-2 max-h-60 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        let venuesWithPlaceholders = [];
+        
+        document.getElementById('findVenues').addEventListener('click', async () => {
+            const venuesList = document.getElementById('venuesList');
+            const updateBtn = document.getElementById('updateVenues');
+            const progressLog = document.getElementById('progressLog');
+            
+            venuesList.innerHTML = 'Finding venues...';
+            progressLog.innerHTML = '';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
+                const data = await response.json();
+                
+                venuesWithPlaceholders = data.venues.filter(venue => 
+                    venue.image && venue.image.url && venue.image.url.includes('placehold.co')
+                );
+                
+                if (venuesWithPlaceholders.length === 0) {
+                    venuesList.innerHTML = '<p class="text-green-400">✅ No venues with placeholder images found!</p>';
+                    updateBtn.disabled = true;
+                } else {
+                    venuesList.innerHTML = `
+                        <p class="text-yellow-400 mb-2">Found ${venuesWithPlaceholders.length} venues with placeholders:</p>
+                        <div class="space-y-1">
+                            ${venuesWithPlaceholders.map(venue => `
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="venue-${venue.id}" value="${venue.id}" checked>
+                                    <label for="venue-${venue.id}" class="text-sm">${venue.name}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    updateBtn.disabled = false;
+                    progressLog.innerHTML += `<p class="text-blue-400">📋 Found ${venuesWithPlaceholders.length} venues with placeholder images</p>`;
+                }
+            } catch (error) {
+                venuesList.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
+            }
+        });
+        
+        document.getElementById('updateVenues').addEventListener('click', async () => {
+            const updateResults = document.getElementById('updateResults');
+            const progressLog = document.getElementById('progressLog');
+            
+            updateResults.innerHTML = 'Updating venues...';
+            
+            const selectedVenues = venuesWithPlaceholders.filter(venue => 
+                document.getElementById(`venue-${venue.id}`).checked
+            );
+            
+            if (selectedVenues.length === 0) {
+                updateResults.innerHTML = '<p class="text-red-400">❌ No venues selected</p>';
+                return;
+            }
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const venue of selectedVenues) {
+                try {
+                    progressLog.innerHTML += `<p class="text-blue-400">🔄 Processing: ${venue.name}</p>`;
+                    
+                    const response = await fetch('/.netlify/functions/update-venue-with-google-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ venueId: venue.id })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        progressLog.innerHTML += `<p class="text-green-400">✅ Updated: ${venue.name} - ${result.message}</p>`;
+                        successCount++;
+                    } else {
+                        progressLog.innerHTML += `<p class="text-yellow-400">⚠️ Skipped: ${venue.name} - ${result.message}</p>`;
+                        errorCount++;
+                    }
+                } catch (error) {
+                    progressLog.innerHTML += `<p class="text-red-400">❌ Error: ${venue.name} - ${error.message}</p>`;
+                    errorCount++;
+                }
+                
+                // Small delay to avoid overwhelming the API
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            updateResults.innerHTML = `
+                <div class="text-green-400">
+                    <p>✅ Update complete!</p>
+                    <p>Success: ${successCount}</p>
+                    <p>Errors: ${errorCount}</p>
+                </div>
+            `;
+            
+            progressLog.innerHTML += `<p class="text-green-400">🎉 Update process completed</p>`;
+        });
+    </script>
+</body>
+</html>
