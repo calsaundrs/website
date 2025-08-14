@@ -7,14 +7,49 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Design System Brand Styles -->
+    <style>
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .accent-color { 
+            color: #E83A99; 
+        }
+        .bg-accent-color { 
+            background-color: #E83A99; 
+        }
+        .border-accent-color { 
+            border-color: #E83A99; 
+        }
+        .accent-color-secondary { 
+            color: #8B5CF6; 
+        }
+        .bg-accent-color-secondary { 
+            background-color: #8B5CF6; 
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <div class="container mx-auto px-4 py-12">
         <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl font-bold mb-8 text-center">
-                <i class="fas fa-camera mr-3 text-purple-400"></i>
-                Generate Event Story
+            <h1 class="font-anton text-5xl md:text-6xl leading-none tracking-wider heading-gradient mb-4 text-center">
+                GENERATE <span class="accent-color">EVENT STORY</span>
             </h1>
+            <p class="text-center text-gray-300 mb-8 text-lg">
+                <i class="fas fa-camera mr-2 accent-color"></i>
+                Create stunning Instagram stories with full Brum Outloud branding
+            </p>
             
             <div class="bg-gray-800 rounded-lg p-6 mb-8">
                 <h2 class="text-xl font-semibold mb-4">What this does:</h2>
@@ -162,73 +197,76 @@
                         ${storyData.eventImage ? 
                             `<div class="absolute inset-0">
                                 <img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
                             </div>` :
                             `<div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900"></div>`
                         }
                         
-                        <!-- Top Branding Bar -->
-                        <div class="absolute top-0 left-0 right-0 bg-gradient-to-r from-pink-500 to-purple-600 p-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                                        <span class="text-pink-500 font-bold text-xs">BO</span>
-                                    </div>
-                                    <div>
-                                        <p class="text-white font-bold text-sm">BRUM OUTLOUD</p>
-                                        <p class="text-white/80 text-xs">LGBTQ+ Events</p>
-                                    </div>
-                                </div>
-                                <div class="text-white text-xs">
-                                    <i class="fas fa-calendar mr-1"></i>
-                                    ${storyData.eventDate ? new Date(storyData.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'TBC'}
+                        <!-- BRUM OUTLOUD Brand Header -->
+                        <div class="absolute top-0 left-0 right-0 p-4">
+                            <div class="text-center">
+                                <h1 class="font-anton text-3xl leading-none tracking-wider heading-gradient mb-1">
+                                    BRUM <span class="accent-color">OUTLOUD</span>
+                                </h1>
+                                <p class="text-white/80 text-xs font-medium tracking-wide">LGBTQ+ EVENTS IN BIRMINGHAM</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Event Date Badge -->
+                        <div class="absolute top-4 right-4">
+                            <div class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 rounded-full px-3 py-1">
+                                <div class="text-accent-color font-bold text-sm">
+                                    ${storyData.eventDate ? new Date(storyData.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase() : 'TBC'}
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Event Content -->
+                        <!-- Main Event Content -->
                         <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <!-- Event Name -->
-                            <h2 class="text-white font-bold text-2xl mb-3 leading-tight drop-shadow-lg">
-                                ${storyData.eventName}
+                            <!-- Event Name with Brand Typography -->
+                            <h2 class="font-anton text-2xl leading-tight tracking-wide mb-4 text-white drop-shadow-lg">
+                                ${storyData.eventName.toUpperCase()}
                             </h2>
                             
-                            <!-- Venue -->
-                            <div class="flex items-center mb-3">
-                                <i class="fas fa-map-marker-alt text-pink-400 mr-2"></i>
+                            <!-- Venue with Accent Styling -->
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-map-marker-alt accent-color mr-3 text-lg"></i>
                                 <p class="text-white font-semibold text-lg">${storyData.venueName}</p>
                             </div>
                             
-                            <!-- Categories -->
+                            <!-- Categories with Brand Colors -->
                             ${storyData.categoryText ? 
-                                `<div class="flex flex-wrap gap-2 mb-4">
+                                `<div class="flex flex-wrap gap-2 mb-6">
                                     ${storyData.categories.slice(0, 3).map(cat => 
-                                        `<span class="bg-pink-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">${cat}</span>`
+                                        `<span class="bg-accent-color/20 border border-accent-color/30 text-accent-color px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">${cat.toUpperCase()}</span>`
                                     ).join('')}
                                 </div>` : ''
                             }
                             
-                            <!-- Call to Action -->
+                            <!-- Call to Action with Brand Styling -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-2">
-                                    <i class="fas fa-arrow-right text-pink-400"></i>
-                                    <span class="text-white font-semibold">View Details</span>
+                                    <i class="fas fa-arrow-right accent-color text-lg"></i>
+                                    <span class="text-white font-bold text-lg">VIEW DETAILS</span>
                                 </div>
-                                <div class="text-white/80 text-sm">
-                                    brumoutloud.co.uk
+                                <div class="text-accent-color font-semibold text-sm tracking-wide">
+                                    BRUMOUTLOUD.CO.UK
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Decorative Elements -->
-                        <div class="absolute top-20 left-4 w-1 h-16 bg-gradient-to-b from-pink-500 to-transparent"></div>
-                        <div class="absolute top-20 right-4 w-1 h-16 bg-gradient-to-b from-purple-500 to-transparent"></div>
+                        <!-- Brand Accent Lines -->
+                        <div class="absolute top-20 left-4 w-1 h-20 bg-gradient-to-b from-accent-color to-transparent"></div>
+                        <div class="absolute top-20 right-4 w-1 h-20 bg-gradient-to-b from-accent-color-secondary to-transparent"></div>
+                        
+                        <!-- Bottom Brand Bar -->
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-color to-accent-color-secondary"></div>
                     </div>
                     
-                    <!-- Download Button -->
+                    <!-- Download Button with Brand Styling -->
                     <div class="absolute top-2 right-2">
-                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm shadow-lg">
-                            <i class="fas fa-download mr-1"></i>Download
+                        <button onclick="downloadStoryData('${storyData.eventSlug || storyData.eventId}')" class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 text-accent-color px-3 py-1 rounded text-sm font-semibold hover:bg-accent-color/30 transition-all">
+                            <i class="fas fa-download mr-1"></i>DOWNLOAD
                         </button>
                     </div>
                 </div>
