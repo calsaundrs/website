@@ -197,7 +197,7 @@
                         <!-- Background Image or Gradient -->
                         ${storyData.eventImage ? 
                             `<div class="absolute inset-0">
-                                <img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-full h-full object-cover">
+                                <img src="${storyData.eventImage}" alt="${storyData.eventName}" class="w-full h-full object-cover object-center" style="object-fit: cover; object-position: center;">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
                             </div>` :
                             `<div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900"></div>`
@@ -306,15 +306,18 @@
                 
                 // Capture the story container with proper aspect ratio
                 const canvas = await html2canvas(storyContainer, {
-                    width: 320,
-                    height: 569,
-                    scale: 3.375, // This gives us 1080x1920 (Instagram story ratio)
+                    scale: 3, // High resolution scaling
                     backgroundColor: '#000000',
                     useCORS: true,
                     allowTaint: true,
                     logging: false,
-                    imageTimeout: 0,
-                    removeContainer: false
+                    imageTimeout: 15000,
+                    removeContainer: false,
+                    foreignObjectRendering: false,
+                    ignoreElements: (element) => {
+                        // Ignore the download button
+                        return element.tagName === 'BUTTON';
+                    }
                 });
                 
                 // Show download button again
