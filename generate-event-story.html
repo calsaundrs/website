@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Design System Brand Styles -->
     <style>
@@ -290,145 +291,39 @@
         
         // Download story as image
         async function downloadStoryImage() {
-            const event = allEvents.find(e => e.id === selectedEvent.id);
-            if (!event) {
-                alert('No event selected');
+            const storyContainer = document.querySelector('#story-preview .bg-black');
+            if (!storyContainer) {
+                alert('No story to download');
                 return;
             }
             
             try {
-                // Create canvas with Instagram story dimensions
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 1080;
-                canvas.height = 1920;
-                
-                // Scale factor (320px preview to 1080px canvas)
-                const scale = 1080 / 320;
-                
-                // Background
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Background image if available
-                if (event.image?.url) {
-                    try {
-                        const img = new Image();
-                        img.crossOrigin = 'anonymous';
-                        await new Promise((resolve, reject) => {
-                            img.onload = resolve;
-                            img.onerror = reject;
-                            img.src = event.image.url;
-                        });
-                        
-                        // Draw background image
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        // Gradient overlay (from-black/90 via-black/60 to-transparent)
-                        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.1)');
-                        gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.6)');
-                        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.9)');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    } catch (error) {
-                        console.log('Background image failed, using gradient');
-                        // Gradient background
-                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                        gradient.addColorStop(0, '#1f2937');
-                        gradient.addColorStop(0.5, '#8B5CF6');
-                        gradient.addColorStop(1, '#E83A99');
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    }
-                } else {
-                    // Gradient background
-                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                    gradient.addColorStop(0, '#1f2937');
-                    gradient.addColorStop(0.5, '#8B5CF6');
-                    gradient.addColorStop(1, '#E83A99');
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Hide download button temporarily
+                const downloadBtn = document.querySelector('#story-preview button');
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'none';
                 }
                 
-                // Text setup
-                ctx.textAlign = 'center';
+                // Capture the story container with proper aspect ratio
+                const canvas = await html2canvas(storyContainer, {
+                    width: 320,
+                    height: 569,
+                    scale: 3.375, // This gives us 1080x1920 (Instagram story ratio)
+                    backgroundColor: '#000000',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    imageTimeout: 0,
+                    removeContainer: false
+                });
                 
-                // BRUM OUTLOUD header (top-0, p-4 = 16px from top)
-                ctx.font = `bold ${48 * scale}px Anton, sans-serif`;
-                const headerGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-                headerGradient.addColorStop(0, '#FFFFFF');
-                headerGradient.addColorStop(0.5, '#E83A99');
-                headerGradient.addColorStop(1, '#8B5CF6');
-                ctx.fillStyle = headerGradient;
-                ctx.fillText('BRUM OUTLOUD', canvas.width / 2, 80 * scale);
-                
-                // Subtitle (text-white/80 text-xs)
-                ctx.font = `${12 * scale}px Poppins, sans-serif`;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.fillText('LGBTQ+ EVENTS IN BIRMINGHAM', canvas.width / 2, 100 * scale);
-                
-                // Date & Time section (top-20 = 80px from top)
-                const dateTimeY = 120 * scale;
-                if (event.date) {
-                    const date = new Date(event.date);
-                    const dateStr = date.toLocaleDateString('en-GB', { 
-                        weekday: 'short', 
-                        day: 'numeric', 
-                        month: 'short' 
-                    }).toUpperCase();
-                    
-                    ctx.font = `bold ${18 * scale}px Poppins, sans-serif`;
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillText(dateStr, canvas.width / 2 - 100 * scale, dateTimeY);
+                // Show download button again
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'block';
                 }
                 
-                if (event.time) {
-                    ctx.font = `bold ${18 * scale}px Poppins, sans-serif`;
-                    ctx.fillStyle = '#E83A99';
-                    ctx.fillText(event.time, canvas.width / 2 + 100 * scale, dateTimeY);
-                }
-                
-                // Event name (bottom-0, p-6, bottom: 60px = 60px from bottom)
-                ctx.font = `bold ${24 * scale}px Anton, sans-serif`;
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillText(event.name.toUpperCase(), canvas.width / 2, canvas.height - 200 * scale);
-                
-                // Venue
-                ctx.font = `bold ${18 * scale}px Poppins, sans-serif`;
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillText(event.venueName, canvas.width / 2, canvas.height - 160 * scale);
-                
-                // Categories (if available)
-                if (event.category && event.category.length > 0) {
-                    const categories = event.category.slice(0, 3);
-                    const categoryY = canvas.height - 120 * scale;
-                    const categorySpacing = 120 * scale;
-                    const startX = canvas.width / 2 - (categories.length - 1) * categorySpacing / 2;
-                    
-                    categories.forEach((cat, index) => {
-                        const x = startX + index * categorySpacing;
-                        ctx.font = `bold ${12 * scale}px Poppins, sans-serif`;
-                        ctx.fillStyle = '#E83A99';
-                        ctx.fillText(cat.toUpperCase(), x, categoryY);
-                    });
-                }
-                
-                // Call to action
-                ctx.font = `bold ${18 * scale}px Poppins, sans-serif`;
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillText('VIEW DETAILS', canvas.width / 2 - 100 * scale, canvas.height - 80 * scale);
-                
-                // Website
-                ctx.font = `bold ${12 * scale}px Poppins, sans-serif`;
-                ctx.fillStyle = '#E83A99';
-                ctx.fillText('BRUMOUTLOUD.CO.UK', canvas.width / 2 + 100 * scale, canvas.height - 80 * scale);
-                
-                // Bottom brand bar
-                ctx.fillStyle = '#E83A99';
-                ctx.fillRect(0, canvas.height - 4 * scale, canvas.width, 4 * scale);
-                
-                // Download
+                // Download the image
+                const event = allEvents.find(e => e.id === selectedEvent.id);
                 canvas.toBlob((blob) => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -441,6 +336,12 @@
             } catch (error) {
                 console.error('Error generating image:', error);
                 alert('Error generating image. Please try again.');
+                
+                // Make sure download button is visible again
+                const downloadBtn = document.querySelector('#story-preview button');
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'block';
+                }
             }
         }
         
