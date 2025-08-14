@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <!-- Design System Brand Styles -->
     <style>
@@ -213,28 +212,21 @@
                             </div>
                         </div>
                         
-                        <!-- Event Date Badge -->
-                        <div class="absolute top-4 right-4">
-                            <div class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 rounded-full px-3 py-1">
-                                <div class="text-accent-color font-bold text-sm">
-                                    ${storyData.eventDate ? new Date(storyData.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase() : 'TBC'}
-                                </div>
-                            </div>
-                        </div>
-                        
                         <!-- Event Date & Time -->
                         <div class="absolute top-20 left-0 right-0 px-6">
                             <div class="flex items-center justify-center space-x-4">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-calendar accent-color text-lg"></i>
-                                    <span class="text-white font-bold text-lg">
-                                        ${storyData.eventDate ? new Date(storyData.eventDate).toLocaleDateString('en-GB', { 
-                                            weekday: 'short', 
-                                            day: 'numeric', 
-                                            month: 'short' 
-                                        }).toUpperCase() : 'DATE TBC'}
-                                    </span>
-                                </div>
+                                ${storyData.eventDate ? `
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-calendar accent-color text-lg"></i>
+                                        <span class="text-white font-bold text-lg">
+                                            ${new Date(storyData.eventDate).toLocaleDateString('en-GB', { 
+                                                weekday: 'short', 
+                                                day: 'numeric', 
+                                                month: 'short' 
+                                            }).toUpperCase()}
+                                        </span>
+                                    </div>
+                                ` : ''}
                                 ${storyData.eventTime ? `
                                     <div class="flex items-center space-x-2">
                                         <i class="fas fa-clock accent-color text-lg"></i>
@@ -298,37 +290,110 @@
         
         // Download story as image
         async function downloadStoryImage() {
-            const storyContainer = document.querySelector('#story-preview .bg-black');
-            if (!storyContainer) {
-                alert('No story to download');
+            const event = allEvents.find(e => e.id === selectedEvent.id);
+            if (!event) {
+                alert('No event selected');
                 return;
             }
             
             try {
-                // Temporarily hide the download button to avoid capturing it
-                const downloadBtn = document.querySelector('#story-preview button');
-                if (downloadBtn) {
-                    downloadBtn.style.display = 'none';
+                // Create canvas with Instagram story dimensions
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 1080;
+                canvas.height = 1920;
+                
+                // Background
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Background image if available
+                if (event.image?.url) {
+                    try {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = event.image.url;
+                        });
+                        
+                        // Draw background image
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Dark overlay for text readability
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    } catch (error) {
+                        console.log('Background image failed, using gradient');
+                        // Gradient background
+                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                        gradient.addColorStop(0, '#0f172a');
+                        gradient.addColorStop(0.5, '#8B5CF6');
+                        gradient.addColorStop(1, '#E83A99');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                } else {
+                    // Gradient background
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    gradient.addColorStop(0, '#0f172a');
+                    gradient.addColorStop(0.5, '#8B5CF6');
+                    gradient.addColorStop(1, '#E83A99');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
                 }
                 
-                // Capture the story container as an image
-                const canvas = await html2canvas(storyContainer, {
-                    width: 320,
-                    height: 569,
-                    scale: 3, // High resolution (960x1707)
-                    backgroundColor: '#000000',
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false
-                });
+                // Text setup
+                ctx.textAlign = 'center';
                 
-                // Show the download button again
-                if (downloadBtn) {
-                    downloadBtn.style.display = 'block';
+                // BRUM OUTLOUD header
+                ctx.font = 'bold 80px Anton, sans-serif';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillText('BRUM OUTLOUD', canvas.width / 2, 200);
+                
+                // Subtitle
+                ctx.font = 'bold 30px Poppins, sans-serif';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fillText('LGBTQ+ EVENTS IN BIRMINGHAM', canvas.width / 2, 250);
+                
+                // Event name
+                ctx.font = 'bold 60px Anton, sans-serif';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillText(event.name.toUpperCase(), canvas.width / 2, canvas.height - 400);
+                
+                // Venue
+                ctx.font = 'bold 40px Poppins, sans-serif';
+                ctx.fillStyle = '#E83A99';
+                ctx.fillText(event.venueName, canvas.width / 2, canvas.height - 320);
+                
+                // Date
+                if (event.date) {
+                    const date = new Date(event.date);
+                    const dateStr = date.toLocaleDateString('en-GB', { 
+                        weekday: 'long', 
+                        day: 'numeric', 
+                        month: 'long' 
+                    });
+                    
+                    ctx.font = 'bold 35px Poppins, sans-serif';
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(dateStr, canvas.width / 2, canvas.height - 240);
                 }
                 
-                // Download the image
-                const event = allEvents.find(e => e.id === selectedEvent.id);
+                // Time
+                if (event.time) {
+                    ctx.font = 'bold 45px Poppins, sans-serif';
+                    ctx.fillStyle = '#E83A99';
+                    ctx.fillText(event.time, canvas.width / 2, canvas.height - 180);
+                }
+                
+                // Website
+                ctx.font = 'bold 30px Poppins, sans-serif';
+                ctx.fillStyle = '#E83A99';
+                ctx.fillText('BRUMOUTLOUD.CO.UK', canvas.width / 2, canvas.height - 100);
+                
+                // Download
                 canvas.toBlob((blob) => {
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -341,12 +406,6 @@
             } catch (error) {
                 console.error('Error generating image:', error);
                 alert('Error generating image. Please try again.');
-                
-                // Make sure download button is visible again
-                const downloadBtn = document.querySelector('#story-preview button');
-                if (downloadBtn) {
-                    downloadBtn.style.display = 'block';
-                }
             }
         }
         
