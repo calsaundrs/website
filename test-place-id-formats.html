@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Place ID Formats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Test Different Place ID Formats</h1>
+        
+        <div class="bg-gray-800 p-6 rounded-lg mb-6">
+            <h2 class="text-xl font-bold mb-4">Original URL</h2>
+            <p class="text-sm text-gray-300 mb-4">https://www.google.com/maps/place/Eden+Bar/@52.9446944,-3.0554318,9z/data=!4m6!3m5!1s0x4870bc632404df1b:0x30887b950fadaed5!8m2!3d52.4697266!4d-1.8952398!16s%2Fg%2F1tdw7h94!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDgxMS4wIKXMDSoASAFQAw%3D%3D</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Test 1: Current Place ID</h3>
+                <p class="text-sm text-gray-300 mb-2">0x4870bc632404df1b:0x30887b950fadaed5</p>
+                <button onclick="testPlaceId('0x4870bc632404df1b:0x30887b950fadaed5', 'result1')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Test This Place ID
+                </button>
+                <div id="result1" class="mt-4 text-sm"></div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Test 2: Alternative Format</h3>
+                <p class="text-sm text-gray-300 mb-2">ChIJ... (Let's try to find the correct one)</p>
+                <button onclick="testPlaceId('ChIJN1oj_tYEdkgAzCtxl8ojX_64', 'result2')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Test ChIJ Format
+                </button>
+                <div id="result2" class="mt-4 text-sm"></div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Test 3: Try Different Search</h3>
+                <p class="text-sm text-gray-300 mb-2">Search for "Eden Bar Birmingham"</p>
+                <button onclick="searchVenue('Eden Bar Birmingham', 'result3')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                    Search for Venue
+                </button>
+                <div id="result3" class="mt-4 text-sm"></div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-lg font-bold mb-4">Test 4: Check Current Venue Data</h3>
+                <p class="text-sm text-gray-300 mb-2">Check what's stored in the database</p>
+                <button onclick="checkVenueData('result4')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded">
+                    Check Venue Data
+                </button>
+                <div id="result4" class="mt-4 text-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testPlaceId(placeId, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/test-google-places-api', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ placeId: placeId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.result;
+                    resultDiv.innerHTML = `
+                        <div class="text-green-400">
+                            <div>✅ API Call Successful</div>
+                            <div>Images: ${result.imageCount}</div>
+                            <div>Reviews: ${result.reviewCount}</div>
+                            <div>Rating: ${result.rating || 'None'}</div>
+                            <div>Phone: ${result.hasPhone ? 'Yes' : 'No'}</div>
+                            <div>Website: ${result.hasWebsite ? 'Yes' : 'No'}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="text-red-400">❌ ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-400">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function searchVenue(query, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = 'Searching...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/search-google-places', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-400">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function checkVenueData(resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = 'Checking...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
+                const data = await response.json();
+                
+                const hubVenue = data.venues.find(v => v.name === 'The Hub');
+                if (hubVenue) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-400">
+                            <div>✅ Found The Hub in database</div>
+                            <div>ID: ${hubVenue.id}</div>
+                            <div>Place ID: ${hubVenue.googlePlaceId || 'None'}</div>
+                            <div>Address: ${hubVenue.address}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="text-red-400">❌ The Hub not found in database</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-400">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

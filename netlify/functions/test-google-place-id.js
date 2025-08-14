@@ -248,6 +248,8 @@ exports.handler = async function(event, context) {
         /[?&]cid=([^&]+)/,
         /[?&]place_id=([^&]+)/,
         /!1s([^!]+)!/,
+        /!1s([^!]+)!/g, // Global match for multiple occurrences
+        /data=!4m6!3m5!1s([^!]+)!/, // Specific pattern for this URL format
       ];
       
       for (const pattern of urlPatterns) {
@@ -258,6 +260,13 @@ exports.handler = async function(event, context) {
             return placeId;
           }
         }
+      }
+      
+      // Try to find any 0x pattern in the URL
+      const zeroXPattern = /0x[0-9a-fA-F]+:[0-9a-fA-F]+/g;
+      const zeroXMatches = input.match(zeroXPattern);
+      if (zeroXMatches && zeroXMatches.length > 0) {
+        return zeroXMatches[0];
       }
       
       return input;
