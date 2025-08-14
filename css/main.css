@@ -274,6 +274,20 @@ select:focus-visible {
         font-weight: 900 !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
+    
+    /* Make homepage hero text much larger on mobile */
+    h1.font-anton.text-8xl {
+        font-size: 8rem !important; /* 10x larger than default */
+        line-height: 0.8 !important;
+    }
+    
+    /* Ensure mobile hero text is extremely prominent */
+    @media (max-width: 640px) {
+        h1.font-anton.text-8xl {
+            font-size: 10rem !important; /* Even larger on small mobile */
+            line-height: 0.7 !important;
+        }
+    }
 }
 
 .filter-button {
