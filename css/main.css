@@ -253,6 +253,18 @@ select:focus-visible {
     color: transparent; /* Fallback for unsupported browsers */
 }
 
+/* Fix embossed text effect on mobile */
+@media (max-width: 768px) {
+    .heading-gradient {
+        background: none;
+        -webkit-background-clip: initial;
+        -webkit-text-fill-color: initial;
+        background-clip: initial;
+        color: #FFFFFF;
+        text-shadow: none;
+    }
+}
+
 .filter-button {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
