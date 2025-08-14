@@ -461,19 +461,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Now submit the event with the venue ID
-                const eventFormData = new FormData(form);
+                // For debugging, let's log what we're sending
+                const formData = new FormData(form);
+                const eventData = {};
                 
-                // Add poster if uploaded
-                if (posterUpload && posterUpload.files.length > 0) {
-                    eventFormData.append('image', posterUpload.files[0]);
+                // Convert FormData to object for debugging
+                for (let [key, value] of formData.entries()) {
+                    eventData[key] = value;
                 }
                 
                 // Add the venue ID
-                eventFormData.append('venueId', finalVenueId);
+                eventData.venueId = finalVenueId;
                 
+                console.log('Submitting event data:', eventData);
+                
+                // For now, let's try sending as JSON to see if that works
                 const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
                     method: 'POST',
-                    body: eventFormData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData)
                 });
                 
                 const contentType = response.headers.get('content-type') || '';
