@@ -915,8 +915,18 @@
             const categories = new Set();
             
             allEvents.forEach(event => {
-                if (event.category && Array.isArray(event.category)) {
-                    event.category.forEach(cat => {
+                // Handle multiple possible category field names
+                const eventCategories = event.category || event.categories || event.categoryIds || [];
+                
+                if (Array.isArray(eventCategories)) {
+                    eventCategories.forEach(cat => {
+                        if (cat && cat.trim()) {
+                            categories.add(cat.trim());
+                        }
+                    });
+                } else if (typeof eventCategories === 'string') {
+                    // Handle comma-separated string
+                    eventCategories.split(',').forEach(cat => {
                         if (cat && cat.trim()) {
                             categories.add(cat.trim());
                         }
@@ -1144,7 +1154,8 @@
             filteredEvents = allEvents.filter(event => {
                 // SFW Filter (Show NSFW)
                 if (!currentFilters.sfw) {
-                    const hasAdultContent = event.category && event.category.some(cat => 
+                    const eventCategories = event.category || event.categories || event.categoryIds || [];
+                    const hasAdultContent = Array.isArray(eventCategories) && eventCategories.some(cat => 
                         adultCategories.some(adult => cat.toLowerCase().includes(adult.toLowerCase()))
                     );
                     if (hasAdultContent) return false;
@@ -1190,7 +1201,8 @@
                 
                 // Category Filter
                 if (currentFilters.categories.length > 0) {
-                    const hasMatchingCategory = event.category && event.category.some(cat => 
+                    const eventCategories = event.category || event.categories || event.categoryIds || [];
+                    const hasMatchingCategory = Array.isArray(eventCategories) && eventCategories.some(cat => 
                         currentFilters.categories.includes(cat)
                     );
                     if (!hasMatchingCategory) return false;
@@ -1292,10 +1304,11 @@
             });
             
             // Create tag display for mobile - allow wrapping but limit to 5 tags max
-            const categoryTags = event.category && event.category.length > 0 ? (() => {
+            const eventCategories = event.category || event.categories || event.categoryIds || [];
+            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
                 const maxVisibleTags = 5;
-                const visibleTags = event.category.slice(0, maxVisibleTags);
-                const remainingCount = event.category.length - maxVisibleTags;
+                const visibleTags = eventCategories.slice(0, maxVisibleTags);
+                const remainingCount = eventCategories.length - maxVisibleTags;
                 
                 const tagElements = visibleTags.map(cat => 
                     `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
@@ -1309,10 +1322,10 @@
             })() : '';
             
             // Create elegant tag display for desktop - show max 3 tags + count
-            const categoryTagsDesktop = event.category && event.category.length > 0 ? (() => {
+            const categoryTagsDesktop = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
                 const maxVisibleTags = 3;
-                const visibleTags = event.category.slice(0, maxVisibleTags);
-                const remainingCount = event.category.length - maxVisibleTags;
+                const visibleTags = eventCategories.slice(0, maxVisibleTags);
+                const remainingCount = eventCategories.length - maxVisibleTags;
                 
                 const tagElements = visibleTags.map(cat => 
                     `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
