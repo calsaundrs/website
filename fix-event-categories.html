@@ -144,6 +144,8 @@
                             <div><strong>Updated:</strong> ${result.summary.updated}</div>
                             <div><strong>Skipped (already correct):</strong> ${result.summary.skipped}</div>
                             <div><strong>Errors:</strong> ${result.summary.errors}</div>
+                            <div><strong>AI API Calls:</strong> ${result.summary.apiCalls}/${result.summary.maxApiCalls}</div>
+                            <div><strong>Processing Time:</strong> ${Math.round(result.summary.processingTime / 1000)}s</div>
                         </div>
                     `;
                     

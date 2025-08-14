@@ -13,12 +13,25 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-// Gemini API integration
+// Gemini API integration with rate limiting
+let lastApiCall = 0;
+const API_RATE_LIMIT = 1000; // 1 second between calls
+
 async function getCategoriesFromGemini(eventName, description) {
     if (!process.env.GEMINI_API_KEY) {
         console.log('No Gemini API key found, using fallback detection');
         return null;
     }
+    
+    // Rate limiting
+    const now = Date.now();
+    const timeSinceLastCall = now - lastApiCall;
+    if (timeSinceLastCall < API_RATE_LIMIT) {
+        const delay = API_RATE_LIMIT - timeSinceLastCall;
+        console.log(`Rate limiting: waiting ${delay}ms before next API call...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    lastApiCall = Date.now();
     
     try {
         const prompt = `Analyze this LGBTQ+ event and assign appropriate categories from this list:
@@ -79,13 +92,25 @@ exports.handler = async (event, context) => {
         let updatedCount = 0;
         let skippedCount = 0;
         let errorCount = 0;
+        let apiCallCount = 0;
+        const MAX_API_CALLS = 50; // Limit API calls to prevent timeout
         
         const batch = db.batch();
         let batchCount = 0;
         const BATCH_SIZE = 500; // Firestore batch limit
         
+        const startTime = Date.now();
+        const TIMEOUT_THRESHOLD = 25000; // 25 seconds to leave buffer for cleanup
+        
         for (const doc of snapshot.docs) {
             try {
+                // Check timeout
+                const elapsedTime = Date.now() - startTime;
+                if (elapsedTime > TIMEOUT_THRESHOLD) {
+                    console.log(`⚠️ Timeout threshold reached (${elapsedTime}ms), stopping processing to prevent function timeout`);
+                    break;
+                }
+                
                 const eventData = doc.data();
                 const eventId = doc.id;
                 
@@ -118,8 +143,55 @@ exports.handler = async (event, context) => {
                     
                     console.log(`No categories found for "${eventName}", using Gemini API for intelligent detection...`);
                     
-                    // Try Gemini API first
-                    const geminiCategories = await getCategoriesFromGemini(eventName, description);
+                    // Check API call limit
+                    if (apiCallCount >= MAX_API_CALLS) {
+                        console.log(`⚠️ API call limit reached (${apiCallCount}/${MAX_API_CALLS}), using fallback detection`);
+                        const eventNameLower = eventName.toLowerCase();
+                        const descriptionLower = description.toLowerCase();
+                        
+                        // Fallback keyword detection
+                        if (eventNameLower.includes('drag') || descriptionLower.includes('drag')) {
+                            normalizedCategories.push('Drag');
+                        }
+                        if (eventNameLower.includes('club') || eventNameLower.includes('night') || descriptionLower.includes('club') || descriptionLower.includes('night')) {
+                            normalizedCategories.push('Nightclub');
+                        }
+                        if (eventNameLower.includes('bar') || descriptionLower.includes('bar')) {
+                            normalizedCategories.push('Bar');
+                        }
+                        if (eventNameLower.includes('social') || descriptionLower.includes('social') || descriptionLower.includes('meet')) {
+                            normalizedCategories.push('Social');
+                        }
+                        if (eventNameLower.includes('music') || descriptionLower.includes('music') || descriptionLower.includes('live')) {
+                            normalizedCategories.push('Live Music');
+                        }
+                        if (eventNameLower.includes('theatre') || descriptionLower.includes('theatre') || descriptionLower.includes('show')) {
+                            normalizedCategories.push('Theatre');
+                        }
+                        if (eventNameLower.includes('workshop') || descriptionLower.includes('workshop') || descriptionLower.includes('learn')) {
+                            normalizedCategories.push('Workshop');
+                        }
+                        if (eventNameLower.includes('kink') || descriptionLower.includes('kink') || descriptionLower.includes('bdsm')) {
+                            normalizedCategories.push('Kink');
+                        }
+                        if (eventNameLower.includes('family') || descriptionLower.includes('family') || descriptionLower.includes('kids')) {
+                            normalizedCategories.push('Family');
+                        }
+                        if (eventNameLower.includes('party') || descriptionLower.includes('party')) {
+                            normalizedCategories.push('Party');
+                        }
+                        if (eventNameLower.includes('community') || descriptionLower.includes('community')) {
+                            normalizedCategories.push('Community');
+                        }
+                        if (eventNameLower.includes('educational') || descriptionLower.includes('educational') || descriptionLower.includes('learn')) {
+                            normalizedCategories.push('Educational');
+                        }
+                        
+                        console.log(`✅ Fallback assigned categories: ${normalizedCategories.join(', ')}`);
+                    } else {
+                        // Try Gemini API first
+                        apiCallCount++;
+                        const geminiCategories = await getCategoriesFromGemini(eventName, description);
                     
                     if (geminiCategories && geminiCategories.length > 0) {
                         normalizedCategories = geminiCategories;
@@ -195,7 +267,13 @@ exports.handler = async (event, context) => {
                     const description = eventData['Description'] || eventData.description || '';
                     
                     console.log(`Improving existing categories for "${eventName}"...`);
-                    const geminiCategories = await getCategoriesFromGemini(eventName, description);
+                    
+                    // Check API call limit
+                    if (apiCallCount >= MAX_API_CALLS) {
+                        console.log(`⚠️ API call limit reached (${apiCallCount}/${MAX_API_CALLS}), skipping category improvement`);
+                    } else {
+                        apiCallCount++;
+                        const geminiCategories = await getCategoriesFromGemini(eventName, description);
                     
                     if (geminiCategories && geminiCategories.length > 0) {
                         // Merge existing and Gemini categories, removing duplicates
@@ -205,6 +283,7 @@ exports.handler = async (event, context) => {
                             normalizedCategories = allCategories;
                         }
                     }
+                }
                 }
                 
                 // Check if update is needed
@@ -255,6 +334,8 @@ exports.handler = async (event, context) => {
         console.log(`Events updated: ${updatedCount}`);
         console.log(`Events skipped (already correct): ${skippedCount}`);
         console.log(`Errors: ${errorCount}`);
+        console.log(`Gemini API calls made: ${apiCallCount}/${MAX_API_CALLS}`);
+        console.log(`Total processing time: ${Date.now() - startTime}ms`);
         
         return {
             statusCode: 200,
@@ -269,7 +350,10 @@ exports.handler = async (event, context) => {
                     totalEvents: snapshot.size,
                     updated: updatedCount,
                     skipped: skippedCount,
-                    errors: errorCount
+                    errors: errorCount,
+                    apiCalls: apiCallCount,
+                    maxApiCalls: MAX_API_CALLS,
+                    processingTime: Date.now() - startTime
                 }
             })
         };
