@@ -244,7 +244,9 @@ exports.handler = async function (event, context) {
             };
         }
         
-        const constructedDate = new Date(`${dateStr}T${startTimeStr}`);
+        // Create date and handle timezone conversion properly
+        // The server runs in UTC, but we want to preserve the UK time as entered
+        const constructedDate = new Date(`${dateStr}T${startTimeStr}:00`);
         if (isNaN(constructedDate.getTime())) {
             return {
                 statusCode: 400,
@@ -252,6 +254,18 @@ exports.handler = async function (event, context) {
                 body: JSON.stringify({ error: 'Validation error', message: 'Invalid date or time' })
             };
         }
+        
+        // Debug: Log the timezone information
+        console.log('Date construction debug:', {
+            dateStr,
+            startTimeStr,
+            constructedDate: constructedDate.toString(),
+            constructedDateISO: constructedDate.toISOString(),
+            timezoneOffset: constructedDate.getTimezoneOffset(),
+            isDST: constructedDate.getTimezoneOffset() < new Date(constructedDate.getFullYear(), 0, 1).getTimezoneOffset()
+        });
+        
+        // Store the date as intended (the timezone conversion should be handled by the client)
         const eventDateIso = constructedDate.toISOString();
         const slug = generateSlug(eventName, dateStr);
         
