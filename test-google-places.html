@@ -71,7 +71,12 @@
                     placeId: '0x4870bc632404df1b:0x30887b950fadaed5' 
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 resultDiv.innerHTML = `<pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>`;
             })

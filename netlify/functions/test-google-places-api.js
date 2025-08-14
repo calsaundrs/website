@@ -24,6 +24,23 @@ exports.handler = async function(event, context) {
 
     const googlePlacesService = new GooglePlacesService();
     
+    // Check if API is enabled
+    if (!googlePlacesService.enabled) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: false,
+          error: 'Google Places API not enabled',
+          message: 'GOOGLE_PLACES_API_KEY environment variable is not set',
+          placeId: placeId,
+          apiEnabled: false
+        })
+      };
+    }
+
+    console.log(`✅ Google Places API is enabled with key: ${googlePlacesService.apiKey ? 'Present' : 'Missing'}`);
+    
     // Test with a mock venue object
     const mockVenue = {
       name: 'Test Venue',
@@ -43,6 +60,7 @@ exports.handler = async function(event, context) {
         success: true,
         placeId: placeId,
         apiEnabled: googlePlacesService.enabled,
+        apiKeyPresent: !!googlePlacesService.apiKey,
         result: {
           hasImages: result.images && result.images.length > 0,
           imageCount: result.images ? result.images.length : 0,
