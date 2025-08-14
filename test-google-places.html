@@ -3,83 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Places Test</title>
+    <title>Test Google Places</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white p-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8">Google Places Integration Test</h1>
+        <h1 class="text-3xl font-bold mb-6">Google Places Debug Test</h1>
         
-        <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-gray-800 p-6 rounded-lg">
-                <h2 class="text-xl font-semibold mb-4">Test URL Extraction</h2>
-                <p class="text-gray-300 mb-4">Testing URL: https://www.google.com/maps/place/Eden+Bar/@52.9446944,-3.0554318,9z/data=!4m6!3m5!1s0x4870bc632404df1b:0x30887b950fadaed5!8m2!3d52.4697266!4d-1.8952398!16s%2Fg%2F1tdw7h94!5m1!1e1?entry=ttu</p>
-                <button onclick="testUrlExtraction()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Test URL Extraction</button>
-                <div id="extraction-result" class="mt-4 p-4 bg-gray-700 rounded hidden"></div>
+                <h2 class="text-xl font-bold mb-4">Test Place ID Extraction</h2>
+                <button id="testExtraction" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4">
+                    Test URL Extraction
+                </button>
+                <div id="extractionResult" class="text-sm"></div>
             </div>
             
             <div class="bg-gray-800 p-6 rounded-lg">
-                <h2 class="text-xl font-semibold mb-4">Test Google Places API</h2>
-                <p class="text-gray-300 mb-4">Place ID: 0x4870bc632404df1b:0x30887b950fadaed5</p>
-                <button onclick="testGooglePlaces()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Test Google Places API</button>
-                <div id="places-result" class="mt-4 p-4 bg-gray-700 rounded hidden"></div>
+                <h2 class="text-xl font-bold mb-4">Test Google Places API</h2>
+                <button id="testAPI" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
+                    Test API Call
+                </button>
+                <div id="apiResult" class="text-sm"></div>
             </div>
+        </div>
+        
+        <div class="mt-8 bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl font-bold mb-4">Venue Details Test</h2>
+            <button id="testVenue" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded mb-4">
+                Test Venue Details Function
+            </button>
+            <div id="venueResult" class="text-sm"></div>
         </div>
     </div>
 
     <script>
-        function testUrlExtraction() {
-            const testUrl = 'https://www.google.com/maps/place/Eden+Bar/@52.9446944,-3.0554318,9z/data=!4m6!3m5!1s0x4870bc632404df1b:0x30887b950fadaed5!8m2!3d52.4697266!4d-1.8952398!16s%2Fg%2F1tdw7h94!5m1!1e1?entry=ttu';
+        // Test Place ID extraction
+        document.getElementById('testExtraction').addEventListener('click', () => {
+            const resultDiv = document.getElementById('extractionResult');
+            resultDiv.innerHTML = 'Testing...';
             
-            // Test the extraction patterns
-            const patterns = [
-                /\/place\/[^\/]+\/([^\/\?]+)/,
-                /\/maps\/place\/[^\/]+\/([^\/\?]+)/,
-                /[?&]cid=([^&]+)/,
-                /[?&]place_id=([^&]+)/,
-                /!1s([^!]+)!/,
-            ];
+            const url = 'https://www.google.com/maps/place/Eden+Bar/@52.9446944,-3.0554318,9z/data=!4m6!3m5!1s0x4870bc632404df1b:0x30887b950fadaed5!8m2!3d52.4697266!4d-1.8952398!16s%2Fg%2F1tdw7h94!5m1!1e1?entry=ttu&g_ep=EgoyMDI1MDgxMS4wIKXMDSoASAFQAw%3D%3D';
             
-            let result = 'No Place ID found';
-            
-            for (let i = 0; i < patterns.length; i++) {
-                const pattern = patterns[i];
-                const match = testUrl.match(pattern);
-                if (match && match[1]) {
-                    const placeId = match[1];
-                    if (placeId.startsWith('ChIJ') || placeId.startsWith('0x')) {
-                        result = `Found Place ID: ${placeId} (Pattern ${i + 1})`;
-                        break;
-                    }
-                }
-            }
-            
-            document.getElementById('extraction-result').innerHTML = `<strong>Result:</strong> ${result}`;
-            document.getElementById('extraction-result').classList.remove('hidden');
-        }
+            fetch('/.netlify/functions/test-google-place-id', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = `<pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+            });
+        });
         
-        async function testGooglePlaces() {
-            const placeId = '0x4870bc632404df1b:0x30887b950fadaed5';
+        // Test Google Places API
+        document.getElementById('testAPI').addEventListener('click', () => {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = 'Testing...';
             
-            try {
-                const response = await fetch(`/.netlify/functions/get-venue-details-firestore?slug=test-venue`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        testPlaceId: placeId
-                    })
-                });
+            fetch('/.netlify/functions/test-google-places-api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    placeId: '0x4870bc632404df1b:0x30887b950fadaed5' 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = `<pre class="text-green-400">${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+            });
+        });
+        
+        // Test venue details function
+        document.getElementById('testVenue').addEventListener('click', () => {
+            const resultDiv = document.getElementById('venueResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            fetch('/.netlify/functions/get-venue-details-firestore?slug=the-hub')
+            .then(response => response.text())
+            .then(html => {
+                // Check for Google Places content in the HTML
+                const hasGooglePlaces = html.includes('Google Places') || html.includes('googlePlaces');
+                const hasImages = html.includes('googlePlaces.images');
+                const hasReviews = html.includes('googlePlaces.reviews');
                 
-                const result = await response.text();
-                document.getElementById('places-result').innerHTML = `<strong>API Response:</strong><pre class="mt-2 text-sm">${result}</pre>`;
-                document.getElementById('places-result').classList.remove('hidden');
-            } catch (error) {
-                document.getElementById('places-result').innerHTML = `<strong>Error:</strong> ${error.message}`;
-                document.getElementById('places-result').classList.remove('hidden');
-            }
-        }
+                resultDiv.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="text-green-400">✅ Venue details function working</div>
+                        <div class="${hasGooglePlaces ? 'text-green-400' : 'text-red-400'}">
+                            ${hasGooglePlaces ? '✅' : '❌'} Google Places sections found
+                        </div>
+                        <div class="${hasImages ? 'text-green-400' : 'text-red-400'}">
+                            ${hasImages ? '✅' : '❌'} Google Places images found
+                        </div>
+                        <div class="${hasReviews ? 'text-green-400' : 'text-red-400'}">
+                            ${hasReviews ? '✅' : '❌'} Google Places reviews found
+                        </div>
+                        <details class="mt-4">
+                            <summary class="cursor-pointer text-blue-400">View HTML Preview</summary>
+                            <pre class="text-xs mt-2 bg-gray-900 p-2 rounded overflow-auto max-h-40">${html.substring(0, 2000)}...</pre>
+                        </details>
+                    </div>
+                `;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+            });
+        });
     </script>
 </body>
 </html>

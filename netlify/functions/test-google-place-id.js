@@ -224,45 +224,65 @@ class SingleVenueTester {
 }
 
 exports.handler = async function(event, context) {
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
+
   try {
-    // Parse the venue name from the request
-    let venueName = 'The Nightingale Club'; // Default
+    const { url } = JSON.parse(event.body);
     
-    if (event.httpMethod === 'POST') {
-      const body = JSON.parse(event.body || '{}');
-      venueName = body.venueName || venueName;
-    } else if (event.queryStringParameters) {
-      venueName = event.queryStringParameters.venueName || venueName;
+    function extractGooglePlaceId(input) {
+      if (!input || typeof input !== 'string') return null;
+      
+      if (input.startsWith('ChIJ') || input.startsWith('0x')) {
+        return input;
+      }
+      
+      const urlPatterns = [
+        /\/place\/[^\/]+\/([^\/\?]+)/,
+        /\/maps\/place\/[^\/]+\/([^\/\?]+)/,
+        /[?&]cid=([^&]+)/,
+        /[?&]place_id=([^&]+)/,
+        /!1s([^!]+)!/,
+      ];
+      
+      for (const pattern of urlPatterns) {
+        const match = input.match(pattern);
+        if (match && match[1]) {
+          const placeId = match[1];
+          if (placeId.startsWith('ChIJ') || placeId.startsWith('0x')) {
+            return placeId;
+          }
+        }
+      }
+      
+      return input;
     }
 
-    console.log(`🧪 Testing Google Place ID for venue: ${venueName}`);
-
-    const tester = new SingleVenueTester();
-    const result = await tester.testSingleVenue(venueName);
-
+    const extractedPlaceId = extractGooglePlaceId(url);
+    
     return {
-      statusCode: result.success ? 200 : 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      },
-      body: JSON.stringify(result)
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        success: true,
+        originalUrl: url,
+        extractedPlaceId: extractedPlaceId,
+        isValid: extractedPlaceId && (extractedPlaceId.startsWith('ChIJ') || extractedPlaceId.startsWith('0x'))
+      })
     };
 
   } catch (error) {
-    console.error('❌ Function error:', error);
-    
     return {
       statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        success: false,
-        error: error.message
+        error: 'Failed to extract Place ID',
+        message: error.message
       })
     };
   }
