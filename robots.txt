@@ -14,4 +14,4 @@ Disallow: /admin-review.html
 Disallow: /admin-settings.html
 
 # Specify the sitemap location
-Sitemap: https://www.brumoutloud.co.uk/sitemap.xml
+Sitemap: https://brumoutloud.co.uk/sitemap.xml
