@@ -87,7 +87,9 @@ exports.handler = async function (event, context) {
                     id: doc.id,
                     name: data.name || 'Untitled Event',
                     description: data.description || '',
-                    date: data.date,
+                    date: data.date, // Keep for backward compatibility
+                    eventDate: data.eventDate || null, // New separate date field
+                    eventTime: data.eventTime || null, // New separate time field
                     status: data.status || 'pending',
                     slug: data.slug || '',
                     category: data.category || [],
