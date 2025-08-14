@@ -308,6 +308,43 @@ class GooglePlacesService {
   }
 
   /**
+   * Search for venues using Google Places API
+   * @param {string} query - Search query
+   * @returns {Array} Search results
+   */
+  async searchVenues(query) {
+    if (!this.enabled) {
+      return [];
+    }
+
+    try {
+      const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&type=establishment&key=${this.apiKey}`;
+      
+      const response = await fetch(searchUrl);
+      const data = await response.json();
+      
+      if (data.status !== 'OK') {
+        console.error(`Google Places search error: ${data.status} - ${data.error_message || 'Unknown error'}`);
+        return [];
+      }
+
+      return data.results.map(place => ({
+        placeId: place.place_id,
+        name: place.name,
+        address: place.formatted_address,
+        rating: place.rating,
+        userRatingsTotal: place.user_ratings_total,
+        types: place.types,
+        photos: place.photos ? place.photos.length : 0
+      }));
+
+    } catch (error) {
+      console.error('Error searching Google Places:', error);
+      return [];
+    }
+  }
+
+  /**
    * Test Google Places API connectivity
    * @returns {Object} Test results
    */

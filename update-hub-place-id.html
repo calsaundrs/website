@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update The Hub Place ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Update The Hub Google Place ID</h1>
+        <p class="mb-4">This will update The Hub to use Eden Bar's Google Place ID since The Hub is within Eden Bar and doesn't have its own listing yet.</p>
+        
+        <div class="bg-blue-900 p-4 rounded-lg mb-4">
+            <h2 class="font-bold mb-2">Current Data:</h2>
+            <p class="text-sm">Venue: The Hub</p>
+            <p class="text-sm">Current Place ID: 0x4870bc632404df1b:0x30887b950fadaed5</p>
+            <p class="text-sm">New Place ID: ChIJG98EJGO8cEgR1a6tD5V7iDA (Eden Bar)</p>
+        </div>
+        
+        <button id="updateBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full">
+            Update to Eden Bar's Place ID
+        </button>
+        <div id="result" class="mt-4"></div>
+    </div>
+
+    <script>
+        document.getElementById('updateBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Updating...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/update-venue-firestore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        venueId: 'z7sXxSqpCeUDsnnsr4B7',
+                        'google-place-id': 'ChIJG98EJGO8cEgR1a6tD5V7iDA'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-400">
+                            <p>✅ Google Place ID updated successfully!</p>
+                            <p class="text-sm mt-2">The Hub now uses Eden Bar's Google Places data.</p>
+                            <p class="text-sm">Check the venue page in 2-5 minutes for Google Places content.</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class="text-red-400">❌ Error: ${result.message}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
