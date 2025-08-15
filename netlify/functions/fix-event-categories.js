@@ -193,54 +193,55 @@ exports.handler = async (event, context) => {
                         apiCallCount++;
                         const geminiCategories = await getCategoriesFromGemini(eventName, description);
                     
-                    if (geminiCategories && geminiCategories.length > 0) {
-                        normalizedCategories = geminiCategories;
-                        console.log(`✅ Gemini assigned categories: ${normalizedCategories.join(', ')}`);
-                    } else {
-                        // Fallback to keyword detection if Gemini fails
-                        console.log('Gemini API failed, using fallback keyword detection...');
-                        const eventNameLower = eventName.toLowerCase();
-                        const descriptionLower = description.toLowerCase();
-                        
-                        // Auto-detect categories based on content
-                        if (eventNameLower.includes('drag') || descriptionLower.includes('drag')) {
-                            normalizedCategories.push('Drag');
+                        if (geminiCategories && geminiCategories.length > 0) {
+                            normalizedCategories = geminiCategories;
+                            console.log(`✅ Gemini assigned categories: ${normalizedCategories.join(', ')}`);
+                        } else {
+                            // Fallback to keyword detection if Gemini fails
+                            console.log('Gemini API failed, using fallback keyword detection...');
+                            const eventNameLower = eventName.toLowerCase();
+                            const descriptionLower = description.toLowerCase();
+                            
+                            // Auto-detect categories based on content
+                            if (eventNameLower.includes('drag') || descriptionLower.includes('drag')) {
+                                normalizedCategories.push('Drag');
+                            }
+                            if (eventNameLower.includes('club') || eventNameLower.includes('night') || descriptionLower.includes('club') || descriptionLower.includes('night')) {
+                                normalizedCategories.push('Nightclub');
+                            }
+                            if (eventNameLower.includes('bar') || descriptionLower.includes('bar')) {
+                                normalizedCategories.push('Bar');
+                            }
+                            if (eventNameLower.includes('social') || descriptionLower.includes('social') || descriptionLower.includes('meet')) {
+                                normalizedCategories.push('Social');
+                            }
+                            if (eventNameLower.includes('music') || descriptionLower.includes('music') || descriptionLower.includes('live')) {
+                                normalizedCategories.push('Live Music');
+                            }
+                            if (eventNameLower.includes('theatre') || descriptionLower.includes('theatre') || descriptionLower.includes('show')) {
+                                normalizedCategories.push('Theatre');
+                            }
+                            if (eventNameLower.includes('workshop') || descriptionLower.includes('workshop') || descriptionLower.includes('learn')) {
+                                normalizedCategories.push('Workshop');
+                            }
+                            if (eventNameLower.includes('kink') || descriptionLower.includes('kink') || descriptionLower.includes('bdsm')) {
+                                normalizedCategories.push('Kink');
+                            }
+                            if (eventNameLower.includes('family') || descriptionLower.includes('family') || descriptionLower.includes('kids')) {
+                                normalizedCategories.push('Family');
+                            }
+                            if (eventNameLower.includes('party') || descriptionLower.includes('party')) {
+                                normalizedCategories.push('Party');
+                            }
+                            if (eventNameLower.includes('community') || descriptionLower.includes('community')) {
+                                normalizedCategories.push('Community');
+                            }
+                            if (eventNameLower.includes('educational') || descriptionLower.includes('educational') || descriptionLower.includes('learn')) {
+                                normalizedCategories.push('Educational');
+                            }
+                            
+                            console.log(`✅ Fallback assigned categories: ${normalizedCategories.join(', ')}`);
                         }
-                        if (eventNameLower.includes('club') || eventNameLower.includes('night') || descriptionLower.includes('club') || descriptionLower.includes('night')) {
-                            normalizedCategories.push('Nightclub');
-                        }
-                        if (eventNameLower.includes('bar') || descriptionLower.includes('bar')) {
-                            normalizedCategories.push('Bar');
-                        }
-                        if (eventNameLower.includes('social') || descriptionLower.includes('social') || descriptionLower.includes('meet')) {
-                            normalizedCategories.push('Social');
-                        }
-                        if (eventNameLower.includes('music') || descriptionLower.includes('music') || descriptionLower.includes('live')) {
-                            normalizedCategories.push('Live Music');
-                        }
-                        if (eventNameLower.includes('theatre') || descriptionLower.includes('theatre') || descriptionLower.includes('show')) {
-                            normalizedCategories.push('Theatre');
-                        }
-                        if (eventNameLower.includes('workshop') || descriptionLower.includes('workshop') || descriptionLower.includes('learn')) {
-                            normalizedCategories.push('Workshop');
-                        }
-                        if (eventNameLower.includes('kink') || descriptionLower.includes('kink') || descriptionLower.includes('bdsm')) {
-                            normalizedCategories.push('Kink');
-                        }
-                        if (eventNameLower.includes('family') || descriptionLower.includes('family') || descriptionLower.includes('kids')) {
-                            normalizedCategories.push('Family');
-                        }
-                        if (eventNameLower.includes('party') || descriptionLower.includes('party')) {
-                            normalizedCategories.push('Party');
-                        }
-                        if (eventNameLower.includes('community') || descriptionLower.includes('community')) {
-                            normalizedCategories.push('Community');
-                        }
-                        if (eventNameLower.includes('educational') || descriptionLower.includes('educational') || descriptionLower.includes('learn')) {
-                            normalizedCategories.push('Educational');
-                        }
-                        
-                        console.log(`✅ Fallback assigned categories: ${normalizedCategories.join(', ')}`);
                     }
                     
                     // Always add LGBTQ+ as default category if not already present
@@ -275,12 +276,13 @@ exports.handler = async (event, context) => {
                         apiCallCount++;
                         const geminiCategories = await getCategoriesFromGemini(eventName, description);
                     
-                    if (geminiCategories && geminiCategories.length > 0) {
-                        // Merge existing and Gemini categories, removing duplicates
-                        const allCategories = [...new Set([...normalizedCategories, ...geminiCategories])];
-                        if (allCategories.length > normalizedCategories.length) {
-                            console.log(`✅ Gemini improved categories: ${normalizedCategories.join(', ')} → ${allCategories.join(', ')}`);
-                            normalizedCategories = allCategories;
+                        if (geminiCategories && geminiCategories.length > 0) {
+                            // Merge existing and Gemini categories, removing duplicates
+                            const allCategories = [...new Set([...normalizedCategories, ...geminiCategories])];
+                            if (allCategories.length > normalizedCategories.length) {
+                                console.log(`✅ Gemini improved categories: ${normalizedCategories.join(', ')} → ${allCategories.join(', ')}`);
+                                normalizedCategories = allCategories;
+                            }
                         }
                     }
                 }
