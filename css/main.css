@@ -71,15 +71,15 @@ button:focus-visible,
 input[type="button"]:focus-visible,
 input[type="submit"]:focus-visible,
 .btn:focus-visible {
-    outline: 3px solid #E83A99;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 2px rgba(232, 58, 153, 0.2);
+    outline: 2px solid #E83A99;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 1px rgba(232, 58, 153, 0.2);
 }
 
 /* Link focus states */
 a:focus-visible {
-    outline: 2px solid #E83A99;
-    outline-offset: 2px;
+    outline: 1px solid #E83A99;
+    outline-offset: 1px;
     text-decoration: underline;
 }
 
@@ -601,19 +601,17 @@ input[type="submit"]:disabled {
 }
 
 .item-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(232, 58, 153, 0.5);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(232, 58, 153, 0.2);
+    transform: translateY(-4px);
+    border-color: rgba(232, 58, 153, 0.3);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
 .item-card-image {
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .item-card:hover .item-card-image {
-    transform: scale(1.08);
+    transform: scale(1.03);
 }
 
 /* Enhanced Button Interactions */
@@ -643,8 +641,8 @@ input[type="submit"]:disabled {
 
 .btn:hover,
 .filter-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Enhanced Navigation Interactions */
@@ -678,10 +676,10 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-    transform: translateY(-1px);
+    transform: translateY(0);
     box-shadow: 
-        0 0 0 3px rgba(232, 58, 153, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.1);
+        0 0 0 2px rgba(232, 58, 153, 0.2),
+        0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Enhanced Scroll Animations */
@@ -724,8 +722,8 @@ select:focus {
 
 /* Enhanced Focus States */
 :focus-visible {
-    outline: 3px solid #E83A99;
-    outline-offset: 2px;
+    outline: 2px solid #E83A99;
+    outline-offset: 1px;
     border-radius: 4px;
     transition: outline 0.2s ease;
 }
@@ -871,15 +869,15 @@ header {
 input:focus,
 textarea:focus,
 select:focus {
-    transform: translateY(-1px);
+    transform: translateY(0);
     box-shadow: 
-        0 0 0 3px rgba(232, 58, 153, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.1);
+        0 0 0 2px rgba(232, 58, 153, 0.2),
+        0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .focused {
     border-color: #E83A99 !important;
-    box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.2);
+    box-shadow: 0 0 0 2px rgba(232, 58, 153, 0.2);
 }
 
 .has-value {
@@ -904,16 +902,22 @@ select:focus {
 }
 
 /* Enhanced card hover states */
+.venue-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .venue-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(232, 58, 153, 0.5);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(232, 58, 153, 0.2);
+    transform: translateY(-3px);
+    border-color: rgba(232, 58, 153, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.venue-card-image {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .venue-card:hover .venue-card-image {
-    transform: scale(1.08);
+    transform: scale(1.02);
 }
 
 /* Enhanced button states */
@@ -941,8 +945,8 @@ select:focus {
 
 /* Enhanced focus indicators */
 :focus-visible {
-    outline: 3px solid #E83A99;
-    outline-offset: 2px;
+    outline: 2px solid #E83A99;
+    outline-offset: 1px;
     border-radius: 4px;
     transition: outline 0.2s ease;
 }
@@ -962,12 +966,13 @@ select:focus {
     }
     
     .venue-card:hover {
-        transform: translateY(-4px) scale(1.01);
+        transform: translateY(-2px);
     }
     
     .btn:hover,
     .filter-button:hover {
-        transform: translateY(-1px);
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 }
 
