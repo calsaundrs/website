@@ -67,8 +67,8 @@ exports.handler = async function (event, context) {
             
             // Get approved events (same as events page) - simplified query
             const eventSnapshot = await Promise.race([
-                eventsRef.where('status', '==', 'approved').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 30000))
+                eventsRef.where('status', '==', 'approved').limit(50).get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 10000))
             ]);
 
             console.log(`Found ${eventSnapshot.size} approved events`);
@@ -100,8 +100,8 @@ exports.handler = async function (event, context) {
             
             // Get all venues - simplified query
             const venueSnapshot = await Promise.race([
-                venuesRef.get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 30000))
+                venuesRef.limit(20).get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 10000))
             ]);
 
             console.log(`Found ${venueSnapshot.size} total venues`);
