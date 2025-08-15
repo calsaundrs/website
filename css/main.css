@@ -1169,3 +1169,323 @@ select:focus {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Button Micro-interactions */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Back button arrow movement */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-back .arrow {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-back:hover .arrow {
+    transform: translateX(-4px);
+}
+
+/* Forward button arrow movement */
+.btn-forward {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-forward .arrow {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-forward:hover .arrow {
+    transform: translateX(4px);
+}
+
+/* Icon button micro-interactions */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-icon .icon {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-icon:hover .icon {
+    transform: scale(1.1);
+}
+
+/* Download button micro-interaction */
+.btn-download .icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-download:hover .icon {
+    transform: translateY(-2px);
+}
+
+/* Submit button micro-interaction */
+.btn-submit {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-submit:hover::before {
+    left: 100%;
+}
+
+/* Filter button micro-interaction */
+.filter-button {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-button.active {
+    background-color: #E83A99;
+    color: white;
+    transform: scale(1.05);
+}
+
+.filter-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background-color: #E83A99;
+    border-radius: 1px;
+}
+
+/* Close button micro-interaction */
+.btn-close {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-close::before,
+.btn-close::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background-color: currentColor;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-close::before {
+    transform: rotate(45deg);
+}
+
+.btn-close::after {
+    transform: rotate(-45deg);
+}
+
+.btn-close:hover {
+    transform: rotate(90deg);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Menu button micro-interaction */
+.btn-menu {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-menu .line {
+    width: 20px;
+    height: 2px;
+    background-color: currentColor;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.btn-menu:hover .line:nth-child(1) {
+    transform: translateY(2px);
+}
+
+.btn-menu:hover .line:nth-child(3) {
+    transform: translateY(-2px);
+}
+
+.btn-menu.active .line:nth-child(1) {
+    transform: rotate(45deg) translateY(6px);
+}
+
+.btn-menu.active .line:nth-child(2) {
+    opacity: 0;
+}
+
+.btn-menu.active .line:nth-child(3) {
+    transform: rotate(-45deg) translateY(-6px);
+}
+
+/* Social media button micro-interactions */
+.btn-social {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-social::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-social:hover::before {
+    width: 100%;
+    height: 100%;
+}
+
+.btn-social .icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-social:hover .icon {
+    transform: scale(1.2);
+}
+
+/* Loading button micro-interaction */
+.btn-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-loading .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pulse effect for important buttons */
+.btn-pulse {
+    position: relative;
+}
+
+.btn-pulse::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background-color: inherit;
+    opacity: 0.7;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+}
+
+/* Mobile optimizations for micro-interactions */
+@media (max-width: 768px) {
+    .btn-back:hover .arrow {
+        transform: translateX(-2px);
+    }
+    
+    .btn-forward:hover .arrow {
+        transform: translateX(2px);
+    }
+    
+    .btn-icon:hover .icon {
+        transform: scale(1.05);
+    }
+    
+    .btn-download:hover .icon {
+        transform: translateY(-1px);
+    }
+    
+    .btn-social:hover .icon {
+        transform: scale(1.1);
+    }
+    
+    .filter-button.active {
+        transform: scale(1.02);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .btn,
+    .btn-back .arrow,
+    .btn-forward .arrow,
+    .btn-icon .icon,
+    .btn-download .icon,
+    .btn-submit::before,
+    .filter-button,
+    .btn-close,
+    .btn-menu,
+    .btn-menu .line,
+    .btn-social,
+    .btn-social::before,
+    .btn-social .icon,
+    .btn-loading .spinner,
+    .btn-pulse::after {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}

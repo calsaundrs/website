@@ -504,10 +504,10 @@
                 </div>
                 <div class="section-content" id="quick-filters">
                     <div class="flex flex-wrap gap-2 p-4">
-                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
-                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
-                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
-                        <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
+                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
+                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
+                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
+                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
                     </div>
                 </div>
             </div>
@@ -563,15 +563,15 @@
 
             <!-- Apply Filters Button -->
             <div class="p-4">
-                <button class="btn-primary w-full" onclick="applyFilters()">
-                    <i class="fas fa-filter mr-2"></i>Apply Filters
+                <button class="btn-primary btn-icon w-full" onclick="applyFilters()">
+                    <i class="fas fa-filter icon mr-2"></i>Apply Filters
                 </button>
             </div>
 
             <!-- Clear Filters -->
             <div class="p-4 pt-0">
-                <button class="btn-secondary w-full" onclick="clearAllFilters()">
-                    <i class="fas fa-times mr-2"></i>Clear All Filters
+                <button class="btn-secondary btn-icon w-full" onclick="clearAllFilters()">
+                    <i class="fas fa-times icon mr-2"></i>Clear All Filters
                 </button>
             </div>
         </div>
@@ -610,8 +610,8 @@
                 <i class="fas fa-calendar-times"></i>
                 <h3 class="text-xl font-semibold mb-2">No Events Found</h3>
                 <p class="mb-4">No events match your current filters.</p>
-                <button class="btn-primary" onclick="clearAllFilters()">
-                    Clear All Filters
+                <button class="btn-primary btn-icon" onclick="clearAllFilters()">
+                    <i class="fas fa-times icon mr-2"></i>Clear All Filters
                 </button>
             </div>
         </div>
@@ -623,9 +623,9 @@
         <div class="p-4 border-b border-gray-700">
             <div class="flex items-center justify-between">
                 <h1 class="text-xl font-bold">Events</h1>
-                <button class="mobile-filter-btn btn-primary" onclick="openMobileFilters()">
-                    <i class="fas fa-filter mr-2"></i>Filters
-                </button>
+                            <button class="mobile-filter-btn btn-primary btn-icon" onclick="openMobileFilters()">
+                <i class="fas fa-filter icon mr-2"></i>Filters
+            </button>
             </div>
             
             <!-- Active Filters Chips -->
@@ -656,7 +656,7 @@
         <div class="p-4 border-b border-gray-700">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold" id="modal-title">Filters</h2>
-                <button onclick="closeMobileFilters()" class="text-gray-400" aria-label="Close filters">
+                <button onclick="closeMobileFilters()" class="btn-close text-gray-400" aria-label="Close filters">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -675,10 +675,10 @@
             <div>
                 <h3 class="font-semibold mb-3">Quick Filters</h3>
                 <div class="flex flex-wrap gap-2">
-                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
-                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
-                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
-                    <button class="quick-filter-btn" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
                 </div>
             </div>
 
@@ -718,11 +718,11 @@
         <!-- Sticky Apply Button -->
         <div class="sticky-apply">
             <div class="flex gap-3">
-                <button class="btn-secondary flex-1" onclick="clearAllFilters()">
-                    Clear All
+                <button class="btn-secondary btn-icon flex-1" onclick="clearAllFilters()">
+                    <i class="fas fa-times icon mr-2"></i>Clear All
                 </button>
-                <button class="btn-primary flex-1" onclick="applyMobileFilters()">
-                    Show <span id="mobile-event-count-btn">0</span> Events
+                <button class="btn-primary btn-icon flex-1" onclick="applyMobileFilters()">
+                    <i class="fas fa-filter icon mr-2"></i>Show <span id="mobile-event-count-btn">0</span> Events
                 </button>
             </div>
         </div>
