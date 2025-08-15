@@ -64,21 +64,27 @@ exports.handler = async function (event, context) {
         try {
             console.log("Fetching events for sitemap...");
             const eventsRef = db.collection('events');
+            
+            // Get all events (not just approved ones) to see what's available
             const eventSnapshot = await Promise.race([
-                eventsRef.where('status', '==', 'approved').select('slug', 'date').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 5000))
+                eventsRef.select('slug', 'date', 'status', 'name').get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 10000))
             ]);
 
-            console.log(`Found ${eventSnapshot.size} approved events`);
+            console.log(`Found ${eventSnapshot.size} total events`);
 
+            let approvedCount = 0;
             eventSnapshot.forEach(doc => {
                 const eventData = doc.data();
-                if (eventData.slug) {
+                if (eventData.slug && eventData.status === 'approved') {
                     const slug = escapeXml(eventData.slug);
                     const lastMod = eventData.date ? new Date(eventData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
                     sitemap += `  <url>\n    <loc>${baseUrl}/event/${slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+                    approvedCount++;
                 }
             });
+            
+            console.log(`Added ${approvedCount} approved events to sitemap`);
         } catch (eventError) {
             console.warn("Failed to fetch events for sitemap:", eventError.message);
             // Continue without events
@@ -88,20 +94,31 @@ exports.handler = async function (event, context) {
         try {
             console.log("Fetching venues for sitemap...");
             const venuesRef = db.collection('venues');
+            
+            // Get all venues to see what's available
             const venueSnapshot = await Promise.race([
-                venuesRef.where('status', '==', 'approved').select('slug').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 5000))
+                venuesRef.select('slug', 'name', 'image', 'Photo', 'Cloudinary Public ID').get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 10000))
             ]);
 
-            console.log(`Found ${venueSnapshot.size} approved venues`);
+            console.log(`Found ${venueSnapshot.size} total venues`);
 
+            let includedCount = 0;
             venueSnapshot.forEach(doc => {
                 const venueData = doc.data();
                 if (venueData.slug) {
-                    const slug = escapeXml(venueData.slug);
-                    sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                    // Check if venue has a valid image (similar to venues function logic)
+                    const hasValidImage = venueData.image || venueData.Photo || venueData['Cloudinary Public ID'];
+                    
+                    if (hasValidImage) {
+                        const slug = escapeXml(venueData.slug);
+                        sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                        includedCount++;
+                    }
                 }
             });
+            
+            console.log(`Added ${includedCount} venues with images to sitemap`);
         } catch (venueError) {
             console.warn("Failed to fetch venues for sitemap:", venueError.message);
             // Continue without venues
