@@ -1,82 +1,30 @@
-const admin = require('firebase-admin');
 const fs = require('fs').promises;
 const path = require('path');
 const Handlebars = require('handlebars');
 
-// Initialize Firebase Admin with error handling
-let firebaseInitialized = false;
-if (!admin.apps.length) {
-    try {
-        const requiredVars = [
-            'FIREBASE_PROJECT_ID',
-            'FIREBASE_CLIENT_EMAIL', 
-            'FIREBASE_PRIVATE_KEY'
-        ];
-        
-        const missingVars = requiredVars.filter(varName => !process.env[varName]);
-        
-        if (missingVars.length > 0) {
-            console.warn(`⚠️  Missing Firebase environment variables: ${missingVars.join(', ')}`);
-        } else {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-                })
-            });
-            firebaseInitialized = true;
-            console.log('✅ Firebase initialized successfully');
-        }
-    } catch (error) {
-        console.error('❌ Firebase initialization failed:', error.message);
-    }
-} else {
-    firebaseInitialized = true;
+// Add fetch for Node.js (if not available)
+if (typeof fetch === 'undefined') {
+    global.fetch = require('node-fetch');
 }
 
-let db;
-if (firebaseInitialized) {
-    db = admin.firestore();
-}
-
-// Fetch all approved events from Firestore
+// Fetch all approved events from API
 async function getAllEvents() {
     try {
-        if (!firebaseInitialized) {
-            console.log('⚠️  Firebase not initialized. Cannot fetch events.');
-            return [];
+        console.log('📅 Fetching all approved events from API...');
+        
+        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-events-firestore');
+        if (!response.ok) {
+            throw new Error(`API responded with ${response.status}`);
         }
         
-        console.log('📅 Fetching all approved events from Firestore...');
-        const eventsRef = db.collection('events');
+        const allEvents = await response.json();
+        console.log(`📅 Found ${allEvents.length} total events from API`);
         
         const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
-
-        const approvedSnapshot = await eventsRef
-            .where('status', '==', 'approved')
-            .get();
-
-        const ApprovedSnapshot = await eventsRef
-            .where('Status', '==', 'Approved')
-            .get();
-
-        console.log(`- Found ${approvedSnapshot.size} events with status: 'approved'`);
-        console.log(`- Found ${ApprovedSnapshot.size} events with Status: 'Approved'`);
-
-        const allApprovedEvents = [];
-        approvedSnapshot.forEach(doc => allApprovedEvents.push({ id: doc.id, ...doc.data() }));
-        ApprovedSnapshot.forEach(doc => {
-            if (!allApprovedEvents.some(event => event.id === doc.id)) {
-                allApprovedEvents.push({ id: doc.id, ...doc.data() });
-            }
-        });
-
-        console.log(`📅 Found ${allApprovedEvents.length} total approved events`);
         
         const events = [];
-        allApprovedEvents.forEach(eventData => {
+        allEvents.forEach(eventData => {
             // Only include events that are today or in the future
             try {
                 const eventDateObj = new Date(eventData.date);
@@ -96,8 +44,9 @@ async function getAllEvents() {
         return events;
         
     } catch (error) {
-        console.error('❌ Error fetching events:', error);
-        throw error;
+        console.error('❌ Error fetching events from API:', error);
+        console.log('⚠️ Using empty events array as fallback...');
+        return [];
     }
 }
 

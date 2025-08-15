@@ -1,43 +1,9 @@
 const fs = require('fs').promises;
 const path = require('path');
-const admin = require('firebase-admin');
 
 // Add fetch for Node.js (if not available)
 if (typeof fetch === 'undefined') {
     global.fetch = require('node-fetch');
-}
-
-// Initialize Firebase Admin with error handling
-let firebaseInitialized = false;
-let db = null;
-
-if (!admin.apps.length) {
-    try {
-        const requiredVars = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
-        const missingVars = requiredVars.filter(varName => !process.env[varName]);
-        
-        if (missingVars.length > 0) {
-            console.warn(`⚠️  Missing Firebase environment variables: ${missingVars.join(', ')}`);
-            console.warn('SSG will use fallback sample venues.');
-        } else {
-            admin.initializeApp({
-                credential: admin.credential.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-                })
-            });
-            db = admin.firestore();
-            firebaseInitialized = true;
-            console.log('✅ Firebase initialized successfully');
-        }
-    } catch (error) {
-        console.error('❌ Firebase initialization failed:', error.message);
-        console.warn('SSG will use fallback sample venues.');
-    }
-} else {
-    db = admin.firestore();
-    firebaseInitialized = true;
 }
 
 // Function to get real venues from Firebase
