@@ -777,8 +777,9 @@ git push origin main
 
 ### Environment Variables
 Required environment variables:
-- `AIRTABLE_PERSONAL_ACCESS_TOKEN`
-- `AIRTABLE_BASE_ID`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
 - `CLOUDINARY_CLOUD_NAME`
 - `CLOUDINARY_API_KEY`
 - `CLOUDINARY_API_SECRET`
@@ -794,7 +795,7 @@ Required environment variables:
   default-src 'self';
   script-src 'self' 'unsafe-inline' https://www.gstatic.com;
   img-src 'self' https://res.cloudinary.com data:;
-  connect-src 'self' https://api.airtable.com;
+  connect-src 'self' https://firestore.googleapis.com;
 ">
 ```
 

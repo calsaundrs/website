@@ -1,0 +1,111 @@
+const fs = require('fs').promises;
+
+async function createCriticalCSS() {
+    console.log('🎯 Creating Critical CSS...');
+    
+    try {
+        // Define critical CSS manually for above-the-fold content
+        const criticalCSS = `/* Critical CSS - Above the fold styles */
+/* Generated on ${new Date().toISOString()} */
+
+/* Font loading */
+@font-face{font-family:'Omnes Pro';src:url('./fonts/Omnes Bold.woff') format('woff');font-weight:bold;font-style:normal;font-display:swap}
+
+/* Base styles */
+body{background:linear-gradient(135deg,#0a0a0a 0%,#1a0d2e 50%,#0a0a0a 100%);color:#EAEAEA;font-family:'Poppins',system-ui,-apple-system,sans-serif;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body.fouc-prevention{background-color:#121212;background-image:none}
+
+/* Loading screen */
+.loading-screen{position:fixed;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#0a0a0a 0%,#1a0d2e 50%,#0a0a0a 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease}
+.loading-logo{width:80px;height:80px;margin-bottom:1rem;animation:pulse 2s infinite}
+.loading-text{color:#FFFFFF;font-size:1.25rem;font-weight:600;margin-bottom:1rem}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top:3px solid #B564F7;border-radius:50%;animation:spin 1s linear infinite}
+
+/* Typography */
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit;margin:0}
+.font-anton{font-family:'Anton',system-ui,sans-serif;letter-spacing:0.05em}
+.heading-gradient{background:linear-gradient(135deg,#FFFFFF 0%,#E83A99 50%,#8B5CF6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent}
+
+/* Layout */
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 1rem}
+.flex{display:flex}
+.hidden{display:none}
+.block{display:block}
+.relative{position:relative}
+.absolute{position:absolute}
+.fixed{position:fixed}
+
+/* Navigation */
+header{position:fixed;top:0;left:0;width:100%;z-index:50;background:rgba(17,24,39,0.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(75,85,99,0.3)}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem}
+.nav-link{color:#FFFFFF;text-decoration:none;font-weight:600;transition:color 0.3s ease}
+.nav-link:hover{color:#B564F7}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.75rem 1.5rem;font-weight:600;border-radius:0.5rem;text-decoration:none;transition:all 0.3s ease;cursor:pointer}
+.btn-primary{background-color:#B564F7;color:#FFFFFF}
+.btn-primary:hover{background-color:#9333EA;transform:translateY(-1px)}
+
+/* Hero section */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem 1rem}
+.hero-content{max-width:800px}
+.hero-title{font-size:4rem;font-weight:900;margin-bottom:1rem;line-height:1.1}
+.hero-subtitle{font-size:1.5rem;margin-bottom:2rem;opacity:0.9}
+
+/* Mobile optimizations */
+@media (max-width:768px){
+  .heading-gradient{background:none;-webkit-background-clip:initial;-webkit-text-fill-color:initial;background-clip:initial;color:#FFFFFF;text-shadow:none}
+  .hero-title{font-size:2.5rem}
+  .hero-subtitle{font-size:1.25rem}
+  .navbar{padding:1rem}
+}
+
+/* Animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* Utility classes */
+.text-center{text-align:center}
+.text-white{color:#FFFFFF}
+.bg-transparent{background-color:transparent}
+.w-full{width:100%}
+.h-full{height:100%}
+.min-h-screen{min-height:100vh}
+.p-4{padding:1rem}
+.p-8{padding:2rem}
+.mb-4{margin-bottom:1rem}
+.mb-8{margin-bottom:2rem}
+.space-y-4>*+*{margin-top:1rem}
+.space-y-8>*+*{margin-top:2rem}`;
+        
+        await fs.writeFile('css/critical.css', criticalCSS);
+        
+        // Get file size
+        const criticalCSSSize = await fs.stat('css/critical.css');
+        const criticalKB = Math.round(criticalCSSSize.size / 1024);
+        
+        console.log('✅ Critical CSS Created!');
+        console.log(`📊 Critical CSS size: ${criticalKB}KB`);
+        console.log(`📁 Output file: css/critical.css`);
+        
+        // Create inline version for HTML
+        const inlineCriticalCSS = criticalCSS
+            .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments
+            .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+            .replace(/\s*{\s*/g, '{') // Remove spaces around braces
+            .replace(/\s*}\s*/g, '}') // Remove spaces around braces
+            .replace(/\s*:\s*/g, ':') // Remove spaces around colons
+            .replace(/\s*;\s*/g, ';') // Remove spaces around semicolons
+            .trim();
+        
+        await fs.writeFile('css/critical-inline.css', inlineCriticalCSS);
+        console.log(`📁 Inline CSS file: css/critical-inline.css`);
+        
+    } catch (error) {
+        console.error('❌ Critical CSS creation failed:', error);
+        process.exit(1);
+    }
+}
+
+// Run the creation
+createCriticalCSS();

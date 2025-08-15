@@ -17,13 +17,18 @@ async function getAllEvents() {
             throw new Error(`API responded with ${response.status}`);
         }
         
-        const allEvents = await response.json();
-        console.log(`📅 API Response type: ${typeof allEvents}`);
-        console.log(`📅 API Response:`, JSON.stringify(allEvents).substring(0, 200) + '...');
+        const responseData = await response.json();
+        console.log(`📅 API Response type: ${typeof responseData}`);
+        console.log(`📅 API Response:`, JSON.stringify(responseData).substring(0, 200) + '...');
         
-        // Ensure allEvents is an array
-        if (!Array.isArray(allEvents)) {
-            console.warn('⚠️ API did not return an array, using empty array');
+        // Handle both array and object response formats
+        let allEvents;
+        if (Array.isArray(responseData)) {
+            allEvents = responseData;
+        } else if (responseData && Array.isArray(responseData.events)) {
+            allEvents = responseData.events;
+        } else {
+            console.warn('⚠️ API did not return an array or events array, using empty array');
             return [];
         }
         

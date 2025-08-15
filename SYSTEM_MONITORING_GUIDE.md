@@ -17,7 +17,7 @@ The system monitoring and testing system provides comprehensive health checks fo
 - **Browser push notifications** for admin users
 - **Automatic permission requests** when accessing admin pages
 - **Real-time polling** for new notifications
-- **Airtable storage** for notification history
+- **Firestore storage** for notification history
 - **Severity levels** (high, medium, low)
 
 ### Admin Dashboard
@@ -29,9 +29,9 @@ The system monitoring and testing system provides comprehensive health checks fo
 
 ## 📋 Test Coverage
 
-### 1. Airtable Connection Test
+### 1. Firestore Connection Test
 - **Purpose**: Verifies database connectivity
-- **Tests**: Connection speed, table access, record retrieval
+- **Tests**: Connection speed, collection access, document retrieval
 - **Threshold**: < 5000ms response time
 
 ### 2. EventService Test
@@ -64,26 +64,27 @@ Add these to your Netlify dashboard:
 
 ```bash
 # Required
-AIRTABLE_PERSONAL_ACCESS_TOKEN=your_token
-AIRTABLE_BASE_ID=your_base_id
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_CLIENT_EMAIL=your_client_email
+FIREBASE_PRIVATE_KEY=your_private_key
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### 2. Airtable Setup
+### 2. Firestore Setup
 
-Create a new table called "System Notifications" with these fields:
+The system automatically creates a "system_notifications" collection in Firestore with these fields:
 
 | Field Name | Type | Description |
 |------------|------|-------------|
-| Type | Single line text | Notification type (system_alert, etc.) |
-| Title | Single line text | Alert title |
-| Message | Long text | Alert message |
-| Severity | Single select | high, medium, low |
-| Details | Long text | JSON details |
-| Timestamp | Date | When alert was created |
-| Status | Single select | New, Read, Resolved |
+| type | String | Notification type (system_alert, etc.) |
+| title | String | Alert title |
+| message | String | Alert message |
+| severity | String | high, medium, low |
+| details | Object | JSON details |
+| timestamp | Timestamp | When alert was created |
+| status | String | New, Read, Resolved |
 
 ### 3. Scheduled Functions
 

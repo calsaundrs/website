@@ -1,1 +1,0 @@
-# Brum Outloud Analysis Summary

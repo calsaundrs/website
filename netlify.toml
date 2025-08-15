@@ -6,6 +6,8 @@
   publish = "."
   functions = "netlify/functions"
   command = "npm run build"
+  # Specify Node.js version to match package requirements
+  environment = { NODE_VERSION = "20" }
 
 # Specifies how serverless functions are handled
 [functions]
@@ -88,6 +90,8 @@
   to = "/all-venues.html"
   status = 200
 
+
+
 # Rule for the COMMUNITY page
 [[redirects]]
   from = "/community"
@@ -149,12 +153,7 @@
     to = "/admin-edit-events.html"
     status = 200
 
-# Rule for the dynamic sitemap (Firestore-based)
-[[redirects]]
-  from = "/sitemap.xml"
-  to = "/.netlify/functions/sitemap-firestore"
-  status = 200
-  force = true
+# Static sitemap.xml is served directly from the root directory
 
 # Custom 404 page
 [[redirects]]

@@ -108,10 +108,10 @@ Retrieves detailed information for a specific event by slug from Firestore.
 
 ### GET /get-event-details-by-id
 
-Retrieves event details by Airtable record ID.
+Retrieves event details by Firestore document ID.
 
 **Parameters:**
-- `id` (string, required): Airtable record ID
+- `id` (string, required): Firestore document ID
 
 **Response:** Same format as `/get-event-details`
 

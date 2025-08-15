@@ -119,12 +119,12 @@ const adminResponse = await fetch('/.netlify/functions/get-events?view=admin');
 - Creates SEO-friendly content
 
 ### `get-event-details-by-id.js`
-**Purpose:** Get event details using Airtable record ID.
+**Purpose:** Get event details using Firestore document ID.
 
 **HTTP Method:** GET
 
 **Parameters:**
-- `id` (string, required): Airtable record ID
+- `id` (string, required): Firestore document ID
 
 **Response:** Same format as `get-event-details`
 
@@ -134,7 +134,7 @@ const adminResponse = await fetch('/.netlify/functions/get-events?view=admin');
 **HTTP Method:** GET
 
 **Parameters:**
-- `view` (string, optional): Airtable view name
+- `view` (string, optional): View type (public/admin)
 - `filter` (string, optional): Additional filtering criteria
 
 **Response Format:**
@@ -635,13 +635,12 @@ async function verifyAuth(event) {
 }
 ```
 
-#### Airtable Integration
+#### Firestore Integration
 ```javascript
-// Standard Airtable connection pattern
-const Airtable = require('airtable');
-const base = new Airtable({ 
-  apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN 
-}).base(process.env.AIRTABLE_BASE_ID);
+// Standard Firestore connection pattern
+const admin = require('firebase-admin');
+const db = admin.firestore();
+```
 
 // Query pattern
 const records = await base('Events').select({
@@ -712,9 +711,10 @@ function successResponse(data, statusCode = 200) {
 
 ### Required Configuration
 ```bash
-# Airtable Integration
-AIRTABLE_PERSONAL_ACCESS_TOKEN=patXXXXXXXXXXXXXX
-AIRTABLE_BASE_ID=appXXXXXXXXXXXXXX
+# Firestore Integration
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-client-email
+FIREBASE_PRIVATE_KEY=your-private-key
 
 # Cloudinary Image Storage
 CLOUDINARY_CLOUD_NAME=your-cloud-name
@@ -757,11 +757,11 @@ if (process.env.NODE_ENV !== 'production') {
 - **Cause:** Firebase token expired or invalid
 - **Solution:** Refresh authentication token
 
-#### `AIRTABLE_ERROR`
+#### `FIRESTORE_ERROR`
 - **Cause:** Database operation failed
 - **Solutions:**
-  - Check Airtable API limits
-  - Verify field names and types
+  - Check Firestore permissions
+  - Verify document structure
   - Check record permissions
 
 #### `CLOUDINARY_ERROR`
@@ -783,7 +783,7 @@ if (process.env.NODE_ENV !== 'production') {
 // Enable debug logging
 console.log('Function input:', JSON.stringify(event, null, 2));
 console.log('Environment check:', {
-  airtable: !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
+  firestore: !!process.env.FIREBASE_PROJECT_ID,
   cloudinary: !!process.env.CLOUDINARY_API_KEY,
   gemini: !!process.env.GEMINI_API_KEY
 });
@@ -925,7 +925,7 @@ describe('Event Submission', () => {
 ```
 
 ### Integration Testing
-- Test with actual Airtable records
+- Test with actual Firestore documents
 - Verify Cloudinary uploads
 - Check Firebase authentication
 - Validate AI API responses
@@ -955,7 +955,7 @@ Functions deploy automatically when pushed to main branch via Netlify's Git inte
 // Health check endpoint
 exports.handler = async (event, context) => {
   const checks = {
-    airtable: !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN,
+    firestore: !!process.env.FIREBASE_PROJECT_ID,
     cloudinary: !!process.env.CLOUDINARY_API_KEY,
     gemini: !!process.env.GEMINI_API_KEY
   };

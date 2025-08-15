@@ -98,9 +98,16 @@
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
     
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
+    
     <!-- Tailwind loaded with defer to avoid render blocking -->
     <script src="https://cdn.tailwindcss.com" defer></script>
     <script src="/js/main.js?v=2" defer></script>
+    <script src="/js/accessibility.js" defer></script>
+    <script src="/js/error-handling.js" defer></script>
+    <script src="/js/pwa-manager.js" defer></script>
+    <script src="/js/seo-manager.js" defer></script>
     
     <!-- PWA and favicons -->
     <link rel="icon" href="/faviconV2.png" type="image/png">
@@ -109,15 +116,93 @@
     <meta name="theme-color" content="#8a2be2">
     
     <style>
-        /* Base Styles */
+        /* FOUC Prevention - Hide content until styles are loaded */
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-text {
+            color: #B564F7;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 100, 247, 0.3);
+            border-top: 3px solid #B564F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Critical CSS to prevent flashing */
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
             color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0;
         }
-
-        /* Critical CSS to prevent pride flag flashing */
+        
+        /* Basic layout styles to prevent layout shift */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
             width: auto !important;
@@ -126,7 +211,9 @@
             transition: opacity 0.3s ease;
         }
         
-        .flag-loaded img[src*="progressflag"] {
+        /* Show flag after page loads */
+        .flag-loaded img[src*="progressflag"],
+        body.flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
 
@@ -413,110 +500,15 @@
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json?v=2">
 
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
-        }
-    </style>
+
     </head>
-<body class="antialiased">
+<body class="antialiased fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -552,8 +544,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
         </div>
         <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
-                <i class="fas fa-bars"></i>
+            <button id="menu-btn" class="btn-menu text-white text-2xl">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
             </button>
         </div>
     </nav>
@@ -582,7 +576,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/glamorous'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg" alt="Glamorous" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="Glamorous" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Glamorous</h3>
@@ -604,7 +605,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/sidewalk'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg" alt="Sidewalk" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="Sidewalk" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Sidewalk</h3>
@@ -626,7 +634,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/the-fountain-inn'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg" alt="The Fountain inn" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="The Fountain inn" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">The Fountain inn</h3>
@@ -648,7 +663,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/the-village-inn'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg" alt="The Village Inn" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="The Village Inn" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">The Village Inn</h3>
@@ -670,7 +692,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/the-fox'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg" alt="The Fox" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="The Fox" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">The Fox</h3>
@@ -692,7 +721,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/the-nightingale-club'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="The Nightingale Club" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">The Nightingale Club</h3>
@@ -714,7 +750,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/eden-bar'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Eden Bar" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="Eden Bar" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Eden Bar</h3>
@@ -736,7 +779,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/missing-bar'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Missing Bar" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="Missing Bar" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Missing Bar</h3>
@@ -758,7 +808,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="venue-card rounded-xl overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300" 
                      onclick="window.location.href='/venue/equator-bar'">
                     <div class="aspect-[4/3] bg-gradient-to-br from-purple-600/20 to-blue-600/20 overflow-hidden">
-                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="w-full h-full object-cover">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" 
+                             srcset="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_300,h_225,c_fill/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp 300w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_400,h_300,c_fill/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp 400w,
+                                     https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_450,c_fill/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp 600w"
+                             sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px"
+                             alt="Equator Bar" 
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">Equator Bar</h3>
@@ -955,5 +1012,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // Call initializePage when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', initializePage);
     </script>
+    
+    <!-- Enhanced Animations & Micro-interactions -->
+    <script src="/js/enhanced-animations.js" defer></script>
 </body>
 </html>

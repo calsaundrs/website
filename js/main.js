@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.classList.remove('hidden');
             menu.classList.add('flex');
             menuBtn.setAttribute('aria-expanded', 'true');
-            menuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            menuBtn.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scroll
             isMenuOpen = true;
             
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.classList.add('hidden');
             menu.classList.remove('flex');
             menuBtn.setAttribute('aria-expanded', 'false');
-            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            menuBtn.classList.remove('active');
             document.body.style.overflow = ''; // Restore scroll
             isMenuOpen = false;
         };

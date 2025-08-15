@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const { createCanvas, loadImage, registerFont } = require('canvas');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -60,17 +59,25 @@ exports.handler = async (event, context) => {
         
         console.log(`Generating Instagram story for event: ${eventData['Event Name'] || eventData.name}`);
         
-        // Generate Instagram story image
-        const imageBuffer = await generateStoryImage(eventData);
-        
+        // Return event data for client-side processing
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': 'image/png',
+                'Content-Type': 'application/json',
                 'Cache-Control': 'public, max-age=3600'
             },
-            body: imageBuffer.toString('base64'),
-            isBase64Encoded: true
+            body: JSON.stringify({
+                success: true,
+                eventData: {
+                    name: eventData['Event Name'] || eventData.name || 'Event',
+                    date: eventData['Date'] || eventData.date,
+                    time: eventData['Time'] || eventData.time || eventData.startTime,
+                    venue: eventData['Venue Name'] || eventData.venueName || 'Venue TBC',
+                    image: eventData.image?.url || eventData.promoImage || null,
+                    categories: eventData.category || eventData.categories || [],
+                    description: eventData['Description'] || eventData.description || ''
+                }
+            })
         };
         
     } catch (error) {
@@ -85,19 +92,6 @@ exports.handler = async (event, context) => {
         };
     }
 };
-
-async function generateStoryImage(eventData) {
-    // Extract event data
-    const eventName = eventData['Event Name'] || eventData.name || 'Event';
-    const eventDate = eventData['Date'] || eventData.date;
-    const eventTime = eventData['Time'] || eventData.time || eventData.startTime;
-    const venueName = eventData['Venue Name'] || eventData.venueName || 'Venue TBC';
-    const eventImage = eventData.image?.url || eventData.promoImage || null;
-    const categories = eventData.category || eventData.categories || [];
-    
-    // Create canvas
-    const canvas = createCanvas(1080, 1920);
-    const ctx = canvas.getContext('2d');
     
     // Background
     ctx.fillStyle = '#000000';
