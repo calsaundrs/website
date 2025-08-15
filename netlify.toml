@@ -90,6 +90,8 @@
   to = "/all-venues.html"
   status = 200
 
+
+
 # Rule for the COMMUNITY page
 [[redirects]]
   from = "/community"
