@@ -281,7 +281,7 @@
                     <!-- Download Button with Brand Styling -->
                     <div class="absolute top-2 right-2">
                         <button onclick="downloadStoryImage()" class="bg-accent-color/20 backdrop-blur-sm border border-accent-color/30 text-accent-color px-3 py-1 rounded text-sm font-semibold hover:bg-accent-color/30 transition-all">
-                            <i class="fas fa-external-link-alt mr-1"></i>OPEN STORY
+                            <i class="fas fa-download mr-1"></i>DOWNLOAD
                         </button>
                     </div>
                 </div>
@@ -297,7 +297,7 @@
             }
             
             try {
-                // Generate Instagram story URL
+                // Generate Instagram story image
                 const response = await fetch('/.netlify/functions/generate-instagram-story', {
                     method: 'POST',
                     headers: {
@@ -313,20 +313,18 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                // Get the story HTML
-                const storyHtml = await response.text();
+                // Get the image blob
+                const imageBlob = await response.blob();
                 
-                // Create a blob URL for the HTML
-                const blob = new Blob([storyHtml], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
+                // Create download link
+                const url = URL.createObjectURL(imageBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `brum-outloud-story-${event.slug || event.id}.png`;
+                link.click();
                 
-                // Open in new tab for user to save as image
-                const newWindow = window.open(url, '_blank');
-                
-                // Clean up after a delay
-                setTimeout(() => {
-                    URL.revokeObjectURL(url);
-                }, 1000);
+                // Clean up
+                URL.revokeObjectURL(url);
                 
             } catch (error) {
                 console.error('Error generating Instagram story:', error);
