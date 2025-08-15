@@ -466,9 +466,11 @@
                 <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
+                            <button id="menu-btn" class="btn-menu text-white text-2xl">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </button>
             </div>
         </nav>
         <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
@@ -1535,6 +1537,7 @@
                 menuBtn.addEventListener('click', function() {
                     menu.classList.toggle('hidden');
                     menu.classList.toggle('flex');
+                    menuBtn.classList.toggle('active');
                 });
                 
                 // Close menu when clicking on a link
@@ -1543,6 +1546,7 @@
                     link.addEventListener('click', function() {
                         menu.classList.add('hidden');
                         menu.classList.remove('flex');
+                        menuBtn.classList.remove('active');
                     });
                 });
             }
@@ -1576,6 +1580,9 @@
             });
         });
     </script>
+
+    <!-- Scripts -->
+    <script src="/js/accessibility.js" defer></script>
 
     <!-- Footer -->
     <footer class="border-t-2 border-gray-800 p-8 mt-32">
