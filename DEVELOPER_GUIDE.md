@@ -17,7 +17,7 @@ Welcome to the BrumOutLoud developer documentation! This guide provides everythi
 - **Git** for version control
 - **Netlify CLI** (optional, for local development)
 - **Firebase account** (for authentication)
-- **Airtable account** (for database)
+- **Firebase account** (for database)
 - **Cloudinary account** (for image storage)
 - **Google Cloud account** (for AI features)
 
@@ -94,7 +94,7 @@ Static HTML/CSS/JS (Netlify CDN)
     ↓
 Netlify Functions (AWS Lambda)
     ↓
-External Services (Airtable, Cloudinary, Firebase, Gemini)
+External Services (Firestore, Cloudinary, Firebase, Gemini)
 ```
 
 ### Key Components

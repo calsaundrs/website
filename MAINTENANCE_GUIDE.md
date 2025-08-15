@@ -4,8 +4,8 @@
 
 This guide provides comprehensive information for maintaining, monitoring, and troubleshooting the BrumOutLoud platform. It covers system administration, performance monitoring, and common issue resolution.
 
-**Last Updated:** July 2025  
-**Platform Version:** 1.1.0
+**Last Updated:** January 2025  
+**Platform Version:** 2.0.0
 
 ---
 
@@ -41,8 +41,8 @@ This guide provides comprehensive information for maintaining, monitoring, and t
   - Review error rates
 
 #### 3. Database Maintenance
-- **Airtable Health Check**
-  - Monitor record counts
+- **Firestore Health Check**
+  - Monitor collection sizes
   - Check for duplicate entries
   - Verify data integrity
 

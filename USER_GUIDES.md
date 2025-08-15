@@ -4,8 +4,8 @@
 
 This guide provides step-by-step instructions for all user types on the BrumOutLoud platform. Whether you're looking for events, submitting content, or managing the platform, you'll find detailed instructions here.
 
-**Last Updated:** July 2025  
-**Platform Version:** 1.1.0
+**Last Updated:** January 2025  
+**Platform Version:** 2.0.0
 
 ---
 
