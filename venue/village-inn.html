@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Village Inn - BrumOutLoud</title>
+    <meta name="description" content="A welcoming LGBTQ+ pub in the heart of Birmingham's Gay Village, offering great drinks and a friendly atmosphere.">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="The Village Inn">
+    <meta property="og:description" content="A welcoming LGBTQ+ pub in the heart of Birmingham's Gay Village, offering great drinks and a friendly atmosphere.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://brumoutloud.co.uk/venue/village-inn">
+    
+    <meta property="og:image" content="https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn">
+    {{/if}}
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Village Inn">
+    <meta name="twitter:description" content="A welcoming LGBTQ+ pub in the heart of Birmingham's Gay Village, offering great drinks and a friendly atmosphere.">
+    
+    <meta name="twitter:image" content="https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn">
+    
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-badge.approved {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                     onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Venue Details -->
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                
+                <img src="https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn" alt="The Village Inn" class="w-full h-full object-cover">
+                
+                <div class="absolute top-4 left-4">
+                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back
+                    </a>
+                </div>
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <!-- Venue Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-4">The Village Inn</h1>
+                    <p class="text-xl text-gray-300 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                        22 Hurst Street, Birmingham, B5 4TD
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Pub</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Bar</span>
+                    </div>
+                </div>
+
+                <!-- Venue Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Venue
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">A welcoming LGBTQ+ pub in the heart of Birmingham's Gay Village, offering great drinks and a friendly atmosphere.</p>
+                        </div>
+                        
+
+                        <!-- Gallery -->
+                        
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+1" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+2" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+3" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Venue+Photo+4" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Images sourced from Google Places
+                            </p>
+                        </div>
+                        
+
+                        <!-- Google Reviews -->
+                        {{#if googlePlaces.reviews.length}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fab fa-google mr-3 text-accent-color"></i>Recent Reviews from Google
+                            </h2>
+                            <div class="space-y-4">
+                                
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Sarah M.</p>
+                                        <div class="text-xs">
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Amazing atmosphere and great music! The staff are friendly and the venue is always clean.</p>
+                                </div>
+                                
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">James L.</p>
+                                        <div class="text-xs">
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Really enjoyed the drag show last night. Great venue with a welcoming community feel.</p>
+                                </div>
+                                
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Emma R.</p>
+                                        <div class="text-xs">
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Best LGBTQ+ venue in Birmingham! Always a fantastic night out with great entertainment.</p>
+                                </div>
+                                
+                            </div>
+                            <div class="mt-8 text-center">
+                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                            </div>
+                        </div>
+                        
+
+                        <!-- Upcoming Events -->
+                        
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+
+                        <!-- Action Buttons -->
+                        
+                        <div class="venue-card p-6">
+                            <div class="space-y-3">
+                                <a href="https://villageinnbirmingham.co.uk" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
+                                </a>
+                            </div>
+                        </div>
+                        
+
+                        <!-- Current Status -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
+                            </h3>
+                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
+                                <p class="font-bold text-lg">Open</p>
+                                <p class="text-sm">Currently open for business</p>
+                            </div>
+                        </div>
+
+                        <!-- Opening Hours -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <p>Monday: 9:00 PM – 3:00 AM</p>
+                                <p>Tuesday: 9:00 PM – 3:00 AM</p>
+                                <p>Wednesday: 9:00 PM – 3:00 AM</p>
+                                <p>Thursday: 9:00 PM – 3:00 AM</p>
+                                <p>Friday: 9:00 PM – 3:00 AM</p>
+                                <p>Saturday: 9:00 PM – 3:00 AM</p>
+                                <p>Sunday: 9:00 PM – 3:00 AM</p>
+                            </div>
+                        </div>
+
+                        <!-- Google Rating -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                            </h3>
+                            <div class="flex items-center space-x-2 text-xl mb-2">
+                                <div>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                                <p class="text-white font-semibold">4.2 <span class="text-gray-400">(156)</span></p>
+                            </div>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                                View on Google Maps
+                            </a>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:+44 121 622 4747" class="text-blue-400 hover:underline">
+                                        +44 121 622 4747
+                                    </a>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="https://villageinnbirmingham.co.uk" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <!-- Share Venue -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Venue
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu').classList.toggle('hidden');
+        });
+
+        // Share functionality
+        function shareVenue() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: document.querySelector('meta[name="description"]').getAttribute('content'),
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Venue link copied to clipboard!');
+                });
+            }
+        }
+
+        // Add click handlers for share buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareButtons = document.querySelectorAll('button');
+            shareButtons.forEach(button => {
+                if (button.textContent.includes('Share')) {
+                    button.addEventListener('click', shareVenue);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -15,7 +15,7 @@
     "optimize:css": "node optimize-css.js",
     "optimize:critical": "node create-critical-css.js",
     "optimize:all": "npm run optimize:css && npm run optimize:critical",
-    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap"
+    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.330",
