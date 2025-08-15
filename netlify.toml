@@ -6,6 +6,8 @@
   publish = "."
   functions = "netlify/functions"
   command = "npm run build"
+  # Specify Node.js version to match package requirements
+  environment = { NODE_VERSION = "20" }
 
 # Specifies how serverless functions are handled
 [functions]
