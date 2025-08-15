@@ -255,40 +255,10 @@ class AccessibilityManager {
     }
 
     /**
-     * Skip Links
+     * Skip Links - Removed as requested
      */
     setupSkipLinks() {
-        // Add skip links to main content and navigation
-        const skipLinks = `
-            <a href="#main-content" class="skip-link">Skip to main content</a>
-            <a href="#main-navigation" class="skip-link">Skip to navigation</a>
-        `;
-        
-        document.body.insertAdjacentHTML('afterbegin', skipLinks);
-
-        // Add skip link styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .skip-link {
-                position: absolute;
-                top: -40px;
-                left: 6px;
-                background: #E83A99;
-                color: white;
-                padding: 8px;
-                text-decoration: none;
-                border-radius: 4px;
-                z-index: 1000;
-                transition: top 0.3s ease;
-            }
-            
-            .skip-link:focus {
-                top: 6px;
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Add IDs to main content areas
+        // Skip links removed - keeping IDs for potential future use
         const main = document.querySelector('main');
         if (main) main.id = 'main-content';
 
