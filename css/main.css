@@ -1489,3 +1489,48 @@ select:focus {
         transform: none !important;
     }
 }
+
+/* Large text mode for accessibility */
+.large-text {
+    font-size: 1.2em;
+}
+
+.large-text h1 {
+    font-size: 2.5em;
+}
+
+.large-text h2 {
+    font-size: 2em;
+}
+
+.large-text h3 {
+    font-size: 1.5em;
+}
+
+.large-text p, .large-text span, .large-text div {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.large-text .btn {
+    font-size: 1.1em;
+    padding: 0.875rem 1.75rem;
+}
+
+.large-text input, .large-text textarea, .large-text select {
+    font-size: 1.1em;
+    padding: 0.875rem;
+}
+
+/* Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

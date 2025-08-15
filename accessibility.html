@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Features | BrumOutLoud</title>
+    <meta name="description" content="Customize your BrumOutLoud experience with our accessibility features. Keyboard shortcuts, high contrast mode, reduced motion, and more.">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Accessibility Features | BrumOutLoud">
+    <meta property="og:description" content="Customize your BrumOutLoud experience with our accessibility features.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://brumoutloud.co.uk/accessibility">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Accessibility Features | BrumOutLoud">
+    <meta name="twitter:description" content="Customize your BrumOutLoud experience with our accessibility features.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Accessibility-specific styles */
+        .accessibility-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .accessibility-toggle:focus {
+            outline: 3px solid #E83A99;
+            outline-offset: 2px;
+        }
+        
+        .feature-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+        
+        .keyboard-shortcut {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .accessibility-demo {
+            border: 2px dashed rgba(232, 58, 153, 0.5);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        /* High contrast mode demo */
+        .demo-high-contrast {
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #FFFFFF;
+        }
+        
+        .demo-high-contrast .btn-primary {
+            background: #FFFF00;
+            color: #000000;
+        }
+        
+        /* Reduced motion demo */
+        .demo-reduced-motion * {
+            animation: none !important;
+            transition: none !important;
+        }
+        
+        /* Focus demo */
+        .demo-focus:focus {
+            outline: 4px solid #E83A99;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white min-h-screen">
+    <!-- Skip Links -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-navigation" class="skip-link">Skip to navigation</a>
+
+    <!-- Header -->
+    <header class="p-8" id="main-navigation">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="btn-menu text-white text-2xl">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </button>
+            </div>
+        </nav>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-anton mb-4 heading-gradient">
+                Accessibility Features
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Customize your BrumOutLoud experience with our comprehensive accessibility features. 
+                We're committed to making our platform accessible to everyone.
+            </p>
+        </div>
+
+        <!-- Quick Settings -->
+        <div class="feature-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-cog mr-3 text-accent-color"></i>
+                Quick Settings
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                    <div>
+                        <h3 class="font-semibold">High Contrast</h3>
+                        <p class="text-sm text-gray-400">Enhanced visibility</p>
+                    </div>
+                    <button id="high-contrast-toggle" class="accessibility-toggle bg-gray-600 w-12 h-6 rounded-full relative" aria-label="Toggle high contrast mode">
+                        <div class="bg-white w-5 h-5 rounded-full absolute top-0.5 left-0.5 transition-transform"></div>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                    <div>
+                        <h3 class="font-semibold">Reduced Motion</h3>
+                        <p class="text-sm text-gray-400">Minimize animations</p>
+                    </div>
+                    <button id="reduced-motion-toggle" class="accessibility-toggle bg-gray-600 w-12 h-6 rounded-full relative" aria-label="Toggle reduced motion">
+                        <div class="bg-white w-5 h-5 rounded-full absolute top-0.5 left-0.5 transition-transform"></div>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                    <div>
+                        <h3 class="font-semibold">Large Text</h3>
+                        <p class="text-sm text-gray-400">Increase font size</p>
+                    </div>
+                    <button id="large-text-toggle" class="accessibility-toggle bg-gray-600 w-12 h-6 rounded-full relative" aria-label="Toggle large text">
+                        <div class="bg-white w-5 h-5 rounded-full absolute top-0.5 left-0.5 transition-transform"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="feature-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-keyboard mr-3 text-accent-color"></i>
+                Keyboard Shortcuts
+            </h2>
+            <p class="text-gray-300 mb-6">
+                Use these keyboard shortcuts to navigate the site quickly. All shortcuts use the Alt key as a modifier.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Go to Homepage</span>
+                    <span class="keyboard-shortcut">Alt + H</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Go to Events</span>
+                    <span class="keyboard-shortcut">Alt + E</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Go to Venues</span>
+                    <span class="keyboard-shortcut">Alt + V</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Submit Event</span>
+                    <span class="keyboard-shortcut">Alt + S</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Toggle Menu</span>
+                    <span class="keyboard-shortcut">Alt + M</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-800 rounded">
+                    <span>Focus Search</span>
+                    <span class="keyboard-shortcut">Alt + F</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Features -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="feature-card p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-mouse-pointer mr-3 text-accent-color"></i>
+                    Focus Management
+                </h3>
+                <p class="text-gray-300 mb-4">
+                    Enhanced focus indicators and logical tab order throughout the site.
+                </p>
+                <div class="accessibility-demo">
+                    <button class="demo-focus btn-primary px-4 py-2 rounded">
+                        Try focusing this button
+                    </button>
+                    <p class="text-sm text-gray-400 mt-2">
+                        Use Tab to navigate and see the enhanced focus indicators.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-card p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-universal-access mr-3 text-accent-color"></i>
+                    Skip Links
+                </h3>
+                <p class="text-gray-300 mb-4">
+                    Skip directly to main content or navigation using keyboard navigation.
+                </p>
+                <div class="accessibility-demo">
+                    <p class="text-sm text-gray-400">
+                        Press Tab at the top of the page to access skip links.
+                    </p>
+                    <div class="mt-2 space-y-1">
+                        <div class="text-xs bg-gray-700 p-2 rounded">
+                            <strong>Skip to main content</strong> - Jump directly to page content
+                        </div>
+                        <div class="text-xs bg-gray-700 p-2 rounded">
+                            <strong>Skip to navigation</strong> - Jump to main navigation menu
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Features -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="feature-card p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-eye mr-3 text-accent-color"></i>
+                    High Contrast Mode
+                </h3>
+                <p class="text-gray-300 mb-4">
+                    Enhanced contrast for better visibility and readability.
+                </p>
+                <div class="accessibility-demo demo-high-contrast">
+                    <h4 class="font-bold mb-2">High Contrast Preview</h4>
+                    <p class="mb-3">This is how text appears in high contrast mode.</p>
+                    <button class="btn-primary px-4 py-2 rounded">
+                        High Contrast Button
+                    </button>
+                </div>
+            </div>
+
+            <div class="feature-card p-6">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-pause mr-3 text-accent-color"></i>
+                    Reduced Motion
+                </h3>
+                <p class="text-gray-300 mb-4">
+                    Minimize animations and transitions for users with motion sensitivity.
+                </p>
+                <div class="accessibility-demo demo-reduced-motion">
+                    <h4 class="font-bold mb-2">Reduced Motion Preview</h4>
+                    <p class="mb-3">Animations are disabled in reduced motion mode.</p>
+                    <button class="btn-primary px-4 py-2 rounded hover:bg-purple-700">
+                        Button (no animation)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen Reader Support -->
+        <div class="feature-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-volume-up mr-3 text-accent-color"></i>
+                Screen Reader Support
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">ARIA Labels</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>All interactive elements have descriptive labels</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Form inputs have proper labels and descriptions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Images have meaningful alt text</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Buttons and links have clear purposes</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">Live Regions</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Form submission status announcements</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Filter changes and results updates</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Loading states and progress indicators</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-400 mt-1 mr-2"></i>
+                            <span>Error messages and notifications</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- WCAG Compliance -->
+        <div class="feature-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-award mr-3 text-accent-color"></i>
+                WCAG 2.1 AA Compliance
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Perceivable</h3>
+                    <p class="text-sm text-gray-300">Content is presented in ways users can perceive</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-mouse-pointer text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Operable</h3>
+                    <p class="text-sm text-gray-300">Interface components are operable by all users</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-2">Understandable</h3>
+                    <p class="text-sm text-gray-300">Content and operation are understandable</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feature-card p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-comments mr-3 text-accent-color"></i>
+                Accessibility Feedback
+            </h2>
+            <p class="text-gray-300 mb-6">
+                Help us improve our accessibility features. We welcome your feedback and suggestions.
+            </p>
+            <form class="space-y-4">
+                <div>
+                    <label for="feedback-type" class="block text-sm font-medium mb-2">Feedback Type</label>
+                    <select id="feedback-type" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white">
+                        <option value="bug">Bug Report</option>
+                        <option value="suggestion">Feature Suggestion</option>
+                        <option value="improvement">Improvement Idea</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="feedback-message" class="block text-sm font-medium mb-2">Message</label>
+                    <textarea id="feedback-message" rows="4" class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white" 
+                              placeholder="Describe your accessibility experience or suggestion..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary px-6 py-3 rounded-lg">
+                    <i class="fas fa-paper-plane mr-2"></i>Send Feedback
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool.html" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script src="/js/accessibility.js"></script>
+    <script>
+        // Accessibility page specific functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const highContrastToggle = document.getElementById('high-contrast-toggle');
+            const reducedMotionToggle = document.getElementById('reduced-motion-toggle');
+            const largeTextToggle = document.getElementById('large-text-toggle');
+
+            // High Contrast Toggle
+            highContrastToggle.addEventListener('click', function() {
+                const isActive = this.classList.contains('active');
+                if (isActive) {
+                    this.classList.remove('active');
+                    this.querySelector('div').style.transform = 'translateX(0)';
+                    document.body.classList.remove('high-contrast');
+                    localStorage.setItem('highContrast', 'false');
+                } else {
+                    this.classList.add('active');
+                    this.querySelector('div').style.transform = 'translateX(1.5rem)';
+                    document.body.classList.add('high-contrast');
+                    localStorage.setItem('highContrast', 'true');
+                }
+            });
+
+            // Reduced Motion Toggle
+            reducedMotionToggle.addEventListener('click', function() {
+                const isActive = this.classList.contains('active');
+                if (isActive) {
+                    this.classList.remove('active');
+                    this.querySelector('div').style.transform = 'translateX(0)';
+                    document.body.classList.remove('reduced-motion');
+                    localStorage.setItem('reducedMotion', 'false');
+                } else {
+                    this.classList.add('active');
+                    this.querySelector('div').style.transform = 'translateX(1.5rem)';
+                    document.body.classList.add('reduced-motion');
+                    localStorage.setItem('reducedMotion', 'true');
+                }
+            });
+
+            // Large Text Toggle
+            largeTextToggle.addEventListener('click', function() {
+                const isActive = this.classList.contains('active');
+                if (isActive) {
+                    this.classList.remove('active');
+                    this.querySelector('div').style.transform = 'translateX(0)';
+                    document.body.classList.remove('large-text');
+                    localStorage.setItem('largeText', 'false');
+                } else {
+                    this.classList.add('active');
+                    this.querySelector('div').style.transform = 'translateX(1.5rem)';
+                    document.body.classList.add('large-text');
+                    localStorage.setItem('largeText', 'true');
+                }
+            });
+
+            // Load saved preferences
+            if (localStorage.getItem('highContrast') === 'true') {
+                highContrastToggle.click();
+            }
+            if (localStorage.getItem('reducedMotion') === 'true') {
+                reducedMotionToggle.click();
+            }
+            if (localStorage.getItem('largeText') === 'true') {
+                largeTextToggle.click();
+            }
+
+            // Handle feedback form
+            const feedbackForm = document.querySelector('form');
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const type = document.getElementById('feedback-type').value;
+                const message = document.getElementById('feedback-message').value;
+                
+                // Here you would typically send this to your backend
+                console.log('Accessibility feedback:', { type, message });
+                
+                // Show success message
+                alert('Thank you for your feedback! We\'ll review it and get back to you.');
+                feedbackForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
