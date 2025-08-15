@@ -8,14 +8,14 @@
     "build:events": "node build-events-ssg.js",
     "build:events-listing": "node build-events-listing-api.js",
     "build:venues-listing": "node build-venues-listing-api.js",
-    "generate-sitemap": "node generate-static-sitemap.js",
+    "generate-sitemap": "node generate-comprehensive-sitemap.js",
     "build:remotion": "cd remotion-templates && npm run build",
     "dev:remotion": "cd remotion-templates && npm run dev",
     "render:reel": "cd remotion-templates && npm run render",
     "optimize:css": "node optimize-css.js",
     "optimize:critical": "node create-critical-css.js",
     "optimize:all": "npm run optimize:css && npm run optimize:critical",
-    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing"
+    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.330",
