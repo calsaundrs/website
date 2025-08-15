@@ -65,10 +65,10 @@ exports.handler = async function (event, context) {
             console.log("Fetching events for sitemap...");
             const eventsRef = db.collection('events');
             
-            // Get approved events (same as events page)
+            // Get approved events (same as events page) - simplified query
             const eventSnapshot = await Promise.race([
-                eventsRef.where('status', '==', 'approved').select('slug', 'date', 'name').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 10000))
+                eventsRef.where('status', '==', 'approved').get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 15000))
             ]);
 
             console.log(`Found ${eventSnapshot.size} approved events`);
@@ -87,6 +87,7 @@ exports.handler = async function (event, context) {
             console.log(`Added ${eventCount} approved events with slugs to sitemap`);
         } catch (eventError) {
             console.warn("Failed to fetch events for sitemap:", eventError.message);
+            console.error("Event error details:", eventError);
             // Continue without events
         }
 
@@ -95,10 +96,10 @@ exports.handler = async function (event, context) {
             console.log("Fetching venues for sitemap...");
             const venuesRef = db.collection('venues');
             
-            // Get all venues to see what's available
+            // Get all venues - simplified query
             const venueSnapshot = await Promise.race([
-                venuesRef.select('slug', 'name', 'image', 'Photo', 'Cloudinary Public ID').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 10000))
+                venuesRef.get(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 15000))
             ]);
 
             console.log(`Found ${venueSnapshot.size} total venues`);
@@ -121,6 +122,7 @@ exports.handler = async function (event, context) {
             console.log(`Added ${includedCount} venues with images to sitemap`);
         } catch (venueError) {
             console.warn("Failed to fetch venues for sitemap:", venueError.message);
+            console.error("Venue error details:", venueError);
             // Continue without venues
         }
 
