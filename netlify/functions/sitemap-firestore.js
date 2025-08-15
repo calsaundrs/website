@@ -65,13 +65,13 @@ exports.handler = async function (event, context) {
             console.log("Fetching events for sitemap...");
             const eventsRef = db.collection('events');
             
-            // Get all events (not just approved ones) to see what's available
+            // Get approved events (same as events page)
             const eventSnapshot = await Promise.race([
-                eventsRef.select('slug', 'date', 'status', 'name').get(),
+                eventsRef.where('status', '==', 'approved').select('slug', 'date', 'name').get(),
                 new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 10000))
             ]);
 
-            console.log(`Found ${eventSnapshot.size} total events`);
+            console.log(`Found ${eventSnapshot.size} approved events`);
 
             let eventCount = 0;
             eventSnapshot.forEach(doc => {
@@ -84,7 +84,7 @@ exports.handler = async function (event, context) {
                 }
             });
             
-            console.log(`Added ${eventCount} events with slugs to sitemap`);
+            console.log(`Added ${eventCount} approved events with slugs to sitemap`);
         } catch (eventError) {
             console.warn("Failed to fetch events for sitemap:", eventError.message);
             // Continue without events

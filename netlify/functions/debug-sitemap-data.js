@@ -27,7 +27,7 @@ exports.handler = async function (event, context) {
             venues: {
                 total: 0,
                 withSlugs: 0,
-                withImages: 0,
+                withValidImages: 0,
                 sample: []
             }
         };
@@ -87,8 +87,9 @@ exports.handler = async function (event, context) {
                 }
                 
                 const hasImage = venueData.image || venueData.Photo || venueData['Cloudinary Public ID'];
-                if (hasImage) {
-                    results.venues.withImages++;
+                const hasValidImage = hasImage && (!venueData.image?.url || !venueData.image.url.includes('placehold.co'));
+                if (hasValidImage) {
+                    results.venues.withValidImages++;
                 }
                 
                 if (results.venues.sample.length < 5) {
@@ -106,7 +107,7 @@ exports.handler = async function (event, context) {
                 }
             });
             
-            console.log(`Venues summary: ${results.venues.withSlugs} with slugs, ${results.venues.withImages} with images`);
+            console.log(`Venues summary: ${results.venues.withSlugs} with slugs, ${results.venues.withValidImages} with valid images (should be in sitemap)`);
             
         } catch (venueError) {
             console.error("Error fetching venues:", venueError);
