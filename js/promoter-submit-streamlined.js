@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Streamlined form loaded successfully!');
+    ErrorHandler.log('Streamlined form loaded successfully!');
     
     // Form elements
     const form = document.getElementById('event-submission-form');
@@ -412,9 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // Show validation errors
+            // Show validation errors using new error handling
             if (errors.length > 0) {
-                alert('Please fix the following issues:\n' + errors.join('\n'));
+                if (window.formErrorHandler) {
+                    window.formErrorHandler.showFormErrors(errors);
+                } else {
+                    alert('Please fix the following issues:\n' + errors.join('\n'));
+                }
                 return;
             }
             
@@ -473,10 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add the venue ID
                 eventData.venueId = finalVenueId;
                 
-                // Debug: Check specific fields
-                console.log('Submitting event data:', eventData);
-                console.log('Category field value:', eventData['category-select']);
-                console.log('All form fields:', Object.keys(eventData));
+                // Log submission data (development only)
+                ErrorHandler.log('Submitting event data:', eventData);
+                ErrorHandler.log('Category field value:', eventData['category-select']);
+                ErrorHandler.log('All form fields:', Object.keys(eventData));
                 
                 // For now, let's try sending as JSON to see if that works
                 const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
@@ -519,8 +523,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Error submitting event: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Error submitting form:', error);
-                alert('Error submitting event. Please try again.');
+                ErrorHandler.error('Error submitting form:', error);
+                if (window.formErrorHandler) {
+                    window.formErrorHandler.handleSubmissionError(error, form);
+                } else {
+                    alert('Error submitting event. Please try again.');
+                }
             }
         });
     }
