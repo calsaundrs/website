@@ -68,7 +68,7 @@ exports.handler = async function (event, context) {
             // Get approved events (same as events page) - simplified query
             const eventSnapshot = await Promise.race([
                 eventsRef.where('status', '==', 'approved').get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 15000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Events fetch timeout')), 30000))
             ]);
 
             console.log(`Found ${eventSnapshot.size} approved events`);
@@ -76,10 +76,12 @@ exports.handler = async function (event, context) {
             let eventCount = 0;
             eventSnapshot.forEach(doc => {
                 const eventData = doc.data();
-                if (eventData.slug) {
-                    const slug = escapeXml(eventData.slug);
+                // Check for slug in multiple possible field names
+                const slug = eventData.slug || eventData['Slug'] || eventData.slugId;
+                if (slug) {
+                    const escapedSlug = escapeXml(slug);
                     const lastMod = eventData.date ? new Date(eventData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-                    sitemap += `  <url>\n    <loc>${baseUrl}/event/${slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+                    sitemap += `  <url>\n    <loc>${baseUrl}/event/${escapedSlug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
                     eventCount++;
                 }
             });
@@ -99,7 +101,7 @@ exports.handler = async function (event, context) {
             // Get all venues - simplified query
             const venueSnapshot = await Promise.race([
                 venuesRef.get(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 15000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Venues fetch timeout')), 30000))
             ]);
 
             console.log(`Found ${venueSnapshot.size} total venues`);
@@ -107,13 +109,15 @@ exports.handler = async function (event, context) {
             let includedCount = 0;
             venueSnapshot.forEach(doc => {
                 const venueData = doc.data();
-                if (venueData.slug) {
+                // Check for slug in multiple possible field names
+                const slug = venueData.slug || venueData['Slug'] || venueData.slugId;
+                if (slug) {
                     // Check if venue has a valid image (similar to venues function logic)
                     const hasValidImage = venueData.image || venueData.Photo || venueData['Cloudinary Public ID'];
                     
                     if (hasValidImage) {
-                        const slug = escapeXml(venueData.slug);
-                        sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                        const escapedSlug = escapeXml(slug);
+                        sitemap += `  <url>\n    <loc>${baseUrl}/venue/${escapedSlug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
                         includedCount++;
                     }
                 }
