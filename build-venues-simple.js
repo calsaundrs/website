@@ -95,37 +95,9 @@ async function getGooglePlacesData(venueData) {
 // Function to get upcoming events for a venue
 async function getUpcomingEventsForVenue(venueId, limit = 6) {
     try {
-        if (!firebaseInitialized || !db) {
-            return [];
-        }
-        
-        const eventsRef = db.collection('events');
-        const now = new Date();
-        
-        const snapshot = await eventsRef
-            .where('venueId', '==', venueId)
-            .where('status', '==', 'approved')
-            .where('date', '>=', now)
-            .orderBy('date', 'asc')
-            .limit(limit)
-            .get();
-
-        const events = [];
-        snapshot.forEach(doc => {
-            const eventData = {
-                id: doc.id,
-                ...doc.data()
-            };
-            events.push({
-                id: eventData.id,
-                name: eventData.name,
-                slug: eventData.slug,
-                date: eventData.date,
-                category: eventData.category || []
-            });
-        });
-
-        return events;
+        // For now, return empty array since we're using static generation
+        // In the future, this could be enhanced to fetch from API
+        return [];
         
     } catch (error) {
         console.error('Error getting upcoming events for venue:', error);

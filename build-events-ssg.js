@@ -18,6 +18,15 @@ async function getAllEvents() {
         }
         
         const allEvents = await response.json();
+        console.log(`📅 API Response type: ${typeof allEvents}`);
+        console.log(`📅 API Response:`, JSON.stringify(allEvents).substring(0, 200) + '...');
+        
+        // Ensure allEvents is an array
+        if (!Array.isArray(allEvents)) {
+            console.warn('⚠️ API did not return an array, using empty array');
+            return [];
+        }
+        
         console.log(`📅 Found ${allEvents.length} total events from API`);
         
         const today = new Date();
