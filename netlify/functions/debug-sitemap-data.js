@@ -51,7 +51,7 @@ exports.handler = async function (event, context) {
                 if (eventData.slug) {
                     results.events.withSlugs++;
                     
-                    if (results.events.sample.length < 5) {
+                    if (results.events.sample.length < 10) {
                         results.events.sample.push({
                             id: doc.id,
                             name: eventData.name,
@@ -63,7 +63,7 @@ exports.handler = async function (event, context) {
                 }
             });
             
-            console.log(`Events summary: ${results.events.approved} approved, ${results.events.withSlugs} with slugs`);
+            console.log(`Events summary: ${results.events.approved} approved, ${results.events.withSlugs} with slugs (all should be in sitemap)`);
             
         } catch (eventError) {
             console.error("Error fetching events:", eventError);

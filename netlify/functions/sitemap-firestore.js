@@ -73,18 +73,18 @@ exports.handler = async function (event, context) {
 
             console.log(`Found ${eventSnapshot.size} total events`);
 
-            let approvedCount = 0;
+            let eventCount = 0;
             eventSnapshot.forEach(doc => {
                 const eventData = doc.data();
-                if (eventData.slug && eventData.status === 'approved') {
+                if (eventData.slug) {
                     const slug = escapeXml(eventData.slug);
                     const lastMod = eventData.date ? new Date(eventData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
                     sitemap += `  <url>\n    <loc>${baseUrl}/event/${slug}</loc>\n    <lastmod>${lastMod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
-                    approvedCount++;
+                    eventCount++;
                 }
             });
             
-            console.log(`Added ${approvedCount} approved events to sitemap`);
+            console.log(`Added ${eventCount} events with slugs to sitemap`);
         } catch (eventError) {
             console.warn("Failed to fetch events for sitemap:", eventError.message);
             // Continue without events
@@ -170,6 +170,8 @@ function generateStaticSitemap() {
     });
 
     sitemap += `</urlset>`;
+
+    console.log("Generated static sitemap with", staticPages.length, "pages (no dynamic content)");
 
     return {
         statusCode: 200,
