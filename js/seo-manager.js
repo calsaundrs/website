@@ -21,7 +21,7 @@ class SEOManager {
     init() {
         this.setupDynamicMeta();
         this.setupStructuredData();
-        this.setupSocialSharing();
+        // this.setupSocialSharing(); // Removed sharing bar functionality
         this.setupAnalytics();
     }
 
