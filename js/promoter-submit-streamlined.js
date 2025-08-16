@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Convert file to base64
             const base64 = await fileToBase64(file);
+            console.log('File converted to base64, length:', base64.length);
             
             // Call AI analysis
             const response = await fetch('/.netlify/functions/analyze-poster', {
@@ -104,18 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ image: base64 })
             });
             
+            console.log('AI analysis response status:', response.status);
+            
             if (!response.ok) {
-                throw new Error('AI analysis failed');
+                const errorText = await response.text();
+                console.error('AI analysis failed:', response.status, errorText);
+                throw new Error(`AI analysis failed: ${response.status} ${response.statusText}`);
             }
             
             const result = await response.json();
+            console.log('AI analysis result:', result);
             
-            if (result.success && result.parsedData) {
-                extractedEventData = result.parsedData;
-                displayExtractedData(result.parsedData);
+            if (result.success && result.extractedData) {
+                extractedEventData = result.extractedData;
+                displayExtractedData(result.extractedData);
                 extractedData.classList.remove('hidden');
             } else {
-                console.log('No data extracted from poster');
+                console.log('No data extracted from poster:', result.error || 'Unknown error');
             }
             
         } catch (error) {
