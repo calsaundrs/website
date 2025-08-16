@@ -171,7 +171,7 @@ exports.handler = async function (event, context) {
                 
                 // Check if this event name already exists in recurring groups (potential duplicate)
                 const hasRecurringVersion = Array.from(recurringGroups.values()).some(instances => 
-                    instances.some(instance => instance.name === event.name)
+                    instances.some(instance => instance.name.toLowerCase() === event.name.toLowerCase())
                 );
                 
                 if (hasRecurringVersion) {
