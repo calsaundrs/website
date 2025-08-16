@@ -26,6 +26,13 @@ async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
   "confidence": "high/medium/low based on how clear the information is"
 }
 
+IMPORTANT DATE GUIDELINES:
+- If the poster shows only day/month (e.g., "4th September"), assume the current year 2025
+- If the poster shows a past year, assume it's a typo and use 2025 instead
+- Only extract dates that are clearly future events
+- If no year is shown, default to 2025
+- If the date appears to be in the past, use 2025 instead
+
 Only return valid JSON. If information is not found, use null for that field. Be conservative - only extract information you're confident about.`;
 
         const payload = {
@@ -68,6 +75,22 @@ Only return valid JSON. If information is not found, use null for that field. Be
         // Try to parse the JSON response
         try {
             const parsedData = JSON.parse(cleanText);
+            
+            // Fix past dates - if date is in the past, assume it's 2025
+            if (parsedData.date) {
+                const extractedDate = new Date(parsedData.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (extractedDate < today) {
+                    console.log('🤖 Fixing past date:', parsedData.date, '→ 2025');
+                    // Extract day and month, set year to 2025
+                    const day = extractedDate.getDate();
+                    const month = extractedDate.getMonth() + 1; // getMonth() returns 0-11
+                    parsedData.date = `2025-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                }
+            }
+            
             console.log('🤖 AI extracted data:', parsedData);
             return parsedData;
         } catch (parseError) {
