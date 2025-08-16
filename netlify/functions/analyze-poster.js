@@ -57,13 +57,22 @@ Only return valid JSON. If information is not found, use null for that field. Be
         const data = await response.json();
         const extractedText = data.candidates[0].content.parts[0].text.trim();
         
+        // Clean up the response - remove markdown code blocks if present
+        let cleanText = extractedText;
+        if (cleanText.includes('```json')) {
+            cleanText = cleanText.replace(/```json\s*/, '').replace(/\s*```/, '');
+        } else if (cleanText.includes('```')) {
+            cleanText = cleanText.replace(/```\s*/, '').replace(/\s*```/, '');
+        }
+        
         // Try to parse the JSON response
         try {
-            const parsedData = JSON.parse(extractedText);
+            const parsedData = JSON.parse(cleanText);
             console.log('🤖 AI extracted data:', parsedData);
             return parsedData;
         } catch (parseError) {
-            console.error('Failed to parse AI response as JSON:', extractedText);
+            console.error('Failed to parse AI response as JSON:', cleanText);
+            console.error('Parse error:', parseError.message);
             return null;
         }
 
