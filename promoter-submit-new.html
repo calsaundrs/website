@@ -76,6 +76,47 @@
 
             <!-- Form -->
             <form id="event-submission-form" class="space-y-8">
+                <!-- Poster Upload Section -->
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
+                        <i class="fas fa-image mr-2"></i>Event Poster/Image
+                    </h2>
+                    
+                    <!-- Upload Area -->
+                    <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-purple-500 transition-colors cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
+                        <p class="text-sm text-gray-500">We'll try to extract event details automatically</p>
+                        <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
+                    </div>
+
+                    <!-- AI Processing Status -->
+                    <div id="ai-processing" class="hidden mt-4 p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400 mr-3"></div>
+                            <span class="text-blue-300">AI is analyzing your poster...</span>
+                        </div>
+                    </div>
+
+                    <!-- Extracted Data Preview -->
+                    <div id="extracted-data" class="hidden mt-4 p-4 bg-green-900/20 border border-green-600 rounded-lg">
+                        <h3 class="text-green-300 font-semibold mb-3">
+                            <i class="fas fa-magic mr-2"></i>Extracted Information
+                        </h3>
+                        <div id="extracted-fields" class="space-y-2 text-sm">
+                            <!-- Extracted fields will be populated here -->
+                        </div>
+                        <div class="mt-4 flex space-x-3">
+                            <button type="button" id="use-extracted" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                <i class="fas fa-check mr-2"></i>Use Extracted Info
+                            </button>
+                            <button type="button" id="ignore-extracted" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                                <i class="fas fa-times mr-2"></i>Ignore
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Basic Event Information -->
                 <div class="card-bg p-8 rounded-lg">
                     <h2 class="text-2xl font-bold mb-6 text-purple-400">

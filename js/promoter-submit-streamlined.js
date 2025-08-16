@@ -14,6 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const changeVenueBtn = document.getElementById('change-venue');
     const addNewVenueBtn = document.getElementById('add-new-venue');
     
+    // Poster parser elements
+    const uploadArea = document.getElementById('upload-area');
+    const posterUpload = document.getElementById('poster-upload');
+    const aiProcessing = document.getElementById('ai-processing');
+    const extractedData = document.getElementById('extracted-data');
+    const extractedFields = document.getElementById('extracted-fields');
+    const useExtractedBtn = document.getElementById('use-extracted');
+    const ignoreExtractedBtn = document.getElementById('ignore-extracted');
+    
+    let extractedEventData = null;
+    
+    // Initialize poster parser
+    initializePosterParser();
+    
     // Initialize recurring events functionality
     initializeRecurringEvents();
     
@@ -23,10 +37,173 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize form submission
     initializeFormSubmission();
     
+    function initializePosterParser() {
+        // Handle file upload
+        uploadArea.addEventListener('click', () => {
+            posterUpload.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-purple-500');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-purple-500');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-purple-500');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                posterUpload.files = files;
+                handlePosterUpload(files[0]);
+            }
+        });
+        
+        posterUpload.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handlePosterUpload(e.target.files[0]);
+            }
+        });
+        
+        // Handle extracted data buttons
+        useExtractedBtn.addEventListener('click', () => {
+            if (extractedEventData) {
+                applyExtractedData(extractedEventData);
+                extractedData.classList.add('hidden');
+            }
+        });
+        
+        ignoreExtractedBtn.addEventListener('click', () => {
+            extractedData.classList.add('hidden');
+            extractedEventData = null;
+        });
+    }
+    
+    async function handlePosterUpload(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+        
+        // Show processing state
+        aiProcessing.classList.remove('hidden');
+        extractedData.classList.add('hidden');
+        
+        try {
+            // Convert file to base64
+            const base64 = await fileToBase64(file);
+            
+            // Call AI analysis
+            const response = await fetch('/.netlify/functions/analyze-poster', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: base64 })
+            });
+            
+            if (!response.ok) {
+                throw new Error('AI analysis failed');
+            }
+            
+            const result = await response.json();
+            
+            if (result.success && result.parsedData) {
+                extractedEventData = result.parsedData;
+                displayExtractedData(result.parsedData);
+                extractedData.classList.remove('hidden');
+            } else {
+                console.log('No data extracted from poster');
+            }
+            
+        } catch (error) {
+            console.error('Poster analysis error:', error);
+            alert('Failed to analyze poster. Please fill in the details manually.');
+        } finally {
+            aiProcessing.classList.add('hidden');
+        }
+    }
+    
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    function displayExtractedData(data) {
+        const fields = [];
+        
+        if (data.eventName) fields.push(`<strong>Event Name:</strong> ${data.eventName}`);
+        if (data.date) fields.push(`<strong>Date:</strong> ${data.date}`);
+        if (data.time) fields.push(`<strong>Time:</strong> ${data.time}`);
+        if (data.venue) fields.push(`<strong>Venue:</strong> ${data.venue}`);
+        if (data.description) fields.push(`<strong>Description:</strong> ${data.description}`);
+        if (data.price) fields.push(`<strong>Price:</strong> ${data.price}`);
+        if (data.categories && data.categories.length > 0) {
+            fields.push(`<strong>Categories:</strong> ${data.categories.join(', ')}`);
+        }
+        
+        extractedFields.innerHTML = fields.map(field => `<div>${field}</div>`).join('');
+    }
+    
+    function applyExtractedData(data) {
+        if (data.eventName) {
+            document.getElementById('event-name').value = data.eventName;
+        }
+        if (data.description) {
+            document.getElementById('description').value = data.description;
+        }
+        if (data.date) {
+            document.getElementById('date').value = data.date;
+            // Update recurring start date if it's empty
+            const recurringStartDate = document.getElementById('recurring-start-date');
+            if (recurringStartDate && !recurringStartDate.value) {
+                recurringStartDate.value = data.date;
+            }
+        }
+        if (data.time) {
+            document.getElementById('start-time').value = data.time;
+        }
+        if (data.venue) {
+            venueSearch.value = data.venue;
+            // Trigger venue search
+            venueSearch.dispatchEvent(new Event('input'));
+        }
+        if (data.categories && data.categories.length > 0) {
+            const categorySelect = document.getElementById('category-select');
+            const category = data.categories[0]; // Use first category
+            if (categorySelect) {
+                // Try to find matching category
+                const option = Array.from(categorySelect.options).find(opt => 
+                    opt.value.toLowerCase() === category.toLowerCase()
+                );
+                if (option) {
+                    categorySelect.value = option.value;
+                }
+            }
+        }
+        
+        // Update recurring preview if needed
+        updateRecurringPreview();
+    }
+    
     function initializeRecurringEvents() {
         // Toggle recurring configuration visibility
         isRecurringCheckbox.addEventListener('change', () => {
             recurringConfig.classList.toggle('hidden', !isRecurringCheckbox.checked);
+            if (isRecurringCheckbox.checked) {
+                // Auto-fill recurring start date with main event date
+                const mainEventDate = document.getElementById('date').value;
+                const recurringStartDate = document.getElementById('recurring-start-date');
+                if (mainEventDate && !recurringStartDate.value) {
+                    recurringStartDate.value = mainEventDate;
+                }
+            }
             updateRecurringPreview();
         });
         
@@ -38,6 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('recurring-start-date').addEventListener('change', updateRecurringPreview);
         document.getElementById('recurring-end-date').addEventListener('change', updateRecurringPreview);
         document.getElementById('max-instances').addEventListener('input', updateRecurringPreview);
+        
+        // Auto-update recurring start date when main event date changes
+        document.getElementById('date').addEventListener('change', (e) => {
+            if (isRecurringCheckbox.checked) {
+                const recurringStartDate = document.getElementById('recurring-start-date');
+                if (!recurringStartDate.value) {
+                    recurringStartDate.value = e.target.value;
+                    updateRecurringPreview();
+                }
+            }
+        });
         
         // Set initial state
         updateRecurringPreview();
@@ -268,7 +456,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isRecurringCheckbox.checked) {
                     formData.append('is-recurring', 'true');
                     formData.append('recurring-pattern', document.querySelector('input[name="recurring-pattern"]:checked').value);
-                    formData.append('recurring-start-date', document.getElementById('recurring-start-date').value);
+                    
+                    // Use main event date as recurring start date if not specified
+                    let recurringStartDate = document.getElementById('recurring-start-date').value;
+                    if (!recurringStartDate) {
+                        recurringStartDate = document.getElementById('date').value;
+                    }
+                    formData.append('recurring-start-date', recurringStartDate);
                     
                     const endDate = document.getElementById('recurring-end-date').value;
                     if (endDate) {
