@@ -1129,27 +1129,40 @@ function getVenueTemplate() {
         // Simple events loading function
         async function loadVenueEvents() {
             try {
-                console.log('Loading events for venue: {{venue.slug}}');
-                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug={{venue.slug}}');
-                if (!response.ok) throw new Error('Failed to fetch events');
-                const data = await response.json();
+                console.log('🚀 Loading events for venue: {{venue.slug}}');
                 
-                console.log('Events data received:', data);
-                
+                // First, let's test if the container exists
                 const eventsContainer = document.getElementById('events-container');
-                console.log('Events container found:', eventsContainer);
+                console.log('📦 Events container found:', eventsContainer);
                 
                 if (!eventsContainer) {
-                    console.error('Events container not found!');
+                    console.error('❌ Events container not found!');
+                    eventsContainer.innerHTML = '<div class="text-red-500 p-4">ERROR: Events container not found!</div>';
                     return;
                 }
                 
-                if (data.success && data.events.length > 0) {
-                    console.log('Total events found:', data.events.length);
+                // Add a loading message
+                eventsContainer.innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div><p class="text-gray-400 mt-2">Loading events...</p></div>';
+                
+                console.log('🌐 Fetching from API...');
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug={{venue.slug}}');
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('📊 Events data received:', data);
+                
+                if (data.success && data.events && data.events.length > 0) {
+                    console.log('✅ Total events found:', data.events.length);
                     
                     // Simple display - just show all events in a list
                     let html = '<div class="space-y-6">';
-                    data.events.forEach(event => {
+                    data.events.forEach((event, index) => {
+                        console.log('🎯 Processing event ' + index + ':', event.name);
+                        
                         const date = new Date(event.date).toLocaleDateString('en-GB', { 
                             month: 'short', 
                             day: 'numeric', 
@@ -1171,14 +1184,20 @@ function getVenueTemplate() {
                     });
                     html += '</div>';
                     
+                    console.log('🎨 Setting HTML content...');
                     eventsContainer.innerHTML = html;
+                    console.log('✅ Events displayed successfully!');
                     
                 } else {
+                    console.log('📭 No events found');
                     eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
                 }
             } catch (error) {
-                console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p></div>';
+                console.error('❌ Error loading events:', error);
+                const eventsContainer = document.getElementById('events-container');
+                if (eventsContainer) {
+                    eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p><p class="text-red-400 text-sm mt-2">Error: ' + error.message + '</p></div>';
+                }
             }
         }
 
