@@ -392,6 +392,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
     
+    // Global venue selection function
+    function selectVenue(id, name, address) {
+        venueIdInput.value = id;
+        venueSearch.value = name;
+        venueResults.classList.add('hidden');
+        
+        venueDetailsContent.innerHTML = `
+            <div class="font-semibold">${name}</div>
+            <div class="text-sm text-gray-400">${address}</div>
+        `;
+        selectedVenueDetails.classList.remove('hidden');
+    }
+    
     function initializeVenueSearch() {
         let searchTimeout;
         
@@ -458,17 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
 
         
-        function selectVenue(id, name, address) {
-            venueIdInput.value = id;
-            venueSearch.value = name;
-            venueResults.classList.add('hidden');
-            
-            venueDetailsContent.innerHTML = `
-                <div class="font-semibold">${name}</div>
-                <div class="text-sm text-gray-400">${address}</div>
-            `;
-            selectedVenueDetails.classList.remove('hidden');
-        }
+
         
         changeVenueBtn.addEventListener('click', () => {
             venueIdInput.value = '';
