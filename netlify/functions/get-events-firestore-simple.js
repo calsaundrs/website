@@ -153,7 +153,7 @@ exports.handler = async function (event, context) {
         const seenEvents = new Map();
         const recurringGroups = new Map();
         
-        events.forEach(event => {
+        for (const event of events) {
             // Debug: Log event details
             console.log(`🔍 Event: ${event.name} | isRecurring: ${event.isRecurring} | recurringGroupId: ${event.recurringGroupId} | date: ${event.date}`);
             
@@ -168,6 +168,17 @@ exports.handler = async function (event, context) {
             } else {
                 // Non-recurring event - deduplicate normally
                 console.log(`📅 Processing non-recurring event: ${event.name} (date: ${event.date})`);
+                
+                // Check if this event name already exists in recurring groups (potential duplicate)
+                const hasRecurringVersion = Array.from(recurringGroups.values()).some(instances => 
+                    instances.some(instance => instance.name === event.name)
+                );
+                
+                if (hasRecurringVersion) {
+                    console.log(`⚠️  Skipping potential duplicate: ${event.name} (recurring version exists)`);
+                    continue; // Skip this event as it has a recurring version
+                }
+                
                 const key = `${event.name}-${event.date}`;
                 const existing = seenEvents.get(key);
                 
@@ -185,7 +196,7 @@ exports.handler = async function (event, context) {
                     }
                 }
             }
-        });
+        }
         
         console.log(`After deduplication: ${deduplicatedEvents.length} non-recurring events, ${recurringGroups.size} recurring groups`);
         
