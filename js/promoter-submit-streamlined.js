@@ -188,17 +188,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (data.categories && data.categories.length > 0) {
-            const categorySelect = document.getElementById('category-select');
-            const category = data.categories[0]; // Use first category
-            if (categorySelect) {
-                // Try to find matching category
-                const option = Array.from(categorySelect.options).find(opt => 
-                    opt.value.toLowerCase() === category.toLowerCase()
-                );
-                if (option) {
-                    categorySelect.value = option.value;
+            // Clear existing selections
+            document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Select matching categories
+            data.categories.forEach(category => {
+                const checkbox = document.querySelector(`input[name="categories"][value="${category}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
                 }
-            }
+            });
+            
+            // Update selected categories display
+            updateSelectedCategoriesDisplay();
         }
         
         // Update recurring preview if needed
@@ -405,6 +409,21 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedVenueDetails.classList.remove('hidden');
     }
     
+    // Update selected categories display
+    function updateSelectedCategoriesDisplay() {
+        const selectedCheckboxes = document.querySelectorAll('input[name="categories"]:checked');
+        const selectedCategoriesDiv = document.getElementById('selected-categories');
+        
+        if (selectedCheckboxes.length === 0) {
+            selectedCategoriesDiv.textContent = 'Select one or more categories that apply to your event';
+            selectedCategoriesDiv.className = 'text-sm text-gray-400';
+        } else {
+            const selectedValues = Array.from(selectedCheckboxes).map(cb => cb.value);
+            selectedCategoriesDiv.textContent = `Selected: ${selectedValues.join(', ')}`;
+            selectedCategoriesDiv.className = 'text-sm text-green-400 font-medium';
+        }
+    }
+    
     function initializeVenueSearch() {
         let searchTimeout;
         
@@ -484,6 +503,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // For now, just show a message - venue creation can be added later
             alert('Venue creation feature coming soon! Please select an existing venue for now.');
         });
+        
+        // Add event listeners for category checkboxes
+        document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCategoriesDisplay);
+        });
     }
     
     function initializeFormSubmission() {
@@ -514,7 +538,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('description', document.getElementById('description').value.trim());
                 formData.append('date', document.getElementById('date').value);
                 formData.append('start-time', document.getElementById('start-time').value);
-                formData.append('category-select', document.getElementById('category-select').value);
+                
+                // Categories (multiple)
+                const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked')).map(cb => cb.value);
+                selectedCategories.forEach(category => {
+                    formData.append('categories', category);
+                });
+                
                 formData.append('link', document.getElementById('link').value.trim());
                 formData.append('contact-name', document.getElementById('contact-name').value.trim());
                 formData.append('contact-email', document.getElementById('contact-email').value.trim());
@@ -600,7 +630,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'description', label: 'Description' },
             { id: 'date', label: 'Event date' },
             { id: 'start-time', label: 'Start time' },
-            { id: 'category-select', label: 'Category' },
             { id: 'contact-name', label: 'Contact name' },
             { id: 'contact-email', label: 'Contact email' }
         ];
@@ -628,6 +657,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (eventDate < today) {
             errors.push('Event date cannot be in the past');
+        }
+        
+        // Category validation
+        const selectedCategories = document.querySelectorAll('input[name="categories"]:checked');
+        if (selectedCategories.length === 0) {
+            errors.push('Please select at least one category');
         }
         
         // Venue validation
