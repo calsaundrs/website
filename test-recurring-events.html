@@ -4,239 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Recurring Events</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-        .container {
-            background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .button {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .button:hover {
-            background-color: #ff5252;
-        }
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
-        .status.success {
-            background-color: #4ecdc420;
-            border: 1px solid #4ecdc4;
-            color: #4ecdc4;
-        }
-        .status.error {
-            background-color: #ff6b6b20;
-            border: 1px solid #ff6b6b;
-            color: #ff6b6b;
-        }
-        pre {
-            background-color: #1a1a1a;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-    </style>
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Test Recurring Events Submission</h1>
         
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
+        <form id="test-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold mb-2">Event Name</label>
+                <input type="text" name="event-name" value="Test Recurring Event" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Description</label>
+                <textarea name="description" class="w-full p-3 bg-gray-800 rounded border">This is a test recurring event</textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Date</label>
+                <input type="date" name="date" value="2025-02-15" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Start Time</label>
+                <input type="time" name="start-time" value="19:00" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Category</label>
+                <select name="category-select" class="w-full p-3 bg-gray-800 rounded border">
+                    <option value="Social">Social</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Contact Name</label>
+                <input type="text" name="contact-name" value="Test User" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Contact Email</label>
+                <input type="email" name="contact-email" value="test@example.com" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Venue ID</label>
+                <input type="text" name="venue-id" value="test-venue" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="is-recurring" value="true" checked class="mr-2">
+                <label class="text-sm font-semibold">This is a recurring event</label>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Recurring Pattern</label>
+                <select name="recurring-pattern" class="w-full p-3 bg-gray-800 rounded border">
+                    <option value="weekly">Weekly</option>
+                    <option value="bi-weekly">Bi-weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Recurring Start Date</label>
+                <input type="date" name="recurring-start-date" value="2025-02-15" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2">Max Instances</label>
+                <input type="number" name="max-instances" value="4" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <button type="submit" class="w-full bg-purple-600 text-white p-3 rounded font-semibold">
+                Submit Test Event
+            </button>
+        </form>
         
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
-        }
-    </style>
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    </head>
-<body>
-    <div class="container">
-        <h1>🔧 Test Recurring Events API</h1>
-        
-        <button id="testBtn" class="button" onclick="testRecurringEvents()">
-            🧪 Test get-recurring-events API
-        </button>
-
-        <div id="status" class="status"></div>
+        <div id="result" class="mt-8 p-4 bg-gray-800 rounded hidden">
+            <h2 class="text-xl font-bold mb-4">Result:</h2>
+            <pre id="result-content" class="text-sm"></pre>
+        </div>
     </div>
-
+    
     <script>
-        async function testRecurringEvents() {
-            const testBtn = document.getElementById('testBtn');
-            const status = document.getElementById('status');
+        document.getElementById('test-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            // Disable button
-            testBtn.disabled = true;
-            testBtn.textContent = '🔄 Testing...';
+            const form = e.target;
+            const formData = new FormData(form);
             
-            status.style.display = 'block';
-            status.className = 'status error';
-            status.textContent = 'Testing get-recurring-events API...';
+            // Log form data
+            console.log('Form data:');
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
             
             try {
-                console.log('Testing get-recurring-events API...');
+                const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+                    method: 'POST',
+                    body: formData
+                });
                 
-                const response = await fetch('/.netlify/functions/get-recurring-events');
+                const result = await response.json();
                 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('result-content').textContent = JSON.stringify(result, null, 2);
                 
-                const responseText = await response.text();
-                console.log('Response text:', responseText);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}\n\nResponse: ${responseText}`);
-                }
-                
-                const data = JSON.parse(responseText);
-                
-                status.className = 'status success';
-                status.innerHTML = `
-                    <h3>✅ API Test Successful!</h3>
-                    <p><strong>Status:</strong> ${response.status}</p>
-                    <p><strong>Recurring Events:</strong> ${data.recurringEvents?.length || 0}</p>
-                    <p><strong>Total Series:</strong> ${data.totalSeries || 0}</p>
-                    <p><strong>Active Events:</strong> ${data.activeEvents || 0}</p>
-                    <details>
-                        <summary>Full Response</summary>
-                        <pre>${JSON.stringify(data, null, 2)}</pre>
-                    </details>
-                `;
-                
-                testBtn.textContent = '✅ Test Complete';
+                console.log('Response:', result);
                 
             } catch (error) {
-                console.error('Test failed:', error);
-                
-                status.className = 'status error';
-                status.innerHTML = `
-                    <h3>❌ API Test Failed</h3>
-                    <p><strong>Error:</strong> ${error.message}</p>
-                    <details>
-                        <summary>Error Details</summary>
-                        <pre>${error.stack || error.message}</pre>
-                    </details>
-                `;
-                
-                testBtn.textContent = '❌ Test Failed - Try Again';
-                testBtn.disabled = false;
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('result-content').textContent = `Error: ${error.message}`;
+                console.error('Error:', error);
             }
-        }
+        });
     </script>
 </body>
 </html>

@@ -403,17 +403,63 @@ exports.handler = async function (event, context) {
         
         // Handle recurring events
         if (firestoreData.isRecurring && firestoreData.recurringPattern) {
-            const recurringManager = new RecurringEventsManager(db);
-            const recurringResult = await recurringManager.createRecurringSeries(firestoreData);
-            
-            if (recurringResult.success) {
-                console.log('Recurring event series created successfully');
-                firestoreData.recurringGroupId = recurringResult.groupId;
-                firestoreData.recurringInstance = 1;
-                firestoreData.totalInstances = recurringResult.totalInstances;
-            } else {
-                console.error('Failed to create recurring series:', recurringResult.error);
-                // Continue with single event
+            try {
+                console.log('Processing recurring event with data:', {
+                    isRecurring: firestoreData.isRecurring,
+                    recurringPattern: firestoreData.recurringPattern,
+                    recurringStartDate: firestoreData.recurringStartDate,
+                    recurringEndDate: firestoreData.recurringEndDate,
+                    maxInstances: firestoreData.maxInstances
+                });
+                
+                const recurringManager = new RecurringEventsManager();
+                
+                // Map form fields to RecurringEventsManager expected format
+                const recurringData = {
+                    name: firestoreData.name,
+                    description: firestoreData.description,
+                    category: firestoreData.category,
+                    venueSlug: firestoreData.venueSlug,
+                    venueName: firestoreData.venueName,
+                    recurringPattern: firestoreData.recurringPattern,
+                    startDate: firestoreData.recurringStartDate,
+                    endDate: firestoreData.recurringEndDate,
+                    maxInstances: firestoreData.maxInstances || 52,
+                    time: firestoreData.startTime || '20:00',
+                    image: firestoreData.promoImage,
+                    link: firestoreData.link,
+                    price: firestoreData.price,
+                    ageRestriction: firestoreData.ageRestriction
+                };
+                
+                console.log('Mapped recurring data:', recurringData);
+                
+                const recurringResult = await recurringManager.createRecurringSeries(recurringData);
+                
+                console.log('Recurring event series created successfully:', recurringResult);
+                
+                // Return success response for recurring events
+                return {
+                    statusCode: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        success: true,
+                        message: `Created ${recurringResult.totalInstances} recurring event instances`,
+                        recurringGroupId: recurringResult.recurringGroupId,
+                        totalInstances: recurringResult.totalInstances,
+                        instances: recurringResult.instances,
+                        ssg: ssgRebuildResult || null,
+                        aiExtraction: aiExtractedData ? {
+                            success: true,
+                            confidence: aiExtractedData.confidence,
+                            extractedFields: Object.keys(aiExtractedData).filter(key => key !== 'confidence')
+                        } : null
+                    })
+                };
+                
+            } catch (error) {
+                console.error('Failed to create recurring series:', error);
+                // Continue with single event creation
             }
         }
         
