@@ -148,41 +148,46 @@ exports.handler = async function (event, context) {
         console.log(`After image filtering: ${eventsWithImages.length} events (removed ${events.length - eventsWithImages.length} events without images)`);
         events = eventsWithImages;
         
-        // Group recurring events FIRST (before deduplication)
-        const groupedEvents = groupRecurringEvents(events);
-        
-        // Deduplicate events AFTER grouping (prefer Firestore-native events over migrated Airtable events)
+        // Deduplicate events first, but handle recurring events properly
         const deduplicatedEvents = [];
         const seenEvents = new Map();
+        const recurringGroups = new Map();
         
-        groupedEvents.forEach(event => {
-            // For recurring events, use the recurringGroupId as part of the key
-            const key = event.isRecurringGroup ? 
-                `${event.name}-${event.recurringGroupId}` : 
-                `${event.name}-${event.date}`;
-            
-            const existing = seenEvents.get(key);
-            
-            if (!existing) {
-                // First time seeing this event
-                seenEvents.set(key, event);
-                deduplicatedEvents.push(event);
+        events.forEach(event => {
+            if (event.isRecurring && event.recurringGroupId) {
+                // This is a recurring event - collect all instances for grouping later
+                if (!recurringGroups.has(event.recurringGroupId)) {
+                    recurringGroups.set(event.recurringGroupId, []);
+                }
+                recurringGroups.get(event.recurringGroupId).push(event);
             } else {
-                // Prefer events without airtableId (pure Firestore) over migrated ones
-                if (!event.airtableId && existing.airtableId) {
-                    // Replace the migrated event with the Firestore-native one
-                    const index = deduplicatedEvents.findIndex(e => e.id === existing.id);
-                    if (index !== -1) {
-                        deduplicatedEvents[index] = event;
-                        seenEvents.set(key, event);
+                // Non-recurring event - deduplicate normally
+                const key = `${event.name}-${event.date}`;
+                const existing = seenEvents.get(key);
+                
+                if (!existing) {
+                    seenEvents.set(key, event);
+                    deduplicatedEvents.push(event);
+                } else {
+                    // Prefer events without airtableId (pure Firestore) over migrated ones
+                    if (!event.airtableId && existing.airtableId) {
+                        const index = deduplicatedEvents.findIndex(e => e.id === existing.id);
+                        if (index !== -1) {
+                            deduplicatedEvents[index] = event;
+                            seenEvents.set(key, event);
+                        }
                     }
                 }
-                // If both have airtableId or both don't, keep the first one (existing)
             }
         });
         
-        console.log(`After deduplication: ${deduplicatedEvents.length} events (removed ${groupedEvents.length - deduplicatedEvents.length} duplicates)`);
-        events = deduplicatedEvents;
+        console.log(`After deduplication: ${deduplicatedEvents.length} non-recurring events, ${recurringGroups.size} recurring groups`);
+        
+        // Group recurring events
+        const groupedEvents = groupRecurringEvents(Array.from(recurringGroups.values()).flat());
+        
+        // Combine non-recurring and grouped recurring events
+        events = [...deduplicatedEvents, ...groupedEvents];
         
         // Sort by date
         groupedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
