@@ -141,6 +141,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    function calculateNextOccurrence(description) {
+        const today = new Date();
+        const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        
+        // Extract day from description (e.g., "Every Wednesday" -> "wednesday")
+        const descriptionLower = description.toLowerCase();
+        const dayMatch = dayNames.find(day => descriptionLower.includes(day));
+        
+        if (dayMatch) {
+            const targetDayIndex = dayNames.indexOf(dayMatch);
+            const currentDayIndex = today.getDay();
+            
+            // Calculate days until next occurrence
+            let daysUntilNext = targetDayIndex - currentDayIndex;
+            if (daysUntilNext <= 0) {
+                daysUntilNext += 7; // Next week
+            }
+            
+            // Create the next occurrence date
+            const nextDate = new Date(today);
+            nextDate.setDate(today.getDate() + daysUntilNext);
+            
+            // Format as YYYY-MM-DD
+            const year = nextDate.getFullYear();
+            const month = String(nextDate.getMonth() + 1).padStart(2, '0');
+            const day = String(nextDate.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        }
+        
+        return null;
+    }
+    
     function displayExtractedData(data) {
         const fields = [];
         
@@ -152,6 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.price) fields.push(`<strong>Price:</strong> ${data.price}`);
         if (data.categories && data.categories.length > 0) {
             fields.push(`<strong>Categories:</strong> ${data.categories.join(', ')}`);
+        }
+        if (data.recurrence && data.recurrence.isRecurring) {
+            fields.push(`<strong>Recurrence:</strong> ${data.recurrence.description || data.recurrence.pattern}`);
         }
         
         extractedFields.innerHTML = fields.map(field => `<div>${field}</div>`).join('');
@@ -170,6 +206,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const recurringStartDate = document.getElementById('recurring-start-date');
             if (recurringStartDate && !recurringStartDate.value) {
                 recurringStartDate.value = data.date;
+            }
+        } else if (data.recurrence && data.recurrence.isRecurring && data.recurrence.description) {
+            // If no specific date but recurring, calculate next occurrence
+            const nextDate = calculateNextOccurrence(data.recurrence.description);
+            if (nextDate) {
+                document.getElementById('date').value = nextDate;
+                const recurringStartDate = document.getElementById('recurring-start-date');
+                if (recurringStartDate && !recurringStartDate.value) {
+                    recurringStartDate.value = nextDate;
+                }
             }
         }
         if (data.time) {
