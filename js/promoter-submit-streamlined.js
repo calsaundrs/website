@@ -176,9 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('start-time').value = data.time;
         }
         if (data.venue) {
-            venueSearch.value = data.venue;
-            // Trigger venue search
-            venueSearch.dispatchEvent(new Event('input'));
+            // Try to find and auto-select the venue
+            const matchedVenue = findMatchingVenue(data.venue);
+            if (matchedVenue) {
+                // Auto-select the venue
+                selectVenue(matchedVenue.id, matchedVenue.name, matchedVenue.address);
+            } else {
+                // Fallback to search box if no match found
+                venueSearch.value = data.venue;
+                venueSearch.dispatchEvent(new Event('input'));
+            }
         }
         if (data.categories && data.categories.length > 0) {
             const categorySelect = document.getElementById('category-select');
@@ -393,6 +400,57 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 });
             });
+        }
+        
+        function findMatchingVenue(venueText) {
+            if (!venues || venues.length === 0) return null;
+            
+            const searchText = venueText.toLowerCase();
+            
+            // First, try exact name match
+            let match = venues.find(venue => 
+                venue.name.toLowerCase() === searchText
+            );
+            
+            if (match) return match;
+            
+            // Try partial name match (venue name contains search text)
+            match = venues.find(venue => 
+                venue.name.toLowerCase().includes(searchText) ||
+                searchText.includes(venue.name.toLowerCase())
+            );
+            
+            if (match) return match;
+            
+            // Try address match
+            match = venues.find(venue => 
+                venue.address && venue.address.toLowerCase().includes(searchText)
+            );
+            
+            if (match) return match;
+            
+            // Try fuzzy matching for common venue names
+            const commonVenueNames = {
+                'victoria': 'The Victoria',
+                'nightingale': 'The Nightingale Club',
+                'eden': 'Eden Bar',
+                'missing': 'Missing Bar',
+                'sidewalk': 'Sidewalk',
+                'glee': 'The Glee Club',
+                'fox': 'The Fox',
+                'hub': 'The Hub',
+                'fountain': 'The Fountain inn',
+                'village': 'The Village Inn'
+            };
+            
+            for (const [key, venueName] of Object.entries(commonVenueNames)) {
+                if (searchText.includes(key)) {
+                    match = venues.find(venue => venue.name === venueName);
+                    if (match) return match;
+                }
+            }
+            
+            return null;
         }
         
         function selectVenue(id, name, address) {
