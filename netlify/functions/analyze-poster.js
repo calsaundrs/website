@@ -24,6 +24,11 @@ async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
   "price": "Price information if found",
   "ageRestriction": "Age restriction if found",
   "categories": ["array", "of", "relevant", "categories"],
+  "recurrence": {
+    "isRecurring": true/false,
+    "pattern": "weekly/bi-weekly/monthly/yearly/custom",
+    "description": "Human-readable description (e.g., 'Every Wednesday', 'First Friday of the month')"
+  },
   "confidence": "high/medium/low based on how clear the information is"
 }
 
@@ -33,6 +38,14 @@ IMPORTANT DATE GUIDELINES:
 - Only extract dates that are clearly future events
 - If no year is shown, default to ${currentYear}
 - If the date appears to be in the past, use ${currentYear} instead
+
+RECURRENCE DETECTION:
+- Look for words like "Every", "Weekly", "Monthly", "Bi-weekly", "Fortnightly", "Daily"
+- Look for day patterns: "Every Wednesday", "Every Friday", "Every other Tuesday"
+- Look for date patterns: "First Friday", "Last Saturday", "Every 1st of the month"
+- Look for time-based patterns: "Every week", "Every month", "Every year"
+- If recurrence is detected, set isRecurring: true and provide pattern and description
+- If no recurrence indicators found, set isRecurring: false and use null for pattern/description
 
 Only return valid JSON. If information is not found, use null for that field. Be conservative - only extract information you're confident about.`;
 

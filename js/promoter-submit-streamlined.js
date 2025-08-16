@@ -235,6 +235,29 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSelectedCategoriesDisplay();
         }
         
+        // Handle recurrence data from AI
+        if (data.recurrence && data.recurrence.isRecurring) {
+            // Check the recurring checkbox
+            isRecurringCheckbox.checked = true;
+            recurringConfig.classList.remove('hidden');
+            
+            // Set the pattern if it matches our options
+            if (data.recurrence.pattern) {
+                const patternRadio = document.querySelector(`input[name="recurring-pattern"][value="${data.recurrence.pattern}"]`);
+                if (patternRadio) {
+                    patternRadio.checked = true;
+                }
+            }
+            
+            // Set the custom description if provided
+            if (data.recurrence.description) {
+                const customDescField = document.getElementById('custom-recurrence-desc');
+                if (customDescField) {
+                    customDescField.value = data.recurrence.description;
+                }
+            }
+        }
+        
         // Update recurring preview if needed
         updateRecurringPreview();
     }
