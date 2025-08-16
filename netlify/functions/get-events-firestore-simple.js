@@ -154,6 +154,9 @@ exports.handler = async function (event, context) {
         const recurringGroups = new Map();
         
         events.forEach(event => {
+            // Debug: Log event details
+            console.log(`🔍 Event: ${event.name} | isRecurring: ${event.isRecurring} | recurringGroupId: ${event.recurringGroupId} | date: ${event.date}`);
+            
             // Check if this is a recurring event (either by isRecurring flag or recurringGroupId)
             if ((event.isRecurring && event.recurringGroupId) || event.recurringGroupId) {
                 // This is a recurring event - collect all instances for grouping later
@@ -208,6 +211,13 @@ exports.handler = async function (event, context) {
         const limitedEvents = events.slice(0, limit);
         
         console.log(`Returning ${limitedEvents.length} events (${deduplicatedEvents.length} non-recurring + ${groupedEvents.length} grouped recurring)`);
+        
+        // Debug: Log final event names
+        console.log(`📋 Final events being returned:`);
+        limitedEvents.forEach((event, index) => {
+            const type = event.isRecurringGroup ? '🔄 GROUPED' : '📅 SINGLE';
+            console.log(`   ${index + 1}. ${type} ${event.name} (${event.date})`);
+        });
         
         return {
             statusCode: 200,
