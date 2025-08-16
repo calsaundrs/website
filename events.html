@@ -1610,9 +1610,25 @@
                 venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
             }
             
+            // Extract recurrence pattern
+            const getRecurrencePattern = (event) => {
+                if (event.recurringPattern) {
+                    const pattern = event.recurringPattern.toLowerCase();
+                    if (pattern.includes('weekly') || pattern.includes('week')) return 'Weekly';
+                    if (pattern.includes('monthly') || pattern.includes('month')) return 'Monthly';
+                    if (pattern.includes('bi-weekly') || pattern.includes('biweekly') || pattern.includes('fortnightly')) return 'Bi-weekly';
+                    if (pattern.includes('daily')) return 'Daily';
+                    if (pattern.includes('yearly') || pattern.includes('annual')) return 'Yearly';
+                    return 'Recurring';
+                }
+                return 'Recurring';
+            };
+            
+            const recurrencePattern = getRecurrencePattern(event);
+            
             const recurringBadge = `
                 <div class="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                    <i class="fas fa-redo mr-1"></i>Recurring
+                    <i class="fas fa-redo mr-1"></i>${recurrencePattern}
                 </div>
             `;
             
