@@ -157,12 +157,14 @@ exports.handler = async function (event, context) {
             // Check if this is a recurring event (either by isRecurring flag or recurringGroupId)
             if ((event.isRecurring && event.recurringGroupId) || event.recurringGroupId) {
                 // This is a recurring event - collect all instances for grouping later
+                console.log(`🔄 Processing recurring event: ${event.name} (groupId: ${event.recurringGroupId})`);
                 if (!recurringGroups.has(event.recurringGroupId)) {
                     recurringGroups.set(event.recurringGroupId, []);
                 }
                 recurringGroups.get(event.recurringGroupId).push(event);
             } else {
                 // Non-recurring event - deduplicate normally
+                console.log(`📅 Processing non-recurring event: ${event.name} (date: ${event.date})`);
                 const key = `${event.name}-${event.date}`;
                 const existing = seenEvents.get(key);
                 
@@ -184,8 +186,17 @@ exports.handler = async function (event, context) {
         
         console.log(`After deduplication: ${deduplicatedEvents.length} non-recurring events, ${recurringGroups.size} recurring groups`);
         
+        // Debug: Log recurring groups
+        recurringGroups.forEach((instances, groupId) => {
+            console.log(`📊 Recurring group ${groupId}: ${instances.length} instances`);
+            instances.forEach(instance => {
+                console.log(`   - ${instance.name} (${instance.date})`);
+            });
+        });
+        
         // Group recurring events
         const groupedEvents = groupRecurringEvents(Array.from(recurringGroups.values()).flat());
+        console.log(`📦 Created ${groupedEvents.length} grouped events`);
         
         // Combine non-recurring and grouped recurring events
         events = [...deduplicatedEvents, ...groupedEvents];
