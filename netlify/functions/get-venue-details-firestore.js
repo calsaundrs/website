@@ -1149,40 +1149,50 @@ function getVenueTemplate() {
                     console.log('Recurring events:', recurringEvents.length);
                     console.log('One-off events:', oneOffEvents.length);
                     
-                    let eventsHTML = '';
+                    // Clear container
+                    eventsContainer.innerHTML = '';
                     
-                    // Recurring Events Section
+                    // Add recurring events section
                     if (recurringEvents.length > 0) {
-                        const sectionHeader = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl">';
-                        const title = '<h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-redo text-green-400 text-xl"></i></div>Regular Events<span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">' + recurringEvents.length + ' event' + (recurringEvents.length !== 1 ? 's' : '') + '</span></h3>';
-                        const grid = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + recurringEvents.map(event => renderEventCard(event, true)).join('') + '</div>';
-                        const sectionFooter = '</div></section>';
-                        eventsHTML += sectionHeader + title + grid + sectionFooter;
+                        const recurringSection = document.createElement('section');
+                        recurringSection.className = 'mb-12';
+                        recurringSection.innerHTML = '<div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl"><h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-redo text-green-400 text-xl"></i></div>Regular Events<span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">' + recurringEvents.length + ' event' + (recurringEvents.length !== 1 ? 's' : '') + '</span></h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="recurring-events-grid"></div></div>';
+                        eventsContainer.appendChild(recurringSection);
+                        
+                        const recurringGrid = document.getElementById('recurring-events-grid');
+                        recurringEvents.forEach(event => {
+                            const eventCard = createEventCard(event, true);
+                            recurringGrid.appendChild(eventCard);
+                        });
                     }
                     
-                    // One-off Events Section
+                    // Add one-off events section
                     if (oneOffEvents.length > 0) {
-                        const sectionHeader = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl">';
-                        const title = '<h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-calendar-day text-blue-400 text-xl"></i></div>Upcoming Events<span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">' + oneOffEvents.length + ' event' + (oneOffEvents.length !== 1 ? 's' : '') + '</span></h3>';
-                        const grid = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + oneOffEvents.map(event => renderEventCard(event, false)).join('') + '</div>';
-                        const sectionFooter = '</div></section>';
-                        eventsHTML += sectionHeader + title + grid + sectionFooter;
+                        const oneOffSection = document.createElement('section');
+                        oneOffSection.className = 'mb-12';
+                        oneOffSection.innerHTML = '<div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl"><h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-calendar-day text-blue-400 text-xl"></i></div>Upcoming Events<span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">' + oneOffEvents.length + ' event' + (oneOffEvents.length !== 1 ? 's' : '') + '</span></h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="oneoff-events-grid"></div></div>';
+                        eventsContainer.appendChild(oneOffSection);
+                        
+                        const oneOffGrid = document.getElementById('oneoff-events-grid');
+                        oneOffEvents.forEach(event => {
+                            const eventCard = createEventCard(event, false);
+                            oneOffGrid.appendChild(eventCard);
+                        });
                     }
-                    
-                    eventsContainer.innerHTML = eventsHTML;
                     
                 } else {
-                    const noEventsHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
-                    eventsContainer.innerHTML = noEventsHTML;
+                    eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
                 }
             } catch (error) {
                 console.error('Error loading events:', error);
-                const errorHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p></div>';
-                document.getElementById('events-container').innerHTML = errorHTML;
+                document.getElementById('events-container').innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p></div>';
             }
         }
 
-        function renderEventCard(event, isRecurring) {
+        function createEventCard(event, isRecurring) {
+            const card = document.createElement('div');
+            card.className = 'venue-card rounded-xl overflow-hidden relative';
+            
             const tagsHTML = event.category && event.category.length > 0 ? 
                 event.category.map(cat => '<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">' + cat + '</span>').join('') : '';
             const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
@@ -1201,35 +1211,21 @@ function getVenueTemplate() {
             
             if (isRecurring) {
                 if (event.isRecurringGroup) {
-                    // This is a grouped recurring event
                     const pattern = event.recurringPattern;
                     const nextOccurrence = event.nextOccurrence ? new Date(event.nextOccurrence) : null;
                     
-                    // Create pattern label
                     let patternLabel = '';
                     switch (pattern) {
-                        case 'weekly':
-                            patternLabel = 'Weekly';
-                            break;
-                        case 'monthly':
-                            patternLabel = 'Monthly';
-                            break;
-                        case 'daily':
-                            patternLabel = 'Daily';
-                            break;
-                        case 'bi-weekly':
-                            patternLabel = 'Bi-weekly';
-                            break;
-                        case 'yearly':
-                            patternLabel = 'Yearly';
-                            break;
-                        default:
-                            patternLabel = 'Recurring';
+                        case 'weekly': patternLabel = 'Weekly'; break;
+                        case 'monthly': patternLabel = 'Monthly'; break;
+                        case 'daily': patternLabel = 'Daily'; break;
+                        case 'bi-weekly': patternLabel = 'Bi-weekly'; break;
+                        case 'yearly': patternLabel = 'Yearly'; break;
+                        default: patternLabel = 'Recurring';
                     }
                     
                     recurringBadge = '<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>' + patternLabel + '</span></div>';
                     
-                    // Update date to show next occurrence
                     if (nextOccurrence) {
                         formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
                             month: 'short', 
@@ -1237,39 +1233,24 @@ function getVenueTemplate() {
                             year: 'numeric' 
                         });
                     }
-                    
                 } else if (event.recurringInfo || event.recurringPattern) {
-                    // Individual recurring event
                     const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
                     let patternLabel = '';
-                    
                     switch (pattern) {
-                        case 'weekly':
-                            patternLabel = 'Weekly';
-                            break;
-                        case 'monthly':
-                            patternLabel = 'Monthly';
-                            break;
-                        case 'daily':
-                            patternLabel = 'Daily';
-                            break;
-                        case 'bi-weekly':
-                            patternLabel = 'Bi-weekly';
-                            break;
-                        case 'yearly':
-                            patternLabel = 'Yearly';
-                            break;
-                        default:
-                            patternLabel = 'Recurring';
+                        case 'weekly': patternLabel = 'Weekly'; break;
+                        case 'monthly': patternLabel = 'Monthly'; break;
+                        case 'daily': patternLabel = 'Daily'; break;
+                        case 'bi-weekly': patternLabel = 'Bi-weekly'; break;
+                        case 'yearly': patternLabel = 'Yearly'; break;
+                        default: patternLabel = 'Recurring';
                     }
-                    
                     recurringBadge = '<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>' + patternLabel + '</span></div>';
                 }
             }
 
-            return '<div class="venue-card rounded-xl overflow-hidden relative">' + 
-                (isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : '') +
-                recurringBadge +
+            const boostedBadge = isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : '';
+
+            card.innerHTML = boostedBadge + recurringBadge + 
                 '<div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">' +
                 '<img src="' + imageUrl + '" alt="' + event.name + '" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80\'">' +
                 '</div>' +
@@ -1285,8 +1266,12 @@ function getVenueTemplate() {
                 '<i class="fas fa-eye mr-1"></i>View Details</a>' +
                 '<button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">' +
                 '<i class="fas fa-share"></i></button>' +
-                '</div></div></div>';
+                '</div></div>';
+
+            return card;
         }
+
+
 
         // Helper function to extract recurring pattern (fallback)
         function extractRecurringPattern(recurringInfo) {
