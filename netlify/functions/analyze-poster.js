@@ -13,6 +13,7 @@ async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
     try {
         console.log('🤖 Starting AI poster parsing');
         
+        const currentYear = new Date().getFullYear();
         const prompt = `Analyze this event poster and extract the following information in JSON format:
 {
   "eventName": "The name of the event",
@@ -27,11 +28,11 @@ async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
 }
 
 IMPORTANT DATE GUIDELINES:
-- If the poster shows only day/month (e.g., "4th September"), assume the current year 2025
-- If the poster shows a past year, assume it's a typo and use 2025 instead
+- If the poster shows only day/month (e.g., "4th September"), assume the current year ${currentYear}
+- If the poster shows a past year, assume it's a typo and use ${currentYear} instead
 - Only extract dates that are clearly future events
-- If no year is shown, default to 2025
-- If the date appears to be in the past, use 2025 instead
+- If no year is shown, default to ${currentYear}
+- If the date appears to be in the past, use ${currentYear} instead
 
 Only return valid JSON. If information is not found, use null for that field. Be conservative - only extract information you're confident about.`;
 
@@ -76,18 +77,19 @@ Only return valid JSON. If information is not found, use null for that field. Be
         try {
             const parsedData = JSON.parse(cleanText);
             
-            // Fix past dates - if date is in the past, assume it's 2025
+            // Fix past dates - if date is in the past, assume it's the current year
             if (parsedData.date) {
                 const extractedDate = new Date(parsedData.date);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
                 if (extractedDate < today) {
-                    console.log('🤖 Fixing past date:', parsedData.date, '→ 2025');
-                    // Extract day and month, set year to 2025
+                    const currentYear = new Date().getFullYear();
+                    console.log('🤖 Fixing past date:', parsedData.date, `→ ${currentYear}`);
+                    // Extract day and month, set year to current year
                     const day = extractedDate.getDate();
                     const month = extractedDate.getMonth() + 1; // getMonth() returns 0-11
-                    parsedData.date = `2025-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                    parsedData.date = `${currentYear}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
                 }
             }
             
