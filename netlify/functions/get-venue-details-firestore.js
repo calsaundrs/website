@@ -1139,6 +1139,11 @@ function getVenueTemplate() {
                 const eventsContainer = document.getElementById('events-container');
                 console.log('Events container found:', eventsContainer);
                 
+                if (!eventsContainer) {
+                    console.error('Events container not found!');
+                    return;
+                }
+                
                 if (data.success && data.events.length > 0) {
                     console.log('Total events found:', data.events.length);
                     
@@ -1148,6 +1153,8 @@ function getVenueTemplate() {
                     
                     console.log('Recurring events:', recurringEvents.length);
                     console.log('One-off events:', oneOffEvents.length);
+                    console.log('Recurring events data:', recurringEvents);
+                    console.log('One-off events data:', oneOffEvents);
                     
                     // Clear container
                     eventsContainer.innerHTML = '';
