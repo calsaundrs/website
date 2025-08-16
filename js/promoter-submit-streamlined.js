@@ -552,10 +552,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                // Image file
-                const imageFile = document.getElementById('promo-image').files[0];
-                if (imageFile) {
-                    formData.append('promo-image', imageFile);
+                // Image file from poster parser
+                const posterFile = posterUpload.files[0];
+                if (posterFile) {
+                    formData.append('promo-image', posterFile);
                 }
                 
                 // Submit to Firebase
