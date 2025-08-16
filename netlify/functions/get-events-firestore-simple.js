@@ -190,12 +190,12 @@ exports.handler = async function (event, context) {
         events = [...deduplicatedEvents, ...groupedEvents];
         
         // Sort by date
-        groupedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         // Apply limit
-        const limitedEvents = groupedEvents.slice(0, limit);
+        const limitedEvents = events.slice(0, limit);
         
-        console.log(`Returning ${limitedEvents.length} grouped events (from ${events.length} original events)`);
+        console.log(`Returning ${limitedEvents.length} events (${deduplicatedEvents.length} non-recurring + ${groupedEvents.length} grouped recurring)`);
         
         return {
             statusCode: 200,
