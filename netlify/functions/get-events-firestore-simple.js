@@ -148,12 +148,19 @@ exports.handler = async function (event, context) {
         console.log(`After image filtering: ${eventsWithImages.length} events (removed ${events.length - eventsWithImages.length} events without images)`);
         events = eventsWithImages;
         
-        // Deduplicate events (prefer Firestore-native events over migrated Airtable events)
+        // Group recurring events FIRST (before deduplication)
+        const groupedEvents = groupRecurringEvents(events);
+        
+        // Deduplicate events AFTER grouping (prefer Firestore-native events over migrated Airtable events)
         const deduplicatedEvents = [];
         const seenEvents = new Map();
         
-        events.forEach(event => {
-            const key = `${event.name}-${event.date}`;
+        groupedEvents.forEach(event => {
+            // For recurring events, use the recurringGroupId as part of the key
+            const key = event.isRecurringGroup ? 
+                `${event.name}-${event.recurringGroupId}` : 
+                `${event.name}-${event.date}`;
+            
             const existing = seenEvents.get(key);
             
             if (!existing) {
@@ -174,11 +181,8 @@ exports.handler = async function (event, context) {
             }
         });
         
-        console.log(`After deduplication: ${deduplicatedEvents.length} events (removed ${events.length - deduplicatedEvents.length} duplicates)`);
+        console.log(`After deduplication: ${deduplicatedEvents.length} events (removed ${groupedEvents.length - deduplicatedEvents.length} duplicates)`);
         events = deduplicatedEvents;
-        
-        // Group recurring events
-        const groupedEvents = groupRecurringEvents(events);
         
         // Sort by date
         groupedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
