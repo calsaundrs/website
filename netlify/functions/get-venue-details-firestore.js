@@ -1117,6 +1117,11 @@ function getVenueTemplate() {
         });
 
         // Load events for this venue
+        // Try to load events immediately, and also on DOMContentLoaded as backup
+        setTimeout(function() {
+            loadVenueEvents();
+        }, 100);
+        
         document.addEventListener('DOMContentLoaded', function() {
             loadVenueEvents();
         });
