@@ -39,6 +39,29 @@ IMPORTANT DATE GUIDELINES:
 - If no year is shown, default to ${currentYear}
 - If the date appears to be in the past, use ${currentYear} instead
 
+CATEGORY MAPPING - ONLY USE THESE EXACT CATEGORIES:
+- Comedy, Drag, Live Music, Party, Pride, Social, Theatre, Viewing Party
+- Kink, Community, Exhibition, Health, Quiz, Trans & Non-Binary, Sober
+- Queer Women & Sapphic, Nightlife, Competition, Games, Cabaret, Show
+
+CATEGORY MAPPING EXAMPLES:
+- "Karaoke" → "Live Music" or "Show"
+- "Music" → "Live Music"
+- "Bingo" → "Games"
+- "Quiz Night" → "Quiz"
+- "Drag Show" → "Drag"
+- "Comedy Night" → "Comedy"
+- "Party" → "Party"
+- "Club Night" → "Nightlife"
+- "Theatre Show" → "Theatre"
+- "Exhibition" → "Exhibition"
+- "Health Workshop" → "Health"
+- "Community Meetup" → "Community"
+- "Kink Workshop" → "Kink"
+- "Trans Support Group" → "Trans & Non-Binary"
+- "Women's Night" → "Queer Women & Sapphic"
+- "Sober Social" → "Sober"
+
 RECURRENCE DETECTION:
 - Look for words like "Every", "Weekly", "Monthly", "Bi-weekly", "Fortnightly", "Daily"
 - Look for day patterns: "Every Wednesday", "Every Friday", "Every other Tuesday"
