@@ -1153,24 +1153,32 @@ function getVenueTemplate() {
                     
                     // Recurring Events Section
                     if (recurringEvents.length > 0) {
-                        const recurringSection = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl"><h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-redo text-green-400 text-xl"></i></div>Regular Events<span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">' + recurringEvents.length + ' event' + (recurringEvents.length !== 1 ? 's' : '') + '</span></h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + recurringEvents.map(event => renderEventCard(event, true)).join('') + '</div></div></section>';
-                        eventsHTML += recurringSection;
+                        const sectionHeader = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl">';
+                        const title = '<h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-redo text-green-400 text-xl"></i></div>Regular Events<span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">' + recurringEvents.length + ' event' + (recurringEvents.length !== 1 ? 's' : '') + '</span></h3>';
+                        const grid = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + recurringEvents.map(event => renderEventCard(event, true)).join('') + '</div>';
+                        const sectionFooter = '</div></section>';
+                        eventsHTML += sectionHeader + title + grid + sectionFooter;
                     }
                     
                     // One-off Events Section
                     if (oneOffEvents.length > 0) {
-                        const oneOffSection = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl"><h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-calendar-day text-blue-400 text-xl"></i></div>Upcoming Events<span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">' + oneOffEvents.length + ' event' + (oneOffEvents.length !== 1 ? 's' : '') + '</span></h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + oneOffEvents.map(event => renderEventCard(event, false)).join('') + '</div></div></section>';
-                        eventsHTML += oneOffSection;
+                        const sectionHeader = '<section class="mb-12"><div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-8 rounded-2xl">';
+                        const title = '<h3 class="font-anton text-3xl text-white mb-6 flex items-center"><div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4"><i class="fas fa-calendar-day text-blue-400 text-xl"></i></div>Upcoming Events<span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">' + oneOffEvents.length + ' event' + (oneOffEvents.length !== 1 ? 's' : '') + '</span></h3>';
+                        const grid = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">' + oneOffEvents.map(event => renderEventCard(event, false)).join('') + '</div>';
+                        const sectionFooter = '</div></section>';
+                        eventsHTML += sectionHeader + title + grid + sectionFooter;
                     }
                     
                     eventsContainer.innerHTML = eventsHTML;
                     
                 } else {
-                    eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
+                    const noEventsHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
+                    eventsContainer.innerHTML = noEventsHTML;
                 }
             } catch (error) {
                 console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p></div>';
+                const errorHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p></div>';
+                document.getElementById('events-container').innerHTML = errorHTML;
             }
         }
 
