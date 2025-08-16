@@ -154,7 +154,8 @@ exports.handler = async function (event, context) {
         const recurringGroups = new Map();
         
         events.forEach(event => {
-            if (event.isRecurring && event.recurringGroupId) {
+            // Check if this is a recurring event (either by isRecurring flag or recurringGroupId)
+            if ((event.isRecurring && event.recurringGroupId) || event.recurringGroupId) {
                 // This is a recurring event - collect all instances for grouping later
                 if (!recurringGroups.has(event.recurringGroupId)) {
                     recurringGroups.set(event.recurringGroupId, []);
