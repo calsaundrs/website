@@ -193,9 +193,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkbox.checked = false;
             });
             
-            // Select matching categories
+            // Get all available category values
+            const availableCategories = Array.from(document.querySelectorAll('input[name="categories"]')).map(cb => cb.value);
+            
+            // Select only categories that exist in our form
             data.categories.forEach(category => {
-                const checkbox = document.querySelector(`input[name="categories"][value="${category}"]`);
+                // Try exact match first
+                let checkbox = document.querySelector(`input[name="categories"][value="${category}"]`);
+                
+                // If no exact match, try case-insensitive match
+                if (!checkbox) {
+                    checkbox = Array.from(document.querySelectorAll('input[name="categories"]')).find(cb => 
+                        cb.value.toLowerCase() === category.toLowerCase()
+                    );
+                }
+                
+                // If still no match, try partial match for common variations
+                if (!checkbox) {
+                    const categoryLower = category.toLowerCase();
+                    if (categoryLower.includes('drag')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Drag"]');
+                    } else if (categoryLower.includes('nightlife') || categoryLower.includes('club')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Nightlife"]');
+                    } else if (categoryLower.includes('competition') || categoryLower.includes('contest')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Competition"]');
+                    } else if (categoryLower.includes('game')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Games"]');
+                    } else if (categoryLower.includes('cabaret') || categoryLower.includes('show')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Cabaret"]');
+                    } else if (categoryLower.includes('social') || categoryLower.includes('community')) {
+                        checkbox = document.querySelector('input[name="categories"][value="Social"]');
+                    }
+                }
+                
                 if (checkbox) {
                     checkbox.checked = true;
                 }
