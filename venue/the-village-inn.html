@@ -178,29 +178,16 @@
                             <h2 class="text-2xl font-bold text-white mb-4">
                                 <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
                             </h2>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+1" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+2" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+3" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+4" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+5" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105">
-                                    <img src="https://placehold.co/400x400/1e1e1e/EAEAEA?text=Photo+6" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
+                            <div id="gallery-loading" class="text-center py-8">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                                <p class="text-gray-400">Loading gallery...</p>
                             </div>
-                            <p class="text-xs text-gray-500 mt-4 text-center">
-                                Images sourced from Google Places
-                            </p>
+                            <div id="gallery-container" class="grid grid-cols-2 md:grid-cols-3 gap-4" style="display: none;">
+                                <!-- Gallery images will be loaded here -->
+                            </div>
+                            <div id="gallery-error" class="text-center py-8" style="display: none;">
+                                <p class="text-gray-400">Gallery images unavailable</p>
+                            </div>
                         </div>
 
                         <!-- Google Reviews -->
@@ -274,17 +261,6 @@
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
-                        <!-- Current Status -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
-                            </h3>
-                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
-                                <p class="font-bold text-lg">Open Now</p>
-                                <p class="text-sm">Currently open for business</p>
-                            </div>
-                        </div>
-
                         <!-- Opening Hours -->
                         <div class="venue-card p-6">
                             <h3 class="text-xl font-bold text-white mb-4 text-center">
@@ -393,6 +369,47 @@
             }
         }
 
+        // Load Google Places gallery
+        async function loadGallery() {
+            try {
+                console.log('🖼️ Loading Google Places gallery...');
+                const response = await fetch('/.netlify/functions/get-venue-details-firestore?slug=the-village-inn');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch venue details');
+                }
+                
+                const data = await response.json();
+                console.log('📸 Gallery data:', data);
+                
+                // Hide loading state
+                document.getElementById('gallery-loading').style.display = 'none';
+                
+                if (data.googlePlaces && data.googlePlaces.images && data.googlePlaces.images.length > 0) {
+                    const galleryContainer = document.getElementById('gallery-container');
+                    let html = '';
+                    
+                    data.googlePlaces.images.forEach((image, index) => {
+                        html += '<div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105" onclick="openImageModal(\'' + image.url + '\')">';
+                        html += '<img src="' + image.url + '" alt="Venue photo" class="w-full h-full object-cover">';
+                        html += '</div>';
+                    });
+                    
+                    galleryContainer.innerHTML = html;
+                    galleryContainer.style.display = 'grid';
+                    console.log('✅ Gallery loaded successfully!');
+                    
+                } else {
+                    console.log('📭 No gallery images available');
+                    document.getElementById('gallery-error').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('❌ Error loading gallery:', error);
+                document.getElementById('gallery-loading').style.display = 'none';
+                document.getElementById('gallery-error').style.display = 'block';
+            }
+        }
+
         // Load events for The Village Inn
         async function loadVenueEvents() {
             try {
@@ -423,8 +440,20 @@
                     const eventsContainer = document.getElementById('events-container');
                     let html = '';
                     
+                    // Track processed events to avoid duplicates
+                    const processedEvents = new Set();
+                    
                     data.events.forEach((event, index) => {
                         console.log('🎯 Processing event ' + index + ':', event.name);
+                        
+                        // Create a unique key for this event to avoid duplicates
+                        const eventKey = event.name.toLowerCase() + '_' + (event.recurringPattern || 'oneoff');
+                        
+                        if (processedEvents.has(eventKey)) {
+                            console.log('⚠️ Skipping duplicate event:', event.name);
+                            return;
+                        }
+                        processedEvents.add(eventKey);
                         
                         const date = new Date(event.date);
                         const day = date.getDate();
@@ -438,7 +467,13 @@
                         const isRecurring = event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern;
                         const recurringBadge = isRecurring ? '<span class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full ml-2">Recurring</span>' : '';
                         
+                        // Event image
+                        const eventImage = event.image && event.image.url ? 
+                            '<img src="' + event.image.url + '" alt="' + event.name + '" class="w-16 h-16 object-cover rounded-lg mr-4">' :
+                            '<div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center mr-4"><i class="fas fa-calendar text-gray-400"></i></div>';
+                        
                         html += '<a href="/event/' + event.slug + '" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">';
+                        html += eventImage;
                         html += '<div class="text-center w-20 flex-shrink-0">';
                         html += '<p class="text-2xl font-bold text-white">' + day + '</p>';
                         html += '<p class="text-lg text-gray-400">' + month + '</p>';
@@ -446,6 +481,9 @@
                         html += '<div class="flex-grow">';
                         html += '<h4 class="font-bold text-white text-xl">' + event.name + recurringBadge + '</h4>';
                         html += '<p class="text-sm text-gray-400">' + time + '</p>';
+                        if (event.description) {
+                            html += '<p class="text-sm text-gray-500 mt-1">' + event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '') + '</p>';
+                        }
                         html += '</div>';
                         html += '<div class="text-accent-color">';
                         html += '<i class="fas fa-arrow-right"></i>';
@@ -468,8 +506,35 @@
             }
         }
 
-        // Load events when page loads
-        document.addEventListener('DOMContentLoaded', loadVenueEvents);
+        // Image modal function
+        function openImageModal(imageUrl) {
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center';
+            modal.onclick = () => document.body.removeChild(modal);
+            
+            // Create image element
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.className = 'max-w-4xl max-h-4xl object-contain';
+            img.alt = 'Venue photo';
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'absolute top-4 right-4 text-white text-2xl hover:text-gray-300';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            
+            modal.appendChild(img);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+        }
+
+        // Load everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVenueEvents();
+            loadGallery();
+        });
     </script>
 </body>
 </html>
