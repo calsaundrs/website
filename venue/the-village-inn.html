@@ -114,12 +114,13 @@
             border: 1px solid rgba(75, 85, 99, 0.4);
             border-radius: 1rem;
             transition: all 0.3s ease;
+            min-width: 320px; /* Ensure cards don't get too narrow */
             overflow: hidden;
         }
         
         .event-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border-color: rgba(232, 58, 155, 0.3);
         }
         
@@ -344,7 +345,7 @@
                                         Regular Events
                                         <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 min-w-0">
                                         <!-- Regular events will be loaded here -->
                                     </div>
                                 </div>
@@ -360,7 +361,7 @@
                                         One-off Events
                                         <span id="oneoff-events-count" class="ml-3 bg-blue-500/20 text-blue-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="oneoff-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    <div id="oneoff-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 min-w-0">
                                         <!-- One-off events will be loaded here -->
                                     </div>
                                 </div>
