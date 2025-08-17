@@ -785,7 +785,7 @@
                                     </div>
                                     <div class="p-8">
                                         <div class="flex items-center justify-between mb-4">
-                                            <span class="text-sm text-gray-400">${event.recurringPattern || 'Recurring Event'}</span>
+                                            <span class="text-sm text-gray-400">${getNextOccurrenceText(event)}</span>
                                         </div>
                                         <h3 class="text-xl font-bold text-white mb-3">${event.name}</h3>
                                         ${event.description ? `<p class="text-gray-300 text-sm mb-6 line-clamp-2">${event.description}</p>` : ''}
@@ -904,6 +904,70 @@
             
             // Hide the "Show More" button
             oneoffEventsShowMore.style.display = 'none';
+        }
+
+        // Helper function to format the next occurrence date
+        function getNextOccurrenceText(event) {
+            const now = new Date();
+            const eventDate = new Date(event.date);
+            
+            // If the event is recurring, find the next occurrence
+            if (event.recurringPattern) {
+                let nextOccurrence = new Date(eventDate);
+                
+                // Calculate the next occurrence based on pattern
+                while (nextOccurrence <= now) {
+                    switch (event.recurringPattern.toLowerCase()) {
+                        case 'weekly':
+                        case 'every week':
+                        case 'every wednesday':
+                        case 'every friday':
+                        case 'every saturday':
+                        case 'every sunday':
+                        case 'every monday':
+                        case 'every tuesday':
+                        case 'every thursday':
+                            nextOccurrence.setDate(nextOccurrence.getDate() + 7);
+                            break;
+                        case 'fortnightly':
+                        case 'bi-weekly':
+                        case 'every 2 weeks':
+                            nextOccurrence.setDate(nextOccurrence.getDate() + 14);
+                            break;
+                        case 'monthly':
+                        case 'every month':
+                            nextOccurrence.setMonth(nextOccurrence.getMonth() + 1);
+                            break;
+                        default:
+                            // For unknown patterns, just return the pattern
+                            return event.recurringPattern;
+                    }
+                }
+                
+                // Calculate days difference
+                const timeDiff = nextOccurrence.getTime() - now.getTime();
+                const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                // Format based on how soon it is
+                if (daysDiff === 0) {
+                    return 'Today';
+                } else if (daysDiff === 1) {
+                    return 'Tomorrow';
+                } else if (daysDiff < 7) {
+                    // Less than 7 days - show day name
+                    return nextOccurrence.toLocaleDateString('en-GB', { weekday: 'long' });
+                } else {
+                    // 7 days or more - show full date
+                    return nextOccurrence.toLocaleDateString('en-GB', { 
+                        weekday: 'short', 
+                        day: 'numeric', 
+                        month: 'short' 
+                    });
+                }
+            }
+            
+            // For non-recurring events, return the original pattern or date
+            return event.recurringPattern || event.date;
         }
 
         // Load everything when page loads
