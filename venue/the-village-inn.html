@@ -115,6 +115,8 @@
             border-radius: 1rem;
             transition: all 0.3s ease;
             min-width: 320px; /* Ensure cards don't get too narrow */
+            max-width: 400px; /* Prevent cards from getting too wide */
+            flex-shrink: 0; /* Prevent cards from shrinking */
             height: 100%; /* Ensure all cards have same height */
             display: flex;
             flex-direction: column;
@@ -127,17 +129,18 @@
             border-color: rgba(232, 58, 155, 0.3);
         }
         
-        /* Ensure grid items don't overlap */
-        .grid > * {
-            min-height: 0;
-            min-width: 0;
+        /* Hide scrollbar but keep functionality */
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;  /* Safari and Chrome */
         }
         
-        /* Responsive grid adjustments */
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            }
+        /* Smooth scrolling for better UX */
+        .overflow-x-auto {
+            scroll-behavior: smooth;
         }
         
         /* Button styles from events.html */
@@ -361,7 +364,7 @@
                                         Regular Events
                                         <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
+                                    <div id="regular-events-container" class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                                         <!-- Regular events will be loaded here -->
                                     </div>
                                 </div>
@@ -377,7 +380,7 @@
                                         One-off Events
                                         <span id="oneoff-events-count" class="ml-3 bg-blue-500/20 text-blue-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="oneoff-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
+                                    <div id="oneoff-events-container" class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                                         <!-- One-off events will be loaded here -->
                                     </div>
                                 </div>
