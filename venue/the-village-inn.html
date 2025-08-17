@@ -507,8 +507,14 @@
                         
                         // Event image
                         const eventImage = event.image && event.image.url ? 
-                            '<img src="' + event.image.url + '" alt="' + event.name + '" class="w-16 h-16 object-cover rounded-lg mr-4">' :
-                            '<div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center mr-4"><i class="fas fa-calendar text-gray-400"></i></div>';
+                            '<img src="' + event.image.url + '" alt="' + event.name + '" class="w-24 h-32 object-cover rounded-lg mr-4 shadow-lg">' :
+                            '<div class="w-24 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center mr-4 shadow-lg"><i class="fas fa-calendar text-gray-400 text-2xl"></i></div>';
+                        
+                        // Only process events that have images
+                        if (!event.image || !event.image.url) {
+                            console.log('⚠️ Skipping event without image:', event.name);
+                            return;
+                        }
                         
                         if (isRecurring) {
                             regularEventsHtml += '<a href="/event/' + event.slug + '" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">';
