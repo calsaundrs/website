@@ -250,9 +250,39 @@
                                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
                                 <p class="text-gray-400">Loading events...</p>
                             </div>
-                            <div id="events-container" class="space-y-4" style="display: none;">
-                                <!-- Events will be loaded here -->
+                            
+                            <!-- Regular Events Section -->
+                            <div id="regular-events-section" class="mb-8" style="display: none;">
+                                <div class="card-bg p-6 rounded-2xl">
+                                    <h3 class="font-anton text-2xl text-white mb-4 flex items-center">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-redo text-green-400 text-lg"></i>
+                                        </div>
+                                        Regular Events
+                                        <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-sm px-3 py-1 rounded-full font-semibold">0 events</span>
+                                    </h3>
+                                    <div id="regular-events-container" class="space-y-4">
+                                        <!-- Regular events will be loaded here -->
+                                    </div>
+                                </div>
                             </div>
+                            
+                            <!-- One-off Events Section -->
+                            <div id="oneoff-events-section" class="mb-8" style="display: none;">
+                                <div class="card-bg p-6 rounded-2xl">
+                                    <h3 class="font-anton text-2xl text-white mb-4 flex items-center">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-day text-blue-400 text-lg"></i>
+                                        </div>
+                                        One-off Events
+                                        <span id="oneoff-events-count" class="ml-3 bg-blue-500/20 text-blue-300 text-sm px-3 py-1 rounded-full font-semibold">0 events</span>
+                                    </h3>
+                                    <div id="oneoff-events-container" class="space-y-4">
+                                        <!-- One-off events will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div id="no-events-state" class="text-center py-8" style="display: none;">
                                 <p class="text-gray-400">No upcoming events at the moment.</p>
                             </div>
@@ -417,7 +447,8 @@
                 
                 // Show loading state
                 document.getElementById('loading-state').style.display = 'block';
-                document.getElementById('events-container').style.display = 'none';
+                document.getElementById('regular-events-section').style.display = 'none';
+                document.getElementById('oneoff-events-section').style.display = 'none';
                 document.getElementById('no-events-state').style.display = 'none';
                 
                 console.log('🌐 Fetching from API...');
@@ -437,8 +468,15 @@
                 if (data.success && data.events && data.events.length > 0) {
                     console.log('✅ Total events found:', data.events.length);
                     
-                    const eventsContainer = document.getElementById('events-container');
-                    let html = '';
+                    const regularEventsContainer = document.getElementById('regular-events-container');
+                    const oneoffEventsContainer = document.getElementById('oneoff-events-container');
+                    const regularEventsCount = document.getElementById('regular-events-count');
+                    const oneoffEventsCount = document.getElementById('oneoff-events-count');
+
+                    let regularEventsHtml = '';
+                    let oneoffEventsHtml = '';
+                    let regularEventCount = 0;
+                    let oneoffEventCount = 0;
                     
                     // Track processed events to avoid duplicates
                     const processedEvents = new Set();
@@ -472,28 +510,62 @@
                             '<img src="' + event.image.url + '" alt="' + event.name + '" class="w-16 h-16 object-cover rounded-lg mr-4">' :
                             '<div class="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center mr-4"><i class="fas fa-calendar text-gray-400"></i></div>';
                         
-                        html += '<a href="/event/' + event.slug + '" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">';
-                        html += eventImage;
-                        html += '<div class="text-center w-20 flex-shrink-0">';
-                        html += '<p class="text-2xl font-bold text-white">' + day + '</p>';
-                        html += '<p class="text-lg text-gray-400">' + month + '</p>';
-                        html += '</div>';
-                        html += '<div class="flex-grow">';
-                        html += '<h4 class="font-bold text-white text-xl">' + event.name + recurringBadge + '</h4>';
-                        html += '<p class="text-sm text-gray-400">' + time + '</p>';
-                        if (event.description) {
-                            html += '<p class="text-sm text-gray-500 mt-1">' + event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '') + '</p>';
+                        if (isRecurring) {
+                            regularEventsHtml += '<a href="/event/' + event.slug + '" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">';
+                            regularEventsHtml += eventImage;
+                            regularEventsHtml += '<div class="text-center w-20 flex-shrink-0">';
+                            regularEventsHtml += '<p class="text-2xl font-bold text-white">' + day + '</p>';
+                            regularEventsHtml += '<p class="text-lg text-gray-400">' + month + '</p>';
+                            regularEventsHtml += '</div>';
+                            regularEventsHtml += '<div class="flex-grow">';
+                            regularEventsHtml += '<h4 class="font-bold text-white text-xl">' + event.name + recurringBadge + '</h4>';
+                            regularEventsHtml += '<p class="text-sm text-gray-400">' + time + '</p>';
+                            if (event.description) {
+                                regularEventsHtml += '<p class="text-sm text-gray-500 mt-1">' + event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '') + '</p>';
+                            }
+                            regularEventsHtml += '</div>';
+                            regularEventsHtml += '<div class="text-accent-color">';
+                            regularEventsHtml += '<i class="fas fa-arrow-right"></i>';
+                            regularEventsHtml += '</div>';
+                            regularEventsHtml += '</a>';
+                            regularEventCount++;
+                        } else {
+                            oneoffEventsHtml += '<a href="/event/' + event.slug + '" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">';
+                            oneoffEventsHtml += eventImage;
+                            oneoffEventsHtml += '<div class="text-center w-20 flex-shrink-0">';
+                            oneoffEventsHtml += '<p class="text-2xl font-bold text-white">' + day + '</p>';
+                            oneoffEventsHtml += '<p class="text-lg text-gray-400">' + month + '</p>';
+                            oneoffEventsHtml += '</div>';
+                            oneoffEventsHtml += '<div class="flex-grow">';
+                            oneoffEventsHtml += '<h4 class="font-bold text-white text-xl">' + event.name + recurringBadge + '</h4>';
+                            oneoffEventsHtml += '<p class="text-sm text-gray-400">' + time + '</p>';
+                            if (event.description) {
+                                oneoffEventsHtml += '<p class="text-sm text-gray-500 mt-1">' + event.description.substring(0, 100) + (event.description.length > 100 ? '...' : '') + '</p>';
+                            }
+                            oneoffEventsHtml += '</div>';
+                            oneoffEventsHtml += '<div class="text-accent-color">';
+                            oneoffEventsHtml += '<i class="fas fa-arrow-right"></i>';
+                            oneoffEventsHtml += '</div>';
+                            oneoffEventsHtml += '</a>';
+                            oneoffEventCount++;
                         }
-                        html += '</div>';
-                        html += '<div class="text-accent-color">';
-                        html += '<i class="fas fa-arrow-right"></i>';
-                        html += '</div>';
-                        html += '</a>';
                     });
                     
-                    eventsContainer.innerHTML = html;
-                    eventsContainer.style.display = 'block';
+                    regularEventsContainer.innerHTML = regularEventsHtml;
+                    oneoffEventsContainer.innerHTML = oneoffEventsHtml;
+                    regularEventsCount.textContent = `${regularEventCount} event${regularEventCount !== 1 ? 's' : ''}`;
+                    oneoffEventsCount.textContent = `${oneoffEventCount} event${oneoffEventCount !== 1 ? 's' : ''}`;
+
+                    // Only show sections that have events
+                    if (regularEventCount > 0) {
+                        document.getElementById('regular-events-section').style.display = 'block';
+                    }
+                    if (oneoffEventCount > 0) {
+                        document.getElementById('oneoff-events-section').style.display = 'block';
+                    }
+                    
                     console.log('✅ Events displayed successfully!');
+                    console.log(`📊 Regular events: ${regularEventCount}, One-off events: ${oneoffEventCount}`);
                     
                 } else {
                     console.log('📭 No events found');
