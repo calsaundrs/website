@@ -414,7 +414,6 @@
                                             <i class="fas fa-redo text-green-400 text-lg"></i>
                                         </div>
                                         Regular Events
-                                        <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
                                     <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                         <!-- Regular events will be loaded here as compact event cards -->
@@ -435,7 +434,6 @@
                                             <i class="fas fa-calendar-day text-blue-400 text-sm md:text-lg"></i>
                                         </div>
                                         One-off Events
-                                        <span id="oneoff-events-count" class="ml-3 bg-blue-500/20 text-blue-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
                                     <div id="oneoff-events-container" class="space-y-4">
                                         <!-- One-off events will be loaded here -->
@@ -660,8 +658,6 @@
                     
                     const regularEventsContainer = document.getElementById('regular-events-container');
                     const oneoffEventsContainer = document.getElementById('oneoff-events-container');
-                    const regularEventsCount = document.getElementById('regular-events-count');
-                    const oneoffEventsCount = document.getElementById('oneoff-events-count');
                     const regularEventsShowMore = document.getElementById('regular-events-show-more');
                     const oneoffEventsShowMore = document.getElementById('oneoff-events-show-more');
 
@@ -750,10 +746,6 @@
                                         <i class="fas fa-clock text-xs ml-2 mr-1"></i>
                                         ${time}
                                     </p>
-                                    <p class="text-gray-400 text-sm mb-3 flex items-center">
-                                        <i class="fas fa-map-marker-alt text-xs mr-1"></i>
-                                        ${venueName}
-                                    </p>
                                     <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
                                         ${categoryTags}
                                     </div>
@@ -800,7 +792,6 @@
                                             <span class="text-sm text-green-400 font-semibold">Recurring Event</span>
                                         </div>
                                         <h3 class="text-xl font-bold text-white mb-3">${event.name}</h3>
-                                        <p class="text-gray-400 text-sm mb-4">The Village Inn</p>
                                         ${event.description ? `<p class="text-gray-300 text-sm mb-6 line-clamp-2">${event.description}</p>` : ''}
                                         <div class="flex justify-between items-center">
                                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
@@ -840,9 +831,6 @@
                     // Show "Show More" button if there are more than 4 events
                     const initialRegularCount = Math.min(4, regularEventCount);
                     const initialOneoffCount = Math.min(4, oneoffEventCount);
-                    
-                    regularEventsCount.textContent = `${initialRegularCount} event${initialRegularCount !== 1 ? 's' : ''}`;
-                    oneoffEventsCount.textContent = `${initialOneoffCount} event${initialOneoffCount !== 1 ? 's' : ''}`;
                     
                     // Show "Show More" buttons if there are more events
                     if (regularEventCount > 4) {
@@ -902,32 +890,24 @@
         function showMoreRegularEvents() {
             const regularEventsContainer = document.getElementById('regular-events-container');
             const regularEventsShowMore = document.getElementById('regular-events-show-more');
-            const regularEventsCount = document.getElementById('regular-events-count');
             
             // Display all regular events
             regularEventsContainer.innerHTML = window.allRegularEventsHtml;
             
             // Hide the "Show More" button
             regularEventsShowMore.style.display = 'none';
-            
-            // Update count to show total
-            regularEventsCount.textContent = `${window.regularEventCount} event${window.regularEventCount !== 1 ? 's' : ''}`;
         }
         
         // Show more one-off events function
         function showMoreOneoffEvents() {
             const oneoffEventsContainer = document.getElementById('oneoff-events-container');
             const oneoffEventsShowMore = document.getElementById('oneoff-events-show-more');
-            const oneoffEventsCount = document.getElementById('oneoff-events-count');
             
             // Display all one-off events
             oneoffEventsContainer.innerHTML = window.allOneoffEventsHtml;
             
             // Hide the "Show More" button
             oneoffEventsShowMore.style.display = 'none';
-            
-            // Update count to show total
-            oneoffEventsCount.textContent = `${window.oneoffEventCount} event${window.oneoffEventCount !== 1 ? 's' : ''}`;
         }
 
         // Load everything when page loads
