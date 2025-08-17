@@ -115,6 +115,9 @@
             border-radius: 1rem;
             transition: all 0.3s ease;
             min-width: 320px; /* Ensure cards don't get too narrow */
+            height: 100%; /* Ensure all cards have same height */
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
         
@@ -122,6 +125,19 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border-color: rgba(232, 58, 155, 0.3);
+        }
+        
+        /* Ensure grid items don't overlap */
+        .grid > * {
+            min-height: 0;
+            min-width: 0;
+        }
+        
+        /* Responsive grid adjustments */
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
         }
         
         /* Button styles from events.html */
@@ -345,7 +361,7 @@
                                         Regular Events
                                         <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 min-w-0">
+                                    <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
                                         <!-- Regular events will be loaded here -->
                                     </div>
                                 </div>
@@ -361,7 +377,7 @@
                                         One-off Events
                                         <span id="oneoff-events-count" class="ml-3 bg-blue-500/20 text-blue-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="oneoff-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 min-w-0">
+                                    <div id="oneoff-events-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
                                         <!-- One-off events will be loaded here -->
                                     </div>
                                 </div>
