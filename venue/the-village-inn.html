@@ -407,16 +407,16 @@
                             </div>
                             
                             <!-- Regular Events Section -->
-                            <div id="regular-events-section" class="mb-8" style="display: none;">
-                                <div class="card-bg p-4 md:p-6 rounded-2xl">
-                                    <h3 class="font-anton text-xl md:text-2xl text-white mb-4 flex items-center">
-                                        <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-3">
-                                            <i class="fas fa-redo text-green-400 text-sm md:text-lg"></i>
+                            <div id="regular-events-section" class="mb-12" style="display: none;">
+                                <div class="card-bg p-8 rounded-2xl">
+                                    <h3 class="font-anton text-2xl text-white mb-6 flex items-center">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-redo text-green-400 text-lg"></i>
                                         </div>
                                         Regular Events
                                         <span id="regular-events-count" class="ml-3 bg-green-500/20 text-green-300 text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-semibold">0 events</span>
                                     </h3>
-                                    <div id="regular-events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div id="regular-events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                         <!-- Regular events will be loaded here as compact event cards -->
                                     </div>
                                 </div>
@@ -779,17 +779,17 @@
                                     <div class="aspect-video bg-gradient-to-br from-green-600/20 to-blue-600/20 flex items-center justify-center">
                                         <img src="${eventImage}" alt="${event.name}" class="w-full h-full object-cover">
                                     </div>
-                                    <div class="p-6">
-                                        <div class="flex items-center justify-between mb-3">
+                                    <div class="p-8">
+                                        <div class="flex items-center justify-between mb-4">
                                             <span class="text-sm text-gray-400">${event.recurringPattern || 'Recurring Event'}</span>
                                         </div>
-                                        <div class="flex items-center gap-2 mb-3">
+                                        <div class="flex items-center gap-2 mb-4">
                                             <i class="fas fa-redo text-green-400"></i>
                                             <span class="text-sm text-green-400 font-semibold">Recurring Event</span>
                                         </div>
-                                        <h3 class="text-xl font-bold text-white mb-2">${event.name}</h3>
-                                        <p class="text-gray-400 text-sm mb-3">The Village Inn</p>
-                                        ${event.description ? `<p class="text-gray-300 text-sm mb-4 line-clamp-2">${event.description}</p>` : ''}
+                                        <h3 class="text-xl font-bold text-white mb-3">${event.name}</h3>
+                                        <p class="text-gray-400 text-sm mb-4">The Village Inn</p>
+                                        ${event.description ? `<p class="text-gray-300 text-sm mb-6 line-clamp-2">${event.description}</p>` : ''}
                                         <div class="flex justify-between items-center">
                                             <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
                                                 <i class="fas fa-eye mr-1"></i>View Details
