@@ -107,6 +107,57 @@
             overflow: hidden;
         }
         
+        /* Event card styles from events.html */
+        .event-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.4);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(232, 58, 155, 0.3);
+        }
+        
+        /* Button styles from events.html */
+        .btn-primary {
+            background: #e83a9b;
+            color: white;
+            border: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            background: #d61f69;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.4);
+            color: #d1d5db;
+            border: 1px solid rgba(75, 85, 99, 0.4);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.6);
+            border-color: rgba(75, 85, 99, 0.6);
+        }
+        
         /* Mobile-friendly touch targets */
         @media (max-width: 768px) {
             .venue-card {
@@ -431,6 +482,31 @@
             }
         }
 
+        // Share event function
+        function shareEvent(event, eventName, eventUrl) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: eventName,
+                    text: `Check out this event: ${eventName}`,
+                    url: window.location.origin + eventUrl,
+                })
+                .then(() => console.log('Successful share'))
+                .catch((error) => console.log('Error sharing', error));
+            } else {
+                const shareUrl = window.location.origin + eventUrl;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Event URL copied to clipboard!');
+                    });
+                } else {
+                    alert(`Share this event: ${shareUrl}`);
+                }
+            }
+        }
+        
         // Load Google Places gallery
         async function loadGallery() {
             try {
@@ -472,7 +548,7 @@
             }
         }
 
-        // Load events for The Village Inn
+        // Load venue events
         async function loadVenueEvents() {
             try {
                 console.log('🚀 Loading events for venue: the-village-inn');
@@ -539,8 +615,8 @@
                         
                         // Event image - much more prominent
                         const eventImage = event.image && event.image.url ? 
-                            '<img src="' + event.image.url + '" alt="' + event.name + '" class="w-full h-48 md:h-56 object-cover rounded-t-lg shadow-lg">' :
-                            '<div class="w-full h-48 md:h-56 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-t-lg flex items-center justify-center shadow-lg"><i class="fas fa-calendar text-gray-400 text-4xl"></i></div>';
+                            event.image.url :
+                            `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
                         
                         // Only process events that have images
                         if (!event.image || !event.image.url) {
@@ -548,25 +624,65 @@
                             return;
                         }
                         
-                        // Create mobile-friendly event card
+                        // Get venue name
+                        let venueName = 'TBC';
+                        if (event.venueName) {
+                            venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
+                        } else if (event.venue && event.venue.name) {
+                            venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
+                        }
+                        
+                        // Create category tags
+                        const eventCategories = event.category || event.categories || event.categoryIds || [];
+                        const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
+                            const maxVisibleTags = 3;
+                            const visibleTags = eventCategories.slice(0, maxVisibleTags);
+                            const remainingCount = eventCategories.length - maxVisibleTags;
+                            
+                            const tagElements = visibleTags.map(cat => 
+                                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
+                            ).join('');
+                            
+                            if (remainingCount > 0) {
+                                return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full flex-shrink-0">+${remainingCount} more</span>`;
+                            }
+                            
+                            return tagElements;
+                        })() : '';
+                        
+                        // Create event card using the same design as events.html
                         const eventCard = `
-                            <a href="/event/${event.slug}" class="block bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg overflow-hidden hover:bg-gray-700/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                ${eventImage}
-                                <div class="p-4">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <h4 class="font-bold text-white text-lg md:text-xl leading-tight flex-1">${event.name}</h4>
-                                        ${recurringBadge}
-                                    </div>
-                                    <div class="flex items-center text-sm text-gray-400 mb-2">
-                                        <i class="fas fa-calendar-day mr-2"></i>
-                                        <span>${day} ${month}</span>
-                                        <span class="mx-2">•</span>
-                                        <i class="fas fa-clock mr-2"></i>
-                                        <span>${time}</span>
-                                    </div>
-                                    ${event.description ? `<p class="text-sm text-gray-500 line-clamp-2">${event.description.substring(0, 120)}${event.description.length > 120 ? '...' : ''}</p>` : ''}
+                            <div class="event-card flex flex-col h-full">
+                                <div class="relative overflow-hidden">
+                                    <img src="${eventImage}" alt="${event.name}" class="w-full h-48 object-cover">
+                                    ${recurringBadge}
                                 </div>
-                            </a>
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
+                                    <p class="text-gray-400 text-sm mb-2 flex items-center">
+                                        <i class="fas fa-calendar text-xs mr-1"></i>
+                                        ${day} ${month}
+                                        • 
+                                        <i class="fas fa-clock text-xs ml-2 mr-1"></i>
+                                        ${time}
+                                    </p>
+                                    <p class="text-gray-400 text-sm mb-3 flex items-center">
+                                        <i class="fas fa-map-marker-alt text-xs mr-1"></i>
+                                        ${venueName}
+                                    </p>
+                                    <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
+                                        ${categoryTags}
+                                    </div>
+                                    <div class="flex justify-between items-center mt-auto">
+                                        <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                            <i class="fas fa-eye mr-1"></i>View Details
+                                        </a>
+                                        <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
+                                            <i class="fas fa-share"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         `;
                         
                         if (isRecurring) {
