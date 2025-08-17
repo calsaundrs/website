@@ -741,7 +741,7 @@
                                     <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
                                     <p class="text-gray-400 text-sm mb-2 flex items-center">
                                         <i class="fas fa-calendar text-xs mr-1"></i>
-                                        ${day} ${month}
+                                        ${getNextOccurrenceText(event)}
                                         • 
                                         <i class="fas fa-clock text-xs ml-2 mr-1"></i>
                                         ${time}
@@ -966,8 +966,26 @@
                 }
             }
             
-            // For non-recurring events, return the original pattern or date
-            return event.recurringPattern || event.date;
+            // For non-recurring events, calculate days difference from the event date
+            const timeDiff = eventDate.getTime() - now.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            // Format based on how soon it is
+            if (daysDiff === 0) {
+                return 'Today';
+            } else if (daysDiff === 1) {
+                return 'Tomorrow';
+            } else if (daysDiff < 7) {
+                // Less than 7 days - show day name
+                return eventDate.toLocaleDateString('en-GB', { weekday: 'long' });
+            } else {
+                // 7 days or more - show full date
+                return eventDate.toLocaleDateString('en-GB', { 
+                    weekday: 'short', 
+                    day: 'numeric', 
+                    month: 'short' 
+                });
+            }
         }
 
         // Load everything when page loads
