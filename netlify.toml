@@ -37,11 +37,12 @@
   force = true
 
 # Rule for individual VENUE pages (Firestore-based with Google Places)
+# Note: Static files in /venue/ directory will be served first
 [[redirects]]
   from = "/venue/*"
   to = "/.netlify/functions/get-venue-details-firestore?slug=:splat"
   status = 200
-  force = true
+  force = false
 
 # Rule for the SSG build page
 [[redirects]]
