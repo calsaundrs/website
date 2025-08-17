@@ -687,7 +687,7 @@
                         const time = date.toLocaleTimeString('en-GB', { 
                             hour: '2-digit', 
                             minute: '2-digit',
-                            hour12: false 
+                            hour12: true 
                         });
                         
                         const isRecurring = event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern;
@@ -702,6 +702,19 @@
                         if (!event.image || !event.image.url) {
                             console.log('⚠️ Skipping event without image:', event.name);
                             return;
+                        }
+                        
+                        // Debug recurring event detection
+                        if (isRecurring) {
+                            console.log('🔄 Recurring event detected:', event.name);
+                            console.log('📅 Original date:', event.date);
+                            console.log('🔄 Recurring pattern:', event.recurringPattern);
+                            console.log('📊 Event data:', {
+                                isRecurringGroup: event.isRecurringGroup,
+                                isRecurring: event.isRecurring,
+                                recurringInfo: event.recurringInfo,
+                                recurringPattern: event.recurringPattern
+                            });
                         }
                         
                         // Get venue name
@@ -911,12 +924,19 @@
             const now = new Date();
             const eventDate = new Date(event.date);
             
+            console.log('🔍 getNextOccurrenceText called for:', event.name);
+            console.log('📅 Event date:', event.date, 'Parsed as:', eventDate);
+            console.log('🕐 Current time:', now);
+            console.log('🔄 Recurring pattern:', event.recurringPattern);
+            
             // If the event is recurring, find the next occurrence
             if (event.recurringPattern) {
                 let nextOccurrence = new Date(eventDate);
+                console.log('🔄 Starting with nextOccurrence:', nextOccurrence);
                 
                 // Calculate the next occurrence based on pattern
                 while (nextOccurrence <= now) {
+                    console.log('⏭️ Advancing nextOccurrence from:', nextOccurrence);
                     switch (event.recurringPattern.toLowerCase()) {
                         case 'weekly':
                         case 'every week':
@@ -939,52 +959,68 @@
                             nextOccurrence.setMonth(nextOccurrence.getMonth() + 1);
                             break;
                         default:
+                            console.log('❓ Unknown pattern, returning:', event.recurringPattern);
                             // For unknown patterns, just return the pattern
                             return event.recurringPattern;
                     }
+                    console.log('⏭️ Advanced to:', nextOccurrence);
                 }
                 
                 // Calculate days difference
                 const timeDiff = nextOccurrence.getTime() - now.getTime();
                 const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                console.log('📊 Days difference:', daysDiff);
                 
                 // Format based on how soon it is
                 if (daysDiff === 0) {
+                    console.log('✅ Returning: Today');
                     return 'Today';
                 } else if (daysDiff === 1) {
+                    console.log('✅ Returning: Tomorrow');
                     return 'Tomorrow';
                 } else if (daysDiff < 7) {
                     // Less than 7 days - show day name
-                    return nextOccurrence.toLocaleDateString('en-GB', { weekday: 'long' });
+                    const dayName = nextOccurrence.toLocaleDateString('en-GB', { weekday: 'long' });
+                    console.log('✅ Returning day name:', dayName);
+                    return dayName;
                 } else {
                     // 7 days or more - show full date
-                    return nextOccurrence.toLocaleDateString('en-GB', { 
+                    const fullDate = nextOccurrence.toLocaleDateString('en-GB', { 
                         weekday: 'short', 
                         day: 'numeric', 
                         month: 'short' 
                     });
+                    console.log('✅ Returning full date:', fullDate);
+                    return fullDate;
                 }
             }
             
             // For non-recurring events, calculate days difference from the event date
             const timeDiff = eventDate.getTime() - now.getTime();
             const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            console.log('📊 Non-recurring event, days difference:', daysDiff);
             
             // Format based on how soon it is
             if (daysDiff === 0) {
+                console.log('✅ Returning: Today');
                 return 'Today';
             } else if (daysDiff === 1) {
+                console.log('✅ Returning: Tomorrow');
                 return 'Tomorrow';
             } else if (daysDiff < 7) {
                 // Less than 7 days - show day name
-                return eventDate.toLocaleDateString('en-GB', { weekday: 'long' });
+                const dayName = eventDate.toLocaleDateString('en-GB', { weekday: 'long' });
+                console.log('✅ Returning day name:', dayName);
+                return dayName;
             } else {
                 // 7 days or more - show full date
-                return eventDate.toLocaleDateString('en-GB', { 
+                const fullDate = eventDate.toLocaleDateString('en-GB', { 
                     weekday: 'short', 
                     day: 'numeric', 
                     month: 'short' 
                 });
+                console.log('✅ Returning full date:', fullDate);
+                return fullDate;
             }
         }
 
