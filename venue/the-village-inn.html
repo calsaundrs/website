@@ -419,6 +419,11 @@
                                     <div id="regular-events-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                         <!-- Regular events will be loaded here as compact event cards -->
                                     </div>
+                                    <div id="regular-events-show-more" class="text-center mt-6" style="display: none;">
+                                        <button onclick="showMoreRegularEvents()" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-200">
+                                            <i class="fas fa-plus mr-2"></i>Show More Regular Events
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -434,6 +439,11 @@
                                     </h3>
                                     <div id="oneoff-events-container" class="space-y-4">
                                         <!-- One-off events will be loaded here -->
+                                    </div>
+                                    <div id="oneoff-events-show-more" class="text-center mt-6" style="display: none;">
+                                        <button onclick="showMoreOneoffEvents()" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-200">
+                                            <i class="fas fa-plus mr-2"></i>Show More One-off Events
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -652,9 +662,11 @@
                     const oneoffEventsContainer = document.getElementById('oneoff-events-container');
                     const regularEventsCount = document.getElementById('regular-events-count');
                     const oneoffEventsCount = document.getElementById('oneoff-events-count');
+                    const regularEventsShowMore = document.getElementById('regular-events-show-more');
+                    const oneoffEventsShowMore = document.getElementById('oneoff-events-show-more');
 
-                    let regularEventsHtml = '';
-                    let oneoffEventsHtml = '';
+                    let allRegularEventsHtml = '';
+                    let allOneoffEventsHtml = '';
                     let regularEventCount = 0;
                     let oneoffEventCount = 0;
                     
@@ -804,18 +816,41 @@
                         `;
                         
                         if (isRecurring) {
-                            regularEventsHtml += compactEventCard;
+                            allRegularEventsHtml += compactEventCard;
                             regularEventCount++;
                         } else {
-                            oneoffEventsHtml += eventCard;
+                            allOneoffEventsHtml += eventCard;
                             oneoffEventCount++;
                         }
                     });
                     
-                    regularEventsContainer.innerHTML = regularEventsHtml;
-                    oneoffEventsContainer.innerHTML = oneoffEventsHtml;
-                    regularEventsCount.textContent = `${regularEventCount} event${regularEventCount !== 1 ? 's' : ''}`;
-                    oneoffEventsCount.textContent = `${oneoffEventCount} event${oneoffEventCount !== 1 ? 's' : ''}`;
+                    // Store all events for "Show More" functionality
+                    window.allRegularEventsHtml = allRegularEventsHtml;
+                    window.allOneoffEventsHtml = allOneoffEventsHtml;
+                    window.regularEventCount = regularEventCount;
+                    window.oneoffEventCount = oneoffEventCount;
+                    
+                    // Initially show only first 4 events per section
+                    const initialRegularEvents = allRegularEventsHtml.split('</a>').slice(0, 4).join('</a>') + (allRegularEventsHtml.split('</a>').length > 4 ? '</a>' : '');
+                    const initialOneoffEvents = allOneoffEventsHtml.split('</div>').slice(0, 4).join('</div>') + (allOneoffEventsHtml.split('</div>').length > 4 ? '</div>' : '');
+                    
+                    regularEventsContainer.innerHTML = initialRegularEvents;
+                    oneoffEventsContainer.innerHTML = initialOneoffEvents;
+                    
+                    // Show "Show More" button if there are more than 4 events
+                    const initialRegularCount = Math.min(4, regularEventCount);
+                    const initialOneoffCount = Math.min(4, oneoffEventCount);
+                    
+                    regularEventsCount.textContent = `${initialRegularCount} event${initialRegularCount !== 1 ? 's' : ''}`;
+                    oneoffEventsCount.textContent = `${initialOneoffCount} event${initialOneoffCount !== 1 ? 's' : ''}`;
+                    
+                    // Show "Show More" buttons if there are more events
+                    if (regularEventCount > 4) {
+                        regularEventsShowMore.style.display = 'block';
+                    }
+                    if (oneoffEventCount > 4) {
+                        oneoffEventsShowMore.style.display = 'block';
+                    }
 
                     // Only show sections that have events
                     if (regularEventCount > 0) {
@@ -861,6 +896,38 @@
             modal.appendChild(img);
             modal.appendChild(closeBtn);
             document.body.appendChild(modal);
+        }
+
+        // Show more regular events function
+        function showMoreRegularEvents() {
+            const regularEventsContainer = document.getElementById('regular-events-container');
+            const regularEventsShowMore = document.getElementById('regular-events-show-more');
+            const regularEventsCount = document.getElementById('regular-events-count');
+            
+            // Display all regular events
+            regularEventsContainer.innerHTML = window.allRegularEventsHtml;
+            
+            // Hide the "Show More" button
+            regularEventsShowMore.style.display = 'none';
+            
+            // Update count to show total
+            regularEventsCount.textContent = `${window.regularEventCount} event${window.regularEventCount !== 1 ? 's' : ''}`;
+        }
+        
+        // Show more one-off events function
+        function showMoreOneoffEvents() {
+            const oneoffEventsContainer = document.getElementById('oneoff-events-container');
+            const oneoffEventsShowMore = document.getElementById('oneoff-events-show-more');
+            const oneoffEventsCount = document.getElementById('oneoff-events-count');
+            
+            // Display all one-off events
+            oneoffEventsContainer.innerHTML = window.allOneoffEventsHtml;
+            
+            // Hide the "Show More" button
+            oneoffEventsShowMore.style.display = 'none';
+            
+            // Update count to show total
+            oneoffEventsCount.textContent = `${window.oneoffEventCount} event${window.oneoffEventCount !== 1 ? 's' : ''}`;
         }
 
         // Load everything when page loads
