@@ -59,13 +59,23 @@ exports.handler = async function(event, context) {
 
             const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
 
-            await sendTemplatedEmail({
+            const result = await sendTemplatedEmail({
                 to: email,
                 from: fromEmail,
                 subject: `[TEST] ${templateName}`,
                 templateName: templateName,
                 data: sampleData,
             });
+
+            if (!result.success) {
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({
+                        message: 'Failed to send test email.',
+                        error: result.error,
+                    }),
+                };
+            }
 
             return {
                 statusCode: 200,

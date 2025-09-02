@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 alert(result.message);
             } else {
-                alert(`Error: ${result.message}`);
+                const errorMessage = result.error ? JSON.stringify(result.error, null, 2) : result.message;
+                alert(`Error: ${result.message}\n\nDetails: ${errorMessage}`);
             }
         } catch (error) {
             alert(`Error: ${error.message}`);
