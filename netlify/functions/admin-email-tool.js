@@ -25,7 +25,7 @@ exports.handler = async function(event, context) {
             };
         }
 
-        const templatePath = path.join(__dirname, '..', 'emails', 'templates', `${templateName}.html`);
+        const templatePath = path.join(__dirname, 'emails', 'templates', `${templateName}.html`);
         let html;
         try {
             html = await fs.readFile(templatePath, 'utf-8');
