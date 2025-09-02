@@ -57,7 +57,7 @@ exports.handler = async function(event, context) {
                 };
             }
 
-            const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+            const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
 
             await sendTemplatedEmail({
                 to: email,

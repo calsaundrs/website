@@ -3,7 +3,7 @@ const { sendTemplatedEmail } = require('./services/email-service');
 
 const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
 
 exports.handler = async function(event, context) {
     console.log('send-event-reminders: Starting function execution');

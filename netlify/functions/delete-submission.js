@@ -42,7 +42,7 @@ exports.handler = async function(event, context) {
 
         // Send rejection email if possible
         if (record && record.fields['Submitted By'] && type === 'Event') {
-            const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+            const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
             await sendTemplatedEmail({
                 to: record.fields['Submitted By'],
                 from: fromEmail,

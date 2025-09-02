@@ -54,7 +54,7 @@ exports.handler = async (event) => {
 
             // Send approval email
             if (eventFields['Submitted By']) {
-                const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+                const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
                 const eventUrl = `https://www.brumoutloud.co.uk/event/${eventFields.Slug}`;
 
                 await sendTemplatedEmail({
@@ -99,7 +99,7 @@ exports.handler = async (event) => {
 
             // Send approval email
             if (eventFields['Submitted By']) {
-                const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+                const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
                 const eventUrl = `https://www.brumoutloud.co.uk/event/${eventFields.Slug}`;
 
                 await sendTemplatedEmail({
@@ -166,7 +166,7 @@ exports.handler = async (event) => {
             console.log(`approve-recurring-series: Approved ${pendingFutureInstances.length} future instances`);
 
             // Send emails for each approved instance
-            const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+            const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
             for (const instance of pendingFutureInstances) {
                 if (instance.fields['Submitted By']) {
                     const eventUrl = `https://www.brumoutloud.co.uk/event/${instance.fields.Slug}`;

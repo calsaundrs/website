@@ -209,7 +209,7 @@ exports.handler = async function (event, context) {
         console.log('🏷️ EVENT SUBMISSION: Status:', firestoreData.status);
 
         // Send confirmation emails
-        const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+        const fromEmail = process.env.FROM_EMAIL || 'noreply@email.brumoutloud.co.uk';
         const adminEmail = process.env.ADMIN_EMAIL || 'admin@brumoutloud.co.uk';
 
         // 1. Send submission confirmation to the user
