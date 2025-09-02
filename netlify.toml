@@ -14,6 +14,7 @@
   # Main directory for all serverless functions
   directory = "netlify/functions/"
   node_bundler = "esbuild"
+  included_files = ["netlify/functions/emails/templates/*.html"]
   external_node_modules = [
     "@remotion/compositor-win32-x64-msvc",
     "@remotion/compositor-darwin-x64", 
