@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { sendTemplatedEmail } = require('./services/email-service');
 
 exports.handler = async function (event, context) {
     console.log('🚀 EVENT SUBMISSION: Function called');
@@ -206,6 +207,37 @@ exports.handler = async function (event, context) {
         console.log('📝 EVENT SUBMISSION: Event name:', firestoreData.name);
         console.log('📅 EVENT SUBMISSION: Event date:', firestoreData.date);
         console.log('🏷️ EVENT SUBMISSION: Status:', firestoreData.status);
+
+        // Send confirmation emails
+        const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@brumoutloud.co.uk';
+
+        // 1. Send submission confirmation to the user
+        if (firestoreData.submittedBy && firestoreData.submittedBy !== 'anonymous@brumoutloud.co.uk') {
+            await sendTemplatedEmail({
+                to: firestoreData.submittedBy,
+                from: fromEmail,
+                subject: 'Your event submission has been received!',
+                templateName: 'submission-confirmation',
+                data: {
+                    eventName: firestoreData.name,
+                },
+            });
+        }
+
+        // 2. Send notification to admin
+        await sendTemplatedEmail({
+            to: adminEmail,
+            from: fromEmail,
+            subject: `New Event Submission: ${firestoreData.name}`,
+            templateName: 'admin-submission-notification',
+            data: {
+                eventName: firestoreData.name,
+                venueName: firestoreData.venueName,
+                eventDate: firestoreData.eventDate,
+                submittedBy: firestoreData.submittedBy,
+            },
+        });
         
         return {
             statusCode: 200,

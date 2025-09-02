@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Management | Admin Panel</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script type="module" src="/js/auth-guard.js"></script>
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <style>
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .accent-color {
+            color: #E83A99;
+        }
+    </style>
+</head>
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
+<header class="p-8">
+    <nav class="container mx-auto flex justify-between items-center">
+        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+           style="font-family: 'Omnes Pro', sans-serif;">
+            <span>Brum Outloud</span>
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="/admin/settings" class="text-gray-300 hover:text-white transition-colors">ADMIN HOME</a>
+        </div>
+    </nav>
+</header>
+
+<main class="container mx-auto px-8 py-8 relative z-10">
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+        <ol role="list" class="flex items-center space-x-4">
+            <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                    <a href="/admin-settings.html" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
+                    <span class="ml-4 font-medium text-white">Email Management</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <section class="text-center mb-8">
+        <div class="text-center mb-16">
+            <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">EMAIL <span class="accent-color">MANAGEMENT</span></h1>
+            <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Preview, test, and monitor all outgoing emails.</p>
+        </div>
+
+        <!-- Email Preview and Test Sending -->
+        <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-eye mr-3 accent-color"></i>Preview & Test
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="template-select" class="block text-sm font-medium text-gray-300 mb-2">Select Template</label>
+                    <select id="template-select" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2">
+                        <option value="submission-confirmation">Submission Confirmation</option>
+                        <option value="approval-confirmation">Approval Confirmation</option>
+                        <option value="rejection-confirmation">Rejection Confirmation</option>
+                        <option value="admin-submission-notification">Admin Submission Notification</option>
+                        <option value="event-reminder">Event Reminder</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="test-email-input" class="block text-sm font-medium text-gray-300 mb-2">Send test to:</label>
+                    <div class="flex gap-2">
+                        <input type="email" id="test-email-input" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2" placeholder="admin@example.com">
+                        <button id="send-test-btn" class="btn-primary px-4 py-2 rounded-lg">Send</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 border border-gray-700 rounded-lg p-4 bg-gray-900">
+                <h3 class="text-lg font-bold text-white mb-2">Preview</h3>
+                <div id="email-preview" class="w-full h-96 overflow-y-auto">
+                    <!-- Preview will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Logs -->
+        <div class="card-bg p-8 md:p-12 rounded-2xl">
+            <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
+                <i class="fas fa-history mr-3 accent-color"></i>Email Logs
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="p-2">To</th>
+                            <th class="p-2">Subject</th>
+                            <th class="p-2">Status</th>
+                            <th class="p-2">Timestamp</th>
+                            <th class="p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="email-logs-table">
+                        <!-- Logs will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+<script src="/js/admin-emails.js"></script>
+</body>
+</html>

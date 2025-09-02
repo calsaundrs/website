@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; }
+  .container { width: 100%; max-width: 600px; margin: 0 auto; }
+  .header { background: #f2f2f2; padding: 20px; text-align: center; }
+  .content { padding: 20px; }
+  .footer { background: #f2f2f2; padding: 20px; text-align: center; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Your event has been approved!</h1>
+    </div>
+    <div class="content">
+      <p>Hi there,</p>
+      <p>Great news! Your event, <strong>{{eventName}}</strong>, has been approved and is now live on Brum Outloud.</p>
+      <p>You can view it here: <a href="{{eventUrl}}">{{eventUrl}}</a></p>
+      <p>Thanks for contributing to the community!</p>
+      <p>The Brum Outloud Team</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2025 Brum Outloud. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

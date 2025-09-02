@@ -1,4 +1,5 @@
 const Airtable = require('airtable');
+const { sendTemplatedEmail } = require('./services/email-service');
 
 const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
@@ -51,6 +52,25 @@ exports.handler = async (event) => {
                 }
             ]);
 
+            // Send approval email
+            if (eventFields['Submitted By']) {
+                const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+                const eventUrl = `https://www.brumoutloud.co.uk/event/${eventFields.Slug}`;
+
+                await sendTemplatedEmail({
+                    to: eventFields['Submitted By'],
+                    from: fromEmail,
+                    subject: 'Your event has been approved!',
+                    templateName: 'approval-confirmation',
+                    data: {
+                        eventName: eventFields['Event Name'],
+                        eventUrl: eventUrl,
+                    },
+                });
+            } else {
+                console.log('approve-recurring-series: No "Submitted By" field found, skipping email.');
+            }
+
             return {
                 statusCode: 200,
                 headers: {
@@ -77,6 +97,25 @@ exports.handler = async (event) => {
                 }
             ]);
 
+            // Send approval email
+            if (eventFields['Submitted By']) {
+                const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+                const eventUrl = `https://www.brumoutloud.co.uk/event/${eventFields.Slug}`;
+
+                await sendTemplatedEmail({
+                    to: eventFields['Submitted By'],
+                    from: fromEmail,
+                    subject: 'Your event has been approved!',
+                    templateName: 'approval-confirmation',
+                    data: {
+                        eventName: eventFields['Event Name'],
+                        eventUrl: eventUrl,
+                    },
+                });
+            } else {
+                console.log('approve-recurring-series: No "Submitted By" field found, skipping email.');
+            }
+
             return {
                 statusCode: 200,
                 headers: {
@@ -94,7 +133,7 @@ exports.handler = async (event) => {
         const seriesId = eventFields['Series ID'];
         const allInstances = await base('Events').select({
             filterByFormula: `{Series ID} = '${seriesId}'`,
-            fields: ['Event Name', 'Date', 'Status']
+            fields: ['Event Name', 'Date', 'Status', 'Slug', 'Submitted By']
         }).all();
 
         console.log(`approve-recurring-series: Found ${allInstances.length} instances in series`);
@@ -125,6 +164,26 @@ exports.handler = async (event) => {
             await base('Events').update(updateRecords);
 
             console.log(`approve-recurring-series: Approved ${pendingFutureInstances.length} future instances`);
+
+            // Send emails for each approved instance
+            const fromEmail = process.env.FROM_EMAIL || 'noreply@brumoutloud.co.uk';
+            for (const instance of pendingFutureInstances) {
+                if (instance.fields['Submitted By']) {
+                    const eventUrl = `https://www.brumoutloud.co.uk/event/${instance.fields.Slug}`;
+                    await sendTemplatedEmail({
+                        to: instance.fields['Submitted By'],
+                        from: fromEmail,
+                        subject: 'Your event has been approved!',
+                        templateName: 'approval-confirmation',
+                        data: {
+                            eventName: instance.fields['Event Name'],
+                            eventUrl: eventUrl,
+                        },
+                    });
+                } else {
+                    console.log(`approve-recurring-series: No "Submitted By" field for instance ${instance.id}, skipping email.`);
+                }
+            }
         }
 
         return {
