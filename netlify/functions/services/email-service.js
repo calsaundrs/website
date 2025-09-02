@@ -41,7 +41,7 @@ async function sendEmail({ to, from, subject, html, templateName, templateData }
   try {
     const { data, error: sendError } = await resend.emails.send({
       from,
-      to,
+      to: Array.isArray(to) ? to : [to],
       subject,
       html,
     });
