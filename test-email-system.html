@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email System Test - Brum Outloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent-color': '#667eea',
+                        'secondary-color': '#764ba2'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-4">Email System Test</h1>
+            <p class="text-gray-400">Test the comprehensive email notification system</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Test Email Sending -->
+            <div class="bg-gray-800 rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4 text-accent-color">
+                    <i class="fas fa-paper-plane mr-2"></i>Test Email Sending
+                </h2>
+                
+                <form id="testEmailForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Email Type</label>
+                        <select id="emailType" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                            <option value="submission_confirmation">Submission Confirmation</option>
+                            <option value="approval_notification">Approval Notification</option>
+                            <option value="rejection_notification">Rejection Notification</option>
+                            <option value="event_reminder">Event Reminder</option>
+                            <option value="admin_submission_alert">Admin Submission Alert</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Test Email Address</label>
+                        <input type="email" id="testEmail" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                               placeholder="test@example.com" required>
+                    </div>
+                    
+                    <div id="dynamicFields" class="space-y-3">
+                        <!-- Dynamic fields will be populated here -->
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-accent-color hover:bg-blue-600 text-white py-3 rounded-lg transition-colors">
+                        <i class="fas fa-paper-plane mr-2"></i>Send Test Email
+                    </button>
+                </form>
+            </div>
+
+            <!-- Email Logs -->
+            <div class="bg-gray-800 rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4 text-accent-color">
+                    <i class="fas fa-list mr-2"></i>Recent Email Logs
+                </h2>
+                
+                <div class="mb-4">
+                    <button onclick="loadEmailLogs()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-refresh mr-2"></i>Refresh Logs
+                    </button>
+                </div>
+                
+                <div id="emailLogs" class="space-y-3 max-h-96 overflow-y-auto">
+                    <div class="text-center py-4 text-gray-400">
+                        <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                        <p>Loading email logs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div id="testResults" class="mt-8 bg-gray-800 rounded-xl p-6 hidden">
+            <h2 class="text-xl font-bold mb-4 text-accent-color">
+                <i class="fas fa-check-circle mr-2"></i>Test Results
+            </h2>
+            <div id="testResultsContent"></div>
+        </div>
+
+        <!-- System Status -->
+        <div class="mt-8 bg-gray-800 rounded-xl p-6">
+            <h2 class="text-xl font-bold mb-4 text-accent-color">
+                <i class="fas fa-info-circle mr-2"></i>System Status
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-semibold mb-2">Email Service</h3>
+                    <p id="emailServiceStatus" class="text-gray-400">Checking...</p>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-semibold mb-2">Database Connection</h3>
+                    <p id="dbStatus" class="text-gray-400">Checking...</p>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-semibold mb-2">Scheduled Functions</h3>
+                    <p id="scheduledStatus" class="text-gray-400">Checking...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EmailSystemTester {
+            constructor() {
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                this.updateDynamicFields();
+                await this.checkSystemStatus();
+                await this.loadEmailLogs();
+            }
+
+            setupEventListeners() {
+                // Email type change
+                document.getElementById('emailType').addEventListener('change', () => {
+                    this.updateDynamicFields();
+                });
+
+                // Test email form
+                document.getElementById('testEmailForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendTestEmail();
+                });
+            }
+
+            updateDynamicFields() {
+                const emailType = document.getElementById('emailType').value;
+                const container = document.getElementById('dynamicFields');
+                
+                let fields = '';
+                
+                switch (emailType) {
+                    case 'submission_confirmation':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="eventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="Test Pride Night" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event ID</label>
+                                <input type="text" id="eventId" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="test-event-123" required>
+                            </div>
+                        `;
+                        break;
+                    case 'approval_notification':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="eventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="Test Pride Night" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event URL</label>
+                                <input type="url" id="eventUrl" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="https://brumoutloud.co.uk/event/test-pride-night" required>
+                            </div>
+                        `;
+                        break;
+                    case 'rejection_notification':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="eventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="Test Pride Night" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Rejection Reason</label>
+                                <textarea id="reason" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" rows="3" 
+                                          required>Please provide more details about your event and venue information.</textarea>
+                            </div>
+                        `;
+                        break;
+                    case 'event_reminder':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="eventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="Test Pride Night" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Date</label>
+                                <input type="text" id="eventDate" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="2024-01-15 at 20:00" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event URL</label>
+                                <input type="url" id="eventUrl" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="https://brumoutloud.co.uk/event/test-pride-night" required>
+                            </div>
+                        `;
+                        break;
+                    case 'admin_submission_alert':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="eventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="Test Pride Night" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Promoter Email</label>
+                                <input type="email" id="promoterEmail" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="promoter@example.com" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event ID</label>
+                                <input type="text" id="eventId" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
+                                       value="test-event-123" required>
+                            </div>
+                        `;
+                        break;
+                }
+                
+                container.innerHTML = fields;
+            }
+
+            async sendTestEmail() {
+                const emailType = document.getElementById('emailType').value;
+                const testEmail = document.getElementById('testEmail').value;
+                
+                let data = {};
+
+                // Collect form data based on email type
+                switch (emailType) {
+                    case 'submission_confirmation':
+                        data = {
+                            promoterEmail: testEmail,
+                            eventName: document.getElementById('eventName').value,
+                            eventId: document.getElementById('eventId').value
+                        };
+                        break;
+                    case 'approval_notification':
+                        data = {
+                            promoterEmail: testEmail,
+                            eventName: document.getElementById('eventName').value,
+                            eventUrl: document.getElementById('eventUrl').value
+                        };
+                        break;
+                    case 'rejection_notification':
+                        data = {
+                            promoterEmail: testEmail,
+                            eventName: document.getElementById('eventName').value,
+                            reason: document.getElementById('reason').value
+                        };
+                        break;
+                    case 'event_reminder':
+                        data = {
+                            promoterEmail: testEmail,
+                            eventName: document.getElementById('eventName').value,
+                            eventDate: document.getElementById('eventDate').value,
+                            eventUrl: document.getElementById('eventUrl').value
+                        };
+                        break;
+                    case 'admin_submission_alert':
+                        data = {
+                            eventName: document.getElementById('eventName').value,
+                            promoterEmail: document.getElementById('promoterEmail').value,
+                            eventId: document.getElementById('eventId').value
+                        };
+                        break;
+                }
+
+                this.showLoading();
+
+                try {
+                    const response = await fetch('/.netlify/functions/send-email-notification', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            type: emailType,
+                            data: data
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    this.showTestResults(result, emailType, testEmail);
+                    await this.loadEmailLogs();
+
+                } catch (error) {
+                    this.hideLoading();
+                    this.showTestResults({ success: false, error: error.message }, emailType, testEmail);
+                }
+            }
+
+            showTestResults(result, emailType, testEmail) {
+                const resultsDiv = document.getElementById('testResults');
+                const contentDiv = document.getElementById('testResultsContent');
+                
+                const statusClass = result.success ? 'text-green-500' : 'text-red-500';
+                const statusIcon = result.success ? 'fa-check-circle' : 'fa-exclamation-triangle';
+                
+                contentDiv.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas ${statusIcon} ${statusClass} text-2xl"></i>
+                            <div>
+                                <h3 class="text-lg font-semibold">${result.success ? 'Email Sent Successfully!' : 'Email Failed'}</h3>
+                                <p class="text-gray-400">Type: ${emailType.replace('_', ' ')} | To: ${testEmail}</p>
+                            </div>
+                        </div>
+                        
+                        ${result.success ? `
+                            <div class="bg-green-900 bg-opacity-50 border border-green-700 rounded-lg p-4">
+                                <p class="text-green-300"><strong>Message ID:</strong> ${result.messageId || 'N/A'}</p>
+                                <p class="text-green-300"><strong>Status:</strong> Delivered successfully</p>
+                            </div>
+                        ` : `
+                            <div class="bg-red-900 bg-opacity-50 border border-red-700 rounded-lg p-4">
+                                <p class="text-red-300"><strong>Error:</strong> ${result.error}</p>
+                                <p class="text-red-300"><strong>Status:</strong> Failed to send</p>
+                            </div>
+                        `}
+                        
+                        <div class="text-sm text-gray-400">
+                            <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                            <p><strong>Email Type:</strong> ${emailType}</p>
+                        </div>
+                    </div>
+                `;
+                
+                resultsDiv.classList.remove('hidden');
+            }
+
+            async loadEmailLogs() {
+                try {
+                    const response = await fetch('/.netlify/functions/get-email-logs?limit=10');
+                    const data = await response.json();
+                    
+                    const logsContainer = document.getElementById('emailLogs');
+                    
+                    if (data.success && data.logs.length > 0) {
+                        logsContainer.innerHTML = data.logs.map(log => `
+                            <div class="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-1">
+                                            <span class="font-semibold text-sm">${log.subject}</span>
+                                            <span class="text-xs px-2 py-1 rounded ${
+                                                log.status === 'sent' ? 'bg-green-600' : 
+                                                log.status === 'failed' ? 'bg-red-600' : 'bg-yellow-600'
+                                            }">
+                                                ${log.status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div class="text-xs text-gray-400">
+                                            <p><strong>To:</strong> ${log.to}</p>
+                                            <p><strong>Sent:</strong> ${new Date(log.sentAt).toLocaleString()}</p>
+                                            ${log.error ? `<p class="text-red-400"><strong>Error:</strong> ${log.error}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        logsContainer.innerHTML = `
+                            <div class="text-center py-4 text-gray-400">
+                                <i class="fas fa-inbox text-xl mb-2"></i>
+                                <p>No email logs found</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error loading email logs:', error);
+                    document.getElementById('emailLogs').innerHTML = `
+                        <div class="text-center py-4 text-red-400">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Error loading email logs</p>
+                        </div>
+                    `;
+                }
+            }
+
+            async checkSystemStatus() {
+                // Check email service
+                try {
+                    const response = await fetch('/.netlify/functions/send-email-notification', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'test', data: {} })
+                    });
+                    document.getElementById('emailServiceStatus').innerHTML = 
+                        '<span class="text-green-500"><i class="fas fa-check-circle mr-1"></i>Online</span>';
+                } catch (error) {
+                    document.getElementById('emailServiceStatus').innerHTML = 
+                        '<span class="text-red-500"><i class="fas fa-times-circle mr-1"></i>Offline</span>';
+                }
+
+                // Check database connection
+                try {
+                    const response = await fetch('/.netlify/functions/get-email-logs?limit=1');
+                    document.getElementById('dbStatus').innerHTML = 
+                        '<span class="text-green-500"><i class="fas fa-check-circle mr-1"></i>Connected</span>';
+                } catch (error) {
+                    document.getElementById('dbStatus').innerHTML = 
+                        '<span class="text-red-500"><i class="fas fa-times-circle mr-1"></i>Disconnected</span>';
+                }
+
+                // Check scheduled functions (this would need a specific endpoint)
+                document.getElementById('scheduledStatus').innerHTML = 
+                    '<span class="text-yellow-500"><i class="fas fa-clock mr-1"></i>Configured</span>';
+            }
+
+            showLoading() {
+                // Simple loading state
+                const button = document.querySelector('#testEmailForm button[type="submit"]');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                button.disabled = true;
+            }
+
+            hideLoading() {
+                const button = document.querySelector('#testEmailForm button[type="submit"]');
+                button.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Test Email';
+                button.disabled = false;
+            }
+        }
+
+        // Global function for refreshing logs
+        function loadEmailLogs() {
+            if (window.emailTester) {
+                window.emailTester.loadEmailLogs();
+            }
+        }
+
+        // Initialize the tester
+        document.addEventListener('DOMContentLoaded', () => {
+            window.emailTester = new EmailSystemTester();
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const cloudinary = require('cloudinary').v2;
 const RecurringEventsManager = require('./services/recurring-events-manager');
+const EmailService = require('./services/email-service');
 const multipart = require('lambda-multipart-parser');
 
 // AI Poster Parsing Function
@@ -466,6 +467,35 @@ exports.handler = async function (event, context) {
         // Save to Firestore
         const firestoreDoc = await db.collection('events').add(firestoreData);
         console.log('Event saved to Firestore with ID:', firestoreDoc.id);
+        
+        // Send email notifications
+        try {
+            const emailService = new EmailService();
+            const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
+            
+            if (promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk') {
+                // Send submission confirmation to promoter
+                await emailService.sendSubmissionConfirmation(
+                    promoterEmail,
+                    firestoreData.name,
+                    firestoreDoc.id
+                );
+                console.log('✅ Submission confirmation email sent to:', promoterEmail);
+                
+                // Send admin notification
+                await emailService.sendAdminSubmissionAlert(
+                    firestoreData.name,
+                    promoterEmail,
+                    firestoreDoc.id
+                );
+                console.log('✅ Admin notification email sent');
+            } else {
+                console.log('⚠️ No valid promoter email found, skipping email notifications');
+            }
+        } catch (emailError) {
+            console.error('❌ Email notification failed:', emailError);
+            // Don't fail the entire submission if email fails
+        }
         
         // Trigger SSG rebuild if in production
         let ssgRebuildResult = null;
