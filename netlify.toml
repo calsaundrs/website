@@ -23,7 +23,8 @@
     "@remotion/compositor-linux-arm64-gnu",
     "@swc/core",
     "esbuild",
-    "source-map"
+    "source-map",
+    "@react-email/render"
   ]
 
 

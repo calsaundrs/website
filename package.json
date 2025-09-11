@@ -18,6 +18,7 @@
     "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap"
   },
   "dependencies": {
+    "@react-email/render": "^1.2.3",
     "@remotion/bundler": "^4.0.330",
     "@remotion/cli": "^4.0.330",
     "@remotion/player": "^4.0.330",

@@ -188,3 +188,4 @@ exports.handler = async (event, context) => {
     
     return canvas.toBuffer('image/png');
 }
+
