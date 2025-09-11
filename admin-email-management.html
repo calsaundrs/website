@@ -66,9 +66,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- Email Templates -->
             <div class="bg-gray-800 rounded-xl p-6">
-                <h2 class="text-xl font-bold mb-4 text-accent-color">
-                    <i class="fas fa-envelope mr-2"></i>Email Templates
-                </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-accent-color">
+                        <i class="fas fa-envelope mr-2"></i>Email Templates
+                    </h2>
+                    <a href="/email-template-showcase.html" class="text-sm bg-accent-color hover:bg-pink-600 px-3 py-1 rounded-lg transition-colors">
+                        <i class="fas fa-external-link-alt mr-1"></i>Showcase
+                    </a>
+                </div>
                 <div class="space-y-3">
                     <button onclick="previewTemplate('submission_confirmation')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
                         <i class="fas fa-check-circle text-green-500 mr-2"></i>
@@ -602,20 +607,56 @@
         }
 
         // Global functions for template previews
-        function previewTemplate(templateType) {
+        async function previewTemplate(templateType) {
             const content = document.getElementById('emailPreviewContent');
             
-            // This would normally fetch the actual template from the server
-            // For now, we'll show a placeholder
+            // Show loading state
             content.innerHTML = `
                 <div class="text-center py-8">
-                    <h3 class="text-xl font-bold mb-4">${templateType.replace('_', ' ').toUpperCase()}</h3>
-                    <p class="text-gray-600">Template preview would be loaded here</p>
-                    <p class="text-sm text-gray-500 mt-4">This feature will show the actual email template with sample data</p>
+                    <i class="fas fa-spinner fa-spin text-3xl text-accent-color mb-4"></i>
+                    <p class="text-gray-600">Loading template preview...</p>
                 </div>
             `;
 
             document.getElementById('emailPreviewModal').classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/.netlify/functions/get-email-template-preview?templateType=${templateType}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    content.innerHTML = `
+                        <div class="mb-4 p-4 bg-gray-100 rounded">
+                            <h4 class="font-bold mb-2">Email Details</h4>
+                            <p><strong>Subject:</strong> ${data.subject}</p>
+                            <p><strong>Template:</strong> ${templateType.replace('_', ' ').toUpperCase()}</p>
+                            <p><strong>Sample Data:</strong> Using realistic preview data</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <h4 class="font-bold mb-2">Email Preview</h4>
+                            <div class="prose max-w-none">
+                                ${data.htmlContent}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
+                            <h3 class="text-xl font-bold mb-4 text-red-600">Error Loading Template</h3>
+                            <p class="text-gray-600">${data.error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4 text-red-600">Error Loading Template</h3>
+                        <p class="text-gray-600">Failed to load template preview: ${error.message}</p>
+                    </div>
+                `;
+            }
         }
 
         function closeEmailPreview() {
