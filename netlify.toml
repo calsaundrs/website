@@ -5,9 +5,14 @@
   # Directory that contains the deploy-ready HTML files and assets.
   publish = "."
   functions = "netlify/functions"
-  command = "npm run build"
+  command = "npm run build:css"
   # Specify Node.js version to match package requirements
   environment = { NODE_VERSION = "20" }
+
+# Build settings to prevent timeouts
+[build.environment]
+  NETLIFY_BUILD_TIMEOUT = "900"
+  NETLIFY_FUNCTION_TIMEOUT = "30"
 
 # Specifies how serverless functions are handled
 [functions]
@@ -21,10 +26,18 @@
     "@remotion/compositor-linux-x64-gnu",
     "@remotion/compositor-linux-arm64-musl",
     "@remotion/compositor-linux-arm64-gnu",
+    "@remotion/bundler",
+    "@remotion/cli",
+    "@remotion/player",
+    "@remotion/renderer",
     "@swc/core",
     "esbuild",
     "source-map",
-    "@react-email/render"
+    "@react-email/render",
+    "react",
+    "react-dom",
+    "sharp",
+    "canvas"
   ]
 
 

@@ -1,0 +1,18 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Brum Outloud",
+  "dependencies": {
+    "@react-email/render": "^1.2.3",
+    "airtable": "^0.12.2",
+    "cloudinary": "^1.41.3",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.1.0",
+    "formidable": "^3.5.1",
+    "lambda-multipart-parser": "^1.0.1",
+    "node-fetch": "^2.7.0",
+    "parse-multipart": "^1.0.4",
+    "resend": "^6.0.3",
+    "uuid": "^9.0.1"
+  }
+}
