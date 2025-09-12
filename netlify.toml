@@ -7,12 +7,7 @@
   functions = "netlify/functions"
   command = "npm run build:css"
   # Specify Node.js version to match package requirements
-  environment = { NODE_VERSION = "20" }
-
-# Build settings to prevent timeouts
-[build.environment]
-  NETLIFY_BUILD_TIMEOUT = "900"
-  NETLIFY_FUNCTION_TIMEOUT = "30"
+  environment = { NODE_VERSION = "20", NETLIFY_BUILD_TIMEOUT = "900", NETLIFY_FUNCTION_TIMEOUT = "30" }
 
 # Specifies how serverless functions are handled
 [functions]
