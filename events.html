@@ -1239,6 +1239,9 @@
                 return true;
             });
             
+            // Group recurring events
+            filteredEvents = groupRecurringEvents(filteredEvents);
+            
             // Sort events by date
             filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
             
@@ -1250,6 +1253,54 @@
             hideLoading();
         }
 
+        // Group recurring events for display
+        function groupRecurringEvents(events) {
+            const groupedEvents = [];
+            const recurringGroups = new Map();
+            
+            events.forEach(event => {
+                if (event.isRecurring && event.recurringGroupId) {
+                    // This is a recurring event with a group ID
+                    if (recurringGroups.has(event.recurringGroupId)) {
+                        // Add to existing group
+                        const group = recurringGroups.get(event.recurringGroupId);
+                        group.instances.push(event);
+                        
+                        // Update group's next occurrence to the earliest future instance
+                        const eventDate = new Date(event.date);
+                        const groupDate = new Date(group.date);
+                        const now = new Date();
+                        
+                        if (eventDate >= now && (groupDate < now || eventDate < groupDate)) {
+                            group.date = event.date;
+                        }
+                    } else {
+                        // Create new group
+                        const group = {
+                            ...event,
+                            instances: [event],
+                            isRecurringGroup: true,
+                            nextOccurrence: event.date,
+                            totalInstances: event.totalInstances || 1
+                        };
+                        recurringGroups.set(event.recurringGroupId, group);
+                    }
+                } else {
+                    // Non-recurring event, add directly
+                    groupedEvents.push(event);
+                }
+            });
+            
+            // Add grouped recurring events
+            recurringGroups.forEach(group => {
+                // Sort instances by date
+                group.instances.sort((a, b) => new Date(a.date) - new Date(b.date));
+                groupedEvents.push(group);
+            });
+            
+            return groupedEvents;
+        }
+        
         // Update event count
         function updateEventCount() {
             const count = filteredEvents.length;
@@ -1284,6 +1335,11 @@
 
         // Create event card
         function createEventCard(event, type) {
+            // Handle recurring events
+            if (event.isRecurringGroup) {
+                return createRecurringEventCard(event, type);
+            }
+            
             // Use the date field (which should now work correctly)
             const eventDate = new Date(event.date);
             
@@ -1526,6 +1582,124 @@
                 </button>
             `;
             return chip;
+        }
+
+        // Create recurring event card
+        function createRecurringEventCard(event, type) {
+            const nextOccurrence = new Date(event.nextOccurrence || event.date);
+            const formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short',
+                timeZone: 'UTC'
+            });
+            
+            const eventCategories = event.category || event.categories || event.categoryIds || [];
+            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? 
+                eventCategories.slice(0, 3).map(cat => 
+                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+                ).join('') : '';
+            
+            const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 
+                `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
+            
+            let venueName = 'TBC';
+            if (event.venueName) {
+                venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
+            } else if (event.venue && event.venue.name) {
+                venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
+            }
+            
+            // Extract recurrence pattern
+            const getRecurrencePattern = (event) => {
+                if (event.recurringPattern) {
+                    const pattern = event.recurringPattern.toLowerCase();
+                    if (pattern.includes('weekly') || pattern.includes('week')) return 'Weekly';
+                    if (pattern.includes('monthly') || pattern.includes('month')) return 'Monthly';
+                    if (pattern.includes('bi-weekly') || pattern.includes('biweekly') || pattern.includes('fortnightly')) return 'Bi-weekly';
+                    if (pattern.includes('daily')) return 'Daily';
+                    if (pattern.includes('yearly') || pattern.includes('annual')) return 'Yearly';
+                    return 'Recurring';
+                }
+                return 'Recurring';
+            };
+            
+            const recurrencePattern = getRecurrencePattern(event);
+            
+            const recurringBadge = `
+                <div class="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                    <i class="fas fa-redo mr-1"></i>${recurrencePattern}
+                </div>
+            `;
+            
+            const recurringInfo = `
+                <div class="text-sm text-purple-400 mb-2">
+                    <i class="fas fa-calendar-alt mr-1"></i>
+                    Next: ${formattedDate}
+                </div>
+            `;
+            
+            if (type === 'desktop') {
+                return `
+                    <div class="event-card flex flex-col h-full border-2 border-purple-500/30">
+                        <div class="relative overflow-hidden">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
+                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
+                            ${recurringBadge}
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
+                            ${recurringInfo}
+                            <p class="text-gray-400 text-sm mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt text-xs mr-1"></i>
+                                ${venueName}
+                            </p>
+                            <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
+                                ${categoryTags}
+                            </div>
+                            <div class="flex justify-between items-center mt-auto">
+                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-eye mr-1"></i>View Series
+                                </a>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="event-card overflow-hidden border-2 border-purple-500/30">
+                        <div class="relative">
+                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
+                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded-full font-semibold">Featured</div>' : ''}
+                            ${recurringBadge}
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        </div>
+                        
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2 line-clamp-2">${event.name}</h3>
+                            ${recurringInfo}
+                            <p class="text-gray-400 text-sm mb-2 flex items-center">
+                                <i class="fas fa-map-marker-alt text-xs mr-1"></i>
+                                ${venueName}
+                            </p>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                ${categoryTags}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-eye mr-1"></i>View Series
+                                </a>
+                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Mobile menu functionality

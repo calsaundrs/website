@@ -93,6 +93,98 @@
             background-clip: text;
         }
 
+        /* Design System Section Styles */
+        .ds-section {
+            margin-bottom: 3rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 20px;
+            width: 95vw !important;
+            max-width: none !important;
+            min-width: 1200px !important;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+        }
+
+        .modal-content.active {
+            transform: scale(1);
+        }
+
+        #modalContent {
+            padding: 0 !important;
+        }
+
+        .modal-content-section {
+            padding: 24px !important;
+        }
+
+        .modal-content-section, .p-12 {
+            padding: 24px !important;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(232, 58, 153, 0.8);
+            border-color: #E83A99;
+            transform: scale(1.1);
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .hero-image-container {
+            margin: -24px -24px 0 -24px;
+        }
+
         .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -370,6 +462,23 @@
                 </div>
             </div>
         </div>
+
+        <!-- Events Section -->
+        <div class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12">
+                <h2 class="font-anton text-5xl text-white mb-4">Upcoming Events</h2>
+                <p class="text-gray-400 text-lg">Discover what's happening at The Village Inn</p>
+            </div>
+            
+            <!-- Events Container -->
+            <div id="events-container">
+                <!-- Events will be loaded here -->
+            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -434,7 +543,588 @@
                     button.addEventListener('click', shareVenue);
                 }
             });
+            
+            // Load events for this venue
+            loadVenueEvents();
+        });
+
+        // Load events for this venue with separate sections for recurring and one-off events
+        async function loadVenueEvents() {
+            try {
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=the-village-inn');
+                if (!response.ok) throw new Error('Failed to fetch events');
+                const data = await response.json();
+                
+                const eventsContainer = document.getElementById('events-container');
+                
+                if (data.success && data.events.length > 0) {
+                    // Separate recurring and one-off events
+                    const recurringEvents = data.events.filter(event => event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern);
+                    const oneOffEvents = data.events.filter(event => !event.isRecurringGroup && !event.isRecurring && !event.recurringInfo && !event.recurringPattern);
+                    
+                    let eventsHTML = '';
+                    
+                    // Recurring Events Section
+                    if (recurringEvents.length > 0) {
+                        eventsHTML += `
+                            <section class="ds-section mb-12">
+                                <div class="card-bg p-8 rounded-2xl">
+                                    <h3 class="font-anton text-3xl text-white mb-6 flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-redo text-green-400 text-xl"></i>
+                                        </div>
+                                        Regular Events
+                                        <span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">${recurringEvents.length} event${recurringEvents.length !== 1 ? 's' : ''}</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        ${recurringEvents.map(event => renderEventCard(event, true)).join('')}
+                                    </div>
+                                </div>
+                            </section>
+                        `;
+                    }
+                    
+                    // One-off Events Section
+                    if (oneOffEvents.length > 0) {
+                        eventsHTML += `
+                            <section class="ds-section mb-12">
+                                <div class="card-bg p-8 rounded-2xl">
+                                    <h3 class="font-anton text-3xl text-white mb-6 flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-calendar-day text-blue-400 text-xl"></i>
+                                        </div>
+                                        Upcoming Events
+                                        <span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">${oneOffEvents.length} event${oneOffEvents.length !== 1 ? 's' : ''}</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        ${oneOffEvents.map(event => renderEventCard(event, false)).join('')}
+                                    </div>
+                                </div>
+                            </section>
+                        `;
+                    }
+                    
+                    eventsContainer.innerHTML = eventsHTML;
+                    
+                } else {
+                    eventsContainer.innerHTML = `
+                        <div class="text-center py-16">
+                            <div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8">
+                                <i class="fas fa-calendar-times text-4xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3>
+                            <p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p>
+                            <a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg">
+                                <i class="fas fa-plus mr-3"></i>Submit an Event
+                            </a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('events-container').innerHTML = `
+                    <div class="text-center py-16">
+                        <div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <i class="fas fa-exclamation-triangle text-4xl text-red-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3>
+                        <p class="text-gray-400 text-lg">We're having trouble loading events right now. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderEventCard(event, isRecurring) {
+            const tagsHTML = event.category && event.category.length > 0 ? 
+                event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
+            const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
+            const isBoosted = event.promotion && event.promotion.boosted;
+            const venueName = event.venueName || 'TBC';
+            
+            let eventDate = new Date(event.date);
+            let formattedDate = eventDate.toLocaleDateString('en-GB', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+
+            // Handle recurring event display
+            let recurringBadge = '';
+            
+            if (isRecurring) {
+                if (event.isRecurringGroup) {
+                    // This is a grouped recurring event
+                    const pattern = event.recurringPattern;
+                    const instanceCount = event.instances ? event.instances.length : 0;
+                    const nextOccurrence = event.nextOccurrence ? new Date(event.nextOccurrence) : null;
+                    
+                    // Create pattern label
+                    let patternLabel = '';
+                    switch (pattern) {
+                        case 'weekly':
+                            patternLabel = 'Weekly';
+                            break;
+                        case 'monthly':
+                            patternLabel = 'Monthly';
+                            break;
+                        case 'daily':
+                            patternLabel = 'Daily';
+                            break;
+                        case 'bi-weekly':
+                            patternLabel = 'Bi-weekly';
+                            break;
+                        case 'yearly':
+                            patternLabel = 'Yearly';
+                            break;
+                        default:
+                            patternLabel = 'Recurring';
+                    }
+                    
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                    
+                    // Update date to show next occurrence
+                    if (nextOccurrence) {
+                        formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        });
+                    }
+                    
+                } else if (event.recurringInfo || event.recurringPattern) {
+                    // Individual recurring event
+                    const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
+                    let patternLabel = '';
+                    
+                    switch (pattern) {
+                        case 'weekly':
+                            patternLabel = 'Weekly';
+                            break;
+                        case 'monthly':
+                            patternLabel = 'Monthly';
+                            break;
+                        case 'daily':
+                            patternLabel = 'Daily';
+                            break;
+                        case 'bi-weekly':
+                            patternLabel = 'Bi-weekly';
+                            break;
+                        case 'yearly':
+                            patternLabel = 'Yearly';
+                            break;
+                        default:
+                            patternLabel = 'Recurring';
+                    }
+                    
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                }
+            }
+
+            return `
+                <div class="venue-card rounded-xl overflow-hidden relative">
+                    ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
+                    ${recurringBadge}
+                    <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
+                        <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">${formattedDate}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem; line-height: 1.5rem;">${event.name}</h3>
+                        <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
+                        <div class="flex gap-1 mb-4 overflow-hidden">
+                            ${tagsHTML}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <button onclick="openEventModal(${JSON.stringify(event).replace(/"/g, '&quot;')})" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-eye mr-1"></i>View Details
+                            </button>
+                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Helper function to extract recurring pattern (fallback)
+        function extractRecurringPattern(recurringInfo) {
+            if (!recurringInfo) return null;
+            
+            const text = recurringInfo.toLowerCase();
+            if (text.includes('weekly') || text.includes('every week')) {
+                return 'weekly';
+            } else if (text.includes('monthly') || text.includes('every month')) {
+                return 'monthly';
+            } else if (text.includes('daily') || text.includes('every day')) {
+                return 'daily';
+            } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+                return 'bi-weekly';
+            } else if (text.includes('yearly') || text.includes('annual')) {
+                return 'yearly';
+            } else {
+                return 'recurring';
+            }
+        }
+
+        // Modal functions for event details
+        function openEventModal(eventData) {
+            try {
+                console.log('🔍 Opening modal for event:', eventData);
+                
+                // Show modal overlay and content
+                const modal = document.getElementById('eventModal');
+                const modalContent = modal.querySelector('.modal-content');
+                
+                modal.classList.add('active');
+                modalContent.classList.add('active');
+                document.body.classList.add('modal-open');
+                
+                // Display event details directly
+                displayEventModal(eventData);
+                
+            } catch (error) {
+                console.error('❌ Error opening event modal:', error);
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Error Loading Event</h3>
+                        <p class="text-gray-400">Could not load event details. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayEventModal(event) {
+            console.log('🎭 Displaying event modal for:', event);
+            
+            const modalContent = document.getElementById('modalContent');
+            if (!modalContent) {
+                console.error('❌ Modal content element not found');
+                return;
+            }
+            
+            try {
+                // Safely get event properties with fallbacks
+                const eventName = event.name || 'Unknown Event';
+                
+                // Debug date information
+                console.log('📅 Event date data:', event.date, event.startDate, event.nextDate);
+                
+                // Try different date fields and formats
+                let eventDate;
+                if (event.nextDate) {
+                    eventDate = new Date(event.nextDate);
+                } else if (event.startDate) {
+                    eventDate = new Date(event.startDate);
+                } else if (event.date) {
+                    eventDate = new Date(event.date);
+                } else {
+                    eventDate = new Date();
+                }
+                
+                // Validate the date
+                if (isNaN(eventDate.getTime())) {
+                    console.log('❌ Invalid date, using current date');
+                    eventDate = new Date();
+                }
+                
+                console.log('📅 Parsed event date:', eventDate);
+                console.log('📅 Date validity:', !isNaN(eventDate.getTime()));
+                
+                const eventTime = event.time || eventDate.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                const eventDescription = event.description || 'No description available';
+                const eventVenue = event.venue || 'The Village Inn';
+                const eventPrice = event.price || 'Free';
+                const eventCategories = event.categories || [];
+                const eventImage = event.image && event.image.url ? event.image.url : null;
+                
+                // Add recurrence indicator if it's a recurring event
+                let recurrenceBadge = '';
+                if (event.recurringPattern) {
+                    const pattern = event.recurringPattern.toLowerCase();
+                    let recurrenceText = '';
+                    
+                    if (pattern.includes('weekly')) {
+                        recurrenceText = 'Weekly';
+                    } else if (pattern.includes('bi-weekly') || pattern.includes('biweekly')) {
+                        recurrenceText = 'Bi-weekly';
+                    } else if (pattern.includes('monthly')) {
+                        recurrenceText = 'Monthly';
+                    } else if (pattern.includes('yearly')) {
+                        recurrenceText = 'Yearly';
+                    } else {
+                        recurrenceText = 'Recurring';
+                    }
+                    recurrenceBadge = `<span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">${recurrenceText}</span>`;
+                }
+
+                modalContent.innerHTML = `
+                    <!-- Hero Image with Title Overlay -->
+                    <div class="hero-image-container aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative rounded-t-[20px] overflow-hidden cursor-pointer" onclick="openImageLightbox('${eventImage}', '${eventName}')">
+                        <img src="${eventImage}" alt="${eventName}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+                        <!-- Title and Tags Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-12 pointer-events-none">
+                            <h1 class="text-6xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">${eventName}</h1>
+                            <div class="flex flex-wrap gap-2">
+                                ${eventCategories.length > 0 ? 
+                                    eventCategories.map(category => 
+                                        `<span class="inline-block bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full border border-white/30">${category}</span>`
+                                    ).join('') : 
+                                    '<span class="inline-block bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full border border-white/30">Event</span>'
+                                }
+                                ${event.recurringPattern ? 
+                                    `<span class="inline-block bg-teal-400/20 backdrop-blur-sm text-teal-300 text-sm px-3 py-1 rounded-full border border-teal-400/30">${getRecurrenceText(event.recurringPattern)}</span>` : 
+                                    ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Container with Padding -->
+                    <div style="padding: 24px;">
+                        <!-- Event Content -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Main Content -->
+                            <div class="lg:col-span-2">
+                                <div class="venue-card p-6 mb-6 rounded-xl">
+                                    <h2 class="text-2xl font-bold text-white mb-4">
+                                        <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                                    </h2>
+                                    <div class="text-gray-300 leading-relaxed">
+                                        ${formatEventDescription(eventDescription)}
+                                    </div>
+                                </div>
+                                
+                                <!-- Share Event -->
+                                <div class="venue-card p-6 rounded-xl">
+                                    <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block" onclick="shareEventFromModal('${eventName}', '${eventDate.toISOString()}', '${eventTime}', '${eventVenue}', '${eventDescription}')">
+                                        <i class="fas fa-share mr-2"></i>Invite your mates?
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="space-y-6">
+                                <!-- Date & Time -->
+                                <div class="venue-card p-6 rounded-xl">
+                                    <h3 class="text-xl font-bold text-white mb-4">
+                                        <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
+                                    </h3>
+                                    <p class="text-2xl font-semibold text-white">${eventDate.toLocaleDateString('en-GB', { 
+                                        weekday: 'long', 
+                                        day: 'numeric', 
+                                        month: 'long', 
+                                        year: 'numeric'
+                                    })}</p>
+                                    <p class="text-xl text-gray-400">${eventTime}</p>
+                                </div>
+
+                                <!-- Location -->
+                                <div class="venue-card p-6 rounded-xl">
+                                    <h3 class="text-xl font-bold text-white mb-4">
+                                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <h4 class="font-semibold text-white">${eventVenue}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Add to Calendar -->
+                                <div class="venue-card p-6 rounded-xl">
+                                    <h3 class="text-xl font-bold text-white mb-4">
+                                        <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <a href="#" onclick="addToGoogleCalendarFromModal('${eventName}', '${eventDate.toISOString()}', '${eventTime}', '${eventVenue}', '${eventDescription}')" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                            <i class="fab fa-google mr-2"></i>Google Calendar
+                                        </a>
+                                        <button onclick="downloadICSFromModal('${eventName}', '${eventDate.toISOString()}', '${eventTime}', '${eventVenue}', '${eventDescription}')" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                            <i class="fas fa-download mr-2"></i>Download ICS
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                console.log('✅ Modal content updated successfully');
+                
+            } catch (error) {
+                console.error('❌ Error displaying event modal:', error);
+                modalContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Error Loading Event</h3>
+                        <p class="text-gray-400">Could not load event details. Please try again.</p>
+                        <button class="btn-secondary mt-4" onclick="closeEventModal()">
+                            Close Modal
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modal.classList.remove('active');
+            modalContent.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        function getRecurrenceText(pattern) {
+            if (!pattern) return '';
+            
+            const text = pattern.toLowerCase();
+            if (text.includes('weekly')) {
+                return 'Weekly';
+            } else if (text.includes('bi-weekly') || text.includes('biweekly')) {
+                return 'Bi-weekly';
+            } else if (text.includes('monthly')) {
+                return 'Monthly';
+            } else if (text.includes('yearly')) {
+                return 'Yearly';
+            } else {
+                return 'Recurring';
+            }
+        }
+
+        function formatEventDescription(description) {
+            if (!description) return 'No description available.';
+            
+            return description
+                .trim()
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function openImageLightbox(imageUrl, imageTitle) {
+            if (!imageUrl) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+            modal.onclick = () => modal.remove();
+            
+            modal.innerHTML = `
+                <img src="${imageUrl}" alt="${imageTitle}" class="max-w-4xl max-h-4xl object-contain">
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function addToGoogleCalendarFromModal(eventName, eventDate, eventTime, eventVenue, eventDescription) {
+            const startDate = new Date(eventDate);
+            const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // 2 hours later
+            
+            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}/${endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventVenue)}`;
+            
+            window.open(googleCalendarUrl, '_blank');
+        }
+
+        function downloadICSFromModal(eventName, eventDate, eventTime, eventVenue, eventDescription) {
+            const startDate = new Date(eventDate);
+            const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // 2 hours later
+            
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//BrumOutLoud//Event Calendar//EN',
+                'BEGIN:VEVENT',
+                `UID:${Date.now()}@brumoutloud.co.uk`,
+                `DTSTART:${startDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
+                `DTEND:${endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`,
+                `SUMMARY:${eventName}`,
+                `DESCRIPTION:${eventDescription}`,
+                `LOCATION:${eventVenue}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${eventName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function shareEventFromModal(eventName, eventDate, eventTime, eventVenue, eventDescription) {
+            const shareText = `Check out ${eventName} at ${eventVenue}! ${eventDate} at ${eventTime}`;
+            const shareUrl = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: eventName,
+                    text: shareText,
+                    url: shareUrl
+                }).catch(err => {
+                    console.log('Share failed:', err);
+                    fallbackShare(shareText, shareUrl);
+                });
+            } else {
+                fallbackShare(shareText, shareUrl);
+            }
+        }
+
+        function fallbackShare(shareText, shareUrl) {
+            const textArea = document.createElement('textarea');
+            textArea.value = `${shareText}\n\n${shareUrl}`;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            alert('Event details copied to clipboard!');
+        }
+
+        // Set up modal event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventModal = document.getElementById('eventModal');
+            if (eventModal) {
+                // Close modal when clicking overlay
+                eventModal.addEventListener('click', function(e) {
+                    if (e.target === eventModal) {
+                        closeEventModal();
+                    }
+                });
+            }
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeEventModal();
+                }
+            });
         });
     </script>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-content w-full max-w-4xl">
+            <button class="modal-close" onclick="closeEventModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
 </body>
 </html>

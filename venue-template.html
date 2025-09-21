@@ -89,6 +89,11 @@
             background-clip: text;
         }
 
+        /* Design System Section Styles */
+        .ds-section {
+            margin-bottom: 3rem;
+        }
+
         /* Mobile-specific heading gradient fix */
         @media (max-width: 768px) {
             .heading-gradient {
@@ -443,32 +448,40 @@
                     // Recurring Events Section
                     if (recurringEvents.length > 0) {
                         eventsHTML += `
-                            <div class="mb-8">
-                                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                                    <i class="fas fa-redo mr-3 text-green-400"></i>
-                                    Regular Events
-                                    <span class="ml-3 bg-green-500/20 text-green-300 text-sm px-3 py-1 rounded-full">${recurringEvents.length} event${recurringEvents.length !== 1 ? 's' : ''}</span>
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    ${recurringEvents.map(event => renderEventCard(event, true)).join('')}
+                            <section class="ds-section mb-12">
+                                <div class="card-bg p-8 rounded-2xl">
+                                    <h3 class="font-anton text-3xl text-white mb-6 flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-redo text-green-400 text-xl"></i>
+                                        </div>
+                                        Regular Events
+                                        <span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">${recurringEvents.length} event${recurringEvents.length !== 1 ? 's' : ''}</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        ${recurringEvents.map(event => renderEventCard(event, true)).join('')}
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
                         `;
                     }
                     
                     // One-off Events Section
                     if (oneOffEvents.length > 0) {
                         eventsHTML += `
-                            <div class="mb-8">
-                                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                                    <i class="fas fa-calendar-day mr-3 text-blue-400"></i>
-                                    Upcoming Events
-                                    <span class="ml-3 bg-blue-500/20 text-blue-300 text-sm px-3 py-1 rounded-full">${oneOffEvents.length} event${oneOffEvents.length !== 1 ? 's' : ''}</span>
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    ${oneOffEvents.map(event => renderEventCard(event, false)).join('')}
+                            <section class="ds-section mb-12">
+                                <div class="card-bg p-8 rounded-2xl">
+                                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-calendar-day text-blue-400 text-xl"></i>
+                                        </div>
+                                        Upcoming Events
+                                        <span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">${oneOffEvents.length} event${oneOffEvents.length !== 1 ? 's' : ''}</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        ${oneOffEvents.map(event => renderEventCard(event, false)).join('')}
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
                         `;
                     }
                     
@@ -530,22 +543,22 @@
                     let patternLabel = '';
                     switch (pattern) {
                         case 'weekly':
-                            patternLabel = 'Weekly Event';
+                            patternLabel = 'Weekly';
                             break;
                         case 'monthly':
-                            patternLabel = 'Monthly Event';
+                            patternLabel = 'Monthly';
                             break;
                         case 'daily':
-                            patternLabel = 'Daily Event';
+                            patternLabel = 'Daily';
                             break;
                         case 'bi-weekly':
-                            patternLabel = 'Bi-Weekly Event';
+                            patternLabel = 'Bi-weekly';
                             break;
                         case 'yearly':
-                            patternLabel = 'Annual Event';
+                            patternLabel = 'Yearly';
                             break;
                         default:
-                            patternLabel = 'Recurring Event';
+                            patternLabel = 'Recurring';
                     }
                     
                     // Remove instance count - users don't need to know how many upcoming
@@ -553,7 +566,7 @@
                     //     patternLabel += ` (${instanceCount} upcoming)`;
                     // }
                     
-                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
                     
                     // Update date to show next occurrence
                     if (nextOccurrence) {
@@ -571,25 +584,25 @@
                     
                     switch (pattern) {
                         case 'weekly':
-                            patternLabel = 'Weekly Event';
+                            patternLabel = 'Weekly';
                             break;
                         case 'monthly':
-                            patternLabel = 'Monthly Event';
+                            patternLabel = 'Monthly';
                             break;
                         case 'daily':
-                            patternLabel = 'Daily Event';
+                            patternLabel = 'Daily';
                             break;
                         case 'bi-weekly':
-                            patternLabel = 'Bi-Weekly Event';
+                            patternLabel = 'Bi-weekly';
                             break;
                         case 'yearly':
-                            patternLabel = 'Annual Event';
+                            patternLabel = 'Yearly';
                             break;
                         default:
-                            patternLabel = 'Recurring Event';
+                            patternLabel = 'Recurring';
                     }
                     
-                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-gradient-to-r from-green-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
+                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
                 }
             }
 

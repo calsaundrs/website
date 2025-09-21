@@ -1,0 +1,38 @@
+# Exclude heavy dependencies that cause build timeouts
+node_modules/@remotion/
+node_modules/remotion/
+node_modules/react/
+node_modules/react-dom/
+node_modules/sharp/
+node_modules/canvas/
+node_modules/@types/
+
+# Exclude development files
+*.log
+*.tmp
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Exclude build artifacts
+dist/
+build/
+.next/
+.nuxt/
+
+# Exclude test files
+**/*.test.js
+**/*.spec.js
+testsprite_tests/
+
+# Exclude documentation
+*.md
+docs/
+
+# Exclude development tools
+.vscode/
+.idea/
+*.swp
+*.swo

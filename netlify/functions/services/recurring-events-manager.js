@@ -345,7 +345,8 @@ class RecurringEventsManager {
         break;
       }
 
-      instances.push(new Date(current));
+      // Create a new Date object to avoid mutation issues
+      instances.push(new Date(current.getTime()));
       count++;
 
       switch (pattern) {

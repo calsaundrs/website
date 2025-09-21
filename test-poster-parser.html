@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Poster Parser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Test Poster Parser</h1>
+        
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm font-semibold mb-2">Upload Test Image</label>
+                <input type="file" id="test-image" accept="image/*" class="w-full p-3 bg-gray-800 rounded border">
+            </div>
+            
+            <button id="test-btn" class="w-full bg-purple-600 text-white p-3 rounded font-semibold">
+                Test Poster Analysis
+            </button>
+            
+            <div id="result" class="mt-8 p-4 bg-gray-800 rounded hidden">
+                <h2 class="text-xl font-bold mb-4">Result:</h2>
+                <pre id="result-content" class="text-sm whitespace-pre-wrap"></pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('test-btn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('test-image');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('result-content');
+            
+            resultDiv.classList.remove('hidden');
+            resultContent.textContent = 'Testing...';
+            
+            try {
+                // Convert file to base64
+                const base64 = await fileToBase64(file);
+                console.log('File converted to base64, length:', base64.length);
+                
+                // Test the analyze-poster function
+                const response = await fetch('/.netlify/functions/analyze-poster', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64 })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    result = { error: 'Invalid JSON response', raw: responseText };
+                }
+                
+                resultContent.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    result: result
+                }, null, 2);
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                resultContent.textContent = `Error: ${error.message}\n\nStack: ${error.stack}`;
+            }
+        });
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>

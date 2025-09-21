@@ -1,6 +1,6 @@
-const CACHE_NAME = 'brumoutloud-cache-v4';
-const STATIC_CACHE = 'brumoutloud-static-v4';
-const DYNAMIC_CACHE = 'brumoutloud-dynamic-v4';
+const CACHE_NAME = 'brumoutloud-cache-v5';
+const STATIC_CACHE = 'brumoutloud-static-v5';
+const DYNAMIC_CACHE = 'brumoutloud-dynamic-v5';
 
 // Static assets that rarely change
 const STATIC_ASSETS = [
@@ -8,6 +8,8 @@ const STATIC_ASSETS = [
   '/index.html',
   '/css/main.css',
   '/js/main.js',
+  '/js/push-notifications.js',
+  '/js/admin-notification-poller.js',
   '/faviconV2.png',
   '/favicon.html',
   '/progressflag.svg.png',
@@ -375,20 +377,48 @@ async function handleBackgroundSync() {
   console.log('Service Worker: Handling background sync');
 }
 
-// Push notification handling (if implemented)
+// Push notification handling
 self.addEventListener('push', (event) => {
   if (event.data) {
     const data = event.data.json();
+    
+    // Default options
     const options = {
       body: data.body,
       icon: '/faviconV2.png',
       badge: '/faviconV2.png',
       vibrate: [200, 100, 200],
-      data: data.data || {}
+      data: data.data || {},
+      tag: data.tag || 'default',
+      requireInteraction: data.requireInteraction || false,
+      actions: data.actions || []
     };
+    
+    // Add specific handling for different notification types
+    if (data.type === 'new-submission') {
+      options.requireInteraction = true;
+      options.vibrate = [300, 100, 300, 100, 300]; // More urgent pattern
+      options.data.url = '/admin-approvals.html';
+    } else if (data.type === 'approval-status') {
+      options.requireInteraction = false;
+      options.data.url = '/admin-approvals.html';
+    } else if (data.type === 'system-alert') {
+      options.requireInteraction = data.severity === 'high';
+      options.data.url = '/admin-system-status.html';
+    }
     
     event.waitUntil(
       self.registration.showNotification(data.title, options)
+    );
+  } else {
+    // Fallback for notifications without data
+    event.waitUntil(
+      self.registration.showNotification('Brum Outloud', {
+        body: 'You have a new notification',
+        icon: '/faviconV2.png',
+        badge: '/faviconV2.png',
+        tag: 'default'
+      })
     );
   }
 });
@@ -397,8 +427,23 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   
+  const notificationData = event.notification.data || {};
+  const url = notificationData.url || '/';
+  
   event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      // Check if there's already a window open
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      
+      // If no window is open, open a new one
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
   );
 });
 

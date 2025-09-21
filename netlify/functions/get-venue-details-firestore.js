@@ -974,6 +974,19 @@ function getVenueTemplate() {
         </div>
     </main>
 
+    <!-- Events Section -->
+    <div class="container mx-auto px-4 py-16">
+        <div class="text-center mb-12">
+            <h2 class="font-anton text-5xl text-white mb-4">Upcoming Events</h2>
+            <p class="text-gray-400 text-lg">Discover what's happening at {{venue.name}}</p>
+        </div>
+        
+        <!-- Events Container -->
+        <div id="events-container">
+            <!-- Events will be loaded here -->
+        </div>
+    </div>
+
     <!-- Image Modal -->
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center p-4">
         <div class="relative max-w-5xl max-h-full">
@@ -1102,6 +1115,113 @@ function getVenueTemplate() {
                 }
             }
         });
+
+        // Load events for this venue
+        // Try to load events immediately, and also on DOMContentLoaded as backup
+        setTimeout(function() {
+            loadVenueEvents();
+        }, 100);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVenueEvents();
+        });
+
+        // Simple events loading function
+        async function loadVenueEvents() {
+            try {
+                console.log('🚀 Loading events for venue: {{venue.slug}}');
+                
+                // First, let's test if the container exists
+                const eventsContainer = document.getElementById('events-container');
+                console.log('📦 Events container found:', eventsContainer);
+                
+                if (!eventsContainer) {
+                    console.error('❌ Events container not found!');
+                    eventsContainer.innerHTML = '<div class="text-red-500 p-4">ERROR: Events container not found!</div>';
+                    return;
+                }
+                
+                // Add a loading message
+                eventsContainer.innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div><p class="text-gray-400 mt-2">Loading events...</p></div>';
+                
+                console.log('🌐 Fetching from API...');
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug={{venue.slug}}');
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('📊 Events data received:', data);
+                
+                if (data.success && data.events && data.events.length > 0) {
+                    console.log('✅ Total events found:', data.events.length);
+                    
+                    // Simple display - just show all events in a list
+                    let html = '<div class="space-y-6">';
+                    data.events.forEach((event, index) => {
+                        console.log('🎯 Processing event ' + index + ':', event.name);
+                        
+                        const date = new Date(event.date).toLocaleDateString('en-GB', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        });
+                        
+                        const isRecurring = event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern;
+                        const badge = isRecurring ? '<span class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full ml-2">Recurring</span>' : '';
+                        
+                        html += '<div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-6 rounded-xl">';
+                        html += '<div class="flex items-center justify-between mb-2">';
+                        html += '<span class="text-sm text-gray-400">' + date + '</span>';
+                        html += badge;
+                        html += '</div>';
+                        html += '<h3 class="text-xl font-bold text-white mb-2">' + event.name + '</h3>';
+                        html += '<p class="text-gray-300 mb-4">' + (event.description || 'No description available') + '</p>';
+                        html += '<a href="/event/' + event.slug + '" class="btn-primary text-white px-4 py-2 rounded-lg text-sm inline-block">View Details</a>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                    
+                    console.log('🎨 Setting HTML content...');
+                    eventsContainer.innerHTML = html;
+                    console.log('✅ Events displayed successfully!');
+                    
+                } else {
+                    console.log('📭 No events found');
+                    eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-calendar-times text-4xl text-gray-600"></i></div><h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3><p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p><a href="/promoter-tool" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg"><i class="fas fa-plus mr-3"></i>Submit an Event</a></div>';
+                }
+            } catch (error) {
+                console.error('❌ Error loading events:', error);
+                const eventsContainer = document.getElementById('events-container');
+                if (eventsContainer) {
+                    eventsContainer.innerHTML = '<div class="text-center py-16"><div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8"><i class="fas fa-exclamation-triangle text-4xl text-red-500"></i></div><h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3><p class="text-gray-400 text-lg">We\'re having trouble loading events right now. Please try again later.</p><p class="text-red-400 text-sm mt-2">Error: ' + error.message + '</p></div>';
+                }
+            }
+        }
+
+
+
+        // Helper function to extract recurring pattern (fallback)
+        function extractRecurringPattern(recurringInfo) {
+            if (!recurringInfo) return null;
+            
+            const text = recurringInfo.toLowerCase();
+            if (text.includes('weekly') || text.includes('every week')) {
+                return 'weekly';
+            } else if (text.includes('monthly') || text.includes('every month')) {
+                return 'monthly';
+            } else if (text.includes('daily') || text.includes('every day')) {
+                return 'daily';
+            } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
+                return 'bi-weekly';
+            } else if (text.includes('yearly') || text.includes('annual')) {
+                return 'yearly';
+            } else {
+                return 'recurring';
+            }
+        }
     </script>
 </body>
 </html>`;

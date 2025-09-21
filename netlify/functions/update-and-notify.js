@@ -1,6 +1,14 @@
-const Airtable = require('airtable');
+const admin = require('firebase-admin');
+const EmailService = require('./services/email-service');
 
-const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+  });
+}
+
+const db = admin.firestore();
 
 exports.handler = async function (event, context) {
     if (event.httpMethod !== 'POST') {
@@ -14,11 +22,12 @@ exports.handler = async function (event, context) {
             return { statusCode: 400, body: JSON.stringify({ message: 'Missing required parameters.' }) };
         }
 
-        const table = type === 'Event' ? base('Events') : base('Venues');
-        const updatedRecords = await table.update([{
-            id: id,
-            fields: { "Status": newStatus }
-        }]);
+        // Update status in Firestore
+        const docRef = db.collection(type.toLowerCase() + 's').doc(id);
+        await docRef.update({ 
+            status: newStatus.toLowerCase(),
+            updatedAt: new Date()
+        });
 
         if (!contactEmail) {
             console.log(`No contactEmail provided for ${type} '${name}'. Skipping notification.`);
@@ -28,41 +37,43 @@ exports.handler = async function (event, context) {
             };
         }
         
-        let subject = '';
-        let body = '';
+        // Send email notification using the new email service
+        const emailService = new EmailService();
+        let emailResult;
 
         if (newStatus === 'Approved') {
-            const recordSlug = updatedRecords[0].fields.Slug;
-            const liveUrl = recordSlug ? `https://brumoutloud.co.uk/${type.toLowerCase()}/${recordSlug}` : `https://brumoutloud.co.uk`;
+            // Get the event/venue document to get the slug
+            const doc = await docRef.get();
+            const docData = doc.data();
+            const slug = docData.slug;
+            const liveUrl = slug ? `https://brumoutloud.co.uk/${type.toLowerCase()}/${slug}` : `https://brumoutloud.co.uk`;
             
-            subject = 'Your submission has been approved!';
-            body = `Great news! Your submission for "${name}" has been approved and is now live on Brum Outloud.
-
-You can view your ${type.toLowerCase()} at: ${liveUrl}
-
-Thank you for contributing to Birmingham's LGBTQ+ community!
-
-The Brum Outloud Team`;
+            emailResult = await emailService.sendApprovalNotification(
+                contactEmail,
+                name,
+                liveUrl
+            );
         } else if (newStatus === 'Rejected') {
-            subject = 'Update on your submission';
-            body = `Thank you for your submission to Brum Outloud.
-
-Unfortunately, we are unable to approve your ${type.toLowerCase()} "${name}" at this time.
-
-${reason ? `Reason: ${reason}` : ''}
-
-If you have any questions or would like to submit a revised version, please visit our promoter tools: https://brumoutloud.co.uk/promoter-tool
-
-The Brum Outloud Team`;
+            emailResult = await emailService.sendRejectionNotification(
+                contactEmail,
+                name,
+                reason || 'Please review your submission and ensure all required information is provided.'
+            );
         }
 
-        const mail = { from: 'hello@brumoutloud.co.uk', to: contactEmail, subject: subject, text: body };
-        console.log('--- EMAIL TO BE SENT ---');
-        console.log(JSON.stringify(mail, null, 2));
+        if (emailResult && emailResult.success) {
+            console.log('✅ Email notification sent successfully');
+        } else {
+            console.error('❌ Email notification failed:', emailResult?.error);
+        }
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true, message: `Submission status set to ${newStatus} and notification logged.` }),
+            body: JSON.stringify({ 
+                success: true, 
+                message: `Submission status set to ${newStatus} and notification sent.`,
+                emailSent: emailResult?.success || false
+            }),
         };
 
     } catch (error) {

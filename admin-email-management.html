@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Management - Brum Outloud Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent-color': '#667eea',
+                        'secondary-color': '#764ba2'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .admin-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .admin-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        .email-log-item {
+            transition: all 0.3s ease;
+        }
+        .email-log-item:hover {
+            background-color: #f8fafc;
+            transform: translateX(4px);
+        }
+        .status-sent { color: #10b981; }
+        .status-failed { color: #ef4444; }
+        .status-pending { color: #f59e0b; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/admin-settings.html" class="text-accent-color hover:text-white transition-colors">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <h1 class="text-2xl font-bold">Email Management</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-400">Admin Panel</span>
+                    <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Email Management Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <!-- Email Templates -->
+            <div class="bg-gray-800 rounded-xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-accent-color">
+                        <i class="fas fa-envelope mr-2"></i>Email Templates
+                    </h2>
+                    <a href="/email-template-showcase.html" class="text-sm bg-accent-color hover:bg-pink-600 px-3 py-1 rounded-lg transition-colors">
+                        <i class="fas fa-external-link-alt mr-1"></i>Showcase
+                    </a>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="previewTemplate('submission_confirmation')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Submission Confirmation
+                    </button>
+                    <button onclick="previewTemplate('approval_notification')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="fas fa-thumbs-up text-blue-500 mr-2"></i>
+                        Approval Notification
+                    </button>
+                    <button onclick="previewTemplate('rejection_notification')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                        Rejection Notification
+                    </button>
+                    <button onclick="previewTemplate('event_reminder')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="fas fa-bell text-yellow-500 mr-2"></i>
+                        Event Reminder
+                    </button>
+                    <button onclick="previewTemplate('admin_submission_alert')" class="w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                        <i class="fas fa-exclamation-triangle text-purple-500 mr-2"></i>
+                        Admin Submission Alert
+                    </button>
+                </div>
+            </div>
+
+            <!-- Test Email -->
+            <div class="bg-gray-800 rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4 text-accent-color">
+                    <i class="fas fa-paper-plane mr-2"></i>Test Email
+                </h2>
+                <form id="testEmailForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Email Type</label>
+                        <select id="testEmailType" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                            <option value="submission_confirmation">Submission Confirmation</option>
+                            <option value="approval_notification">Approval Notification</option>
+                            <option value="rejection_notification">Rejection Notification</option>
+                            <option value="event_reminder">Event Reminder</option>
+                            <option value="admin_submission_alert">Admin Submission Alert</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Test Email Address</label>
+                        <input type="email" id="testEmailAddress" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="test@example.com" required>
+                    </div>
+                    <div id="testEmailFields" class="space-y-3">
+                        <!-- Dynamic fields will be added here -->
+                    </div>
+                    <button type="submit" class="w-full bg-accent-color hover:bg-blue-600 text-white py-3 rounded-lg transition-colors">
+                        <i class="fas fa-paper-plane mr-2"></i>Send Test Email
+                    </button>
+                </form>
+            </div>
+
+            <!-- Email Statistics -->
+            <div class="bg-gray-800 rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4 text-accent-color">
+                    <i class="fas fa-chart-bar mr-2"></i>Email Statistics
+                </h2>
+                <div id="emailStats" class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-gray-700 rounded-lg">
+                        <span>Total Sent</span>
+                        <span class="font-bold text-green-500" id="totalSent">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-700 rounded-lg">
+                        <span>Failed</span>
+                        <span class="font-bold text-red-500" id="totalFailed">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-700 rounded-lg">
+                        <span>Success Rate</span>
+                        <span class="font-bold text-blue-500" id="successRate">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-700 rounded-lg">
+                        <span>Last 24h</span>
+                        <span class="font-bold text-purple-500" id="last24h">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Logs -->
+        <div class="bg-gray-800 rounded-xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-accent-color">
+                    <i class="fas fa-list mr-2"></i>Email Logs
+                </h2>
+                <div class="flex space-x-4">
+                    <select id="statusFilter" class="p-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
+                        <option value="">All Status</option>
+                        <option value="sent">Sent</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                    <button onclick="loadEmailLogs()" class="bg-accent-color hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-refresh mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div id="emailLogsContainer" class="space-y-3">
+                <div class="text-center py-8 text-gray-400">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Loading email logs...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Push Notifications Section -->
+        <div class="bg-gray-800 rounded-xl p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-accent-color">
+                    <i class="fas fa-mobile-alt mr-2"></i>Push Notifications
+                </h2>
+                <div class="text-sm text-gray-400">
+                    Backup notification system for admin devices
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Push Notification Status -->
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-semibold text-white mb-3">Notification Status</h3>
+                    <div id="pushStatus" class="mb-4 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Browser Support:</span>
+                            <span id="browserSupport" class="text-sm font-medium text-gray-400">Checking...</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Permission:</span>
+                            <span id="permissionStatus" class="text-sm font-medium text-gray-400">Checking...</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Service Worker:</span>
+                            <span id="serviceWorkerStatus" class="text-sm font-medium text-gray-400">Checking...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <button id="enablePushBtn" onclick="enablePushNotifications()" class="w-full bg-accent-color hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors" disabled>
+                            <i class="fas fa-bell mr-2"></i>Enable Push Notifications
+                        </button>
+                        <button id="testPushBtn" onclick="testPushNotification()" class="w-full bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors" disabled>
+                            <i class="fas fa-paper-plane mr-2"></i>Send Test Notification
+                        </button>
+                        <button id="disablePushBtn" onclick="disablePushNotifications()" class="w-full bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg transition-colors" style="display: none;">
+                            <i class="fas fa-bell-slash mr-2"></i>Disable Push Notifications
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Push Notification Settings -->
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-semibold text-white mb-3">Notification Settings</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">New Event Submissions</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="newSubmissionNotifications" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">System Alerts</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="systemAlertNotifications" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Approval Status Updates</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="approvalStatusNotifications" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm text-gray-300 mb-2">Polling Interval</label>
+                        <select id="pollingInterval" class="w-full p-2 bg-gray-600 border border-gray-500 rounded-lg text-white">
+                            <option value="15000">15 seconds</option>
+                            <option value="30000" selected>30 seconds</option>
+                            <option value="60000">1 minute</option>
+                            <option value="300000">5 minutes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-blue-900 bg-opacity-30 rounded-lg">
+                <h4 class="font-semibold text-blue-300 mb-2">📱 How Push Notifications Work</h4>
+                <ul class="text-sm text-blue-200 space-y-1">
+                    <li>• <strong>Instant Alerts:</strong> Get notified immediately when new events are submitted</li>
+                    <li>• <strong>Background Monitoring:</strong> Works even when the admin panel isn't open</li>
+                    <li>• <strong>Click to Review:</strong> Click notifications to go directly to the approvals page</li>
+                    <li>• <strong>Backup System:</strong> Works alongside email notifications for reliability</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Preview Modal -->
+    <div id="emailPreviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                    <h3 class="text-xl font-bold text-accent-color">Email Preview</h3>
+                    <button onclick="closeEmailPreview()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div id="emailPreviewContent" class="bg-white text-gray-900 rounded-lg p-6">
+                        <!-- Email content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-gray-800 rounded-xl p-8 text-center">
+                <i class="fas fa-spinner fa-spin text-3xl text-accent-color mb-4"></i>
+                <p class="text-white">Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="/js/auth-guard.js"></script>
+    <script>
+        // Email Management JavaScript
+        class EmailManager {
+            constructor() {
+                this.emailLogs = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadEmailLogs();
+                await this.loadEmailStats();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Test email form
+                document.getElementById('testEmailForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.sendTestEmail();
+                });
+
+                // Email type change
+                document.getElementById('testEmailType').addEventListener('change', (e) => {
+                    this.updateTestEmailFields(e.target.value);
+                });
+
+                // Status filter
+                document.getElementById('statusFilter').addEventListener('change', (e) => {
+                    this.filterEmailLogs(e.target.value);
+                });
+
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    this.logout();
+                });
+            }
+
+            async loadEmailLogs() {
+                try {
+                    const response = await fetch('/.netlify/functions/get-email-logs');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.emailLogs = data.logs;
+                        this.displayEmailLogs(this.emailLogs);
+                    } else {
+                        this.showError('Failed to load email logs');
+                    }
+                } catch (error) {
+                    console.error('Error loading email logs:', error);
+                    this.showError('Error loading email logs');
+                }
+            }
+
+            async loadEmailStats() {
+                try {
+                    const response = await fetch('/.netlify/functions/get-email-logs');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const logs = data.logs;
+                        const totalSent = logs.filter(log => log.status === 'sent').length;
+                        const totalFailed = logs.filter(log => log.status === 'failed').length;
+                        const successRate = logs.length > 0 ? ((totalSent / logs.length) * 100).toFixed(1) : 0;
+                        
+                        // Last 24 hours
+                        const last24h = logs.filter(log => {
+                            const logDate = new Date(log.sentAt);
+                            const now = new Date();
+                            const diffHours = (now - logDate) / (1000 * 60 * 60);
+                            return diffHours <= 24;
+                        }).length;
+
+                        document.getElementById('totalSent').textContent = totalSent;
+                        document.getElementById('totalFailed').textContent = totalFailed;
+                        document.getElementById('successRate').textContent = successRate + '%';
+                        document.getElementById('last24h').textContent = last24h;
+                    }
+                } catch (error) {
+                    console.error('Error loading email stats:', error);
+                }
+            }
+
+            displayEmailLogs(logs) {
+                const container = document.getElementById('emailLogsContainer');
+                
+                if (logs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>No email logs found</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = logs.map(log => `
+                    <div class="email-log-item p-4 bg-gray-700 rounded-lg border border-gray-600">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <span class="font-semibold">${log.subject}</span>
+                                    <span class="status-${log.status} text-sm font-medium">
+                                        <i class="fas fa-circle text-xs mr-1"></i>
+                                        ${log.status.toUpperCase()}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-400 space-y-1">
+                                    <div><strong>To:</strong> ${log.to}</div>
+                                    <div><strong>Sent:</strong> ${new Date(log.sentAt).toLocaleString()}</div>
+                                    ${log.messageId ? `<div><strong>Message ID:</strong> ${log.messageId}</div>` : ''}
+                                    ${log.error ? `<div class="text-red-400"><strong>Error:</strong> ${log.error}</div>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                ${log.status === 'failed' ? `
+                                    <button onclick="emailManager.resendEmail('${log.id}')" 
+                                            class="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-sm transition-colors">
+                                        <i class="fas fa-redo mr-1"></i>Resend
+                                    </button>
+                                ` : ''}
+                                <button onclick="emailManager.previewEmailLog('${log.id}')" 
+                                        class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fas fa-eye mr-1"></i>Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            filterEmailLogs(status) {
+                const filteredLogs = status ? 
+                    this.emailLogs.filter(log => log.status === status) : 
+                    this.emailLogs;
+                this.displayEmailLogs(filteredLogs);
+            }
+
+            updateTestEmailFields(emailType) {
+                const container = document.getElementById('testEmailFields');
+                let fields = '';
+
+                switch (emailType) {
+                    case 'submission_confirmation':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="testEventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Test Event" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event ID</label>
+                                <input type="text" id="testEventId" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="test-event-123" required>
+                            </div>
+                        `;
+                        break;
+                    case 'approval_notification':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="testEventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Test Event" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event URL</label>
+                                <input type="url" id="testEventUrl" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="https://brumoutloud.co.uk/event/test-event" required>
+                            </div>
+                        `;
+                        break;
+                    case 'rejection_notification':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="testEventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Test Event" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Rejection Reason</label>
+                                <textarea id="testReason" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" rows="3" placeholder="Please provide more details about your event" required></textarea>
+                            </div>
+                        `;
+                        break;
+                    case 'event_reminder':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="testEventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Test Event" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Date</label>
+                                <input type="text" id="testEventDate" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="2024-01-15 at 20:00" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event URL</label>
+                                <input type="url" id="testEventUrl" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="https://brumoutloud.co.uk/event/test-event" required>
+                            </div>
+                        `;
+                        break;
+                    case 'admin_submission_alert':
+                        fields = `
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event Name</label>
+                                <input type="text" id="testEventName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Test Event" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Promoter Email</label>
+                                <input type="email" id="testPromoterEmail" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="promoter@example.com" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Event ID</label>
+                                <input type="text" id="testEventId" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="test-event-123" required>
+                            </div>
+                        `;
+                        break;
+                }
+
+                container.innerHTML = fields;
+            }
+
+            async sendTestEmail() {
+                const emailType = document.getElementById('testEmailType').value;
+                const emailAddress = document.getElementById('testEmailAddress').value;
+                
+                let data = {};
+
+                switch (emailType) {
+                    case 'submission_confirmation':
+                        data = {
+                            promoterEmail: emailAddress,
+                            eventName: document.getElementById('testEventName').value,
+                            eventId: document.getElementById('testEventId').value
+                        };
+                        break;
+                    case 'approval_notification':
+                        data = {
+                            promoterEmail: emailAddress,
+                            eventName: document.getElementById('testEventName').value,
+                            eventUrl: document.getElementById('testEventUrl').value
+                        };
+                        break;
+                    case 'rejection_notification':
+                        data = {
+                            promoterEmail: emailAddress,
+                            eventName: document.getElementById('testEventName').value,
+                            reason: document.getElementById('testReason').value
+                        };
+                        break;
+                    case 'event_reminder':
+                        data = {
+                            promoterEmail: emailAddress,
+                            eventName: document.getElementById('testEventName').value,
+                            eventDate: document.getElementById('testEventDate').value,
+                            eventUrl: document.getElementById('testEventUrl').value
+                        };
+                        break;
+                    case 'admin_submission_alert':
+                        data = {
+                            eventName: document.getElementById('testEventName').value,
+                            promoterEmail: document.getElementById('testPromoterEmail').value,
+                            eventId: document.getElementById('testEventId').value
+                        };
+                        break;
+                }
+
+                this.showLoading();
+
+                try {
+                    const response = await fetch('/.netlify/functions/send-email-notification', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            type: emailType,
+                            data: data
+                        })
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    if (result.success) {
+                        this.showSuccess('Test email sent successfully!');
+                        await this.loadEmailLogs();
+                        await this.loadEmailStats();
+                    } else {
+                        this.showError('Failed to send test email: ' + result.error);
+                    }
+                } catch (error) {
+                    this.hideLoading();
+                    this.showError('Error sending test email: ' + error.message);
+                }
+            }
+
+            async resendEmail(logId) {
+                if (!confirm('Are you sure you want to resend this email?')) {
+                    return;
+                }
+
+                this.showLoading();
+
+                try {
+                    const response = await fetch('/.netlify/functions/get-email-logs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ logId })
+                    });
+
+                    const result = await response.json();
+                    this.hideLoading();
+
+                    if (result.success) {
+                        this.showSuccess('Email resent successfully!');
+                        await this.loadEmailLogs();
+                        await this.loadEmailStats();
+                    } else {
+                        this.showError('Failed to resend email: ' + result.error);
+                    }
+                } catch (error) {
+                    this.hideLoading();
+                    this.showError('Error resending email: ' + error.message);
+                }
+            }
+
+            previewEmailLog(logId) {
+                const log = this.emailLogs.find(l => l.id === logId);
+                if (!log) return;
+
+                const content = document.getElementById('emailPreviewContent');
+                content.innerHTML = `
+                    <div class="mb-4 p-4 bg-gray-100 rounded">
+                        <h4 class="font-bold mb-2">Email Details</h4>
+                        <p><strong>To:</strong> ${log.to}</p>
+                        <p><strong>Subject:</strong> ${log.subject}</p>
+                        <p><strong>Status:</strong> <span class="status-${log.status}">${log.status.toUpperCase()}</span></p>
+                        <p><strong>Sent:</strong> ${new Date(log.sentAt).toLocaleString()}</p>
+                        ${log.messageId ? `<p><strong>Message ID:</strong> ${log.messageId}</p>` : ''}
+                        ${log.error ? `<p class="text-red-600"><strong>Error:</strong> ${log.error}</p>` : ''}
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="font-bold mb-2">Email Content</h4>
+                        <div class="prose max-w-none">
+                            ${log.content.html || log.content.text || 'No content available'}
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('emailPreviewModal').classList.remove('hidden');
+            }
+
+            showLoading() {
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+            }
+
+            hideLoading() {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+
+            showSuccess(message) {
+                this.showNotification(message, 'success');
+            }
+
+            showError(message) {
+                this.showNotification(message, 'error');
+            }
+
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg z-50 ${
+                    type === 'success' ? 'bg-green-600' : 'bg-red-600'
+                } text-white`;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'} mr-2"></i>
+                        ${message}
+                    </div>
+                `;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            async logout() {
+                try {
+                    const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+                    const auth = getAuth();
+                    await signOut(auth);
+                    window.location.href = '/admin-login.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+
+        // Global functions for template previews
+        async function previewTemplate(templateType) {
+            const content = document.getElementById('emailPreviewContent');
+            
+            // Show loading state
+            content.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-3xl text-accent-color mb-4"></i>
+                    <p class="text-gray-600">Loading template preview...</p>
+                </div>
+            `;
+
+            document.getElementById('emailPreviewModal').classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/.netlify/functions/get-email-template-preview?templateType=${templateType}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    content.innerHTML = `
+                        <div class="mb-4 p-4 bg-gray-100 rounded">
+                            <h4 class="font-bold mb-2">Email Details</h4>
+                            <p><strong>Subject:</strong> ${data.subject}</p>
+                            <p><strong>Template:</strong> ${templateType.replace('_', ' ').toUpperCase()}</p>
+                            <p><strong>Sample Data:</strong> Using realistic preview data</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <h4 class="font-bold mb-2">Email Preview</h4>
+                            <div class="prose max-w-none">
+                                ${data.htmlContent}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
+                            <h3 class="text-xl font-bold mb-4 text-red-600">Error Loading Template</h3>
+                            <p class="text-gray-600">${data.error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-4 text-red-600">Error Loading Template</h3>
+                        <p class="text-gray-600">Failed to load template preview: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function closeEmailPreview() {
+            document.getElementById('emailPreviewModal').classList.add('hidden');
+        }
+
+        function loadEmailLogs() {
+            if (window.emailManager) {
+                window.emailManager.loadEmailLogs();
+            }
+        }
+
+        // Push Notification Functions
+        async function enablePushNotifications() {
+            try {
+                if (!window.pushNotificationService) {
+                    window.pushNotificationService = new PushNotificationService();
+                }
+                
+                const enabled = await window.pushNotificationService.initialize();
+                if (enabled) {
+                    updatePushNotificationStatus();
+                    showPushNotificationSuccess('Push notifications enabled successfully!');
+                    
+                    // Subscribe to push notifications
+                    await subscribeToPushNotifications();
+                } else {
+                    showPushNotificationError('Failed to enable push notifications. Please check your browser settings.');
+                }
+            } catch (error) {
+                console.error('Error enabling push notifications:', error);
+                showPushNotificationError('Error enabling push notifications: ' + error.message);
+            }
+        }
+
+        async function subscribeToPushNotifications() {
+            try {
+                if ('serviceWorker' in navigator && 'PushManager' in window) {
+                    const registration = await navigator.serviceWorker.ready;
+                    const subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: 'BEl62iUYgUivxIkv69yViEuiBIa40HI8YyA8K2CWgzs' // VAPID key placeholder
+                    });
+                    
+                    // Send subscription to server
+                    const response = await fetch('/.netlify/functions/manage-push-subscription', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'subscribe',
+                            subscription: subscription,
+                            userAgent: navigator.userAgent,
+                            adminId: 'admin-' + Date.now()
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Push subscription saved successfully');
+                    } else {
+                        console.error('Failed to save push subscription');
+                    }
+                }
+            } catch (error) {
+                console.error('Error subscribing to push notifications:', error);
+            }
+        }
+
+        async function disablePushNotifications() {
+            try {
+                if ('serviceWorker' in navigator && 'PushManager' in window) {
+                    const registration = await navigator.serviceWorker.ready;
+                    const subscription = await registration.pushManager.getSubscription();
+                    
+                    if (subscription) {
+                        await subscription.unsubscribe();
+                        
+                        // Remove subscription from server
+                        await fetch('/.netlify/functions/manage-push-subscription', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'unsubscribe',
+                                subscription: subscription
+                            })
+                        });
+                    }
+                }
+                
+                updatePushNotificationStatus();
+                showPushNotificationSuccess('Push notifications disabled successfully!');
+            } catch (error) {
+                console.error('Error disabling push notifications:', error);
+                showPushNotificationError('Error disabling push notifications: ' + error.message);
+            }
+        }
+
+        async function testPushNotification() {
+            try {
+                if (!window.pushNotificationService || !window.pushNotificationService.isEnabled()) {
+                    showPushNotificationError('Push notifications are not enabled');
+                    return;
+                }
+                
+                const success = await window.pushNotificationService.sendTestNotification();
+                if (success) {
+                    showPushNotificationSuccess('Test notification sent successfully!');
+                } else {
+                    showPushNotificationError('Failed to send test notification');
+                }
+            } catch (error) {
+                console.error('Error sending test notification:', error);
+                showPushNotificationError('Error sending test notification: ' + error.message);
+            }
+        }
+
+        function updatePushNotificationStatus() {
+            const browserSupport = document.getElementById('browserSupport');
+            const permissionStatus = document.getElementById('permissionStatus');
+            const serviceWorkerStatus = document.getElementById('serviceWorkerStatus');
+            const enableBtn = document.getElementById('enablePushBtn');
+            const testBtn = document.getElementById('testPushBtn');
+            const disableBtn = document.getElementById('disablePushBtn');
+            
+            // Check browser support
+            const isSupported = 'Notification' in window && 'serviceWorker' in navigator;
+            browserSupport.textContent = isSupported ? '✅ Supported' : '❌ Not Supported';
+            browserSupport.className = isSupported ? 'text-sm font-medium text-green-400' : 'text-sm font-medium text-red-400';
+            
+            // Check permission
+            const permission = isSupported ? Notification.permission : 'denied';
+            permissionStatus.textContent = permission === 'granted' ? '✅ Granted' : 
+                                         permission === 'denied' ? '❌ Denied' : '⚠️ Default';
+            permissionStatus.className = permission === 'granted' ? 'text-sm font-medium text-green-400' : 
+                                        permission === 'denied' ? 'text-sm font-medium text-red-400' : 
+                                        'text-sm font-medium text-yellow-400';
+            
+            // Check service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(() => {
+                    serviceWorkerStatus.textContent = '✅ Active';
+                    serviceWorkerStatus.className = 'text-sm font-medium text-green-400';
+                }).catch(() => {
+                    serviceWorkerStatus.textContent = '❌ Inactive';
+                    serviceWorkerStatus.className = 'text-sm font-medium text-red-400';
+                });
+            } else {
+                serviceWorkerStatus.textContent = '❌ Not Supported';
+                serviceWorkerStatus.className = 'text-sm font-medium text-red-400';
+            }
+            
+            // Update button states
+            if (isSupported && permission === 'granted') {
+                enableBtn.disabled = true;
+                enableBtn.style.display = 'none';
+                testBtn.disabled = false;
+                disableBtn.style.display = 'block';
+            } else if (isSupported && permission !== 'denied') {
+                enableBtn.disabled = false;
+                enableBtn.style.display = 'block';
+                testBtn.disabled = true;
+                disableBtn.style.display = 'none';
+            } else {
+                enableBtn.disabled = true;
+                enableBtn.style.display = 'block';
+                testBtn.disabled = true;
+                disableBtn.style.display = 'none';
+            }
+        }
+
+        function showPushNotificationSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg z-50 bg-green-600 text-white';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-check mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function showPushNotificationError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg z-50 bg-red-600 text-white';
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        // Initialize the email manager
+        let emailManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            emailManager = new EmailManager();
+            window.emailManager = emailManager;
+            
+            // Initialize test email fields
+            emailManager.updateTestEmailFields('submission_confirmation');
+            
+            // Initialize push notification status
+            updatePushNotificationStatus();
+            
+            // Load push notification scripts
+            if (!document.querySelector('script[src*="push-notifications.js"]')) {
+                const pushScript = document.createElement('script');
+                pushScript.src = '/js/push-notifications.js';
+                document.head.appendChild(pushScript);
+            }
+            
+            if (!document.querySelector('script[src*="admin-notification-poller.js"]')) {
+                const pollerScript = document.createElement('script');
+                pollerScript.src = '/js/admin-notification-poller.js';
+                document.head.appendChild(pollerScript);
+            }
+        });
+    </script>
+</body>
+</html>

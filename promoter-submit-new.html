@@ -3,169 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Event - BrumOutLoud</title>
-    <link href="/css/tailwind.css" rel="stylesheet">
-    <link href="/css/custom.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="/faviconV2.png">
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
+    <title>Submit Your Event | BrumOutLoud</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        .form-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
         }
         
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
+        .form-input:focus {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(181, 100, 247, 0.5);
+            box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.1);
         }
         
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+        .btn-primary {
+            background: linear-gradient(135deg, #b564f7 0%, #8b5cf6 100%);
+            border: 1px solid rgba(181, 100, 247, 0.3);
+            transition: all 0.3s ease;
         }
         
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(181, 100, 247, 0.3);
         }
         
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
         }
         
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+            transform: translateY(-1px);
         }
     </style>
     </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+    <header class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-2xl font-bold text-purple-400">BrumOutLoud</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="/events.html" class="hover:text-purple-400 transition-colors">Events</a>
+                    <a href="/venues.html" class="hover:text-purple-400 transition-colors">Venues</a>
+                    <a href="/community.html" class="hover:text-purple-400 transition-colors">Community</a>
+                </nav>
             </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
-            <!-- Page Header -->
-            <div class="text-center mb-8">
-                <h1 class="font-anton text-4xl text-white mb-4">Submit Your Event</h1>
-                <p class="text-gray-400 text-lg">Share your LGBTQ+ event with Birmingham's community</p>
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="font-anton text-6xl md:text-7xl leading-none tracking-wider heading-gradient mb-4">
+                    SUBMIT <span class="accent-color">EVENT</span>
+                </h1>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Share your LGBTQ+ event with the Birmingham community. Our streamlined form makes it easy to get your event listed quickly.
+                </p>
             </div>
 
-            <!-- Main Form -->
+            <!-- Form -->
             <form id="event-submission-form" class="space-y-8">
                 <!-- Poster Upload Section -->
-                <div class="card-bg p-6 rounded-lg border border-gray-700">
-                    <h2 class="text-xl font-bold mb-4 accent-color-secondary">
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
                         <i class="fas fa-image mr-2"></i>Event Poster/Image
                     </h2>
                     
                     <!-- Upload Area -->
-                    <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-accent-color transition-colors cursor-pointer">
+                    <div id="upload-area" class="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-purple-500 transition-colors cursor-pointer">
                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                         <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
                         <p class="text-sm text-gray-500">We'll try to extract event details automatically</p>
@@ -199,336 +117,321 @@
                     </div>
                 </div>
 
-                <!-- Event Details Section -->
-                <div class="card-bg p-6 rounded-lg border border-gray-700">
-                    <h2 class="text-xl font-bold mb-4 accent-color-secondary">
+                <!-- Basic Event Information -->
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
                         <i class="fas fa-calendar-plus mr-2"></i>Event Details
                     </h2>
                     
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Event Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
-                            <label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Event Name <span class="text-red-400">*</span>
+                            <label for="event-name" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-star mr-1"></i>Event Name *
                             </label>
-                            <input type="text" id="event-name" name="event-name" 
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                   required>
+                            <input type="text" id="event-name" name="event-name" required
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="Enter your event name">
                         </div>
 
-                        <!-- Contact Email -->
                         <div class="md:col-span-2">
-                            <label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Your Contact Email <span class="text-red-400">*</span>
+                            <label for="description" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-align-left mr-1"></i>Description *
                             </label>
-                            <input type="email" id="contact-email" name="contact-email" 
-                                   placeholder="So we can contact you with any issues"
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                   required>
-                        </div>
-
-                        <!-- Date and Time -->
-                        <div>
-                            <label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Date <span class="text-red-400">*</span>
-                            </label>
-                            <input type="date" id="date" name="date" 
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                   required>
+                            <textarea id="description" name="description" rows="4" required
+                                      class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                      placeholder="Tell us about your event..."></textarea>
                         </div>
 
                         <div>
-                            <label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Start Time <span class="text-red-400">*</span>
+                            <label for="date" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-calendar mr-1"></i>Event Date *
                             </label>
-                            <input type="time" id="start-time" name="start-time" 
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                   required>
+                            <input type="date" id="date" name="date" required
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white">
                         </div>
 
-                        <!-- Venue Selection -->
-                        <div class="md:col-span-2">
-                            <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Venue <span class="text-red-400">*</span>
+                        <div>
+                            <label for="start-time" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-clock mr-1"></i>Start Time *
                             </label>
-                            <select id="venue-select" name="venueId" 
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                    required>
-                                <option value="">Loading venues...</option>
-                            </select>
-                            
-                            <!-- New Venue Fields -->
-                            <div id="new-venue-fields" class="hidden mt-4 space-y-4 p-4 bg-gray-800/50 rounded-lg">
-                                <div>
-                                    <label for="new-venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                        New Venue Name <span class="text-red-400">*</span>
+                            <input type="time" id="start-time" name="start-time" required
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-tags mr-1"></i>Categories *
+                            </label>
+                            <div class="space-y-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Comedy" class="mr-2 text-purple-600">
+                                        <span>Comedy</span>
                                     </label>
-                                    <input type="text" id="new-venue-name" 
-                                           class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Drag" class="mr-2 text-purple-600">
+                                        <span>Drag</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Live Music" class="mr-2 text-purple-600">
+                                        <span>Live Music</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Party" class="mr-2 text-purple-600">
+                                        <span>Party</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Pride" class="mr-2 text-purple-600">
+                                        <span>Pride</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Social" class="mr-2 text-purple-600">
+                                        <span>Social</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Theatre" class="mr-2 text-purple-600">
+                                        <span>Theatre</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Viewing Party" class="mr-2 text-purple-600">
+                                        <span>Viewing Party</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Kink" class="mr-2 text-purple-600">
+                                        <span>Kink</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Community" class="mr-2 text-purple-600">
+                                        <span>Community</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Exhibition" class="mr-2 text-purple-600">
+                                        <span>Exhibition</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Health" class="mr-2 text-purple-600">
+                                        <span>Health</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Quiz" class="mr-2 text-purple-600">
+                                        <span>Quiz</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Trans & Non-Binary" class="mr-2 text-purple-600">
+                                        <span>Trans & Non-Binary</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Sober" class="mr-2 text-purple-600">
+                                        <span>Sober</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Queer Women & Sapphic" class="mr-2 text-purple-600">
+                                        <span>Queer Women & Sapphic</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Nightlife" class="mr-2 text-purple-600">
+                                        <span>Nightlife</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Competition" class="mr-2 text-purple-600">
+                                        <span>Competition</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Games" class="mr-2 text-purple-600">
+                                        <span>Games</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Cabaret" class="mr-2 text-purple-600">
+                                        <span>Cabaret</span>
+                                    </label>
+                                    <label class="inline-flex items-center px-3 py-2 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors text-sm">
+                                        <input type="checkbox" name="categories" value="Show" class="mr-2 text-purple-600">
+                                        <span>Show</span>
+                                    </label>
                                 </div>
-                                <div>
-                                    <label for="new-venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                        Venue Address <span class="text-red-400">*</span>
-                                    </label>
-                                    <input type="text" id="new-venue-address" 
-                                           placeholder="e.g., 123 Main Street, Birmingham"
-                                           class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
+                                <div id="selected-categories" class="text-sm text-gray-400">
+                                    Select one or more categories that apply to your event
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Categories -->
-                        <div class="md:col-span-2">
-                            <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Categories (Select all that apply) <span class="text-red-400">*</span>
+                        <div>
+                            <label for="link" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                             </label>
-                            <select id="category-select" name="categoryIds" 
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none" 
-                                    multiple required>
-                                <option value="">Loading categories...</option>
-                            </select>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="md:col-span-2">
-                            <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Description
-                            </label>
-                            <textarea id="description" name="description" rows="4" 
-                                      placeholder="Tell us about your event..."
-                                      class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none"></textarea>
-                        </div>
-
-                        <!-- Ticket Link -->
-                        <div class="md:col-span-2">
-                            <label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                Ticket Link (Optional)
-                            </label>
-                            <input type="url" id="link" name="link" 
-                                   placeholder="https://"
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
+                            <input type="url" id="link" name="link"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="https://">
                         </div>
                     </div>
                 </div>
 
-                <!-- Recurrence Section -->
-                <div class="card-bg p-6 rounded-lg border border-gray-700">
-                    <h2 class="text-xl font-bold mb-4 accent-color-secondary">
-                        <i class="fas fa-redo mr-2"></i>Recurrence (Optional)
+                <!-- Venue Selection -->
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Venue
                     </h2>
                     
-                    <!-- Recurrence Type Selection -->
-                    <div class="mb-6">
-                        <div class="flex flex-wrap items-center space-x-6">
-                            <label class="flex items-center">
-                                <input type="radio" name="recurrence-type" value="none" class="form-radio h-5 w-5 text-accent-color" checked>
-                                <span class="ml-2 text-gray-300">No Recurrence</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="recurrence-type" value="weekly" class="form-radio h-5 w-5 text-accent-color">
-                                <span class="ml-2 text-gray-300">Weekly</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="recurrence-type" value="monthly" class="form-radio h-5 w-5 text-accent-color">
-                                <span class="ml-2 text-gray-300">Monthly</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Recurrence Options -->
-                    <div id="recurrence-options" class="hidden space-y-6">
-                        <!-- Weekly Options -->
-                        <div id="weekly-options" class="hidden">
-                            <label class="block text-sm font-semibold mb-3 accent-color-secondary">Repeat on:</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="1" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Monday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="2" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Tuesday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="3" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Wednesday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="4" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Thursday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="5" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Friday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="6" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Saturday</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="weekly_days" value="0" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                    <span class="ml-2 text-gray-300">Sunday</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Monthly Options -->
-                        <div id="monthly-options" class="hidden space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold mb-3 accent-color-secondary">Monthly Recurrence Type:</label>
-                                <div class="flex items-center space-x-6">
-                                    <label class="flex items-center">
-                                        <input type="radio" name="monthly_type" value="date" class="form-radio h-4 w-4 text-accent-color" checked>
-                                        <span class="ml-2 text-gray-300">By Date (e.g., 15th of every month)</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="monthly_type" value="day" class="form-radio h-4 w-4 text-accent-color">
-                                        <span class="ml-2 text-gray-300">By Day (e.g., 2nd Friday of every month)</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <!-- Monthly Date Options -->
-                            <div id="monthly-by-date-options">
-                                <label for="monthly-day-of-month" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Month:</label>
-                                <input type="number" id="monthly-day-of-month" name="monthly_day_of_month" min="1" max="31" 
-                                       class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
-                            </div>
-                            
-                            <!-- Monthly Day Options -->
-                            <div id="monthly-by-day-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="monthly-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Week of Month:</label>
-                                    <select id="monthly-week" name="monthly_week" 
-                                            class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
-                                        <option value="1">First</option>
-                                        <option value="2">Second</option>
-                                        <option value="3">Third</option>
-                                        <option value="4">Fourth</option>
-                                        <option value="-1">Last</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="monthly-day-of-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Week:</label>
-                                    <select id="monthly-day-of-week" name="monthly_day_of_week" 
-                                            class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
-                                        <option value="1">Monday</option>
-                                        <option value="2">Tuesday</option>
-                                        <option value="3">Wednesday</option>
-                                        <option value="4">Thursday</option>
-                                        <option value="5">Friday</option>
-                                        <option value="6">Saturday</option>
-                                        <option value="0">Sunday</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- End Date -->
+                    <div class="space-y-6">
                         <div>
-                            <label for="recurrence-end-date" class="block text-sm font-semibold mb-2 accent-color-secondary">
-                                End Date (Optional)
+                            <label for="venue-search" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-search mr-1"></i>Search Venues
                             </label>
-                            <input type="date" id="recurrence-end-date" name="recurrence-end-date" 
-                                   class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
-                            <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing series</p>
+                            <input type="text" id="venue-search" 
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="Start typing to search venues...">
+                            <input type="hidden" id="venue-id" name="venue-id">
                         </div>
-                    </div>
-                </div>
 
-                <!-- Generated Dates Preview -->
-                <div id="dates-preview-section" class="card-bg p-6 rounded-lg border border-gray-700 hidden">
-                    <h2 class="text-xl font-bold mb-4 accent-color-secondary">
-                        <i class="fas fa-calendar-alt mr-2"></i>Generated Event Dates
-                    </h2>
-                    
-                    <div id="dates-preview" class="space-y-3">
-                        <!-- Generated dates will be populated here -->
-                    </div>
-                    
-                    <!-- Exception Dates -->
-                    <div class="mt-6 pt-6 border-t border-gray-600">
-                        <h3 class="text-lg font-semibold mb-3 accent-color-secondary">Exception Dates</h3>
-                        <div id="exception-dates-list" class="space-y-2 mb-4">
-                            <!-- Exception dates will be populated here -->
-                        </div>
-                        <div class="flex gap-3">
-                            <input type="date" id="exception-date-input" 
-                                   class="flex-1 p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:border-accent-color focus:outline-none">
-                            <button type="button" id="add-exception-btn" 
-                                    class="px-4 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 focus:outline-none">
-                                <i class="fas fa-plus mr-2"></i>Add Exception
+                        <div id="venue-results" class="hidden space-y-2 max-h-48 overflow-y-auto"></div>
+                        
+                        <div id="selected-venue-details" class="hidden p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                            <h3 class="font-semibold text-purple-400 mb-2">Selected Venue</h3>
+                            <div id="venue-details-content"></div>
+                            <button type="button" id="change-venue" class="text-sm text-gray-400 hover:text-white mt-2">
+                                <i class="fas fa-edit mr-1"></i>Change venue
                             </button>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">Add dates when the event won't happen (e.g., holidays, venue closures)</p>
+
+                        <div class="text-center">
+                            <button type="button" id="add-new-venue" class="btn-secondary px-6 py-3 rounded-lg">
+                                <i class="fas fa-plus mr-2"></i>Add New Venue
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Hidden Fields -->
-                <input type="hidden" name="recurring-info" id="recurring-info-hidden">
-
-                <!-- Submit Section -->
-                <div class="card-bg p-6 rounded-lg border border-gray-700">
-                    <div class="flex items-center justify-between">
+                <!-- Recurring Events -->
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
+                        <i class="fas fa-redo mr-2"></i>Recurring Event
+                    </h2>
+                    
+                    <div class="space-y-6">
                         <div class="flex items-center">
-                            <input id="terms-agree" type="checkbox" 
-                                   class="h-5 w-5 rounded border-gray-300 text-accent-color focus:ring-accent-color">
-                            <label for="terms-agree" class="ml-3 text-sm text-gray-300">
-                                I agree to the <a href="/terms-of-submission.html" target="_blank" class="underline hover:text-white">Terms of Submission</a>
+                            <input type="checkbox" id="is-recurring" name="is-recurring" class="mr-3 h-5 w-5 text-purple-600">
+                            <label for="is-recurring" class="text-lg font-semibold">
+                                This is a recurring event
                             </label>
-                        </div>
-                        <button type="submit" id="submit-button" 
-                                class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 focus:outline-none" 
-                                disabled>
-                            <i class="fas fa-paper-plane mr-2"></i>Submit Event
-                        </button>
                     </div>
+
+                        <div id="recurring-config" class="hidden space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-3">Recurrence Pattern *</label>
+                                    <div class="space-y-2">
+                                <label class="flex items-center">
+                                            <input type="radio" name="recurring-pattern" value="weekly" class="mr-2">
+                                            <span>Weekly</span>
+                                </label>
+                                <label class="flex items-center">
+                                            <input type="radio" name="recurring-pattern" value="bi-weekly" class="mr-2">
+                                            <span>Bi-weekly</span>
+                                </label>
+                                <label class="flex items-center">
+                                            <input type="radio" name="recurring-pattern" value="monthly" class="mr-2">
+                                            <span>Monthly</span>
+                                </label>
+                                <label class="flex items-center">
+                                            <input type="radio" name="recurring-pattern" value="yearly" class="mr-2">
+                                            <span>Yearly</span>
+                                </label>
+                                <label class="flex items-center">
+                                            <input type="radio" name="recurring-pattern" value="custom" class="mr-2">
+                                            <span>Custom</span>
+                                </label>
+                            </div>
+                        </div>
+
+                            <div>
+                                    <label for="recurring-start-date" class="block text-sm font-semibold mb-2">
+                                        Start Date *
+                                    </label>
+                                    <input type="date" id="recurring-start-date" name="recurring-start-date"
+                                           class="form-input w-full px-4 py-3 rounded-lg text-white">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="recurring-end-date" class="block text-sm font-semibold mb-2">
+                                        End Date (Optional)
+                                    </label>
+                                    <input type="date" id="recurring-end-date" name="recurring-end-date"
+                                           class="form-input w-full px-4 py-3 rounded-lg text-white">
+                                </div>
+                                
+                                <div>
+                                    <label for="max-instances" class="block text-sm font-semibold mb-2">
+                                        Max Instances
+                                    </label>
+                                    <input type="number" id="max-instances" name="max-instances" value="52" min="1" max="1000"
+                                           class="form-input w-full px-4 py-3 rounded-lg text-white">
+                                    <p class="text-xs text-gray-400 mt-1">Maximum number of events to create (default: 52)</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="custom-recurrence-desc" class="block text-sm font-semibold mb-2">
+                                    Custom Description (Optional)
+                                </label>
+                                <textarea id="custom-recurrence-desc" name="custom-recurrence-desc" rows="2"
+                                          class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                          placeholder="e.g., Every other Tuesday, First Friday of the month..."></textarea>
+                        </div>
+
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2 text-purple-400">Preview</h3>
+                                <div id="recurring-preview" class="text-sm text-gray-300">
+                                    Select a pattern and start date to see a preview of upcoming dates.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="card-bg p-8 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">
+                        <i class="fas fa-user mr-2"></i>Contact Information
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="contact-name" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-user mr-1"></i>Contact Name *
+                            </label>
+                            <input type="text" id="contact-name" name="contact-name" required
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="Your name">
+                        </div>
+                        
+                        <div>
+                            <label for="contact-email" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-envelope mr-1"></i>Contact Email *
+                            </label>
+                            <input type="email" id="contact-email" name="contact-email" required
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="your@email.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn-primary px-8 py-4 rounded-lg text-lg font-semibold">
+                        <span id="submit-text">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Event
+                        </span>
+                        <div id="submit-loader" class="hidden">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
+                        </div>
+                        </button>
                 </div>
             </form>
-
-            <!-- Status Messages -->
-            <div id="form-status" class="hidden mt-6 p-4 rounded-lg text-center"></div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8 mt-16">
-        <div class="container mx-auto grid md:grid-cols-2">
-            <div>
-                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js"></script>
-    <script>
-        // Form functionality will be added in the next part
-    </script>
+    <script src="/js/promoter-submit-streamlined.js"></script>
 </body>
 </html>
