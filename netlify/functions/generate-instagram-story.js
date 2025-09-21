@@ -92,6 +92,14 @@ exports.handler = async (event, context) => {
         };
     }
 };
+
+// Helper function to generate Instagram story image
+async function generateInstagramStoryImage(eventName, eventDate, eventTime, venueName, eventImage) {
+    const { createCanvas, loadImage } = require('canvas');
+    
+    // Create canvas
+    const canvas = createCanvas(1080, 1920);
+    const ctx = canvas.getContext('2d');
     
     // Background
     ctx.fillStyle = '#000000';
