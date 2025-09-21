@@ -81,9 +81,15 @@ class PushNotificationService {
         // Focus the admin window/tab
         window.focus();
         
-        // Navigate to system status page if it's a system alert
-        if (options.tag === 'system-alert') {
+        // Navigate based on notification type
+        if (options.data && options.data.url) {
+          window.location.href = options.data.url;
+        } else if (options.tag === 'system-alert') {
           window.location.href = '/admin-system-status.html';
+        } else if (options.tag === 'new-submission') {
+          window.location.href = '/admin-approvals.html';
+        } else if (options.tag === 'approval-status') {
+          window.location.href = '/admin-approvals.html';
         }
       };
 
@@ -110,6 +116,45 @@ class PushNotificationService {
       data: {
         type: 'system-alert',
         severity: severity,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  async sendNewSubmissionAlert(eventName, promoterEmail, eventId) {
+    return this.sendNotification('🎉 New Event Submission', {
+      body: `"${eventName}" submitted by ${promoterEmail}`,
+      tag: 'new-submission',
+      requireInteraction: true,
+      icon: '/faviconV2.png',
+      badge: '/faviconV2.png',
+      data: {
+        type: 'new-submission',
+        eventName: eventName,
+        promoterEmail: promoterEmail,
+        eventId: eventId,
+        url: '/admin-approvals.html',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  async sendApprovalStatusAlert(eventName, status, promoterEmail) {
+    const statusIcon = status === 'approved' ? '✅' : '❌';
+    const statusText = status === 'approved' ? 'Approved' : 'Rejected';
+    
+    return this.sendNotification(`${statusIcon} Event ${statusText}`, {
+      body: `"${eventName}" has been ${statusText.toLowerCase()}`,
+      tag: 'approval-status',
+      requireInteraction: false,
+      icon: '/faviconV2.png',
+      badge: '/faviconV2.png',
+      data: {
+        type: 'approval-status',
+        eventName: eventName,
+        status: status,
+        promoterEmail: promoterEmail,
+        url: '/admin-approvals.html',
         timestamp: new Date().toISOString()
       }
     });

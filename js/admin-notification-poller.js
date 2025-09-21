@@ -35,6 +35,10 @@ class AdminNotificationPoller {
 
   async checkForNotifications() {
     try {
+      // Check for new event submissions
+      await this.checkForNewSubmissions();
+      
+      // Check for general system notifications
       const response = await fetch('/.netlify/functions/get-notifications');
       const data = await response.json();
       
@@ -57,6 +61,62 @@ class AdminNotificationPoller {
       }
     } catch (error) {
       console.error('Error checking for notifications:', error);
+    }
+  }
+
+  async checkForNewSubmissions() {
+    try {
+      // Get pending events to check for new submissions
+      const response = await fetch('/.netlify/functions/get-pending-events');
+      const data = await response.json();
+      
+      if (data.success && data.events && data.events.length > 0) {
+        // Get the most recent pending event
+        const latestEvent = data.events[0];
+        
+        // Check if this is a new submission (within last 10 minutes)
+        const submissionTime = new Date(latestEvent.submittedAt || latestEvent.createdAt);
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+        
+        if (submissionTime > tenMinutesAgo) {
+          // Check if we've already notified about this event
+          const eventKey = `submission_${latestEvent.id}`;
+          const lastNotified = localStorage.getItem(eventKey);
+          
+          if (!lastNotified || new Date(lastNotified) < submissionTime) {
+            // Send push notification for new submission
+            await this.sendNewSubmissionNotification(latestEvent);
+            
+            // Mark as notified
+            localStorage.setItem(eventKey, new Date().toISOString());
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for new submissions:', error);
+    }
+  }
+
+  async sendNewSubmissionNotification(event) {
+    if (!window.pushNotificationService || !window.pushNotificationService.isEnabled()) {
+      console.log('Push notifications not available for new submission alert');
+      return;
+    }
+
+    try {
+      const eventName = event.name || 'Untitled Event';
+      const promoterEmail = event.submittedBy || event.submitterEmail || 'Unknown';
+      const eventId = event.id;
+      
+      await window.pushNotificationService.sendNewSubmissionAlert(
+        eventName, 
+        promoterEmail, 
+        eventId
+      );
+      
+      console.log('New submission notification sent:', eventName);
+    } catch (error) {
+      console.error('Error sending new submission notification:', error);
     }
   }
 

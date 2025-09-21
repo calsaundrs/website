@@ -496,6 +496,36 @@ exports.handler = async function (event, context) {
             console.error('❌ Email notification failed:', emailError);
             // Don't fail the entire submission if email fails
         }
+
+        // Send push notification to admin devices
+        try {
+            const pushResponse = await fetch(`${process.env.URL || 'https://brumoutloud.co.uk'}/.netlify/functions/send-push-notification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'new-submission',
+                    title: '🎉 New Event Submission',
+                    body: `"${firestoreData.name}" submitted by ${promoterEmail || 'Anonymous'}`,
+                    data: {
+                        eventName: firestoreData.name,
+                        promoterEmail: promoterEmail || 'Anonymous',
+                        eventId: firestoreDoc.id,
+                        url: '/admin-approvals.html'
+                    }
+                })
+            });
+
+            if (pushResponse.ok) {
+                console.log('✅ Push notification sent to admin devices');
+            } else {
+                console.log('⚠️ Push notification failed:', await pushResponse.text());
+            }
+        } catch (pushError) {
+            console.error('❌ Push notification failed:', pushError);
+            // Don't fail the entire submission if push notification fails
+        }
         
         // Trigger SSG rebuild if in production
         let ssgRebuildResult = null;
