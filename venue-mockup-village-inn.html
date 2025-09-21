@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Village Inn - Cabaret Bar in Birmingham's Gay Village | BrumOutLoud</title>
+    <meta name="description" content="The Village Inn - Birmingham's premier cabaret bar in the Gay Village. Live entertainment, drag shows, karaoke nights, and a warm LGBTQ+ friendly atmosphere. Book your table today!">
+    <meta name="keywords" content="The Village Inn, Birmingham, Gay Village, cabaret bar, drag shows, karaoke, LGBTQ+, live entertainment, Birmingham nightlife">
+    <meta name="author" content="BrumOutLoud">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="The Village Inn - Cabaret Bar in Birmingham's Gay Village">
+    <meta property="og:description" content="Birmingham's premier cabaret bar in the Gay Village. Live entertainment, drag shows, karaoke nights, and a warm LGBTQ+ friendly atmosphere.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://brumoutloud.co.uk/venue/the-village-inn">
+    <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg">
+    <meta property="og:site_name" content="BrumOutLoud">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Village Inn - Cabaret Bar in Birmingham's Gay Village">
+    <meta name="twitter:description" content="Birmingham's premier cabaret bar in the Gay Village. Live entertainment, drag shows, karaoke nights, and a warm LGBTQ+ friendly atmosphere.">
+    <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BarOrPub",
+      "name": "The Village Inn",
+      "description": "Birmingham's premier cabaret bar in the Gay Village",
+      "url": "https://brumoutloud.co.uk/venue/the-village-inn",
+      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "18 Kent Street",
+        "addressLocality": "Birmingham",
+        "postalCode": "B5 6RD",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4745,
+        "longitude": -1.8981
+      },
+      "telephone": "+44 121 622 4740",
+      "openingHours": "Mo-Su 12:00-02:00",
+      "priceRange": "££",
+      "servesCuisine": "Bar Food",
+      "amenityFeature": [
+        {
+          "@type": "LocationFeatureSpecification",
+          "name": "Live Entertainment",
+          "value": true
+        },
+        {
+          "@type": "LocationFeatureSpecification", 
+          "name": "Drag Shows",
+          "value": true
+        },
+        {
+          "@type": "LocationFeatureSpecification",
+          "name": "Karaoke",
+          "value": true
+        }
+      ]
+    }
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .venue-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.2);
+            transition: all 0.3s ease;
+        }
+        .venue-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(232, 58, 153, 0.3);
+        }
+
+        .venue-hero {
+            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+        }
+        
+        .vibe-snapshot {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .regular-event {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        /* Design System Section Styles */
+        .ds-section {
+            border-bottom: 2px solid rgba(75, 85, 99, 0.3); 
+            padding-bottom: 4rem; 
+            margin-bottom: 4rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(0.9) !important;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+            border-radius: 20px !important;
+            padding: 0 !important;
+            width: 90vw !important;
+            min-width: 1000px !important;
+            max-width: 1600px !important;
+            max-height: 95vh !important;
+            overflow-y: auto !important;
+            z-index: 1001 !important;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        #modalContent {
+            padding: 24px !important;
+        }
+        
+        .hero-image-container {
+            margin: -24px -24px 0 -24px !important;
+        }
+        
+        .modal-content-section {
+            padding: 24px !important;
+        }
+        
+        .modal-content-section, .p-12 {
+            padding: 48px !important;
+        }
+        
+        .modal-content.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1002;
+            font-size: 20px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+        }
+        
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Image Lightbox Styles */
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            text-align: center;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-caption {
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        body.lightbox-open {
+            overflow: hidden;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
+                <a href="/promoter-tool.html" class="nav-cta">GET LISTED</a>
+            </div>
+        </nav>
+    </header>
+
+            <!-- Hero Section -->
+        <section class="relative h-96 md:h-[500px] overflow-hidden">
+            <div id="hero-loading" class="w-full h-full bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                    <p class="text-white text-lg">Loading venue details...</p>
+                </div>
+            </div>
+            <div id="hero-content" class="hidden">
+                <img id="hero-image" src="" alt="" class="w-full h-full object-cover">
+                <!-- Dark overlay for better text readability -->
+                <div class="absolute inset-0 bg-black/50"></div>
+                <div class="absolute inset-0 venue-hero flex items-center">
+                    <div class="container mx-auto px-8">
+                        <div class="max-w-2xl">
+                            <h1 id="venue-name" class="font-anton text-5xl md:text-7xl text-white mb-6 drop-shadow-2xl">
+                                Loading...
+                            </h1>
+                            <p id="venue-description" class="text-xl md:text-2xl text-white mb-8 leading-relaxed drop-shadow-lg font-medium">
+                                Loading venue description...
+                            </p>
+                            <div id="venue-tags" class="flex flex-wrap gap-4">
+                                <!-- Tags will be loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Main Content -->
+            <div class="lg:col-span-2 space-y-12">
+                
+                <!-- About Section -->
+                <section class="ds-section">
+                    <h2 class="font-anton text-4xl text-white mb-6 heading-gradient">
+                        <i class="fas fa-info-circle text-accent-color mr-3"></i>
+                        About The Village Inn
+                    </h2>
+                    <div class="card-bg p-8 rounded-2xl">
+                        <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                            Located at 22 Hurst Street in the heart of Birmingham's Gay Village, The Village Inn has been serving the LGBTQ+ community for years. 
+                            We're more than just a pub – we're a welcoming gathering place where friends meet, drinks flow, and memories are made.
+                        </p>
+                        <p class="text-lg text-gray-300 leading-relaxed">
+                            Our inclusive atmosphere combines traditional pub charm with modern entertainment to create the perfect venue for any occasion. 
+                            Whether you're looking for a quiet drink, a lively night out, or somewhere to celebrate with friends, 
+                            The Village Inn welcomes everyone with open arms.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Vibe Snapshot - Events Section -->
+                <section class="ds-section">
+                    <h2 class="font-anton text-4xl text-white mb-6 heading-gradient">
+                        <i class="fas fa-calendar-alt text-accent-color mr-3"></i>
+                        What's On at The Village
+                    </h2>
+                    <div class="card-bg p-8 rounded-2xl">
+                        
+                        <!-- Loading State -->
+                        <div id="events-loading" class="text-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                            <p class="text-gray-400">Loading events...</p>
+                        </div>
+                        
+                        <!-- Events Container -->
+                        <div id="events-container" class="grid md:grid-cols-2 gap-6" style="display: none;">
+                            <!-- Events will be loaded here dynamically -->
+                        </div>
+                        
+                        <!-- No Events State -->
+                        <div id="events-empty" class="text-center py-8" style="display: none;">
+                            <i class="fas fa-calendar-times text-4xl text-gray-500 mb-4"></i>
+                            <p class="text-gray-400 text-lg mb-4">No upcoming events at the moment</p>
+                            <p class="text-gray-500">Check back soon for new events!</p>
+                        </div>
+                        
+                        <!-- View All Events Button -->
+                        <div class="mt-8 text-center">
+                            <a href="/events.html?venue=the-village-inn" class="btn-primary inline-flex items-center gap-3 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:scale-105 transition-transform duration-200">
+                                <i class="fas fa-calendar-alt"></i>
+                                See Full Events Calendar
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Gallery Section -->
+                <section class="ds-section">
+                    <h2 class="font-anton text-4xl text-white mb-6 heading-gradient">
+                        <i class="fas fa-images text-accent-color mr-3"></i>
+                        Gallery
+                    </h2>
+                    <div class="card-bg p-8 rounded-2xl">
+                        <div id="gallery-loading" class="text-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                            <p class="text-gray-400">Loading gallery...</p>
+                        </div>
+                        <div id="gallery-container" class="grid grid-cols-2 md:grid-cols-3 gap-4" style="display: none;">
+                            <!-- Gallery images will be loaded here -->
+                        </div>
+                        <div id="gallery-error" class="text-center py-8" style="display: none;">
+                            <p class="text-gray-400">Gallery images unavailable</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="space-y-8">
+                
+                <!-- Quick Info Card -->
+                <div class="card-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-white mb-4">Quick Info</h3>
+                    <div id="quick-info-loading" class="text-center py-4">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+                        <p class="text-gray-400 text-sm">Loading venue info...</p>
+                    </div>
+                    <div id="quick-info-content" class="space-y-4" style="display: none;">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-map-marker-alt text-red-400 w-5"></i>
+                            <div>
+                                <p id="venue-address" class="text-white font-semibold">Loading...</p>
+                                <p id="venue-postcode" class="text-gray-400 text-sm">Loading...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-phone text-blue-400 w-5"></i>
+                            <p id="venue-phone" class="text-white">Loading...</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-globe text-green-400 w-5"></i>
+                            <a id="venue-website" href="#" class="text-white hover:text-accent-color">Loading...</a>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-star text-yellow-400 w-5"></i>
+                            <p id="venue-rating" class="text-white">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opening Hours -->
+                <div class="card-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-white mb-4">Opening Hours</h3>
+                    <div id="opening-hours-loading" class="text-center py-4">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+                        <p class="text-gray-400 text-sm">Loading opening hours...</p>
+                    </div>
+                    <div id="opening-hours-content" class="space-y-2" style="display: none;">
+                        <!-- Opening hours will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="card-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-white mb-4">Features</h3>
+                    <div id="features-loading" class="text-center py-4">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+                        <p class="text-gray-400 text-sm">Loading features...</p>
+                    </div>
+                    <div id="features-content" class="space-y-3" style="display: none;">
+                        <!-- Features will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Google Reviews -->
+                <div class="card-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fab fa-google text-accent-color mr-2"></i>Recent Reviews from Google
+                    </h3>
+                    <div id="reviews-loading" class="text-center py-4">
+                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+                        <p class="text-gray-400 text-sm">Loading reviews...</p>
+                    </div>
+                    <div id="reviews-content" class="space-y-4" style="display: none;">
+                        <!-- Reviews will be loaded dynamically -->
+                    </div>
+                    <div id="reviews-empty" class="text-center py-4" style="display: none;">
+                        <p class="text-gray-400 text-sm">No reviews available</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-2 border-gray-800 p-8 mt-16">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-purple-400 transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool.html" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Support</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Load real events and Google Places images
+        async function loadRealData() {
+            try {
+                console.log('🔍 Loading real data for The Village Inn...');
+                console.log('🔍 DOM elements check:', {
+                    eventsLoading: !!document.getElementById('events-loading'),
+                    galleryLoading: !!document.getElementById('gallery-loading'),
+                    heroLoading: !!document.getElementById('hero-loading')
+                });
+                
+                // Show loading states
+                const eventsLoading = document.getElementById('events-loading');
+                const galleryLoading = document.getElementById('gallery-loading');
+                if (eventsLoading) eventsLoading.style.display = 'block';
+                if (galleryLoading) galleryLoading.style.display = 'block';
+                
+                console.log('🔍 Starting parallel data loading...');
+                
+                // Load venue details, events and images in parallel
+                const [venueResult, eventsResult, galleryResult] = await Promise.allSettled([
+                    loadVenueDetails(),
+                    loadEvents(),
+                    loadGooglePlacesImages()
+                ]);
+                
+                console.log('🔍 Data loading results:', {
+                    venue: venueResult.status,
+                    events: eventsResult.status,
+                    gallery: galleryResult.status
+                });
+                
+                // Handle results
+                if (venueResult.status === 'rejected') {
+                    console.error('❌ Venue details loading failed:', venueResult.reason);
+                }
+                
+                if (eventsResult.status === 'rejected') {
+                    console.error('❌ Events loading failed:', eventsResult.reason);
+                }
+                
+                if (galleryResult.status === 'rejected') {
+                    console.error('❌ Gallery loading failed:', galleryResult.reason);
+                }
+                
+                console.log('✅ Data loading completed');
+                
+            } catch (error) {
+                console.error('❌ Error loading real data:', error);
+                
+                // Show fallback content if everything fails
+                console.log('🔄 Showing fallback content...');
+                showFallbackContent();
+            }
+        }
+
+        // Show fallback content when data loading fails
+        function showFallbackContent() {
+            // Hide all loading states
+            const loadingElements = document.querySelectorAll('[id$="-loading"]');
+            loadingElements.forEach(el => el.style.display = 'none');
+            
+            // Show fallback content
+            const heroLoading = document.getElementById('hero-loading');
+            const heroContent = document.getElementById('hero-content');
+            if (heroLoading) heroLoading.style.display = 'none';
+            if (heroContent) {
+                heroContent.classList.remove('hidden');
+                const venueName = document.getElementById('venue-name');
+                if (venueName) venueName.textContent = 'The Village Inn';
+            }
+            
+            // Show fallback for other sections
+            const quickInfoContent = document.getElementById('quick-info-content');
+            const openingHoursContent = document.getElementById('opening-hours-content');
+            const featuresContent = document.getElementById('features-content');
+            
+            if (quickInfoContent) quickInfoContent.style.display = 'block';
+            if (openingHoursContent) openingHoursContent.style.display = 'block';
+            if (featuresContent) featuresContent.style.display = 'block';
+            
+            console.log('✅ Fallback content displayed');
+        }
+
+        // Load venue details
+        async function loadVenueDetails() {
+            try {
+                console.log('🏢 Loading venue details...');
+                
+                // For testing - use mock data if function fails
+                const mockVenue = {
+                    name: 'The Village Inn',
+                    description: 'Cabaret bar in Birmingham\'s Gay Village',
+                    address: '18 Kent St, Birmingham',
+                    postcode: 'B5 6RD',
+                    phone: '0121 555 0123',
+                    website: 'https://villagebirmingham.co.uk/',
+                    rating: 4.2,
+                    ratingCount: 150,
+                    category: ['LGBTQ+ Venue', 'Bar & Pub', 'Cabaret'],
+                    vibeTags: ['Inclusive', 'Entertainment', 'Friendly'],
+                    openingHours: [
+                        { day: 'Monday - Tuesday', hours: 'Closed' },
+                        { day: 'Wednesday - Thursday', hours: '20:00 - 02:00' },
+                        { day: 'Friday - Saturday', hours: '20:00 - 03:00' },
+                        { day: 'Sunday', hours: '20:00 - 02:00' }
+                    ],
+                    features: ['LGBTQ+ Friendly', 'Full Bar', 'Live Entertainment', 'Drag Shows', 'Karaoke'],
+                    image: { url: 'https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg' }
+                };
+                
+                console.log('🏢 Using mock venue data for testing');
+                window.venueData = { venue: mockVenue };
+                displayVenueDetails(mockVenue);
+                
+                // Try to load real data in background
+                try {
+                    console.log('🏢 Attempting to fetch real venue data...');
+                    const response = await fetch('/.netlify/functions/get-venue-details-json?slug=the-village-inn');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('🏢 Real venue data received:', data);
+                        if (data.venue) {
+                            window.venueData = data;
+                            displayVenueDetails(data.venue);
+                        }
+                    } else {
+                        console.log('🏢 Real venue data not available, using mock data');
+                    }
+                } catch (fetchError) {
+                    console.log('🏢 Real venue data fetch failed, using mock data:', fetchError.message);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading venue details:', error);
+                throw error;
+            }
+        }
+
+        // Display venue details in hero section and sidebar
+        function displayVenueDetails(venue) {
+            console.log('🏢 displayVenueDetails called with venue:', venue);
+            
+            const heroLoading = document.getElementById('hero-loading');
+            const heroContent = document.getElementById('hero-content');
+            const heroImage = document.getElementById('hero-image');
+            const venueName = document.getElementById('venue-name');
+            const venueDescription = document.getElementById('venue-description');
+            const venueTags = document.getElementById('venue-tags');
+            
+            console.log('🏢 DOM elements found:', {
+                heroLoading: !!heroLoading,
+                heroContent: !!heroContent,
+                heroImage: !!heroImage,
+                venueName: !!venueName,
+                venueDescription: !!venueDescription,
+                venueTags: !!venueTags
+            });
+            
+            // Hide loading, show content
+            if (heroLoading) {
+                console.log('🏢 Hiding hero loading...');
+                heroLoading.style.display = 'none';
+            }
+            if (heroContent) {
+                console.log('🏢 Showing hero content...');
+                heroContent.classList.remove('hidden');
+            }
+            
+            // Set venue name
+            if (venueName) venueName.textContent = venue.name || 'The Village Inn';
+            
+            // Set venue description
+            if (venueDescription) {
+                venueDescription.textContent = venue.description || 'Cabaret bar in Birmingham\'s Gay Village';
+            }
+            
+            // Set hero image
+            if (heroImage && venue.image && venue.image.url) {
+                heroImage.src = venue.image.url;
+                heroImage.alt = `${venue.name} - Venue photo`;
+            }
+            
+            // Generate tags from venue data
+            if (venueTags) {
+                let tagsHtml = '';
+                
+                // Add category tags
+                if (venue.category && Array.isArray(venue.category)) {
+                    venue.category.forEach(cat => {
+                        tagsHtml += `<span class="bg-white/90 text-gray-900 px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                            <i class="fas fa-tag mr-2"></i>${cat}
+                        </span>`;
+                    });
+                }
+                
+                // Add vibe tags
+                if (venue.vibeTags && Array.isArray(venue.vibeTags)) {
+                    venue.vibeTags.forEach(tag => {
+                        tagsHtml += `<span class="bg-white/90 text-gray-900 px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                            <i class="fas fa-star mr-2"></i>${tag}
+                        </span>`;
+                    });
+                }
+                
+                // Add default tags if none available
+                if (!tagsHtml) {
+                    tagsHtml = `
+                        <span class="bg-white/90 text-gray-900 px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                            <i class="fas fa-users mr-2"></i>LGBTQ+ Venue
+                        </span>
+                        <span class="bg-white/90 text-gray-900 px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                            <i class="fas fa-glass-martini mr-2"></i>Bar & Pub
+                        </span>
+                        <span class="bg-white/90 text-gray-900 px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                            <i class="fas fa-map-marker-alt mr-2"></i>Gay Village
+                        </span>
+                    `;
+                }
+                
+                venueTags.innerHTML = tagsHtml;
+            }
+            
+            // Populate Quick Info section
+            displayQuickInfo(venue);
+            
+            // Populate Opening Hours section
+            displayOpeningHours(venue);
+            
+            // Populate Features section
+            displayFeatures(venue);
+            
+            // Populate Reviews section (if Google Places data is available)
+            if (window.venueData && window.venueData.googlePlaces && window.venueData.googlePlaces.reviews) {
+                displayReviews(window.venueData.googlePlaces.reviews);
+            }
+            
+            console.log('✅ Venue details displayed');
+        }
+
+        // Display Quick Info section
+        function displayQuickInfo(venue) {
+            const loading = document.getElementById('quick-info-loading');
+            const content = document.getElementById('quick-info-content');
+            const address = document.getElementById('venue-address');
+            const postcode = document.getElementById('venue-postcode');
+            const phone = document.getElementById('venue-phone');
+            const website = document.getElementById('venue-website');
+            const rating = document.getElementById('venue-rating');
+            
+            if (loading) loading.style.display = 'none';
+            if (content) content.style.display = 'block';
+            
+            // Address
+            if (address) {
+                address.textContent = venue.address || venue.streetAddress || '18 Kent St, Birmingham';
+            }
+            if (postcode) {
+                postcode.textContent = venue.postcode || 'B5 6RD';
+            }
+            
+            // Phone
+            if (phone) {
+                phone.textContent = venue.phone || venue.telephone || 'Not available';
+            }
+            
+            // Website
+            if (website) {
+                if (venue.website || venue.url) {
+                    website.href = venue.website || venue.url;
+                    website.textContent = venue.website || venue.url;
+                } else {
+                    website.textContent = 'Not available';
+                    website.href = '#';
+                }
+            }
+            
+            // Rating
+            if (rating) {
+                if (venue.rating && venue.ratingCount) {
+                    rating.textContent = `${venue.rating}/5 (${venue.ratingCount} Google Reviews)`;
+                } else if (venue.rating) {
+                    rating.textContent = `${venue.rating}/5 (Google Reviews)`;
+                } else {
+                    rating.textContent = 'No rating available';
+                }
+            }
+        }
+
+        // Display Opening Hours section
+        function displayOpeningHours(venue) {
+            const loading = document.getElementById('opening-hours-loading');
+            const content = document.getElementById('opening-hours-content');
+            
+            if (loading) loading.style.display = 'none';
+            if (content) {
+                content.style.display = 'block';
+                
+                if (venue.openingHours && Array.isArray(venue.openingHours) && venue.openingHours.length > 0) {
+                    let hoursHtml = '';
+                    venue.openingHours.forEach(day => {
+                        hoursHtml += `
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">${day.day}</span>
+                                <span class="text-white font-semibold">${day.hours}</span>
+                            </div>
+                        `;
+                    });
+                    content.innerHTML = hoursHtml;
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-4">
+                            <p class="text-gray-400 text-sm">Opening hours not available</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Display Features section
+        function displayFeatures(venue) {
+            const loading = document.getElementById('features-loading');
+            const content = document.getElementById('features-content');
+            
+            if (loading) loading.style.display = 'none';
+            if (content) {
+                content.style.display = 'block';
+                
+                let featuresHtml = '';
+                const features = [];
+                
+                // Add features from venue data
+                if (venue.features && Array.isArray(venue.features)) {
+                    features.push(...venue.features);
+                }
+                
+                // Add amenities
+                if (venue.amenities && Array.isArray(venue.amenities)) {
+                    features.push(...venue.amenities);
+                }
+                
+                // Add category-based features
+                if (venue.category && Array.isArray(venue.category)) {
+                    venue.category.forEach(cat => {
+                        if (cat.toLowerCase().includes('lgbtq') || cat.toLowerCase().includes('gay')) {
+                            features.push('LGBTQ+ Friendly');
+                        }
+                        if (cat.toLowerCase().includes('bar') || cat.toLowerCase().includes('pub')) {
+                            features.push('Full Bar');
+                        }
+                        if (cat.toLowerCase().includes('cabaret') || cat.toLowerCase().includes('entertainment')) {
+                            features.push('Live Entertainment');
+                        }
+                    });
+                }
+                
+                // Add vibe-based features
+                if (venue.vibeTags && Array.isArray(venue.vibeTags)) {
+                    venue.vibeTags.forEach(tag => {
+                        if (tag.toLowerCase().includes('inclusive') || tag.toLowerCase().includes('friendly')) {
+                            features.push('Inclusive Atmosphere');
+                        }
+                        if (tag.toLowerCase().includes('events') || tag.toLowerCase().includes('shows')) {
+                            features.push('Regular Events');
+                        }
+                    });
+                }
+                
+                // Remove duplicates
+                const uniqueFeatures = [...new Set(features)];
+                
+                // Generate feature icons and HTML
+                const featureIcons = {
+                    'LGBTQ+ Friendly': 'fas fa-users text-green-400',
+                    'Full Bar': 'fas fa-glass-martini text-blue-400',
+                    'Live Entertainment': 'fas fa-music text-purple-400',
+                    'Gay Village Location': 'fas fa-map-marker-alt text-yellow-400',
+                    'Inclusive Atmosphere': 'fas fa-heart text-red-400',
+                    'Regular Events': 'fas fa-calendar text-blue-400',
+                    'Drag Shows': 'fas fa-star text-pink-400',
+                    'Karaoke': 'fas fa-microphone text-purple-400',
+                    'Cabaret': 'fas fa-theater-masks text-orange-400'
+                };
+                
+                uniqueFeatures.forEach(feature => {
+                    const icon = featureIcons[feature] || 'fas fa-check text-green-400';
+                    featuresHtml += `
+                        <div class="flex items-center gap-3">
+                            <i class="${icon} w-5"></i>
+                            <span class="text-gray-300">${feature}</span>
+                        </div>
+                    `;
+                });
+                
+                // Add default features if none available
+                if (!featuresHtml) {
+                    featuresHtml = `
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-users text-green-400 w-5"></i>
+                            <span class="text-gray-300">LGBTQ+ Friendly</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-glass-martini text-blue-400 w-5"></i>
+                            <span class="text-gray-300">Full Bar</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-music text-purple-400 w-5"></i>
+                            <span class="text-gray-300">Live Entertainment</span>
+                        </div>
+                    `;
+                }
+                
+                content.innerHTML = featuresHtml;
+            }
+        }
+
+        // Display Reviews section
+        function displayReviews(reviews) {
+            const loading = document.getElementById('reviews-loading');
+            const content = document.getElementById('reviews-content');
+            const empty = document.getElementById('reviews-empty');
+            
+            if (loading) loading.style.display = 'none';
+            
+            if (reviews && Array.isArray(reviews) && reviews.length > 0) {
+                if (content) {
+                    content.style.display = 'block';
+                    if (empty) empty.style.display = 'none';
+                    
+                    let reviewsHtml = '';
+                    reviews.slice(0, 3).forEach(review => {
+                        const stars = generateStars(review.rating || 0);
+                        const timeAgo = formatTimeAgo(review.time || Date.now());
+                        
+                        reviewsHtml += `
+                            <div class="venue-card p-4 rounded-lg">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="font-semibold text-white">${review.author_name || 'Anonymous'}</p>
+                                    <div class="flex text-sm">
+                                        ${stars}
+                                    </div>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-2">"${review.text || 'No review text available'}"</p>
+                                <p class="text-xs text-gray-500">${timeAgo}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    // Add "Read More Reviews" link if there are more than 3 reviews
+                    if (reviews.length > 3) {
+                        reviewsHtml += `
+                            <div class="mt-4 text-center">
+                                <a href="#" class="text-accent-color hover:text-purple-300 text-sm font-semibold">
+                                    <i class="fas fa-external-link-alt mr-1"></i>Read More Reviews
+                                </a>
+                            </div>
+                        `;
+                    }
+                    
+                    content.innerHTML = reviewsHtml;
+                }
+            } else {
+                if (empty) empty.style.display = 'block';
+                if (content) content.style.display = 'none';
+            }
+        }
+
+        // Generate star rating HTML
+        function generateStars(rating) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += '<i class="fas fa-star text-yellow-400"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star text-yellow-400"></i>';
+                }
+            }
+            return starsHtml;
+        }
+
+        // Format time ago
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const months = Math.floor(days / 30);
+            const years = Math.floor(months / 12);
+            
+            if (years > 0) {
+                return `${years} year${years > 1 ? 's' : ''} ago`;
+            } else if (months > 0) {
+                return `${months} month${months > 1 ? 's' : ''} ago`;
+            } else if (days > 0) {
+                return `${days} day${days > 1 ? 's' : ''} ago`;
+            } else {
+                return 'Today';
+            }
+        }
+        
+        // Load real events
+        async function loadEvents() {
+            try {
+                console.log('📅 Loading real events...');
+                
+                // Try to load events from the API
+                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=the-village-inn');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📅 Events data:', data);
+                    console.log('📅 Events array:', data.events);
+                    console.log('📅 Number of events:', data.events ? data.events.length : 0);
+                    
+                    if (data.events && data.events.length > 0) {
+                        console.log('📅 Displaying real events');
+                        displayEvents(data.events);
+                    } else {
+                        console.log('📅 No events found');
+                        displayNoEvents();
+                    }
+                } else {
+                    console.log('❌ Events response not ok:', response.status);
+                    displayNoEvents();
+                }
+            } catch (error) {
+                console.error('❌ Error loading events:', error);
+                displayNoEvents();
+            }
+        }
+        
+        // Display no events when real events aren't available
+        function displayNoEvents() {
+            const eventsContainer = document.getElementById('events-container');
+            const eventsEmpty = document.getElementById('events-empty');
+            const eventsLoading = document.getElementById('events-loading');
+            
+            if (eventsLoading) eventsLoading.style.display = 'none';
+            if (eventsContainer) eventsContainer.style.display = 'none';
+            if (eventsEmpty) eventsEmpty.style.display = 'block';
+            
+            console.log('📭 No events available');
+        }
+        
+        // Display events in the mockup
+        function displayEvents(events) {
+            const eventsLoading = document.getElementById('events-loading');
+            const eventsContainer = document.getElementById('events-container');
+            const eventsEmpty = document.getElementById('events-empty');
+            
+            // Hide loading state
+            if (eventsLoading) eventsLoading.style.display = 'none';
+            
+            if (!eventsContainer) {
+                console.log('❌ Events container not found');
+                return;
+            }
+            
+            console.log('📅 Displaying events:', events);
+            
+            if (!events || events.length === 0) {
+                // Show empty state
+                if (eventsEmpty) eventsEmpty.style.display = 'block';
+                if (eventsContainer) eventsContainer.style.display = 'none';
+                console.log('📅 No events to display');
+                return;
+            }
+            
+            // Filter events to only show those with images
+            const eventsWithImages = events.filter(event => {
+                const hasImage = event.image && event.image.url && event.image.url !== '';
+                console.log(`📅 Event "${event.name}" has image:`, hasImage);
+                return hasImage;
+            });
+            
+            console.log('📅 Events with images:', eventsWithImages.length);
+            
+            if (eventsWithImages.length === 0) {
+                // Show empty state if no events have images
+                if (eventsEmpty) eventsEmpty.style.display = 'block';
+                if (eventsContainer) eventsContainer.style.display = 'none';
+                console.log('📅 No events with images to display');
+                return;
+            }
+            
+            // Hide empty state and show container
+            if (eventsEmpty) eventsEmpty.style.display = 'none';
+            if (eventsContainer) eventsContainer.style.display = 'grid';
+            
+            let eventsHtml = '';
+            
+            eventsWithImages.forEach((event, index) => {
+                console.log(`📅 Event ${index + 1}:`, event);
+                console.log(`📅 Event name: ${event.name}`);
+                console.log(`📅 Event date: ${event.date}`);
+                console.log(`📅 Event recurringPattern: ${event.recurringPattern}`);
+                
+                const eventImage = event.image.url;
+                
+                // Manual corrections for specific events with wrong dates
+                let correctedDate = event.date;
+                let correctedPattern = event.recurringPattern;
+                
+                if (event.name.toLowerCase().includes("ladywood's legends")) {
+                    correctedDate = '2025-10-18T18:00:00.000Z'; // 18th October
+                    correctedPattern = 'monthly';
+                    console.log('📅 Corrected Ladywood\'s Legends to 18th October, monthly');
+                } else if (event.name.toLowerCase().includes("karaoke with dahlia rivers")) {
+                    // Calculate this Wednesday
+                    const today = new Date();
+                    const daysUntilWednesday = (3 - today.getDay() + 7) % 7; // 3 = Wednesday
+                    const nextWednesday = new Date(today);
+                    nextWednesday.setDate(today.getDate() + daysUntilWednesday);
+                    nextWednesday.setHours(21, 0, 0, 0); // 9 PM
+                    correctedDate = nextWednesday.toISOString();
+                    correctedPattern = 'weekly';
+                    console.log('📅 Corrected Karaoke to this Wednesday:', nextWednesday.toLocaleDateString());
+                }
+                
+                const eventDate = new Date(correctedDate);
+                
+                // Debug date parsing
+                console.log(`📅 Raw date string: "${correctedDate}"`);
+                console.log(`📅 Parsed date object:`, eventDate);
+                console.log(`📅 Date validity:`, !isNaN(eventDate.getTime()));
+                console.log(`📅 Formatted date:`, eventDate.toLocaleDateString('en-GB', { 
+                    weekday: 'short', 
+                    day: 'numeric', 
+                    month: 'short',
+                    year: 'numeric'
+                }));
+                
+                const time = event.time || eventDate.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                // Add recurrence indicator if it's a recurring event
+                let recurrenceBadge = '';
+                if (correctedPattern) {
+                    const pattern = correctedPattern.toLowerCase();
+                    let recurrenceText = '';
+                    
+                    if (pattern.includes('weekly')) {
+                        recurrenceText = 'Weekly';
+                    } else if (pattern.includes('bi-weekly') || pattern.includes('biweekly')) {
+                        recurrenceText = 'Bi-weekly';
+                    } else if (pattern.includes('monthly')) {
+                        recurrenceText = 'Monthly';
+                    } else if (pattern.includes('yearly') || pattern.includes('annual')) {
+                        recurrenceText = 'Yearly';
+                    } else {
+                        recurrenceText = 'Recurring';
+                    }
+                    
+                    recurrenceBadge = `
+                        <div class="inline-flex items-center gap-1 bg-purple-600/20 text-purple-300 px-2 py-1 rounded-full text-xs font-medium border border-purple-500/30">
+                            <i class="fas fa-redo text-xs"></i>
+                            <span>${recurrenceText}</span>
+                        </div>
+                    `;
+                }
+                
+                // Create a more compact event card that fits the venue page style
+                eventsHtml += `
+                    <div class="venue-card p-4 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-pointer" 
+                         onclick="openEventModal(${JSON.stringify(event).replace(/"/g, '&quot;')})">
+                        <div class="flex items-start gap-4">
+                            <img src="${eventImage}" alt="${event.name}" class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="text-lg font-bold text-white truncate">${event.name}</h4>
+                                    ${recurrenceBadge}
+                                </div>
+                                <p class="text-green-300 font-semibold mb-2">
+                                    ${eventDate.toLocaleDateString('en-GB', { 
+                                        weekday: 'short', 
+                                        day: 'numeric', 
+                                        month: 'short',
+                                        year: 'numeric'
+                                    })} @ ${time}
+                                </p>
+                                ${event.description ? `<p class="text-gray-300 text-sm line-clamp-2">${event.description}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            console.log('📅 Generated HTML length:', eventsHtml.length);
+            eventsContainer.innerHTML = eventsHtml;
+            console.log('📅 Events container updated');
+        }
+        
+        // Load Google Places images
+        async function loadGooglePlacesImages() {
+            try {
+                console.log('🖼️ Loading Google Places gallery...');
+                const response = await fetch('/.netlify/functions/get-venue-details-json?slug=the-village-inn');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch venue details');
+                }
+                
+                const data = await response.json();
+                console.log('📸 Gallery data:', data);
+                
+                // Hide loading state
+                const loadingDiv = document.getElementById('gallery-loading');
+                if (loadingDiv) loadingDiv.style.display = 'none';
+                
+                if (data.googlePlaces && data.googlePlaces.images && data.googlePlaces.images.length > 0) {
+                    console.log('✅ Found Google Places images:', data.googlePlaces.images.length);
+                    displayGooglePlacesImages(data.googlePlaces.images);
+                } else {
+                    console.log('📭 No gallery images available');
+                    displayNoImages();
+                }
+            } catch (error) {
+                console.error('❌ Error loading gallery:', error);
+                displayNoImages();
+            }
+        }
+        
+        // Display no images when Google Places images aren't available
+        function displayNoImages() {
+            const loadingDiv = document.getElementById('gallery-loading');
+            const containerDiv = document.getElementById('gallery-container');
+            const errorDiv = document.getElementById('gallery-error');
+            
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (containerDiv) containerDiv.style.display = 'none';
+            if (errorDiv) errorDiv.style.display = 'block';
+            
+            console.log('📭 No gallery images available');
+        }
+        
+        // Display Google Places images
+        function displayGooglePlacesImages(images) {
+            const containerDiv = document.getElementById('gallery-container');
+            if (containerDiv) {
+                let html = '';
+                
+                images.forEach((image, index) => {
+                    html += '<div class="gallery-item bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105" onclick="openImageModal(\'' + image.url + '\')">';
+                    html += '<img src="' + image.url + '" alt="Venue photo" class="w-full h-full object-cover">';
+                    html += '</div>';
+                });
+                
+                containerDiv.innerHTML = html;
+                containerDiv.style.display = 'grid';
+                console.log('✅ Gallery loaded successfully!');
+            }
+        }
+        
+        // Show gallery error
+        function showGalleryError() {
+            const loadingDiv = document.getElementById('gallery-loading');
+            const containerDiv = document.getElementById('gallery-container');
+            const errorDiv = document.getElementById('gallery-error');
+            
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (containerDiv) containerDiv.style.display = 'none';
+            if (errorDiv) errorDiv.style.display = 'block';
+        }
+        
+        // Open image modal
+        function openImageModal(imageUrl) {
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
+            modal.onclick = () => modal.remove();
+            
+            modal.innerHTML = `
+                <img src="${imageUrl}" alt="The Village Inn" class="max-w-4xl max-h-4xl object-contain">
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // Modal functions for event details
+        function openEventModal(eventData) {
+            try {
+                console.log('🔍 Opening modal for event:', eventData);
+                
+                // Show modal overlay and content
+                const modal = document.getElementById('eventModal');
+                const modalContent = modal.querySelector('.modal-content');
+                
+                modal.classList.add('active');
+                modalContent.classList.add('active');
+                document.body.classList.add('modal-open');
+                
+                // Display event details directly
+                displayEventModal(eventData);
+                
+            } catch (error) {
+                console.error('❌ Error opening event modal:', error);
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Error Loading Event</h3>
+                        <p class="text-gray-400">Could not load event details. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayEventModal(event) {
+            console.log('🎭 Displaying event modal for:', event);
+            
+            const modalContent = document.getElementById('modalContent');
+            if (!modalContent) {
+                console.error('❌ Modal content element not found');
+                return;
+            }
+            
+            try {
+                // Safely get event properties with fallbacks
+                const eventName = event.name || 'Unknown Event';
+                
+                // Debug date information
+                console.log('📅 Event date data:', event.date, event.startDate, event.nextDate);
+                
+                // Try different date fields and formats
+                let eventDate;
+                if (event.nextDate) {
+                    eventDate = new Date(event.nextDate);
+                } else if (event.startDate) {
+                    eventDate = new Date(event.startDate);
+                } else if (event.date) {
+                    eventDate = new Date(event.date);
+                } else {
+                    eventDate = new Date();
+                }
+                
+                // Validate the date
+                if (isNaN(eventDate.getTime())) {
+                    console.log('❌ Invalid date, using current date');
+                    eventDate = new Date();
+                }
+                
+                console.log('📅 Parsed event date:', eventDate);
+                console.log('📅 Date validity:', !isNaN(eventDate.getTime()));
+                
+                const eventTime = event.time || eventDate.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                const eventDescription = event.description || 'No description available';
+                const eventVenue = event.venue || 'The Village Inn';
+                const eventPrice = event.price || 'Free';
+                const eventCategories = event.categories || [];
+                const eventImage = event.image && event.image.url ? event.image.url : null;
+                
+                // Add recurrence indicator if it's a recurring event
+                let recurrenceBadge = '';
+                if (event.recurringPattern) {
+                    const pattern = event.recurringPattern.toLowerCase();
+                    let recurrenceText = '';
+                    
+                    if (pattern.includes('weekly')) {
+                        recurrenceText = 'Weekly';
+                    } else if (pattern.includes('bi-weekly') || pattern.includes('biweekly')) {
+                        recurrenceText = 'Bi-weekly';
+                    } else if (pattern.includes('monthly')) {
+                        recurrenceText = 'Monthly';
+                    } else if (pattern.includes('yearly')) {
+                        recurrenceText = 'Yearly';
+                    } else {
+                        recurrenceText = 'Recurring';
+                    }
+                    recurrenceBadge = `<span class="inline-block bg-teal-400/10 text-teal-300 text-xs font-semibold px-2 py-1 rounded-full">${recurrenceText}</span>`;
+                }
+                
+                                modalContent.innerHTML = `
+                    <!-- Hero Image with Title Overlay -->
+                    <div class="hero-image-container aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative rounded-t-[20px] overflow-hidden cursor-pointer" onclick="openImageLightbox('${eventImage}', '${eventName}')">
+                        <img src="${eventImage}" alt="${eventName}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+                        <!-- Title and Tags Overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-12 pointer-events-none">
+                            <h1 class="text-6xl font-bold text-white mb-6 leading-tight drop-shadow-2xl">${eventName}</h1>
+                            <div class="flex flex-wrap gap-2">
+                                ${eventCategories.length > 0 ? 
+                                    eventCategories.map(category => 
+                                        `<span class="inline-block bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full border border-white/30">${category}</span>`
+                                    ).join('') : 
+                                    '<span class="inline-block bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full border border-white/30">Event</span>'
+                                }
+                                ${event.recurringPattern ? 
+                                    `<span class="inline-block bg-teal-400/20 backdrop-blur-sm text-teal-300 text-sm px-3 py-1 rounded-full border border-teal-400/30">${getRecurrenceText(event.recurringPattern)}</span>` : 
+                                    ''
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Container with Padding -->
+                    <div style="padding: 24px;">
+                            </div>
+
+                            <!-- Event Content -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <!-- Main Content -->
+                                <div class="lg:col-span-2">
+                                    <div class="venue-card p-6 mb-6 rounded-xl">
+                                        <h2 class="text-2xl font-bold text-white mb-4">
+                                            <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                                        </h2>
+                                        <div class="text-gray-300 leading-relaxed">
+                                            ${formatEventDescription(eventDescription)}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Share Event -->
+                                    <div class="venue-card p-6 rounded-xl">
+                                        <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                                            <i class="fas fa-share mr-2"></i>Share with Friends
+                                        </button>
+                                    </div>
+                                </div>
+
+                                                                <!-- Sidebar -->
+                                <div class="space-y-6">
+                                    <!-- Date & Time -->
+                                    <div class="venue-card p-6 rounded-xl">
+                                        <h3 class="text-xl font-bold text-white mb-4">
+                                            <i class="fas fa-calendar mr-2 text-accent-color"></i>Date & Time
+                                        </h3>
+                                        <p class="text-2xl font-semibold text-white">${eventDate.toLocaleDateString('en-GB', { 
+                                            weekday: 'long', 
+                                            day: 'numeric', 
+                                            month: 'long', 
+                                            year: 'numeric'
+                                        })}</p>
+                                        <p class="text-xl text-gray-400">${eventTime}</p>
+                                    </div>
+
+                                    <!-- Location -->
+                                    <div class="venue-card p-6 rounded-xl">
+                                        <h3 class="text-xl font-bold text-white mb-4">
+                                            <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>Location
+                                        </h3>
+                                        <div class="space-y-3">
+                                            <div>
+                                                <h4 class="font-semibold text-white">${eventVenue}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add to Calendar -->
+                                    <div class="venue-card p-6 rounded-xl">
+                                        <h3 class="text-xl font-bold text-white mb-4">
+                                            <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                                        </h3>
+                                        <div class="space-y-3">
+                                            <a href="#" onclick="addToGoogleCalendar('${eventName}', '${eventDate.toISOString()}', '${eventTime}', '${eventVenue}', '${eventDescription}')" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                                <i class="fab fa-google mr-2"></i>Google Calendar
+                                            </a>
+                                            <a href="#" onclick="downloadICS('${eventName}', '${eventDate.toISOString()}', '${eventTime}', '${eventVenue}', '${eventDescription}')" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                                <i class="fas fa-calendar-plus mr-2"></i>Apple/Outlook/Other
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Close Button -->
+                                    <button onclick="closeEventModal()" class="btn-secondary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                                        <i class="fas fa-times mr-2"></i>Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                console.log('✅ Modal content updated successfully');
+                
+            } catch (error) {
+                console.error('❌ Error displaying event modal:', error);
+                modalContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Error Loading Event</h3>
+                        <p class="text-gray-400">Could not load event details. Please try again.</p>
+                        <button class="btn-secondary mt-4" onclick="closeEventModal()">
+                            <i class="fas fa-times mr-2"></i>Close
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('eventModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modal.classList.remove('active');
+            modalContent.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Calendar functions
+        function addToGoogleCalendar(eventName, eventDate, eventTime, eventVenue, eventDescription) {
+            const date = new Date(eventDate);
+            const startDate = date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            const endDate = new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            
+            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventVenue)}`;
+            
+            window.open(googleCalendarUrl, '_blank');
+        }
+
+        function downloadICS(eventName, eventDate, eventTime, eventVenue, eventDescription) {
+            const date = new Date(eventDate);
+            const startDate = date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            const endDate = new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//BrumOutLoud//Event Calendar//EN',
+                'BEGIN:VEVENT',
+                `UID:${Date.now()}@brumoutloud.co.uk`,
+                `DTSTART:${startDate}`,
+                `DTEND:${endDate}`,
+                `SUMMARY:${eventName}`,
+                `DESCRIPTION:${eventDescription}`,
+                `LOCATION:${eventVenue}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${eventName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function getRecurrenceText(pattern) {
+            const patternLower = pattern.toLowerCase();
+            if (patternLower.includes('weekly')) {
+                return 'Weekly';
+            } else if (patternLower.includes('bi-weekly') || patternLower.includes('biweekly')) {
+                return 'Bi-weekly';
+            } else if (patternLower.includes('monthly')) {
+                return 'Monthly';
+            } else if (patternLower.includes('yearly')) {
+                return 'Yearly';
+            } else {
+                return 'Recurring';
+            }
+        }
+
+        function formatEventDescription(description) {
+            if (!description) return '';
+            
+            return description
+                .trim() // Remove leading/trailing whitespace
+                // Convert line breaks to <br> tags
+                .replace(/\n/g, '<br>')
+                // Convert **bold** to <strong>
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Convert *italic* to <em>
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Convert `code` to <code>
+                .replace(/`(.*?)`/g, '<code class="bg-gray-800 px-1 py-0.5 rounded text-sm">$1</code>')
+                // Convert [link text](url) to <a> tags
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-accent-color hover:underline">$1</a>');
+        }
+
+        function openImageLightbox(imageUrl, imageAlt) {
+            console.log('🔍 Opening lightbox for:', imageUrl, imageAlt);
+            
+            const lightbox = document.getElementById('imageLightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            const lightboxCaption = document.getElementById('lightboxCaption');
+            
+            if (!lightbox || !lightboxImage || !lightboxCaption) {
+                console.error('❌ Lightbox elements not found');
+                return;
+            }
+            
+            lightboxImage.src = imageUrl;
+            lightboxImage.alt = imageAlt;
+            lightboxCaption.textContent = imageAlt;
+            
+            lightbox.classList.add('active');
+            document.body.classList.add('lightbox-open');
+            
+            console.log('✅ Lightbox opened successfully');
+        }
+
+        function closeImageLightbox() {
+            const lightbox = document.getElementById('imageLightbox');
+            lightbox.classList.remove('active');
+            document.body.classList.remove('lightbox-open');
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up modal event listeners
+            const eventModal = document.getElementById('eventModal');
+            if (eventModal) {
+                // Close modal when clicking overlay
+                eventModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeEventModal();
+                    }
+                });
+            }
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeEventModal();
+                    closeImageLightbox();
+                }
+            });
+
+            // Close lightbox when clicking outside
+            const imageLightbox = document.getElementById('imageLightbox');
+            if (imageLightbox) {
+                imageLightbox.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeImageLightbox();
+                    }
+                });
+            }
+            
+            // Load real data
+            console.log('🚀 DOMContentLoaded - Starting data load...');
+            try {
+                loadRealData();
+            } catch (error) {
+                console.error('❌ Error in DOMContentLoaded:', error);
+            }
+        });
+    </script>
+    
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-content w-full max-w-4xl">
+            <button class="modal-close" onclick="closeEventModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox -->
+    <div id="imageLightbox" class="image-lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeImageLightbox()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightboxImage" class="lightbox-image" src="" alt="">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+    </body>
+</html>

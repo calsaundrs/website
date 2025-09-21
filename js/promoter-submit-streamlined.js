@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 handlePosterUpload(files[0]);
             }
         });
-        
+
         posterUpload.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 handlePosterUpload(e.target.files[0]);
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     function validateForm() {
         const errors = [];
         

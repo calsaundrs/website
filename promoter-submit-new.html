@@ -45,7 +45,7 @@
             transform: translateY(-1px);
         }
     </style>
-</head>
+    </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <!-- Header -->
     <header class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
@@ -132,7 +132,7 @@
                                    class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
                                    placeholder="Enter your event name">
                         </div>
-                        
+
                         <div class="md:col-span-2">
                             <label for="description" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-align-left mr-1"></i>Description *
@@ -141,7 +141,7 @@
                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
                                       placeholder="Tell us about your event..."></textarea>
                         </div>
-                        
+
                         <div>
                             <label for="date" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-calendar mr-1"></i>Event Date *
@@ -149,7 +149,7 @@
                             <input type="date" id="date" name="date" required
                                    class="form-input w-full px-4 py-3 rounded-lg text-white">
                         </div>
-                        
+
                         <div>
                             <label for="start-time" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-clock mr-1"></i>Start Time *
@@ -157,7 +157,7 @@
                             <input type="time" id="start-time" name="start-time" required
                                    class="form-input w-full px-4 py-3 rounded-lg text-white">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-tags mr-1"></i>Categories *
@@ -254,7 +254,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div>
                             <label for="link" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
@@ -282,7 +282,7 @@
                                    placeholder="Start typing to search venues...">
                             <input type="hidden" id="venue-id" name="venue-id">
                         </div>
-                        
+
                         <div id="venue-results" class="hidden space-y-2 max-h-48 overflow-y-auto"></div>
                         
                         <div id="selected-venue-details" class="hidden p-4 bg-gray-800/50 rounded-lg border border-gray-600">
@@ -292,7 +292,7 @@
                                 <i class="fas fa-edit mr-1"></i>Change venue
                             </button>
                         </div>
-                        
+
                         <div class="text-center">
                             <button type="button" id="add-new-venue" class="btn-secondary px-6 py-3 rounded-lg">
                                 <i class="fas fa-plus mr-2"></i>Add New Venue
@@ -313,37 +313,37 @@
                             <label for="is-recurring" class="text-lg font-semibold">
                                 This is a recurring event
                             </label>
-                        </div>
-                        
+                    </div>
+
                         <div id="recurring-config" class="hidden space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label class="block text-sm font-semibold mb-3">Recurrence Pattern *</label>
                                     <div class="space-y-2">
-                                        <label class="flex items-center">
+                                <label class="flex items-center">
                                             <input type="radio" name="recurring-pattern" value="weekly" class="mr-2">
                                             <span>Weekly</span>
-                                        </label>
-                                        <label class="flex items-center">
+                                </label>
+                                <label class="flex items-center">
                                             <input type="radio" name="recurring-pattern" value="bi-weekly" class="mr-2">
                                             <span>Bi-weekly</span>
-                                        </label>
-                                        <label class="flex items-center">
+                                </label>
+                                <label class="flex items-center">
                                             <input type="radio" name="recurring-pattern" value="monthly" class="mr-2">
                                             <span>Monthly</span>
-                                        </label>
-                                        <label class="flex items-center">
+                                </label>
+                                <label class="flex items-center">
                                             <input type="radio" name="recurring-pattern" value="yearly" class="mr-2">
                                             <span>Yearly</span>
-                                        </label>
-                                        <label class="flex items-center">
+                                </label>
+                                <label class="flex items-center">
                                             <input type="radio" name="recurring-pattern" value="custom" class="mr-2">
                                             <span>Custom</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div>
+                                </label>
+                            </div>
+                        </div>
+
+                            <div>
                                     <label for="recurring-start-date" class="block text-sm font-semibold mb-2">
                                         Start Date *
                                     </label>
@@ -378,8 +378,8 @@
                                 <textarea id="custom-recurrence-desc" name="custom-recurrence-desc" rows="2"
                                           class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
                                           placeholder="e.g., Every other Tuesday, First Friday of the month..."></textarea>
-                            </div>
-                            
+                        </div>
+
                             <div class="bg-gray-800/50 p-4 rounded-lg">
                                 <h3 class="font-semibold mb-2 text-purple-400">Preview</h3>
                                 <div id="recurring-preview" class="text-sm text-gray-300">
@@ -426,7 +426,7 @@
                         <div id="submit-loader" class="hidden">
                             <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
                         </div>
-                    </button>
+                        </button>
                 </div>
             </form>
         </div>

@@ -336,8 +336,8 @@
                             </div>
                     </div>
 
-                        <!-- Back to Events -->
-                        <a href="/events" class="btn-secondary btn-back text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
+                        <!-- Back Button -->
+                        <a href="/events" id="backButton" class="btn-secondary btn-back text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
                             <i class="fas fa-arrow-left arrow mr-2"></i>Back to Events
                         </a>
                     </div>
@@ -399,6 +399,24 @@
                 const dateString = element.getAttribute('data-date');
                 element.textContent = formatDate(dateString);
             });
+            
+            // Handle dynamic back button
+            const urlParams = new URLSearchParams(window.location.search);
+            const ref = urlParams.get('ref');
+            const venue = urlParams.get('venue');
+            
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                if (ref === 'venue' && venue) {
+                    // User came from a venue page, go back to that venue
+                    backButton.href = `/venue/${venue}`;
+                    backButton.innerHTML = '<i class="fas fa-arrow-left arrow mr-2"></i>Back to Venue';
+                } else {
+                    // Default: go back to events page
+                    backButton.href = '/events';
+                    backButton.innerHTML = '<i class="fas fa-arrow-left arrow mr-2"></i>Back to Events';
+                }
+            }
         });
     </script>
 </body>

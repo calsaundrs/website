@@ -98,6 +98,12 @@ BrumOutLoud is a comprehensive events platform designed to be the go-to resource
 - Git
 - Accounts for: Firebase, Cloudinary, Google Cloud
 
+### Venues Data
+
+The venues listing page (`all-venues.html`) uses hardcoded venue data for maximum performance and reliability. Since venues don't change frequently, this approach eliminates all API dependencies and ensures instant loading.
+
+To update venue information, simply edit the hardcoded data in the `initializePage()` function within `all-venues.html`.
+
 ### Installation
 
 1. **Clone and install:**
