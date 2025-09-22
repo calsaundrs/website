@@ -7,7 +7,7 @@
   functions = "netlify/functions"
   command = "npm run build:css"
   # Specify Node.js version to match package requirements
-  environment = { NODE_VERSION = "20", NETLIFY_BUILD_TIMEOUT = "900", NETLIFY_FUNCTION_TIMEOUT = "30" }
+  environment = { NODE_VERSION = "20", NETLIFY_BUILD_TIMEOUT = "1800", NETLIFY_FUNCTION_TIMEOUT = "30" }
 
 # Specifies how serverless functions are handled
 [functions]
@@ -32,7 +32,20 @@
     "react",
     "react-dom",
     "sharp",
-    "canvas"
+    "canvas",
+    "firebase-admin",
+    "firebase",
+    "resend",
+    "cloudinary",
+    "airtable",
+    "formidable",
+    "lambda-multipart-parser",
+    "node-fetch",
+    "parse-multipart",
+    "uuid",
+    "xlsx",
+    "handlebars",
+    "cheerio"
   ]
 
 
@@ -177,6 +190,25 @@
 
 [functions."scheduled-event-reminders"]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
+
+# Function-specific optimizations for large functions
+[functions."get-venue-details-firestore"]
+  timeout = 30
+
+[functions."get-event-details"]
+  timeout = 30
+
+[functions."get-venue-details"]
+  timeout = 30
+
+[functions."venue-ssg-fallback"]
+  timeout = 30
+
+[functions."get-event-details-dynamic"]
+  timeout = 30
+
+[functions."get-events-firestore"]
+  timeout = 30
 
 # Environment Variables (add these to your Netlify dashboard)
 [context.production.environment]
