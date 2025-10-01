@@ -79,7 +79,7 @@ class EmailTemplates {
         table { border-collapse: collapse; border-spacing: 0; }
         img { border: 0; line-height: 100%; text-decoration: none; }
 
-        .wrapper { width: 100%; padding: 48px 0; background: ${this.elements.overlayPattern}; }
+        .wrapper { width: 100%; padding: 44px 0; background: linear-gradient(160deg, rgba(8,11,20,0.92) 0%, rgba(26,14,46,0.9) 100%); }
 
         .container {
             width: 100%;
@@ -110,8 +110,8 @@ class EmailTemplates {
             align-items: center;
             gap: 12px;
             font-family: ${this.fonts.heading};
-            font-size: 30px;
-            letter-spacing: 0.08em;
+            font-size: 28px;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
         }
 
@@ -125,11 +125,11 @@ class EmailTemplates {
         .subject-chip {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
+            gap: 6px;
+            padding: 6px 12px;
             border-radius: 9999px;
             font-size: 11px;
-            letter-spacing: 0.16em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             background: ${this.elements.chipBackground};
             border: 1px solid ${this.elements.chipBorder};
@@ -137,14 +137,14 @@ class EmailTemplates {
         }
 
         .content {
-            padding: 34px;
+            padding: 32px;
             background: rgba(10, 12, 21, 0.92);
         }
 
         .panel {
             background: rgba(17, 24, 39, 0.86);
             border-radius: 18px;
-            padding: 26px;
+            padding: 24px;
             border: 1px solid rgba(148, 163, 184, 0.22);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
@@ -307,13 +307,13 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td style="font-size:22px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:10px;">
-            We’ve got “${eventName}”. It’s officially on our radar.
+          <td style="font-size:20px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:10px;">
+            “${eventName}” has landed in our review queue.
           </td>
         </tr>
         <tr>
           <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
-            Thanks for trusting Brum Outloud with your night. Our team will give it a thorough review—no robots, just local legends.
+            Thanks for submitting your event. The team will review the details and make sure everything’s ready for listing.
           </td>
         </tr>
         ${promoImage ? `
@@ -351,7 +351,7 @@ class EmailTemplates {
         </tr>
         <tr>
           <td style="padding-top:20px;color:${this.colors.textSecondary};font-size:14px;line-height:1.8;">
-            <strong style="color:${this.colors.textPrimary};">What happens now:</strong> we’ll check the details, polish the listing, and either hit you with an approval high-five or let you know if anything needs tweaking. Expect an update soon.
+            We’ll let you know as soon as the listing goes live or if anything needs adjusting. Keep an eye on your inbox.
           </td>
         </tr>
         <tr>
@@ -379,13 +379,13 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td style="font-size:22px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+          <td style="font-size:20px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
             “${eventName}” is live on Brum Outloud.
           </td>
         </tr>
         <tr>
           <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
-            Time to shout about it. Your page is ready to share with your crowd, the community, and anyone who needs a night out.
+            Your listing is published and ready to share. Use the link below wherever you promote your event.
           </td>
         </tr>
         ${promoImage ? `
@@ -422,7 +422,7 @@ class EmailTemplates {
         </tr>` : ''}
         <tr>
           <td style="padding-top:20px;color:${this.colors.textSecondary};font-size:14px;line-height:1.7;">
-            Next moves: drop the link on socials, tag <strong style="color:${this.colors.textPrimary};">@brumoutloud</strong>, and ping any collaborators.
+            Share the link across your channels and tag <strong style="color:${this.colors.textPrimary};">@brumoutloud</strong> if you’d like us to amplify it.
           </td>
         </tr>
         <tr>
@@ -446,13 +446,13 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td style="font-size:20px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Let’s polish “${eventName}” together.
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            We need a quick update for “${eventName}”.
           </td>
         </tr>
         <tr>
           <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
-            A quick update now means a stronger listing later. Tweak the point below and resubmit when you’re ready—we’ll fast-track the follow-up.
+            Please review the note below and resubmit when ready. Once we receive the update we’ll check it again promptly.
           </td>
         </tr>
         <tr>
@@ -486,13 +486,13 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td style="font-size:20px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Your event is nearly here: “${eventName}”.
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            Reminder: “${eventName}” is almost here.
           </td>
         </tr>
         <tr>
           <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
-            Tomorrow’s the night. A couple of quick moves will keep the energy high and the doors buzzing.
+            A few final checks can help the night run smoothly.
           </td>
         </tr>
         <tr>
@@ -534,8 +534,8 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td style="font-size:20px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Fresh drop: “${eventName}”.
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            New submission: “${eventName}”.
           </td>
         </tr>
         <tr>
