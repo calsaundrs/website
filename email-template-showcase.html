@@ -417,49 +417,70 @@
                 eventName: 'Pride Night at The Village Inn',
                 eventId: 'pride-night-2024-001',
                 eventUrl: 'https://brumoutloud.co.uk/event/pride-night-village-inn',
-                eventDate: '2024-01-15 at 20:00',
+                eventDate: '2025-11-15',
+                eventTime: '19:30',
                 promoterEmail: 'promoter@example.com',
-                reason: 'Please provide more details about your event, including venue information and a clear description of what attendees can expect.'
+                venueName: 'The Village Inn',
+                promoImage: 'https://res.cloudinary.com/demo/image/upload/v1697040000/sample-nightlife-poster.jpg',
+                reason: 'Please add a brief event description and confirm the venue address so attendees know what to expect.'
             };
 
             let data = {};
+            let subject = '';
             switch (currentTemplateType) {
                 case 'submission_confirmation':
                     data = {
                         promoterEmail: emailAddress,
                         eventName: sampleData.eventName,
-                        eventId: sampleData.eventId
+                        eventId: sampleData.eventId,
+                        eventDate: sampleData.eventDate,
+                        eventTime: sampleData.eventTime,
+                        promoImage: sampleData.promoImage,
+                        venueName: sampleData.venueName
                     };
+                    subject = `✅ Event submitted – "${sampleData.eventName}"`;
                     break;
                 case 'approval_notification':
                     data = {
-                        promoterEmail: emailAddress,
                         eventName: sampleData.eventName,
-                        eventUrl: sampleData.eventUrl
+                        eventUrl: sampleData.eventUrl,
+                        promoImage: sampleData.promoImage,
+                        eventDate: sampleData.eventDate,
+                        venueName: sampleData.venueName
                     };
+                    subject = `🎉 Event approved – "${sampleData.eventName}"`;
                     break;
                 case 'rejection_notification':
                     data = {
-                        promoterEmail: emailAddress,
                         eventName: sampleData.eventName,
                         reason: sampleData.reason
                     };
+                    subject = `⚠️ Update needed – "${sampleData.eventName}"`;
                     break;
                 case 'event_reminder':
                     data = {
-                        promoterEmail: emailAddress,
                         eventName: sampleData.eventName,
                         eventDate: sampleData.eventDate,
+                        eventTime: sampleData.eventTime,
                         eventUrl: sampleData.eventUrl
                     };
+                    subject = `📅 Reminder: ${sampleData.eventName}`;
                     break;
                 case 'admin_submission_alert':
                     data = {
                         eventName: sampleData.eventName,
                         promoterEmail: sampleData.promoterEmail,
-                        eventId: sampleData.eventId
+                        eventId: sampleData.eventId,
+                        promoImage: sampleData.promoImage,
+                        eventDate: sampleData.eventDate,
+                        eventTime: sampleData.eventTime
                     };
+                    subject = `🔔 New submission – "${sampleData.eventName}"`;
                     break;
+            }
+
+            if (!subject) {
+                subject = `Brum Outloud test – ${currentTemplateType}`;
             }
 
             try {
@@ -469,8 +490,11 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        type: currentTemplateType,
-                        data: data
+                        to: emailAddress,
+                        subject,
+                        template: currentTemplateType,
+                        templateData: data,
+                        type: currentTemplateType
                     })
                 });
 
