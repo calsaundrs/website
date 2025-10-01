@@ -81,7 +81,7 @@ class NotificationService {
 
     return {
       html,
-      text: emailService.templates.getPlainTextVersion(html),
+      text: emailService.templates.generatePlainText(name, data) || emailService.templates.getPlainTextVersion(html),
     };
   }
 
