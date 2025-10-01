@@ -13,7 +13,7 @@
 [functions]
   # Main directory for all serverless functions
   directory = "netlify/functions/"
-  node_bundler = "esbuild"
+  node_bundler = "nft"
   external_node_modules = [
     "@remotion/compositor-win32-x64-msvc",
     "@remotion/compositor-darwin-x64", 
