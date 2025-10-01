@@ -470,16 +470,23 @@ exports.handler = async function (event, context) {
         
         // Send email notifications
         try {
+            const NotificationService = require('./services/notification-service');
+            const notificationService = new NotificationService();
             const emailService = new EmailService();
             const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
             
             if (promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk') {
                 // Send submission confirmation to promoter
-                await emailService.sendSubmissionConfirmation(
-                    promoterEmail,
-                    firestoreData.name,
-                    firestoreDoc.id
-                );
+                await notificationService.sendEmailNotification({
+                    to: promoterEmail,
+                    subject: `✅ Event Submitted Successfully - "${firestoreData.name}"`,
+                    template: 'submission_confirmation',
+                    templateData: {
+                        eventName: firestoreData.name,
+                        eventId: firestoreDoc.id,
+                    },
+                    type: 'submission_confirmation'
+                });
                 console.log('✅ Submission confirmation email sent to:', promoterEmail);
                 
                 // Send admin notification

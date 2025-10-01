@@ -26,60 +26,18 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { type, data } = JSON.parse(event.body);
-    const emailService = new EmailService();
+    const { to, subject, html, text, template, templateData, type } = JSON.parse(event.body);
+    const notificationService = new (require('./services/notification-service'))();
 
-    let result;
-
-    switch (type) {
-      case 'submission_confirmation':
-        result = await emailService.sendSubmissionConfirmation(
-          data.promoterEmail,
-          data.eventName,
-          data.eventId
-        );
-        break;
-
-      case 'approval_notification':
-        result = await emailService.sendApprovalNotification(
-          data.promoterEmail,
-          data.eventName,
-          data.eventUrl
-        );
-        break;
-
-      case 'rejection_notification':
-        result = await emailService.sendRejectionNotification(
-          data.promoterEmail,
-          data.eventName,
-          data.reason
-        );
-        break;
-
-      case 'event_reminder':
-        result = await emailService.sendEventReminder(
-          data.promoterEmail,
-          data.eventName,
-          data.eventDate,
-          data.eventUrl
-        );
-        break;
-
-      case 'admin_submission_alert':
-        result = await emailService.sendAdminSubmissionAlert(
-          data.eventName,
-          data.promoterEmail,
-          data.eventId
-        );
-        break;
-
-      default:
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({ error: 'Invalid email type' })
-        };
-    }
+    const result = await notificationService.sendEmailNotification({
+      to,
+      subject,
+      html,
+      text,
+      template,
+      templateData,
+      type,
+    });
 
     return {
       statusCode: 200,

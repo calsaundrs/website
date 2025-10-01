@@ -1,20 +1,19 @@
 const { Resend } = require('resend');
-const admin = require('firebase-admin');
+const { admin } = require('../utils/firebase-admin');
+const crypto = require('crypto');
 const EmailTemplates = require('./email-templates');
 
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
-}
-
 const db = admin.firestore();
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
+if (!resendApiKey) {
+  console.warn('⚠️ RESEND_API_KEY is not configured. Email delivery is disabled.');
+}
 
 class EmailService {
   constructor() {
-    this.fromEmail = 'Brum Outloud <hello@brumoutloud.co.uk>';
+    this.fromEmail = 'Brum Outloud <hello@email.brumoutloud.co.uk>';
     this.adminEmail = process.env.ADMIN_EMAIL || 'admin@brumoutloud.co.uk';
     this.templates = new EmailTemplates();
   }
@@ -23,7 +22,24 @@ class EmailService {
    * Send email using Resend API
    */
   async sendEmail(to, subject, htmlContent, textContent = null) {
+    const messageId = crypto.randomUUID();
+    const logDetails = {
+      to,
+      subject,
+      messageId,
+      sentAt: new Date(),
+      content: { html: htmlContent, text: textContent },
+      metadata: {
+        attempt: 1,
+        provider: 'resend',
+      },
+    };
+
     try {
+      if (!resend) {
+        throw new Error('Resend API key missing. Set RESEND_API_KEY to enable email delivery.');
+      }
+
       const emailData = {
         from: this.fromEmail,
         to: [to],
@@ -35,31 +51,37 @@ class EmailService {
       console.log('📧 Sending email:', { to, subject });
       
       const result = await resend.emails.send(emailData);
-      
-      // Log email to Firestore
-      await this.logEmail({
-        to,
-        subject,
-        status: 'sent',
-        messageId: result.data?.id,
-        sentAt: new Date(),
-        content: { html: htmlContent, text: textContent }
+      const providerId = result.data?.id;
+
+      console.log('📨 Resend response:', {
+        id: providerId,
+        status: result.data?.status || 'unknown',
+        deliverAt: result.data?.deliver_at || null,
       });
 
-      console.log('✅ Email sent successfully:', result.data?.id);
-      return { success: true, messageId: result.data?.id };
+      await this.logEmail({
+        ...logDetails,
+        providerMessageId: providerId,
+        status: 'sent',
+      });
+
+      console.log('✅ Email sent successfully:', providerId);
+      return { success: true, messageId: providerId || messageId };
       
     } catch (error) {
-      console.error('❌ Email sending failed:', error);
+      console.error('❌ Email sending failed:', {
+        message: error.message,
+        status: error.statusCode || error.code,
+        details: error.body || error.response?.body || null,
+      });
       
-      // Log failed email
       await this.logEmail({
-        to,
-        subject,
+        ...logDetails,
         status: 'failed',
-        error: error.message,
-        sentAt: new Date(),
-        content: { html: htmlContent, text: textContent }
+        error: {
+          message: error.message,
+          stack: error.stack,
+        },
       });
 
       return { success: false, error: error.message };

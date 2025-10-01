@@ -1,12 +1,5 @@
-const admin = require('firebase-admin');
-const EmailService = require('./services/email-service');
-
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
-}
+const { admin } = require('./utils/firebase-admin');
+const NotificationService = require('./services/notification-service');
 
 const db = admin.firestore();
 
@@ -37,8 +30,7 @@ exports.handler = async function (event, context) {
             };
         }
         
-        // Send email notification using the new email service
-        const emailService = new EmailService();
+        const notificationService = new NotificationService();
         let emailResult;
 
         if (newStatus === 'Approved') {
@@ -48,17 +40,27 @@ exports.handler = async function (event, context) {
             const slug = docData.slug;
             const liveUrl = slug ? `https://brumoutloud.co.uk/${type.toLowerCase()}/${slug}` : `https://brumoutloud.co.uk`;
             
-            emailResult = await emailService.sendApprovalNotification(
-                contactEmail,
-                name,
-                liveUrl
-            );
+            emailResult = await notificationService.sendEmailNotification({
+                to: contactEmail,
+                subject: `🎉 ${type} Approved - "${name}"`,
+                template: 'approval_notification',
+                templateData: {
+                    eventName: name,
+                    eventUrl: liveUrl,
+                },
+                type: 'approval_notification',
+            });
         } else if (newStatus === 'Rejected') {
-            emailResult = await emailService.sendRejectionNotification(
-                contactEmail,
-                name,
-                reason || 'Please review your submission and ensure all required information is provided.'
-            );
+            emailResult = await notificationService.sendEmailNotification({
+                to: contactEmail,
+                subject: `⚠️ ${type} Update - "${name}"`,
+                template: 'rejection_notification',
+                templateData: {
+                    eventName: name,
+                    reason: reason || 'Please review your submission and ensure all required information is provided.',
+                },
+                type: 'rejection_notification',
+            });
         }
 
         if (emailResult && emailResult.success) {

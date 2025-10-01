@@ -37,9 +37,9 @@ exports.handler = async function(event, context) {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     
     const snapshot = await db.collection('system_notifications')
-      .where('timestamp', '>=', oneDayAgo)
-      .orderBy('timestamp', 'desc')
-      .limit(50)
+      .where('createdAt', '>=', oneDayAgo)
+      .orderBy('createdAt', 'desc')
+      .limit(100)
       .get();
     
     const notifications = [];
@@ -52,7 +52,7 @@ exports.handler = async function(event, context) {
         message: data.message,
         severity: data.severity,
         details: data.details,
-        timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString(),
+        timestamp: data.createdAt ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
         status: data.status || 'New'
       });
     });
