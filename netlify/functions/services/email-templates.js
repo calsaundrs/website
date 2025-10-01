@@ -60,9 +60,7 @@ class EmailTemplates {
     <meta charset="UTF-8">
     <title>${title}</title>
     <style>
-        :root {
-            color-scheme: dark;
-        }
+        :root { color-scheme: dark; }
 
         html, body {
             margin: 0;
@@ -74,198 +72,103 @@ class EmailTemplates {
             color: ${this.colors.textPrimary};
         }
 
-        table {
-            border-collapse: collapse;
-            border-spacing: 0;
-        }
+        table { border-collapse: collapse; border-spacing: 0; }
+        img { border: 0; line-height: 100%; text-decoration: none; }
 
-        img {
-            border: 0;
-            line-height: 100%;
-            text-decoration: none;
-        }
-
-        .wrapper {
-            width: 100%;
-            padding: 40px 0;
-        }
+        .wrapper { width: 100%; padding: 40px 0; }
 
         .container {
             width: 100%;
-            max-width: ${this.layout.maxWidth}px;
+            max-width: 620px;
             margin: 0 auto;
-            background: ${this.colors.panel};
-            border-radius: ${this.layout.borderRadius}px;
+            background: rgba(17, 24, 39, 0.88);
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
             overflow: hidden;
-            border: ${this.layout.glassBorder};
-            box-shadow: ${this.layout.shadow};
         }
 
-        .header {
-            position: relative;
-            background: ${this.gradients.primary};
-            padding: 56px 32px 64px;
-            text-align: center;
-            color: #ffffff;
+        .masthead {
+            padding: 24px 32px;
+            background: rgba(8, 11, 20, 0.75);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.18);
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: ${this.elements.overlayPattern};
-            opacity: 0.7;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .brand-chip {
+        .brand {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 22px;
-            border-radius: 9999px;
-            background: rgba(0, 0, 0, 0.22);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-        }
-
-        .brand-text {
+            gap: 10px;
             font-family: ${this.fonts.heading};
-            font-size: 36px;
+            font-size: 26px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
 
-        .tagline {
-            margin-top: 22px;
-            letter-spacing: 0.18em;
+        .subject-line {
+            margin-top: 6px;
+            font-size: 13px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .headline {
-            margin-top: 30px;
-            font-family: ${this.fonts.heading};
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            font-size: 40px;
-            line-height: 1.15;
-            max-width: 440px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .headline span {
-            color: ${this.colors.accent};
+            color: ${this.colors.textMuted};
         }
 
         .content {
-            padding: 48px ${this.layout.padding}px;
-            background: rgba(8, 11, 20, 0.65);
+            padding: 32px;
+            background: rgba(12, 16, 29, 0.9);
         }
 
         .panel {
-            background: rgba(15, 23, 42, 0.72);
-            border-radius: 20px;
-            padding: 32px;
+            background: rgba(17, 24, 39, 0.82);
+            border-radius: 16px;
+            padding: 24px;
             border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-
-        .divider {
-            height: 1px;
-            background: ${this.elements.dividerGradient};
-            border-radius: 9999px;
-            margin: 36px 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
         .footer {
-            background: rgba(7, 10, 20, 0.9);
-            padding: 40px ${this.layout.padding}px;
-            text-align: center;
+            padding: 24px 32px 30px;
+            background: rgba(8, 11, 20, 0.82);
             border-top: 1px solid rgba(148, 163, 184, 0.18);
+            text-align: center;
         }
 
         .footer-links {
             display: inline-flex;
-            gap: 18px;
-            padding: 12px 22px;
+            gap: 16px;
+            padding: 10px 18px;
             border-radius: 9999px;
             background: rgba(17, 24, 39, 0.65);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            margin-bottom: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            margin-bottom: 18px;
         }
 
         .footer-link {
             color: ${this.colors.textSecondary};
             text-decoration: none;
-            font-size: 13px;
-            letter-spacing: 0.06em;
+            font-size: 12px;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
         }
 
-        .footer-text {
+        .footer-copy {
             color: ${this.colors.textMuted};
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.8;
-            margin-bottom: 24px;
-        }
-
-        .social-row {
-            display: inline-flex;
-            gap: 16px;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: ${this.gradients.primary};
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 18px;
         }
 
         .unsubscribe {
             display: inline-block;
-            margin-top: 18px;
+            margin-top: 16px;
             color: ${this.colors.textMuted};
             text-decoration: none;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         @media (max-width: 640px) {
-            body {
-                padding: 0;
-            }
-
-            .wrapper {
-                padding: 24px 0;
-            }
-
-            .container {
-                border-radius: 0;
-            }
-
-            .content {
-                padding: 32px 24px;
-            }
-
-            .panel {
-                padding: 28px 24px;
-            }
-
-            .headline {
-                font-size: 32px;
-            }
+            .wrapper { padding: 24px 0; }
+            .container { border-radius: 0; }
+            .content { padding: 24px; }
+            .panel { padding: 20px; }
         }
     </style>
 </head>
@@ -275,14 +178,9 @@ class EmailTemplates {
             <td align="center">
                 <table role="presentation" class="container" width="100%">
                     <tr>
-                        <td class="header">
-                            <div class="header-content">
-                                <span class="brand-chip">
-                                    <span class="brand-text">BRUM OUTLOUD</span>
-                                </span>
-                                <div class="tagline">BE SEEN · BE HEARD · BE PROUD</div>
-                                <div class="headline">${title.replace('Brum Outloud', '<span>Brum Outloud</span>')}</div>
-                            </div>
+                        <td class="masthead">
+                            <div class="brand">BRUM OUTLOUD</div>
+                            <div class="subject-line">${title.toUpperCase()}</div>
                         </td>
                     </tr>
                     <tr>
@@ -297,17 +195,10 @@ class EmailTemplates {
                             <div class="footer-links">
                                 <a href="https://brumoutloud.co.uk" class="footer-link">Website</a>
                                 <a href="https://brumoutloud.co.uk/events" class="footer-link">Events</a>
-                                <a href="https://brumoutloud.co.uk/venues" class="footer-link">Venues</a>
-                                <a href="https://brumoutloud.co.uk/promoter-tool" class="footer-link">Promoters</a>
+                                <a href="https://brumoutloud.co.uk/contact" class="footer-link">Contact</a>
                             </div>
-                            <div class="footer-text">
-                                Celebrating Birmingham's LGBTQ+ community with inclusive events, venues, and resources.<br>
-                                You're receiving this because you're part of the Brum Outloud network.
-                            </div>
-                            <div class="social-row">
-                                <a href="https://instagram.com/brumoutloud" class="social-link">📷</a>
-                                <a href="https://twitter.com/brumoutloud" class="social-link">🐦</a>
-                                <a href="https://facebook.com/brumoutloud" class="social-link">📘</a>
+                            <div class="footer-copy">
+                                Powered by Brum Outloud · Supporting Birmingham's LGBTQ+ community.
                             </div>
                             <div>
                                 <a href="https://brumoutloud.co.uk/unsubscribe" class="unsubscribe">Manage preferences</a>
@@ -330,111 +221,39 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="padding-bottom:28px;">
-            <table role="presentation" width="120" height="120" style="border-radius:9999px;background:${this.gradients.success};box-shadow:0 18px 40px rgba(16,185,129,0.28);">
-              <tr><td align="center" style="font-size:48px;">🎉</td></tr>
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            Thanks for submitting “${eventName}”.
+          </td>
+        </tr>
+        <tr>
+          <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
+            Your event is in review. We’ll let you know once it’s live or if we need anything else.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(17,24,39,0.6);border-radius:12px;border:1px solid rgba(148,163,184,0.18);">
+              <tr>
+                <td style="padding:14px 18px;color:${this.colors.textMuted};font-size:12px;letter-spacing:0.1em;text-transform:uppercase;">Submission ID</td>
+                <td style="padding:14px 18px;font-family:${this.fonts.mono};font-size:14px;color:${this.colors.textPrimary};">${eventId}</td>
+              </tr>
+              <tr>
+                <td style="padding:14px 18px;color:${this.colors.textMuted};font-size:12px;letter-spacing:0.1em;text-transform:uppercase;">Submitted</td>
+                <td style="padding:14px 18px;color:${this.colors.textPrimary};">${submittedAt}</td>
+              </tr>
             </table>
           </td>
         </tr>
         <tr>
-          <td align="center" style="font-family:${this.fonts.heading};letter-spacing:0.06em;text-transform:uppercase;font-size:32px;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Event Submitted Successfully
+          <td style="padding-top:20px;color:${this.colors.textSecondary};font-size:14px;line-height:1.7;">
+            Next steps: gather imagery, keep your inbox handy, and be ready to share once approved.
           </td>
         </tr>
         <tr>
-          <td align="center" style="color:${this.colors.textSecondary};font-size:16px;line-height:1.8;padding-bottom:32px;">
-            Thank you for your submission! Your event is now in our review queue and we will be in touch soon.
-          </td>
-        </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(15,23,42,0.72);border-radius:20px;border:1px solid rgba(148,163,184,0.2);">
-        <tr>
-          <td style="padding:28px 32px;">
-            <table role="presentation" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:14px;">
-                  Submission Overview
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textPrimary};font-size:20px;font-weight:600;padding-bottom:8px;">
-                  ${eventName}
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;">
-                  Submitted on ${submittedAt}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:22px;">
-              <tr>
-                <td style="background:${this.gradients.subtle};border-radius:16px;padding:16px 20px;border:1px solid rgba(232,58,153,0.3);">
-                  <table role="presentation" width="100%" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:${this.colors.accent};padding-bottom:6px;">
-                        Submission ID
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="font-family:${this.fonts.mono};font-size:16px;color:${this.colors.textPrimary};">
-                        ${eventId}
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:12px;">
-                  Next Steps
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <table role="presentation" width="100%" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Review process:</strong> our team checks all required details and supporting material.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Approval update:</strong> we’ll email you once the listing is live or if updates are needed.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Your prep:</strong> gather imagery, socials, and any copy you’d like to share for promotion.
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:32px;">
-              <tr>
-                <td align="center">
-                  <a href="https://brumoutloud.co.uk/promoter-tool" style="display:inline-flex;align-items:center;gap:10px;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:16px 32px;border-radius:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-size:14px;box-shadow:0 18px 40px rgba(232,58,153,0.35);">
-                    Manage Your Submission →
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-        <tr>
-          <td style="color:${this.colors.textMuted};font-size:13px;line-height:1.8;text-align:center;">
-            Questions or changes? Reply to this email or contact us at
-            <a href="mailto:hello@brumoutloud.co.uk" style="color:${this.colors.accent};text-decoration:none;">hello@brumoutloud.co.uk</a>.
+          <td style="padding-top:24px;">
+            <a href="https://brumoutloud.co.uk/promoter-tool" style="display:inline-block;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">
+              Open promoter hub
+            </a>
           </td>
         </tr>
       </table>
@@ -450,111 +269,31 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="padding-bottom:28px;">
-            <table role="presentation" width="120" height="120" style="border-radius:9999px;background:${this.gradients.primary};box-shadow:0 18px 40px rgba(232,58,153,0.32);">
-              <tr><td align="center" style="font-size:48px;">✨</td></tr>
-            </table>
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            Your event is live.
           </td>
         </tr>
         <tr>
-          <td align="center" style="font-family:${this.fonts.heading};letter-spacing:0.06em;text-transform:uppercase;font-size:32px;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Your Event Is Live
+          <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
+            “${eventName}” is published on Brum Outloud. Share the link and keep details current so attendees know what to expect.
           </td>
         </tr>
         <tr>
-          <td align="center" style="color:${this.colors.textSecondary};font-size:16px;line-height:1.8;padding-bottom:32px;">
-            Congratulations! Your event has been approved and is now discoverable across Brum Outloud.
+          <td style="background:rgba(17,24,39,0.6);border-radius:12px;border:1px solid rgba(148,163,184,0.18);padding:18px;color:${this.colors.textPrimary};">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:${this.colors.accent};padding-bottom:6px;">Listing</div>
+            <a href="${eventUrl}" style="color:${this.colors.textPrimary};text-decoration:none;font-weight:600;word-break:break-all;">${eventUrl}</a>
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(15,23,42,0.72);border-radius:20px;border:1px solid rgba(148,163,184,0.2);">
         <tr>
-          <td style="padding:28px 32px;">
-            <table role="presentation" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:14px;">
-                  Event Snapshot
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textPrimary};font-size:22px;font-weight:600;padding-bottom:12px;">
-                  ${eventName}
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;">
-                  Live now on Brum Outloud. Share your listing with your audience to drive visibility and attendance.
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="display:flex;gap:16px;background:${this.gradients.subtle};border-radius:16px;padding:18px 20px;border:1px solid rgba(232,58,153,0.3);">
-                  <span style="width:36px;height:36px;border-radius:9999px;background:${this.gradients.primary};display:inline-flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:18px;">🔗</span>
-                  <div style="color:${this.colors.textPrimary};font-size:15px;">
-                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:${this.colors.accent};padding-bottom:4px;">Live Listing</div>
-                    <a href="${eventUrl}" style="color:${this.colors.textPrimary};text-decoration:none;font-weight:600;">${eventUrl}</a>
-                  </div>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:12px;">
-                  Suggested Next Steps
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <table role="presentation" width="100%" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Promote your listing:</strong> share the live link with your community and across social channels.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Keep your details fresh:</strong> revisit your submission if anything changes and ensure images are high quality.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;color:${this.colors.textSecondary};font-size:15px;">
-                        <strong style="color:${this.colors.textPrimary};">Explore more tools:</strong> visit the promoter hub for assets, guidance, and future event planning support.
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:32px;">
-              <tr>
-                <td align="center" style="padding-bottom:12px;">
-                  <a href="${eventUrl}" style="display:inline-flex;align-items:center;gap:10px;background:${this.gradients.primary};color:#FFFFFF;text-decoration:none;padding:16px 32px;border-radius:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-size:14px;box-shadow:0 18px 40px rgba(232,58,153,0.35);">
-                    View Your Event →
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td align="center">
-                  <a href="https://brumoutloud.co.uk/promoter-tool" style="display:inline-flex;align-items:center;gap:10px;background:rgba(148,163,184,0.14);color:${this.colors.textPrimary};text-decoration:none;padding:12px 24px;border-radius:12px;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;border:1px solid rgba(148,163,184,0.18);">
-                    Explore Promoter Hub →
-                  </a>
-                </td>
-              </tr>
-            </table>
+          <td style="padding-top:20px;color:${this.colors.textSecondary};font-size:14px;line-height:1.7;">
+            Next steps: post the link on socials, confirm on-the-day logistics, and tag @brumoutloud so we can amplify.
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
         <tr>
-          <td style="color:${this.colors.textMuted};font-size:13px;line-height:1.8;text-align:center;">
-            Need success tips or media support? Reach out at
-            <a href="mailto:hello@brumoutloud.co.uk" style="color:${this.colors.accent};text-decoration:none;">hello@brumoutloud.co.uk</a>.
+          <td style="padding-top:24px;">
+            <a href="${eventUrl}" style="display:inline-block;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">
+              View listing
+            </a>
           </td>
         </tr>
       </table>
@@ -571,79 +310,30 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="padding-bottom:28px;">
-            <table role="presentation" width="120" height="120" style="border-radius:9999px;background:${this.gradients.warning};box-shadow:0 18px 40px rgba(245,158,11,0.28);">
-              <tr><td align="center" style="font-size:48px;">📝</td></tr>
-            </table>
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            We need an update before “${eventName}” can go live.
           </td>
         </tr>
         <tr>
-          <td align="center" style="font-family:${this.fonts.heading};letter-spacing:0.06em;text-transform:uppercase;font-size:30px;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Update Requested
+          <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
+            Please review the feedback below and resubmit when ready. We’ll fast-track the follow-up check.
           </td>
         </tr>
         <tr>
-          <td align="center" style="color:${this.colors.textSecondary};font-size:16px;line-height:1.8;padding-bottom:32px;">
-            We’ve reviewed your submission and need a few adjustments before we can set it live.
+          <td style="background:${this.gradients.warning};border-radius:12px;border:1px solid rgba(245,158,11,0.35);padding:18px;color:${this.colors.textPrimary};line-height:1.7;font-size:14px;">
+            ${reason || 'Please add more detail so the listing shines and sets clear expectations for attendees.'}
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(15,23,42,0.72);border-radius:20px;border:1px solid rgba(148,163,184,0.2);">
         <tr>
-          <td style="padding:28px 32px;">
-            <table role="presentation" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:14px;">
-                  Submission Details
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textPrimary};font-size:20px;font-weight:600;padding-bottom:10px;">
-                  ${eventName}
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;">
-                  Submitted ${updatedAt}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="background:${this.gradients.warning};border-radius:16px;padding:18px 20px;border:1px solid rgba(245,158,11,0.3);color:${this.colors.textPrimary};line-height:1.7;font-size:15px;">
-                  <strong>Feedback:</strong><br>${reason || 'Please review your submission and ensure all required information is provided.'}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.8;">
-                  Update your submission with the changes above and resubmit when you’re ready. Once we receive the new details we’ll prioritise the review.
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:32px;">
-              <tr>
-                <td align="center">
-                  <a href="https://brumoutloud.co.uk/promoter-tool" style="display:inline-flex;align-items:center;gap:10px;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:16px 32px;border-radius:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-size:14px;box-shadow:0 18px 40px rgba(232,58,153,0.35);">
-                    Update Submission →
-                  </a>
-                </td>
-              </tr>
-            </table>
+          <td style="padding-top:18px;color:${this.colors.textSecondary};font-size:14px;">
+            Reviewed: ${updatedAt}
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
         <tr>
-          <td style="color:${this.colors.textMuted};font-size:13px;line-height:1.8;text-align:center;">
-            Need guidance? Reply to this email or contact us at
-            <a href="mailto:hello@brumoutloud.co.uk" style="color:${this.colors.accent};text-decoration:none;">hello@brumoutloud.co.uk</a>.
+          <td style="padding-top:22px;">
+            <a href="https://brumoutloud.co.uk/promoter-tool" style="display:inline-block;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">
+              Update details
+            </a>
           </td>
         </tr>
       </table>
@@ -659,96 +349,27 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="padding-bottom:28px;">
-            <table role="presentation" width="120" height="120" style="border-radius:9999px;background:${this.gradients.primary};box-shadow:0 18px 40px rgba(232,58,153,0.32);">
-              <tr><td align="center" style="font-size:48px;">⏰</td></tr>
-            </table>
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            Reminder: “${eventName}” happens ${eventDate}.
           </td>
         </tr>
         <tr>
-          <td align="center" style="font-family:${this.fonts.heading};letter-spacing:0.06em;text-transform:uppercase;font-size:30px;color:${this.colors.textPrimary};padding-bottom:12px;">
-            Event Reminder
+          <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:18px;">
+            Make a final pass on promotion and logistics so everything runs smoothly.
           </td>
         </tr>
         <tr>
-          <td align="center" style="color:${this.colors.textSecondary};font-size:16px;line-height:1.8;padding-bottom:32px;">
-            Your event is nearly here! Use these final checks to make sure everything’s ready to go.
+          <td style="background:${this.gradients.subtle};border-radius:12px;border:1px solid rgba(232,58,153,0.28);padding:18px;color:${this.colors.textPrimary};line-height:1.7;font-size:14px;">
+            • Share the event link today.<br>
+            • Confirm performer and staff call times.<br>
+            • Prep assets you want to capture during the night.
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(15,23,42,0.72);border-radius:20px;border:1px solid rgba(148,163,184,0.2);">
         <tr>
-          <td style="padding:28px 32px;">
-            <table role="presentation" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:14px;">
-                  Event Details
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textPrimary};font-size:20px;font-weight:600;padding-bottom:10px;">
-                  ${eventName}
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;">
-                  Scheduled for ${eventDate}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="background:${this.gradients.subtle};border-radius:16px;padding:18px 20px;border:1px solid rgba(232,58,153,0.3);color:${this.colors.textPrimary};line-height:1.7;font-size:15px;">
-                  <strong>Host Checklist:</strong>
-                  <ul style="margin:12px 0 0 18px;padding:0;">
-                    <li style="padding:6px 0;">Share the event link across socials one last time.</li>
-                    <li style="padding:6px 0;">Confirm on-the-day logistics (doors, performers, staff).</li>
-                    <li style="padding:6px 0;">Prepare visuals and messaging for post-event recap.</li>
-                  </ul>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="background:${this.gradients.success};border-radius:16px;padding:18px 20px;border:1px solid rgba(16,185,129,0.25);color:${this.colors.textPrimary};line-height:1.7;font-size:15px;">
-                  <strong>Boost Your Reach:</strong>
-                  <ul style="margin:12px 0 0 18px;padding:0;">
-                    <li style="padding:6px 0;">Tag @brumoutloud so we can amplify your posts.</li>
-                    <li style="padding:6px 0;">Encourage RSVPs and early arrival to build momentum.</li>
-                    <li style="padding:6px 0;">Capture content on the night for future promotion.</li>
-                  </ul>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:32px;">
-              <tr>
-                <td align="center" style="padding-bottom:12px;">
-                  <a href="${eventUrl}" style="display:inline-flex;align-items:center;gap:10px;background:${this.gradients.primary};color:#FFFFFF;text-decoration:none;padding:16px 32px;border-radius:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-size:14px;box-shadow:0 18px 40px rgba(232,58,153,0.35);">
-                    View Event Listing →
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td align="center">
-                  <a href="https://instagram.com/brumoutloud" style="display:inline-flex;align-items:center;gap:10px;background:rgba(148,163,184,0.14);color:${this.colors.textPrimary};text-decoration:none;padding:12px 24px;border-radius:12px;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;border:1px solid rgba(148,163,184,0.18);">
-                    Tag Us On Instagram →
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-        <tr>
-          <td style="color:${this.colors.textMuted};font-size:13px;line-height:1.8;text-align:center;">
-            Need a last-minute shoutout? Email us at
-            <a href="mailto:hello@brumoutloud.co.uk" style="color:${this.colors.accent};text-decoration:none;">hello@brumoutloud.co.uk</a>.
+          <td style="padding-top:22px;">
+            <a href="${eventUrl}" style="display:inline-block;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">
+              View event page
+            </a>
           </td>
         </tr>
       </table>
@@ -765,115 +386,30 @@ class EmailTemplates {
     const content = `
       <table role="presentation" width="100%" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="padding-bottom:28px;">
-            <table role="presentation" width="120" height="120" style="border-radius:9999px;background:${this.gradients.primary};box-shadow:0 18px 40px rgba(232,58,153,0.32);">
-              <tr><td align="center" style="font-size:48px;">📥</td></tr>
-            </table>
+          <td style="font-size:18px;font-weight:600;color:${this.colors.textPrimary};padding-bottom:12px;">
+            New submission waiting in the review queue.
           </td>
         </tr>
         <tr>
-          <td align="center" style="font-family:${this.fonts.heading};letter-spacing:0.06em;text-transform:uppercase;font-size:30px;color:${this.colors.textPrimary};padding-bottom:12px;">
-            New Submission Received
+          <td style="color:${this.colors.textSecondary};font-size:15px;line-height:1.7;padding-bottom:16px;">
+            Event: ${eventName}. Submitted ${submittedAt}. Promoter: ${promoterEmail || 'not provided'}.
           </td>
         </tr>
         <tr>
-          <td align="center" style="color:${this.colors.textSecondary};font-size:16px;line-height:1.8;padding-bottom:32px;">
-            A new event has been submitted and is awaiting review.
+          <td style="background:rgba(17,24,39,0.6);border-radius:12px;border:1px solid rgba(148,163,184,0.18);padding:16px;color:${this.colors.textPrimary};font-family:${this.fonts.mono};font-size:14px;">
+            Submission ID: ${eventId}
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;background:rgba(15,23,42,0.72);border-radius:20px;border:1px solid rgba(148,163,184,0.2);">
         <tr>
-          <td style="padding:28px 32px;">
-            <table role="presentation" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:14px;">
-                  Event Summary
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textPrimary};font-size:20px;font-weight:600;padding-bottom:10px;">
-                  ${eventName}
-                </td>
-              </tr>
-              <tr>
-                <td style="color:${this.colors.textSecondary};font-size:15px;">
-                  Submitted ${submittedAt}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="background:${this.gradients.subtle};border-radius:16px;padding:18px 20px;border:1px solid rgba(232,58,153,0.3);">
-                  <table role="presentation" width="100%" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:${this.colors.accent};padding-bottom:6px;">Submission ID</td>
-                    </tr>
-                    <tr>
-                      <td style="font-family:${this.fonts.mono};font-size:16px;color:${this.colors.textPrimary};">${eventId}</td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="background:rgba(96,165,250,0.14);border-radius:16px;padding:18px 20px;border:1px solid rgba(96,165,250,0.28);color:${this.colors.textPrimary};line-height:1.7;font-size:15px;">
-                  <strong>Promoter Contact:</strong><br>
-                  ${promoterEmail || 'No email provided'}
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
-              <tr>
-                <td style="font-family:${this.fonts.heading};letter-spacing:0.08em;text-transform:uppercase;font-size:12px;color:${this.colors.textMuted};padding-bottom:12px;">
-                  Review Checklist
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <table role="presentation" width="100%" style="border-collapse:collapse;">
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        Confirm event metadata: title, schedule, and venue information.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;border-bottom:1px solid rgba(148,163,184,0.18);color:${this.colors.textSecondary};font-size:15px;">
-                        Check for appropriate imagery and accessible descriptions.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 0;color:${this.colors.textSecondary};font-size:15px;">
-                        Validate promoter contact details for follow-up if required.
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-
-            <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:32px;">
-              <tr>
-                <td align="center">
-                  <a href="https://brumoutloud.co.uk/admin-approvals.html" style="display:inline-flex;align-items:center;gap:10px;background:${this.gradients.primary};color:#FFFFFF;text-decoration:none;padding:16px 32px;border-radius:16px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;font-size:14px;box-shadow:0 18px 40px rgba(232,58,153,0.35);">
-                    Review Queue →
-                  </a>
-                </td>
-              </tr>
-            </table>
+          <td style="padding-top:18px;color:${this.colors.textSecondary};font-size:14px;line-height:1.7;">
+            Checks: validate copy and imagery, confirm venue, make sure contact info works.
           </td>
         </tr>
-      </table>
-
-      <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:26px;">
         <tr>
-          <td style="color:${this.colors.textMuted};font-size:13px;line-height:1.8;text-align:center;">
-            Need more context? Visit the admin panel or reach out in the team workspace.
+          <td style="padding-top:22px;">
+            <a href="https://brumoutloud.co.uk/admin-approvals.html" style="display:inline-block;background:${this.gradients.primary};color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">
+              Open approvals
+            </a>
           </td>
         </tr>
       </table>

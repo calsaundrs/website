@@ -26,42 +26,41 @@
         }
 
         .template-card {
-            background: rgba(17, 24, 39, 0.82);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            border-radius: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 1.25rem;
+            transition: transform 0.2s ease, border 0.2s ease;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
         }
         .template-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(232, 58, 153, 0.5);
-            box-shadow: 0 25px 50px rgba(232, 58, 153, 0.25);
+            transform: translateY(-4px);
+            border-color: rgba(232, 58, 153, 0.35);
         }
         .preview-frame {
-            background: #080B14;
-            border-radius: 1rem;
+            background: #0b0f1c;
+            border-radius: 0.9rem;
             overflow: hidden;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(148, 163, 184, 0.15);
+            border: 1px solid rgba(148, 163, 184, 0.14);
         }
         .template-icon {
-            width: 72px;
-            height: 72px;
+            width: 60px;
+            height: 60px;
             border-radius: 9999px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 26px;
             color: white;
-            margin: 0 auto 20px;
-            box-shadow: 0 16px 30px rgba(232, 58, 153, 0.25);
+            margin: 0;
+            box-shadow: 0 12px 28px rgba(232, 58, 153, 0.2);
         }
-        .icon-gradient-success { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
-        .icon-gradient-primary { background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%); }
-        .icon-gradient-warning { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
-        .icon-gradient-info { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); }
-        .icon-gradient-admin { background: linear-gradient(135deg, #6366F1 0%, #7C3AED 100%); }
+        .section-title {
+            font-size: 0.85rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #9CA3AF;
+        }
 
         .badge {
             display: inline-flex;
@@ -89,7 +88,7 @@
         }
         .preview-controls button:hover {
             background: rgba(232, 58, 153, 0.18);
-            border-color: rgba(232, 58, 153, 0.5);
+            border-color: rgba(232, 58, 153, 0.4);
         }
     </style>
 </head>
@@ -113,227 +112,197 @@
 
     <div class="max-w-7xl mx-auto px-4 py-8">
         <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-white via-accent-color to-secondary-color bg-clip-text text-transparent uppercase tracking-[0.2em]">
-                Email Experience Library
+        <div class="text-center mb-10">
+            <div class="section-title mb-3">Notification Emails</div>
+            <h1 class="text-3xl font-semibold mb-3 text-white">
+                Brum Outloud Email Library
             </h1>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                Modular email journeys crafted with the Brum Outloud design system. Each template blends glassmorphism aesthetics, gradient accents, and precise typography for a polished brand experience.
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+                Lean, brand-aligned messages for every touchpoint. Each template is written to be direct, useful, and instantly recognisable.
             </p>
         </div>
 
         <!-- Template Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
             <!-- Submission Confirmation -->
-            <div class="template-card p-7">
-                <div class="template-icon icon-gradient-success">
-                    <i class="fas fa-check-circle"></i>
+            <div class="template-card p-6 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="template-icon submission-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Promoter Touchpoint</div>
+                        <h3 class="text-lg font-semibold text-white">Submission confirmation</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            Confirms we have the event, shares the submission ID, and outlines what happens next.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center mb-4">
-                    <div class="badge mb-3 text-green-300"><i class="fas fa-bolt mr-2"></i>Immediate Trigger</div>
-                    <h3 class="text-xl font-bold mb-2 uppercase tracking-[0.12em]">Submission Confirmation</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Sent the moment a promoter submits an event. Confirms receipt, shares the submission ID, and highlights next steps using the glass-panel layout.
-                    </p>
+                <div class="preview-frame" style="height: 280px;">
+                    <iframe id="submission_confirmation-preview" src="about:blank" class="w-full h-full border-0"></iframe>
                 </div>
-                <div class="preview-frame mb-5" style="height: 320px; overflow: hidden;">
-                    <iframe id="submission-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="preview-controls flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('submission_confirmation')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
+                <div class="preview-controls flex justify-end space-x-3">
+                    <button onclick="loadTemplatePreview('submission_confirmation')" class="px-4 py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-eye mr-2"></i>Preview
                     </button>
-                    <button onclick="testTemplate('submission_confirmation')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i>Send Test
+                    <button onclick="testTemplate('submission_confirmation')" class="px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Send test
                     </button>
                 </div>
             </div>
 
             <!-- Approval Notification -->
-            <div class="template-card p-7">
-                <div class="template-icon icon-gradient-primary">
-                    <i class="fas fa-sparkles"></i>
+            <div class="template-card p-6 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="template-icon approval-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Promoter Touchpoint</div>
+                        <h3 class="text-lg font-semibold text-white">Approval notice</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            Announces the listing is live, links straight to the page, and nudges social promotion.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center mb-4">
-                    <div class="badge mb-3 text-pink-200"><i class="fas fa-magic mr-2"></i>Celebration</div>
-                    <h3 class="text-xl font-bold mb-2 uppercase tracking-[0.12em]">Approval Notification</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Announces that an event is live. Features bold headlines, polished CTA buttons, and promotional guidance aligned with the design system.
-                    </p>
+                <div class="preview-frame" style="height: 280px;">
+                    <iframe id="approval_notification-preview" src="about:blank" class="w-full h-full border-0"></iframe>
                 </div>
-                <div class="preview-frame mb-5" style="height: 320px; overflow: hidden;">
-                    <iframe id="approval-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="preview-controls flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('approval_notification')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
+                <div class="preview-controls flex justify-end space-x-3">
+                    <button onclick="loadTemplatePreview('approval_notification')" class="px-4 py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-eye mr-2"></i>Preview
                     </button>
-                    <button onclick="testTemplate('approval_notification')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i>Send Test
+                    <button onclick="testTemplate('approval_notification')" class="px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Send test
                     </button>
                 </div>
             </div>
 
             <!-- Rejection Notification -->
-            <div class="template-card p-7">
-                <div a="template-icon icon-gradient-warning">
-                    <i class="fas fa-clipboard-list"></i>
+            <div class="template-card p-6 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="template-icon rejection-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Promoter Touchpoint</div>
+                        <h3 class="text-lg font-semibold text-white">Update requested</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            Shares the feedback clearly and gives a direct route back to the promoter hub.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center mb-4">
-                    <div class="badge mb-3 text-yellow-300"><i class="fas fa-pencil-alt mr-2"></i>Action Needed</div>
-                    <h3 class="text-xl font-bold mb-2 uppercase tracking-[0.12em]">Update Requested</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Provides constructive feedback inside a warm gradient panel with clear CTA to edit and resubmit, maintaining brand tone throughout.
-                    </p>
+                <div class="preview-frame" style="height: 280px;">
+                    <iframe id="rejection_notification-preview" src="about:blank" class="w-full h-full border-0"></iframe>
                 </div>
-                <div class="preview-frame mb-5" style="height: 320px; overflow: hidden;">
-                    <iframe id="rejection-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="preview-controls flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('rejection_notification')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
+                <div class="preview-controls flex justify-end space-x-3">
+                    <button onclick="loadTemplatePreview('rejection_notification')" class="px-4 py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-eye mr-2"></i>Preview
                     </button>
-                    <button onclick="testTemplate('rejection_notification')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i>Send Test
+                    <button onclick="testTemplate('rejection_notification')" class="px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Send test
                     </button>
                 </div>
             </div>
 
             <!-- Event Reminder -->
-            <div class="template-card p-7">
-                <div class="template-icon icon-gradient-info">
-                    <i class="fas fa-bell"></i>
+            <div class="template-card p-6 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="template-icon reminder-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Promoter Touchpoint</div>
+                        <h3 class="text-lg font-semibold text-white">Day-before reminder</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            A quick checklist delivered the day before to keep promo momentum going.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center mb-4">
-                    <div class="badge mb-3 text-blue-200"><i class="fas fa-hourglass-half mr-2"></i>Day-Before Helper</div>
-                    <h3 class="text-xl font-bold mb-2 uppercase tracking-[0.12em]">Event Reminder</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Final touchpoint before the event. Includes checklist, promo tips, and social CTAs framed within the glassmorphism motif.
-                    </p>
+                <div class="preview-frame" style="height: 280px;">
+                    <iframe id="event_reminder-preview" src="about:blank" class="w-full h-full border-0"></iframe>
                 </div>
-                <div class="preview-frame mb-5" style="height: 320px; overflow: hidden;">
-                    <iframe id="reminder-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="preview-controls flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('event_reminder')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
+                <div class="preview-controls flex justify-end space-x-3">
+                    <button onclick="loadTemplatePreview('event_reminder')" class="px-4 py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-eye mr-2"></i>Preview
                     </button>
-                    <button onclick="testTemplate('event_reminder')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i>Send Test
+                    <button onclick="testTemplate('event_reminder')" class="px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Send test
                     </button>
                 </div>
             </div>
 
             <!-- Admin Submission Alert -->
-            <div class="template-card p-7">
-                <div class="template-icon icon-gradient-admin">
-                    <i class="fas fa-shield-check"></i>
+            <div class="template-card p-6 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="template-icon admin-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <div class="section-title">Internal Touchpoint</div>
+                        <h3 class="text-lg font-semibold text-white">Admin alert</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            Keeps the review queue tidy with submission ID, promoter details, and quick checks.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center mb-4">
-                    <div class="badge mb-3 text-purple-200"><i class="fas fa-users-cog mr-2"></i>Operations</div>
-                    <h3 class="text-xl font-bold mb-2 uppercase tracking-[0.12em]">Admin Submission Alert</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Notifies the team of new submissions. Provides ID, promoter contact, and review checklist inside a structured panel.
-                    </p>
+                <div class="preview-frame" style="height: 280px;">
+                    <iframe id="admin_submission_alert-preview" src="about:blank" class="w-full h-full border-0"></iframe>
                 </div>
-                <div class="preview-frame mb-5" style="height: 320px; overflow: hidden;">
-                    <iframe id="admin-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="preview-controls flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('admin_submission_alert')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
+                <div class="preview-controls flex justify-end space-x-3">
+                    <button onclick="loadTemplatePreview('admin_submission_alert')" class="px-4 py-2 rounded-lg text-sm font-medium">
                         <i class="fas fa-eye mr-2"></i>Preview
                     </button>
-                    <button onclick="testTemplate('admin_submission_alert')" class="px-4 py-2 rounded-lg text-sm font-semibold tracking-wide">
-                        <i class="fas fa-paper-plane mr-2"></i>Send Test
+                    <button onclick="testTemplate('admin_submission_alert')" class="px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-paper-plane mr-2"></i>Send test
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Design System Integration -->
-        <div class="glass-panel p-8 mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-center uppercase tracking-[0.16em]">Design System Anchors</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-r from-accent-color to-secondary-color rounded-full mx-auto mb-3 shadow-lg"></div>
-                    <h3 class="font-semibold mb-2">Gradient DNA</h3>
-                    <p class="text-gray-400 text-sm">Every template carries the signature pink-to-purple gradient and glass effects.</p>
+        <div class="bg-gray-800 rounded-xl p-7 mb-8 border border-gray-700">
+            <h2 class="text-xl font-semibold mb-6 text-white flex items-center gap-3">
+                <span class="section-title">Design DNA</span>
+                <span class="h-px flex-1 bg-gray-700"></span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 text-sm text-gray-300">
+                <div>
+                    <div class="section-title mb-2">Palette</div>
+                    <p>Core pink-purple gradient with glass panels and high-contrast copy.</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-laptop-code text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Responsive Foundations</h3>
-                    <p class="text-gray-400 text-sm">Scales beautifully across desktop, tablet, and mobile clients.</p>
+                <div>
+                    <div class="section-title mb-2">Typography</div>
+                    <p>Poppins for body text, uppercase accents for quick scanning.</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-universal-access text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Accessible Contrast</h3>
-                    <p class="text-gray-400 text-sm">Typography and panels follow AA contrast ratios for clarity.</p>
+                <div>
+                    <div class="section-title mb-2">Structure</div>
+                    <p>Single-column tables, clear CTAs, and instant access to key info.</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-wand-magic-sparkles text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Polished Finishes</h3>
-                    <p class="text-gray-400 text-sm">Animated iconography and micro-interactions create a premium feel.</p>
+                <div>
+                    <div class="section-title mb-2">Tone</div>
+                    <p>Direct, supportive, and grounded in what promoters need right now.</p>
                 </div>
             </div>
         </div>
 
         <!-- Features -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass-panel p-6">
-                <h3 class="text-xl font-bold mb-4 text-accent-color uppercase tracking-[0.14em] flex items-center"><i class="fas fa-magic mr-2"></i>Presentation Layer</h3>
-                <ul class="space-y-3 text-gray-300 text-sm leading-relaxed">
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Gradient headers, badges, and glass cards inspired by the design system.
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Animated icons and visual elements
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Call-to-action buttons with hover effects
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Social media integration
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Professional typography
-                    </li>
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 class="section-title mb-3">What promoters see</h3>
+                <ul class="space-y-3 text-gray-300 text-sm">
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Fast acknowledgements with IDs for reference.</li>
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Clear CTAs to the promoter hub for every action.</li>
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Consistent branding so messages feel official.</li>
                 </ul>
             </div>
 
-            <div class="glass-panel p-6">
-                <h3 class="text-xl font-bold mb-4 text-accent-color uppercase tracking-[0.14em] flex items-center"><i class="fas fa-cogs mr-2"></i>Technical Features</h3>
-                <ul class="space-y-3 text-gray-300 text-sm leading-relaxed">
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        HTML and plain text versions
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Email client compatibility
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Dynamic content injection
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Template preview system
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
-                        Automated delivery tracking
-                    </li>
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 class="section-title mb-3">What operations get</h3>
+                <ul class="space-y-3 text-gray-300 text-sm">
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Structured data for logging and follow-up.</li>
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Consistent tone across every notification.</li>
+                    <li class="flex items-start gap-3"><i class="fas fa-check text-green-500 mt-1"></i>Plain-text fallbacks ready for every template.</li>
                 </ul>
             </div>
         </div>
@@ -344,7 +313,7 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-gray-800 rounded-xl max-w-md w-full p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-accent-color">Send Test Email</h3>
+                    <h3 class="text-lg font-semibold text-accent-color">Send test email</h3>
                     <button onclick="closeTestModal()" class="text-gray-400 hover:text-white">
                         <i class="fas fa-times text-xl"></i>
                     </button>
@@ -375,15 +344,19 @@
 
         // Load template preview in iframe
         async function loadTemplatePreview(templateType) {
-            const iframeId = templateType.replace('_', '-') + '-preview';
+            const iframeId = `${templateType}-preview`;
             const iframe = document.getElementById(iframeId);
+            
+            if (!iframe) {
+                console.warn('Preview frame not found for template type:', templateType);
+                return;
+            }
             
             try {
                 const response = await fetch(`/.netlify/functions/get-email-template-preview?templateType=${templateType}`);
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Create a data URL with the HTML content
                     const htmlContent = `
                         <!DOCTYPE html>
                         <html>
@@ -391,7 +364,7 @@
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <style>
-                                body { margin: 0; padding: 0; transform: scale(0.8); transform-origin: top left; width: 125%; }
+                                body { margin: 0; padding: 0; background: #0b0f1c; }
                             </style>
                         </head>
                         <body>
@@ -405,16 +378,16 @@
                     iframe.src = url;
                 } else {
                     iframe.srcdoc = `
-                        <div style="padding: 20px; text-align: center; color: #666;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
-                            <p>Error loading template: ${data.error}</p>
+                        <div style="padding: 20px; text-align: center; color: #9095a5; font-family: sans-serif;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 20px; margin-bottom: 8px;"></i>
+                            <p>Unable to load preview: ${data.error}</p>
                         </div>
                     `;
                 }
             } catch (error) {
                 iframe.srcdoc = `
-                    <div style="padding: 20px; text-align: center; color: #666;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                    <div style="padding: 20px; text-align: center; color: #9095a5; font-family: sans-serif;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 20px; margin-bottom: 8px;"></i>
                         <p>Error loading template: ${error.message}</p>
                     </div>
                 `;
@@ -516,10 +489,15 @@
 
         // Load all template previews on page load
         document.addEventListener('DOMContentLoaded', () => {
-            const templates = ['submission_confirmation', 'approval_notification', 'rejection_notification', 'event_reminder', 'admin_submission_alert'];
-            templates.forEach(template => {
-                loadTemplatePreview(template);
-            });
+            const templates = [
+                'submission_confirmation',
+                'approval_notification',
+                'rejection_notification',
+                'event_reminder',
+                'admin_submission_alert'
+            ];
+
+            templates.forEach(loadTemplatePreview);
         });
     </script>
 </body>
