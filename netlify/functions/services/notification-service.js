@@ -61,19 +61,19 @@ class NotificationService {
 
     switch (name) {
       case 'submission_confirmation':
-        html = emailService.templates.getSubmissionConfirmationTemplate(data.eventName, data.eventId);
+        html = emailService.templates.getSubmissionConfirmationTemplate(data);
         break;
       case 'approval_notification':
-        html = emailService.templates.getApprovalTemplate(data.eventName, data.eventUrl);
+        html = emailService.templates.getApprovalTemplate(data);
         break;
       case 'rejection_notification':
-        html = emailService.templates.getRejectionTemplate(data.eventName, data.reason || 'Please review your submission and ensure all required information is provided.');
+        html = emailService.templates.getRejectionTemplate(data);
         break;
       case 'event_reminder':
-        html = emailService.templates.getEventReminderTemplate(data.eventName, data.eventDate, data.eventUrl);
+        html = emailService.templates.getEventReminderTemplate(data);
         break;
       case 'admin_submission_alert':
-        html = emailService.templates.getAdminSubmissionTemplate(data.eventName, data.promoterEmail, data.eventId);
+        html = emailService.templates.getAdminSubmissionTemplate(data);
         break;
       default:
         throw new Error(`Unknown email template: ${name}`);

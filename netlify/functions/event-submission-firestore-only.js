@@ -484,17 +484,30 @@ exports.handler = async function (event, context) {
                     templateData: {
                         eventName: firestoreData.name,
                         eventId: firestoreDoc.id,
+                        eventDate: firestoreData.eventDate,
+                        eventTime: firestoreData.eventTime,
+                        promoImage: firestoreData.promoImage,
+                        venueName: firestoreData.venueName
                     },
                     type: 'submission_confirmation'
                 });
                 console.log('✅ Submission confirmation email sent to:', promoterEmail);
                 
                 // Send admin notification
-                await emailService.sendAdminSubmissionAlert(
-                    firestoreData.name,
-                    promoterEmail,
-                    firestoreDoc.id
-                );
+                await notificationService.sendEmailNotification({ // Using NotificationService
+                    to: notificationService.adminEmail, // Use adminEmail from NotificationService
+                    subject: `🔔 New Event Submission - "${firestoreData.name}"`,
+                    template: 'admin_submission_alert',
+                    templateData: {
+                        eventName: firestoreData.name,
+                        promoterEmail: promoterEmail,
+                        eventId: firestoreDoc.id,
+                        promoImage: firestoreData.promoImage,
+                        eventDate: firestoreData.eventDate,
+                        eventTime: firestoreData.eventTime
+                    },
+                    type: 'admin_submission_alert'
+                });
                 console.log('✅ Admin notification email sent');
             } else {
                 console.log('⚠️ No valid promoter email found, skipping email notifications');

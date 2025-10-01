@@ -47,6 +47,9 @@ exports.handler = async function (event, context) {
                 templateData: {
                     eventName: name,
                     eventUrl: liveUrl,
+                    promoImage: docData.promoImage,
+                    eventDate: docData.eventDate,
+                    venueName: docData.venueName
                 },
                 type: 'approval_notification',
             });
