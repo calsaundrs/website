@@ -644,40 +644,136 @@
             const modal = document.getElementById('notification-modal');
             const list = document.getElementById('notifications-list');
             
-            // Load notifications from Airtable (you'd need to create this endpoint)
             try {
                 const response = await fetch('/.netlify/functions/get-notifications');
                 const data = await response.json();
                 
                 if (data.success && data.data.length > 0) {
-                    list.innerHTML = data.data.map(notification => `
-                        <div class="status-card rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="font-semibold">${notification.title}</div>
-                                <span class="text-sm text-gray-400">${new Date(notification.timestamp).toLocaleString()}</span>
-                            </div>
-                            <div class="text-sm text-gray-300 mb-2">${notification.message}</div>
-                            <div class="text-xs text-gray-500">Severity: ${notification.severity}</div>
-                        </div>
-                    `).join('');
+                    list.innerHTML = data.data.map(notification => renderNotification(notification)).join('');
                 } else {
-                    list.innerHTML = `
-                        <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-bell-slash text-2xl mb-2"></i>
-                            <div>No notifications</div>
-                        </div>
-                    `;
+                    list.innerHTML = getEmptyNotificationState();
                 }
             } catch (error) {
-                list.innerHTML = `
-                    <div class="text-center text-red-400 py-8">
-                        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                        <div>Failed to load notifications</div>
-                    </div>
-                `;
+                console.error('Failed to load notifications', error);
+                list.innerHTML = getErrorNotificationState();
             }
             
             modal.classList.remove('hidden');
+        }
+
+        function renderNotification(notification) {
+            const severityClass = getSeverityClass(notification.severity);
+            const severityIcon = getSeverityIcon(notification.severity);
+            const details = formatNotificationDetails(notification.details);
+
+            return `
+                <div class="status-card rounded-lg p-4 border-l-4 ${severityClass}">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fas ${severityIcon}"></i>
+                            <div class="font-semibold">${notification.title || 'Untitled Notification'}</div>
+                        </div>
+                        <span class="text-sm text-gray-400">${formatDate(notification.timestamp)}</span>
+                    </div>
+                    ${notification.message ? `<div class="text-sm text-gray-300 mb-2">${notification.message}</div>` : ''}
+                    ${details}
+                    <div class="text-xs text-gray-500 mt-2">Channel: ${notification.channel || 'system'} | Status: ${notification.status || 'New'}</div>
+                </div>
+            `;
+        }
+
+        function getSeverityClass(severity = 'info') {
+            switch (severity.toLowerCase()) {
+                case 'critical':
+                case 'high':
+                case 'error':
+                    return 'border-red-500';
+                case 'warning':
+                case 'medium':
+                    return 'border-yellow-500';
+                case 'success':
+                case 'low':
+                    return 'border-green-500';
+                default:
+                    return 'border-purple-500';
+            }
+        }
+
+        function getSeverityIcon(severity = 'info') {
+            switch (severity.toLowerCase()) {
+                case 'critical':
+                case 'high':
+                case 'error':
+                    return 'fa-exclamation-circle text-red-400';
+                case 'warning':
+                case 'medium':
+                    return 'fa-exclamation-triangle text-yellow-400';
+                case 'success':
+                case 'low':
+                    return 'fa-check-circle text-green-400';
+                default:
+                    return 'fa-info-circle text-purple-400';
+            }
+        }
+
+        function formatNotificationDetails(details) {
+            if (!details) return '';
+
+            try {
+                if (typeof details === 'string') {
+                    const parsed = JSON.parse(details);
+                    return renderDetailsObject(parsed);
+                }
+                if (typeof details === 'object') {
+                    return renderDetailsObject(details);
+                }
+            } catch (error) {
+                console.warn('Failed to parse notification details', error);
+            }
+
+            return `<pre class="text-xs text-gray-500 bg-gray-900 rounded p-3 overflow-x-auto">${details}</pre>`;
+        }
+
+        function renderDetailsObject(details) {
+            const entries = Object.entries(details);
+            if (entries.length === 0) return '';
+
+            return `
+                <div class="text-xs text-gray-500 bg-gray-900 rounded p-3 mt-2 space-y-1">
+                    ${entries.map(([key, value]) => {
+                        if (typeof value === 'object') {
+                            return `<div><span class="text-gray-400">${key}:</span><pre class="mt-1 whitespace-pre-wrap">${JSON.stringify(value, null, 2)}</pre></div>`;
+                        }
+                        return `<div><span class="text-gray-400">${key}:</span> ${value}</div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function getEmptyNotificationState() {
+            return `
+                <div class="text-center text-gray-400 py-8">
+                    <i class="fas fa-bell-slash text-2xl mb-2"></i>
+                    <div>No notifications</div>
+                </div>
+            `;
+        }
+
+        function getErrorNotificationState() {
+            return `
+                <div class="text-center text-red-400 py-8">
+                    <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                    <div>Failed to load notifications</div>
+                </div>
+            `;
+        }
+
+        function formatDate(timestamp) {
+            try {
+                return new Date(timestamp).toLocaleString();
+            } catch (error) {
+                return timestamp;
+            }
         }
 
         function hideNotifications() {
