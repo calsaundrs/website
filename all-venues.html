@@ -625,6 +625,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // --- DOM Elements ---
         const venueGrid = document.getElementById('venue-grid');
         const noVenuesMessage = document.getElementById('no-venues-message');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const VENUES_API_ENDPOINT = '/.netlify/functions/get-venues-firestore';
 
         // Helper for star ratings (not used for display but kept if needed elsewhere or for future features)
         function generateStars(rating) {
@@ -636,6 +638,93 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
             for (let i = 0; i < emptyStars; i++) stars += '<i class="far fa-star text-yellow-400"></i>';
             return stars;
+        }
+
+        function generateSlug(name) {
+            return (name || 'venue')
+                .toString()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function showLoadingState(isLoading) {
+            if (!loadingScreen) return;
+            loadingScreen.classList.toggle('hidden', !isLoading);
+        }
+
+        function showErrorState(message) {
+            if (!venueGrid || !noVenuesMessage) return;
+            venueGrid.innerHTML = '';
+            noVenuesMessage.querySelector('h3').textContent = 'Unable to load venues';
+            noVenuesMessage.querySelector('p').textContent = message || 'Please try again shortly.';
+            noVenuesMessage.classList.remove('hidden');
+        }
+
+        function normaliseImage(data, defaultText) {
+            if (!data) return null;
+            if (typeof data === 'string') {
+                return data;
+            }
+            if (typeof data === 'object' && data.url) {
+                return data.url;
+            }
+            if (data.secure_url) {
+                return data.secure_url;
+            }
+            if (data.photoUrl) {
+                return data.photoUrl;
+            }
+            if (data['Photo URL']) {
+                return data['Photo URL'];
+            }
+            return null;
+        }
+
+        function normaliseArray(value, fallback = []) {
+            if (!value) return [...fallback];
+            if (Array.isArray(value)) return value.filter(Boolean);
+            if (typeof value === 'string') {
+                return value.split(',').map(item => item.trim()).filter(Boolean);
+            }
+            return [...fallback];
+        }
+
+        function transformVenue(raw = {}) {
+            const name = raw.name || raw['Name'] || 'Venue';
+            const slug = raw.slug || raw['Slug'] || generateSlug(name);
+            const address = raw.address || raw['Address'] || '';
+            const description = raw.description || raw['Description'] || '';
+
+            let imageUrl = raw.photoUrl || raw['Photo URL'] || normaliseImage(raw.image, name);
+
+            if (!imageUrl && raw.cloudinaryPublicId && typeof raw.cloudinaryPublicId === 'string') {
+                const cloudName = (window.__NETLIFY_CLOUDINARY_CLOUD_NAME || '').trim();
+                if (cloudName) {
+                    imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_800,h_400,c_fill,g_auto/${raw.cloudinaryPublicId}`;
+                }
+            }
+
+            if (!imageUrl) {
+                imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodeURIComponent(name)}`;
+            }
+
+            const category = normaliseArray(raw.category, raw.tags || []);
+            const tags = normaliseArray(raw.tags, category);
+
+            return {
+                ...raw,
+                id: raw.id || slug,
+                name,
+                slug,
+                address,
+                description,
+                category,
+                tags,
+                popular: Boolean(raw.popular || raw['Popular'] || raw.isFeatured),
+                image: { url: imageUrl },
+                type: raw.type || raw['Type'] || 'venue'
+            };
         }
 
         // --- Display Logic ---
@@ -652,15 +741,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         // --- Rendering Venue Cards ---
         function renderVenues(venuesToDisplay) {
+            if (!venueGrid) return;
+
             if (!venuesToDisplay || venuesToDisplay.length === 0) {
-                venueGrid.innerHTML = `
-                    
-                        <h3 class="text-xl font-semibold text-white mb-2">No Venues Found</h3>
-                        <p class="text-gray-400 mb-6">Try adjusting your filters or search terms.</p>
-                        <button id="reset-venue-filters-btn" class="filter-button active">Clear Filters</button>
-                    </div>
-                `;
+                venueGrid.innerHTML = '';
+                if (noVenuesMessage) {
+                    noVenuesMessage.classList.remove('hidden');
+                }
                 return;
+            }
+
+            if (noVenuesMessage) {
+                noVenuesMessage.classList.add('hidden');
             }
 
             venueGrid.innerHTML = venuesToDisplay.map(venue => {
@@ -705,229 +797,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
 
-        // --- Initialization ---
-        function initializePage() {
-            // Hardcoded venues data - no API calls needed
-            allVenues = [
-                {
-                    id: "the-village-inn",
-                    name: "The Village Inn",
-                    slug: "village-inn",
-                    description: "Cabaret bar; Beating heart of the Gay Village; Always buzzing; Guarantees a warm welcome and a memorable night",
-                    address: "18 Kent St, Birmingham B5 6RD",
-                    category: ["LGBTQ+ Venue", "Bar & Pub", "Cabaret"],
-                    tags: ["LGBTQ+ Friendly", "Live Entertainment", "Drag Shows", "Karaoke"],
-                    type: "venue",
-                    popular: true,
-                    image: {
-                        url: "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg"
-                    },
-                    rating: 4.2,
-                    ratingCount: 150,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "20:00 - 02:00" },
-                        { day: "Friday - Saturday", hours: "20:00 - 03:00" },
-                        { day: "Sunday", hours: "20:00 - 02:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Full Bar", "Live Entertainment", "Drag Shows", "Karaoke"],
-                    phone: "0121 555 0123",
-                    website: "https://villagebirmingham.co.uk/",
-                    postcode: "B5 6RD"
-                },
-                {
-                    id: "nightingale-club",
-                    name: "The Nightingale Club",
-                    slug: "nightingale-club",
-                    description: "Birmingham's premier LGBTQ+ nightclub with multiple floors, themed nights, and a vibrant atmosphere",
-                    address: "18 Kent St, Birmingham B5 6RD",
-                    category: ["LGBTQ+ Venue", "Nightclub", "Dance"],
-                    tags: ["LGBTQ+ Friendly", "Nightclub", "Dance Floor", "Multiple Floors"],
-                    type: "venue",
-                    popular: true,
-                    image: {
-                        url: "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg"
-                    },
-                    rating: 4.1,
-                    ratingCount: 120,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "22:00 - 03:00" },
-                        { day: "Friday - Saturday", hours: "22:00 - 04:00" },
-                        { day: "Sunday", hours: "22:00 - 03:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Multiple Floors", "Dance Floors", "Themed Nights", "Drag Shows"],
-                    phone: "0121 622 1718",
-                    website: "https://nightingaleclub.co.uk/",
-                    postcode: "B5 6RD"
-                },
-                {
-                    id: "xoyo",
-                    name: "XOYO",
-                    slug: "xoyo",
-                    description: "Modern LGBTQ+ friendly venue with great music, cocktails, and a welcoming atmosphere",
-                    address: "32-37 Cowper St, Birmingham B2 4EN",
-                    category: ["LGBTQ+ Venue", "Bar & Club", "Music"],
-                    tags: ["LGBTQ+ Friendly", "Cocktails", "Live Music", "DJ Sets"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.0,
-                    ratingCount: 85,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "19:00 - 02:00" },
-                        { day: "Friday - Saturday", hours: "19:00 - 03:00" },
-                        { day: "Sunday", hours: "19:00 - 01:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Full Bar", "Live Music", "DJ Sets", "Cocktails"],
-                    phone: "0121 555 0124",
-                    website: "https://xoyo-birmingham.co.uk/",
-                    postcode: "B2 4EN"
-                },
-                {
-                    id: "the-glee-club",
-                    name: "The Glee Club",
-                    slug: "the-glee-club",
-                    description: "Comedy club and entertainment venue with regular LGBTQ+ events and inclusive programming",
-                    address: "The Arcadian, Hurst St, Birmingham B5 4TD",
-                    category: ["LGBTQ+ Venue", "Comedy Club", "Entertainment"],
-                    tags: ["LGBTQ+ Friendly", "Comedy", "Live Entertainment", "Food & Drink"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.3,
-                    ratingCount: 200,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "18:00 - 23:00" },
-                        { day: "Friday - Saturday", hours: "18:00 - 01:00" },
-                        { day: "Sunday", hours: "18:00 - 22:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Comedy Shows", "Live Entertainment", "Food & Drink", "Accessible"],
-                    phone: "0871 472 0400",
-                    website: "https://www.glee.co.uk/birmingham",
-                    postcode: "B5 4TD"
-                },
-                {
-                    id: "o2-institute",
-                    name: "O2 Institute",
-                    slug: "o2-institute",
-                    description: "Historic music venue hosting LGBTQ+ events, live music, and inclusive performances",
-                    address: "78 Digbeth High St, Birmingham B5 6DY",
-                    category: ["LGBTQ+ Venue", "Music Venue", "Events"],
-                    tags: ["LGBTQ+ Friendly", "Live Music", "Events", "Historic Venue"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.4,
-                    ratingCount: 300,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "19:00 - 23:00" },
-                        { day: "Friday - Saturday", hours: "19:00 - 02:00" },
-                        { day: "Sunday", hours: "19:00 - 23:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Live Music", "Events", "Historic Venue", "Multiple Rooms"],
-                    phone: "0121 555 0125",
-                    website: "https://academymusicgroup.com/o2institutebirmingham",
-                    postcode: "B5 6DY"
-                },
-                {
-                    id: "the-rainbow",
-                    name: "The Rainbow",
-                    slug: "the-rainbow",
-                    description: "LGBTQ+ friendly pub with regular drag shows, karaoke nights, and community events",
-                    address: "160 High St, Birmingham B12 0LD",
-                    category: ["LGBTQ+ Venue", "Bar & Pub", "Entertainment"],
-                    tags: ["LGBTQ+ Friendly", "Drag Shows", "Karaoke", "Community Events"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.0,
-                    ratingCount: 95,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "19:00 - 01:00" },
-                        { day: "Friday - Saturday", hours: "19:00 - 02:00" },
-                        { day: "Sunday", hours: "19:00 - 01:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Drag Shows", "Karaoke", "Community Events", "Full Bar"],
-                    phone: "0121 555 0126",
-                    website: "https://therainbowbirmingham.co.uk/",
-                    postcode: "B12 0LD"
-                },
-                {
-                    id: "the-fox",
-                    name: "The Fox",
-                    slug: "the-fox",
-                    description: "Cozy LGBTQ+ friendly pub with great food, drinks, and a welcoming atmosphere",
-                    address: "118 Great Hampton St, Birmingham B18 6AD",
-                    category: ["LGBTQ+ Venue", "Bar & Pub", "Food"],
-                    tags: ["LGBTQ+ Friendly", "Food & Drink", "Cozy Atmosphere", "Local Pub"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.2,
-                    ratingCount: 75,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "12:00 - 23:00" },
-                        { day: "Wednesday - Thursday", hours: "12:00 - 23:00" },
-                        { day: "Friday - Saturday", hours: "12:00 - 01:00" },
-                        { day: "Sunday", hours: "12:00 - 22:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Food & Drink", "Cozy Atmosphere", "Local Pub", "Outdoor Seating"],
-                    phone: "0121 555 0127",
-                    website: "https://thefoxbirmingham.co.uk/",
-                    postcode: "B18 6AD"
-                },
-                {
-                    id: "eden",
-                    name: "Eden",
-                    slug: "eden",
-                    description: "Modern LGBTQ+ bar with great cocktails, music, and a vibrant social scene",
-                    address: "Hill St, Birmingham B5 4UA",
-                    category: ["LGBTQ+ Venue", "Bar", "Cocktails"],
-                    tags: ["LGBTQ+ Friendly", "Cocktails", "Music", "Social Scene"],
-                    type: "venue",
-                    popular: false,
-                    image: {
-                        url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=300&fit=crop&crop=center&auto=format&q=80"
-                    },
-                    rating: 4.1,
-                    ratingCount: 110,
-                    openingHours: [
-                        { day: "Monday - Tuesday", hours: "Closed" },
-                        { day: "Wednesday - Thursday", hours: "20:00 - 02:00" },
-                        { day: "Friday - Saturday", hours: "20:00 - 03:00" },
-                        { day: "Sunday", hours: "20:00 - 02:00" }
-                    ],
-                    features: ["LGBTQ+ Friendly", "Cocktails", "Music", "Social Scene", "Modern Atmosphere"],
-                    phone: "0121 555 0128",
-                    website: "https://edenbirmingham.co.uk/",
-                    postcode: "B5 4UA"
+        async function loadVenues() {
+            try {
+                showLoadingState(true);
+                const response = await fetch(`${VENUES_API_ENDPOINT}?t=${Date.now()}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
                 }
-            ];
-            
-            console.log('✅ Hardcoded venues loaded:', allVenues.length, 'venues');
-            console.log('📊 Venues:', allVenues.map(v => v.name).join(', '));
-            
-            displayVenues(); // Display all venues
+
+                const data = await response.json();
+                const venuesFromApi = Array.isArray(data.venues) ? data.venues : [];
+
+                console.log(`📡 Loaded ${venuesFromApi.length} venues from API`);
+
+                allVenues = venuesFromApi.map(transformVenue).filter(venue => venue.status !== 'archived' && venue.status !== 'hidden');
+
+                if (allVenues.length === 0) {
+                    showErrorState('No venues are available right now. Please check back soon.');
+                    return;
+                }
+
+                displayVenues();
+            } catch (error) {
+                console.error('❌ Unable to load venues:', error);
+                showErrorState('We couldn\'t load the venues list just now. Please refresh to try again.');
+            } finally {
+                showLoadingState(false);
+            }
         }
 
-        // Call initializePage when the DOM is fully loaded
+        // Call loadVenues when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            initializePage();
+            loadVenues();
         });
     </script>
     
