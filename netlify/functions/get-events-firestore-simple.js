@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
     console.log('Getting events with comprehensive recurring system');
-    
+
     try {
         // Initialize Firebase
         if (!admin.apps.length) {
@@ -15,22 +15,22 @@ exports.handler = async function (event, context) {
             });
         }
         const db = admin.firestore();
-        
+
         // Get query parameters
         const queryParams = new URLSearchParams(event.queryStringParameters || '');
         const limit = parseInt(queryParams.get('limit')) || 50;
         const view = queryParams.get('view');
         const venues = queryParams.getAll('venues'); // Get venue filters
-        
+
         console.log(`Getting events with recurring system. Limit: ${limit}, View: ${view}, Venues: ${venues.join(', ')}`);
-        
+
         // If view=venues, return venues instead of events
         if (view === 'venues') {
             console.log('Returning venues list');
             const venuesRef = db.collection('venues');
             const venuesSnapshot = await venuesRef.get();
             const venuesList = [];
-            
+
             venuesSnapshot.forEach(doc => {
                 const data = doc.data();
                 // Only include venues with Cloudinary images
@@ -46,10 +46,10 @@ exports.handler = async function (event, context) {
                     });
                 }
             });
-            
+
             // Sort venues by name
             venuesList.sort((a, b) => a.name.localeCompare(b.name));
-            
+
             return {
                 statusCode: 200,
                 headers: {
@@ -64,67 +64,78 @@ exports.handler = async function (event, context) {
                 })
             };
         }
-        
-        // Build query for events
+
+        // Build query for events - handle both lowercase and PascalCase status
+        // We avoid server-side orderBy to prevent index requirement issues
         let query = db.collection('events')
-            .where('status', '==', 'approved')
-            .orderBy('date', 'asc');
-        
+            .where('status', 'in', ['approved', 'Approved']);
+
+        console.log('Executing Firestore query for all approved events...');
         const snapshot = await query.get();
-        let events = [];
-        
+        console.log(`Firestore returned ${snapshot.size} approved events`);
+
+        let rawEvents = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         snapshot.forEach(doc => {
             const data = doc.data();
-            
+
+            // Standardize raw date - handle both string and Firebase Timestamp
+            let rawDate = data.date || data['Date'] || data.eventDate || null;
+            if (rawDate && typeof rawDate === 'object' && rawDate.toDate) {
+                rawDate = rawDate.toDate().toISOString();
+            }
+
+            // Standardize the event data object
+            const eventData = {
+                id: doc.id,
+                name: data.name || data['Event Name'] || 'Untitled Event',
+                description: data.description || data['Description'] || '',
+                date: rawDate,
+                status: (data.status || 'pending').toLowerCase(),
+                slug: data.slug || data['Slug'] || '',
+                category: data.category || data['category'] || data.categories || data['categories'] || [],
+                venueId: data.venueId || data['venueId'] || null,
+                venueName: data.venueName || data['Venue Name'] || '',
+                venueSlug: data.venueSlug || data['Venue Slug'] || '',
+                image: extractImageUrl(data),
+                link: data.link || data['Link'] || '',
+                ticketLink: data.ticketLink || data['Ticket Link'] || '',
+                isRecurring: data.isRecurring || false,
+                recurringGroupId: data.recurringGroupId || data['Series ID'] || null,
+                recurringPattern: data.recurringPattern || null,
+                promotion: data.promotion || {},
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt
+            };
+
+            // Parse and check date
+            if (!eventData.date) {
+                console.log(`Skipping event ${eventData.name} due to missing date`);
+                return;
+            }
+
+            const eventDate = new Date(eventData.date);
+            if (isNaN(eventDate.getTime())) {
+                console.log(`Skipping event ${eventData.name} due to invalid date format: ${eventData.date}`);
+                return;
+            }
+
             // Only include future events or events from today
-            const eventDate = new Date(data.date);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
             if (eventDate >= today) {
-                // Use standardized field names - no more legacy mapping
-                const eventData = {
-                    id: doc.id,
-                    name: data.name || 'Untitled Event',
-                    description: data.description || '',
-                    date: data.date, // Keep for backward compatibility
-                    eventDate: data.eventDate || null, // New separate date field
-                    eventTime: data.eventTime || null, // New separate time field
-                    status: data.status || 'pending',
-                    slug: data.slug || '',
-                    category: data.category || [],
-                    venueId: data.venueId || null,
-                    venueName: data.venueName || '',
-                    venueSlug: data.venueSlug || '',
-                    airtableId: data.airtableId || null,
-                    image: extractImageUrl(data),
-                    link: data.link || '',
-                    ticketLink: data.ticketLink || '',
-                    recurringInfo: data.recurringInfo || null,
-                    seriesId: data.seriesId || null,
-                    promotion: data.promotion || {},
-                    createdAt: data.createdAt,
-                    updatedAt: data.updatedAt,
-                    submittedBy: data.submittedBy || '',
-                    approvedBy: data.approvedBy,
-                    approvedAt: data.approvedAt,
-                    
-                    // Recurring event fields (standardized)
-                    isRecurring: data.isRecurring || false,
-                    recurringPattern: data.recurringPattern || null,
-                    recurringGroupId: data.recurringGroupId || null,
-                    recurringInstance: data.recurringInstance || null,
-                    totalInstances: data.totalInstances || null,
-                    recurringStartDate: data.recurringStartDate || null,
-                    recurringEndDate: data.recurringEndDate || null
-                };
-                
-                console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, image: ${JSON.stringify(eventData.image)})`);
-                
-                events.push(eventData);
+                rawEvents.push(eventData);
+            } else {
+                console.log(`Skipping past event: ${eventData.name} (${eventData.date})`);
             }
         });
-        
+
+        console.log(`After date filtering: ${rawEvents.length} upcoming events`);
+        let events = rawEvents;
+
+        // Final sort by date
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
         // Filter by venues if specified
         if (venues && venues.length > 0 && venues[0] !== 'all') {
             console.log(`Filtering events by venues: ${venues.join(', ')}`);
@@ -133,30 +144,19 @@ exports.handler = async function (event, context) {
             });
             console.log(`After venue filtering: ${events.length} events`);
         }
-        
-        // Filter events to only include those with actual images (not placeholders)
-        const eventsWithImages = [];
-        events.forEach(event => {
-            if (event.image && event.image.url && !event.image.url.includes('placehold.co')) {
-                eventsWithImages.push(event);
-                console.log(`✅ INCLUDED: ${event.name} - has valid image`);
-            } else {
-                console.log(`❌ EXCLUDED: ${event.name} - no valid image (image: ${JSON.stringify(event.image)})`);
-            }
-        });
-        
-        console.log(`After image filtering: ${eventsWithImages.length} events (removed ${events.length - eventsWithImages.length} events without images)`);
-        events = eventsWithImages;
-        
+
+        // Include all approved future events, regardless of whether they have a specific image or placeholder
+        console.log(`Returning ${events.length} upcoming approved events`);
+
         // Deduplicate events first, but handle recurring events properly
         const deduplicatedEvents = [];
         const seenEvents = new Map();
         const recurringGroups = new Map();
-        
+
         for (const event of events) {
             // Debug: Log event details
             console.log(`🔍 Event: ${event.name} | isRecurring: ${event.isRecurring} | recurringGroupId: ${event.recurringGroupId} | date: ${event.date}`);
-            
+
             // Check if this is a recurring event (either by isRecurring flag or recurringGroupId)
             if ((event.isRecurring && event.recurringGroupId) || event.recurringGroupId) {
                 // This is a recurring event - collect all instances for grouping later
@@ -168,20 +168,20 @@ exports.handler = async function (event, context) {
             } else {
                 // Non-recurring event - deduplicate normally
                 console.log(`📅 Processing non-recurring event: ${event.name} (date: ${event.date})`);
-                
+
                 // Check if this event name already exists in recurring groups (potential duplicate)
-                const hasRecurringVersion = Array.from(recurringGroups.values()).some(instances => 
+                const hasRecurringVersion = Array.from(recurringGroups.values()).some(instances =>
                     instances.some(instance => instance.name.toLowerCase() === event.name.toLowerCase())
                 );
-                
+
                 if (hasRecurringVersion) {
                     console.log(`⚠️  Skipping potential duplicate: ${event.name} (recurring version exists)`);
                     continue; // Skip this event as it has a recurring version
                 }
-                
+
                 const key = `${event.name}-${event.date}`;
                 const existing = seenEvents.get(key);
-                
+
                 if (!existing) {
                     seenEvents.set(key, event);
                     deduplicatedEvents.push(event);
@@ -197,9 +197,9 @@ exports.handler = async function (event, context) {
                 }
             }
         }
-        
+
         console.log(`After deduplication: ${deduplicatedEvents.length} non-recurring events, ${recurringGroups.size} recurring groups`);
-        
+
         // Debug: Log recurring groups
         recurringGroups.forEach((instances, groupId) => {
             console.log(`📊 Recurring group ${groupId}: ${instances.length} instances`);
@@ -207,29 +207,29 @@ exports.handler = async function (event, context) {
                 console.log(`   - ${instance.name} (${instance.date})`);
             });
         });
-        
+
         // Group recurring events
         const groupedEvents = groupRecurringEvents(Array.from(recurringGroups.values()).flat());
         console.log(`📦 Created ${groupedEvents.length} grouped events`);
-        
+
         // Combine non-recurring and grouped recurring events
         events = [...deduplicatedEvents, ...groupedEvents];
-        
+
         // Sort by date
         events.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
+
         // Apply limit
         const limitedEvents = events.slice(0, limit);
-        
+
         console.log(`Returning ${limitedEvents.length} events (${deduplicatedEvents.length} non-recurring + ${groupedEvents.length} grouped recurring)`);
-        
+
         // Debug: Log final event names
         console.log(`📋 Final events being returned:`);
         limitedEvents.forEach((event, index) => {
             const type = event.isRecurringGroup ? '🔄 GROUPED' : '📅 SINGLE';
             console.log(`   ${index + 1}. ${type} ${event.name} (${event.date})`);
         });
-        
+
         return {
             statusCode: 200,
             headers: {
@@ -248,7 +248,7 @@ exports.handler = async function (event, context) {
                 timestamp: new Date().toISOString()
             })
         };
-        
+
     } catch (error) {
         console.error('Error getting events with recurring system:', error);
         return {
@@ -271,7 +271,7 @@ exports.handler = async function (event, context) {
 function groupRecurringEvents(events) {
     const groupedEvents = [];
     const recurringGroups = new Map();
-    
+
     events.forEach(event => {
         if (event.isRecurring && event.recurringGroupId) {
             // This is a recurring event with a group ID
@@ -283,7 +283,7 @@ function groupRecurringEvents(events) {
                 const eventDate = new Date(event.date);
                 const groupDate = new Date(group.date);
                 const now = new Date();
-                
+
                 if (eventDate >= now && (groupDate < now || eventDate < groupDate)) {
                     group.date = event.date;
                 }
@@ -304,7 +304,7 @@ function groupRecurringEvents(events) {
         } else if (event.recurringInfo || event.recurringPattern) {
             // Legacy recurring event (no group ID)
             const groupKey = createRecurringGroupKey(event);
-            
+
             if (recurringGroups.has(groupKey)) {
                 // Add to existing group
                 const group = recurringGroups.get(groupKey);
@@ -331,16 +331,16 @@ function groupRecurringEvents(events) {
             groupedEvents.push(event);
         }
     });
-    
+
     // Add grouped recurring events (only show the next upcoming instance)
     recurringGroups.forEach(group => {
         // Sort instances by date
         group.instances.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
+
         // Find the next upcoming instance
         const now = new Date();
         const nextInstance = group.instances.find(instance => new Date(instance.date) >= now);
-        
+
         if (nextInstance) {
             // Use the next instance as the main event
             const mainEvent = {
@@ -388,7 +388,7 @@ function groupRecurringEvents(events) {
             groupedEvents.push(mainEvent);
         }
     });
-    
+
     return groupedEvents;
 }
 
@@ -400,7 +400,7 @@ function createRecurringGroupKey(event) {
 
 function extractRecurringPattern(recurringInfo) {
     if (!recurringInfo) return null;
-    
+
     const text = recurringInfo.toLowerCase();
     if (text.includes('weekly') || text.includes('every week')) {
         return 'weekly';
@@ -420,13 +420,13 @@ function extractRecurringPattern(recurringInfo) {
 function calculateNextOccurrence(startDate, pattern) {
     const start = new Date(startDate);
     const now = new Date();
-    
+
     if (start > now) {
         return start;
     }
-    
+
     let next = new Date(start);
-    
+
     switch (pattern) {
         case 'daily':
             while (next <= now) {
@@ -456,21 +456,21 @@ function calculateNextOccurrence(startDate, pattern) {
         default:
             return start;
     }
-    
+
     return next;
 }
 
 function calculateTotalOccurrences(startDate, endDate, pattern) {
     if (!endDate) return null;
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
     let count = 0;
     let current = new Date(start);
-    
+
     while (current <= end) {
         count++;
-        
+
         switch (pattern) {
             case 'daily':
                 current.setDate(current.getDate() + 1);
@@ -491,7 +491,7 @@ function calculateTotalOccurrences(startDate, endDate, pattern) {
                 return count;
         }
     }
-    
+
     return count;
 }
 
@@ -499,7 +499,7 @@ function upgradeCloudinaryQuality(url) {
     if (!url || !url.includes('cloudinary.com')) {
         return url;
     }
-    
+
     // Extract the base URL and public ID
     const match = url.match(/https:\/\/res\.cloudinary\.com\/([^\/]+)\/image\/upload\/([^\/]+)\/(.*)/);
     if (match) {
@@ -507,14 +507,14 @@ function upgradeCloudinaryQuality(url) {
         // Return high-quality URL with new settings
         return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${publicId}`;
     }
-    
+
     // If we can't parse it, return original
     return url;
 }
 
 function extractImageUrl(data) {
     console.log('Extracting image from data with keys:', Object.keys(data));
-    
+
     // Use the same logic as SSG event pages - prioritize Cloudinary Public ID with specific transformations
     if (data['Cloudinary Public ID'] && process.env.CLOUDINARY_CLOUD_NAME) {
         console.log('Found Cloudinary Public ID:', data['Cloudinary Public ID']);
@@ -522,7 +522,7 @@ function extractImageUrl(data) {
         console.log('Generated Cloudinary URL:', cloudinaryUrl);
         return { url: cloudinaryUrl };
     }
-    
+
     // Also check for camelCase version
     if (data.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
         console.log('Found cloudinaryPublicId:', data.cloudinaryPublicId);
@@ -530,7 +530,7 @@ function extractImageUrl(data) {
         console.log('Generated Cloudinary URL:', cloudinaryUrl);
         return { url: cloudinaryUrl };
     }
-    
+
     // Handle Promo Image as array (from Airtable)
     if (data['Promo Image'] && Array.isArray(data['Promo Image']) && data['Promo Image'].length > 0) {
         console.log('Found Promo Image array:', data['Promo Image']);
@@ -539,7 +539,7 @@ function extractImageUrl(data) {
             return { url: promoImage.url };
         }
     }
-    
+
     // Handle other image formats
     if (data.promoImage && data.promoImage.url) {
         console.log('Found promoImage object:', data.promoImage);
@@ -577,7 +577,7 @@ function extractImageUrl(data) {
         console.log('Found venue_image object:', data.venue_image);
         return data.venue_image;
     }
-    
+
     // Check for string formats (direct URLs)
     if (typeof data.promoImage === 'string' && data.promoImage.includes('cloudinary')) {
         console.log('Found promoImage string:', data.promoImage);
@@ -603,7 +603,7 @@ function extractImageUrl(data) {
         console.log('Found venue_image string:', data.venue_image);
         return { url: data.venue_image };
     }
-    
+
     // Check for any field that contains 'cloudinary' in the URL and upgrade quality
     for (const [key, value] of Object.entries(data)) {
         if (typeof value === 'string' && value.includes('cloudinary')) {
@@ -619,7 +619,7 @@ function extractImageUrl(data) {
             return { url: upgradedUrl, ...value };
         }
     }
-    
+
     // Try generating Cloudinary URL from airtableId as fallback (pattern: brumoutloud_events/event_[airtableId])
     if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
         // High quality settings: w_1600 for retina, h_900 for 16:9 ratio, q_90 for high quality, c_fill for better cropping, fl_progressive for faster loading
@@ -627,7 +627,7 @@ function extractImageUrl(data) {
         console.log('Trying high-quality airtableId-based Cloudinary URL:', cloudinaryUrl);
         return { url: cloudinaryUrl };
     }
-    
+
     console.log('No image found in data, using placeholder');
     // Return placeholder image (same as SSG pages)
     return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };
