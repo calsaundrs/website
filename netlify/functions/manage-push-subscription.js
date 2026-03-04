@@ -3,7 +3,11 @@ const admin = require('firebase-admin');
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+    }),
   });
 }
 
@@ -46,9 +50,9 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          success: false, 
-          error: 'Missing required fields: action, subscription' 
+        body: JSON.stringify({
+          success: false,
+          error: 'Missing required fields: action, subscription'
         })
       };
     }
@@ -79,8 +83,8 @@ exports.handler = async (event, context) => {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            success: true, 
+          body: JSON.stringify({
+            success: true,
             message: 'Subscription updated',
             subscriptionId: existingDoc.id
           })
@@ -102,8 +106,8 @@ exports.handler = async (event, context) => {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            success: true, 
+          body: JSON.stringify({
+            success: true,
             message: 'Subscription created',
             subscriptionId: newSubscription.id
           })
@@ -118,15 +122,15 @@ exports.handler = async (event, context) => {
 
       if (!existingQuery.empty) {
         await existingQuery.docs[0].ref.delete();
-        
+
         return {
           statusCode: 200,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            success: true, 
+          body: JSON.stringify({
+            success: true,
             message: 'Subscription removed'
           })
         };
@@ -137,8 +141,8 @@ exports.handler = async (event, context) => {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            success: false, 
+          body: JSON.stringify({
+            success: false,
             error: 'Subscription not found'
           })
         };
@@ -150,8 +154,8 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          success: false, 
+        body: JSON.stringify({
+          success: false,
           error: 'Invalid action. Use "subscribe" or "unsubscribe"'
         })
       };
@@ -165,8 +169,8 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 
-        success: false, 
+      body: JSON.stringify({
+        success: false,
         error: 'Internal server error',
         details: error.message
       })

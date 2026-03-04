@@ -3,9 +3,13 @@ const EmailService = require('./services/email-service');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+        }),
+    });
 }
 
 const db = admin.firestore();
@@ -24,7 +28,7 @@ exports.handler = async function (event, context) {
 
         // Update status in Firestore
         const docRef = db.collection(type.toLowerCase() + 's').doc(id);
-        await docRef.update({ 
+        await docRef.update({
             status: newStatus.toLowerCase(),
             updatedAt: new Date()
         });
@@ -36,7 +40,7 @@ exports.handler = async function (event, context) {
                 body: JSON.stringify({ success: true, message: `Submission status set to ${newStatus}. No notification sent.` }),
             };
         }
-        
+
         // Send email notification using the new email service
         const emailService = new EmailService();
         let emailResult;
@@ -47,7 +51,7 @@ exports.handler = async function (event, context) {
             const docData = doc.data();
             const slug = docData.slug;
             const liveUrl = slug ? `https://brumoutloud.co.uk/${type.toLowerCase()}/${slug}` : `https://brumoutloud.co.uk`;
-            
+
             emailResult = await emailService.sendApprovalNotification(
                 contactEmail,
                 name,
@@ -69,8 +73,8 @@ exports.handler = async function (event, context) {
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ 
-                success: true, 
+            body: JSON.stringify({
+                success: true,
                 message: `Submission status set to ${newStatus} and notification sent.`,
                 emailSent: emailResult?.success || false
             }),

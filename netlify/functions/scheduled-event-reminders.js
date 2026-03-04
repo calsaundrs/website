@@ -4,7 +4,11 @@ const EmailService = require('./services/email-service');
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+    }),
   });
 }
 
@@ -13,23 +17,23 @@ const db = admin.firestore();
 // This function will be called by Netlify's scheduled functions
 exports.handler = async (event, context) => {
   console.log('🕐 Scheduled event reminders triggered at:', new Date().toISOString());
-  
+
   try {
     const emailService = new EmailService();
-    
+
     // Get tomorrow's date
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowStr = tomorrow.toISOString().split('T')[0]; // YYYY-MM-DD format
-    
+
     console.log('🔍 Looking for events happening tomorrow:', tomorrowStr);
-    
+
     // Query events happening tomorrow
     const eventsSnapshot = await db.collection('events')
       .where('eventDate', '==', tomorrowStr)
       .where('status', '==', 'approved')
       .get();
-    
+
     if (eventsSnapshot.empty) {
       console.log('📅 No events found for tomorrow');
       return {
@@ -42,15 +46,15 @@ exports.handler = async (event, context) => {
         })
       };
     }
-    
+
     console.log(`📧 Found ${eventsSnapshot.size} events for tomorrow`);
-    
+
     const results = [];
-    
+
     for (const doc of eventsSnapshot.docs) {
       const eventData = doc.data();
       const promoterEmail = eventData.submittedBy || eventData.submitterEmail;
-      
+
       if (!promoterEmail || promoterEmail === 'anonymous@brumoutloud.co.uk') {
         console.log(`⚠️ No valid email for event: ${eventData.name}`);
         results.push({
@@ -61,18 +65,18 @@ exports.handler = async (event, context) => {
         });
         continue;
       }
-      
+
       try {
         const eventUrl = `https://brumoutloud.co.uk/event/${eventData.slug}`;
         const eventDate = `${eventData.eventDate} at ${eventData.eventTime || 'TBD'}`;
-        
+
         const emailResult = await emailService.sendEventReminder(
           promoterEmail,
           eventData.name,
           eventDate,
           eventUrl
         );
-        
+
         if (emailResult.success) {
           console.log(`✅ Reminder sent for: ${eventData.name}`);
           results.push({
@@ -92,7 +96,7 @@ exports.handler = async (event, context) => {
             error: emailResult.error
           });
         }
-        
+
       } catch (error) {
         console.error(`❌ Error processing event ${eventData.name}:`, error);
         results.push({
@@ -104,13 +108,13 @@ exports.handler = async (event, context) => {
         });
       }
     }
-    
+
     const successCount = results.filter(r => r.status === 'sent').length;
     const failedCount = results.filter(r => r.status === 'failed' || r.status === 'error').length;
     const skippedCount = results.filter(r => r.status === 'skipped').length;
-    
+
     console.log(`📊 Reminder summary: ${successCount} sent, ${failedCount} failed, ${skippedCount} skipped`);
-    
+
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -126,7 +130,7 @@ exports.handler = async (event, context) => {
         timestamp: new Date().toISOString()
       })
     };
-    
+
   } catch (error) {
     console.error('❌ Scheduled event reminder processing failed:', error);
     return {

@@ -3,7 +3,11 @@ const admin = require('firebase-admin');
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+    }),
   });
 }
 
@@ -46,9 +50,9 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          success: false, 
-          error: 'Missing required fields: type, title, body' 
+        body: JSON.stringify({
+          success: false,
+          error: 'Missing required fields: type, title, body'
         })
       };
     }
@@ -65,8 +69,8 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          success: true, 
+        body: JSON.stringify({
+          success: true,
           message: 'No admin subscriptions found',
           sent: 0
         })
@@ -90,12 +94,12 @@ exports.handler = async (event, context) => {
     const results = [];
     for (const doc of subscriptionsSnapshot.docs) {
       const subscription = doc.data();
-      
+
       try {
         // In a real implementation, you would use a push service like FCM
         // For now, we'll log the notification and store it for the poller to pick up
         console.log(`Sending push notification to admin: ${subscription.userAgent}`);
-        
+
         // Store notification in Firestore for the poller to pick up
         await db.collection('admin_notifications').add({
           type: type,
@@ -127,8 +131,8 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 
-        success: true, 
+      body: JSON.stringify({
+        success: true,
         message: 'Push notifications sent',
         sent: results.filter(r => r.status === 'sent').length,
         failed: results.filter(r => r.status === 'failed').length,
@@ -144,8 +148,8 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ 
-        success: false, 
+      body: JSON.stringify({
+        success: false,
         error: 'Internal server error',
         details: error.message
       })

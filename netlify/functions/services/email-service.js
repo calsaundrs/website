@@ -5,7 +5,11 @@ const EmailTemplates = require('./email-templates');
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') : undefined
+    }),
   });
 }
 
@@ -33,9 +37,9 @@ class EmailService {
       };
 
       console.log('📧 Sending email:', { to, subject });
-      
+
       const result = await resend.emails.send(emailData);
-      
+
       // Log email to Firestore
       await this.logEmail({
         to,
@@ -48,10 +52,10 @@ class EmailService {
 
       console.log('✅ Email sent successfully:', result.data?.id);
       return { success: true, messageId: result.data?.id };
-      
+
     } catch (error) {
       console.error('❌ Email sending failed:', error);
-      
+
       // Log failed email
       await this.logEmail({
         to,
@@ -86,11 +90,11 @@ class EmailService {
   async getEmailLogs(limit = 50, status = null) {
     try {
       let query = db.collection('email_logs').orderBy('sentAt', 'desc').limit(limit);
-      
+
       if (status) {
         query = query.where('status', '==', status);
       }
-      
+
       const snapshot = await query.get();
       return snapshot.docs.map(doc => ({
         id: doc.id,
