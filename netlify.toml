@@ -176,6 +176,12 @@
     to = "/admin-edit-events.html"
     status = 200
 
+# Rule for Import Events JSON tool
+[[redirects]]
+    from = "/admin/import-events"
+    to = "/admin-import-events.html"
+    status = 200
+
 # Static sitemap.xml is served directly from the root directory
 
 # Custom 404 page

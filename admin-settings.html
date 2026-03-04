@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Brum Out Loud</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
@@ -17,21 +19,26 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(75, 85, 99, 0.3);
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
             border: 1px solid rgba(232, 58, 153, 0.3);
         }
+
         .btn-primary:hover {
             background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
             transform: translateY(-1px);
         }
+
         .btn-secondary {
             background: rgba(75, 85, 99, 0.3);
             border: 1px solid rgba(75, 85, 99, 0.5);
         }
+
         .btn-secondary:hover {
             background: rgba(75, 85, 99, 0.5);
         }
+
         .heading-gradient {
             background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
             -webkit-background-clip: text;
@@ -50,12 +57,15 @@
                 text-shadow: 0 0 10px rgba(232, 58, 153, 0.5);
             }
         }
+
         .accent-color {
             color: #E83A99;
         }
+
         .accent-color-secondary {
             color: #8B5CF6;
         }
+
         .notification-badge {
             position: absolute;
             top: -8px;
@@ -72,63 +82,72 @@
             font-weight: bold;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
-        
+
         .stats-card {
             background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.2);
             transition: all 0.3s ease;
         }
-        
+
         .stats-card:hover {
             transform: translateY(-2px);
             border-color: rgba(232, 58, 153, 0.3);
             box-shadow: 0 8px 25px rgba(232, 58, 153, 0.15);
         }
-        
+
         .urgent {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.2) 100%);
             border-color: rgba(239, 68, 68, 0.3);
         }
-        
+
         .urgent .notification-badge {
             background: #EF4444;
             animation: pulse 1s infinite;
         }
-        
+
         .admin-link {
             background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.2);
             transition: all 0.3s ease;
         }
-        
+
         .admin-link:hover {
             transform: translateY(-2px);
             border-color: rgba(232, 58, 153, 0.3);
             background: rgba(232, 58, 153, 0.1);
         }
-        
+
         .stats-card {
             background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.2);
             transition: all 0.3s ease;
         }
+
         .stats-card:hover {
             transform: translateY(-2px);
             border-color: rgba(232, 58, 153, 0.3);
         }
+
         .stats-card.urgent {
             border-color: rgba(239, 68, 68, 0.5);
             background: rgba(239, 68, 68, 0.1);
         }
-        
+
         .notification-badge {
             position: absolute;
             top: -8px;
@@ -153,12 +172,12 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
+
         .fouc-prevention.loaded {
             visibility: visible;
             opacity: 1;
         }
-        
+
         /* Loading screen */
         .loading-screen {
             position: fixed;
@@ -174,19 +193,19 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
-        
+
         .loading-text {
             color: #B564F7;
             font-family: 'Poppins', sans-serif;
@@ -194,7 +213,7 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -203,17 +222,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Critical CSS to prevent flashing */
         body {
             background-color: #121212;
@@ -225,14 +258,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -241,64 +274,74 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
     </style>
-    </head>
+</head>
+
 <body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-<header class="p-8">
-    <nav class="container mx-auto flex justify-between items-center">
-        <!-- Site name with consolidated flag image and fallback -->
-        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-           style="font-family: 'Omnes Pro', sans-serif;">
-            <span>Brum Outloud</span>
-            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
-        </a>
-        <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-        </div>
-        <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
+            patience!</p>
     </div>
-</header>
+
+    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+                style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white transition-colors">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white transition-colors">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white transition-colors">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white transition-colors">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html"
+                    class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET
+                    LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu"
+            class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html"
+                class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET
+                LISTED</a>
+        </div>
+    </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <!-- Breadcrumbs -->
@@ -308,7 +351,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin-settings.html" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                        <a href="/admin-settings.html"
+                            class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
                     </div>
                 </li>
                 <li>
@@ -322,13 +366,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADMIN <span class="accent-color">DASHBOARD</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage your LGBTQ+ events platform with powerful admin tools.</p>
+                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADMIN <span
+                        class="accent-color">DASHBOARD</span></h1>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage your LGBTQ+ events platform with powerful
+                    admin tools.</p>
             </div>
 
             <!-- Dashboard Stats -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <a href="/admin-approvals.html" class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
+                <a href="/admin-approvals.html"
+                    class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Events</p>
@@ -339,10 +386,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                     </div>
                     <div id="pending-events-badge" class="notification-badge hidden">0</div>
-                    <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors"></div>
+                    <div
+                        class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors">
+                    </div>
                 </a>
 
-                <a href="/admin-approvals.html" class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
+                <a href="/admin-approvals.html"
+                    class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Venues</p>
@@ -353,7 +403,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                     </div>
                     <div id="pending-venues-badge" class="notification-badge hidden">0</div>
-                    <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors"></div>
+                    <div
+                        class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-accent-color/30 transition-colors">
+                    </div>
                 </a>
 
                 <div class="stats-card rounded-xl p-6 relative">
@@ -387,7 +439,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <i class="fas fa-bolt mr-3 accent-color"></i>Quick Actions
                 </h2>
                 <p class="text-gray-400 mb-8">Essential tools for managing submissions and content.</p>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <a href="/admin-approvals.html" class="admin-link rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
@@ -447,7 +499,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-envelope"></i>
                             </div>
-                            <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                            <span
+                                class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2">Email Management</h3>
                         <p class="text-gray-400 text-sm">Manage email notifications and templates</p>
@@ -461,7 +514,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-video"></i>
                             </div>
-                            <span class="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                            <span
+                                class="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2">Social Reels Generator</h3>
                         <p class="text-gray-400 text-sm">Create Instagram reels for upcoming events</p>
@@ -491,6 +545,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                         <h3 class="text-xl font-bold text-white mb-2">Data Migration</h3>
                         <p class="text-gray-400 text-sm">Tools for data cleanup and migration</p>
+                        <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="/admin/import-events" class="admin-link rounded-xl p-6 relative group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-2xl text-accent-color">
+                                <i class="fas fa-file-import"></i>
+                            </div>
+                            <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Bulk Import Events</h3>
+                        <p class="text-gray-400 text-sm">Import events instantly using JSON payloads</p>
                         <div class="mt-4 text-accent-color group-hover:translate-x-2 transition-transform">
                             <i class="fas fa-arrow-right"></i>
                         </div>
@@ -551,14 +619,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <div id="system-status-indicator" class="w-3 h-3 bg-gray-500 rounded-full"></div>
                             <span id="system-status-text" class="text-gray-400 text-sm">Checking...</span>
                         </div>
-                        <a href="/admin-system-status.html" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        <a href="/admin-system-status.html"
+                            class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                             <i class="fas fa-chart-line"></i>
                             Detailed View
                         </a>
                     </div>
                 </div>
                 <p class="text-gray-400 mb-8">Real-time system health monitoring and performance metrics.</p>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="admin-link rounded-xl p-6">
                         <div class="flex items-center justify-between mb-4">
@@ -642,19 +711,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 <!-- Quick Actions -->
                 <div class="flex flex-wrap gap-3 mt-6">
-                    <button id="quick-health-check" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <button id="quick-health-check"
+                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-heartbeat"></i>
                         Quick Health Check
                     </button>
-                    <button id="refresh-status" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <button id="refresh-status"
+                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-sync-alt"></i>
                         Refresh Status
                     </button>
-                    <button id="test-notification" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <button id="test-notification"
+                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-bell"></i>
                         Test Notification
                     </button>
-                    <button id="test-notification-system" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                    <button id="test-notification-system"
+                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-cog"></i>
                         Test System
                     </button>
@@ -666,7 +739,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- Hidden elements for admin dashboard compatibility -->
     <div id="recent-activity" class="hidden"></div>
     <form id="settings-form" class="hidden"></form>
-    
+
     <script src="/js/admin-dashboard.js"></script>
     <script src="/js/push-notifications.js"></script>
     <script src="/js/admin-notification-poller.js"></script>
@@ -674,26 +747,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         // System Status Dashboard
         async function loadSystemStatus() {
             console.log('Loading system status...');
-            
+
             // Show loading state
             const refreshBtn = document.getElementById('refresh-status');
             const originalText = refreshBtn.innerHTML;
             refreshBtn.disabled = true;
             refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            
+
             try {
                 const response = await fetch('/.netlify/functions/get-system-status');
                 console.log('System status response:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('System status response error:', errorText);
                     throw new Error(`HTTP ${response.status}: ${errorText}`);
                 }
-                
+
                 const data = await response.json();
                 console.log('System status data:', data);
-                
+
                 if (data.success && data.data) {
                     updateSystemStatus(data.data);
                 } else {
@@ -703,15 +776,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             } catch (error) {
                 console.error('Error loading system status:', error);
                 showError('Failed to load system status: ' + error.message);
-                
+
                 // Set unknown status
                 const overallStatus = document.getElementById('overall-status');
                 overallStatus.textContent = '❓';
                 overallStatus.className = 'text-2xl font-bold text-gray-400 mb-1';
-                
+
                 const lastCheck = document.getElementById('last-check');
                 lastCheck.textContent = 'Error';
-                
+
                 const testsPassed = document.getElementById('tests-passed');
                 testsPassed.textContent = '--';
             } finally {
@@ -723,11 +796,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         function updateSystemStatus(status) {
             console.log('Updating system status with:', status);
-            
+
             // Update system status indicator
             const systemIndicator = document.getElementById('system-status-indicator');
             const systemText = document.getElementById('system-status-text');
-            
+
             // Update overall status
             const overallStatus = document.getElementById('overall-status');
             if (status.overallStatus === 'healthy') {
@@ -791,11 +864,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const apiStart = Date.now();
                 const apiResponse = await fetch('/.netlify/functions/get-events-firestore-simple');
                 const apiDuration = Date.now() - apiStart;
-                
+
                 const apiIndicator = document.getElementById('api-status-indicator');
                 const apiText = document.getElementById('api-status-text');
                 const responseTimeElement = document.getElementById('response-time');
-                
+
                 if (apiResponse.ok) {
                     apiIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
                     apiText.textContent = 'Online';
@@ -812,11 +885,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const dbStart = Date.now();
                 const dbResponse = await fetch('/.netlify/functions/get-pending-items-firestore');
                 const dbDuration = Date.now() - dbStart;
-                
+
                 const dbIndicator = document.getElementById('db-status-indicator');
                 const dbText = document.getElementById('db-status-text');
                 const cacheStatusElement = document.getElementById('cache-status');
-                
+
                 if (dbResponse.ok) {
                     dbIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
                     dbText.textContent = 'Firestore Connected';
@@ -833,7 +906,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 try {
                     const notificationsResponse = await fetch('/.netlify/functions/get-notifications');
                     const notificationsElement = document.getElementById('notifications');
-                    
+
                     if (notificationsResponse.ok) {
                         const data = await notificationsResponse.json();
                         if (data.success && data.data) {
@@ -856,12 +929,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             } catch (error) {
                 console.error('Error updating service status:', error);
-                
+
                 // Set error state
                 document.getElementById('api-status-indicator').className = 'w-3 h-3 bg-red-500 rounded-full';
                 document.getElementById('api-status-text').textContent = 'Error';
                 document.getElementById('api-status-text').className = 'text-red-400 text-sm';
-                
+
                 document.getElementById('db-status-indicator').className = 'w-3 h-3 bg-red-500 rounded-full';
                 document.getElementById('db-status-text').textContent = 'Firestore Error';
                 document.getElementById('db-status-text').className = 'text-red-400 text-sm';
@@ -871,17 +944,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         async function runQuickHealthCheck() {
             const btn = document.getElementById('quick-health-check');
             const originalText = btn.innerHTML;
-            
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
-            
+
             try {
                 const response = await fetch('/.netlify/functions/run-system-tests', {
                     method: 'POST'
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     showSuccess(`Health check completed: ${data.data.passed}/${data.data.totalTests} tests passed`);
                     loadSystemStatus(); // Refresh the status
@@ -935,14 +1008,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         async function testNotificationSystem() {
             const btn = document.getElementById('test-notification-system');
             const originalText = btn.innerHTML;
-            
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
-            
+
             try {
                 const response = await fetch('/.netlify/functions/test-notification-system');
                 const data = await response.json();
-                
+
                 if (data.success) {
                     showSuccess('Notification system test completed: ' + data.message);
                     console.log('Test result:', data);
@@ -964,7 +1037,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const minutes = Math.floor(diff / 60000);
             const hours = Math.floor(diff / 3600000);
             const days = Math.floor(diff / 86400000);
-            
+
             if (days > 0) return `${days}d ago`;
             if (hours > 0) return `${hours}h ago`;
             if (minutes > 0) return `${minutes}m ago`;
@@ -984,9 +1057,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Admin dashboard initializing...');
-            
+
             // Initialize push notification service
             if (typeof PushNotificationService !== 'undefined') {
                 window.pushNotificationService = new PushNotificationService();
@@ -1003,23 +1076,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 window.notificationPoller.start();
                 console.log('Notification poller started');
             }
-            
+
             // Load initial status
             loadSystemStatus();
-            
+
             // Set up event listeners
             document.getElementById('quick-health-check').addEventListener('click', runQuickHealthCheck);
             document.getElementById('refresh-status').addEventListener('click', loadSystemStatus);
             document.getElementById('test-notification').addEventListener('click', testNotification);
             document.getElementById('test-notification-system').addEventListener('click', testNotificationSystem);
-            
+
             // Auto-refresh status every 2 minutes
             const refreshInterval = setInterval(loadSystemStatus, 120000);
             console.log('Auto-refresh interval set to 2 minutes');
-            
+
             // Store interval ID for cleanup
             window.systemStatusInterval = refreshInterval;
         });
     </script>
 </body>
+
 </html>
