@@ -150,22 +150,11 @@
             updateStatus('uploading', 'Importing Events...', `Found ${eventsArray.length} valid events. Uploading securely...`);
 
             try {
-                // Get user token (assuming admin is logged in, grab token from firebase)
-                const token = localStorage.getItem('MIGRATION_TOKEN') || prompt("Enter MIGRATION_TOKEN to authorize this import:");
-                if (!token) {
-                    updateStatus('error', 'Unauthorized', 'No migration token provided.');
-                    return;
-                }
-
-                // We save it so we don't prompt every time they paste
-                localStorage.setItem('MIGRATION_TOKEN', token);
-
                 const payload = {
-                    token: token,
-                    events: eventsArray
-                };
+                events: eventsArray
+            };
 
-                const response = await fetch('/.netlify/functions/import-events-json', {
+            const response = await fetch('/.netlify/functions/import-events-json', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
