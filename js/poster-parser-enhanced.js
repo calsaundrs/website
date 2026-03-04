@@ -20,8 +20,8 @@ class EnhancedPosterParser {
 
     init() {
         this.setupPosterUpload();
-        this.setupExtractionInterface();
-        this.setupConfirmationHandlers();
+        // Note: extraction interface and confirmation handlers are set up
+        // dynamically when AI analysis results are shown (see showExtractionResults)
     }
 
     /**
@@ -90,7 +90,7 @@ class EnhancedPosterParser {
 
             // Convert to base64 for AI processing
             const base64 = await this.fileToBase64(file);
-            
+
             // Trigger AI analysis
             await this.analyzePoster(base64);
 
@@ -131,7 +131,7 @@ class EnhancedPosterParser {
     showPosterPreview(preview) {
         const posterPreview = document.getElementById('poster-preview');
         const uploadArea = document.getElementById('upload-area');
-        
+
         if (posterPreview) {
             posterPreview.innerHTML = `
                 <img src="${preview}" alt="Poster preview" class="max-w-full h-auto rounded-lg">
@@ -141,7 +141,7 @@ class EnhancedPosterParser {
             `;
             posterPreview.classList.remove('hidden');
         }
-        
+
         if (uploadArea) {
             uploadArea.classList.add('hidden');
         }
@@ -171,7 +171,7 @@ class EnhancedPosterParser {
             }
 
             const result = await response.json();
-            
+
             if (result.success && result.extractedData) {
                 this.extractedData = result.extractedData;
                 this.showExtractionResults();
@@ -332,10 +332,10 @@ class EnhancedPosterParser {
 
         // Auto-fill form fields
         this.fillFormFields(this.extractedData);
-        
+
         // Show success message
         this.showSuccess('All extracted data has been applied to the form!');
-        
+
         // Hide extraction interface
         this.hideExtractionInterface();
     }
@@ -436,7 +436,7 @@ class EnhancedPosterParser {
      */
     applySelectedFields() {
         const selectedData = {};
-        
+
         // Get selected fields
         document.querySelectorAll('#extracted-data input[type="checkbox"]:checked').forEach(checkbox => {
             const fieldKey = checkbox.id.replace('use-', '');
@@ -448,7 +448,7 @@ class EnhancedPosterParser {
 
         // Fill form with selected data
         this.fillFormFields(selectedData);
-        
+
         this.showSuccess('Selected data has been applied to the form!');
         this.hideExtractionInterface();
     }
@@ -474,7 +474,7 @@ class EnhancedPosterParser {
                 if (element) {
                     element.value = value;
                     element.classList.add('border-green-500');
-                    
+
                     // Remove green border after 3 seconds
                     setTimeout(() => {
                         element.classList.remove('border-green-500');
