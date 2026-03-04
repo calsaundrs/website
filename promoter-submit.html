@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Your LGBTQ+ Event to Brum Outloud | Simple Form</title>
-    <meta name="description" content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="description"
+        content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/main.css">
-    
+
     <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
     <script src="/js/main.js"></script>
@@ -38,12 +41,12 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
+
         .fouc-prevention.loaded {
             visibility: visible;
             opacity: 1;
         }
-        
+
         /* Loading screen */
         .loading-screen {
             position: fixed;
@@ -59,19 +62,19 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
-        
+
         .loading-text {
             color: #B564F7;
             font-family: 'Poppins', sans-serif;
@@ -79,7 +82,7 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -88,17 +91,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Critical CSS to prevent flashing */
         body {
             background-color: #121212;
@@ -110,14 +127,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -126,878 +143,567 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
     </style>
-    </head>
+</head>
+
 <body class="antialiased">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-<header class="p-8">
-    <nav class="container mx-auto flex justify-between items-center">
-        <!-- Site name with consolidated flag image and fallback -->
-        <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-           style="font-family: 'Omnes Pro', sans-serif;">
-            <span>Brum Outloud</span>
-            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
-                 onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
-        </a>
-        <div class="hidden lg:flex items-center space-x-8">
-            <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-            <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-            <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-            <!-- GET LISTED button styling reverted to original Tailwind classes -->
-            <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-        </div>
-        <div class="lg:hidden relative z-[60]">
-            <button id="menu-btn" class="text-white text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-        <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-        <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-        <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-        <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-        <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
+            patience!</p>
     </div>
-</header>
+
+    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+                style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html"
+                    class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET
+                    LISTED</a>
+            </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+        <div id="menu"
+            class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html"
+                class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET
+                LISTED</a>
+        </div>
+    </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
             <div class="text-center mb-16">
                 <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-    SUBMIT YOUR <span class="accent-color">LGBTQ+ EVENT</span>
-</h1>
-<h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Easily add your Birmingham queer events to Brum Outloud.</h2>
+                    SUBMIT YOUR <span class="accent-color">LGBTQ+ EVENT</span>
+                </h1>
+                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Easily add your Birmingham queer events to Brum
+                    Outloud.</h2>
             </div>
 
             <div class="card-bg p-8 md:p-12">
                 <h2 class="font-anton text-3xl text-white mb-6">Submit a Single Event</h2>
                 <form id="single-event-form" class="space-y-6">
-                     <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
                         <div class="space-y-6">
-                            <div><label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Event Name</label><input type="text" id="event-name" name="event-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
-                            
-                            <div><label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact Email</label><input type="email" id="contact-email" name="contact-email" placeholder="So we can contact you with any issues" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
-                            
+                            <div><label for="event-name"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Event
+                                    Name</label><input type="text" id="event-name" name="event-name"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+
+                            <div><label for="contact-email"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact
+                                    Email</label><input type="email" id="contact-email" name="contact-email"
+                                    placeholder="So we can contact you with any issues"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+
                             <div>
-                              <label for="venue-select" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue</label>
-                              <select id="venue-select" name="venueId" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
-                                  <option value="">Loading venues...</option>
-                              </select>
+                                <label for="venue-select"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Venue</label>
+                                <select id="venue-select" name="venueId"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                                    <option value="">Loading venues...</option>
+                                </select>
                             </div>
                             <div>
-                              <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">Categories (Select all that apply)</label>
-                              <select id="category-select" name="categoryIds" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" multiple required>
-                                  <option value="">Loading categories...</option>
-                              </select>
+                                <label for="category-select"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Categories (Select
+                                    all that apply)</label>
+                                <select id="category-select" name="categoryIds"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" multiple
+                                    required>
+                                    <option value="">Loading categories...</option>
+                                </select>
                             </div>
                             <div id="new-venue-fields" class="hidden space-y-6 transition-all duration-300">
                                 <div>
-                                  <label for="new-venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue Name</label>
-                                  <input type="text" id="new-venue-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
+                                    <label for="new-venue-name"
+                                        class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue
+                                        Name</label>
+                                    <input type="text" id="new-venue-name"
+                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
                                 </div>
                                 <div>
-                                  <label for="new-venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue Address</label>
-                                  <input type="text" id="new-venue-address" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="e.g., 123 Main Street, Birmingham">
+                                    <label for="new-venue-address"
+                                        class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue
+                                        Address</label>
+                                    <input type="text" id="new-venue-address"
+                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"
+                                        placeholder="e.g., 123 Main Street, Birmingham">
                                 </div>
                             </div>
-                            <div><label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea id="description" name="description" rows="3" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea></div>
+                            <div><label for="description"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea
+                                    id="description" name="description" rows="3"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea>
+                            </div>
                         </div>
                         <div class="space-y-6">
                             <div class="grid grid-cols-2 gap-4">
-                                <div><label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input type="date" id="date" name="date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
-                                <div><label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">Start Time</label><input type="time" id="start-time" name="start-time" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+                                <div><label for="date"
+                                        class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input
+                                        type="date" id="date" name="date"
+                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                                </div>
+                                <div><label for="start-time"
+                                        class="block text-sm font-semibold mb-2 accent-color-secondary">Start
+                                        Time</label><input type="time" id="start-time" name="start-time"
+                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                                </div>
                             </div>
-                            <div><label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link (Optional)</label><input type="url" id="link" name="link" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="https://"></div>
+                            <div><label for="link"
+                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link
+                                    (Optional)</label><input type="url" id="link" name="link"
+                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"
+                                    placeholder="https://"></div>
                             <div class="mb-4 p-4 border border-gray-700 rounded-lg bg-gray-800/50">
-                <label class="block text-lg font-bold mb-3 accent-color-secondary">Recurrence (Optional)</label>
-                <div class="flex flex-wrap items-center space-x-4 mb-4">
-                    <div class="flex items-center">
-                        <input type="radio" id="recurrence-none" name="recurrence-type" value="none" class="form-radio h-5 w-5 text-accent-color" checked>
-                        <label for="recurrence-none" class="ml-2 text-gray-300">No Recurrence</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly" class="form-radio h-5 w-5 text-accent-color">
-                        <label for="recurrence-weekly" class="ml-2 text-gray-300">Weekly</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="recurrence-monthly" name="recurrence-type" value="monthly" class="form-radio h-5 w-5 text-accent-color">
-                        <label for="recurrence-monthly" class="ml-2 text-gray-300">Monthly</label>
-                    </div>
-                </div>
-                <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
-                    <!-- Preview Section -->
-                    <div id="recurrence-preview" class="hidden p-4 bg-gray-800/50 rounded-lg border border-gray-600">
-                        <h4 class="text-sm font-semibold mb-2 accent-color-secondary">Preview of Next 3 Months:</h4>
-                        <div id="preview-dates" class="text-sm text-gray-300 space-y-1"></div>
-                    </div>
-                    <!-- Weekly Options -->
-                    <div id="weekly-options" class="hidden">
-                        <label class="block text-sm font-semibold mb-2 accent-color-secondary">Repeat on:</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="1" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Monday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="2" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Tuesday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="3" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Wednesday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="4" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Thursday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="5" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Friday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="6" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Saturday</span></label>
-                            <label class="flex items-center"><input type="checkbox" name="weekly_days" value="0" class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color"> <span class="ml-2">Sunday</span></label>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Options -->
-                    <div id="monthly-options" class="hidden space-y-4">
-                        <div>
-                            <label class="block text-sm font-semibold mb-2 accent-color-secondary">Monthly Recurrence Type:</label>
-                            <div class="flex items-center space-x-4">
-                                <div class="flex items-center">
-                                    <input type="radio" id="monthly-type-date" name="monthly_type" value="date" class="form-radio h-4 w-4 text-accent-color" checked>
-                                    <label for="monthly-type-date" class="ml-2 text-gray-300">By Date (e.g., 15th of every month)</label>
+                                <label class="block text-lg font-bold mb-3 accent-color-secondary">Recurrence
+                                    (Optional)</label>
+                                <div class="flex flex-wrap items-center space-x-4 mb-4">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="recurrence-none" name="recurrence-type" value="none"
+                                            class="form-radio h-5 w-5 text-accent-color" checked>
+                                        <label for="recurrence-none" class="ml-2 text-gray-300">No Recurrence</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly"
+                                            class="form-radio h-5 w-5 text-accent-color">
+                                        <label for="recurrence-weekly" class="ml-2 text-gray-300">Weekly</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="recurrence-monthly" name="recurrence-type"
+                                            value="monthly" class="form-radio h-5 w-5 text-accent-color">
+                                        <label for="recurrence-monthly" class="ml-2 text-gray-300">Monthly</label>
+                                    </div>
                                 </div>
-                                <div class="flex items-center">
-                                    <input type="radio" id="monthly-type-day" name="monthly_type" value="day" class="form-radio h-4 w-4 text-accent-color">
-                                    <label for="monthly-type-day" class="ml-2 text-gray-300">By Day (e.g., 2nd Friday of every month)</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="monthly-by-date-options">
-                            <label for="monthly-day-of-month" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Month:</label>
-                            <input type="number" id="monthly-day-of-month" name="monthly_day_of_month" min="1" max="31" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                        </div>
-                        <div id="monthly-by-day-options" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="monthly-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Week of Month:</label>
-                                <select id="monthly-week" name="monthly_week" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                                    <option value="1">First</option>
-                                    <option value="2">Second</option>
-                                    <option value="3">Third</option>
-                                    <option value="4">Fourth</option>
-                                    <option value="-1">Last</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="monthly-day-of-week" class="block text-sm font-semibold mb-2 accent-color-secondary">Day of Week:</label>
-                                <select id="monthly-day-of-week" name="monthly_day_of_week" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white">
-                                    <option value="0">Sunday</option>
-                                    <option value="1">Monday</option>
-                                    <option value="2">Tuesday</option>
-                                    <option value="3">Wednesday</option>
-                                    <option value="4">Thursday</option>
-                                    <option value="5">Friday</option>
-                                    <option value="6">Saturday</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- End Date for Recurring Series -->
-                    <div id="recurrence-end-date" class="hidden">
-                        <label for="recurrence-end-date-input" class="block text-sm font-semibold mb-2 accent-color-secondary">End Date (Optional)</label>
-                        <input type="date" id="recurrence-end-date-input" name="recurrence-end-date" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700 text-white" min="">
-                        <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing series</p>
-                    </div>
-                    
-                    <!-- Exception Dates -->
-                    <div id="recurrence-exceptions" class="hidden">
-                        <label class="block text-sm font-semibold mb-2 accent-color-secondary">Exception Dates (Optional)</label>
-                        <div id="exception-dates-list" class="space-y-2">
-                            <!-- Exception dates will be added here dynamically -->
-                        </div>
-                        <div class="flex gap-2 mt-2">
-                            <input type="date" id="exception-date-input" class="flex-1 p-2 bg-gray-900/50 rounded-lg border border-gray-700 text-white" min="">
-                            <button type="button" id="add-exception-btn" class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Add</button>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-1">Add dates when the event won't happen (e.g., holidays, venue closures)</p>
-                    </div>
-                </div>
-            </div>
-                            <input type="hidden" name="recurring-info" id="recurring-info-hidden">
-                            <div><label for="promo-image" class="block text-sm font-semibold mb-2 accent-color-secondary">Promo Image</label><input type="file" id="promo-image" name="promo-image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif"></div>
-                        </div>
-                    </div>
-                    <div id="form-status" class="text-center hidden p-4 rounded-lg"></div>
-                    <div class="mt-6 flex items-center justify-end space-x-4">
-                        <div class="flex items-center">
-                            <input id="terms-agree" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-accent-color focus:ring-accent-color">
-                            <label for="terms-agree" class="ml-2 block text-sm text-gray-400">I agree to the <a href="/terms-of-submission.html" target="_blank" class="underline hover:text-white">Terms of Submission</a></label>
-                        </div>
-                        <button type="submit" id="submit-button" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50" disabled>Submit Event</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </main>
+                                <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
+                                    <!-- Preview Section -->
+                                    <div id="recurrence-preview"
+                                        class="hidden p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                                        <h4 class="text-sm font-semibold mb-2 accent-color-secondary">Preview of Next 3
+                                            Months:</h4>
+                                        <div id="preview-dates" class="text-sm text-gray-300 space-y-1"></div>
+                                    </div>
+                                    <!-- Weekly Options -->
+                                    <div id="weekly-options" class="hidden">
+                                        <label class="block text-sm font-semibold mb-2 accent-color-secondary">Repeat
+                                            on:</label>
+                                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="1"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Monday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="2"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Tuesday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="3"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Wednesday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="4"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Thursday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="5"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Friday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="6"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Saturday</span></label>
+                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
+                                                    value="0"
+                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
+                                                <span class="ml-2">Sunday</span></label>
+                                        </div>
+                                    </div>
 
-    <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-            <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
-            </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
-
+                                    <!-- Monthly Options -->
+                                    <div id="monthly-options" class="hidden space-y-4">
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold mb-2 accent-color-secondary">Monthly
+                                                Recurrence Type:</label>
+                                            <div class="flex items-center space-x-4">
+                                                <div class="flex items-center">
+                                                    <input type="radio" id="monthly-type-date" name="monthly_type"
+                                                        value="date" class="form-radio h-4 w-4 text-accent-color"
+                                                        checked>
+                                                    <label for="monthly-type-date" class="ml-2 text-gray-300">By Date
+                                                        (e.g., 15th of every month)</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="radio" id="monthly-type-day" name="monthly_type"
+                                                        value="day" class="form-radio h-4 w-4 text-accent-color">
+                                                    <label for="monthly-type-day" class="ml-2 text-gray-300">By Day
+                                                        (e.g., 2nd Friday of every month)</label>
+                                                </div>
+                                            </div>
+                                        </div>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('single-event-form');
-        const venueSelect = document.getElementById('venue-select');
-        const categorySelect = document.getElementById('category-select');
-        const newVenueFields = document.getElementById('new-venue-fields');
-        const newVenueNameInput = document.getElementById('new-venue-name');
-        const newVenueAddressInput = document.getElementById('new-venue-address');
-        const statusDiv = document.getElementById('form-status');
-        const submitButton = document.getElementById('submit-button');
-        const termsCheckbox = document.getElementById('terms-agree');
+        function initializeForm() {
+            if (window.formInitialized) return;
+            window.formInitialized = true;
 
-        termsCheckbox.addEventListener('change', () => {
-            submitButton.disabled = !termsCheckbox.checked;
-        });
+            const form = document.getElementById('single-event-form');
+            const venueSelect = document.getElementById('venue-select');
+            const categorySelect = document.getElementById('category-select');
+            const newVenueFields = document.getElementById('new-venue-fields');
+            const newVenueNameInput = document.getElementById('new-venue-name');
+            const newVenueAddressInput = document.getElementById('new-venue-address');
+            const statusDiv = document.getElementById('form-status');
+            const submitButton = document.getElementById('submit-button');
+            const termsCheckbox = document.getElementById('terms-agree');
 
-        // --- Categories Population ---
-        console.log('Populating categories...');
-        const categories = ["Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"];
-        categorySelect.innerHTML = ''; // Clear "Loading..."
-        categories.forEach(categoryName => {
-            const option = document.createElement('option');
-            option.value = categoryName; // Value is the string name
-            option.textContent = categoryName;
-            categorySelect.appendChild(option);
-        });
-        console.log('Categories populated.');
+            if (!venueSelect || !categorySelect) return;
 
-        // --- Fetch venues ---
-        console.log('Fetching venues...');
-        fetch('/.netlify/functions/get-venue-list')
-            .then(response => {
-                if (!response.ok) {
-                    console.error(`Network response was not ok: ${response.statusText}`);
-                    throw new Error(`Network response was not ok: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(venues => {
-                console.log('Venues fetched:', venues);
-                venueSelect.innerHTML = '<option value="" disabled selected>Select an existing venue...</option>';
-                venues.forEach(venue => {
-                    const option = document.createElement('option');
-                    option.value = venue.id;
-                    option.textContent = venue.name;
-                    venueSelect.appendChild(option);
-                });
-                venueSelect.insertAdjacentHTML('beforeend', '<option value="__CREATE_NEW__">-- Add a new venue --</option>');
-                console.log('Venues populated.');
-            })
-            .catch(error => {
-                console.error('Failed to load venues:', error);
-                venueSelect.innerHTML = '<option value="">Could not load venues</option>';
+            termsCheckbox.addEventListener('change', () => {
+                submitButton.disabled = !termsCheckbox.checked;
             });
 
-        venueSelect.addEventListener('change', () => {
-            if (venueSelect.value === '__CREATE_NEW__') {
-                newVenueFields.classList.remove('hidden');
-                newVenueNameInput.required = true;
-                newVenueAddressInput.required = true;
-            } else {
-                newVenueFields.classList.add('hidden');
-                newVenueNameInput.required = false;
-                newVenueAddressInput.required = false;
-            }
-        });
-
-        // --- Recurrence Logic ---
-        const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
-        const recurringOptionsDiv = document.getElementById('recurring-options');
-        const weeklyOptionsDiv = document.getElementById('weekly-options');
-        const monthlyOptionsDiv = document.getElementById('monthly-options');
-        const monthlyTypeRadios = document.querySelectorAll('input[name="monthly_type"]');
-        const monthlyByDateOptionsDiv = document.getElementById('monthly-by-date-options');
-        const monthlyByDayOptionsDiv = document.getElementById('monthly-by-day-options');
-        const recurringInfoHiddenInput = document.querySelector('input[name="recurring-info"]');
-
-        const updateRecurrenceVisibility = () => {
-            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
-            const endDateDiv = document.getElementById('recurrence-end-date');
-            const endDateInput = document.getElementById('recurrence-end-date-input');
-
-            recurringOptionsDiv.classList.add('hidden');
-            weeklyOptionsDiv.classList.add('hidden');
-            monthlyOptionsDiv.classList.add('hidden');
-            endDateDiv.classList.add('hidden');
-            document.getElementById('recurrence-exceptions').classList.add('hidden');
-
-            if (selectedRecurrenceType === 'weekly') {
-                recurringOptionsDiv.classList.remove('hidden');
-                weeklyOptionsDiv.classList.remove('hidden');
-                endDateDiv.classList.remove('hidden');
-                document.getElementById('recurrence-exceptions').classList.remove('hidden');
-            } else if (selectedRecurrenceType === 'monthly') {
-                recurringOptionsDiv.classList.remove('hidden');
-                monthlyOptionsDiv.classList.remove('hidden');
-                endDateDiv.classList.remove('hidden');
-                document.getElementById('recurrence-exceptions').classList.remove('hidden');
-                updateMonthlyOptionsVisibility();
-            }
-            
-            // Set minimum date for end date input
-            const startDate = document.getElementById('date').value;
-            if (startDate && endDateInput) {
-                endDateInput.min = startDate;
-            }
-        };
-
-        const updateMonthlyOptionsVisibility = () => {
-            const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-
-            monthlyByDateOptionsDiv.classList.add('hidden');
-            monthlyByDayOptionsDiv.classList.add('hidden');
-
-            if (selectedMonthlyType === 'date') {
-                monthlyByDateOptionsDiv.classList.remove('hidden');
-            } else if (selectedMonthlyType === 'day') {
-                monthlyByDayOptionsDiv.classList.remove('hidden');
-            }
-        };
-
-        recurrenceTypeRadios.forEach(radio => {
-            radio.addEventListener('change', updateRecurrenceVisibility);
-        });
-        monthlyTypeRadios.forEach(radio => {
-            radio.addEventListener('change', updateMonthlyOptionsVisibility);
-        });
-
-        // Add event listeners for preview updates
-        const weeklyDayCheckboxes = document.querySelectorAll('input[name="weekly_days"]');
-        const monthlyDayInput = document.getElementById('monthly-day-of-month');
-        const monthlyWeekSelect = document.getElementById('monthly-week');
-        const monthlyDaySelect = document.getElementById('monthly-day-of-week');
-
-        weeklyDayCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateRecurrencePreview);
-        });
-
-        if (monthlyDayInput) monthlyDayInput.addEventListener('input', updateRecurrencePreview);
-        if (monthlyWeekSelect) monthlyWeekSelect.addEventListener('change', updateRecurrencePreview);
-        if (monthlyDaySelect) monthlyDaySelect.addEventListener('change', updateRecurrencePreview);
-
-        // Exception date handling
-        const addExceptionBtn = document.getElementById('add-exception-btn');
-        const exceptionDateInput = document.getElementById('exception-date-input');
-        const exceptionDatesList = document.getElementById('exception-dates-list');
-        let exceptionDates = [];
-
-        // Event delegation for exception date removal
-        if (exceptionDatesList) {
-            exceptionDatesList.addEventListener('click', (e) => {
-                const removeBtn = e.target.closest('button[data-exception-date]');
-                if (removeBtn) {
-                    const date = removeBtn.dataset.exceptionDate;
-                    exceptionDates = exceptionDates.filter(d => d !== date);
-                    renderExceptionDates();
-                    updateRecurrencePreview();
-                }
+            // --- Categories Population ---
+            console.log('Populating categories...');
+            const categories = ["Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"];
+            categorySelect.innerHTML = '';
+            categories.forEach(categoryName => {
+                const option = document.createElement('option');
+                option.value = categoryName;
+                option.textContent = categoryName;
+                categorySelect.appendChild(option);
             });
-        }
+            console.log('Categories populated.');
 
-        if (addExceptionBtn && exceptionDateInput) {
-            addExceptionBtn.addEventListener('click', () => {
-                const date = exceptionDateInput.value;
-                if (date && !exceptionDates.includes(date)) {
-                    exceptionDates.push(date);
-                    renderExceptionDates();
-                    exceptionDateInput.value = '';
-                    updateRecurrencePreview();
-                }
-            });
-
-            exceptionDateInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    addExceptionBtn.click();
-                }
-            });
-        }
-
-        function renderExceptionDates() {
-            if (!exceptionDatesList) return;
-            
-            exceptionDatesList.innerHTML = exceptionDates.map(date => `
-                <div class="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
-                    <span class="text-sm text-gray-300">${new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-                    <button type="button" class="text-red-400 hover:text-red-300" data-exception-date="${date}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        updateRecurrenceVisibility();
-        
-        // Preview functionality
-        function updateRecurrencePreview() {
-            const selectedType = document.querySelector('input[name="recurrence-type"]:checked').value;
-            const previewDiv = document.getElementById('recurrence-preview');
-            const previewDates = document.getElementById('preview-dates');
-            
-            if (selectedType === 'none') {
-                previewDiv.classList.add('hidden');
-                return;
-            }
-            
-            const startDate = document.getElementById('date').value;
-            if (!startDate) {
-                previewDiv.classList.add('hidden');
-                return;
-            }
-            
-            let recurrenceData = null;
-            
-            if (selectedType === 'weekly') {
-                const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked'))
-                    .map(cb => parseInt(cb.value, 10));
-                if (weeklyDays.length > 0) {
-                    recurrenceData = { type: 'weekly', days: weeklyDays };
-                }
-            } else if (selectedType === 'monthly') {
-                const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                if (monthlyType === 'date') {
-                    const dayOfMonth = document.getElementById('monthly-day-of-month').value;
-                    if (dayOfMonth) {
-                        recurrenceData = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(dayOfMonth, 10) };
-                    }
-                } else if (monthlyType === 'day') {
-                    const week = document.getElementById('monthly-week').value;
-                    const dayOfWeek = document.getElementById('monthly-day-of-week').value;
-                    if (week && dayOfWeek) {
-                        recurrenceData = { type: 'monthly', monthlyType: 'day', week: parseInt(week, 10), dayOfWeek: parseInt(dayOfWeek, 10) };
-                    }
-                }
-            }
-            
-            if (recurrenceData) {
-                const dates = calculateRecurringDates(startDate, recurrenceData, 3);
-                
-                // Filter out exception dates
-                const filteredDates = dates.filter(date => !exceptionDates.includes(date));
-                
-                if (filteredDates.length > 0) {
-                    const dateList = filteredDates.slice(0, 8).map(date => {
-                        const d = new Date(date);
-                        return d.toLocaleDateString('en-GB', { 
-                            weekday: 'short', 
-                            day: 'numeric', 
-                            month: 'short' 
-                        });
-                    }).join(', ');
-                    
-                    let previewText = dateList + (filteredDates.length > 8 ? ` and ${filteredDates.length - 8} more...` : '');
-                    
-                    if (exceptionDates.length > 0) {
-                        previewText += `<br><span class="text-yellow-400 text-xs">Excluding: ${exceptionDates.slice(0, 3).map(d => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })).join(', ')}${exceptionDates.length > 3 ? ` and ${exceptionDates.length - 3} more` : ''}</span>`;
-                    }
-                    
-                    previewDates.innerHTML = previewText;
-                    previewDiv.classList.remove('hidden');
-                } else {
-                    previewDiv.classList.add('hidden');
-                }
-            } else {
-                previewDiv.classList.add('hidden');
-            }
-        }
-        
-        // Simple date calculation for preview (client-side)
-        // TODO: This function is duplicated in netlify/functions/event-submission.js. Consider creating a shared utility
-        // to eliminate code duplication and ensure consistency between frontend and backend.
-        function calculateRecurringDates(startDate, recurrenceData, monthsAhead = 3) {
-            const dates = [];
-            const start = new Date(startDate);
-            const endDate = new Date(start);
-            endDate.setMonth(endDate.getMonth() + monthsAhead);
-            
-            if (recurrenceData.type === 'weekly') {
-                const daysOfWeek = recurrenceData.days || [];
-                let currentDate = new Date(start);
-                
-                while (currentDate <= endDate) {
-                    if (daysOfWeek.includes(currentDate.getDay())) {
-                        dates.push(currentDate.toISOString().split('T')[0]);
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            } else if (recurrenceData.type === 'monthly') {
-                if (recurrenceData.monthlyType === 'date') {
-                    const dayOfMonth = recurrenceData.dayOfMonth;
-                    let currentDate = new Date(start);
-                    
-                    while (currentDate <= endDate) {
-                        const maxDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-                        const actualDay = Math.min(dayOfMonth, maxDay);
-                        
-                        const eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), actualDay);
-                        if (eventDate >= start) {
-                            dates.push(eventDate.toISOString().split('T')[0]);
-                        }
-                        
-                        currentDate.setMonth(currentDate.getMonth() + 1);
-                    }
-                } else if (recurrenceData.monthlyType === 'day') {
-                    const week = recurrenceData.week;
-                    const dayOfWeek = recurrenceData.dayOfWeek;
-                    let currentDate = new Date(start);
-                    
-                    while (currentDate <= endDate) {
-                        const eventDate = getNthWeekdayOfMonth(currentDate.getFullYear(), currentDate.getMonth(), week, dayOfWeek);
-                        if (eventDate && eventDate >= start) {
-                            dates.push(eventDate.toISOString().split('T')[0]);
-                        }
-                        currentDate.setMonth(currentDate.getMonth() + 1);
-                    }
-                }
-            }
-            
-            return dates;
-        }
-        
-        // TODO: This function is duplicated in netlify/functions/event-submission.js. Consider creating a shared utility
-        // to eliminate code duplication and ensure consistency between frontend and backend.
-        function getNthWeekdayOfMonth(year, month, week, dayOfWeek) {
-            const date = new Date(year, month, 1);
-            
-            if (week > 0) {
-                let day = date.getDay();
-                let diff = (dayOfWeek - day + 7) % 7;
-                date.setDate(date.getDate() + diff);
-                date.setDate(date.getDate() + (week - 1) * 7);
-            } else {
-                date.setMonth(date.getMonth() + 1);
-                date.setDate(0);
-                let day = date.getDay();
-                let diff = (dayOfWeek - day + 7) % 7;
-                date.setDate(date.getDate() - diff);
-            }
-            
-            if (date.getMonth() !== month) return null;
-            return date;
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.log('Form submit event triggered');
-            
-            try {
-            
-            // Clear previous error states
-            document.querySelectorAll('.border-red-500').forEach(field => {
-                field.classList.remove('border-red-500');
-            });
-            
-            // Enhanced validation
-            const errors = [];
-            
-            // Check terms agreement
-            if (!termsCheckbox.checked) {
-                errors.push('You must agree to the Terms of Submission.');
-            }
-            
-            // Check required fields
-            const eventName = document.getElementById('event-name').value.trim();
-            const eventDate = document.getElementById('date').value;
-            const startTime = document.getElementById('start-time').value;
-            
-            if (!eventName) {
-                errors.push('Event name is required.');
-                document.getElementById('event-name').classList.add('border-red-500');
-            }
-            
-            if (!eventDate) {
-                errors.push('Event date is required.');
-                document.getElementById('date').classList.add('border-red-500');
-            } else {
-                // Check if date is in the past
-                const selectedDate = new Date(eventDate);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                            if (selectedDate < today) {
-                errors.push('Event date cannot be in the past.');
-                document.getElementById('date').classList.add('border-red-500');
-            } else {
-                // Update recurrence preview when date changes
-                try {
-                    updateRecurrencePreview();
-                } catch (previewError) {
-                    console.warn('Error updating recurrence preview:', previewError);
-                }
-            }
-            }
-            
-            if (!startTime) {
-                errors.push('Start time is required.');
-                document.getElementById('start-time').classList.add('border-red-500');
-            }
-            
-            // Check venue selection
-            if (!venueSelect.value) {
-                errors.push('Please select a venue or choose to add a new one.');
-                venueSelect.classList.add('border-red-500');
-            }
-            
-            // Check new venue fields if creating new venue
-            if (venueSelect.value === '__CREATE_NEW__') {
-                if (!newVenueNameInput.value.trim()) {
-                    errors.push('New venue name is required.');
-                    newVenueNameInput.classList.add('border-red-500');
-                }
-                if (!newVenueAddressInput.value.trim()) {
-                    errors.push('New venue address is required.');
-                    newVenueAddressInput.classList.add('border-red-500');
-                }
-            }
-            
-            // Check categories
-            const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
-            if (selectedCategories.length === 0) {
-                errors.push('Please select at least one category.');
-                categorySelect.classList.add('border-red-500');
-            }
-            
-            // Build recurrenceRule object and validate
-            const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
-            const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked');
-            
-            if (!selectedRecurrenceType) {
-                console.error('No recurrence type selected!');
-                errors.push('Please select a recurrence type.');
-            }
-            
-            let recurrenceRule = null;
-
-            if (selectedRecurrenceType && selectedRecurrenceType.value === 'weekly') {
-                const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
-                console.log('weeklyDays:', weeklyDays);
-                if (weeklyDays.length > 0) {
-                    recurrenceRule = { type: 'weekly', days: weeklyDays };
-                } else {
-                    errors.push('Please select at least one day for weekly recurrence.');
-                }
-            } else if (selectedRecurrenceType && selectedRecurrenceType.value === 'monthly') {
-                const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                console.log('monthlyType:', monthlyType);
-                if (monthlyType === 'date') {
-                    const monthlyDayOfMonth = document.getElementById('monthly-day-of-month').value;
-                    console.log('monthlyDayOfMonth:', monthlyDayOfMonth);
-                    if (monthlyDayOfMonth && monthlyDayOfMonth >= 1 && monthlyDayOfMonth <= 31) {
-                        recurrenceRule = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(monthlyDayOfMonth, 10) };
-                    } else {
-                        errors.push('Please enter a valid day of month (1-31) for monthly recurrence.');
-                    }
-                } else if (monthlyType === 'day') {
-                    const monthlyWeek = document.getElementById('monthly-week').value;
-                    const monthlyDayOfWeek = document.getElementById('monthly-day-of-week').value;
-                    console.log('monthlyWeek:', monthlyWeek, 'monthlyDayOfWeek:', monthlyDayOfWeek);
-                    if (monthlyWeek && monthlyDayOfWeek) {
-                        recurrenceRule = { type: 'monthly', monthlyType: 'day', week: parseInt(monthlyWeek, 10), dayOfWeek: parseInt(monthlyDayOfWeek, 10) };
-                    } else {
-                        errors.push('Please select both week and day of week for monthly recurrence.');
-                    }
-                }
-            }
-
-            // Show validation errors (including recurrence validation)
-            if (errors.length > 0) {
-                statusDiv.innerHTML = `
-                    <div class="text-red-400 font-semibold mb-2">Please fix the following issues:</div>
-                    <ul class="list-disc list-inside text-left">
-                        ${errors.map(error => `<li>${error}</li>`).join('')}
-                    </ul>
-                `;
-                statusDiv.className = 'text-center p-4 rounded-lg bg-red-800/20 border border-red-500 text-white';
-                statusDiv.classList.remove('hidden');
-                
-                // Focus first error field
-                const firstErrorField = document.querySelector('.border-red-500');
-                if (firstErrorField) {
-                    firstErrorField.focus();
-                    firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                
-                // Reset submit button
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Event';
-                return;
-            }
-
-            // Disable submit button and show loading state
-            submitButton.disabled = true;
-            submitButton.innerHTML = `
-                <div class="flex items-center justify-center">
-                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Submitting...
-                </div>
-            `;
-            
-            statusDiv.textContent = 'Submitting your event, please wait...';
-            statusDiv.className = 'text-center p-4 rounded-lg bg-blue-600 text-white';
-            statusDiv.classList.remove('hidden');
-
-            let venueId = venueSelect.value;
-
-            // Handle new venue creation
-            if (venueId === '__CREATE_NEW__') {
-                try {
-                    statusDiv.textContent = 'Creating new venue...';
-                    
-                    const response = await fetch('/.netlify/functions/create-unlisted-venue', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            venueName: newVenueNameInput.value.trim(),
-                            address: newVenueAddressInput.value.trim()
-                        })
+            // --- Fetch venues ---
+            console.log('Fetching venues...');
+            fetch('/.netlify/functions/get-venue-list')
+                .then(response => {
+                    if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+                    return response.json();
+                })
+                .then(venues => {
+                    console.log('Venues fetched:', venues);
+                    venueSelect.innerHTML = '<option value="" disabled selected>Select an existing venue...</option>';
+                    venues.forEach(venue => {
+                        const option = document.createElement('option');
+                        option.value = venue.id;
+                        option.textContent = venue.name;
+                        venueSelect.appendChild(option);
                     });
-                    
-                    const result = await response.json();
-                    
-                    if (!response.ok) {
-                        throw new Error(result.message || `Server error: ${response.status}`);
+                    venueSelect.insertAdjacentHTML('beforeend', '<option value="__CREATE_NEW__">-- Add a new venue --</option>');
+                    console.log('Venues populated.');
+                })
+                .catch(error => {
+                    console.error('Failed to load venues:', error);
+                    venueSelect.innerHTML = '<option value="">Could not load venues</option>';
+                });
+
+            venueSelect.addEventListener('change', () => {
+                if (venueSelect.value === '__CREATE_NEW__') {
+                    newVenueFields.classList.remove('hidden');
+                    newVenueNameInput.required = true;
+                    newVenueAddressInput.required = true;
+                } else {
+                    newVenueFields.classList.add('hidden');
+                    newVenueNameInput.required = false;
+                    newVenueAddressInput.required = false;
+                }
+            });
+
+            // --- Recurrence Logic ---
+            const recurrenceTypeRadios = document.querySelectorAll('input[name="recurrence-type"]');
+            const recurringOptionsDiv = document.getElementById('recurring-options');
+            const weeklyOptionsDiv = document.getElementById('weekly-options');
+            const monthlyOptionsDiv = document.getElementById('monthly-options');
+            const monthlyTypeRadios = document.querySelectorAll('input[name="monthly_type"]');
+            const monthlyByDateOptionsDiv = document.getElementById('monthly-by-date-options');
+            const monthlyByDayOptionsDiv = document.getElementById('monthly-by-day-options');
+            const recurringInfoHiddenInput = document.querySelector('input[name="recurring-info"]');
+
+            const updateRecurrenceVisibility = () => {
+                const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
+                const endDateDiv = document.getElementById('recurrence-end-date');
+                const endDateInput = document.getElementById('recurrence-end-date-input');
+
+                recurringOptionsDiv.classList.add('hidden');
+                weeklyOptionsDiv.classList.add('hidden');
+                monthlyOptionsDiv.classList.add('hidden');
+                endDateDiv.classList.add('hidden');
+                document.getElementById('recurrence-exceptions').classList.add('hidden');
+
+                if (selectedRecurrenceType === 'weekly') {
+                    recurringOptionsDiv.classList.remove('hidden');
+                    weeklyOptionsDiv.classList.remove('hidden');
+                    endDateDiv.classList.remove('hidden');
+                    document.getElementById('recurrence-exceptions').classList.remove('hidden');
+                } else if (selectedRecurrenceType === 'monthly') {
+                    recurringOptionsDiv.classList.remove('hidden');
+                    monthlyOptionsDiv.classList.remove('hidden');
+                    endDateDiv.classList.remove('hidden');
+                    document.getElementById('recurrence-exceptions').classList.remove('hidden');
+                    updateMonthlyOptionsVisibility();
+                }
+            };
+
+            const updateMonthlyOptionsVisibility = () => {
+                const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                monthlyByDateOptionsDiv.classList.add('hidden');
+                monthlyByDayOptionsDiv.classList.add('hidden');
+                if (selectedMonthlyType === 'date') monthlyByDateOptionsDiv.classList.remove('hidden');
+                else if (selectedMonthlyType === 'day') monthlyByDayOptionsDiv.classList.remove('hidden');
+            };
+
+            recurrenceTypeRadios.forEach(radio => radio.addEventListener('change', updateRecurrenceVisibility));
+            monthlyTypeRadios.forEach(radio => radio.addEventListener('change', updateMonthlyOptionsVisibility));
+
+            const updateRecurrencePreview = () => {
+                const selectedType = document.querySelector('input[name="recurrence-type"]:checked').value;
+                const previewDiv = document.getElementById('recurrence-preview');
+                const previewDates = document.getElementById('preview-dates');
+                if (selectedType === 'none') { previewDiv.classList.add('hidden'); return; }
+                const startDate = document.getElementById('date').value;
+                if (!startDate) { previewDiv.classList.add('hidden'); return; }
+                let recurrenceData = null;
+                if (selectedType === 'weekly') {
+                    const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
+                    if (weeklyDays.length > 0) recurrenceData = { type: 'weekly', days: weeklyDays };
+                } else if (selectedType === 'monthly') {
+                    const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
+                    if (monthlyType === 'date') {
+                        const dayOfMonth = document.getElementById('monthly-day-of-month').value;
+                        if (dayOfMonth) recurrenceData = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(dayOfMonth, 10) };
+                    } else if (monthlyType === 'day') {
+                        const week = document.getElementById('monthly-week').value;
+                        const dayOfWeek = document.getElementById('monthly-day-of-week').value;
+                        if (week && dayOfWeek) recurrenceData = { type: 'monthly', monthlyType: 'day', week: parseInt(week, 10), dayOfWeek: parseInt(dayOfWeek, 10) };
                     }
-                    
-                    if (!result.success) {
-                        throw new Error(result.message || 'Failed to create venue.');
+                }
+                if (recurrenceData) {
+                    const dates = calculateRecurringDates(startDate, recurrenceData, 3);
+                    const filteredDates = dates.filter(date => !exceptionDates.includes(date));
+                    if (filteredDates.length > 0) {
+                        const dateList = filteredDates.slice(0, 8).map(date => new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })).join(', ');
+                        previewDates.innerHTML = dateList + (filteredDates.length > 8 ? ` and ${filteredDates.length - 8} more...` : '');
+                        previewDiv.classList.remove('hidden');
+                    } else previewDiv.classList.add('hidden');
+                } else previewDiv.classList.add('hidden');
+            };
+
+            const calculateRecurringDates = (startDate, recurrenceData, monthsAhead = 3) => {
+                const dates = [];
+                const start = new Date(startDate);
+                const endDate = new Date(start);
+                endDate.setMonth(endDate.getMonth() + monthsAhead);
+                if (recurrenceData.type === 'weekly') {
+                    const daysOfWeek = recurrenceData.days || [];
+                    let currentDate = new Date(start);
+                    while (currentDate <= endDate) {
+                        if (daysOfWeek.includes(currentDate.getDay())) dates.push(currentDate.toISOString().split('T')[0]);
+                        currentDate.setDate(currentDate.getDate() + 1);
                     }
-                    
-                    venueId = result.id;
-                    statusDiv.textContent = 'Venue created successfully. Now submitting event...';
-                    
-                } catch (error) {
-                    console.error('Venue creation error:', error);
-                    statusDiv.innerHTML = `
-                        <div class="text-red-400 font-semibold mb-2">Failed to create venue</div>
-                        <div class="text-sm">${error.message}</div>
-                        <div class="text-xs mt-2 opacity-75">Please try again or contact support if the problem persists.</div>
-                    `;
-                    statusDiv.className = 'text-center p-4 rounded-lg bg-red-800/20 border border-red-500 text-white';
-                    
-                    // Reset submit button
+                } else if (recurrenceData.type === 'monthly') {
+                    if (recurrenceData.monthlyType === 'date') {
+                        const dayOfMonth = recurrenceData.dayOfMonth;
+                        let currentDate = new Date(start);
+                        while (currentDate <= endDate) {
+                            const maxDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+                            const eventDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), Math.min(dayOfMonth, maxDay));
+                            if (eventDate >= start) dates.push(eventDate.toISOString().split('T')[0]);
+                            currentDate.setMonth(currentDate.getMonth() + 1);
+                        }
+                    } else if (recurrenceData.monthlyType === 'day') {
+                        const week = recurrenceData.week;
+                        const dayOfWeek = recurrenceData.dayOfWeek;
+                        let currentDate = new Date(start);
+                        while (currentDate <= endDate) {
+                            const eventDate = getNthWeekdayOfMonth(currentDate.getFullYear(), currentDate.getMonth(), week, dayOfWeek);
+                            if (eventDate && eventDate >= start) dates.push(eventDate.toISOString().split('T')[0]);
+                            currentDate.setMonth(currentDate.getMonth() + 1);
+                        }
+                    }
+                }
+                return dates;
+            };
+
+            const getNthWeekdayOfMonth = (year, month, week, dayOfWeek) => {
+                const date = new Date(year, month, 1);
+                if (week > 0) {
+                    let day = date.getDay();
+                    let diff = (dayOfWeek - day + 7) % 7;
+                    date.setDate(date.getDate() + diff + (week - 1) * 7);
+                } else {
+                    date.setMonth(month + 1);
+                    date.setDate(0);
+                    let day = date.getDay();
+                    let diff = (day - dayOfWeek + 7) % 7;
+                    date.setDate(date.getDate() - diff);
+                }
+                return date.getMonth() === month ? date : null;
+            };
+
+            const weeklyDayCheckboxes = document.querySelectorAll('input[name="weekly_days"]');
+            weeklyDayCheckboxes.forEach(cb => cb.addEventListener('change', updateRecurrencePreview));
+            document.getElementById('monthly-day-of-month')?.addEventListener('input', updateRecurrencePreview);
+            document.getElementById('monthly-week')?.addEventListener('change', updateRecurrencePreview);
+            document.getElementById('monthly-day-of-week')?.addEventListener('change', updateRecurrencePreview);
+            document.getElementById('date')?.addEventListener('change', updateRecurrencePreview);
+
+            const exceptionDatesList = document.getElementById('exception-dates-list');
+            let exceptionDates = [];
+            if (exceptionDatesList) {
+                exceptionDatesList.addEventListener('click', (e) => {
+                    const removeBtn = e.target.closest('button[data-exception-date]');
+                    if (removeBtn) {
+                        exceptionDates = exceptionDates.filter(d => d !== removeBtn.dataset.exceptionDate);
+                        renderExceptionDates();
+                        updateRecurrencePreview();
+                    }
+                });
+            }
+
+            const addExceptionBtn = document.getElementById('add-exception-btn');
+            const exceptionDateInput = document.getElementById('exception-date-input');
+            if (addExceptionBtn && exceptionDateInput) {
+                addExceptionBtn.addEventListener('click', () => {
+                    if (exceptionDateInput.value && !exceptionDates.includes(exceptionDateInput.value)) {
+                        exceptionDates.push(exceptionDateInput.value);
+                        renderExceptionDates();
+                        exceptionDateInput.value = '';
+                        updateRecurrencePreview();
+                    }
+                });
+            }
+
+            const renderExceptionDates = () => {
+                if (!exceptionDatesList) return;
+                exceptionDatesList.innerHTML = exceptionDates.map(date => `
+                    <div class="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
+                        <span class="text-sm text-gray-300">${new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        <button type="button" class="text-red-400 hover:text-red-300" data-exception-date="${date}"><i class="fas fa-times"></i></button>
+                    </div>
+                `).join('');
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    document.querySelectorAll('.border-red-500').forEach(f => f.classList.remove('border-red-500'));
+                    const errors = [];
+                    if (!termsCheckbox.checked) errors.push('You must agree to terms.');
+                    const eventName = document.getElementById('event-name').value.trim();
+                    const eventDate = document.getElementById('date').value;
+                    if (!eventName) { errors.push('Name required.'); document.getElementById('event-name').classList.add('border-red-500'); }
+                    if (!eventDate) { errors.push('Date required.'); document.getElementById('date').classList.add('border-red-500'); }
+                    if (!venueSelect.value) { errors.push('Venue required.'); venueSelect.classList.add('border-red-500'); }
+                    const selectedCategories = Array.from(categorySelect.selectedOptions).map(o => o.value);
+                    if (selectedCategories.length === 0) { errors.push('Category required.'); categorySelect.classList.add('border-red-500'); }
+
+                    if (errors.length > 0) {
+                        statusDiv.innerHTML = `<ul class="text-left">${errors.map(err => `<li>${err}</li>`).join('')}</ul>`;
+                        statusDiv.className = 'p-4 rounded-lg bg-red-800/20 border border-red-500 text-white';
+                        statusDiv.classList.remove('hidden');
+                        return;
+                    }
+
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Submitting...';
+                    let venueId = venueSelect.value;
+                    if (venueId === '__CREATE_NEW__') {
+                        const res = await fetch('/.netlify/functions/create-unlisted-venue', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ venueName: newVenueNameInput.value.trim(), address: newVenueAddressInput.value.trim() })
+                        });
+                        const resJson = await res.json();
+                        if (res.ok && resJson.success) venueId = resJson.id;
+                        else throw new Error(resJson.message || 'Venue creation failed');
+                    }
+
+                    const formData = new FormData(form);
+                    formData.set('venueId', venueId);
+                    formData.delete('categoryIds');
+                    selectedCategories.forEach(c => formData.append('categoryIds', c));
+                    const selectedRecType = document.querySelector('input[name="recurrence-type"]:checked').value;
+                    if (selectedRecType !== 'none') {
+                        // Gather rule
+                        let rule = { type: selectedRecType };
+                        if (selectedRecType === 'weekly') rule.days = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
+                        else {
+                            const mType = document.querySelector('input[name="monthly_type"]:checked').value;
+                            if (mType === 'date') rule.dayOfMonth = parseInt(document.getElementById('monthly-day-of-month').value, 10);
+                            else { rule.week = parseInt(document.getElementById('monthly-week').value, 10); rule.dayOfWeek = parseInt(document.getElementById('monthly-day-of-week').value, 10); }
+                        }
+                        const endDate = document.getElementById('recurrence-end-date-input').value;
+                        if (endDate) rule.endDate = endDate;
+                        if (exceptionDates.length > 0) rule.exceptions = exceptionDates;
+                        formData.set('recurring-info', JSON.stringify(rule));
+                    }
+
+                    const subRes = await fetch('/.netlify/functions/event-submission-firestore-only', { method: 'POST', body: formData });
+                    if (subRes.ok) {
+                        statusDiv.textContent = 'Success! Event submitted.';
+                        statusDiv.className = 'p-4 rounded-lg bg-green-800 text-white';
+                        form.reset();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        const subErr = await subRes.json().catch(() => ({ message: 'Submission failed' }));
+                        throw new Error(subErr.message);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    statusDiv.textContent = `Error: ${err.message}`;
+                    statusDiv.className = 'p-4 rounded-lg bg-red-800 text-white';
                     submitButton.disabled = false;
                     submitButton.textContent = 'Submit Event';
-                    return;
                 }
-            }
-
-            if (recurrenceRule) {
-                // Add end date and exceptions to recurrence rule
-                const endDate = document.getElementById('recurrence-end-date-input').value;
-                if (endDate) {
-                    recurrenceRule.endDate = endDate;
-                }
-                
-                if (exceptionDates.length > 0) {
-                    recurrenceRule.exceptions = exceptionDates;
-                }
-                
-                recurringInfoHiddenInput.value = JSON.stringify(recurrenceRule);
-            } else {
-                recurringInfoHiddenInput.value = ''; // Clear if no recurrence selected
-            }
-
-            const formData = new FormData(form);
-            formData.set('venueId', venueId);
-
-            // The 'lambda-multipart-parser' correctly handles multiple form fields with the same name.
-            // We need to remove the placeholder 'categoryIds' that FormData creates from the select element
-            // and append our actual selected values.
-            formData.delete('categoryIds');
-            selectedCategories.forEach(categoryName => {
-                formData.append('categoryIds', categoryName);
             });
-            
-            // Ensure recurring-info is correctly set in formData
-            if (recurringInfoHiddenInput.value) {
-                formData.set('recurring-info', recurringInfoHiddenInput.value);
-            } else {
-                formData.delete('recurring-info'); // Remove if no recurrence
-            }
-
-            try {
-                const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (!response.ok) {
-                    // Try to get a more specific error message from the server response
-                    const errorResult = await response.json().catch(() => ({ message: 'Server error during event submission.' }));
-                    throw new Error(errorResult.message || `Server responded with status: ${response.status}`);
-                }
-
-                statusDiv.textContent = 'Success! Your event has been submitted for review.';
-                statusDiv.className = 'text-center p-4 rounded-lg bg-green-800 text-white';
-                form.reset();
-                newVenueFields.classList.add('hidden');
-                termsCheckbox.checked = false;
-                submitButton.disabled = true;
-                updateRecurrenceVisibility(); // Reset recurrence fields after submission
-
-            } catch (error) {
-                console.error('Form submission error:', error);
-                statusDiv.textContent = `Error: ${error.message}`;
-                statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
-                submitButton.disabled = !termsCheckbox.checked;
-            }
-        } catch (outerError) {
-            console.error('Outer form submission error:', outerError);
-            statusDiv.textContent = `Unexpected error: ${outerError.message}`;
-            statusDiv.className = 'text-center p-4 rounded-lg bg-red-800 text-white';
-            submitButton.disabled = false;
-            submitButton.textContent = 'Submit Event';
         }
-    });
-</script>
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeForm);
+        else initializeForm();
+    </script>
 </body>
+
 </html>
