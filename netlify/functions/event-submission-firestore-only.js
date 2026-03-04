@@ -130,7 +130,7 @@ exports.handler = async function (event, context) {
                 const { files = [], ...fields } = parsed || {};
                 submission = fields || {};
                 
-                const imageFile = files.find(f => f.fieldname === 'image' || f.name === 'image') || files[0];
+                const imageFile = files.find(f => f.fieldname === 'image' || f.fieldname === 'promo-image' || f.name === 'image' || f.name === 'promo-image') || files[0];
                 if (imageFile && imageFile.content && imageFile.content.length) {
                     imageBuffer = Buffer.from(imageFile.content);
                     imageFileName = imageFile.filename || imageFile.fileName || 'upload.jpg';
@@ -355,6 +355,7 @@ exports.handler = async function (event, context) {
             
             // Categorization (Standardized)
             category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : 
+                     (submission.categoryIds ? (Array.isArray(submission.categoryIds) ? submission.categoryIds : String(submission.categoryIds).split(',').map(c => c.trim())) :
                      (aiCategories && Array.isArray(aiCategories) ? aiCategories : 
                      (submission['category-select'] ? (() => {
                          console.log('Processing category:', submission['category-select']);
@@ -362,7 +363,7 @@ exports.handler = async function (event, context) {
                      })() : (() => {
                          console.log('No category found in submission');
                          return [];
-                     })())),
+                     })()))),
             
             // Links (Standardized)
             link: submission.link || '',
@@ -401,6 +402,9 @@ exports.handler = async function (event, context) {
             maxInstances: submission['max-instances'] ? parseInt(submission['max-instances']) : null,
             customRecurrenceDesc: submission['custom-recurrence-desc'] || null
         };
+        
+        // Declare ssgRebuildResult before it's potentially referenced in the recurring block
+        let ssgRebuildResult = null;
         
         // Handle recurring events
         if (firestoreData.isRecurring && firestoreData.recurringPattern) {
@@ -468,10 +472,12 @@ exports.handler = async function (event, context) {
         const firestoreDoc = await db.collection('events').add(firestoreData);
         console.log('Event saved to Firestore with ID:', firestoreDoc.id);
         
+        // Determine promoter email (needed by both email and push notification blocks)
+        const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
+        
         // Send email notifications
         try {
             const emailService = new EmailService();
-            const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
             
             if (promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk') {
                 // Send submission confirmation to promoter
@@ -528,7 +534,6 @@ exports.handler = async function (event, context) {
         }
         
         // Trigger SSG rebuild if in production
-        let ssgRebuildResult = null;
         if (process.env.NODE_ENV === 'production' && process.env.NETLIFY_BUILD_HOOK) {
             try {
                 const response = await fetch(process.env.NETLIFY_BUILD_HOOK, { method: 'POST' });
