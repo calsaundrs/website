@@ -11,16 +11,16 @@
     <!-- External Fonts & CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
         :root {
-            --accent-pink: #E83A99;
-            --accent-purple: #B564F7;
-            --bg-dark: #0a0a0a;
-            --glass-bg: rgba(17, 24, 39, 0.6);
+            --accent-pink: #ec4899;
+            --accent-purple: #c026d3;
+            --bg-dark: #09090b;
+            --glass-bg: rgba(24, 24, 27, 0.45);
         }
 
         * {
@@ -31,14 +31,15 @@
 
         body {
             background-color: var(--bg-dark);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
+            color: #f4f4f5;
+            font-family: 'Outfit', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
+            background-image: radial-gradient(circle at 50% -20%, #2e1065 0%, #09090b 70%);
+            background-attachment: fixed;
         }
 
         .video-background-container {
@@ -100,18 +101,19 @@
         }
 
         .font-anton {
-            font-family: 'Anton', sans-serif;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+            text-transform: none;
+            font-weight: 800;
         }
 
         .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 10%, var(--accent-pink) 50%, var(--accent-purple) 90%);
+            background: linear-gradient(135deg, #fdf4ff 0%, #f472b6 40%, #c026d3 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-size: 5.5rem;
-            line-height: 0.9;
+            font-size: 5rem;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
             animation: glowCycle 4s ease-in-out infinite alternate;
         }
@@ -136,8 +138,8 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(181, 100, 247, 0.15);
-            border: 1px solid var(--accent-purple);
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.4);
             color: #fff;
             padding: 0.6rem 1.5rem;
             border-radius: 9999px;

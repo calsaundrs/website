@@ -27,18 +27,19 @@
     <link rel="stylesheet" href="/css/main.css">
     <style>
         :root {
-            --accent-color: #e83a9b;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(31, 41, 55, 0.8);
-            --text-primary: #ffffff;
-            --text-secondary: #d1d5db;
-            --border-color: rgba(75, 85, 99, 0.4);
+            --accent-color: #ec4899;
+            --bg-dark: #09090b;
+            --bg-card: rgba(24, 24, 27, 0.4);
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --border-color: rgba(255, 255, 255, 0.08);
         }
 
         body {
             background: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% -20%, #2e1065 0%, #09090b 70%);
+            background-attachment: fixed;
             color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
         }
 
         .filter-panel {
@@ -358,47 +359,52 @@
 
         /* Event Card Styles */
         .event-card {
-            background: rgba(31, 41, 55, 0.8) !important;
-            backdrop-filter: blur(20px) !important;
-            border: 1px solid rgba(75, 85, 99, 0.4) !important;
-            border-radius: 1rem !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-            overflow: hidden !important;
+            background: rgba(24, 24, 27, 0.45);
+            /* Deep zinc glass */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            /* Faint border */
+            border-radius: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            will-change: transform, box-shadow, border-color;
         }
 
         .event-card:hover {
-            transform: translateY(-4px) !important;
-            border-color: rgba(232, 58, 153, 0.5) !important;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 58, 153, 0.2) !important;
+            transform: translateY(-4px);
+            border-color: rgba(236, 72, 153, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
         }
 
         .event-card .relative {
-            overflow: hidden !important;
+            overflow: hidden;
         }
 
         .event-card img {
-            transition: transform 0.3s ease !important;
-            transform-origin: center center !important;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: center center;
         }
 
         .event-card:hover img {
-            transform: scale(1.05) !important;
+            transform: scale(1.08);
         }
 
         .event-card h3 {
-            color: #FFFFFF !important;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
-            font-weight: 700 !important;
-            font-size: 1.25rem !important;
-            line-height: 1.4 !important;
-            margin-bottom: 0.75rem !important;
-            text-align: left !important;
+            color: #FFFFFF;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+            text-align: left;
         }
 
         .event-card p {
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
-            line-height: 1.5 !important;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
         }
 
         .event-card .btn-primary,
@@ -736,45 +742,55 @@
 
 <body class="min-h-screen">
     <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
+    <header
+        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
             <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-                style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
+            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
+                style="font-family: 'Outfit', sans-serif;">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
+                    Outloud</span>
                 <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
+                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
                     onload="document.body.classList.add('flag-loaded')">
             </a>
-            <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html"
-                    class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET
-                    LISTED</a>
+            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
+                <a href="/events.html" class="text-white border-b-2 border-pink-500 pb-1">WHAT'S ON</a>
+                <a href="/all-venues.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
+                <a href="/community.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
+                <a href="/contact.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
+                <a href="/promoter-tool.html" class="nav-cta ml-4">
+                    GET LISTED
+                </a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl">
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
+                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
+                    aria-label="Menu">
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span
+                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
                 </button>
             </div>
         </nav>
         <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html"
-                class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET
-                LISTED</a>
+            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
+            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
+            <a href="/community.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
+                GET LISTED
+            </a>
         </div>
     </header>
 
@@ -1848,11 +1864,16 @@
             const catLabel = getCategoryLabel(eventCategories, event.name);
             const scatterHtml = emoji.map(e => `<span>${e}</span>`).join('');
             const heroHtml = imageUrl
-                ? `<div class="relative overflow-hidden">
-                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
+                ? `<div class="relative overflow-hidden group h-56 rounded-t-2xl">
+                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                       <div class="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
+                       <div class="absolute bottom-0 left-0 w-full p-4 flex flex-col justify-end">
+                           <div class="text-white font-bold text-lg leading-tight line-clamp-2 drop-shadow-md">${event.name}</div>
+                           <div class="text-zinc-300 text-xs font-semibold uppercase tracking-wider mt-1 drop-shadow-md">${venueName}</div>
+                       </div>
                    </div>`
-                : `<div class="event-hero-fallback ${gradientClass}">
+                : `<div class="event-hero-fallback ${gradientClass} h-56">
                        <div class="hero-scatter">${scatterHtml}</div>
                        <span class="hero-emoji-big">${emoji[0]}</span>
                        <div class="hero-accent-bar"></div>
@@ -1868,18 +1889,10 @@
                 return `
                     <div class="event-card flex flex-col h-full">
                         ${heroHtml}
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
-                            <p class="text-gray-400 text-sm mb-2 flex items-center">
-                                <i class="fas fa-calendar text-xs mr-1"></i>
-                                ${formattedDate}
-                                • 
-                                <i class="fas fa-clock text-xs ml-2 mr-1"></i>
-                                ${formattedTime}
-                            </p>
-                            <p class="text-gray-400 text-sm mb-3 flex items-center">
-                                <i class="fas fa-map-marker-alt text-xs mr-1"></i>
-                                ${venueName}
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <p class="text-zinc-400 text-sm mb-4 flex items-center gap-3">
+                                <span class="flex items-center"><i class="fas fa-calendar mr-2 text-pink-500"></i> ${formattedDate}</span>
+                                <span class="flex items-center"><i class="fas fa-clock mr-2 text-pink-500"></i> ${formattedTime}</span>
                             </p>
                             <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
                                 ${categoryTagsDesktop}
@@ -1902,23 +1915,16 @@
                         ${heroHtml}
                         
                         <!-- Content Section -->
-                        <div class="p-3">
-                            <!-- Event Title -->
-                            <h3 class="text-base font-bold mb-1 text-white leading-tight">${event.name}</h3>
-                            
+                        <div class="p-4 flex flex-col justify-between h-full w-full">
                             <!-- Date, Time and Venue - Compact Layout -->
-                            <div class="flex flex-wrap items-center gap-3 text-gray-300 text-xs mb-2">
+                            <div class="flex flex-col gap-2 text-zinc-300 text-sm mb-3">
                                 <div class="flex items-center">
-                                    <i class="fas fa-calendar text-accent-color mr-1"></i>
+                                    <i class="fas fa-calendar text-pink-500 mr-2 w-4"></i>
                                     <span>${formattedDate}</span>
                                 </div>
                                 <div class="flex items-center">
-                                    <i class="fas fa-clock text-accent-color mr-1"></i>
+                                    <i class="fas fa-clock text-pink-500 mr-2 w-4"></i>
                                     <span>${formattedTime}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-map-marker-alt text-accent-color mr-1"></i>
-                                    <span>${venueName}</span>
                                 </div>
                             </div>
                             
@@ -2093,12 +2099,17 @@
             const catLabel = getCategoryLabel(eventCategories, event.name);
             const scatterHtml = emoji.map(e => `<span>${e}</span>`).join('');
             const heroHtml = imageUrl
-                ? `<div class="relative overflow-hidden">
-                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
+                ? `<div class="relative overflow-hidden group h-56 rounded-t-2xl">
+                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                       <div class="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
                        ${recurringBadge}
+                       <div class="absolute bottom-0 left-0 w-full p-4 flex flex-col justify-end">
+                           <div class="text-white font-bold text-lg leading-tight line-clamp-2 drop-shadow-md">${event.name}</div>
+                           <div class="text-zinc-300 text-xs font-semibold uppercase tracking-wider mt-1 drop-shadow-md">${venueName}</div>
+                       </div>
                    </div>`
-                : `<div class="event-hero-fallback ${gradientClass}">
+                : `<div class="event-hero-fallback ${gradientClass} h-56">
                        <div class="hero-scatter">${scatterHtml}</div>
                        <span class="hero-emoji-big">${emoji[0]}</span>
                        <div class="hero-accent-bar"></div>
@@ -2115,14 +2126,9 @@
                 return `
                     <div class="event-card flex flex-col h-full border-2 border-purple-500/30">
                         ${heroHtml}
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
+                        <div class="p-4 flex flex-col flex-grow justify-between">
                             ${recurringInfo}
-                            <p class="text-gray-400 text-sm mb-3 flex items-center">
-                                <i class="fas fa-map-marker-alt text-xs mr-1"></i>
-                                ${venueName}
-                            </p>
-                            <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
+                            <div class="flex gap-1 mb-4 pt-1 overflow-hidden whitespace-nowrap">
                                 ${categoryTags}
                             </div>
                             <div class="flex justify-between items-center mt-auto">
@@ -2140,14 +2146,9 @@
                 return `
                     <div class="event-card overflow-hidden border-2 border-purple-500/30">
                         ${heroHtml}
-                        <div class="p-4">
-                            <h3 class="text-lg font-bold mb-2 line-clamp-2">${event.name}</h3>
+                        <div class="p-4 flex flex-col justify-between h-full">
                             ${recurringInfo}
-                            <p class="text-gray-400 text-sm mb-2 flex items-center">
-                                <i class="fas fa-map-marker-alt text-xs mr-1"></i>
-                                ${venueName}
-                            </p>
-                            <div class="flex flex-wrap gap-1 mb-3">
+                            <div class="flex flex-wrap gap-1 mb-3 pt-1">
                                 ${categoryTags}
                             </div>
                             <div class="flex justify-between items-center">
