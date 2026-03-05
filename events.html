@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LGBTQ+ Events in Birmingham | What's On | Brum Outloud</title>
-    <meta name="description" content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more. Updated daily with the latest events from Birmingham's vibrant LGBTQ+ scene.">
-    <meta name="keywords" content="LGBTQ+ events, Birmingham, drag shows, club nights, gay bars, lesbian events, queer community, Birmingham nightlife">
+    <meta name="description"
+        content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more. Updated daily with the latest events from Birmingham's vibrant LGBTQ+ scene.">
+    <meta name="keywords"
+        content="LGBTQ+ events, Birmingham, drag shows, club nights, gay bars, lesbian events, queer community, Birmingham nightlife">
     <meta property="og:title" content="LGBTQ+ Events in Birmingham | What's On | Brum Outloud">
-    <meta property="og:description" content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more.">
+    <meta property="og:description"
+        content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://brumoutloud.co.uk/events.html">
     <meta property="og:image" content="https://brumoutloud.co.uk/progressflag.svg.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="LGBTQ+ Events in Birmingham | What's On | Brum Outloud">
-    <meta name="twitter:description" content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more.">
+    <meta name="twitter:description"
+        content="Discover LGBTQ+ events in Birmingham. Find drag shows, club nights, community meetups, and more.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <!-- Main CSS -->
     <link rel="preload" href="/css/main.css" as="style">
     <link rel="stylesheet" href="/css/main.css">
@@ -109,7 +114,7 @@
             transition: all 0.2s ease;
             font-size: 0.875rem;
         }
-        
+
         /* Line clamp utilities for consistent card heights */
         .line-clamp-2 {
             display: -webkit-box;
@@ -281,7 +286,7 @@
             .desktop-filters {
                 display: none;
             }
-            
+
             .mobile-filter-btn {
                 display: block;
             }
@@ -291,7 +296,7 @@
             .mobile-filter-btn {
                 display: none;
             }
-            
+
             .desktop-filters {
                 display: block;
             }
@@ -329,8 +334,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* No results state */
@@ -356,21 +366,26 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
             overflow: hidden !important;
         }
+
         .event-card:hover {
             transform: translateY(-4px) !important;
             border-color: rgba(232, 58, 153, 0.5) !important;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 58, 153, 0.2) !important;
         }
+
         .event-card .relative {
             overflow: hidden !important;
         }
+
         .event-card img {
             transition: transform 0.3s ease !important;
             transform-origin: center center !important;
         }
+
         .event-card:hover img {
             transform: scale(1.05) !important;
         }
+
         .event-card h3 {
             color: #FFFFFF !important;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
@@ -380,28 +395,161 @@
             margin-bottom: 0.75rem !important;
             text-align: left !important;
         }
+
         .event-card p {
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
             line-height: 1.5 !important;
         }
-        .event-card .btn-primary, .event-card .btn-secondary {
+
+        .event-card .btn-primary,
+        .event-card .btn-secondary {
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
         }
-        .event-card .btn-primary:hover, .event-card .btn-secondary:hover {
+
+        .event-card .btn-primary:hover,
+        .event-card .btn-secondary:hover {
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
         }
+
         .event-card .text-accent-color {
             color: #E83A99 !important;
         }
+
         .event-card .bg-blue-100\/20 {
             background-color: rgba(191, 219, 254, 0.2) !important;
             backdrop-filter: blur(5px) !important;
         }
+
         .event-card .text-blue-300 {
             color: #93C5FD !important;
         }
-        
+
+        /* === Beautiful gradient fallback hero for events without images === */
+        .event-hero-fallback {
+            position: relative;
+            width: 100%;
+            height: 12rem;
+            /* h-48 equivalent */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Subtle dot pattern overlay */
+        .event-hero-fallback::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
+            background-size: 20px 20px;
+            z-index: 1;
+        }
+
+        /* Animated shimmer accent */
+        .event-hero-fallback::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 40%,
+                    rgba(255, 255, 255, 0.03) 50%,
+                    transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                transform: translateX(-30%) translateY(-30%);
+            }
+
+            50% {
+                transform: translateX(30%) translateY(30%);
+            }
+        }
+
+        .event-hero-fallback .fallback-text {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 1rem 1.25rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+            line-height: 1.3;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            max-width: 90%;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-hero-fallback .fallback-icon {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.5rem;
+            opacity: 0.25;
+            z-index: 2;
+        }
+
+        /* Category-themed gradients */
+        .hero-grad-drag {
+            background: linear-gradient(135deg, #be185d, #9333ea);
+        }
+
+        .hero-grad-clubbing {
+            background: linear-gradient(135deg, #4338ca, #7c3aed);
+        }
+
+        .hero-grad-community {
+            background: linear-gradient(135deg, #0f766e, #06b6d4);
+        }
+
+        .hero-grad-cabaret {
+            background: linear-gradient(135deg, #b91c1c, #f59e0b);
+        }
+
+        .hero-grad-social {
+            background: linear-gradient(135deg, #0369a1, #38bdf8);
+        }
+
+        .hero-grad-karaoke {
+            background: linear-gradient(135deg, #7e22ce, #ec4899);
+        }
+
+        .hero-grad-bingo {
+            background: linear-gradient(135deg, #c026d3, #f472b6);
+        }
+
+        .hero-grad-kink {
+            background: linear-gradient(135deg, #1e1b4b, #581c87);
+        }
+
+        .hero-grad-nostalgia {
+            background: linear-gradient(135deg, #78350f, #d97706);
+        }
+
+        .hero-grad-trans {
+            background: linear-gradient(135deg, #5bcefa, #f5a9b8);
+        }
+
+        .hero-grad-pride {
+            background: linear-gradient(135deg, #ef4444, #f59e0b, #22c55e, #3b82f6, #8b5cf6);
+        }
+
+        .hero-grad-default {
+            background: linear-gradient(135deg, #1e293b, #334155, #475569);
+        }
+
         /* Mobile-specific card enhancements */
         @media (max-width: 768px) {
             .event-card {
@@ -410,33 +558,33 @@
                 cursor: pointer !important;
                 transition: transform 0.2s ease, box-shadow 0.2s ease !important;
             }
-            
+
             .event-card:hover {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
             }
-            
+
             .event-card:active {
                 transform: translateY(0) !important;
             }
-            
+
             .event-card img {
                 border-radius: 1.25rem 1.25rem 0 0 !important;
                 overflow: hidden !important;
             }
-            
+
             .event-card .btn-primary {
                 background: linear-gradient(135deg, #E83A99, #D61F69) !important;
                 border: none !important;
                 font-weight: 600 !important;
             }
-            
+
             .event-card .btn-secondary {
                 background: rgba(75, 85, 99, 0.6) !important;
                 border: 1px solid rgba(75, 85, 99, 0.8) !important;
                 backdrop-filter: blur(10px) !important;
             }
-            
+
             .event-card h3 {
                 font-size: 1.125rem !important;
                 line-height: 1.3 !important;
@@ -444,18 +592,20 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen">
     <!-- Header -->
     <header class="p-8">
         <nav class="container mx-auto flex justify-between items-center">
             <!-- Site name with consolidated flag image and fallback -->
             <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
+                style="font-family: 'Omnes Pro', sans-serif;">
                 <span>Brum Outloud</span>
                 <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                     onload="document.body.classList.add('flag-loaded')">
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded"
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                    onload="document.body.classList.add('flag-loaded')">
             </a>
             <div class="hidden lg:flex items-center space-x-8">
                 <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
@@ -463,22 +613,27 @@
                 <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
                 <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
                 <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+                <a href="/promoter-tool.html"
+                    class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET
+                    LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                            <button id="menu-btn" class="btn-menu text-white text-2xl">
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-            </button>
+                <button id="menu-btn" class="btn-menu text-white text-2xl">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </button>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+        <div id="menu"
+            class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
             <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
             <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
             <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
             <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+            <a href="/promoter-tool.html"
+                class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET
+                LISTED</a>
         </div>
     </header>
 
@@ -487,36 +642,43 @@
         <!-- Desktop Filter Panel -->
         <div class="w-80 p-6 filter-panel m-6">
             <h2 class="text-xl font-bold mb-6">Filters</h2>
-            
+
             <!-- SFW Filter - Prominent at top -->
             <div class="filter-section">
                 <div class="flex items-center justify-between p-4">
                     <div class="flex items-center gap-3">
                         <span class="font-semibold">Show NSFW</span>
                     </div>
-                    <button class="toggle-switch" id="sfw-toggle" role="switch" aria-checked="false" onclick="toggleSFW()"></button>
+                    <button class="toggle-switch" id="sfw-toggle" role="switch" aria-checked="false"
+                        onclick="toggleSFW()"></button>
                 </div>
             </div>
 
             <!-- Quick Filters -->
             <div class="filter-section">
-                <div class="section-header" onclick="toggleSection('quick-filters')" aria-expanded="true" aria-controls="quick-filters">
+                <div class="section-header" onclick="toggleSection('quick-filters')" aria-expanded="true"
+                    aria-controls="quick-filters">
                     <span>Quick Filters</span>
                     <i class="fas fa-chevron-down section-icon"></i>
                 </div>
                 <div class="section-content" id="quick-filters">
                     <div class="flex flex-wrap gap-2 p-4">
-                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
-                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
-                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
-                        <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
+                        <button class="quick-filter-btn filter-button"
+                            onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
+                        <button class="quick-filter-btn filter-button"
+                            onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
+                        <button class="quick-filter-btn filter-button"
+                            onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
+                        <button class="quick-filter-btn filter-button"
+                            onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
                     </div>
                 </div>
             </div>
 
             <!-- Categories (Based on actual category array) -->
             <div class="filter-section">
-                <div class="section-header" onclick="toggleSection('categories')" aria-expanded="true" aria-controls="categories">
+                <div class="section-header" onclick="toggleSection('categories')" aria-expanded="true"
+                    aria-controls="categories">
                     <span>Categories</span>
                     <i class="fas fa-chevron-down section-icon"></i>
                 </div>
@@ -545,7 +707,8 @@
 
             <!-- Date Range -->
             <div class="filter-section">
-                <div class="section-header" onclick="toggleSection('date-range')" aria-expanded="true" aria-controls="date-range">
+                <div class="section-header" onclick="toggleSection('date-range')" aria-expanded="true"
+                    aria-controls="date-range">
                     <span>Date Range</span>
                     <i class="fas fa-chevron-down section-icon"></i>
                 </div>
@@ -598,8 +761,9 @@
             <!-- Event Count -->
             <div class="mb-6">
                 <h1 class="text-2xl font-bold mb-2">Events</h1>
-                <p class="text-gray-400">Showing <span class="text-accent-color font-semibold" id="event-count">0</span> events</p>
-                
+                <p class="text-gray-400">Showing <span class="text-accent-color font-semibold" id="event-count">0</span>
+                    events</p>
+
             </div>
 
             <!-- Event Grid -->
@@ -625,11 +789,11 @@
         <div class="p-4 border-b border-gray-700">
             <div class="flex items-center justify-between">
                 <h1 class="text-xl font-bold">Events</h1>
-                            <button class="mobile-filter-btn btn-primary btn-icon" onclick="openMobileFilters()">
-                <i class="fas fa-filter icon mr-2"></i>Filters
-            </button>
+                <button class="mobile-filter-btn btn-primary btn-icon" onclick="openMobileFilters()">
+                    <i class="fas fa-filter icon mr-2"></i>Filters
+                </button>
             </div>
-            
+
             <!-- Active Filters Chips -->
             <div class="mt-4" id="mobile-active-filters">
                 <div class="filter-chip">
@@ -641,7 +805,8 @@
             </div>
 
             <!-- Event Count -->
-            <p class="text-gray-400 mt-2">Showing <span class="text-accent-color font-semibold" id="mobile-event-count">0</span> events</p>
+            <p class="text-gray-400 mt-2">Showing <span class="text-accent-color font-semibold"
+                    id="mobile-event-count">0</span> events</p>
         </div>
 
         <!-- Mobile Event Grid -->
@@ -654,7 +819,8 @@
 
     <!-- Mobile Filter Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeMobileFilters()"></div>
-    <div class="mobile-filter-modal" id="mobile-filter-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="mobile-filter-modal" id="mobile-filter-modal" role="dialog" aria-modal="true"
+        aria-labelledby="modal-title">
         <div class="p-4 border-b border-gray-700">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-bold" id="modal-title">Filters</h2>
@@ -670,17 +836,22 @@
                 <div class="flex items-center gap-3">
                     <span class="font-semibold">Show NSFW</span>
                 </div>
-                <button class="toggle-switch" id="mobile-sfw-toggle" role="switch" aria-checked="false" onclick="toggleSFW()"></button>
+                <button class="toggle-switch" id="mobile-sfw-toggle" role="switch" aria-checked="false"
+                    onclick="toggleSFW()"></button>
             </div>
 
             <!-- Quick Filters -->
             <div>
                 <h3 class="font-semibold mb-3">Quick Filters</h3>
                 <div class="flex flex-wrap gap-2">
-                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-week')">This Week</button>
-                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-week')">Next Week</button>
-                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-month')">This Month</button>
-                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-month')">Next Month</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-week')">This
+                        Week</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-week')">Next
+                        Week</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'this-month')">This
+                        Month</button>
+                    <button class="quick-filter-btn filter-button" onclick="toggleQuickFilter(this, 'next-month')">Next
+                        Month</button>
                 </div>
             </div>
 
@@ -747,22 +918,70 @@
         // Adult content categories (for SFW filter)
         const adultCategories = ['Kink', 'Adult', 'NSFW', 'Explicit'];
 
+        // Map categories to gradient CSS class for fallback hero cards
+        function getGradientClass(categories, eventName) {
+            const cats = (Array.isArray(categories) ? categories : []).map(c => c.toLowerCase());
+            const name = (eventName || '').toLowerCase();
+
+            if (cats.some(c => c.includes('drag'))) return 'hero-grad-drag';
+            if (cats.some(c => c.includes('clubbing') || c.includes('club night'))) return 'hero-grad-clubbing';
+            if (cats.some(c => c.includes('community'))) return 'hero-grad-community';
+            if (cats.some(c => c.includes('cabaret'))) return 'hero-grad-cabaret';
+            if (cats.some(c => c.includes('social'))) return 'hero-grad-social';
+            if (cats.some(c => c.includes('karaoke'))) return 'hero-grad-karaoke';
+            if (cats.some(c => c.includes('bingo'))) return 'hero-grad-bingo';
+            if (cats.some(c => c.includes('kink') || c.includes('adult') || c.includes('nsfw'))) return 'hero-grad-kink';
+            if (cats.some(c => c.includes('nostalgia') || c.includes('retro'))) return 'hero-grad-nostalgia';
+            if (cats.some(c => c.includes('trans'))) return 'hero-grad-trans';
+            if (cats.some(c => c.includes('pride'))) return 'hero-grad-pride';
+
+            // Name-based fallback
+            if (name.includes('trans')) return 'hero-grad-trans';
+            if (name.includes('drag')) return 'hero-grad-drag';
+            if (name.includes('karaoke') || name.includes('eoke')) return 'hero-grad-karaoke';
+            if (name.includes('bingo')) return 'hero-grad-bingo';
+            if (name.includes('cabaret')) return 'hero-grad-cabaret';
+            if (name.includes('club')) return 'hero-grad-clubbing';
+            if (name.includes('pride')) return 'hero-grad-pride';
+
+            return 'hero-grad-default';
+        }
+
+        // Map categories to a Font Awesome icon class
+        function getCategoryIcon(categories) {
+            const cats = (Array.isArray(categories) ? categories : []).map(c => c.toLowerCase());
+
+            if (cats.some(c => c.includes('drag'))) return 'fas fa-star';
+            if (cats.some(c => c.includes('clubbing'))) return 'fas fa-music';
+            if (cats.some(c => c.includes('community'))) return 'fas fa-users';
+            if (cats.some(c => c.includes('cabaret'))) return 'fas fa-theater-masks';
+            if (cats.some(c => c.includes('social'))) return 'fas fa-glass-cheers';
+            if (cats.some(c => c.includes('karaoke'))) return 'fas fa-microphone';
+            if (cats.some(c => c.includes('bingo'))) return 'fas fa-dice';
+            if (cats.some(c => c.includes('kink'))) return 'fas fa-lock';
+            if (cats.some(c => c.includes('nostalgia'))) return 'fas fa-compact-disc';
+            if (cats.some(c => c.includes('trans'))) return 'fas fa-transgender-alt';
+            if (cats.some(c => c.includes('pride'))) return 'fas fa-rainbow';
+
+            return 'fas fa-calendar-alt';
+        }
+
         // Fetch events from Firestore
         async function fetchEvents() {
             showLoading();
             try {
                 // Try to fetch from Netlify function
                 const response = await fetch('/.netlify/functions/get-events-firestore-simple');
-                
+
                 if (response.ok) {
                     const data = await response.json();
-                    
-                                               if (data.success) {
-                               allEvents = data.events || [];
-                               // Removed data source indicator
-                               console.log(`Fetched ${allEvents.length} events from API`);
 
-                           } else {
+                    if (data.success) {
+                        allEvents = data.events || [];
+                        // Removed data source indicator
+                        console.log(`Fetched ${allEvents.length} events from API`);
+
+                    } else {
                         console.error('API returned error:', data.error);
                         throw new Error(data.error || 'API returned an error');
                     }
@@ -772,17 +991,17 @@
                 }
             } catch (error) {
                 console.error('Error fetching events:', error);
-                
+
                 // Fallback to sample data for testing
                 console.log('Using fallback sample data for testing');
                 allEvents = getSampleEvents();
                 // Using fallback sample data
             }
-            
+
             // Populate filter options
             populateCategories();
             populateVenues();
-            
+
             // Apply initial filters
             applyFilters();
             hideLoading();
@@ -795,7 +1014,7 @@
             tomorrow.setDate(tomorrow.getDate() + 1);
             const weekend = new Date(now);
             weekend.setDate(weekend.getDate() + 3);
-            
+
             return [
                 {
                     id: '1',
@@ -915,11 +1134,11 @@
         // Populate categories from actual event data
         function populateCategories() {
             const categories = new Set();
-            
+
             allEvents.forEach(event => {
                 // Handle multiple possible category field names
                 const eventCategories = event.category || event.categories || event.categoryIds || [];
-                
+
                 if (Array.isArray(eventCategories)) {
                     eventCategories.forEach(cat => {
                         if (cat && cat.trim()) {
@@ -935,9 +1154,9 @@
                     });
                 }
             });
-            
+
             const sortedCategories = Array.from(categories).sort();
-            
+
             // Desktop categories
             const desktopContainer = document.getElementById('categories-container');
             desktopContainer.innerHTML = sortedCategories.map(category => `
@@ -946,7 +1165,7 @@
                     <span>${category}</span>
                 </label>
             `).join('');
-            
+
             // Mobile categories
             const mobileContainer = document.getElementById('mobile-categories-container');
             mobileContainer.innerHTML = sortedCategories.map(category => `
@@ -960,9 +1179,9 @@
         // Populate venues from actual event data
         function populateVenues() {
             const venues = new Set();
-            
 
-            
+
+
             allEvents.forEach(event => {
                 // Handle both string and array formats
                 let venueName = null;
@@ -971,22 +1190,22 @@
                 } else if (event.venue && event.venue.name) {
                     venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
                 }
-                
 
-                
+
+
                 if (venueName && venueName.trim()) {
                     venues.add(venueName.trim());
                 }
             });
-            
+
             const sortedVenues = Array.from(venues).sort();
-            
+
             // Desktop venue select
             const desktopSelect = document.getElementById('venue-select');
-            desktopSelect.innerHTML = '<option value="">All Venues</option>' + 
+            desktopSelect.innerHTML = '<option value="">All Venues</option>' +
                 sortedVenues.map(venue => `<option value="${venue}">${venue}</option>`).join('');// Mobile venue select
             const mobileSelect = document.getElementById('mobile-venue-select');
-            mobileSelect.innerHTML = '<option value="">All Venues</option>' + 
+            mobileSelect.innerHTML = '<option value="">All Venues</option>' +
                 sortedVenues.map(venue => `<option value="${venue}">${venue}</option>`).join('');
         }
 
@@ -1008,14 +1227,14 @@
         function toggleSFW() {
             const desktopToggle = document.getElementById('sfw-toggle');
             const mobileToggle = document.getElementById('mobile-sfw-toggle');
-            
+
             desktopToggle.classList.toggle('active');
             mobileToggle.classList.toggle('active');
-            
+
             const isActive = desktopToggle.classList.contains('active');
             desktopToggle.setAttribute('aria-checked', isActive);
             mobileToggle.setAttribute('aria-checked', isActive);
-            
+
             currentFilters.sfw = isActive;
         }
 
@@ -1024,10 +1243,10 @@
             // Remove active class from all quick filter buttons
             const allButtons = button.parentElement.querySelectorAll('.quick-filter-btn');
             allButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             // Add active class to clicked button
             button.classList.add('active');
-            
+
             currentFilters.quickFilter = filter;
         }
 
@@ -1035,10 +1254,10 @@
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
             const header = section.previousElementSibling;
-            
+
             section.classList.toggle('collapsed');
             header.classList.toggle('collapsed');
-            
+
             const isExpanded = !section.classList.contains('collapsed');
             header.setAttribute('aria-expanded', isExpanded);
         }
@@ -1047,7 +1266,7 @@
         function openMobileFilters() {
             document.getElementById('modal-overlay').classList.add('active');
             document.getElementById('mobile-filter-modal').classList.add('active');
-            
+
             // Focus management
             document.getElementById('mobile-filter-modal').focus();
         }
@@ -1055,7 +1274,7 @@
         function closeMobileFilters() {
             document.getElementById('modal-overlay').classList.remove('active');
             document.getElementById('mobile-filter-modal').classList.remove('active');
-            
+
             // Return focus to filter button
             document.querySelector('.mobile-filter-btn').focus();
         }
@@ -1074,7 +1293,7 @@
                     chip.remove();
                 }
             });
-            
+
             // Reset the specific filter
             if (['this-week', 'next-week', 'this-month', 'next-month'].includes(filter)) {
                 currentFilters.quickFilter = '';
@@ -1093,7 +1312,7 @@
                 document.getElementById('venue-select').value = '';
                 document.getElementById('mobile-venue-select').value = '';
             }
-            
+
             applyFilters();
         }
 
@@ -1103,32 +1322,32 @@
             document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            
+
             // Reset quick filters
             document.querySelectorAll('.quick-filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             // Reset SFW toggle
             document.getElementById('sfw-toggle').classList.remove('active');
             document.getElementById('mobile-sfw-toggle').classList.remove('active');
             document.getElementById('sfw-toggle').setAttribute('aria-checked', 'false');
             document.getElementById('mobile-sfw-toggle').setAttribute('aria-checked', 'false');
-            
+
             // Reset venue select
             document.getElementById('venue-select').value = '';
             document.getElementById('mobile-venue-select').value = '';
-            
+
             // Reset date inputs
             document.getElementById('date-from').value = '';
             document.getElementById('date-to').value = '';
             document.getElementById('mobile-date-from').value = '';
             document.getElementById('mobile-date-to').value = '';
-            
+
             // Clear filter chips
             document.getElementById('active-filters').innerHTML = '';
             document.getElementById('mobile-active-filters').innerHTML = '';
-            
+
             // Reset filter state
             currentFilters = {
                 sfw: false,
@@ -1139,36 +1358,36 @@
                 dateTo: '',
                 search: ''
             };
-            
+
             applyFilters();
         }
 
         // Apply Filters with real data
         function applyFilters() {
             showLoading();
-            
+
             // Get current filter values
             currentFilters.venue = document.getElementById('venue-select').value;
             currentFilters.dateFrom = document.getElementById('date-from').value;
             currentFilters.dateTo = document.getElementById('date-to').value;
-            
+
             // Filter events
             filteredEvents = allEvents.filter(event => {
                 // SFW Filter (Show NSFW)
                 if (!currentFilters.sfw) {
                     const eventCategories = event.category || event.categories || event.categoryIds || [];
-                    const hasAdultContent = Array.isArray(eventCategories) && eventCategories.some(cat => 
+                    const hasAdultContent = Array.isArray(eventCategories) && eventCategories.some(cat =>
                         adultCategories.some(adult => cat.toLowerCase().includes(adult.toLowerCase()))
                     );
                     if (hasAdultContent) return false;
                 }
-                
+
                 // Quick Filters
                 if (currentFilters.quickFilter) {
                     const eventDate = new Date(event.date);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    
+
                     switch (currentFilters.quickFilter) {
                         case 'this-week':
                             const thisWeekStart = new Date(today);
@@ -1200,16 +1419,16 @@
                             break;
                     }
                 }
-                
+
                 // Category Filter
                 if (currentFilters.categories.length > 0) {
                     const eventCategories = event.category || event.categories || event.categoryIds || [];
-                    const hasMatchingCategory = Array.isArray(eventCategories) && eventCategories.some(cat => 
+                    const hasMatchingCategory = Array.isArray(eventCategories) && eventCategories.some(cat =>
                         currentFilters.categories.includes(cat)
                     );
                     if (!hasMatchingCategory) return false;
                 }
-                
+
                 // Venue Filter - handle both string and array formats
                 if (currentFilters.venue) {
                     let eventVenueName = null;
@@ -1218,38 +1437,38 @@
                     } else if (event.venue && event.venue.name) {
                         eventVenueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
                     }
-                    
+
                     if (eventVenueName !== currentFilters.venue) {
                         return false;
                     }
                 }
-                
+
                 // Date Range Filter
                 if (currentFilters.dateFrom) {
                     const fromDate = new Date(currentFilters.dateFrom);
                     if (new Date(event.date) < fromDate) return false;
                 }
-                
+
                 if (currentFilters.dateTo) {
                     const toDate = new Date(currentFilters.dateTo);
                     toDate.setHours(23, 59, 59); // End of day
                     if (new Date(event.date) > toDate) return false;
                 }
-                
+
                 return true;
             });
-            
+
             // Group recurring events
             filteredEvents = groupRecurringEvents(filteredEvents);
-            
+
             // Sort events by date
             filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-            
+
             // Update UI
             updateEventCount();
             renderEvents();
             updateActiveFilterChips();
-            
+
             hideLoading();
         }
 
@@ -1257,7 +1476,7 @@
         function groupRecurringEvents(events) {
             const groupedEvents = [];
             const recurringGroups = new Map();
-            
+
             events.forEach(event => {
                 if (event.isRecurring && event.recurringGroupId) {
                     // This is a recurring event with a group ID
@@ -1265,12 +1484,12 @@
                         // Add to existing group
                         const group = recurringGroups.get(event.recurringGroupId);
                         group.instances.push(event);
-                        
+
                         // Update group's next occurrence to the earliest future instance
                         const eventDate = new Date(event.date);
                         const groupDate = new Date(group.date);
                         const now = new Date();
-                        
+
                         if (eventDate >= now && (groupDate < now || eventDate < groupDate)) {
                             group.date = event.date;
                         }
@@ -1290,17 +1509,17 @@
                     groupedEvents.push(event);
                 }
             });
-            
+
             // Add grouped recurring events
             recurringGroups.forEach(group => {
                 // Sort instances by date
                 group.instances.sort((a, b) => new Date(a.date) - new Date(b.date));
                 groupedEvents.push(group);
             });
-            
+
             return groupedEvents;
         }
-        
+
         // Update event count
         function updateEventCount() {
             const count = filteredEvents.length;
@@ -1314,21 +1533,21 @@
             const desktopGrid = document.getElementById('event-grid');
             const mobileGrid = document.getElementById('mobile-event-grid');
             const noResults = document.getElementById('no-results');
-            
+
             if (filteredEvents.length === 0) {
                 desktopGrid.classList.add('hidden');
                 mobileGrid.classList.add('hidden');
                 noResults.classList.remove('hidden');
                 return;
             }
-            
+
             desktopGrid.classList.remove('hidden');
             mobileGrid.classList.remove('hidden');
             noResults.classList.add('hidden');
-            
+
             // Desktop events
             desktopGrid.innerHTML = filteredEvents.map(event => createEventCard(event, 'desktop')).join('');
-            
+
             // Mobile events
             mobileGrid.innerHTML = filteredEvents.map(event => createEventCard(event, 'mobile')).join('');
         }
@@ -1339,83 +1558,95 @@
             if (event.isRecurringGroup) {
                 return createRecurringEventCard(event, type);
             }
-            
+
             // Use the date field (which should now work correctly)
             const eventDate = new Date(event.date);
-            
+
             // Check if date is valid
             if (isNaN(eventDate.getTime())) {
                 console.error('Invalid date for event:', event.name, 'Date value:', event.date);
                 return ''; // Skip this event if date is invalid
             }
-            
-            const formattedDate = eventDate.toLocaleDateString('en-GB', { 
-                weekday: 'short', 
-                day: 'numeric', 
+
+            const formattedDate = eventDate.toLocaleDateString('en-GB', {
+                weekday: 'short',
+                day: 'numeric',
                 month: 'short',
                 timeZone: 'UTC' // Display dates as stored (no timezone conversion)
             });
-            const formattedTime = eventDate.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
+            const formattedTime = eventDate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
                 minute: '2-digit',
                 timeZone: 'UTC' // Display times as stored (no timezone conversion)
             });
-            
+
             // Create tag display for mobile - allow wrapping but limit to 5 tags max
             const eventCategories = event.category || event.categories || event.categoryIds || [];
             const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
                 const maxVisibleTags = 5;
                 const visibleTags = eventCategories.slice(0, maxVisibleTags);
                 const remainingCount = eventCategories.length - maxVisibleTags;
-                
-                const tagElements = visibleTags.map(cat => 
+
+                const tagElements = visibleTags.map(cat =>
                     `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
                 ).join('');
-                
+
                 if (remainingCount > 0) {
                     return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full mr-1 mb-1">+${remainingCount} more</span>`;
                 }
-                
+
                 return tagElements;
             })() : '';
-            
+
             // Create elegant tag display for desktop - show max 3 tags + count
             const categoryTagsDesktop = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
                 const maxVisibleTags = 3;
                 const visibleTags = eventCategories.slice(0, maxVisibleTags);
                 const remainingCount = eventCategories.length - maxVisibleTags;
-                
-                const tagElements = visibleTags.map(cat => 
+
+                const tagElements = visibleTags.map(cat =>
                     `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
                 ).join('');
-                
+
                 if (remainingCount > 0) {
                     return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full flex-shrink-0">+${remainingCount} more</span>`;
                 }
-                
+
                 return tagElements;
             })() : '';
-            
-                    // Handle image like the live events page
-        const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
-        
-        // Get venue name - handle both string and array formats
-        let venueName = 'TBC';
-        if (event.venueName) {
-            venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
-        } else if (event.venue && event.venue.name) {
-            venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
-        }
-        
 
-            
+            // Handle image — use real image or a beautiful gradient fallback
+            const rawImageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : null;
+            const isPlaceholder = !rawImageUrl || rawImageUrl.includes('placehold.co') || rawImageUrl.includes('placeholder');
+            const imageUrl = isPlaceholder ? null : rawImageUrl;
+
+            // Get venue name - handle both string and array formats
+            let venueName = 'TBC';
+            if (event.venueName) {
+                venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
+            } else if (event.venue && event.venue.name) {
+                venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
+            }
+
+            // Pick gradient class based on the first category
+            const gradientClass = getGradientClass(eventCategories, event.name);
+
+            // Build the hero section — real image or gradient fallback
+            const heroHtml = imageUrl
+                ? `<div class="relative overflow-hidden">
+                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
+                   </div>`
+                : `<div class="event-hero-fallback ${gradientClass}">
+                       <span class="fallback-text">${event.name}</span>
+                       <i class="${getCategoryIcon(eventCategories)} fallback-icon"></i>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:3">Featured</div>' : ''}
+                   </div>`;
+
             if (type === 'desktop') {
                 return `
                     <div class="event-card flex flex-col h-full">
-                        <div class="relative overflow-hidden">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
-                        </div>
+                        ${heroHtml}
                         <div class="p-4 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
                             <p class="text-gray-400 text-sm mb-2 flex items-center">
@@ -1446,13 +1677,8 @@
             } else {
                 return `
                     <div class="event-card overflow-hidden">
-                        <!-- Hero Image Section -->
-                        <div class="relative">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded-full font-semibold">Featured</div>' : ''}
-                            <!-- Gradient overlay for better text readability -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        </div>
+                        <!-- Hero Section -->
+                        ${heroHtml}
                         
                         <!-- Content Section -->
                         <div class="p-3">
@@ -1498,15 +1724,15 @@
         function shareEvent(event, eventName, eventUrl) {
             event.preventDefault();
             event.stopPropagation();
-            
+
             if (navigator.share) {
                 navigator.share({
                     title: eventName,
                     text: `Check out this event: ${eventName}`,
                     url: window.location.origin + eventUrl,
                 })
-                .then(() => console.log('Successful share'))
-                .catch((error) => console.log('Error sharing', error));
+                    .then(() => console.log('Successful share'))
+                    .catch((error) => console.log('Error sharing', error));
             } else {
                 const shareUrl = window.location.origin + eventUrl;
                 if (navigator.clipboard) {
@@ -1546,24 +1772,24 @@
         function updateActiveFilterChips() {
             const activeFilters = document.getElementById('active-filters');
             const mobileActiveFilters = document.getElementById('mobile-active-filters');
-            
+
             // Clear existing chips
             activeFilters.innerHTML = '';
             mobileActiveFilters.innerHTML = '';
-            
+
             // Add chips based on current filters
             if (currentFilters.quickFilter) {
                 const chip = createFilterChip(currentFilters.quickFilter, currentFilters.quickFilter);
                 activeFilters.appendChild(chip.cloneNode(true));
                 mobileActiveFilters.appendChild(chip);
             }
-            
+
             if (currentFilters.venue) {
                 const chip = createFilterChip(currentFilters.venue, currentFilters.venue);
                 activeFilters.appendChild(chip.cloneNode(true));
                 mobileActiveFilters.appendChild(chip);
             }
-            
+
             currentFilters.categories.forEach(category => {
                 const chip = createFilterChip(category, category);
                 activeFilters.appendChild(chip.cloneNode(true));
@@ -1587,29 +1813,30 @@
         // Create recurring event card
         function createRecurringEventCard(event, type) {
             const nextOccurrence = new Date(event.nextOccurrence || event.date);
-            const formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
-                weekday: 'short', 
-                day: 'numeric', 
+            const formattedDate = nextOccurrence.toLocaleDateString('en-GB', {
+                weekday: 'short',
+                day: 'numeric',
                 month: 'short',
                 timeZone: 'UTC'
             });
-            
+
             const eventCategories = event.category || event.categories || event.categoryIds || [];
-            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? 
-                eventCategories.slice(0, 3).map(cat => 
+            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ?
+                eventCategories.slice(0, 3).map(cat =>
                     `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
                 ).join('') : '';
-            
-            const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 
-                `https://placehold.co/400x225/1e1e1e/EAEAEA?text=${encodeURIComponent(event.name)}`;
-            
+
+            const rawImageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : null;
+            const isPlaceholder = !rawImageUrl || rawImageUrl.includes('placehold.co') || rawImageUrl.includes('placeholder');
+            const imageUrl = isPlaceholder ? null : rawImageUrl;
+
             let venueName = 'TBC';
             if (event.venueName) {
                 venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
             } else if (event.venue && event.venue.name) {
                 venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
             }
-            
+
             // Extract recurrence pattern
             const getRecurrencePattern = (event) => {
                 if (event.recurringPattern) {
@@ -1623,30 +1850,41 @@
                 }
                 return 'Recurring';
             };
-            
+
             const recurrencePattern = getRecurrencePattern(event);
-            
+
             const recurringBadge = `
-                <div class="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                <div class="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold" style="z-index:3">
                     <i class="fas fa-redo mr-1"></i>${recurrencePattern}
                 </div>
             `;
-            
+
             const recurringInfo = `
                 <div class="text-sm text-purple-400 mb-2">
                     <i class="fas fa-calendar-alt mr-1"></i>
                     Next: ${formattedDate}
                 </div>
             `;
-            
+
+            // Build hero — real image or gradient fallback
+            const gradientClass = getGradientClass(eventCategories, event.name);
+            const heroHtml = imageUrl
+                ? `<div class="relative overflow-hidden">
+                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
+                       ${recurringBadge}
+                   </div>`
+                : `<div class="event-hero-fallback ${gradientClass}">
+                       <span class="fallback-text">${event.name}</span>
+                       <i class="${getCategoryIcon(eventCategories)} fallback-icon"></i>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:3">Featured</div>' : ''}
+                       ${recurringBadge}
+                   </div>`;
+
             if (type === 'desktop') {
                 return `
                     <div class="event-card flex flex-col h-full border-2 border-purple-500/30">
-                        <div class="relative overflow-hidden">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
-                            ${recurringBadge}
-                        </div>
+                        ${heroHtml}
                         <div class="p-4 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold mb-2 line-clamp-2 min-h-[3rem]">${event.name}</h3>
                             ${recurringInfo}
@@ -1671,13 +1909,7 @@
             } else {
                 return `
                     <div class="event-card overflow-hidden border-2 border-purple-500/30">
-                        <div class="relative">
-                            <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
-                            ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded-full font-semibold">Featured</div>' : ''}
-                            ${recurringBadge}
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        </div>
-                        
+                        ${heroHtml}
                         <div class="p-4">
                             <h3 class="text-lg font-bold mb-2 line-clamp-2">${event.name}</h3>
                             ${recurringInfo}
@@ -1703,53 +1935,53 @@
         }
 
         // Mobile menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const menuBtn = document.getElementById('menu-btn');
             const menu = document.getElementById('menu');
-            
+
             if (menuBtn && menu) {
-                menuBtn.addEventListener('click', function() {
+                menuBtn.addEventListener('click', function () {
                     menu.classList.toggle('hidden');
                     menu.classList.toggle('flex');
                     menuBtn.classList.toggle('active');
                 });
-                
+
                 // Close menu when clicking on a link
                 const menuLinks = menu.querySelectorAll('a');
                 menuLinks.forEach(link => {
-                    link.addEventListener('click', function() {
+                    link.addEventListener('click', function () {
                         menu.classList.add('hidden');
                         menu.classList.remove('flex');
                         menuBtn.classList.remove('active');
                     });
                 });
             }
-            
+
             // Fetch events on page load
             fetchEvents();
-            
+
             // Add event listeners for form elements
-            document.getElementById('venue-select').addEventListener('change', function() {
+            document.getElementById('venue-select').addEventListener('change', function () {
                 currentFilters.venue = this.value;
             });
-            
-            document.getElementById('mobile-venue-select').addEventListener('change', function() {
+
+            document.getElementById('mobile-venue-select').addEventListener('change', function () {
                 currentFilters.venue = this.value;
             });
-            
-            document.getElementById('date-from').addEventListener('change', function() {
+
+            document.getElementById('date-from').addEventListener('change', function () {
                 currentFilters.dateFrom = this.value;
             });
-            
-            document.getElementById('mobile-date-from').addEventListener('change', function() {
+
+            document.getElementById('mobile-date-from').addEventListener('change', function () {
                 currentFilters.dateFrom = this.value;
             });
-            
-            document.getElementById('date-to').addEventListener('change', function() {
+
+            document.getElementById('date-to').addEventListener('change', function () {
                 currentFilters.dateTo = this.value;
             });
-            
-            document.getElementById('mobile-date-to').addEventListener('change', function() {
+
+            document.getElementById('mobile-date-to').addEventListener('change', function () {
                 currentFilters.dateTo = this.value;
             });
         });
@@ -1765,32 +1997,39 @@
     <footer class="border-t-2 border-gray-800 p-8 mt-32">
         <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                 </div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
+                        class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
                     <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
                     <ul>
                         <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a>
+                        </li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter
+                                Tools</a></li>
                         <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
                     </ul>
                 </div>
-                 <div>
+                <div>
                     <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                     <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
+                                FAQ</a></li>
                         <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
+                                Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html"
+                                class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
 </body>
-</html> 
+
+</html>
