@@ -918,50 +918,60 @@
         // Adult content categories (for SFW filter)
         const adultCategories = ['Kink', 'Adult', 'NSFW', 'Explicit'];
 
+        // Normalise categories — handle arrays, comma-separated strings, or single strings
+        function normaliseCats(categories) {
+            if (!categories) return [];
+            if (typeof categories === 'string') return categories.split(',').map(c => c.trim().toLowerCase());
+            if (Array.isArray(categories)) return categories.flatMap(c => typeof c === 'string' ? c.split(',').map(s => s.trim().toLowerCase()) : []);
+            return [];
+        }
+
         // Map categories to gradient CSS class for fallback hero cards
         function getGradientClass(categories, eventName) {
-            const cats = (Array.isArray(categories) ? categories : []).map(c => c.toLowerCase());
+            const cats = normaliseCats(categories);
             const name = (eventName || '').toLowerCase();
 
-            if (cats.some(c => c.includes('drag'))) return 'hero-grad-drag';
-            if (cats.some(c => c.includes('clubbing') || c.includes('club night'))) return 'hero-grad-clubbing';
-            if (cats.some(c => c.includes('community'))) return 'hero-grad-community';
-            if (cats.some(c => c.includes('cabaret'))) return 'hero-grad-cabaret';
-            if (cats.some(c => c.includes('social'))) return 'hero-grad-social';
-            if (cats.some(c => c.includes('karaoke'))) return 'hero-grad-karaoke';
-            if (cats.some(c => c.includes('bingo'))) return 'hero-grad-bingo';
+            // Specific matches first (trans, drag, kink are more distinctive than social/community)
+            if (cats.some(c => c.includes('trans')))        return 'hero-grad-trans';
+            if (cats.some(c => c.includes('pride')))         return 'hero-grad-pride';
+            if (cats.some(c => c.includes('drag')))          return 'hero-grad-drag';
             if (cats.some(c => c.includes('kink') || c.includes('adult') || c.includes('nsfw'))) return 'hero-grad-kink';
+            if (cats.some(c => c.includes('cabaret')))       return 'hero-grad-cabaret';
+            if (cats.some(c => c.includes('karaoke')))       return 'hero-grad-karaoke';
+            if (cats.some(c => c.includes('bingo')))         return 'hero-grad-bingo';
             if (cats.some(c => c.includes('nostalgia') || c.includes('retro'))) return 'hero-grad-nostalgia';
-            if (cats.some(c => c.includes('trans'))) return 'hero-grad-trans';
-            if (cats.some(c => c.includes('pride'))) return 'hero-grad-pride';
+            if (cats.some(c => c.includes('clubbing') || c.includes('club night'))) return 'hero-grad-clubbing';
+            if (cats.some(c => c.includes('community')))     return 'hero-grad-community';
+            if (cats.some(c => c.includes('social')))        return 'hero-grad-social';
 
             // Name-based fallback
-            if (name.includes('trans')) return 'hero-grad-trans';
-            if (name.includes('drag')) return 'hero-grad-drag';
+            if (name.includes('trans'))    return 'hero-grad-trans';
+            if (name.includes('drag'))     return 'hero-grad-drag';
             if (name.includes('karaoke') || name.includes('eoke')) return 'hero-grad-karaoke';
-            if (name.includes('bingo')) return 'hero-grad-bingo';
-            if (name.includes('cabaret')) return 'hero-grad-cabaret';
-            if (name.includes('club')) return 'hero-grad-clubbing';
-            if (name.includes('pride')) return 'hero-grad-pride';
+            if (name.includes('bingo'))    return 'hero-grad-bingo';
+            if (name.includes('cabaret'))  return 'hero-grad-cabaret';
+            if (name.includes('club'))     return 'hero-grad-clubbing';
+            if (name.includes('pride'))    return 'hero-grad-pride';
+            if (name.includes('quiz'))     return 'hero-grad-social';
 
             return 'hero-grad-default';
         }
 
         // Map categories to a Font Awesome icon class
         function getCategoryIcon(categories) {
-            const cats = (Array.isArray(categories) ? categories : []).map(c => c.toLowerCase());
+            const cats = normaliseCats(categories);
 
-            if (cats.some(c => c.includes('drag'))) return 'fas fa-star';
-            if (cats.some(c => c.includes('clubbing'))) return 'fas fa-music';
+            if (cats.some(c => c.includes('trans')))     return 'fas fa-transgender-alt';
+            if (cats.some(c => c.includes('drag')))      return 'fas fa-star';
+            if (cats.some(c => c.includes('clubbing')))  return 'fas fa-music';
             if (cats.some(c => c.includes('community'))) return 'fas fa-users';
-            if (cats.some(c => c.includes('cabaret'))) return 'fas fa-theater-masks';
-            if (cats.some(c => c.includes('social'))) return 'fas fa-glass-cheers';
-            if (cats.some(c => c.includes('karaoke'))) return 'fas fa-microphone';
-            if (cats.some(c => c.includes('bingo'))) return 'fas fa-dice';
-            if (cats.some(c => c.includes('kink'))) return 'fas fa-lock';
+            if (cats.some(c => c.includes('cabaret')))   return 'fas fa-theater-masks';
+            if (cats.some(c => c.includes('social')))    return 'fas fa-glass-cheers';
+            if (cats.some(c => c.includes('karaoke')))   return 'fas fa-microphone';
+            if (cats.some(c => c.includes('bingo')))     return 'fas fa-dice';
+            if (cats.some(c => c.includes('kink')))      return 'fas fa-lock';
             if (cats.some(c => c.includes('nostalgia'))) return 'fas fa-compact-disc';
-            if (cats.some(c => c.includes('trans'))) return 'fas fa-transgender-alt';
-            if (cats.some(c => c.includes('pride'))) return 'fas fa-rainbow';
+            if (cats.some(c => c.includes('pride')))     return 'fas fa-rainbow';
 
             return 'fas fa-calendar-alt';
         }
