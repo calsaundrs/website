@@ -932,27 +932,27 @@
             const name = (eventName || '').toLowerCase();
 
             // Specific matches first (trans, drag, kink are more distinctive than social/community)
-            if (cats.some(c => c.includes('trans')))        return 'hero-grad-trans';
-            if (cats.some(c => c.includes('pride')))         return 'hero-grad-pride';
-            if (cats.some(c => c.includes('drag')))          return 'hero-grad-drag';
+            if (cats.some(c => c.includes('trans'))) return 'hero-grad-trans';
+            if (cats.some(c => c.includes('pride'))) return 'hero-grad-pride';
+            if (cats.some(c => c.includes('drag'))) return 'hero-grad-drag';
             if (cats.some(c => c.includes('kink') || c.includes('adult') || c.includes('nsfw'))) return 'hero-grad-kink';
-            if (cats.some(c => c.includes('cabaret')))       return 'hero-grad-cabaret';
-            if (cats.some(c => c.includes('karaoke')))       return 'hero-grad-karaoke';
-            if (cats.some(c => c.includes('bingo')))         return 'hero-grad-bingo';
+            if (cats.some(c => c.includes('cabaret'))) return 'hero-grad-cabaret';
+            if (cats.some(c => c.includes('karaoke'))) return 'hero-grad-karaoke';
+            if (cats.some(c => c.includes('bingo'))) return 'hero-grad-bingo';
             if (cats.some(c => c.includes('nostalgia') || c.includes('retro'))) return 'hero-grad-nostalgia';
             if (cats.some(c => c.includes('clubbing') || c.includes('club night'))) return 'hero-grad-clubbing';
-            if (cats.some(c => c.includes('community')))     return 'hero-grad-community';
-            if (cats.some(c => c.includes('social')))        return 'hero-grad-social';
+            if (cats.some(c => c.includes('community'))) return 'hero-grad-community';
+            if (cats.some(c => c.includes('social'))) return 'hero-grad-social';
 
             // Name-based fallback
-            if (name.includes('trans'))    return 'hero-grad-trans';
-            if (name.includes('drag'))     return 'hero-grad-drag';
+            if (name.includes('trans')) return 'hero-grad-trans';
+            if (name.includes('drag')) return 'hero-grad-drag';
             if (name.includes('karaoke') || name.includes('eoke')) return 'hero-grad-karaoke';
-            if (name.includes('bingo'))    return 'hero-grad-bingo';
-            if (name.includes('cabaret'))  return 'hero-grad-cabaret';
-            if (name.includes('club'))     return 'hero-grad-clubbing';
-            if (name.includes('pride'))    return 'hero-grad-pride';
-            if (name.includes('quiz'))     return 'hero-grad-social';
+            if (name.includes('bingo')) return 'hero-grad-bingo';
+            if (name.includes('cabaret')) return 'hero-grad-cabaret';
+            if (name.includes('club')) return 'hero-grad-clubbing';
+            if (name.includes('pride')) return 'hero-grad-pride';
+            if (name.includes('quiz')) return 'hero-grad-social';
 
             return 'hero-grad-default';
         }
@@ -961,17 +961,17 @@
         function getCategoryIcon(categories) {
             const cats = normaliseCats(categories);
 
-            if (cats.some(c => c.includes('trans')))     return 'fas fa-transgender-alt';
-            if (cats.some(c => c.includes('drag')))      return 'fas fa-star';
-            if (cats.some(c => c.includes('clubbing')))  return 'fas fa-music';
+            if (cats.some(c => c.includes('trans'))) return 'fas fa-transgender-alt';
+            if (cats.some(c => c.includes('drag'))) return 'fas fa-star';
+            if (cats.some(c => c.includes('clubbing'))) return 'fas fa-music';
             if (cats.some(c => c.includes('community'))) return 'fas fa-users';
-            if (cats.some(c => c.includes('cabaret')))   return 'fas fa-theater-masks';
-            if (cats.some(c => c.includes('social')))    return 'fas fa-glass-cheers';
-            if (cats.some(c => c.includes('karaoke')))   return 'fas fa-microphone';
-            if (cats.some(c => c.includes('bingo')))     return 'fas fa-dice';
-            if (cats.some(c => c.includes('kink')))      return 'fas fa-lock';
+            if (cats.some(c => c.includes('cabaret'))) return 'fas fa-theater-masks';
+            if (cats.some(c => c.includes('social'))) return 'fas fa-glass-cheers';
+            if (cats.some(c => c.includes('karaoke'))) return 'fas fa-microphone';
+            if (cats.some(c => c.includes('bingo'))) return 'fas fa-dice';
+            if (cats.some(c => c.includes('kink'))) return 'fas fa-lock';
             if (cats.some(c => c.includes('nostalgia'))) return 'fas fa-compact-disc';
-            if (cats.some(c => c.includes('pride')))     return 'fas fa-rainbow';
+            if (cats.some(c => c.includes('pride'))) return 'fas fa-rainbow';
 
             return 'fas fa-calendar-alt';
         }
@@ -1584,11 +1584,20 @@
                 month: 'short',
                 timeZone: 'UTC' // Display dates as stored (no timezone conversion)
             });
-            const formattedTime = eventDate.toLocaleTimeString('en-GB', {
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'UTC' // Display times as stored (no timezone conversion)
-            });
+            // Prefer explicit time field over extracting from date string
+            // (many imported events have date-only strings like "2026-03-07" which default to 00:00)
+            let formattedTime;
+            if (event.time && event.time !== '00:00') {
+                formattedTime = event.time;
+            } else {
+                const extractedTime = eventDate.toLocaleTimeString('en-GB', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'UTC'
+                });
+                // If extracted time is midnight and there's no explicit time, show "TBC"
+                formattedTime = (extractedTime === '00:00' && !event.time) ? 'TBC' : extractedTime;
+            }
 
             // Create tag display for mobile - allow wrapping but limit to 5 tags max
             const eventCategories = event.category || event.categories || event.categoryIds || [];

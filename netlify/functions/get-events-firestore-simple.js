@@ -93,6 +93,7 @@ exports.handler = async function (event, context) {
                 name: data.name || data['Event Name'] || 'Untitled Event',
                 description: data.description || data['Description'] || '',
                 date: rawDate,
+                time: data.time || data.eventTime || null,
                 status: (data.status || 'pending').toLowerCase(),
                 slug: data.slug || data['Slug'] || '',
                 category: data.category || data['category'] || data.categories || data['categories'] || [],
