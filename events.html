@@ -425,129 +425,225 @@
             color: #93C5FD !important;
         }
 
-        /* === Beautiful gradient fallback hero for events without images === */
+        /* === Premium fallback hero for events without images === */
         .event-hero-fallback {
             position: relative;
             width: 100%;
             height: 12rem;
-            /* h-48 equivalent */
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-end;
+            justify-content: flex-start;
             overflow: hidden;
         }
 
-        /* Subtle dot pattern overlay */
+        /* Decorative floating circle — top-right */
+        .event-hero-fallback .hero-shape-1 {
+            position: absolute;
+            top: -30px;
+            right: -20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            filter: blur(1px);
+            z-index: 1;
+        }
+
+        /* Decorative floating circle — bottom-left */
+        .event-hero-fallback .hero-shape-2 {
+            position: absolute;
+            bottom: -20px;
+            left: -15px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            z-index: 1;
+        }
+
+        /* Decorative ring — center-right */
+        .event-hero-fallback .hero-shape-3 {
+            position: absolute;
+            top: 50%;
+            right: 15%;
+            transform: translateY(-50%) rotate(15deg);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            z-index: 1;
+            animation: float-ring 6s ease-in-out infinite;
+        }
+
+        @keyframes float-ring {
+
+            0%,
+            100% {
+                transform: translateY(-50%) rotate(15deg);
+            }
+
+            50% {
+                transform: translateY(-55%) rotate(25deg);
+            }
+        }
+
+        /* Diagonal stripe overlay for texture */
         .event-hero-fallback::before {
             content: '';
             position: absolute;
             inset: 0;
-            background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
-            background-size: 20px 20px;
+            background: repeating-linear-gradient(-45deg,
+                    transparent,
+                    transparent 8px,
+                    rgba(255, 255, 255, 0.015) 8px,
+                    rgba(255, 255, 255, 0.015) 16px);
             z-index: 1;
         }
 
-        /* Animated shimmer accent */
+        /* Animated glow pulse underlay */
         .event-hero-fallback::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                    transparent 40%,
-                    rgba(255, 255, 255, 0.03) 50%,
-                    transparent 60%);
-            animation: shimmer 8s ease-in-out infinite;
-            z-index: 1;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+            animation: pulse-glow 4s ease-in-out infinite;
+            z-index: 0;
         }
 
-        @keyframes shimmer {
+        @keyframes pulse-glow {
 
             0%,
             100% {
-                transform: translateX(-30%) translateY(-30%);
+                opacity: 0.4;
+                transform: translateX(-50%) scale(0.9);
             }
 
             50% {
-                transform: translateX(30%) translateY(30%);
+                opacity: 1;
+                transform: translateX(-50%) scale(1.1);
             }
         }
 
-        .event-hero-fallback .fallback-text {
+        /* Large category icon as centrepiece */
+        .event-hero-fallback .hero-icon-large {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -55%);
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, 0.12);
+            z-index: 1;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+        }
+
+        /* Glassmorphism text panel at bottom */
+        .event-hero-fallback .fallback-panel {
             position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 1rem 1.25rem;
+            z-index: 3;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .event-hero-fallback .fallback-text {
             font-weight: 800;
-            font-size: 1.25rem;
-            line-height: 1.3;
+            font-size: 1.1rem;
+            line-height: 1.25;
             color: #fff;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-            max-width: 90%;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            margin: 0;
         }
 
-        .event-hero-fallback .fallback-icon {
+        .event-hero-fallback .fallback-venue {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 2px;
+        }
+
+        .event-hero-fallback .fallback-icon-badge {
             position: absolute;
-            bottom: 0.75rem;
+            top: 0.75rem;
             right: 0.75rem;
-            font-size: 1.5rem;
-            opacity: 0.25;
-            z-index: 2;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        /* Category-themed gradients */
+        .event-hero-fallback .fallback-icon-badge i {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Category-themed gradients — richer multi-stop versions */
         .hero-grad-drag {
-            background: linear-gradient(135deg, #be185d, #9333ea);
+            background: linear-gradient(135deg, #be185d 0%, #a21caf 40%, #7c3aed 100%);
         }
 
         .hero-grad-clubbing {
-            background: linear-gradient(135deg, #4338ca, #7c3aed);
+            background: linear-gradient(135deg, #312e81 0%, #4338ca 35%, #7c3aed 70%, #a78bfa 100%);
         }
 
         .hero-grad-community {
-            background: linear-gradient(135deg, #0f766e, #06b6d4);
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 40%, #06b6d4 100%);
         }
 
         .hero-grad-cabaret {
-            background: linear-gradient(135deg, #b91c1c, #f59e0b);
+            background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 30%, #ea580c 65%, #f59e0b 100%);
         }
 
         .hero-grad-social {
-            background: linear-gradient(135deg, #0369a1, #38bdf8);
+            background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 40%, #38bdf8 100%);
         }
 
         .hero-grad-karaoke {
-            background: linear-gradient(135deg, #7e22ce, #ec4899);
+            background: linear-gradient(135deg, #581c87 0%, #7e22ce 35%, #c026d3 70%, #ec4899 100%);
         }
 
         .hero-grad-bingo {
-            background: linear-gradient(135deg, #c026d3, #f472b6);
+            background: linear-gradient(135deg, #86198f 0%, #c026d3 40%, #f472b6 80%, #fda4af 100%);
         }
 
         .hero-grad-kink {
-            background: linear-gradient(135deg, #1e1b4b, #581c87);
+            background: linear-gradient(135deg, #0f0a1e 0%, #1e1b4b 40%, #4c1d95 80%, #581c87 100%);
         }
 
         .hero-grad-nostalgia {
-            background: linear-gradient(135deg, #78350f, #d97706);
+            background: linear-gradient(135deg, #451a03 0%, #78350f 30%, #b45309 60%, #d97706 100%);
         }
 
         .hero-grad-trans {
-            background: linear-gradient(135deg, #5bcefa, #f5a9b8);
+            background: linear-gradient(160deg, #5bcefa 0%, #f5a9b8 35%, #ffffff 50%, #f5a9b8 65%, #5bcefa 100%);
         }
 
         .hero-grad-pride {
-            background: linear-gradient(135deg, #ef4444, #f59e0b, #22c55e, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 17%, #eab308 33%, #22c55e 50%, #3b82f6 67%, #8b5cf6 83%, #ec4899 100%);
         }
 
         .hero-grad-default {
-            background: linear-gradient(135deg, #1e293b, #334155, #475569);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 35%, #334155 70%, #475569 100%);
         }
 
         /* Mobile-specific card enhancements */
@@ -1651,15 +1747,23 @@
             const gradientClass = getGradientClass(eventCategories, event.name);
 
             // Build the hero section — real image or gradient fallback
+            const iconClass = getCategoryIcon(eventCategories);
             const heroHtml = imageUrl
                 ? `<div class="relative overflow-hidden">
                        <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
                        ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded">Featured</div>' : ''}
                    </div>`
                 : `<div class="event-hero-fallback ${gradientClass}">
-                       <span class="fallback-text">${event.name}</span>
-                       <i class="${getCategoryIcon(eventCategories)} fallback-icon"></i>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:3">Featured</div>' : ''}
+                       <div class="hero-shape-1"></div>
+                       <div class="hero-shape-2"></div>
+                       <div class="hero-shape-3"></div>
+                       <i class="${iconClass} hero-icon-large"></i>
+                       <div class="fallback-icon-badge"><i class="${iconClass}"></i></div>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:4">Featured</div>' : ''}
+                       <div class="fallback-panel">
+                           <div class="fallback-text">${event.name}</div>
+                           <div class="fallback-venue">${venueName}</div>
+                       </div>
                    </div>`;
 
             if (type === 'desktop') {
@@ -1887,6 +1991,7 @@
 
             // Build hero — real image or gradient fallback
             const gradientClass = getGradientClass(eventCategories, event.name);
+            const iconClass = getCategoryIcon(eventCategories);
             const heroHtml = imageUrl
                 ? `<div class="relative overflow-hidden">
                        <img src="${imageUrl}" alt="${event.name}" class="w-full h-48 object-cover">
@@ -1894,10 +1999,17 @@
                        ${recurringBadge}
                    </div>`
                 : `<div class="event-hero-fallback ${gradientClass}">
-                       <span class="fallback-text">${event.name}</span>
-                       <i class="${getCategoryIcon(eventCategories)} fallback-icon"></i>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:3">Featured</div>' : ''}
+                       <div class="hero-shape-1"></div>
+                       <div class="hero-shape-2"></div>
+                       <div class="hero-shape-3"></div>
+                       <i class="${iconClass} hero-icon-large"></i>
+                       <div class="fallback-icon-badge"><i class="${iconClass}"></i></div>
+                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:4">Featured</div>' : ''}
                        ${recurringBadge}
+                       <div class="fallback-panel">
+                           <div class="fallback-text">${event.name}</div>
+                           <div class="fallback-venue">${venueName}</div>
+                       </div>
                    </div>`;
 
             if (type === 'desktop') {
