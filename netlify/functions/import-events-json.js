@@ -55,73 +55,172 @@ exports.handler = async (event, context) => {
             };
         }
 
-        const events = body.events || [];
-        if (!Array.isArray(events)) {
+        let upsertEvents = [];
+        let deleteSlugs = [];
+        let dryRun = false;
+
+        if (Array.isArray(body)) {
+            upsertEvents = body;
+        } else {
+            if (Array.isArray(body.events)) {
+                upsertEvents = body.events;
+            } else if (Array.isArray(body.upsert)) {
+                upsertEvents = body.upsert;
+            }
+            if (Array.isArray(body.delete)) {
+                deleteSlugs = body.delete;
+            }
+            dryRun = body.dryRun === true;
+        }
+
+        if (upsertEvents.length === 0 && deleteSlugs.length === 0) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Bad Request', message: 'Payload must contain an "events" array' })
+                body: JSON.stringify({ error: 'Bad Request', message: 'Payload must contain an "upsert", "events", or "delete" array' })
             };
         }
 
         const results = [];
 
-        for (const evt of events) {
-            const currentResult = { name: evt.name || 'Unnamed Event' };
+        // 1. Process deletions
+        for (const slug of deleteSlugs) {
+            const currentResult = { action: 'delete', slug: slug };
+            try {
+                if (dryRun) {
+                    console.log(`[DRY RUN] Would delete event with slug: ${slug}`);
+                    currentResult.success = true;
+                    currentResult.dryRun = true;
+                } else {
+                    const snapshot = await db.collection('events').where('slug', '==', slug).get();
+                    if (snapshot.empty) {
+                        console.warn(`Delete warning: No event found with slug ${slug}`);
+                        currentResult.success = false;
+                        currentResult.warning = 'No matching document found';
+                    } else {
+                        for (const doc of snapshot.docs) {
+                            await doc.ref.delete();
+                        }
+                        currentResult.success = true;
+                    }
+                }
+            } catch (err) {
+                console.error(`Failed to delete event with slug ${slug}:`, err);
+                currentResult.success = false;
+                currentResult.error = err.message;
+            }
+            results.push(currentResult);
+        }
+
+        // 2. Process upserts
+        for (const evt of upsertEvents) {
+            const currentResult = { action: 'upsert', name: evt.name || 'Unnamed Event' };
             try {
                 // Generate slug from name and date
                 const rawName = evt.name || 'Event';
                 const dateSuffix = evt.date ? `-${evt.date}` : '';
                 const slug = rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + dateSuffix;
+                currentResult.slug = slug;
 
-                // Handle image upload to Cloudinary if imageUrl is provided
-                let cloudinaryResult = null;
-                if (evt.imageUrl) {
+                // Handle date conversion to ISO string with optional time
+                let isoDate = evt.date || '';
+                if (evt.date) {
                     try {
-                        cloudinaryResult = await cloudinary.uploader.upload(evt.imageUrl, {
-                            folder: 'brumoutloud/events',
-                            format: 'jpg',
-                            width: 1200,
-                            height: 630,
-                            crop: 'fill',
-                            gravity: 'auto',
-                            quality: 'auto'
-                        });
-                    } catch (uploadError) {
-                        console.error('Cloudinary upload failed for', evt.imageUrl, uploadError);
-                        // Continue to save the event without an image instead of failing entirely
+                        let timeStr = evt.startTime || '00:00';
+                        const dateTimeStr = `${evt.date}T${timeStr}:00.000Z`;
+                        const d = new Date(dateTimeStr);
+                        if (!isNaN(d.getTime())) {
+                            isoDate = dateTimeStr;
+                        }
+                    } catch (e) {
+                        // ignore error and fallback to raw string
                     }
                 }
 
-                const eventData = {
-                    name: evt.name || '',
-                    description: evt.description || '',
-                    date: evt.date || '',
-                    category: Array.isArray(evt.category) ? evt.category : [],
-                    venueName: evt.venueName || '',
-                    venueSlug: evt.venueSlug || '',
-                    image: cloudinaryResult ? { url: cloudinaryResult.secure_url } : null,
-                    link: evt.link || '',
-                    price: evt.price || '',
-                    ageRestriction: evt.ageRestriction || '',
-                    status: 'approved',
-                    isRecurring: !!evt.isRecurring,
-                    recurringGroupId: evt.recurringGroupId || null,
-                    recurringInstance: evt.recurringInstance || 1,
-                    totalInstances: evt.totalInstances || 1,
-                    recurringStartDate: evt.recurringStartDate || null,
-                    recurringEndDate: evt.recurringEndDate || null,
-                    recurringPattern: evt.recurringPattern || null,
-                    slug: slug,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
+                // Handle category array
+                let categories = [];
+                if (Array.isArray(evt.category)) {
+                    categories = evt.category;
+                } else if (typeof evt.category === 'string') {
+                    categories = [evt.category];
+                } else if (Array.isArray(evt.categories)) {
+                    categories = evt.categories;
+                }
 
-                // Add to Firestore
-                const docRef = await db.collection('events').add(eventData);
+                let exists = false;
+                let existingDocId = null;
+                const existingSnapshot = await db.collection('events').where('slug', '==', slug).get();
+                if (!existingSnapshot.empty) {
+                    exists = true;
+                    existingDocId = existingSnapshot.docs[0].id;
+                }
 
-                currentResult.success = true;
-                currentResult.id = docRef.id;
+                if (dryRun) {
+                    currentResult.success = true;
+                    currentResult.dryRun = true;
+                    currentResult.intendedAction = exists ? 'update' : 'create';
+                    console.log(`[DRY RUN] Would ${currentResult.intendedAction} event: ${rawName} (slug: ${slug})`);
+                } else {
+                    // Handle image upload to Cloudinary if imageUrl is provided
+                    let cloudinaryResult = null;
+                    if (evt.imageUrl) {
+                        try {
+                            cloudinaryResult = await cloudinary.uploader.upload(evt.imageUrl, {
+                                folder: 'brumoutloud/events',
+                                format: 'jpg',
+                                width: 1200,
+                                height: 630,
+                                crop: 'fill',
+                                gravity: 'auto',
+                                quality: 'auto'
+                            });
+                        } catch (uploadError) {
+                            console.error('Cloudinary upload failed for', evt.imageUrl, uploadError);
+                            // Continue to save the event without an image instead of failing entirely
+                        }
+                    }
+
+                    const eventData = {
+                        name: evt.name || '',
+                        description: evt.description || '',
+                        date: isoDate,
+                        time: evt.startTime || '',
+                        category: categories,
+                        venueName: evt.venueName || '',
+                        venueSlug: evt.venueSlug || '',
+                        link: evt.link || '',
+                        price: evt.price || '',
+                        ageRestriction: evt.ageRestriction || '',
+                        status: 'approved',
+                        isRecurring: !!evt.isRecurring,
+                        recurringGroupId: evt.recurringGroupId || null,
+                        recurringInstance: evt.recurringInstance || 1,
+                        totalInstances: evt.totalInstances || 1,
+                        recurringStartDate: evt.recurringStartDate || null,
+                        recurringEndDate: evt.recurringEndDate || null,
+                        recurringPattern: evt.recurringPattern || null,
+                        slug: slug,
+                        updatedAt: new Date().toISOString()
+                    };
+
+                    // Only set the image if we uploaded one, otherwise keep existing image if updating
+                    if (cloudinaryResult) {
+                        eventData.image = { url: cloudinaryResult.secure_url };
+                    }
+
+                    if (exists) {
+                        await db.collection('events').doc(existingDocId).update(eventData);
+                        currentResult.success = true;
+                        currentResult.id = existingDocId;
+                        currentResult.action = 'update';
+                    } else {
+                        eventData.createdAt = new Date().toISOString();
+                        const docRef = await db.collection('events').add(eventData);
+                        currentResult.success = true;
+                        currentResult.id = docRef.id;
+                        currentResult.action = 'create';
+                    }
+                }
             } catch (itemError) {
                 console.error(`Failed to process event ${currentResult.name}:`, itemError);
                 currentResult.success = false;
@@ -131,8 +230,8 @@ exports.handler = async (event, context) => {
             results.push(currentResult);
         }
 
-        // Trigger Netlify Rebuild if configured
-        if (process.env.NETLIFY_BUILD_HOOK_URL) {
+        // Trigger Netlify Rebuild if configured and not dry run
+        if (!dryRun && process.env.NETLIFY_BUILD_HOOK_URL) {
             try {
                 await fetch(process.env.NETLIFY_BUILD_HOOK_URL, {
                     method: 'POST',
@@ -149,7 +248,7 @@ exports.handler = async (event, context) => {
             headers,
             body: JSON.stringify({
                 success: true,
-                message: `Processed ${events.length} events`,
+                message: `Processed operations: ${upsertEvents.length} upserts, ${deleteSlugs.length} deletes${dryRun ? ' (DRY RUN)' : ''}`,
                 results: results
             })
         };
