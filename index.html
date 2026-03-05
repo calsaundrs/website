@@ -4,42 +4,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glow Up in Progress | Brum Outloud</title>
-    <meta name="description" content="Brum Outloud is having a quick costume change. We'll be back on stage shortly!">
-    <meta name="robots" content="noindex, nofollow">
+    <title>Brum Outloud | LGBTQ+ Birmingham Events, Venues & Community</title>
+    <meta name="description"
+        content="Your essential guide to Birmingham's vibrant LGBTQ+ scene. Discover queer-friendly events, venues, and community resources for residents and visitors.">
 
-    <!-- External Fonts & CSS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/">
+    <meta property="og:title" content="Brum Outloud | LGBTQ+ Birmingham Events, Venues & Community">
+    <meta property="og:description"
+        content="Your essential guide to Birmingham's vibrant LGBTQ+ scene. Discover queer-friendly events, venues, and community resources for residents and visitors.">
+    <meta property="og:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.brumoutloud.co.uk/">
+    <meta name="twitter:title" content="Brum Outloud | LGBTQ+ Birmingham Events, Venues & Community">
+    <meta name="twitter:description"
+        content="Your essential guide to Birmingham's vibrant LGBTQ+ scene. Discover queer-friendly events, venues, and community resources for residents and visitors.">
+    <meta name="twitter:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    <meta name="twitter:creator" content="@brumoutloud">
+    <meta name="twitter:site" content="@brumoutloud">
+
+    <!-- Additional SEO meta tags -->
+    <meta name="keywords"
+        content="LGBTQ+ Birmingham, gay events Birmingham, queer venues Birmingham, LGBTQ+ community, Birmingham gay scene, LGBT events, pride Birmingham, queer nightlife">
+    <meta name="author" content="Brum Outloud">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- Geo tags for local SEO -->
+    <meta name="geo.region" content="GB-WMD">
+    <meta name="geo.placename" content="Birmingham, UK">
+    <meta name="geo.position" content="52.4862;-1.8904">
+    <meta name="ICBM" content="52.4862, -1.8904">
+
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
+    <!-- Enhanced Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Brum Outloud",
+      "url": "https://www.brumoutloud.co.uk",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.brumoutloud.co.uk/progressflag.svg.png",
+        "width": 192,
+        "height": 192
+      },
+      "description": "Your essential guide to Birmingham's vibrant LGBTQ+ scene. Discover queer-friendly events, venues, and community resources for residents and visitors.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Birmingham",
+        "addressCountry": "GB"
+      },
+      "sameAs": [
+        "https://www.instagram.com/brumoutloud/",
+        "https://www.facebook.com/brumoutloud/"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "url": "https://www.brumoutloud.co.uk/contact.html"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://www.brumoutloud.co.uk",
+      "name": "Brum Outloud",
+      "description": "Your essential guide to Birmingham's vibrant LGBTQ+ scene",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.brumoutloud.co.uk/events.html?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Brum Outloud",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.brumoutloud.co.uk/progressflag.svg.png"
+        }
+      }
+    }
+    </script>
+
+    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
-        :root {
-            --accent-pink: #ec4899;
-            --accent-purple: #c026d3;
-            --bg-dark: #09090b;
-            --glass-bg: rgba(24, 24, 27, 0.45);
+        /* FOUC Prevention - Hide content until styles are loaded */
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        * {
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-text {
+            color: #c026d3;
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 100, 247, 0.3);
+            border-top: 3px solid #B564F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Critical CSS to prevent flashing */
+        body {
+            background-color: #09090b;
+            color: #f4f4f5;
+            font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: #f4f4f5;
-            font-family: 'Outfit', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #2e1065 0%, #09090b 70%);
-            background-attachment: fixed;
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.03) translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .hamburger {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            transition: all 0.25s;
+            position: relative;
+        }
+
+        .hamburger-top,
+        .hamburger-middle,
+        .hamburger-bottom {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 3px;
+            background: #fff;
+            transform: rotate(0);
+            transition: all 0.5s;
+        }
+
+        .hamburger-middle {
+            transform: translateY(7px);
+        }
+
+        .hamburger-bottom {
+            transform: translateY(14px);
+        }
+
+        .open .hamburger-top {
+            transform: rotate(45deg) translateY(6px) translateX(6px);
+        }
+
+        .open .hamburger-middle {
+            display: none;
+        }
+
+        .open .hamburger-bottom {
+            transform: rotate(-45deg) translateY(6px) translateX(-6px);
+        }
+
+        /* Prevent pride flag from flashing at full size */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Show flag after page loads */
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
+
+        /* Basic layout styles to prevent layout shift */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
 
         .video-background-container {
@@ -48,14 +284,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2;
+            z-index: -1;
+            overflow: hidden;
         }
 
         .background-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.3;
         }
 
         .video-overlay {
@@ -64,234 +300,232 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 800px;
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 3rem;
-            padding: 3.5rem 2rem;
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
-            animation: cardEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
-        }
-
-        @keyframes cardEntrance {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(40px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .font-anton {
-            font-family: 'Outfit', sans-serif;
-            letter-spacing: -0.02em;
-            text-transform: none;
-            font-weight: 800;
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #fdf4ff 0%, #f472b6 40%, #c026d3 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            animation: glowCycle 4s ease-in-out infinite alternate;
-        }
-
-        @media (max-width: 768px) {
-            .heading-gradient {
-                font-size: 3.5rem;
-            }
-        }
-
-        .subtext {
-            font-size: 1.35rem;
-            color: #ccc;
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(236, 72, 153, 0.1);
-            border: 1px solid rgba(236, 72, 153, 0.4);
-            color: #fff;
-            padding: 0.6rem 1.5rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 2.5rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .status-badge i {
-            margin-right: 0.75rem;
-            color: var(--accent-pink);
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            color: #EAEAEA;
-            font-size: 1.8rem;
-            text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: 1rem;
-        }
-
-        .social-link:hover {
-            color: var(--accent-pink);
-            transform: scale(1.2) rotate(8deg);
-            filter: drop-shadow(0 0 10px var(--accent-pink));
-        }
-
-        .progress-flag {
-            height: 2.5rem;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
-        }
-
-        /* Fun Floating Emojis */
-        .floating-emoji {
-            position: absolute;
-            font-size: 2rem;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.6;
-            animation: floatEmoji 6s ease-in-out infinite;
-        }
-
-        @keyframes floatEmoji {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(15deg);
-            }
-        }
-
-        @keyframes glowCycle {
-            0% {
-                filter: drop-shadow(0 0 5px rgba(232, 58, 153, 0.3));
-            }
-
-            100% {
-                filter: drop-shadow(0 0 20px rgba(181, 100, 247, 0.6));
-            }
-        }
-
-        .glitter-particle {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: twinkle var(--duration) ease-in-out infinite;
-        }
-
-        @keyframes twinkle {
-
-            0%,
-            100% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: scale(1.2);
-            }
+            background: rgba(18, 18, 18, 0.8);
         }
     </style>
+
+    <!-- Performance: Optimized external resource loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet">
+    </noscript>
+
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    </noscript>
+
+    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="/css/tailwind.css" as="style">
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/HouseOfAllureReel.mp4" as="video" type="video/mp4">
+
+    <script src="/js/fouc-prevention.js"></script>
+    <script src="/js/main.js?v=2" defer></script>
+
+    <!-- PWA and favicons -->
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="apple-touch-icon" href="/faviconV2.png">
+    <link rel="manifest" href="/manifest.json?v=2">
+    <meta name="theme-color" content="#8a2be2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
-<body>
+<body class="antialiased fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div class="video-background-container">
         <div class="video-overlay"></div>
-        <video autoplay loop muted playsinline class="background-video" preload="metadata">
+        <video autoplay loop muted playsinline class="background-video" preload="metadata" poster="/video-poster.jpg">
             <source src="/HouseOfAllureReel.mp4" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
     </div>
 
-    <div id="glitter-container"></div>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
 
-    <div class="container">
-        <div class="card">
-            <!-- Cheeky Floating Elements Around Card -->
-            <span class="floating-emoji" style="top: -20px; left: -10px; animation-delay: 0s;">✨</span>
-            <span class="floating-emoji" style="top: 10px; right: -20px; animation-delay: 1.5s;">💅</span>
-            <span class="floating-emoji" style="bottom: -15px; left: 20%; animation-delay: 3s;">💄</span>
-            <span class="floating-emoji" style="top: 40%; right: -25px; animation-delay: 4.5s;">🏳️‍🌈</span>
+    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-
-            <div class="status-badge">
-                <i class="fas fa-magic"></i> Backstage: Fixing Our Wig
+    <header
+        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
+                style="font-family: 'Outfit', sans-serif;">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
+                    Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
+                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                    onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
+                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S
+                    ON</a>
+                <a href="/all-venues.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
+                <a href="/community.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
+                <a href="/contact.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
+                <a href="/promoter-tool.html" class="nav-cta ml-4">
+                    GET LISTED
+                </a>
             </div>
-
-            <h1 class="font-anton heading-gradient">Getting Our<br>Glow Up</h1>
-
-            <p class="subtext">
-                Brum Outloud is having a quick mid-show costume change. We'll be back center stage with all your
-                favorite events in just a flash!
-            </p>
-
-            <a href="https://www.instagram.com/brumoutloud/" class="social-link" target="_blank"
-                aria-label="Follow us on Instagram">
-                <i class="fab fa-instagram"></i>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
+                    aria-label="Menu">
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span
+                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                </button>
+            </div>
+        </nav>
+        <div id="menu"
+            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
+            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
+            <a href="/community.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
+                GET LISTED
             </a>
         </div>
+    </header>
+
+    <main class="container mx-auto px-8 py-8 relative z-10">
+        <section class="max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h1
+                    class="font-anton text-8xl md:text-9xl lg:text-[12rem] leading-none tracking-wider heading-gradient font-black">
+                    OUR CITY.<br><span class="accent-color">OUR SCENE.</span>
+                </h1>
+                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">YOUR GUIDE TO LGBTQ+ BIRMINGHAM</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <a href="/events.html"
+                    class="card-bg block group p-8 md:p-12 text-center transition-all duration-500 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20">
+                    <h2
+                        class="font-anton text-5xl md:text-6xl text-white mb-4 transition-all duration-300 group-hover:text-accent-color">
+                        WHAT'S ON</h2>
+                    <p class="text-lg text-gray-400 mb-6 transition-all duration-300 group-hover:text-gray-300">Explore
+                        all the latest events, from club nights to theatre.</p>
+                    <span
+                        class="font-bold text-accent-color text-lg transition-all duration-300 group-hover:scale-110 group-hover:translate-x-1 inline-block">VIEW
+                        EVENTS →</span>
+                </a>
+                <a href="/all-venues.html"
+                    class="card-bg block group p-8 md:p-12 text-center transition-all duration-500 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20">
+                    <h2
+                        class="font-anton text-5xl md:text-6xl text-white mb-4 transition-all duration-300 group-hover:text-accent-color">
+                        THE VENUES</h2>
+                    <p class="text-lg text-gray-400 mb-6 transition-all duration-300 group-hover:text-gray-300">Discover
+                        the best LGBTQ+ friendly spaces in Birmingham.</p>
+                    <span
+                        class="font-bold text-accent-color text-lg transition-all duration-300 group-hover:scale-110 group-hover:translate-x-1 inline-block">BROWSE
+                        VENUES →</span>
+                </a>
+            </div>
+
+            <!-- Video Credit -->
+            <div class="text-center text-gray-500 text-sm mt-8 relative z-10">
+                <p>Background video credit: <br>
+                    <a href="https://www.instagram.com/_houseofallure_/" target="_blank" rel="noopener noreferrer"
+                        class="underline hover:text-white">House of Allure</a>
+                    produced by
+                    <a href="https://www.instagram.com/dominus_von_vexo/" target="_blank" rel="noopener noreferrer"
+                        class="underline hover:text-white">Dominus Von Vexo</a>.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t-2 border-gray-800 p-8 mt-32">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
+                        class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a>
+                        </li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter
+                                Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
+                                FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
+                                Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html"
+                                class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
     </div>
 
-    <script>
-        // Create subtle floating glitter
-        const glitterContainer = document.getElementById('glitter-container');
-        const particleCount = 40;
+    </div>
 
-        for (let i = 0; i < particleCount; i++) {
-            const p = document.createElement('div');
-            p.className = 'glitter-particle';
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script src="/js/accessibility.js"></script>
+    <script src="/js/error-handling.js"></script>
+    <script src="/js/pwa-manager.js"></script>
+    <script src="/js/seo-manager.js"></script>
+    <script src="/js/enhanced-animations.js"></script>
 
-            const size = Math.random() * 3 + 1;
-            p.style.width = `${size}px`;
-            p.style.height = `${size}px`;
-
-            p.style.left = `${Math.random() * 100}%`;
-            p.style.top = `${Math.random() * 100}%`;
-
-            p.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
-            p.style.animationDelay = `${Math.random() * 5}s`;
-
-            glitterContainer.appendChild(p);
-        }
-    </script>
 </body>
 
 </html>
