@@ -1,43 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Not Found - BrumOutLoud</title>
-    <meta name="description" content="Event not found or no longer available.">
-    
-    <!-- Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    
-    <style>
-        body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-        }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
-            letter-spacing: 0.05em;
-        }
-        .accent-color { color: #E83A99; }
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-        <header
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const newHeader = `    <header
         class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
         <nav class="container mx-auto flex justify-between items-center max-w-7xl">
             <!-- Site name with consolidated flag image and fallback -->
@@ -87,33 +55,38 @@
                 GET LISTED
             </a>
         </div>
-    </header>
+    </header>`;
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-8 py-8">
-        <div class="max-w-2xl mx-auto text-center">
-            <div class="mb-8">
-                <i class="fas fa-calendar-times text-6xl text-accent-color mb-4"></i>
-                <h1 class="text-4xl font-bold text-white mb-4">Event Not Found</h1>
-                <p class="text-gray-400 mb-8">This event may have been removed or the URL may be incorrect.</p>
-            </div>
-            
-            <div class="space-y-4">
-                <a href="/events" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
-                    <i class="fas fa-calendar-alt mr-2"></i>Browse All Events
-                </a>
-                <a href="/" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
-                    <i class="fas fa-home mr-2"></i>Go Home
-                </a>
-            </div>
-        </div>
-    </main>
+const fontImportOutfit = `<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">`;
 
-    <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8 mt-16">
-        <div class="container mx-auto text-center">
-            <h3 class="font-anton text-3xl leading-tight text-white mb-4">BE SEEN,<br>BE HEARD.</h3>
-        </div>
-    </footer>
-</body>
-</html>
+function walkDir(dir, callback) {
+    fs.readdirSync(dir).forEach(f => {
+        let dirPath = path.join(dir, f);
+        let isDirectory = fs.statSync(dirPath).isDirectory();
+        isDirectory ? walkDir(dirPath, callback) : callback(path.join(dir, f));
+    });
+}
+
+walkDir(__dirname, function (filePath) {
+    if (filePath.endsWith('.html') && !filePath.includes('node_modules')) {
+        let content = fs.readFileSync(filePath, 'utf8');
+        let modified = false;
+
+        // Replace old header
+        if (content.includes('<header class="p-8">')) {
+            content = content.replace(/<header class="p-8">[\s\S]*?<\/header>/, newHeader);
+            modified = true;
+        }
+
+        // Replace poppins/anton font links with outfit if needed, or add it globally if not present and if there's an existing google font
+        if (content.match(/<link[^>]*family=Poppins[^>]*>/i)) {
+            content = content.replace(/<link[^>]*family=Poppins[^>]*>/gi, fontImportOutfit);
+            modified = true;
+        }
+
+        if (modified) {
+            fs.writeFileSync(filePath, content, 'utf8');
+            console.log(`Updated: ${filePath}`);
+        }
+    }
+});
