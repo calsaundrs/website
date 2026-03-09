@@ -621,14 +621,6 @@ function extractImageUrl(data) {
         }
     }
 
-    // Try generating Cloudinary URL from airtableId as fallback (pattern: brumoutloud_events/event_[airtableId])
-    if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // High quality settings: w_1600 for retina, h_900 for 16:9 ratio, q_90 for high quality, c_fill for better cropping, fl_progressive for faster loading
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${data.airtableId}`;
-        console.log('Trying high-quality airtableId-based Cloudinary URL:', cloudinaryUrl);
-        return { url: cloudinaryUrl };
-    }
-
     console.log('No image found in data, using placeholder');
     // Return placeholder image (same as SSG pages)
     return { url: `https://placehold.co/1200x675/1e1e1e/EAEAEA?text=${encodeURIComponent(data.name || 'Event')}` };

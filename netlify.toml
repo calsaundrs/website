@@ -37,7 +37,6 @@
     "firebase",
     "resend",
     "cloudinary",
-    "airtable",
     "formidable",
     "lambda-multipart-parser",
     "node-fetch",

@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
     // Enable CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
@@ -27,7 +27,7 @@ exports.handler = async function(event, context) {
 
     try {
         console.log('Venue List Firestore: Starting function');
-        
+
         // Initialize Firebase if not already initialized
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -41,7 +41,7 @@ exports.handler = async function(event, context) {
 
         const db = admin.firestore();
         const venuesRef = db.collection('venues');
-        
+
         console.log('Venue List Firestore: Fetching venues from Firestore');
         const snapshot = await venuesRef.get(); // Removed status filter
 
@@ -50,25 +50,19 @@ exports.handler = async function(event, context) {
         const venues = [];
         snapshot.forEach(doc => {
             const data = doc.data();
-            
+
             // Extract image URL using same logic as events
             let imageUrl = null;
-            
+
             // 1. Try explicit image fields
             if (data.image) {
                 imageUrl = typeof data.image === 'string' ? data.image : data.image.url;
             } else if (data['Image']) {
                 imageUrl = typeof data['Image'] === 'string' ? data['Image'] : data['Image'].url;
-            } else if (data.venueImage) {
-                imageUrl = typeof data.venueImage === 'string' ? data.venueImage : data.venueImage.url;
             } else if (data['Venue Image']) {
                 imageUrl = typeof data['Venue Image'] === 'string' ? data['Venue Image'] : data['Venue Image'].url;
-            } else if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-                // Try high-quality Cloudinary URL from airtableId (venues might be in events folder)
-                imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/venue_${data.airtableId}`;
-                console.log('Trying high-quality airtableId-based Cloudinary URL for venue:', imageUrl);
             }
-            
+
             venues.push({
                 id: doc.id,
                 name: data.name || data['Venue Name'] || 'Unnamed Venue',
@@ -98,7 +92,7 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 error: 'Failed to fetch venues',
                 details: error.message,
                 stack: error.stack

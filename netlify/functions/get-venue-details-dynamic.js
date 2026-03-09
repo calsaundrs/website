@@ -302,30 +302,30 @@ exports.handler = async (event, context) => {
 
     // Extract slug from query parameters
     let slug = event.queryStringParameters?.slug;
-    
+
     if (!slug && event.path.includes('/venue/')) {
         const pathParts = event.path.split('/');
         slug = pathParts[pathParts.length - 1];
     }
-    
+
     if (!slug) {
-        return { 
-            statusCode: 400, 
-            body: 'Error: Venue slug not provided.' 
+        return {
+            statusCode: 400,
+            body: 'Error: Venue slug not provided.'
         };
     }
 
     try {
         console.log("Attempting to fetch venue with slug:", slug);
-        
+
         // Get venue data from Firestore
         const venueData = await getVenueBySlug(slug);
-        
+
         if (!venueData) {
             console.log("No venue found with slug:", slug);
-            return { 
-                statusCode: 404, 
-                body: 'Venue not found.' 
+            return {
+                statusCode: 404,
+                body: 'Venue not found.'
             };
         }
 
@@ -336,7 +336,7 @@ exports.handler = async (event, context) => {
 
         // Enrich venue data for template
         const enrichedVenue = enrichVenueForTemplate(venueData, upcomingEvents);
-        
+
         // Compile and render template
         const template = Handlebars.compile(embeddedVenueTemplate);
         const html = template({ venue: enrichedVenue });
@@ -381,11 +381,11 @@ async function getVenueBySlug(slug) {
     try {
         const venuesRef = db.collection('venues');
         const snapshot = await venuesRef.where('slug', '==', slug).limit(1).get();
-        
+
         if (snapshot.empty) {
             return null;
         }
-        
+
         const doc = snapshot.docs[0];
         return processVenueForDetails({
             id: doc.id,
@@ -399,7 +399,7 @@ async function getVenueBySlug(slug) {
 
 function processVenueForDetails(venueData) {
     console.log("Processing venue data:", venueData.name || venueData['Venue Name'], "Keys:", Object.keys(venueData));
-    
+
     // Extract image URL from various possible formats
     let imageUrl = null;
     if (venueData.image) {
@@ -412,14 +412,8 @@ function processVenueForDetails(venueData) {
         }
     } else if (venueData['Image']) {
         imageUrl = typeof venueData['Image'] === 'string' ? venueData['Image'] : venueData['Image'].url;
-    } else if (venueData.venueImage) {
-        imageUrl = typeof venueData.venueImage === 'string' ? venueData.venueImage : venueData.venueImage.url;
     } else if (venueData['Venue Image']) {
         imageUrl = typeof venueData['Venue Image'] === 'string' ? venueData['Venue Image'] : venueData['Venue Image'].url;
-    } else if (venueData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // Try high-quality Cloudinary URL from airtableId (venues might be in events folder)  
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/venue_${venueData.airtableId}`;
-        console.log('Using high-quality airtableId-based Cloudinary URL for venue details:', imageUrl);
     }
 
     // Handle tags
@@ -456,7 +450,7 @@ async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
     try {
         const eventsRef = db.collection('events');
         const now = new Date();
-        
+
         const snapshot = await eventsRef
             .where('venueSlug', '==', venueSlug)
             .where('date', '>=', now)
@@ -467,7 +461,7 @@ async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
         return snapshot.docs.map(doc => {
             const eventData = doc.data();
             const eventDate = eventData.date ? new Date(eventData.date) : null;
-            
+
             return {
                 id: doc.id,
                 name: eventData.name,
@@ -475,10 +469,10 @@ async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
                 date: eventData.date,
                 dayOfMonth: eventDate ? eventDate.getDate() : '',
                 monthAbbr: eventDate ? eventDate.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase() : '',
-                time: eventDate ? eventDate.toLocaleTimeString('en-GB', { 
-                    hour: 'numeric', 
+                time: eventDate ? eventDate.toLocaleTimeString('en-GB', {
+                    hour: 'numeric',
                     minute: '2-digit',
-                    hour12: true 
+                    hour12: true
                 }) : ''
             };
         });
@@ -490,8 +484,8 @@ async function getUpcomingEventsForVenue(venueSlug, limit = 6) {
 
 function enrichVenueForTemplate(venueData, upcomingEvents = []) {
     // Format description with line breaks
-    const formattedDescription = venueData.description ? 
-        venueData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') : 
+    const formattedDescription = venueData.description ?
+        venueData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') :
         '';
 
     return {

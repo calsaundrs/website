@@ -344,10 +344,10 @@ try {
         path.join(__dirname, 'event-template.html'), // Same directory
         '/opt/build/repo/event-template.html' // Netlify absolute path
     ];
-    
+
     let templatePath = null;
     let rawTemplate = null;
-    
+
     for (const testPath of possiblePaths) {
         console.log('Testing template path:', testPath);
         if (fs.existsSync(testPath)) {
@@ -357,7 +357,7 @@ try {
             break;
         }
     }
-    
+
     if (rawTemplate) {
         compiledTemplate = Handlebars.compile(rawTemplate);
         console.log('✅ Successfully loaded and compiled event-template.html for dynamic rendering');
@@ -392,71 +392,69 @@ try {
 // Enrich event data for template rendering
 async function enrichEventForTemplate(eventData, event) {
     const eventDate = eventData.date ? new Date(eventData.date) : null;
-    
+
     // Format date components
     const dayOfMonth = eventDate ? eventDate.getDate() : '';
     const monthAbbr = eventDate ? eventDate.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase() : '';
-    const formattedDate = eventDate ? eventDate.toLocaleDateString('en-GB', { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
+    const formattedDate = eventDate ? eventDate.toLocaleDateString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
     }) : 'Date TBC';
-    const time = eventDate ? eventDate.toLocaleTimeString('en-GB', { 
-        hour: 'numeric', 
+    const time = eventDate ? eventDate.toLocaleTimeString('en-GB', {
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: true 
+        hour12: true
     }) : '';
 
     // Fetch image URL from events listing API to ensure consistency
     let imageUrl = null;
-    
+
     try {
         // Call the events listing API to get the same event and use its image URL
         const eventsResponse = await fetch(`https://${event.headers.host}/.netlify/functions/get-events-firestore-simple?limit=50`);
         if (eventsResponse.ok) {
             const eventsData = await eventsResponse.json();
             const matchingEvent = eventsData.events?.find(e => e.slug === eventData.slug || e.id === eventData.id);
-                         if (matchingEvent && matchingEvent.image?.url) {
-                 imageUrl = matchingEvent.image.url;
-                 // Upgrade any Cloudinary URLs to high quality
-                 if (imageUrl.includes('cloudinary.com')) {
-                     const match = imageUrl.match(/https:\/\/res\.cloudinary\.com\/([^\/]+)\/image\/upload\/([^\/]+)\/(.*)/);
-                     if (match) {
-                         const [, cloudName, , publicId] = match;
-                         imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${publicId}`;
-                         console.log('Upgraded image URL to high quality:', imageUrl);
-                     }
-                 }
-                 console.log('Using final image URL:', imageUrl);
-             }
+            if (matchingEvent && matchingEvent.image?.url) {
+                imageUrl = matchingEvent.image.url;
+                // Upgrade any Cloudinary URLs to high quality
+                if (imageUrl.includes('cloudinary.com')) {
+                    const match = imageUrl.match(/https:\/\/res\.cloudinary\.com\/([^\/]+)\/image\/upload\/([^\/]+)\/(.*)/);
+                    if (match) {
+                        const [, cloudName, , publicId] = match;
+                        imageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${publicId}`;
+                        console.log('Upgraded image URL to high quality:', imageUrl);
+                    }
+                }
+                console.log('Using final image URL:', imageUrl);
+            }
         }
     } catch (error) {
         console.log('Failed to fetch from events listing API:', error.message);
     }
-    
+
     if (!imageUrl) {
         // Fallback to original logic if API call fails
         if (eventData.image) {
             imageUrl = typeof eventData.image === 'string' ? eventData.image : eventData.image.url;
-                 } else if (eventData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-             imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${eventData.airtableId}`;
-         } else if (eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
-             imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${eventData.id}`;
+        } else if (eventData.id && eventData.id.startsWith('rec') && process.env.CLOUDINARY_CLOUD_NAME) {
+            imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${eventData.id}`;
         } else {
             imageUrl = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
         }
     }
 
     // Format description with line breaks
-    const formattedDescription = eventData.description ? 
-        eventData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') : 
+    const formattedDescription = eventData.description ?
+        eventData.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>') :
         '';
 
     // Generate calendar URLs
     const googleCalendarUrl = eventDate ? generateGoogleCalendarUrl(eventData) : null;
     const icalUrl = eventDate ? generateICalUrl(eventData) : null;
-    
+
     // Check if recurring/boosted
     const isRecurring = !!eventData.recurringInfo;
     const today = new Date();
@@ -481,10 +479,10 @@ async function enrichEventForTemplate(eventData, event) {
 
 function generateGoogleCalendarUrl(event) {
     if (!event.date || !event.name) return null;
-    
+
     const startDate = new Date(event.date);
     const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000); // 3 hours later
-    
+
     const params = new URLSearchParams({
         action: 'TEMPLATE',
         text: event.name,
@@ -492,16 +490,16 @@ function generateGoogleCalendarUrl(event) {
         details: event.description || '',
         location: event.venue?.name || ''
     });
-    
+
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 function generateICalUrl(event) {
     if (!event.date || !event.name) return null;
-    
+
     const startDate = new Date(event.date);
     const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
-    
+
     const ical = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
@@ -516,7 +514,7 @@ function generateICalUrl(event) {
         'END:VEVENT',
         'END:VCALENDAR'
     ].join('\r\n');
-    
+
     return `data:text/calendar;charset=utf8,${encodeURIComponent(ical)}`;
 }
 
@@ -525,17 +523,17 @@ async function getEventBySlug(slug) {
     if (!firebaseInitialized || !db) {
         return null;
     }
-    
+
     try {
         const eventsRef = db.collection('events');
-        
+
         // Try exact slug match first
         let snapshot = await eventsRef
             .where('slug', '==', slug)
             .where('status', '==', 'approved')
             .limit(1)
             .get();
-        
+
         // Also try uppercase Status field
         if (snapshot.empty) {
             snapshot = await eventsRef
@@ -544,9 +542,9 @@ async function getEventBySlug(slug) {
                 .limit(1)
                 .get();
         }
-        
+
         if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
+            const doc = snapshot.docs[0];
             const eventData = doc.data();
             console.log("Found event by exact slug:", eventData.name);
             return processEventData({
@@ -554,14 +552,14 @@ async function getEventBySlug(slug) {
                 ...eventData
             });
         }
-        
+
         // Fallback: partial slug match
         snapshot = await eventsRef
             .where('status', '==', 'approved')
             .orderBy('date', 'desc')
             .limit(40)
             .get();
-        
+
         if (snapshot.empty) {
             // Try uppercase Status
             snapshot = await eventsRef
@@ -570,7 +568,7 @@ async function getEventBySlug(slug) {
                 .limit(40)
                 .get();
         }
-        
+
         const docs = snapshot.docs;
         for (const doc of docs) {
             const eventData = doc.data();
@@ -582,7 +580,7 @@ async function getEventBySlug(slug) {
                 });
             }
         }
-        
+
         return null;
     } catch (error) {
         console.error('Error fetching event by slug:', error);
@@ -592,23 +590,23 @@ async function getEventBySlug(slug) {
 
 function processEventData(rawData) {
     console.log("Processing raw event data:", rawData.name, "Raw data keys:", Object.keys(rawData));
-    
+
     // Handle venue data - could be array or string
     let venueName = 'Venue TBC';
     let venueSlug = '';
-    
+
     if (rawData.venueName) {
         venueName = Array.isArray(rawData.venueName) ? rawData.venueName[0] : rawData.venueName;
     } else if (rawData['Venue Name']) {
         venueName = Array.isArray(rawData['Venue Name']) ? rawData['Venue Name'][0] : rawData['Venue Name'];
     }
-    
+
     if (rawData.venueSlug) {
         venueSlug = rawData.venueSlug;
     } else if (rawData['Venue Slug']) {
         venueSlug = rawData['Venue Slug'];
     }
-    
+
     // Handle categories - ensure it's an array
     let categories = [];
     if (rawData.category) {
@@ -616,7 +614,7 @@ function processEventData(rawData) {
     } else if (rawData.Category) {
         categories = Array.isArray(rawData.Category) ? rawData.Category : [rawData.Category];
     }
-    
+
     return {
         id: rawData.id,
         name: rawData.name || rawData['Event Name'] || 'Untitled Event',
@@ -640,15 +638,15 @@ function processEventData(rawData) {
     };
 }
 
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
     console.log('Event handler called with event:', JSON.stringify(event, null, 2));
-    
+
     // Get slug from query parameters
     let slug = event.queryStringParameters?.slug;
     if (slug && slug.endsWith('.html')) {
         slug = slug.slice(0, -5);
     }
-    
+
     // If still no slug, attempt to derive from path (/event/<slug> or ...?splat)
     if (!slug) {
         const pathParts = event.rawUrl ? new URL(event.rawUrl).pathname.split('/') : (event.path || '').split('/');
@@ -656,7 +654,7 @@ exports.handler = async function(event, context) {
             slug = pathParts.slice(2).join('/').replace(/\.html$/, '');
         }
     }
-    
+
     if (!slug) {
         return {
             statusCode: 400,
@@ -664,12 +662,12 @@ exports.handler = async function(event, context) {
             body: '<h1>Missing slug parameter</h1>'
         };
     }
-    
+
     console.log('Looking for event with slug:', slug);
-    
+
     // Get the event data
     const eventData = await getEventBySlug(slug);
-    
+
     if (!eventData) {
         console.log("Event not found for slug:", slug);
         return {
@@ -681,7 +679,7 @@ exports.handler = async function(event, context) {
     console.log("Event data retrieved:", eventData.name);
 
     // Enrich event data for template
-            const enrichedEvent = await enrichEventForTemplate(eventData, event);
+    const enrichedEvent = await enrichEventForTemplate(eventData, event);
 
     console.log("Enriched event data:", {
         name: enrichedEvent.name,
@@ -693,7 +691,7 @@ exports.handler = async function(event, context) {
     // Force use of embedded template
     console.log('Compiling embedded template');
     const compiledTemplate = Handlebars.compile(embeddedTemplate);
-    
+
     const html = compiledTemplate({ event: enrichedEvent });
 
     return {

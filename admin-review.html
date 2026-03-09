@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Bulk Submissions | Brum Out Loud</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
@@ -20,12 +22,12 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
+
         .fouc-prevention.loaded {
             visibility: visible;
             opacity: 1;
         }
-        
+
         /* Loading screen */
         .loading-screen {
             position: fixed;
@@ -41,19 +43,19 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
-        
+
         .loading-text {
             color: #B564F7;
             font-family: 'Poppins', sans-serif;
@@ -61,7 +63,7 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -70,17 +72,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Critical CSS to prevent flashing */
         body {
             background-color: #121212;
@@ -92,14 +108,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -108,31 +124,36 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
     </style>
-    </head>
+</head>
+
 <body class="antialiased">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
+            patience!</p>
+    </div>
 
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
     <header
         class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
@@ -151,7 +172,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     onload="document.body.classList.add('flag-loaded')">
             </a>
             <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
+                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S
+                    ON</a>
                 <a href="/all-venues.html"
                     class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
                 <a href="/community.html"
@@ -189,15 +211,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">REVIEW <span class="accent-color">EVENTS</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Review the events parsed from your file. Match the venue and make any corrections before approving them for the site.</p>
+                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">REVIEW <span
+                        class="accent-color">EVENTS</span></h1>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Review the events parsed from your file. Match
+                    the venue and make any corrections before approving them for the site.</p>
             </div>
 
             <div id="review-container" class="space-y-6">
-                </div>
-            
+            </div>
+
             <div class="mt-12 text-center hidden" id="approve-all-container">
-                <button id="approve-all-btn" class="bg-green-600 text-white font-bold py-4 px-10 rounded-lg hover:bg-green-700 transition-colors text-lg">Approve All Correct Events</button>
+                <button id="approve-all-btn"
+                    class="bg-green-600 text-white font-bold py-4 px-10 rounded-lg hover:bg-green-700 transition-colors text-lg">Approve
+                    All Correct Events</button>
             </div>
 
             <div id="status-message" class="mt-8 text-center text-lg font-semibold hidden"></div>
@@ -206,35 +232,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </main>
 
     <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+        <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
+                        class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a>
+                        </li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter
+                                Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
+                                FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
+                                Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html"
+                                class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -258,7 +290,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const parsedVenueName = (event.venue || '').trim().toLowerCase();
                 const matchedVenue = allVenues.find(v => v.name.trim().toLowerCase() === parsedVenueName);
                 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                const ordinals = [{v:'first',t:'First'},{v:'second',t:'Second'},{v:'third',t:'Third'},{v:'fourth',t:'Fourth'},{v:'last',t:'Last'}];
+                const ordinals = [{ v: 'first', t: 'First' }, { v: 'second', t: 'Second' }, { v: 'third', t: 'Third' }, { v: 'fourth', t: 'Fourth' }, { v: 'last', t: 'Last' }];
 
                 const card = document.createElement('div');
                 card.id = `event-card-${index}`;
@@ -334,7 +366,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                 card.appendChild(form);
                 reviewContainer.appendChild(card);
-                
+
                 // Apply common styling
                 card.querySelectorAll('input:not([type=checkbox]):not([type=radio]), textarea, select').forEach(el => el.className = 'w-full p-2 bg-gray-900/50 rounded-md border border-gray-700');
                 card.querySelectorAll('input[type=radio]').forEach(el => el.className = 'form-radio bg-gray-800 border-gray-600 text-accent-color focus:ring-accent-color');
@@ -373,7 +405,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     const decodedData = atob(hashData);
                     console.log('Decoded data (before JSON.parse):', decodedData);
                     const events = JSON.parse(decodedData);
-                    if(events && events.length > 0) {
+                    if (events && events.length > 0) {
                         events.forEach(createEventCard);
                         approveAllContainer.classList.remove('hidden');
                     } else {
@@ -391,11 +423,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const eventsToCreate = [];
                 reviewContainer.querySelectorAll('.event-review-form').forEach(form => {
                     if (!form.elements.approved.checked) return;
-                    
+
                     const eventData = {};
                     const formData = new FormData(form);
                     for (const [key, value] of formData.entries()) {
-                         // Handle checkbox array for recurrence days
+                        // Handle checkbox array for recurrence days
                         if (key === 'recurrence_days') {
                             if (!eventData[key]) eventData[key] = [];
                             eventData[key].push(value);
@@ -403,22 +435,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             eventData[key] = value;
                         }
                     }
-                    
+
                     // Use the correct radio button value for monthly_type
                     eventData.monthly_type = form.querySelector(`input[name="monthly_type_${form.dataset.index}"]:checked`).value;
-                    
+
                     if (eventData.venueId) {
                         eventsToCreate.push(eventData);
                     }
                 });
 
-                if(eventsToCreate.length === 0) {
+                if (eventsToCreate.length === 0) {
                     statusMessage.textContent = "No events with linked venues are selected for approval.";
                     statusMessage.className = "mt-8 text-center text-lg font-semibold text-yellow-400";
                     statusMessage.classList.remove('hidden');
                     return;
                 }
-                
+
                 const approveAllBtn = document.getElementById('approve-all-btn');
                 statusMessage.textContent = `Approving ${eventsToCreate.length} event(s)...`;
                 statusMessage.className = "mt-8 text-center text-lg font-semibold text-white";
@@ -426,14 +458,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 approveAllBtn.disabled = true;
 
                 try {
-                    const response = await fetch('/.netlify/functions/create-approved-event', {
+                    // 1. Send to the unified Firestore admin creation endpoint
+                    const response = await fetch('/.netlify/functions/admin-create-event-firestore', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ events: eventsToCreate }),
                     });
                     if (!response.ok) {
-                         const errData = await response.json();
-                         throw new Error(errData.message || 'Server responded with an error.');
+                        const errData = await response.json();
+                        throw new Error(errData.message || 'Server responded with an error.');
                     }
                     statusMessage.textContent = 'Successfully approved events! They are now being added to the site.';
                     statusMessage.className = "mt-8 text-center text-lg font-semibold text-green-400";
@@ -448,4 +481,5 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         });
     </script>
 </body>
+
 </html>

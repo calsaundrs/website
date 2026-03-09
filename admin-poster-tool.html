@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Parser | Admin Panel</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
@@ -16,65 +18,81 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(75, 85, 99, 0.3);
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
             border: 1px solid rgba(232, 58, 153, 0.3);
         }
+
         .btn-primary:hover {
             background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
             transform: translateY(-1px);
         }
+
         .btn-secondary {
             background: rgba(75, 85, 99, 0.3);
             border: 1px solid rgba(75, 85, 99, 0.5);
         }
+
         .btn-secondary:hover {
             background: rgba(75, 85, 99, 0.5);
         }
+
         .btn-success {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
+
         .btn-success:hover {
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             transform: translateY(-1px);
         }
+
         .heading-gradient {
             background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .accent-color {
             color: #E83A99;
         }
+
         .accent-color-secondary {
             color: #8B5CF6;
         }
+
         .form-input {
             background: rgba(31, 41, 55, 0.8);
             border: 1px solid rgba(75, 85, 99, 0.5);
             backdrop-filter: blur(10px);
         }
+
         .form-input:focus {
             border-color: #E83A99;
             box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
         }
+
         .upload-area {
             background: rgba(31, 41, 55, 0.3);
             border: 2px dashed rgba(75, 85, 99, 0.5);
             transition: all 0.3s ease;
         }
-        .upload-area:hover, .upload-area.dragover {
+
+        .upload-area:hover,
+        .upload-area.dragover {
             border-color: #E83A99;
             background: rgba(232, 58, 153, 0.1);
         }
+
         .result-card {
             background: rgba(17, 24, 39, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.2);
             transition: all 0.3s ease;
         }
+
         .result-card:hover {
             transform: translateY(-2px);
             border-color: rgba(232, 58, 153, 0.3);
@@ -90,12 +108,12 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
+
         .fouc-prevention.loaded {
             visibility: visible;
             opacity: 1;
         }
-        
+
         /* Loading screen */
         .loading-screen {
             position: fixed;
@@ -111,19 +129,19 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
-        
+
         .loading-text {
             color: #B564F7;
             font-family: 'Poppins', sans-serif;
@@ -131,7 +149,7 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -140,17 +158,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Critical CSS to prevent flashing */
         body {
             background-color: #121212;
@@ -162,14 +194,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -178,31 +210,36 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
     </style>
-    </head>
+</head>
+
 <body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
+        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
+            patience!</p>
+    </div>
 
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
+    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
     <header
         class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
@@ -221,7 +258,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     onload="document.body.classList.add('flag-loaded')">
             </a>
             <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
+                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S
+                    ON</a>
                 <a href="/all-venues.html"
                     class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
                 <a href="/community.html"
@@ -264,7 +302,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <li>
                     <div class="flex items-center">
                         <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin/settings" class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
+                        <a href="/admin/settings"
+                            class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
                     </div>
                 </li>
                 <li>
@@ -278,28 +317,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">POSTER <span class="accent-color">PARSER</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Upload an event poster and let the AI extract the details. Review and approve the events to add them to the site.</p>
+                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">POSTER <span
+                        class="accent-color">PARSER</span></h1>
+                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Upload an event poster and let the AI extract
+                    the details. Review and approve the events to add them to the site.</p>
             </div>
 
             <div class="card-bg p-8 md:p-12 rounded-2xl">
                 <form id="poster-form" class="space-y-6">
-                     <div>
+                    <div>
                         <label for="poster-file" class="block text-sm font-semibold mb-2 accent-color-secondary">
                             <i class="fas fa-image mr-1"></i>Upload Poster Image
                         </label>
-                        <input type="file" id="poster-file" name="poster" class="form-input w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/gif" required>
+                        <input type="file" id="poster-file" name="poster"
+                            class="form-input w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600"
+                            accept="image/png, image/jpeg, image/gif" required>
                     </div>
-                     <div id="image-preview" class="hidden">
+                    <div id="image-preview" class="hidden">
                         <p class="text-sm font-semibold mb-2 accent-color-secondary">Image Preview</p>
                         <img id="preview-img" class="rounded-lg max-h-64 mx-auto" alt="Image preview">
-                     </div>
+                    </div>
                     <div class="pt-4">
-                        <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg transition-all w-full flex items-center justify-center">
-                             <span id="submit-text">
-                                 <i class="fas fa-magic mr-2"></i>Parse Poster
-                             </span>
-                             <span id="submit-loader" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-3 hidden"></span>
+                        <button type="submit"
+                            class="btn-primary text-white font-bold py-3 px-8 rounded-lg transition-all w-full flex items-center justify-center">
+                            <span id="submit-text">
+                                <i class="fas fa-magic mr-2"></i>Parse Poster
+                            </span>
+                            <span id="submit-loader"
+                                class="animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-3 hidden"></span>
                         </button>
                     </div>
                 </form>
@@ -311,37 +356,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
         </section>
     </main>
-    
+
     <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+        <div class="container mx-auto grid md:grid-cols-2">
             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
+                        class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a>
+                        </li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter
+                                Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
+                                FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
+                                Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html"
+                                class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
     <script>
         const form = document.getElementById('poster-form');
@@ -365,7 +416,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 reader.readAsDataURL(file);
             }
         });
-        
+
         function renderEventForm(eventData, index) {
             const form = document.createElement('form');
             form.className = "event-review-form card-bg p-6 space-y-4";
@@ -414,10 +465,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             form.appendChild(gridDiv3);
 
             form.appendChild(createField('Recurring Info', 'recurringInfo', 'text', '', 'e.g., Every second Friday'));
-            
+
             const categoriesString = Array.isArray(eventData.categories) ? eventData.categories.join(', ') : '';
             form.appendChild(createField('Categories (comma-separated)', 'categories', 'text', categoriesString));
-            
+
             form.appendChild(createField('Contact Email', 'contactEmail', 'email', eventData.contactEmail));
 
             const promoImageDiv = document.createElement('div');
@@ -446,7 +497,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             submitLoader.classList.remove('hidden');
             resultsContainer.innerHTML = '';
             statusMessage.textContent = 'Uploading image and contacting AI. This may take a moment...';
-            
+
             try {
                 const response = await fetch('/.netlify/functions/process-poster', {
                     method: 'POST',
@@ -459,9 +510,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.error("Server response not OK:", result);
                     throw new Error(result.message || 'An unknown server error occurred.');
                 }
-                
+
                 statusMessage.textContent = `AI found ${result.length} event(s). Please review and approve.`;
-                if(result.length === 0) { statusMessage.textContent = "AI couldn't find any clear event details in this spreadsheet."; }
+                if (result.length === 0) { statusMessage.textContent = "AI couldn't find any clear event details in this spreadsheet."; }
 
                 console.log("Calling renderEventForm for each result...");
                 result.events.forEach(renderEventForm);
@@ -470,9 +521,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             } catch (error) {
                 statusMessage.textContent = `Error: ${error.toString()}`;
             } finally {
-                 submitBtn.disabled = false;
-                 submitText.textContent = 'Parse Poster';
-                 submitLoader.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitText.textContent = 'Parse Poster';
+                submitLoader.classList.add('hidden');
             }
         });
 
@@ -502,13 +553,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 const formData = new FormData(reviewForm);
                 console.log("FormData entries:", Array.from(formData.entries()));
                 try {
-                    const response = await fetch('/.netlify/functions/create-approved-event', {
+                    // Send to the unified Firestore admin creation endpoint
+                    const response = await fetch('/.netlify/functions/admin-create-event-firestore', {
                         method: 'POST',
                         body: formData
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.message);
-                    
+
                     reviewForm.style.opacity = '0.5';
                     const eventName = new FormData(reviewForm).get('name');
                     reviewForm.innerHTML = `<p class="text-center text-green-400 font-bold">Approved & Added: ${eventName}</p>`;
@@ -523,4 +575,5 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     </script>
 </body>
+
 </html>

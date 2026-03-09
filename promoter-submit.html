@@ -8,7 +8,8 @@
     <meta name="description"
         content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="/css/tailwind.css">
@@ -173,7 +174,7 @@
 
     <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-        <header
+    <header
         class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
         <nav class="container mx-auto flex justify-between items-center max-w-7xl">
             <!-- Site name with consolidated flag image and fallback -->
@@ -190,7 +191,8 @@
                     onload="document.body.classList.add('flag-loaded')">
             </a>
             <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
+                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S
+                    ON</a>
                 <a href="/all-venues.html"
                     class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
                 <a href="/community.html"
@@ -771,10 +773,16 @@
                     submitButton.textContent = 'Submitting...';
                     let venueId = venueSelect.value;
                     if (venueId === '__CREATE_NEW__') {
-                        const res = await fetch('/.netlify/functions/create-unlisted-venue', {
+                        const newVenueName = newVenueNameInput.value.trim();
+                        const newVenueAddress = newVenueAddressInput.value.trim();
+                        const res = await fetch('/.netlify/functions/venue-submission-firestore-only', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ venueName: newVenueNameInput.value.trim(), address: newVenueAddressInput.value.trim() })
+                            body: JSON.stringify({
+                                venueName: newVenueName,
+                                address: newVenueAddress,
+                                status: 'pending' // Firestore explicit status
+                            }),
                         });
                         const resJson = await res.json();
                         if (res.ok && resJson.success) venueId = resJson.id;
