@@ -663,7 +663,7 @@ async function getAllVenues() {
     }
 }
 
-// Function to process venue data (same as in get-venues-firestore.js)
+// Function to process venue data (same as in get-venues.js)
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;

@@ -12,7 +12,7 @@ async function getAllEvents() {
     try {
         console.log('📅 Fetching all approved events from API...');
         
-        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-events-firestore');
+        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-events');
         if (!response.ok) {
             throw new Error(`API responded with ${response.status}`);
         }

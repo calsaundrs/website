@@ -2,15 +2,15 @@ const admin = require('firebase-admin');
 
 exports.handler = async function (event, context) {
     console.log('Firestore-only status update called');
-    
+
     try {
-        // Check environment variables (no Airtable needed)
+        // Check environment variables
         const required = [
             'FIREBASE_PROJECT_ID',
             'FIREBASE_CLIENT_EMAIL',
             'FIREBASE_PRIVATE_KEY'
         ];
-        
+
         const missing = required.filter(varName => !process.env[varName]);
         if (missing.length > 0) {
             return {
@@ -23,7 +23,7 @@ exports.handler = async function (event, context) {
                 })
             };
         }
-        
+
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -35,11 +35,11 @@ exports.handler = async function (event, context) {
             });
         }
         const db = admin.firestore();
-        
+
         // Parse request body
         const body = JSON.parse(event.body);
         const { itemId, newStatus, itemType } = body;
-        
+
         if (!itemId || !newStatus || !itemType) {
             return {
                 statusCode: 400,
@@ -50,16 +50,16 @@ exports.handler = async function (event, context) {
                 })
             };
         }
-        
+
         console.log(`Updating ${itemType} ${itemId} to status: ${newStatus}`);
-        
+
         // Determine collection based on item type
         const collection = itemType === 'venue' ? 'venues' : 'events';
-        
+
         // Update status in Firestore
         const docRef = db.collection(collection).doc(itemId);
         const doc = await docRef.get();
-        
+
         if (!doc.exists) {
             return {
                 statusCode: 404,
@@ -70,24 +70,24 @@ exports.handler = async function (event, context) {
                 })
             };
         }
-        
+
         // Update the document
         await docRef.update({
             status: newStatus.toLowerCase(),
             updatedAt: new Date()
         });
-        
+
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
-        
+
         // Trigger SSG rebuild if an event or venue was approved
         let ssgRebuildResult = null;
         if (newStatus.toLowerCase() === 'approved') {
             try {
                 console.log(`${itemType} approved - triggering build hook...`);
-                
+
                 // Check if build hook URL is configured
                 const buildHookUrl = process.env.NETLIFY_BUILD_HOOK_URL;
-                
+
                 if (buildHookUrl) {
                     // Trigger the build hook
                     const response = await fetch(buildHookUrl, {
@@ -96,7 +96,7 @@ exports.handler = async function (event, context) {
                             'Content-Type': 'application/json'
                         }
                     });
-                    
+
                     if (response.ok) {
                         const buildId = await response.text();
                         ssgRebuildResult = {
@@ -123,7 +123,7 @@ exports.handler = async function (event, context) {
                 };
             }
         }
-        
+
         return {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -137,7 +137,7 @@ exports.handler = async function (event, context) {
                 note: 'This update was processed using Firestore only'
             })
         };
-        
+
     } catch (error) {
         console.error('Error in Firestore-only status update:', error);
         return {

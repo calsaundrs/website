@@ -136,8 +136,8 @@ class EventAPI {
       }
     });
 
-    console.log('EventAPI: Calling get-events-firestore-simple with params:', params.toString());
-    const response = await fetch(`${this.baseUrl}/get-events-firestore-simple?${params}`);
+    console.log('EventAPI: Calling get-events with params:', params.toString());
+    const response = await fetch(`${this.baseUrl}/get-events?${params}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -157,7 +157,7 @@ class EventAPI {
   }
 
   async getVenues() {
-    const response = await fetch(`${this.baseUrl}/get-venue-list-firestore`);
+    const response = await fetch(`${this.baseUrl}/get-venue-list`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

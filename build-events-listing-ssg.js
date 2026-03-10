@@ -38,15 +38,7 @@ function extractImageUrl(data) {
             return value;
         }
     }
-    
-    // Try generating Cloudinary URL from airtableId as fallback (pattern: brumoutloud_events/event_[airtableId])
-    if (data.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // High quality settings: w_1600 for retina, h_900 for 16:9 ratio, q_90 for high quality, c_fill for better cropping, fl_progressive for faster loading
-        const cloudinaryUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/event_${data.airtableId}`;
-        console.log('Trying high-quality airtableId-based Cloudinary URL:', cloudinaryUrl);
-        return { url: cloudinaryUrl };
-    }
-    
+
     return null;
 }
 
@@ -57,29 +49,29 @@ async function getAllApprovedEvents() {
             console.log('⚠️ Firebase not initialized. Cannot fetch events.');
             return [];
         }
-        
+
         const eventsRef = db.collection('events');
         const snapshot = await eventsRef
             .where('status', '==', 'approved')
             .orderBy('date', 'asc')
             .get();
-        
+
         const events = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         snapshot.forEach(doc => {
             const eventData = doc.data();
-            
+
             // Filter out past events
             const eventDate = new Date(eventData.date || eventData.startDate);
             if (eventDate < today) {
                 return; // Skip past events
             }
-            
+
             // Extract image URL
             const imageData = extractImageUrl(eventData);
-            
+
             // Only include events with images
             if (imageData && imageData.url) {
                 events.push({
@@ -97,10 +89,10 @@ async function getAllApprovedEvents() {
                 });
             }
         });
-        
+
         console.log(`Found ${events.length} approved events with images for SSG`);
         return events;
-        
+
     } catch (error) {
         console.error('Error fetching events for SSG:', error);
         throw error;
@@ -111,7 +103,7 @@ async function getAllApprovedEvents() {
 async function generateEventsListingPage() {
     try {
         console.log('🚀 Starting Events Listing SSG...');
-        
+
         if (!firebaseInitialized) {
             console.log('⚠️ Firebase not initialized. Skipping events listing SSG.');
             return {
@@ -119,14 +111,14 @@ async function generateEventsListingPage() {
                 reason: 'Firebase not initialized - missing environment variables'
             };
         }
-        
+
         // Read the current events.html template
         const templatePath = path.join(__dirname, 'events.html');
         let templateContent = await fs.readFile(templatePath, 'utf8');
-        
+
         // Get all events
         const events = await getAllApprovedEvents();
-        
+
         // Generate featured events (first 3 featured events or first 3 events)
         const featuredEvents = events.filter(e => e.featured).slice(0, 3);
         if (featuredEvents.length < 3) {
@@ -134,24 +126,24 @@ async function generateEventsListingPage() {
             const nonFeatured = events.filter(e => !e.featured).slice(0, remainingSlots);
             featuredEvents.push(...nonFeatured);
         }
-        
+
         // Generate event cards HTML
         const eventCardsHtml = events.map(event => {
             const eventDate = new Date(event.date);
-            const formattedDate = eventDate.toLocaleDateString('en-GB', { 
-                weekday: 'short', 
-                day: 'numeric', 
-                month: 'short' 
+            const formattedDate = eventDate.toLocaleDateString('en-GB', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short'
             });
-            const formattedTime = eventDate.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            const formattedTime = eventDate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
-            
-            const categoryTags = Array.isArray(event.category) ? 
+
+            const categoryTags = Array.isArray(event.category) ?
                 event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`).join('') :
                 '';
-            
+
             return `
                 <div class="event-card rounded-xl overflow-hidden relative flex flex-col group cursor-pointer hover:scale-105 transition-transform duration-300" onclick="window.location.href='/event/${event.slug}'">
                     <div class="relative">
@@ -182,16 +174,16 @@ async function generateEventsListingPage() {
                     </div>
                 </div>`;
         }).join('');
-        
+
         // Generate featured slideshow HTML
         const featuredSlideshowHtml = featuredEvents.map((event, index) => {
             const eventDate = new Date(event.date);
-            const formattedDate = eventDate.toLocaleDateString('en-GB', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long' 
+            const formattedDate = eventDate.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
             });
-            
+
             return `
                 <div class="slide ${index === 0 ? 'active' : ''}">
                     <div class="featured-tag"><i class="fas fa-star"></i> FEATURED BANNER</div>
@@ -210,36 +202,36 @@ async function generateEventsListingPage() {
                     </div>
                 </div>`;
         }).join('');
-        
-        const featuredDotsHtml = featuredEvents.map((_, index) => 
+
+        const featuredDotsHtml = featuredEvents.map((_, index) =>
             `<span class="dot ${index === 0 ? 'active' : ''}" data-slide="${index}"></span>`
         ).join('');
-        
+
         // Replace placeholders in template with static content
         templateContent = templateContent
             .replace('<!-- EVENTS_GRID_SSG_PLACEHOLDER -->', eventCardsHtml)
             .replace('<!-- FEATURED_SLIDESHOW_SSG_PLACEHOLDER -->', featuredSlideshowHtml)
             .replace('<!-- FEATURED_DOTS_SSG_PLACEHOLDER -->', featuredDotsHtml)
             .replace(/<!-- SSG_TIMESTAMP -->/g, new Date().toISOString());
-        
+
         // Remove or replace JavaScript loading logic with static notice
         templateContent = templateContent.replace(
             /async function initializePage\(\) \{[\s\S]*?\}\s*initializePage\(\);/,
             '// Events loaded statically via SSG - no dynamic loading needed'
         );
-        
+
         // Write the static file
         await fs.writeFile(templatePath, templateContent, 'utf8');
-        
+
         console.log(`✅ Generated static events listing with ${events.length} events`);
-        
+
         return {
             success: true,
             totalEvents: events.length,
             featuredEvents: featuredEvents.length,
             outputFile: templatePath
         };
-        
+
     } catch (error) {
         console.error('❌ Error generating events listing SSG:', error);
         throw error;

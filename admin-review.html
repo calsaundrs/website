@@ -459,7 +459,7 @@
 
                 try {
                     // 1. Send to the unified Firestore admin creation endpoint
-                    const response = await fetch('/.netlify/functions/admin-create-event-firestore', {
+                    const response = await fetch('/.netlify/functions/admin-create-event', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ events: eventsToCreate }),

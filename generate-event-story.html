@@ -109,7 +109,7 @@
         async function loadEvents() {
             try {
                 // Use the same API as the main events page
-                const response = await fetch('/.netlify/functions/get-events-firestore');
+                const response = await fetch('/.netlify/functions/get-events');
                 const data = await response.json();
                 allEvents = data.events || [];
                 console.log(`Loaded ${allEvents.length} events`);

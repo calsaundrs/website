@@ -341,7 +341,7 @@
                     eventDataStatus.textContent = 'Fetching event data...';
                     eventDataStatus.className = 'text-sm text-yellow-400';
                     
-                    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=5');
+                    const response = await fetch('/.netlify/functions/get-events-simple?limit=5');
                     
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -386,7 +386,7 @@
             // Load event pages list
             async function loadEventPages() {
                 try {
-                    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=10');
+                    const response = await fetch('/.netlify/functions/get-events-simple?limit=10');
                     const data = await response.json();
                     
                     if (data.events && data.events.length > 0) {

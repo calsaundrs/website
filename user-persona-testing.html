@@ -410,7 +410,7 @@
                 <button onclick="testGetEventsDebug()" class="btn-info text-white px-8 py-4 rounded-lg text-lg font-bold">
                     <i class="fas fa-calendar mr-2"></i>Debug Get Events
                 </button>
-                <p class="text-sm text-gray-400 mt-2">Debug get-events-firestore function</p>
+                <p class="text-sm text-gray-400 mt-2">Debug get-events function</p>
             </div>
             
             <div class="mt-4">
@@ -575,25 +575,25 @@
 
         // Test Functions
         async function testBrowseEvents() {
-            const response = await fetch('/.netlify/functions/get-events-firestore-simple');
+            const response = await fetch('/.netlify/functions/get-events-simple');
             const data = await response.json();
             return `Found ${data.events?.length || 0} events`;
         }
 
         async function testSearchEvents() {
-            const response = await fetch('/.netlify/functions/get-events-firestore-simple?search=pride');
+            const response = await fetch('/.netlify/functions/get-events-simple?search=pride');
             const data = await response.json();
             return `Found ${data.events?.length || 0} events matching "pride"`;
         }
 
         async function testFilterByCategory() {
-            const response = await fetch('/.netlify/functions/get-events-firestore-simple?categories=Club Night');
+            const response = await fetch('/.netlify/functions/get-events-simple?categories=Club Night');
             const data = await response.json();
             return `Found ${data.events?.length || 0} club night events`;
         }
 
         async function testViewEventDetails() {
-            const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=1');
+            const response = await fetch('/.netlify/functions/get-events-simple?limit=1');
             const data = await response.json();
             if (data.events && data.events.length > 0) {
                 const event = data.events[0];
@@ -603,13 +603,13 @@
         }
 
         async function testBrowseVenues() {
-            const response = await fetch('/.netlify/functions/get-venues-firestore');
+            const response = await fetch('/.netlify/functions/get-venues');
             const data = await response.json();
             return `Found ${data.venues?.length || 0} venues`;
         }
 
         async function testViewVenueDetails() {
-            const response = await fetch('/.netlify/functions/get-venues-firestore');
+            const response = await fetch('/.netlify/functions/get-venues');
             const data = await response.json();
             if (data.venues && data.venues.length > 0) {
                 const venue = data.venues[0];
@@ -627,7 +627,7 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+            const response = await fetch('/.netlify/functions/event-submission-simple', {
                 method: 'POST',
                 body: formData
             });
@@ -656,7 +656,7 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+            const response = await fetch('/.netlify/functions/event-submission-simple', {
                 method: 'POST',
                 body: formData
             });
@@ -680,7 +680,7 @@
             formData.append('venue-name', 'Test Venue');
             formData.append('email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+            const response = await fetch('/.netlify/functions/event-submission-simple', {
                 method: 'POST',
                 body: formData
             });
@@ -701,7 +701,7 @@
             formData.append('address', '123 Test Street, Birmingham');
             formData.append('contact-email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/venue-submission', {
                 method: 'POST',
                 body: formData
             });
@@ -728,7 +728,7 @@
             formData.append('opening-hours', 'Mon-Sat: 10am-11pm');
             formData.append('contact-email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/venue-submission', {
                 method: 'POST',
                 body: formData
             });
@@ -750,7 +750,7 @@
             formData.append('features', 'Dance floor, Bar, Stage');
             formData.append('contact-email', 'test@persona.com');
 
-            const response = await fetch('/.netlify/functions/venue-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/venue-submission', {
                 method: 'POST',
                 body: formData
             });
@@ -763,7 +763,7 @@
         }
 
         async function testViewPendingItems() {
-            const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+            const response = await fetch('/.netlify/functions/get-pending-items');
             const data = await response.json();
             return `Found ${data.items?.length || 0} pending items`;
         }
@@ -894,7 +894,7 @@
             addResult('🔧 Testing Firestore field name fixes...', 'loading');
             
             try {
-                const response = await fetch('/.netlify/functions/test-firestore-fixes');
+                const response = await fetch('/.netlify/functions/test-fixes');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -969,7 +969,7 @@
                 formData.append('address', '123 Debug Street, Birmingham');
                 formData.append('email', 'debug@test.com');
 
-                const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+                const response = await fetch('/.netlify/functions/venue-submission-simple', {
                     method: 'POST',
                     body: formData
                 });
@@ -1035,7 +1035,7 @@
         // Debug get events function
         async function testGetEventsDebug() {
             clearResults();
-            addResult('🔍 Debugging get-events-firestore function...', 'loading');
+            addResult('🔍 Debugging get-events function...', 'loading');
             
             try {
                 const response = await fetch('/.netlify/functions/test-get-events-debug');

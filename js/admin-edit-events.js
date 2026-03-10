@@ -1204,7 +1204,7 @@ async function handleEditFormSubmit(event) {
             });
         } else {
             // Use the regular update function
-            response = await fetch('/.netlify/functions/update-item-firestore', {
+            response = await fetch('/.netlify/functions/update-item', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1262,7 +1262,7 @@ async function handleDeleteEvent(eventId) {
     }
     
     try {
-        const response = await fetch('/.netlify/functions/delete-event-firestore', {
+        const response = await fetch('/.netlify/functions/delete-event', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1660,7 +1660,7 @@ async function handleBulkStatusChange(newStatus) {
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
-            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
+            const response = await fetch('/.netlify/functions/update-item-status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1701,7 +1701,7 @@ async function handleBulkDelete() {
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
-            const response = await fetch('/.netlify/functions/delete-event-firestore', {
+            const response = await fetch('/.netlify/functions/delete-event', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

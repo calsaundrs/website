@@ -269,7 +269,7 @@ class EventSubmissionManager {
             venueParams.append('website', eventData['new-venue-website']);
             venueParams.append('description', `Venue created during event submission for: ${eventData['event-name']}`);
 
-            const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+            const response = await fetch('/.netlify/functions/venue-submission-simple', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: venueParams.toString()
@@ -305,7 +305,7 @@ class EventSubmissionManager {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this.baseTimeout * attempt);
 
-            const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+            const response = await fetch('/.netlify/functions/event-submission', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),

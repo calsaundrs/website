@@ -11,7 +11,7 @@ async function getRealVenues() {
     try {
         console.log("🔍 Fetching venues from API...");
         // Use a placeholder URL to avoid crashing the build when running locally
-        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-venues-firestore');
+        const response = await fetch('https://brumoutloud.co.uk/.netlify/functions/get-venues');
         if (!response.ok) {
             throw new Error(`API responded with ${response.status}`);
         }
@@ -730,7 +730,7 @@ function renderTemplate(template, data) {
     return result;
 }
 
-// Function to process venue data (same as in get-venues-firestore.js)
+// Function to process venue data (same as in get-venues.js)
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;

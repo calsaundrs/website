@@ -22,7 +22,7 @@
             resultDiv.innerHTML = 'Fixing...';
             
             try {
-                const response = await fetch('/.netlify/functions/update-venue-firestore', {
+                const response = await fetch('/.netlify/functions/update-venue', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Submit to Firebase
-                const response = await fetch('/.netlify/functions/event-submission-firestore-only', {
+                const response = await fetch('/.netlify/functions/event-submission', {
                     method: 'POST',
                     body: formData
                 });

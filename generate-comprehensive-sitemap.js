@@ -66,7 +66,7 @@ async function generateComprehensiveSitemap() {
   // Add ALL events
   try {
     console.log('Fetching all events...');
-    const eventsData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-events-firestore');
+    const eventsData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-events');
     const events = eventsData.events || [];
     console.log(`Found ${events.length} events`);
 
@@ -88,7 +88,7 @@ async function generateComprehensiveSitemap() {
   // Add ALL venues with valid images
   try {
     console.log('Fetching all venues...');
-    const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues-firestore');
+    const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues');
     const venues = venuesData.venues || [];
     console.log(`Found ${venues.length} venues`);
 

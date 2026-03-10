@@ -75,7 +75,7 @@
                 params.append('limit', '10');
                 params.append('status', 'approved');
                 
-                const response = await fetch(`/.netlify/functions/get-events-firestore-simple?${params.toString()}`);
+                const response = await fetch(`/.netlify/functions/get-events-simple?${params.toString()}`);
                 const data = await response.json();
                 
                 if (data.events && data.events.length > 0) {
@@ -104,7 +104,7 @@
                 params.append('status', 'approved');
                 params.append('limit', '50');
                 
-                const response = await fetch(`/.netlify/functions/get-events-firestore-simple?${params.toString()}`);
+                const response = await fetch(`/.netlify/functions/get-events-simple?${params.toString()}`);
                 const data = await response.json();
                 
                 if (data.success && data.events.length > 0) {

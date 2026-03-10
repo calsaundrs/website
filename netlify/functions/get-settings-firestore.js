@@ -16,7 +16,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 exports.handler = async function (event, context) {
-    console.log("get-settings-firestore function called");
+    console.log("get-settings function called");
     
     try {
         const queryParams = event.queryStringParameters || {};
@@ -70,7 +70,7 @@ exports.handler = async function (event, context) {
         }
 
     } catch (error) {
-        console.error('Error in get-settings-firestore:', error);
+        console.error('Error in get-settings:', error);
         
         return {
             statusCode: 500,

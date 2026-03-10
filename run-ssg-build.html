@@ -316,7 +316,7 @@
             try {
                 log('📡 Fetching real venues from database...');
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/.netlify/functions/get-venues-firestore?t=${timestamp}`, {
+                const response = await fetch(`/.netlify/functions/get-venues?t=${timestamp}`, {
                     cache: 'no-cache',
                     headers: {
                         'Cache-Control': 'no-cache, no-store, must-revalidate',

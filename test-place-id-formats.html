@@ -111,7 +111,7 @@
             resultDiv.innerHTML = 'Checking...';
             
             try {
-                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
+                const response = await fetch('/.netlify/functions/get-venues?admin=true');
                 const data = await response.json();
                 
                 const hubVenue = data.venues.find(v => v.name === 'The Hub');

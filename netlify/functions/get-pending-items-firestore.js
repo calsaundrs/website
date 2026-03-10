@@ -70,7 +70,7 @@ exports.handler = async function (event, context) {
         };
 
     } catch (error) {
-        console.error('Error in get-pending-items-firestore:', error);
+        console.error('Error in get-pending-items:', error);
         
         return {
             statusCode: 500,

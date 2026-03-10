@@ -6,26 +6,33 @@ const RecurringEventsManager = require('./services/recurring-events-manager');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        }),
-    });
+    if (process.env.FIREBASE_PRIVATE_KEY) {
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            }),
+        });
+    } else {
+        // Fallback for local dev if private key isn't set
+        admin.initializeApp({
+            credential: admin.credential.applicationDefault()
+        });
+    }
 }
 
 const db = admin.firestore();
 const eventService = new FirestoreEventService();
 
 exports.handler = async function (event, context) {
-    console.log("get-events-firestore function called");
+    console.log("get-events function called");
     console.log("Query parameters:", event.queryStringParameters);
-    
+
     try {
         const queryParams = event.queryStringParameters || {};
         const view = queryParams.view || 'public';
-        
+
         // Handle different views
         if (view === 'venues') {
             return await handleVenuesView();
@@ -34,16 +41,16 @@ exports.handler = async function (event, context) {
         } else {
             return await handlePublicView(queryParams);
         }
-        
+
     } catch (error) {
-        console.error('Error in get-events-firestore:', error);
+        console.error('Error in get-events:', error);
         console.error('Error stack:', error.stack);
-        
+
         // Check if this is an index error
         if (error.message && error.message.includes('FAILED_PRECONDITION')) {
             console.log('This is an index error - follow the link in the error message to create the required index');
         }
-        
+
         return {
             statusCode: 500,
             headers: {
@@ -73,14 +80,14 @@ async function handlePublicView(queryParams) {
 
     console.log("Public view filters:", filters);
 
-            try {
-            const eventsRef = db.collection('events');
-            let query = eventsRef.where('status', '==', 'approved');
+    try {
+        const eventsRef = db.collection('events');
+        let query = eventsRef.where('status', '==', 'approved');
 
         // Start with a simple query that will work immediately
         // This will generate index creation links for more complex queries
         console.log("Using basic query to generate index links");
-        
+
         // For now, get approved events without ordering to avoid index requirements
         // We'll add ordering back once the basic index is created
         console.log("Using simple query without ordering to avoid index requirements");
@@ -91,11 +98,11 @@ async function handlePublicView(queryParams) {
         console.log("Executing Firestore query...");
         const snapshot = await query.get();
         console.log(`Query returned ${snapshot.size} documents`);
-        
+
         const events = [];
         let processedCount = 0;
         let skippedCount = 0;
-        
+
         // Process events and fetch venue data for each
         for (const doc of snapshot.docs) {
             const rawData = doc.data();
@@ -107,7 +114,7 @@ async function handlePublicView(queryParams) {
                 promoImage: rawData['Promo Image'],
                 cloudinaryId: rawData['Cloudinary Public ID']
             });
-            
+
             // Map Firestore field names to expected field names (support both legacy and new field names)
             const eventData = {
                 id: doc.id,
@@ -136,12 +143,12 @@ async function handlePublicView(queryParams) {
                 cloudinaryPublicId: rawData.cloudinaryPublicId || rawData['Cloudinary Public ID'],
                 promoImage: rawData.promoImage || rawData['Promo Image']
             };
-            
+
             // Convert venue object to venueName string for compatibility with live events page
             if (eventData.venue && eventData.venue.name && !eventData.venueName) {
                 eventData.venueName = Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name;
             }
-            
+
             // Fetch venue data if we have a venue slug
             let venueData = null;
             if (eventData.venueSlug) {
@@ -161,24 +168,24 @@ async function handlePublicView(queryParams) {
                     console.log(`Error fetching venue data for ${eventData.name}:`, error);
                 }
             }
-            
+
             console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, venue: ${JSON.stringify(eventData.venue)}, image: ${JSON.stringify(eventData.image)})`);
-            
+
             // Apply date filtering client-side
             if (eventData.date) {
                 try {
                     const eventDate = new Date(eventData.date);
                     const now = new Date();
-                    
+
                     // Check if the date is valid
                     if (isNaN(eventDate.getTime())) {
                         console.log(`Invalid date for event ${eventData.name}: ${eventData.date}`);
                         skippedCount++;
                         continue; // Skip this event
                     }
-                    
+
                     console.log(`Date comparison for ${eventData.name}: eventDate=${eventDate.toISOString()}, now=${now.toISOString()}, isPast=${eventDate < now}`);
-                    
+
                     // Filter out past events (events before today)
                     if (eventDate < now) {
                         console.log(`Skipping past event ${eventData.name} (date: ${eventDate.toISOString()})`);
@@ -191,7 +198,7 @@ async function handlePublicView(queryParams) {
                     continue; // Skip this event
                 }
             }
-            
+
             // Apply search filtering client-side (Firestore doesn't support full-text search)
             if (filters.search) {
                 const searchLower = filters.search.toLowerCase();
@@ -203,12 +210,12 @@ async function handlePublicView(queryParams) {
                     continue; // Skip this event
                 }
             }
-            
+
             const processedEvent = await processEventForPublic(eventData, venueData);
             events.push(processedEvent);
             processedCount++;
         }
-        
+
         console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
 
         // Sort events by date (client-side since we can't orderBy in Firestore yet)
@@ -216,12 +223,12 @@ async function handlePublicView(queryParams) {
             try {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
-                
+
                 // Handle invalid dates
                 if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
                 if (isNaN(dateA.getTime())) return 1; // Invalid dates go to the end
                 if (isNaN(dateB.getTime())) return -1;
-                
+
                 return dateA - dateB;
             } catch (error) {
                 console.log('Error sorting events by date:', error);
@@ -257,7 +264,7 @@ async function handlePublicView(queryParams) {
                 filters: filters
             })
         };
-        
+
     } catch (error) {
         console.error('Error fetching public events:', error);
         throw error;
@@ -289,7 +296,7 @@ async function handleAdminView(queryParams) {
         query = query.limit(filters.limit);
 
         const snapshot = await query.get();
-        
+
         const events = [];
         snapshot.forEach(doc => {
             const eventData = {
@@ -313,7 +320,7 @@ async function handleAdminView(queryParams) {
                 filters: filters
             })
         };
-        
+
     } catch (error) {
         console.error('Error fetching admin events:', error);
         throw error;
@@ -328,7 +335,7 @@ function extractImageInfo(eventData, venueData = null) {
         image: eventData.image,
         legacyCloudinaryId: eventData['Cloudinary Public ID']
     });
-    
+
     // Check for standardized Cloudinary Public ID first (new field name)
     const cloudinaryId = eventData.cloudinaryPublicId || eventData['Cloudinary Public ID'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
@@ -338,7 +345,7 @@ function extractImageInfo(eventData, venueData = null) {
             alt: eventData['Event Name'] || eventData.name
         };
     }
-    
+
     // Check for standardized promo image (new field name)
     const promoImage = eventData.promoImage || eventData['Promo Image'];
     if (promoImage) {
@@ -350,7 +357,7 @@ function extractImageInfo(eventData, venueData = null) {
         } else if (promoImage && typeof promoImage === 'object') {
             imageUrl = promoImage.url || promoImage[0]?.url;
         }
-        
+
         if (imageUrl) {
             console.log(`Using promo image: ${imageUrl}`);
             return {
@@ -359,7 +366,7 @@ function extractImageInfo(eventData, venueData = null) {
             };
         }
     }
-    
+
     // Check for generic image field
     const image = eventData.image;
     if (image) {
@@ -371,7 +378,7 @@ function extractImageInfo(eventData, venueData = null) {
         } else if (image && typeof image === 'object') {
             imageUrl = image.url || image[0]?.url;
         }
-        
+
         if (imageUrl) {
             console.log(`Using image field: ${imageUrl}`);
             return {
@@ -380,7 +387,7 @@ function extractImageInfo(eventData, venueData = null) {
             };
         }
     }
-    
+
     // Fallback to venue image if available
     if (venueData && venueData.image && venueData.image.url) {
         console.log(`Using venue image as fallback: ${venueData.image.url}`);
@@ -389,48 +396,48 @@ function extractImageInfo(eventData, venueData = null) {
             alt: `${eventData['Event Name'] || eventData.name} at ${venueData.name}`
         };
     }
-    
+
     console.log(`No valid image found, returning null`);
     return null;
 }
 
 async function handleVenuesView() {
-    console.log("=== VENUES VIEW REQUESTED - v5 - NO AIRTABLE AT ALL ===");
+    console.log("=== VENUES VIEW REQUESTED ===");
 
     try {
         const venuesRef = db.collection('venues');
         const snapshot = await venuesRef.get();
-        
+
         console.log(`Found ${snapshot.size} total venues in collection`);
-        
+
         const venues = [];
-        
+
         snapshot.forEach(doc => {
             const venueData = doc.data();
-            
-                            // Process all venues - let processVenueForPublic handle image logic
-                const processedVenue = processVenueForPublic({
-                    id: doc.id,
-                    ...venueData
-                });
-                
-                // Debug: Log raw venue data to see what fields exist
-                console.log(`Raw venue data for ${processedVenue.name}:`, {
-                    id: doc.id,
-                    hasImageField: !!venueData.image,
-                    hasPhotoField: !!venueData.Photo,
-                    hasCloudinaryId: !!venueData['Cloudinary Public ID'],
-                    processedImage: processedVenue.image
-                });
-                
-                // Only include venues that have some form of image (Cloudinary or will use placeholder)
-                if (processedVenue.image || processedVenue.name) {
-                    venues.push(processedVenue);
-                }
+
+            // Process all venues - let processVenueForPublic handle image logic
+            const processedVenue = processVenueForPublic({
+                id: doc.id,
+                ...venueData
+            });
+
+            // Debug: Log raw venue data to see what fields exist
+            console.log(`Raw venue data for ${processedVenue.name}:`, {
+                id: doc.id,
+                hasImageField: !!venueData.image,
+                hasPhotoField: !!venueData.Photo,
+                hasCloudinaryId: !!venueData['Cloudinary Public ID'],
+                processedImage: processedVenue.image
+            });
+
+            // Only include venues that have some form of image (Cloudinary or will use placeholder)
+            if (processedVenue.image || processedVenue.name) {
+                venues.push(processedVenue);
+            }
         });
-        
-        console.log(`Found ${venues.length} venues to display - NO AIRTABLE URLS`);
-        
+
+        console.log(`Found ${venues.length} venues to display`);
+
         return {
             statusCode: 200,
             headers: {
@@ -445,7 +452,7 @@ async function handleVenuesView() {
                 version: 'v4-cloudinary-only'
             })
         };
-        
+
     } catch (error) {
         console.error('Error fetching venues:', error);
         return {
@@ -464,7 +471,7 @@ async function handleVenuesView() {
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
-    
+
     // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
@@ -487,7 +494,7 @@ function processVenueForPublic(venueData) {
                 }
             }
         }
-        
+
         // 3. If still no image, generate a consistent placeholder based on venue name
         if (!imageUrl) {
             const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
@@ -538,12 +545,12 @@ async function processEventForPublic(eventData, venueData = null) {
         link: eventData['Link'] || eventData.link,
         ticketLink: eventData['Ticket Link'] || eventData.ticketLink,
         seriesId: eventData['Series ID'] || eventData.seriesId,
-                    status: eventData.status,
+        status: eventData.status,
         recurringInfo: eventData['Recurring Info'] || eventData.recurringInfo
     };
     // Extract image URL from various possible formats
     let imageUrl = null;
-    
+
     // 1. First try Cloudinary public ID
     if (mappedData.cloudinaryPublicId && process.env.CLOUDINARY_CLOUD_NAME) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_800,h_400,c_fill/${mappedData.cloudinaryPublicId}`;
@@ -565,12 +572,12 @@ async function processEventForPublic(eventData, venueData = null) {
                 }
             }
         }
-        
+
         // 3. If still no image, try to get venue image as fallback
         if (!imageUrl && venueData && venueData.image && venueData.image.url) {
             imageUrl = venueData.image.url;
         }
-        
+
         // 4. If still no image, generate a consistent placeholder based on event name
         if (!imageUrl) {
             const eventName = mappedData.name || 'Event';
@@ -578,10 +585,10 @@ async function processEventForPublic(eventData, venueData = null) {
             imageUrl = `https://placehold.co/800x400/1e1e1e/EAEAEA?text=${encodedName}`;
         }
     }
-    
+
     // Use passed venue data or fallback to event venue data
     let finalVenueData = venueData;
-    
+
     if (!finalVenueData) {
         // Handle venue data - check for venue object first, then fallback to individual fields
         if (eventData.venue && eventData.venue.name && eventData.venue.slug) {
@@ -602,7 +609,7 @@ async function processEventForPublic(eventData, venueData = null) {
             };
         }
     }
-    
+
     // Extract venue name for compatibility with live events page
     let venueName = null;
     if (finalVenueData && finalVenueData.name) {
@@ -612,7 +619,7 @@ async function processEventForPublic(eventData, venueData = null) {
     } else if (eventData.venue && eventData.venue.name) {
         venueName = Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name;
     }
-    
+
     return {
         id: mappedData.id,
         name: mappedData.name,

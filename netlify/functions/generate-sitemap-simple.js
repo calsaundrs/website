@@ -63,7 +63,7 @@ exports.handler = async function (event, context) {
             sitemap += `  <url>\n    <loc>${baseUrl}${page}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
         });
 
-        // Add events - use same approach as get-events-firestore
+        // Add events - use same approach as get-events
         try {
             console.log("Fetching events for sitemap...");
             const eventsRef = db.collection('events');
@@ -98,7 +98,7 @@ exports.handler = async function (event, context) {
             console.error("Event error details:", eventError);
         }
 
-        // Add venues - use same approach as get-venues-firestore
+        // Add venues - use same approach as get-venues
         try {
             console.log("Fetching venues for sitemap...");
             const venuesRef = db.collection('venues');

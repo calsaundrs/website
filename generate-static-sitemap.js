@@ -65,7 +65,7 @@ async function generateSitemap() {
         // Fetch events from API
         try {
             console.log('Fetching events...');
-            const eventsData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-events-firestore');
+            const eventsData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-events');
             const events = eventsData.events || [];
             
             console.log(`Found ${events.length} events`);
@@ -86,7 +86,7 @@ async function generateSitemap() {
         // Fetch venues from API
         try {
             console.log('Fetching venues...');
-            const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues-firestore');
+            const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues');
             const venues = venuesData.venues || [];
             
             console.log(`Found ${venues.length} venues`);

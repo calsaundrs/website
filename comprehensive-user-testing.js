@@ -174,26 +174,26 @@ class UserPersonaSimulator {
     }
 
     async browseEvents() {
-        const response = await fetch('/.netlify/functions/get-events-firestore-simple');
+        const response = await fetch('/.netlify/functions/get-events');
         const data = await response.json();
         if (!data.events) throw new Error('No events data returned');
         return `Found ${data.events.length} events`;
     }
 
     async searchEvents(query) {
-        const response = await fetch(`/.netlify/functions/get-events-firestore-simple?search=${encodeURIComponent(query)}`);
+        const response = await fetch(`/.netlify/functions/get-events?search=${encodeURIComponent(query)}`);
         const data = await response.json();
         return `Found ${data.events?.length || 0} events matching "${query}"`;
     }
 
     async filterEventsByCategory(category) {
-        const response = await fetch(`/.netlify/functions/get-events-firestore-simple?categories=${encodeURIComponent(category)}`);
+        const response = await fetch(`/.netlify/functions/get-events?categories=${encodeURIComponent(category)}`);
         const data = await response.json();
         return `Found ${data.events?.length || 0} ${category} events`;
     }
 
     async viewEventDetails() {
-        const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=1');
+        const response = await fetch('/.netlify/functions/get-events?limit=1');
         const data = await response.json();
         if (!data.events || data.events.length === 0) {
             throw new Error('No events available for testing');
@@ -203,14 +203,14 @@ class UserPersonaSimulator {
     }
 
     async browseVenues() {
-        const response = await fetch('/.netlify/functions/get-venues-firestore');
+        const response = await fetch('/.netlify/functions/get-venues');
         const data = await response.json();
         if (!data.venues) throw new Error('No venues data returned');
         return `Found ${data.venues.length} venues`;
     }
 
     async viewVenueDetails() {
-        const response = await fetch('/.netlify/functions/get-venues-firestore');
+        const response = await fetch('/.netlify/functions/get-venues');
         const data = await response.json();
         if (!data.venues || data.venues.length === 0) {
             throw new Error('No venues available for testing');
@@ -244,7 +244,7 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/event-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -272,7 +272,7 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/event-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -295,7 +295,7 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/event-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -318,7 +318,7 @@ class UserPersonaSimulator {
         formData.append('venue-name', 'Test Venue');
         formData.append('email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/event-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/event-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -349,7 +349,7 @@ class UserPersonaSimulator {
         formData.append('address', '123 Test Street, Birmingham');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/venue-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -377,7 +377,7 @@ class UserPersonaSimulator {
         formData.append('opening-hours', 'Mon-Sat: 10am-11pm');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/venue-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -400,7 +400,7 @@ class UserPersonaSimulator {
         formData.append('features', 'Dance floor, Bar, Stage');
         formData.append('contact-email', 'test@persona.com');
 
-        const response = await fetch('/.netlify/functions/venue-submission-firestore-simple', {
+        const response = await fetch('/.netlify/functions/venue-submission-simple', {
             method: 'POST',
             body: formData
         });
@@ -429,7 +429,7 @@ class UserPersonaSimulator {
     }
 
     async reviewPendingItems() {
-        const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+        const response = await fetch('/.netlify/functions/get-pending-items');
         const data = await response.json();
         return `Found ${data.items?.length || 0} pending items for review`;
     }

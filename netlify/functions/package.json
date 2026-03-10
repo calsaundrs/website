@@ -4,7 +4,6 @@
   "description": "Netlify Functions for Brum Outloud",
   "dependencies": {
     "@react-email/render": "^1.2.3",
-    "airtable": "^0.12.2",
     "cloudinary": "^1.41.3",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.1.0",

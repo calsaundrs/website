@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,16 @@
             height: 1.5rem;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
 
@@ -28,12 +38,12 @@
             opacity: 0;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        
+
         .fouc-prevention.loaded {
             visibility: visible;
             opacity: 1;
         }
-        
+
         /* Loading screen */
         .loading-screen {
             position: fixed;
@@ -49,19 +59,19 @@
             z-index: 9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        
+
         .loading-screen.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        
+
         .loading-logo {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
-        
+
         .loading-text {
             color: #B564F7;
             font-family: 'Poppins', sans-serif;
@@ -69,7 +79,7 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-        
+
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -78,17 +88,31 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Critical CSS to prevent flashing */
         body {
             background-color: #121212;
@@ -100,14 +124,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
@@ -116,119 +140,124 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
     </style>
-    </head>
+</head>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
+        style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+<script>(function (w, d, s, l, i) {
+        w[l] = w[l] || []; w[l].push({
+            'gtm.start':
+                new Date().getTime(), event: 'gtm.js'
+        }); var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
 <!-- End Google Tag Manager -->
 <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
+    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!
+    </p>
 </div>
 
 <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-tool.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
-            </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
-                    aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
-                </button>
-            </div>
-        </nav>
-        <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
+<header
+    class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="container mx-auto flex justify-between items-center max-w-7xl">
+        <!-- Site name with consolidated flag image and fallback -->
+        <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
+            style="font-family: 'Outfit', sans-serif;">
+            <span
+                class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
+                Outloud</span>
+            <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+            <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
+                class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+                onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                onload="document.body.classList.add('flag-loaded')">
+        </a>
+        <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
+            <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
+            <a href="/all-venues.html" class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
             <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
+                class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
+            <a href="/contact.html" class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta ml-4">
                 GET LISTED
             </a>
         </div>
-    </header>
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <h1 class="font-anton text-5xl text-white mb-4">Data Tools</h1>
-        <p class="text-gray-400 mb-4">Use these tools to import or clean up your website data.</p>
-        
-        <div class="space-y-8">
-            <!-- Migration Tool -->
-            <div class="card-bg p-8">
-                <h2 class="font-anton text-3xl text-white mb-2">Event Migration</h2>
-                <p class="text-gray-400 mb-6">Scrape events from the live site and add or update them in your Airtable base.</p>
-                <button id="start-migration-btn" class="nav-cta w-full text-lg flex items-center justify-center">
-                    Start Full Event Migration
-                </button>
-            </div>
+        <div class="lg:hidden relative z-[60]">
+            <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
+                aria-label="Menu">
+                <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                <span class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+            </button>
+        </div>
+    </nav>
+    <div id="menu"
+        class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
+        <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
+        <a href="/all-venues.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
+        <a href="/community.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
+        <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
+        <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
+            GET LISTED
+        </a>
+    </div>
+</header>
+<main class="container mx-auto px-8 py-8 relative z-10">
+    <h1 class="font-anton text-5xl text-white mb-4">Data Tools</h1>
+    <p class="text-gray-400 mb-4">Use these tools to import or clean up your website data.</p>
 
-            <!-- NEW: Category Cleanup Tool -->
-            <div class="card-bg p-8">
-                 <h2 class="font-anton text-3xl text-white mb-2">Category Cleanup</h2>
-                 <p class="text-gray-400 mb-6">This tool will scan all events that are missing a category and attempt to add them by scraping the original event page.</p>
-                <button id="start-cleanup-btn" class="bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg w-full text-lg flex items-center justify-center">
-                    Add Missing Categories
-                </button>
-            </div>
+    <div class="space-y-8">
+        <!-- Migration Tool -->
+        <div class="card-bg p-8">
+            <h2 class="font-anton text-3xl text-white mb-2">Event Migration</h2>
+            <p class="text-gray-400 mb-6">Synchronise events with the Firestore database and manage data across the
+                platform.</p>
+            <button id="start-migration-btn" class="nav-cta w-full text-lg flex items-center justify-center">
+                Start Full Event Migration
+            </button>
         </div>
 
-        <!-- Status Container -->
-        <div id="status-container" class="mt-8 text-left hidden">
-             <p id="status-message" class="font-semibold text-lg"></p>
-             <div id="log-output" class="mt-2 text-left bg-gray-900/50 p-4 rounded-lg text-gray-400 text-sm whitespace-pre-wrap max-h-64 overflow-y-auto"></div>
+        <!-- NEW: Category Cleanup Tool -->
+        <div class="card-bg p-8">
+            <h2 class="font-anton text-3xl text-white mb-2">Category Cleanup</h2>
+            <p class="text-gray-400 mb-6">This tool will scan all events that are missing a category and attempt to add
+                them by scraping the original event page.</p>
+            <button id="start-cleanup-btn"
+                class="bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg w-full text-lg flex items-center justify-center">
+                Add Missing Categories
+            </button>
         </div>
-    </main>
+    </div>
 
-    <footer class="border-t-2 border-gray-800 p-8">
+    <!-- Status Container -->
+    <div id="status-container" class="mt-8 text-left hidden">
+        <p id="status-message" class="font-semibold text-lg"></p>
+        <div id="log-output"
+            class="mt-2 text-left bg-gray-900/50 p-4 rounded-lg text-gray-400 text-sm whitespace-pre-wrap max-h-64 overflow-y-auto">
+        </div>
+    </div>
+</main>
+
+<footer class="border-t-2 border-gray-800 p-8">
     <div class="container mx-auto grid md:grid-cols-2">
         <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
+            <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+            <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
+                    class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
         <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
             <div>
@@ -236,84 +265,89 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <ul>
                     <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
                     <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                    <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a>
+                    </li>
                     <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
                 </ul>
             </div>
-             <div>
+            <div>
                 <h4 class="font-bold text-lg mb-4 text-white">About</h4>
                 <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
+                            FAQ</a></li>
                     <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
+                            Policy</a></li>
+                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms
+                            and Conditions</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </footer>
 
-    <script>
-        const migrationBtn = document.getElementById('start-migration-btn');
-        const cleanupBtn = document.getElementById('start-cleanup-btn');
-        const statusContainer = document.getElementById('status-container');
-        const statusMessage = document.getElementById('status-message');
-        const logOutput = document.getElementById('log-output');
-        const BASE_URL = 'https://brumoutloud.co.uk';
+<script>
+    const migrationBtn = document.getElementById('start-migration-btn');
+    const cleanupBtn = document.getElementById('start-cleanup-btn');
+    const statusContainer = document.getElementById('status-container');
+    const statusMessage = document.getElementById('status-message');
+    const logOutput = document.getElementById('log-output');
+    const BASE_URL = 'https://brumoutloud.co.uk';
 
-        function log(message, type = 'info') {
-            const colorMap = {
-                'info': 'text-gray-400', 'error': 'text-red-400', 
-                'success': 'text-green-400', 'update': 'text-yellow-400'
-            };
-            logOutput.innerHTML += `<p class="${colorMap[type] || 'text-gray-400'}">> ${message}</p>`;
-            logOutput.scrollTop = logOutput.scrollHeight;
-        }
-        
-        function setupUIForTask(button, message) {
-            migrationBtn.disabled = true;
-            cleanupBtn.disabled = true;
-            button.innerHTML = '<span class="loader"></span><span class="ml-3">In Progress...</span>';
-            statusContainer.classList.remove('hidden');
-            logOutput.innerHTML = '';
-            log(message);
-            statusMessage.textContent = 'Working...';
-        }
+    function log(message, type = 'info') {
+        const colorMap = {
+            'info': 'text-gray-400', 'error': 'text-red-400',
+            'success': 'text-green-400', 'update': 'text-yellow-400'
+        };
+        logOutput.innerHTML += `<p class="${colorMap[type] || 'text-gray-400'}">> ${message}</p>`;
+        logOutput.scrollTop = logOutput.scrollHeight;
+    }
 
-        function resetUI() {
-            migrationBtn.disabled = false;
-            cleanupBtn.disabled = false;
-            migrationBtn.innerHTML = 'Start Event Migration';
-            cleanupBtn.innerHTML = 'Add Missing Categories';
-        }
-        
-        cleanupBtn.addEventListener('click', async () => {
-            setupUIForTask(cleanupBtn, 'Starting category cleanup...');
-            try {
-                const response = await fetch('/.netlify/functions/categorize-events', { method: 'POST' });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message);
-                statusMessage.textContent = 'Cleanup Complete!';
-                log(result.message, 'success');
-                cleanupBtn.innerHTML = 'Done!';
-                cleanupBtn.style.backgroundColor = '#10B981';
-                setTimeout(() => {
-                    resetUI();
-                    cleanupBtn.style.backgroundColor = '';
-                }, 3000);
-            } catch(error) {
-                statusMessage.textContent = 'Cleanup Failed';
-                log(error.toString(), 'error');
+    function setupUIForTask(button, message) {
+        migrationBtn.disabled = true;
+        cleanupBtn.disabled = true;
+        button.innerHTML = '<span class="loader"></span><span class="ml-3">In Progress...</span>';
+        statusContainer.classList.remove('hidden');
+        logOutput.innerHTML = '';
+        log(message);
+        statusMessage.textContent = 'Working...';
+    }
+
+    function resetUI() {
+        migrationBtn.disabled = false;
+        cleanupBtn.disabled = false;
+        migrationBtn.innerHTML = 'Start Event Migration';
+        cleanupBtn.innerHTML = 'Add Missing Categories';
+    }
+
+    cleanupBtn.addEventListener('click', async () => {
+        setupUIForTask(cleanupBtn, 'Starting category cleanup...');
+        try {
+            const response = await fetch('/.netlify/functions/categorize-events', { method: 'POST' });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            statusMessage.textContent = 'Cleanup Complete!';
+            log(result.message, 'success');
+            cleanupBtn.innerHTML = 'Done!';
+            cleanupBtn.style.backgroundColor = '#10B981';
+            setTimeout(() => {
                 resetUI();
-            }
-        });
+                cleanupBtn.style.backgroundColor = '';
+            }, 3000);
+        } catch (error) {
+            statusMessage.textContent = 'Cleanup Failed';
+            log(error.toString(), 'error');
+            resetUI();
+        }
+    });
 
-        migrationBtn.addEventListener('click', async () => {
-            // This button now uses the multi-step process from before
-            setupUIForTask(migrationBtn, 'Starting full event migration...');
-            // ... (full migration logic from previous version) ...
-        });
+    migrationBtn.addEventListener('click', async () => {
+        // This button now uses the multi-step process from before
+        setupUIForTask(migrationBtn, 'Starting full event migration...');
+        // ... (full migration logic from previous version) ...
+    });
 
-    </script>
+</script>
 </body>
+
 </html>

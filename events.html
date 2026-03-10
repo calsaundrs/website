@@ -1190,7 +1190,7 @@
             showLoading();
             try {
                 // Try to fetch from Netlify function
-                const response = await fetch('/.netlify/functions/get-events-firestore-simple');
+                const response = await fetch('/.netlify/functions/get-events-simple');
 
                 if (response.ok) {
                     const data = await response.json();

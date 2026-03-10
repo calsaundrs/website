@@ -29,7 +29,7 @@ function escapeXml(unsafe) {
 
 exports.handler = async function (event, context) {
     try {
-        console.log("sitemap-firestore function called");
+        console.log("sitemap function called");
         
         // Check if Firebase is properly initialized
         if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {

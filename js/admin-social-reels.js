@@ -123,7 +123,7 @@ class SocialReelsGenerator {
         
         try {
             // Use the same endpoint as the main events page
-            const url = '/.netlify/functions/get-events-firestore-simple';
+            const url = '/.netlify/functions/get-events';
             const params = new URLSearchParams();
             
             // Set up date range filtering

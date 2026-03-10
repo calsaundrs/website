@@ -687,7 +687,7 @@ async function main() {
     
     try {
         // Fetch venues from the API
-        const response = await fetch('http://localhost:8888/.netlify/functions/get-venues-firestore');
+        const response = await fetch('http://localhost:8888/.netlify/functions/get-venues');
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }

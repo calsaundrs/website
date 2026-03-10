@@ -22,7 +22,7 @@
             resultDiv.innerHTML = 'Deleting...';
             
             try {
-                const response = await fetch('/.netlify/functions/delete-venue-firestore', {
+                const response = await fetch('/.netlify/functions/delete-venue', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

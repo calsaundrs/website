@@ -554,7 +554,7 @@
                 console.log("FormData entries:", Array.from(formData.entries()));
                 try {
                     // Send to the unified Firestore admin creation endpoint
-                    const response = await fetch('/.netlify/functions/admin-create-event-firestore', {
+                    const response = await fetch('/.netlify/functions/admin-create-event', {
                         method: 'POST',
                         body: formData
                     });

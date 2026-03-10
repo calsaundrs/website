@@ -56,7 +56,7 @@
             progressLog.innerHTML = '';
             
             try {
-                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
+                const response = await fetch('/.netlify/functions/get-venues?admin=true');
                 const data = await response.json();
                 
                 venuesWithPlaceholders = data.venues.filter(venue => 

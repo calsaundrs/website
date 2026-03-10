@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showLoadingState();
             
             console.log('🔍 Loading pending items...');
-            const response = await fetch('/.netlify/functions/get-pending-items-firestore');
+            const response = await fetch('/.netlify/functions/get-pending-items');
             
             if (response.ok) {
                 const data = await response.json();
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log(`✅ APPROVE: Starting approval for ${type} ${id}`);
             
-            const endpoint = 'update-item-status-firestore-only';
+            const endpoint = 'update-item-status';
             const requestBody = {
                 itemId: id,
                 newStatus: 'approved',
@@ -726,14 +726,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { imageFile, newImage, ...otherData } = eventData;
                 formData.append('data', JSON.stringify(otherData));
                 
-                response = await fetch('/.netlify/functions/update-item-firestore', {
+                response = await fetch('/.netlify/functions/update-item', {
                     method: 'POST',
                     body: formData
                 });
             } else {
                 // Use JSON for non-file updates
                 const { imageFile, newImage, ...jsonData } = eventData;
-                response = await fetch('/.netlify/functions/update-item-firestore', {
+                response = await fetch('/.netlify/functions/update-item', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(jsonData)
@@ -783,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log(`🔄 REJECT: Starting rejection for ${type} ${id}`);
             
-            const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
+            const response = await fetch('/.netlify/functions/update-item-status', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

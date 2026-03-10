@@ -53,7 +53,7 @@
 # Rule for individual EVENT pages (Firestore-based)
 [[redirects]]
   from = "/event/*"
-  to = "/.netlify/functions/get-event-details-firestore?slug=:splat"
+  to = "/.netlify/functions/get-event-details?slug=:splat"
   status = 200
   force = true
 
@@ -61,7 +61,7 @@
 # Note: Static files in /venue/ directory will be served first
 [[redirects]]
   from = "/venue/*"
-  to = "/.netlify/functions/get-venue-details-firestore?slug=:splat"
+  to = "/.netlify/functions/get-venue-details?slug=:splat"
   status = 200
   force = false
 
@@ -196,14 +196,10 @@
 [functions."scheduled-event-reminders"]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
 
-# Function-specific optimizations for large functions
-[functions."get-venue-details-firestore"]
+[functions."get-venue-details"]
   timeout = 30
 
 [functions."get-event-details"]
-  timeout = 30
-
-[functions."get-venue-details"]
   timeout = 30
 
 [functions."venue-ssg-fallback"]
@@ -212,13 +208,11 @@
 [functions."get-event-details-dynamic"]
   timeout = 30
 
-[functions."get-events-firestore"]
+[functions."get-events"]
   timeout = 30
 
 # Environment Variables (add these to your Netlify dashboard)
 [context.production.environment]
-  AIRTABLE_PERSONAL_ACCESS_TOKEN = ""
-  AIRTABLE_BASE_ID = ""
   CLOUDINARY_CLOUD_NAME = ""
   CLOUDINARY_API_KEY = ""
   CLOUDINARY_API_SECRET = ""
@@ -229,8 +223,6 @@
   ADMIN_EMAIL = ""
 
 [context.deploy-preview.environment]
-  AIRTABLE_PERSONAL_ACCESS_TOKEN = ""
-  AIRTABLE_BASE_ID = ""
   CLOUDINARY_CLOUD_NAME = ""
   CLOUDINARY_API_KEY = ""
   CLOUDINARY_API_SECRET = ""

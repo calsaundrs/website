@@ -8,8 +8,8 @@ async function generateEventsListingPage() {
         
         // Try to fetch from deployed API endpoint
         // Use existing production site during builds
-        const apiUrl = 'https://new.brumoutloud.co.uk';
-        const eventsApiUrl = `${apiUrl}/.netlify/functions/get-events-firestore-simple`;
+        const apiUrl = 'https://brumoutloud.co.uk';
+        const eventsApiUrl = `${apiUrl}/.netlify/functions/get-events`;
         
         console.log('📡 Fetching events from:', eventsApiUrl);
         

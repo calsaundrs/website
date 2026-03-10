@@ -24,18 +24,15 @@ try {
     firebaseInitialized = false;
 }
 
-// Function to process venue data (same logic as get-venues-firestore.js)
+// Function to process venue data (same logic as get-venues.js)
 function processVenueForPublic(venueData) {
     // Extract image URL from various possible formats
     let imageUrl = null;
-    
+
     // 1. First try Cloudinary public ID
     const cloudinaryId = venueData['Cloudinary Public ID'] || venueData['cloudinaryPublicId'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/${cloudinaryId}`;
-    } else if (venueData.airtableId && process.env.CLOUDINARY_CLOUD_NAME) {
-        // Try generating Cloudinary URL from airtableId as fallback
-        imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_90,w_1600,h_900,c_fill,fl_progressive/brumoutloud_events/venue_${venueData.airtableId}`;
     } else {
         // 2. Try to find any image field that might contain a Cloudinary URL
         const possibleImageFields = ['image', 'Image', 'Photo', 'Photo URL', 'imageUrl', 'Venue Image'];
@@ -55,7 +52,7 @@ function processVenueForPublic(venueData) {
             }
         }
     }
-    
+
     // Generate slug from venue name if not provided
     const venueName = venueData.name || venueData['Venue Name'] || venueData['Name'] || 'Venue';
     const generateSlug = (name) => {
@@ -64,7 +61,7 @@ function processVenueForPublic(venueData) {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
     };
-    
+
     const venue = {
         id: venueData.id,
         name: venueName,
@@ -79,13 +76,13 @@ function processVenueForPublic(venueData) {
         status: venueData.status || 'listed',
         openingHours: venueData.openingHours || venueData['Opening Hours'],
         popular: venueData.popular || venueData['Popular'] || false,
-        airtableId: venueData.airtableId || null
+        // Pure Firestore record
     };
-    
+
     if (!venue.category || venue.category.length === 0) {
         venue.category = ['LGBTQ+', 'Venue'];
     }
-    
+
     return venue;
 }
 
@@ -96,21 +93,21 @@ async function getAllVenuesWithImages() {
             console.log('⚠️ Firebase not initialized. Cannot fetch venues.');
             return [];
         }
-        
+
         const venuesRef = db.collection('venues');
         const snapshot = await venuesRef.get();
-        
+
         const venues = [];
-        
+
         snapshot.forEach(doc => {
             const venueData = doc.data();
-            
+
             // Process venue data
             const processedVenue = processVenueForPublic({
                 id: doc.id,
                 ...venueData
             });
-            
+
             // Only include venues that have actual images (not placeholders)
             if (processedVenue.image && processedVenue.image.url && !processedVenue.image.url.includes('placehold.co')) {
                 venues.push(processedVenue);
@@ -119,13 +116,13 @@ async function getAllVenuesWithImages() {
                 console.log(`❌ EXCLUDED: ${processedVenue.name} - no valid image`);
             }
         });
-        
+
         // Sort venues by name
         venues.sort((a, b) => a.name.localeCompare(b.name));
-        
+
         console.log(`Found ${venues.length} venues with images for SSG`);
         return venues;
-        
+
     } catch (error) {
         console.error('Error fetching venues for SSG:', error);
         throw error;
@@ -136,7 +133,7 @@ async function getAllVenuesWithImages() {
 async function generateVenuesListingPage() {
     try {
         console.log('🚀 Starting Venues Listing SSG...');
-        
+
         if (!firebaseInitialized) {
             console.log('⚠️ Firebase not initialized. Skipping venues listing SSG.');
             return {
@@ -144,23 +141,23 @@ async function generateVenuesListingPage() {
                 reason: 'Firebase not initialized - missing environment variables'
             };
         }
-        
+
         // Read the current all-venues.html template
         const templatePath = path.join(__dirname, 'all-venues.html');
         let templateContent = await fs.readFile(templatePath, 'utf8');
-        
+
         // Get all venues
         const venues = await getAllVenuesWithImages();
-        
+
         // Generate venue cards HTML
         const venueCardsHtml = venues.map(venue => {
-            const categoryTags = Array.isArray(venue.category) ? 
+            const categoryTags = Array.isArray(venue.category) ?
                 venue.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') :
                 '';
-            
+
             const isPopular = venue.popular || false;
             const venueType = venue.type || 'venue';
-            
+
             return `
                 <div class="venue-card rounded-xl overflow-hidden relative flex flex-col group cursor-pointer" onclick="window.location.href='/venue/${venue.slug}'">
                     <div class="relative">
@@ -188,29 +185,29 @@ async function generateVenuesListingPage() {
                     </div>
                 </div>`;
         }).join('');
-        
+
         // Replace placeholders in template with static content
         templateContent = templateContent
             .replace('<!-- VENUES_GRID_SSG_PLACEHOLDER -->', venueCardsHtml)
             .replace(/<!-- SSG_TIMESTAMP -->/g, new Date().toISOString());
-        
+
         // Remove or replace JavaScript loading logic with static notice
         templateContent = templateContent.replace(
             /async function initializePage\(\) \{[\s\S]*?\}\s*initializePage\(\);/,
             '// Venues loaded statically via SSG - no dynamic loading needed'
         );
-        
+
         // Write the static file
         await fs.writeFile(templatePath, templateContent, 'utf8');
-        
+
         console.log(`✅ Generated static venues listing with ${venues.length} venues`);
-        
+
         return {
             success: true,
             totalVenues: venues.length,
             outputFile: templatePath
         };
-        
+
     } catch (error) {
         console.error('❌ Error generating venues listing SSG:', error);
         throw error;

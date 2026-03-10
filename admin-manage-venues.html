@@ -531,7 +531,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             try {
                 // Call the venues function with admin parameter to get all venues for admin management
-                const response = await fetch('/.netlify/functions/get-venues-firestore?admin=true');
+                const response = await fetch('/.netlify/functions/get-venues?admin=true');
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({details: 'Server returned an invalid response'}));
                     throw new Error(errorData.details || 'Failed to fetch venues.');
@@ -686,7 +686,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
             
             try {
-                const response = await fetch('/.netlify/functions/update-item-status-firestore-only', {
+                const response = await fetch('/.netlify/functions/update-item-status', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -761,7 +761,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     formData.append('venueId', currentItemForAction.id);
 
                     // Send the data as multipart form data to support image uploads
-                    const response = await fetch('/.netlify/functions/update-venue-firestore', { 
+                    const response = await fetch('/.netlify/functions/update-venue', { 
                         method: 'POST',
                         body: formData // Send FormData directly for multipart support
                     });

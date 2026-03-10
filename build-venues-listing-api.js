@@ -8,8 +8,8 @@ async function generateVenuesListingPage() {
         
         // Try to fetch from deployed API endpoint
         // Use existing production site during builds
-        const apiUrl = 'https://new.brumoutloud.co.uk';
-        const venuesApiUrl = `${apiUrl}/.netlify/functions/get-venues-firestore`;
+        const apiUrl = 'https://brumoutloud.co.uk';
+        const venuesApiUrl = `${apiUrl}/.netlify/functions/get-venues`;
         
         console.log('📡 Fetching venues from:', venuesApiUrl);
         

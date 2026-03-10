@@ -130,7 +130,7 @@ async function cacheSSGPages(cache) {
 async function getEventPages() {
   try {
     // Check if we're in a build environment or if event pages exist
-    const response = await fetch('/.netlify/functions/get-events-firestore-simple?limit=10');
+    const response = await fetch('/.netlify/functions/get-events?limit=10');
     if (response.ok) {
       const data = await response.json();
       if (data.events && data.events.length > 0) {
