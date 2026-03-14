@@ -516,16 +516,20 @@ exports.handler = async function (event, context) {
         
         Handlebars.registerHelper('formatTime', function(dateString) {
             try {
+                if (!dateString) return 'Time TBC';
+                const dateStr = typeof dateString === 'string' ? dateString : '';
+                // No time component in the date string
+                if (!dateStr.includes('T')) return 'Time TBC';
+                // Midnight UTC = no meaningful time was set
+                if (dateStr.includes('T00:00')) return 'Time TBC';
                 const date = new Date(dateString);
-                if (isNaN(date.getTime())) {
-                    return 'Time TBC';
-                }
-                // For UK events, display times as stored (no timezone conversion)
-                return date.toLocaleTimeString('en-GB', { 
+                if (isNaN(date.getTime())) return 'Time TBC';
+                const formatted = date.toLocaleTimeString('en-GB', { 
                     hour: 'numeric',
                     minute: '2-digit'
-                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
                 });
+                // Final safety check
+                return (formatted === '0:00' || formatted === '00:00') ? 'Time TBC' : formatted;
             } catch (error) {
                 return 'Time TBC';
             }
@@ -533,20 +537,23 @@ exports.handler = async function (event, context) {
         
         Handlebars.registerHelper('formatDate', function(dateString) {
             try {
+                if (!dateString) return 'Date TBC';
+                const dateStr = typeof dateString === 'string' ? dateString : '';
                 const date = new Date(dateString);
-                if (isNaN(date.getTime())) {
-                    return 'Date TBC';
-                }
-                // For UK events, display dates as stored (no timezone conversion)
-                return date.toLocaleDateString('en-GB', { 
+                if (isNaN(date.getTime())) return 'Date TBC';
+                // Check if this event has a meaningful time
+                const hasNoTime = !dateStr.includes('T') || dateStr.includes('T00:00');
+                const options = { 
                     weekday: 'long', 
                     day: 'numeric', 
                     month: 'long', 
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                    // Removed timeZone: 'Europe/London' to avoid +1 hour shift
-                });
+                    year: 'numeric'
+                };
+                if (!hasNoTime) {
+                    options.hour = 'numeric';
+                    options.minute = '2-digit';
+                }
+                return date.toLocaleDateString('en-GB', options);
             } catch (error) {
                 return 'Date TBC';
             }

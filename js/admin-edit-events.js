@@ -351,13 +351,13 @@ function renderEvents(events) {
                     
                     <div class="event-card-detail-item">
                         <p class="detail-label">Event Date</p>
-                        <p class="detail-value">${eventDate.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}</p>
+                        <p class="detail-value">${(() => {
+                            const dateStr = event.date || event.Date || '';
+                            const hasNoTime = typeof dateStr === 'string' && (!dateStr.includes('T') || dateStr.includes('T00:00'));
+                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                            if (!hasNoTime) { options.hour = '2-digit'; options.minute = '2-digit'; }
+                            return eventDate.toLocaleDateString('en-GB', options) + (hasNoTime ? ' — Time TBC' : '');
+                        })()}</p>
                     </div>
                     
                     <div class="event-card-detail-item">

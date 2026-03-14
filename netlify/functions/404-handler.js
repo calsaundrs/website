@@ -103,12 +103,15 @@ function processEventForPublic(eventData, eventId) {
     };
 }
 
-// Format date for display
+// Format date for display (omit time if midnight/missing)
 function formatDate(dateString) {
     if (!dateString) return 'Date TBC';
     
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return 'Date TBC';
+    
+    const dateStr = typeof dateString === 'string' ? dateString : '';
+    const hasNoTime = !dateStr.includes('T') || dateStr.includes('T00:00');
     
     const options = { 
         weekday: 'long', 
@@ -116,6 +119,11 @@ function formatDate(dateString) {
         month: 'long', 
         day: 'numeric' 
     };
+    
+    if (!hasNoTime) {
+        options.hour = 'numeric';
+        options.minute = '2-digit';
+    }
     
     return date.toLocaleDateString('en-GB', options);
 }

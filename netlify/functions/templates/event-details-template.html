@@ -470,15 +470,20 @@
     <script>
         // Helper function to format dates
         function formatDate(dateString) {
+            const dateStr = typeof dateString === 'string' ? dateString : '';
+            const hasNoTime = !dateStr.includes('T') || dateStr.includes('T00:00');
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-GB', { 
+            const options = { 
                 weekday: 'long', 
                 day: 'numeric', 
                 month: 'long', 
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-            });
+                year: 'numeric'
+            };
+            if (!hasNoTime) {
+                options.hour = 'numeric';
+                options.minute = '2-digit';
+            }
+            return date.toLocaleDateString('en-GB', options);
         }
         
         // Format all dates on the page

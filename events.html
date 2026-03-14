@@ -1793,19 +1793,25 @@
                 month: 'short',
                 timeZone: 'UTC' // Display dates as stored (no timezone conversion)
             });
-            // Prefer explicit time field over extracting from date string
-            // (many imported events have date-only strings like "2026-03-07" which default to 00:00)
+            // Detect missing/midnight time and show "Time TBC"
             let formattedTime;
-            if (event.time && event.time !== '00:00') {
-                formattedTime = event.time;
+            const rawDateStr = typeof event.date === 'string' ? event.date : '';
+            const hasNoTimeComponent = !rawDateStr.includes('T');
+            const isMidnightUTC = rawDateStr.includes('T00:00');
+            const explicitTime = event.time;
+            const explicitTimeIsMidnight = !explicitTime || explicitTime === '00:00' || explicitTime === '0:00';
+
+            if (hasNoTimeComponent || (isMidnightUTC && explicitTimeIsMidnight)) {
+                formattedTime = 'Time TBC';
+            } else if (explicitTime && !explicitTimeIsMidnight) {
+                formattedTime = explicitTime;
             } else {
                 const extractedTime = eventDate.toLocaleTimeString('en-GB', {
                     hour: '2-digit',
                     minute: '2-digit',
                     timeZone: 'UTC'
                 });
-                // If extracted time is midnight and there's no explicit time, show "TBC"
-                formattedTime = (extractedTime === '00:00' && !event.time) ? 'TBC' : extractedTime;
+                formattedTime = (extractedTime === '00:00') ? 'Time TBC' : extractedTime;
             }
 
             // Create tag display for mobile - allow wrapping but limit to 5 tags max
