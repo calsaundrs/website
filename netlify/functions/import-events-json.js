@@ -57,6 +57,7 @@ exports.handler = async (event, context) => {
 
         let upsertEvents = [];
         let deleteSlugs = [];
+        let deleteByIds = [];
         let dryRun = false;
 
         if (Array.isArray(body)) {
@@ -70,20 +71,68 @@ exports.handler = async (event, context) => {
             if (Array.isArray(body.delete)) {
                 deleteSlugs = body.delete;
             }
+            if (Array.isArray(body.deleteById)) {
+                deleteByIds = body.deleteById;
+            }
             dryRun = body.dryRun === true;
         }
 
-        if (upsertEvents.length === 0 && deleteSlugs.length === 0) {
+        if (upsertEvents.length === 0 && deleteSlugs.length === 0 && deleteByIds.length === 0) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Bad Request', message: 'Payload must contain an "upsert", "events", or "delete" array' })
+                body: JSON.stringify({ error: 'Bad Request', message: 'Payload must contain an "upsert", "events", "delete", or "deleteById" array' })
             };
         }
 
         const results = [];
 
-        // 1. Process deletions
+        // 1a. Process deletions by Firestore document ID (precise targeting)
+        for (const docId of deleteByIds) {
+            const currentResult = { action: 'deleteById', id: docId };
+            try {
+                if (dryRun) {
+                    // In dry run, check if the document exists and report what would happen
+                    const docRef = db.collection('events').doc(docId);
+                    const docSnap = await docRef.get();
+                    if (docSnap.exists) {
+                        const data = docSnap.data();
+                        console.log(`[DRY RUN] Would delete event by ID: ${docId} (name: "${data.name || 'Untitled'}", slug: "${data.slug || 'none'}")`);
+                        currentResult.success = true;
+                        currentResult.dryRun = true;
+                        currentResult.eventName = data.name || 'Untitled';
+                        currentResult.slug = data.slug || null;
+                    } else {
+                        console.warn(`[DRY RUN] No event found with ID: ${docId}`);
+                        currentResult.success = false;
+                        currentResult.dryRun = true;
+                        currentResult.warning = 'No document found with this ID';
+                    }
+                } else {
+                    const docRef = db.collection('events').doc(docId);
+                    const docSnap = await docRef.get();
+                    if (!docSnap.exists) {
+                        console.warn(`Delete warning: No event found with ID ${docId}`);
+                        currentResult.success = false;
+                        currentResult.warning = 'No document found with this ID';
+                    } else {
+                        const data = docSnap.data();
+                        currentResult.eventName = data.name || 'Untitled';
+                        currentResult.slug = data.slug || null;
+                        await docRef.delete();
+                        console.log(`Deleted event by ID: ${docId} (name: "${data.name || 'Untitled'}")`);
+                        currentResult.success = true;
+                    }
+                }
+            } catch (err) {
+                console.error(`Failed to delete event with ID ${docId}:`, err);
+                currentResult.success = false;
+                currentResult.error = err.message;
+            }
+            results.push(currentResult);
+        }
+
+        // 1b. Process deletions by slug
         for (const slug of deleteSlugs) {
             const currentResult = { action: 'delete', slug: slug };
             try {
@@ -248,7 +297,7 @@ exports.handler = async (event, context) => {
             headers,
             body: JSON.stringify({
                 success: true,
-                message: `Processed operations: ${upsertEvents.length} upserts, ${deleteSlugs.length} deletes${dryRun ? ' (DRY RUN)' : ''}`,
+                message: `Processed operations: ${upsertEvents.length} upserts, ${deleteByIds.length} deleteByIds, ${deleteSlugs.length} deletes${dryRun ? ' (DRY RUN)' : ''}`,
                 results: results
             })
         };
