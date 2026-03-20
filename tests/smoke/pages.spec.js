@@ -10,8 +10,8 @@ test.describe('Page Load Smoke Tests', () => {
   });
 
   test('events page loads', async ({ page }) => {
-    await page.goto('/events.html', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
+    const response = await page.goto('/events.html', { waitUntil: 'domcontentloaded' });
+    expect(response.status()).toBeLessThan(400);
     await expect(page.locator('body')).toContainText(/event/i);
   });
 
@@ -32,8 +32,8 @@ test.describe('Page Load Smoke Tests', () => {
   });
 
   test('admin login page loads', async ({ page }) => {
-    await page.goto('/admin-login.html', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
+    const response = await page.goto('/admin-login.html', { waitUntil: 'domcontentloaded' });
+    expect(response.status()).toBeLessThan(400);
     await expect(page.locator('form')).toBeVisible({ timeout: 5000 });
   });
 });
