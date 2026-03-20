@@ -354,17 +354,7 @@ exports.handler = async function (event, context) {
             venueSlug: venueData.venueSlug,
             
             // Categorization (Standardized)
-            category: submission.categories ? (Array.isArray(submission.categories) ? submission.categories : String(submission.categories).split(',').map(c => c.trim())) :
-                     (submission.category ? submission.category.split(',').map(cat => cat.trim()) :
-                     (submission.categoryIds ? (Array.isArray(submission.categoryIds) ? submission.categoryIds : String(submission.categoryIds).split(',').map(c => c.trim())) :
-                     (aiCategories && Array.isArray(aiCategories) ? aiCategories :
-                     (submission['category-select'] ? (() => {
-                         console.log('Processing category:', submission['category-select']);
-                         return [submission['category-select']];
-                     })() : (() => {
-                         console.log('No category found in submission');
-                         return [];
-                     })())))),
+            category: getCategories(submission, aiCategories),
             
             // Links (Standardized)
             link: submission.link || '',
@@ -590,4 +580,27 @@ function generateSlug(eventName, date) {
 
 function generateVenueSlug(venueName) {
     return venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function getCategories(submission, aiCategories) {
+    function parseCSV(value) {
+        return String(value).split(',').map(c => c.trim()).filter(Boolean);
+    }
+
+    if (submission.categories) {
+        return Array.isArray(submission.categories) ? submission.categories : parseCSV(submission.categories);
+    }
+    if (submission.category) {
+        return parseCSV(submission.category);
+    }
+    if (submission.categoryIds) {
+        return Array.isArray(submission.categoryIds) ? submission.categoryIds : parseCSV(submission.categoryIds);
+    }
+    if (aiCategories && Array.isArray(aiCategories)) {
+        return aiCategories;
+    }
+    if (submission['category-select']) {
+        return [submission['category-select']];
+    }
+    return [];
 }

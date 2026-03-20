@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const changeVenueBtn = document.getElementById('change-venue');
     const addNewVenueBtn = document.getElementById('add-new-venue');
     
+    // New venue elements
+    const NEW_VENUE_ID = 'new';
+    const newVenueNameInput = document.getElementById('new-venue-name');
+    const newVenueAddressInput = document.getElementById('new-venue-address');
+    const newVenuePostcodeInput = document.getElementById('new-venue-postcode');
+    const newVenueForm = document.getElementById('new-venue-form');
+    const cancelNewVenueBtn = document.getElementById('cancel-new-venue');
+
     // Poster parser elements
     const uploadArea = document.getElementById('upload-area');
     const posterUpload = document.getElementById('poster-upload');
@@ -22,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const extractedFields = document.getElementById('extracted-fields');
     const useExtractedBtn = document.getElementById('use-extracted');
     const ignoreExtractedBtn = document.getElementById('ignore-extracted');
-    
+    const uploadPreview = document.getElementById('upload-preview');
+
     let extractedEventData = null;
     
     // Initialize poster parser
@@ -81,41 +90,70 @@ document.addEventListener('DOMContentLoaded', () => {
             extractedData.classList.add('hidden');
             extractedEventData = null;
         });
+
+        // Handle remove upload
+        const removeUploadBtn = document.getElementById('remove-upload');
+        if (removeUploadBtn) {
+            removeUploadBtn.addEventListener('click', () => {
+                posterUpload.value = '';
+                uploadPreview.classList.add('hidden');
+                uploadArea.classList.remove('hidden');
+                extractedData.classList.add('hidden');
+                extractedEventData = null;
+            });
+        }
     }
-    
+
+    function showUploadPreview(file) {
+        const thumbnail = document.getElementById('preview-thumbnail');
+        const filename = document.getElementById('preview-filename');
+        const filesize = document.getElementById('preview-filesize');
+
+        thumbnail.src = URL.createObjectURL(file);
+        filename.textContent = file.name;
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        filesize.textContent = sizeMB >= 1 ? `${sizeMB} MB` : `${(file.size / 1024).toFixed(0)} KB`;
+
+        uploadArea.classList.add('hidden');
+        uploadPreview.classList.remove('hidden');
+    }
+
     async function handlePosterUpload(file) {
         if (!file.type.startsWith('image/')) {
             alert('Please select an image file');
             return;
         }
-        
+
+        // Show image preview immediately
+        showUploadPreview(file);
+
         // Show processing state
         aiProcessing.classList.remove('hidden');
         extractedData.classList.add('hidden');
-        
+
         try {
             // Convert file to base64
             const base64 = await fileToBase64(file);
             console.log('File converted to base64, length:', base64.length);
-            
+
             // Call AI analysis
             const response = await fetch('/.netlify/functions/analyze-poster', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image: base64 })
             });
-            
+
             console.log('AI analysis response status:', response.status);
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('AI analysis failed:', response.status, errorText);
                 throw new Error(`AI analysis failed: ${response.status} ${response.statusText}`);
             }
-            
+
             const result = await response.json();
             console.log('AI analysis result:', result);
-            
+
             if (result.success && result.extractedData) {
                 extractedEventData = result.extractedData;
                 displayExtractedData(result.extractedData);
@@ -123,10 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log('No data extracted from poster:', result.error || 'Unknown error');
             }
-            
+
         } catch (error) {
             console.error('Poster analysis error:', error);
-            alert('Failed to analyze poster. Please fill in the details manually.');
+            // Don't alert — the preview is still showing, image is still attached
         } finally {
             aiProcessing.classList.add('hidden');
         }
@@ -598,24 +636,21 @@ document.addEventListener('DOMContentLoaded', () => {
             venueSearch.focus();
         });
         
-        const newVenueForm = document.getElementById('new-venue-form');
-        const cancelNewVenueBtn = document.getElementById('cancel-new-venue');
-
         addNewVenueBtn.addEventListener('click', () => {
             newVenueForm.classList.remove('hidden');
             addNewVenueBtn.classList.add('hidden');
-            venueIdInput.value = 'new';
+            venueIdInput.value = NEW_VENUE_ID;
             selectedVenueDetails.classList.add('hidden');
-            document.getElementById('new-venue-name').focus();
+            newVenueNameInput.focus();
         });
 
         cancelNewVenueBtn.addEventListener('click', () => {
             newVenueForm.classList.add('hidden');
             addNewVenueBtn.classList.remove('hidden');
             venueIdInput.value = '';
-            document.getElementById('new-venue-name').value = '';
-            document.getElementById('new-venue-address').value = '';
-            document.getElementById('new-venue-postcode').value = '';
+            newVenueNameInput.value = '';
+            newVenueAddressInput.value = '';
+            newVenuePostcodeInput.value = '';
         });
         
         // Add event listeners for category checkboxes
@@ -665,14 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('contact-email', document.getElementById('contact-email').value.trim());
                 
                 // Venue data
-                if (venueIdInput.value === 'new') {
-                    // New venue being created
-                    const newVenueName = document.getElementById('new-venue-name').value.trim();
-                    const newVenueAddress = document.getElementById('new-venue-address').value.trim();
-                    const newVenuePostcode = document.getElementById('new-venue-postcode').value.trim();
-                    formData.append('new-venue-name', newVenueName);
-                    formData.append('new-venue-address', newVenueAddress);
-                    formData.append('new-venue-postcode', newVenuePostcode);
+                if (venueIdInput.value === NEW_VENUE_ID) {
+                    formData.append('new-venue-name', newVenueNameInput.value.trim());
+                    formData.append('new-venue-address', newVenueAddressInput.value.trim());
+                    formData.append('new-venue-postcode', newVenuePostcodeInput.value.trim());
                 } else if (venueIdInput.value) {
                     formData.append('venue-id', venueIdInput.value);
                 }
@@ -795,13 +826,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Venue validation
         if (!venueIdInput.value) {
             errors.push('Please select a venue');
-        } else if (venueIdInput.value === 'new') {
-            const newVenueName = document.getElementById('new-venue-name');
-            if (!newVenueName.value.trim()) {
+        } else if (venueIdInput.value === NEW_VENUE_ID) {
+            if (!newVenueNameInput.value.trim()) {
                 errors.push('Please enter a name for the new venue');
-                newVenueName.classList.add('border-red-500');
+                newVenueNameInput.classList.add('border-red-500');
             } else {
-                newVenueName.classList.remove('border-red-500');
+                newVenueNameInput.classList.remove('border-red-500');
             }
         }
         
@@ -879,8 +909,6 @@ document.addEventListener('DOMContentLoaded', () => {
         venueResults.classList.add('hidden');
 
         // Reset new venue form
-        const newVenueForm = document.getElementById('new-venue-form');
-        const addNewVenueBtn = document.getElementById('add-new-venue');
         if (newVenueForm) newVenueForm.classList.add('hidden');
         if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
 
