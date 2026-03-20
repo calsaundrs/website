@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Handle remove upload
-        const removeUploadBtn = document.getElementById('remove-upload');
+        // Handle remove upload (supports both promoter-submit-new and promoter-tool)
+        const removeUploadBtn = document.getElementById('remove-upload') || document.getElementById('remove-poster');
         if (removeUploadBtn) {
             removeUploadBtn.addEventListener('click', () => {
                 posterUpload.value = '';
@@ -113,7 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     URL.revokeObjectURL(currentObjectURL);
                     currentObjectURL = null;
                 }
-                if (uploadPreview) uploadPreview.classList.add('hidden');
+                const previewContainer = uploadPreview || document.getElementById('poster-preview');
+                if (previewContainer) previewContainer.classList.add('hidden');
                 uploadArea.classList.remove('hidden');
                 if (extractedData) extractedData.classList.add('hidden');
                 extractedEventData = null;
@@ -122,10 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showUploadPreview(file) {
-        if (!uploadPreview) return;
+        // Support both promoter-submit-new.html (upload-preview) and promoter-tool.html (poster-preview)
+        const previewContainer = uploadPreview || document.getElementById('poster-preview');
+        if (!previewContainer) return;
 
         const thumbnail = document.getElementById('preview-thumbnail');
-        const filename = document.getElementById('preview-filename');
+        const filename = document.getElementById('preview-filename') || document.getElementById('poster-filename');
         const filesize = document.getElementById('preview-filesize');
 
         // Revoke previous object URL to prevent memory leak
@@ -142,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         uploadArea.classList.add('hidden');
-        uploadPreview.classList.remove('hidden');
+        previewContainer.classList.remove('hidden');
     }
 
     async function handlePosterUpload(file) {
@@ -393,9 +396,13 @@ document.addEventListener('DOMContentLoaded', () => {
             radio.addEventListener('change', updateRecurringPreview);
         });
         
-        document.getElementById('recurring-start-date').addEventListener('change', updateRecurringPreview);
-        document.getElementById('recurring-end-date').addEventListener('change', updateRecurringPreview);
-        document.getElementById('max-instances').addEventListener('input', updateRecurringPreview);
+        const recurringStartDate = document.getElementById('recurring-start-date');
+        const recurringEndDate = document.getElementById('recurring-end-date');
+        const maxInstancesInput = document.getElementById('max-instances');
+
+        if (recurringStartDate) recurringStartDate.addEventListener('change', updateRecurringPreview);
+        if (recurringEndDate) recurringEndDate.addEventListener('change', updateRecurringPreview);
+        if (maxInstancesInput) maxInstancesInput.addEventListener('input', updateRecurringPreview);
         
         // Auto-update recurring start date when main event date changes
         document.getElementById('date').addEventListener('change', (e) => {
