@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Event Submission Form Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/promoter-submit-new.html', { waitUntil: 'networkidle' });
+    await page.goto('/promoter-submit-new.html', { waitUntil: 'domcontentloaded' });
   });
 
   test('all required form fields are present', async ({ page }) => {
