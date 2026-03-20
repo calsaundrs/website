@@ -256,6 +256,32 @@
                         </div>
 
                         <div>
+                            <label for="end-time" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-clock mr-1"></i>End Time (Optional)
+                            </label>
+                            <input type="time" id="end-time" name="end-time"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white">
+                        </div>
+
+                        <div>
+                            <label for="price" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-pound-sign mr-1"></i>Price (Optional)
+                            </label>
+                            <input type="text" id="price" name="price"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="e.g. Free, £5, £10-£15">
+                        </div>
+
+                        <div>
+                            <label for="age-restriction" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-id-card mr-1"></i>Age Restriction (Optional)
+                            </label>
+                            <input type="text" id="age-restriction" name="age-restriction"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="e.g. 18+, All ages">
+                        </div>
+
+                        <div>
                             <label for="link" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                             </label>
@@ -296,6 +322,34 @@
                         <div class="text-center">
                             <button type="button" id="add-new-venue" class="btn-secondary px-6 py-3 rounded-lg">
                                 <i class="fas fa-plus mr-2"></i>Add New Venue
+                            </button>
+                        </div>
+
+                        <!-- New Venue Form (hidden by default) -->
+                        <div id="new-venue-form" class="hidden space-y-4 p-4 bg-gray-800/50 rounded-lg border border-purple-500/30">
+                            <h3 class="font-semibold text-purple-400 mb-2">
+                                <i class="fas fa-map-pin mr-2"></i>New Venue Details
+                            </h3>
+                            <div>
+                                <label for="new-venue-name" class="block text-sm font-semibold mb-2">Venue Name *</label>
+                                <input type="text" id="new-venue-name" name="new-venue-name"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="Enter venue name">
+                            </div>
+                            <div>
+                                <label for="new-venue-address" class="block text-sm font-semibold mb-2">Address</label>
+                                <input type="text" id="new-venue-address" name="new-venue-address"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="Full address">
+                            </div>
+                            <div>
+                                <label for="new-venue-postcode" class="block text-sm font-semibold mb-2">Postcode</label>
+                                <input type="text" id="new-venue-postcode" name="new-venue-postcode"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="e.g. B1 1AA">
+                            </div>
+                            <button type="button" id="cancel-new-venue" class="text-sm text-gray-400 hover:text-white">
+                                <i class="fas fa-times mr-1"></i>Cancel — use existing venue instead
                             </button>
                         </div>
                     </div>

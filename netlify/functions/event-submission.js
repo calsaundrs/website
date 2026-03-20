@@ -354,16 +354,17 @@ exports.handler = async function (event, context) {
             venueSlug: venueData.venueSlug,
             
             // Categorization (Standardized)
-            category: submission.category ? submission.category.split(',').map(cat => cat.trim()) : 
+            category: submission.categories ? (Array.isArray(submission.categories) ? submission.categories : String(submission.categories).split(',').map(c => c.trim())) :
+                     (submission.category ? submission.category.split(',').map(cat => cat.trim()) :
                      (submission.categoryIds ? (Array.isArray(submission.categoryIds) ? submission.categoryIds : String(submission.categoryIds).split(',').map(c => c.trim())) :
-                     (aiCategories && Array.isArray(aiCategories) ? aiCategories : 
+                     (aiCategories && Array.isArray(aiCategories) ? aiCategories :
                      (submission['category-select'] ? (() => {
                          console.log('Processing category:', submission['category-select']);
                          return [submission['category-select']];
                      })() : (() => {
                          console.log('No category found in submission');
                          return [];
-                     })()))),
+                     })())))),
             
             // Links (Standardized)
             link: submission.link || '',

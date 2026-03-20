@@ -598,9 +598,24 @@ document.addEventListener('DOMContentLoaded', () => {
             venueSearch.focus();
         });
         
+        const newVenueForm = document.getElementById('new-venue-form');
+        const cancelNewVenueBtn = document.getElementById('cancel-new-venue');
+
         addNewVenueBtn.addEventListener('click', () => {
-            // For now, just show a message - venue creation can be added later
-            alert('Venue creation feature coming soon! Please select an existing venue for now.');
+            newVenueForm.classList.remove('hidden');
+            addNewVenueBtn.classList.add('hidden');
+            venueIdInput.value = 'new';
+            selectedVenueDetails.classList.add('hidden');
+            document.getElementById('new-venue-name').focus();
+        });
+
+        cancelNewVenueBtn.addEventListener('click', () => {
+            newVenueForm.classList.add('hidden');
+            addNewVenueBtn.classList.remove('hidden');
+            venueIdInput.value = '';
+            document.getElementById('new-venue-name').value = '';
+            document.getElementById('new-venue-address').value = '';
+            document.getElementById('new-venue-postcode').value = '';
         });
         
         // Add event listeners for category checkboxes
@@ -644,13 +659,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     formData.append('categories', category);
                 });
                 
+                formData.append('end-time', document.getElementById('end-time').value || '');
+                formData.append('price', document.getElementById('price').value.trim());
+                formData.append('age-restriction', document.getElementById('age-restriction').value.trim());
                 formData.append('link', document.getElementById('link').value.trim());
                 formData.append('contact-name', document.getElementById('contact-name').value.trim());
                 formData.append('contact-email', document.getElementById('contact-email').value.trim());
                 
                 // Venue data
-                if (venueIdInput.value) {
+                if (venueIdInput.value === 'new') {
+                    // New venue being created
+                    const newVenueName = document.getElementById('new-venue-name').value.trim();
+                    const newVenueAddress = document.getElementById('new-venue-address').value.trim();
+                    const newVenuePostcode = document.getElementById('new-venue-postcode').value.trim();
+                    formData.append('new-venue-name', newVenueName);
+                    formData.append('new-venue-address', newVenueAddress);
+                    formData.append('new-venue-postcode', newVenuePostcode);
+                } else if (venueIdInput.value) {
                     formData.append('venue-id', venueIdInput.value);
+                }
+                // Always send venue name as fallback
+                if (venueSearch.value.trim()) {
+                    formData.append('venue-name', venueSearch.value.trim());
                 }
                 
                 // Recurring event data
@@ -767,6 +797,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Venue validation
         if (!venueIdInput.value) {
             errors.push('Please select a venue');
+        } else if (venueIdInput.value === 'new') {
+            const newVenueName = document.getElementById('new-venue-name');
+            if (!newVenueName.value.trim()) {
+                errors.push('Please enter a name for the new venue');
+                newVenueName.classList.add('border-red-500');
+            } else {
+                newVenueName.classList.remove('border-red-500');
+            }
         }
         
         // Recurring event validation
@@ -835,13 +873,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset recurring events
         isRecurringCheckbox.checked = false;
         recurringConfig.classList.add('hidden');
-        
+
         // Reset venue selection
         venueIdInput.value = '';
         venueSearch.value = '';
         selectedVenueDetails.classList.add('hidden');
         venueResults.classList.add('hidden');
-        
+
+        // Reset new venue form
+        const newVenueForm = document.getElementById('new-venue-form');
+        const addNewVenueBtn = document.getElementById('add-new-venue');
+        if (newVenueForm) newVenueForm.classList.add('hidden');
+        if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
+
         // Update preview
         updateRecurringPreview();
     }
