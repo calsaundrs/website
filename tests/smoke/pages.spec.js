@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Page Load Smoke Tests', () => {
   test('home page loads', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
-    await expect(page).toHaveTitle(/BrumOutLoud/i);
+    await expect(page).toHaveTitle(/Brum\s*Out\s*loud/i);
     // Wait for FOUC prevention to finish (adds 'loaded' class to body)
     await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
     await expect(page.locator('nav')).toBeVisible({ timeout: 5000 });
