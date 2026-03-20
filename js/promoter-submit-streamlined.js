@@ -653,11 +653,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('date', document.getElementById('date').value);
                 formData.append('start-time', document.getElementById('start-time').value);
                 
-                // Categories (multiple)
+                // Categories (send as comma-separated string for multipart parser compatibility)
                 const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked')).map(cb => cb.value);
-                selectedCategories.forEach(category => {
-                    formData.append('categories', category);
-                });
+                formData.append('categories', selectedCategories.join(','));
                 
                 formData.append('end-time', document.getElementById('end-time').value || '');
                 formData.append('price', document.getElementById('price').value.trim());
