@@ -33,38 +33,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadPreview = document.getElementById('upload-preview');
 
     let extractedEventData = null;
-    
+    let currentObjectURL = null;
+
     // Initialize poster parser
     initializePosterParser();
     
-    // Initialize recurring events functionality
-    initializeRecurringEvents();
-    
-    // Initialize venue search
-    initializeVenueSearch();
-    
-    // Initialize form submission
-    initializeFormSubmission();
+    // Initialize recurring events functionality (only on pages with recurring config)
+    if (isRecurringCheckbox && recurringConfig) {
+        initializeRecurringEvents();
+    }
+
+    // Initialize venue search (only on pages with venue search)
+    if (venueSearch && venueResults) {
+        initializeVenueSearch();
+    }
+
+    // Initialize form submission (only on pages with the form)
+    if (form) {
+        initializeFormSubmission();
+    }
     
     function initializePosterParser() {
+        if (!uploadArea || !posterUpload) return;
+
         // Handle file upload
         uploadArea.addEventListener('click', () => {
             posterUpload.click();
         });
-        
+
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('border-purple-500');
         });
-        
+
         uploadArea.addEventListener('dragleave', () => {
             uploadArea.classList.remove('border-purple-500');
         });
-        
+
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('border-purple-500');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 posterUpload.files = files;
@@ -79,40 +88,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // Handle extracted data buttons
-        useExtractedBtn.addEventListener('click', () => {
-            if (extractedEventData) {
-                applyExtractedData(extractedEventData);
+        if (useExtractedBtn) {
+            useExtractedBtn.addEventListener('click', () => {
+                if (extractedEventData) {
+                    applyExtractedData(extractedEventData);
+                    extractedData.classList.add('hidden');
+                }
+            });
+        }
+
+        if (ignoreExtractedBtn) {
+            ignoreExtractedBtn.addEventListener('click', () => {
                 extractedData.classList.add('hidden');
-            }
-        });
-        
-        ignoreExtractedBtn.addEventListener('click', () => {
-            extractedData.classList.add('hidden');
-            extractedEventData = null;
-        });
+                extractedEventData = null;
+            });
+        }
 
         // Handle remove upload
         const removeUploadBtn = document.getElementById('remove-upload');
         if (removeUploadBtn) {
             removeUploadBtn.addEventListener('click', () => {
                 posterUpload.value = '';
-                uploadPreview.classList.add('hidden');
+                if (currentObjectURL) {
+                    URL.revokeObjectURL(currentObjectURL);
+                    currentObjectURL = null;
+                }
+                if (uploadPreview) uploadPreview.classList.add('hidden');
                 uploadArea.classList.remove('hidden');
-                extractedData.classList.add('hidden');
+                if (extractedData) extractedData.classList.add('hidden');
                 extractedEventData = null;
             });
         }
     }
 
     function showUploadPreview(file) {
+        if (!uploadPreview) return;
+
         const thumbnail = document.getElementById('preview-thumbnail');
         const filename = document.getElementById('preview-filename');
         const filesize = document.getElementById('preview-filesize');
 
-        thumbnail.src = URL.createObjectURL(file);
-        filename.textContent = file.name;
-        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-        filesize.textContent = sizeMB >= 1 ? `${sizeMB} MB` : `${(file.size / 1024).toFixed(0)} KB`;
+        // Revoke previous object URL to prevent memory leak
+        if (currentObjectURL) {
+            URL.revokeObjectURL(currentObjectURL);
+        }
+        currentObjectURL = URL.createObjectURL(file);
+
+        if (thumbnail) thumbnail.src = currentObjectURL;
+        if (filename) filename.textContent = file.name;
+        if (filesize) {
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+            filesize.textContent = sizeMB >= 1 ? `${sizeMB} MB` : `${(file.size / 1024).toFixed(0)} KB`;
+        }
 
         uploadArea.classList.add('hidden');
         uploadPreview.classList.remove('hidden');
@@ -629,29 +656,35 @@ document.addEventListener('DOMContentLoaded', () => {
         
 
         
-        changeVenueBtn.addEventListener('click', () => {
-            venueIdInput.value = '';
-            venueSearch.value = '';
-            selectedVenueDetails.classList.add('hidden');
-            venueSearch.focus();
-        });
-        
-        addNewVenueBtn.addEventListener('click', () => {
-            newVenueForm.classList.remove('hidden');
-            addNewVenueBtn.classList.add('hidden');
-            venueIdInput.value = NEW_VENUE_ID;
-            selectedVenueDetails.classList.add('hidden');
-            newVenueNameInput.focus();
-        });
+        if (changeVenueBtn) {
+            changeVenueBtn.addEventListener('click', () => {
+                venueIdInput.value = '';
+                venueSearch.value = '';
+                selectedVenueDetails.classList.add('hidden');
+                venueSearch.focus();
+            });
+        }
 
-        cancelNewVenueBtn.addEventListener('click', () => {
-            newVenueForm.classList.add('hidden');
-            addNewVenueBtn.classList.remove('hidden');
-            venueIdInput.value = '';
-            newVenueNameInput.value = '';
-            newVenueAddressInput.value = '';
-            newVenuePostcodeInput.value = '';
-        });
+        if (addNewVenueBtn && newVenueForm) {
+            addNewVenueBtn.addEventListener('click', () => {
+                newVenueForm.classList.remove('hidden');
+                addNewVenueBtn.classList.add('hidden');
+                venueIdInput.value = NEW_VENUE_ID;
+                if (selectedVenueDetails) selectedVenueDetails.classList.add('hidden');
+                if (newVenueNameInput) newVenueNameInput.focus();
+            });
+        }
+
+        if (cancelNewVenueBtn && newVenueForm) {
+            cancelNewVenueBtn.addEventListener('click', () => {
+                newVenueForm.classList.add('hidden');
+                if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
+                venueIdInput.value = '';
+                if (newVenueNameInput) newVenueNameInput.value = '';
+                if (newVenueAddressInput) newVenueAddressInput.value = '';
+                if (newVenuePostcodeInput) newVenuePostcodeInput.value = '';
+            });
+        }
         
         // Add event listeners for category checkboxes
         document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
