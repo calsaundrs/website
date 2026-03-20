@@ -23,9 +23,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Install serve
-        run: npm install -g serve
-
       - name: Run smoke tests
         run: npx playwright test tests/smoke/
 

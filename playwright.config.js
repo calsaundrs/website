@@ -9,9 +9,9 @@ module.exports = defineConfig({
     headless: true,
   },
   webServer: {
-    command: 'npx serve . -l 8888 -s',
+    command: 'npx serve . -l 8888',
     port: 8888,
     reuseExistingServer: true,
-    timeout: 10000,
+    timeout: 30000,
   },
 });

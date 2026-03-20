@@ -2,24 +2,27 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Page Load Smoke Tests', () => {
   test('home page loads', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page).toHaveTitle(/BrumOutLoud/i);
-    await expect(page.locator('nav')).toBeVisible();
+    // Wait for FOUC prevention to finish (adds 'loaded' class to body)
+    await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
+    await expect(page.locator('nav')).toBeVisible({ timeout: 5000 });
   });
 
   test('events page loads', async ({ page }) => {
-    await page.goto('/events.html');
+    await page.goto('/events.html', { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
     await expect(page.locator('body')).toContainText(/event/i);
   });
 
   test('venues page loads', async ({ page }) => {
-    const response = await page.goto('/all-venues.html');
+    const response = await page.goto('/all-venues.html', { waitUntil: 'networkidle' });
     expect(response.status()).toBeLessThan(400);
   });
 
   test('event submission form page loads', async ({ page }) => {
-    await page.goto('/promoter-submit-new.html');
-    await expect(page.locator('#event-submission-form')).toBeVisible();
+    await page.goto('/promoter-submit-new.html', { waitUntil: 'networkidle' });
+    await expect(page.locator('#event-submission-form')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('#event-name')).toBeVisible();
     await expect(page.locator('#description')).toBeVisible();
     await expect(page.locator('#date')).toBeVisible();
@@ -29,7 +32,8 @@ test.describe('Page Load Smoke Tests', () => {
   });
 
   test('admin login page loads', async ({ page }) => {
-    await page.goto('/admin-login.html');
-    await expect(page.locator('form')).toBeVisible();
+    await page.goto('/admin-login.html', { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
+    await expect(page.locator('form')).toBeVisible({ timeout: 5000 });
   });
 });
