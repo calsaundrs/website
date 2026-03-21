@@ -4,6 +4,11 @@ const RecurringEventsManager = require('./services/recurring-events-manager');
 
 // Version: 2025-01-27-v1 - Firestore-based events listing function
 
+// Maximum number of approved events to fetch before client-side date filtering.
+// Firestore doesn't support offset-based pagination, so we fetch up to this limit
+// and slice in memory.
+const MAX_EVENTS_FETCH_LIMIT = 500;
+
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
     if (process.env.FIREBASE_PRIVATE_KEY) {
@@ -92,8 +97,8 @@ async function handlePublicView(queryParams) {
         // We'll add ordering back once the basic index is created
         console.log("Using simple query without ordering to avoid index requirements");
 
-        // Apply pagination (Firestore doesn't support offset, so we'll get all and slice)
-        query = query.limit(filters.limit);
+        // Fetch all approved events; limit applied after client-side date filtering
+        query = query.limit(MAX_EVENTS_FETCH_LIMIT);
 
         console.log("Executing Firestore query...");
         const snapshot = await query.get();
@@ -243,12 +248,8 @@ async function handlePublicView(queryParams) {
         const groupedEvents = recurringManager.groupRecurringEvents(events);
         console.log(`Grouped ${events.length} events into ${groupedEvents.length} display items`);
 
-        // Get total count for pagination
-        console.log("Getting total count...");
-        const countQuery = eventsRef.where('status', '==', 'approved');
-        const countSnapshot = await countQuery.get();
-        const totalCount = countSnapshot.size;
-        console.log(`Total count: ${totalCount}`);
+        // Apply pagination after date filtering and grouping
+        const pagedGroupedEvents = groupedEvents.slice(filters.offset, filters.offset + filters.limit);
 
         return {
             statusCode: 200,
@@ -258,9 +259,9 @@ async function handlePublicView(queryParams) {
             },
             body: JSON.stringify({
                 success: true,
-                events: groupedEvents,
-                totalCount: totalCount,
-                hasMore: events.length === filters.limit,
+                events: pagedGroupedEvents,
+                totalCount: groupedEvents.length,
+                hasMore: groupedEvents.length > filters.offset + filters.limit,
                 filters: filters
             })
         };
