@@ -92,11 +92,10 @@
     }
     </script>
 
-    <!-- Performance: Optimized external resource loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    </noscript>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
 
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style"
         onload="this.onload=null;this.rel='stylesheet'">
@@ -105,8 +104,8 @@
     </noscript>
 
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="/css/main.css" as="style">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="preload" href="/css/main.css?v=3" as="style">
+    <link rel="stylesheet" href="/css/main.css?v=3">
 
     <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
@@ -126,26 +125,45 @@
     <meta name="theme-color" content="#8a2be2">
 
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        :root {
+            --color-bg: #0d0115;
+            --color-pink: #ff007f;
+            --color-purple: #7a00ff;
+            --color-toxic: #ccff00;
+            --color-light: #f3e8ff;
         }
 
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
         }
 
-        /* Loading screen */
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .neo-card {
+            background: rgba(13, 1, 21, 0.7);
+            border: 4px solid var(--color-light);
+            box-shadow: 8px 8px 0 var(--color-purple);
+            transition: all 0.2s ease;
+        }
+        
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0 var(--color-pink);
+        }
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            background: var(--color-bg);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -167,66 +185,49 @@
         }
 
         .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
+            color: var(--color-toxic);
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
             margin-bottom: 10px;
         }
 
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
+            border: 4px solid var(--color-purple);
+            border-top: 4px solid var(--color-toxic);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Critical CSS to prevent flashing */
+        /* Critical CSS */
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
         }
 
-        /* Basic layout styles to prevent layout shift */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
         }
 
-        /* Prevent pride flag from flashing at full size */
         img[src*="progressflag"] {
             height: 1.5rem !important;
             width: auto !important;
@@ -235,256 +236,131 @@
             transition: opacity 0.3s ease;
         }
 
-        /* Show flag after page loads */
         .flag-loaded img[src*="progressflag"],
         body.flag-loaded img[src*="progressflag"] {
             opacity: 1;
         }
 
+        /* Neo-Print Venue Card */
         .venue-card {
-            background: rgba(31, 41, 55, 0.8) !important;
-            backdrop-filter: blur(20px) !important;
-            border: 1px solid rgba(75, 85, 99, 0.4) !important;
-            border-radius: 1rem !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+            background-color: #000000 !important;
+            border: 4px solid var(--color-light) !important;
+            border-radius: 0 !important;
+            box-shadow: 6px 6px 0 var(--color-purple) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
         }
 
         .venue-card:hover {
-            transform: translateY(-4px) !important;
-            border-color: rgba(232, 58, 153, 0.5) !important;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 58, 153, 0.2) !important;
+            transform: translate(-4px, -4px) !important;
+            border-color: var(--color-pink) !important;
+            box-shadow: 10px 10px 0 var(--color-toxic) !important;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
+            background-color: var(--color-pink);
+            color: #000000 !important;
+            border: 2px solid var(--color-light);
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 0;
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
+            background-color: #ffffff;
+            color: #000000 !important;
         }
 
         .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
+            background-color: var(--color-purple);
+            color: #ffffff;
+            border: 2px solid var(--color-light);
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 0;
             transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
+            background-color: var(--color-toxic);
+            color: #000000;
         }
 
-        /* Enhanced card content styling */
+        /* Essential resets inside venue card */
         .venue-card h3 {
-            color: #FFFFFF;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            color: var(--color-light);
+            text-shadow: none;
         }
 
         .venue-card p {
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            text-shadow: none;
         }
 
-        /* Enhanced category tags */
-        .venue-card .inline-block {
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
+        /* Filter buttons */
         .filter-button {
-            background: rgba(31, 41, 55, 0.8);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            color: #D1D5DB;
+            background-color: #000000;
+            border: 2px solid var(--color-light);
+            color: var(--color-light);
             padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
+            border-radius: 0;
+            font-weight: 900;
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
             font-size: 0.875rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            backdrop-filter: blur(10px);
             white-space: nowrap;
             min-width: fit-content;
+            box-shadow: 2px 2px 0 var(--color-purple);
         }
 
         .filter-button:hover {
-            background: rgba(55, 65, 81, 0.8);
-            border-color: rgba(75, 85, 99, 0.7);
-            transform: translateY(-1px);
+            background-color: var(--color-purple);
+            color: #ffffff;
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--color-toxic);
         }
 
         .filter-button.active {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border-color: rgba(232, 58, 153, 0.3);
-            color: white;
-            box-shadow: 0 4px 15px rgba(232, 58, 153, 0.3);
+            background-color: var(--color-pink);
+            border-color: var(--color-light);
+            color: #000000;
+            box-shadow: 4px 4px 0 var(--color-toxic);
         }
 
-        /* Enhanced visual hierarchy */
         .heading-gradient {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--color-toxic);
+            -webkit-text-stroke: 1px var(--color-light);
         }
 
-        /* Fix embossed text effect on mobile */
         @media (max-width: 768px) {
             .heading-gradient {
-                background: none;
-                -webkit-background-clip: initial;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                color: #FFFFFF;
+                -webkit-text-stroke: 0;
+                color: var(--color-toxic);
                 text-shadow: none;
             }
         }
 
-        /* Improved popover styling */
+        /* Popover sharp styling */
         .popover {
-            background: rgba(31, 41, 55, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: none;
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 8px 8px 0 var(--color-pink);
             z-index: 1000;
             position: absolute;
             top: 100%;
             left: 0;
             margin-top: 0.5rem;
-        }
-
-        /* Enhanced loader */
-        .loader {
-            width: 2rem;
-            height: 2rem;
-            border: 3px solid rgba(75, 85, 99, 0.3);
-            border-top: 3px solid #E83A99;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Custom aspect ratio for venue cards */
-        .aspect-2-1 {
-            aspect-ratio: 2 / 1;
-        }
-
-        /* Enhanced venue card hover effects - matches design system */
-
-        /* Ensure calendar button maintains its styling and doesn't inherit card hover effects */
-        .venue-card .btn-secondary {
-            position: relative;
-            z-index: 10;
-        }
-
-        .venue-card .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.6);
-            transform: translateY(-1px);
-        }
-
-        /* Mobile responsive adjustments */
-        @media (max-width: 767px) {
-            #filter-bar-container {
-                padding: 1rem;
-            }
-
-            #filter-bar-container .flex {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .filter-button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            /* Popover width adjustment for mobile */
-            .popover {
-                width: calc(100vw - 2rem);
-                left: 1rem;
-                right: 1rem;
-            }
-        }
-    </style>
-
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
-
-    <!-- PWA and favicons -->
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-    <link rel="apple-touch-icon" href="/faviconV2.png">
-    <link rel="manifest" href="/manifest.json?v=2">
-    <meta name="theme-color" content="#8a2be2">
-
-    <style>
-        /* Critical CSS to prevent pride flag flashing */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
-        }
-
-        /* Existing styles from design-system or main.css (ensure these are present in your main.css too for consistency) */
-        .filter-button {
-            background-color: rgba(42, 42, 42, 0.8);
-            color: #EAEAEA;
-            border: 2px solid transparent;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.2s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Ensure content is centered */
-        }
-
-        .filter-button:hover {
-            background-color: rgba(60, 60, 60, 0.8);
-            color: white;
-        }
-
-        .filter-button.active {
-            background-color: transparent;
-            color: #B564F7;
-            border-color: #B564F7;
-        }
-
-        .popover {
-            display: none;
-            position: absolute;
-            margin-top: 0.5rem;
             width: 18rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 0;
             padding: 1rem;
-            z-index: 20;
-            background-color: #1e1e1e;
-            border: 1px solid #2e2e2e;
         }
-
+        
         .popover.show {
             display: block;
         }
@@ -494,36 +370,76 @@
             width: 100%;
             text-align: left;
             padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            color: #D1D5DB;
+            border-radius: 0;
+            color: var(--color-light);
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
         }
 
         .popover-option:hover {
-            background-color: #374151;
+            background-color: var(--color-purple);
+            border-color: var(--color-toxic);
+            color: #ffffff;
+            padding-left: 1.5rem;
+        }
+
+        .loader {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid var(--color-purple);
+            border-top: 3px solid var(--color-toxic);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .aspect-2-1 {
+            aspect-ratio: 2 / 1;
+        }
+
+        .venue-card .btn-secondary {
+            position: relative;
+            z-index: 10;
+        }
+
+        .venue-card .btn-secondary:hover {
+            transform: translateY(-1px);
         }
 
         .category-tag {
             display: inline-block;
-            background-color: rgba(181, 100, 247, 0.1);
-            color: #B564F7;
+            background-color: var(--color-light);
+            color: #000000;
+            border: 2px solid #000000;
+            font-weight: bold;
+            text-transform: uppercase;
             font-size: 0.75rem;
-            font-weight: 600;
             padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            border-radius: 0;
             flex-shrink: 0;
+            box-shadow: 2px 2px 0 var(--color-toxic);
+        }
+
+        .venue-card .inline-block.rounded-full {
+             border-radius: 0 !important;
+             background-color: var(--color-light) !important;
+             color: #000000 !important;
+             border: 2px solid #000000;
+             box-shadow: 2px 2px 0 var(--color-pink);
+             font-weight: bold;
+             text-transform: uppercase;
+             font-size: 0.75rem;
         }
 
         .item-card-image-container {
-            /* Ensure correct aspect ratio and sizing for images in cards */
             width: 100%;
             padding-bottom: 75%;
-            /* 4:3 Aspect Ratio (height is 75% of width) */
             position: relative;
             overflow: hidden;
-            border-radius: 1rem 1rem 0 0;
-            /* Match card border-radius */
+            border-radius: 0;
             background-color: #1a1a1a;
-            /* Placeholder background */
+            border-bottom: 4px solid var(--color-light);
         }
 
         .item-card-image {
@@ -533,85 +449,46 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Cover the container */
-            border-radius: 1rem 1rem 0 0;
-            /* Match container corners */
+            border-radius: 0;
+            filter: contrast(1.1) grayscale(0.2);
+        }
+        
+        .venue-card:hover .item-card-image {
+            filter: contrast(1.2) grayscale(0);
         }
 
-
-        /* Custom styles for filter bar layout */
-        /* Ensure filter buttons stretch to full width on mobile for better touch target */
+        /* Filter layouts */
         @media (max-width: 767px) {
+            #filter-bar-container { padding: 1rem; }
+            #filter-bar-container .flex { flex-direction: column; gap: 0.75rem; }
+            .filter-button { width: 100%; justify-content: center; }
+            .popover { width: calc(100vw - 2rem); left: 1rem; right: 1rem; }
+            
             #venue-filter-bar-container {
                 display: grid;
-                /* Changed to grid for 2 columns */
                 grid-template-columns: repeat(2, 1fr);
-                /* Two equal columns */
                 gap: 0.75rem;
-                /* Consistent gap */
                 align-items: center;
-                /* Vertically align items in grid */
             }
-
-            /* Apply to all direct children of the filter bar for equal column distribution */
-            #venue-filter-bar-container>* {
-                width: 100%;
-                /* Fill the grid column */
-                margin-left: 0 !important;
-                /* Override any auto margins */
-            }
-
-            /* Filter buttons within the grid should also fill their space */
-            #venue-filter-bar-container .filter-button {
-                width: 100%;
-                /* Force buttons to fill grid cell */
-                justify-content: center;
-                /* Center text within buttons */
-            }
-
-            /* Popover width adjustment for mobile */
-            .popover {
-                width: calc(100% - 2rem);
-                left: 1rem;
-                right: 1rem;
-            }
+            #venue-filter-bar-container > * { width: 100%; margin-left: 0 !important; }
+            #venue-filter-bar-container .filter-button { width: 100%; justify-content: center; }
         }
 
-        /* Desktop specific layout adjustments */
         @media (min-width: 768px) {
             #venue-filter-bar-container {
                 display: flex;
-                /* Back to flex on desktop */
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-items: center;
                 gap: 1rem;
-                /* md:gap-4 from HTML */
             }
-
-            /* Apply to all direct children for desktop flex distribution */
-            #venue-filter-bar-container>* {
-                width: auto;
-                /* Revert to auto width */
-            }
-
-            /* For the filter buttons, allow them to grow and enforce some base styling */
+            #venue-filter-bar-container > * { width: auto; }
             #venue-filter-bar-container .filter-button {
                 flex-grow: 1;
-                /* Allow to grow and take equal space */
                 min-width: 120px;
-                /* Optional: minimum width for aesthetic consistency */
                 justify-content: center;
-                /* Center text for equal distribution */
             }
-
-            /* Specific adjustments for popover buttons as they contain spans/icons */
-            #vibe-tags-btn,
-            #venue-features-btn,
-            #accessibility-btn {
-                min-width: 150px;
-                /* Adjust as needed for content */
-            }
+            #vibe-tags-btn, #venue-features-btn, #accessibility-btn { min-width: 150px; }
         }
     </style>
     <link rel="icon" href="/faviconV2.png" type="image/png">
@@ -620,7 +497,7 @@
 
 </head>
 
-<body class="antialiased fouc-prevention">
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
@@ -645,55 +522,38 @@
 
     <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-        <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+        <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
+            
+            <div class="hidden lg:flex gap-8 font-bold uppercase tracking-widest text-sm items-center">
+                <a href="/events.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">What's On</a>
+                <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Venues</a>
+                <a href="/community.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Community / Safe Space</a>
+                <a href="/contact.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Contact</a>
+                <a href="/promoter-tool.html" class="nav-cta ml-4">GET LISTED</a>
+            </div>
+            
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
                     aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)] self-end"></span>
                 </button>
             </div>
         </nav>
+        
         <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+            class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
+            <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">VENUES</a>
+            <a href="/community.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl">GET LISTED</a>
         </div>
     </header>
 
@@ -725,45 +585,70 @@
         </div>
     </main>
 
-    <footer class="border-t-2 border-gray-800 p-8">
-        <div class="container mx-auto grid md:grid-cols-2">
-            <div>
-                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
-                        class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html"
-                                class="text-gray-400 hover:text-white transition-colors">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html"
-                                class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-submit-new.html"
-                                class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings"
-                                class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html"
-                                class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact"
-                                class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html"
-                                class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html"
-                                class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
-                    </ul>
-                </div>
-            </div>
+    <div class="mt-32 border-4 border-white mb-8">
+        <!-- Top Warning Strip -->
+        <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-white">
+            Warning: High volume queer chaos ahead
         </div>
-    </footer>
+        
+        <div class="mt-32 border-4 border-white">
+        <!-- Top Warning Strip -->
+        <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-white">
+            Warning: High volume queer chaos ahead
+        </div>
+        
+        <footer class="bg-black text-white p-8 md:p-16 relative overflow-hidden">
+            <!-- Background Accent -->
+            <div class="absolute -right-20 -bottom-10 font-accent text-[12rem] leading-none opacity-20 text-[var(--color-pink)] pointer-events-none select-none">
+                0121
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <!-- Left Col -->
+                <div>
+                    <h3 class="text-5xl font-black italic misprint mb-4">DON'T BE A STRANGER.</h3>
+                    <p class="mb-6 font-medium text-lg max-w-sm">Get on the blower. Drop your email here to get the secret location drops and early-bird tickets before they sell out.</p>
+                    
+                    <div class="flex gap-4 items-end max-w-sm">
+                        <div class="flex-grow">
+                            <input type="email" class="punk-input w-full text-lg py-2" placeholder="your@email.bab">
+                        </div>
+                        <button class="bg-[var(--color-pink)] text-white px-4 py-2 font-black uppercase text-sm border-2 border-white hover:bg-white hover:text-black transition-colors">
+                            Sub
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Col -->
+                <div class="flex flex-col md:items-end justify-between space-y-8 mt-8 md:mt-0">
+                    <div class="flex flex-wrap gap-4 md:gap-6 font-bold uppercase tracking-widest md:justify-end">
+                        <a href="/events.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                        <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
+                    </div>
+                    
+                    <div class="flex gap-6 font-bold text-xs uppercase tracking-widest md:justify-end mt-4">
+                        <a href="/privacy-policy.html" class="hover:text-[var(--color-toxic)] transition-colors">Privacy Policy</a>
+                        <a href="/terms-and-conditions.html" class="hover:text-[var(--color-toxic)] transition-colors">Terms & Conditions</a>
+                    </div>
+                    
+                    <div class="md:text-right mt-8">
+                        <div class="flex md:justify-end gap-4 mb-4">
+                            <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                        <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                        <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
+                        <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script>
         // --- Global State ---
@@ -940,9 +825,67 @@
             }).join('');
         }
 
-
-
-
+        // Sample venues for testing when API is not available locally
+        function getSampleVenues() {
+            return [
+                {
+                    id: '1',
+                    name: 'The Nightingale Club',
+                    slug: 'the-nightingale-club',
+                    address: '18 Kent St, Birmingham B5 6RD',
+                    description: 'Birmingham\'s oldest and largest LGBTQ+ club spread across 3 floors.',
+                    category: ['Club', 'Entertainment'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Nightingale+Club' },
+                    popular: true
+                },
+                {
+                    id: '2',
+                    name: 'Eden Bar',
+                    slug: 'eden-bar',
+                    address: '116 Sherlock St, Birmingham B5 6NB',
+                    description: 'A friendly community bar with a great atmosphere and regular events.',
+                    category: ['Bar', 'Community'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=Eden+Bar' }
+                },
+                {
+                    id: '3',
+                    name: 'The Village Inn',
+                    slug: 'the-village-inn',
+                    address: '152 Hurst St, Birmingham B5 6RY',
+                    description: 'A staple of the Birmingham gay village offering drag shows and cabaret.',
+                    category: ['Bar', 'Drag', 'Cabaret'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=The+Village+Inn' },
+                    popular: true
+                },
+                {
+                    id: '4',
+                    name: 'Missing Bar',
+                    slug: 'missing-bar',
+                    address: '48 Bromsgrove St, Birmingham B5 6NU',
+                    description: 'Vibrant party bar known for its eclectic music and welcoming crowd.',
+                    category: ['Bar', 'Party'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=Missing+Bar' }
+                },
+                {
+                    id: '5',
+                    name: 'Equator Bar',
+                    slug: 'equator-bar',
+                    address: '123 Hurst St, Birmingham B5 6SE',
+                    description: 'A relaxed and sophisticated bar perfect for pre-club drinks.',
+                    category: ['Bar', 'Lounge'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=Equator+Bar' }
+                },
+                {
+                    id: '6',
+                    name: 'Fox Bar',
+                    slug: 'fox-bar',
+                    address: '17 Lower Essex St, Birmingham B5 6SN',
+                    description: 'A popular venue serving the local community with a great beer garden.',
+                    category: ['Bar', 'Pub'],
+                    image: { url: 'https://placehold.co/800x400/1e1e1e/EAEAEA?text=Fox+Bar' }
+                }
+            ];
+        }
 
         async function loadVenues() {
             try {
@@ -1010,7 +953,21 @@
                 }
 
             } catch (error) {
-                console.error('❌ Unable to load venues:', error);
+                console.error('❌ Unable to load venues API, using fallback data for local testing:', error);
+                
+                // Fallback to sample data for testing
+                const sampleVenues = getSampleVenues();
+                const freshVenues = sampleVenues.map(transformVenue).filter(venue => venue.status !== 'archived' && venue.status !== 'hidden');
+                
+                const isDifferent = allVenues.length !== freshVenues.length ||
+                    freshVenues.some((fv, i) => !allVenues[i] || fv.id !== allVenues[i].id);
+
+                if (isDifferent || allVenues.length === 0) {
+                    allVenues = freshVenues;
+                    displayVenues();
+                    console.log('🔄 UI seamlessly updated with fallback venue data');
+                }
+
                 if (allVenues.length === 0) {
                     showErrorState('We couldn\'t load the venues list just now. Please refresh to try again.');
                 }
