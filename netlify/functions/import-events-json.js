@@ -57,7 +57,7 @@ const CATEGORY_RULES = [
 
 // Also detect "rubber" + "dress code" together as Adult content
 function hasRubberDressCode(text) {
-    return text.includes('rubber') && text.includes('dress code');
+    return /\brubber\b/.test(text) && /\bdress code\b/.test(text);
 }
 
 /**
@@ -70,7 +70,7 @@ function validateAndSuggestCategories(evt, categories) {
     // Apply keyword-based auto-categorisation rules
     for (const rule of CATEGORY_RULES) {
         if (categories.includes(rule.category)) continue;
-        const matched = rule.keywords.some(kw => text.includes(kw));
+        const matched = rule.keywords.some(kw => new RegExp(`\\b${kw.trim()}\\b`).test(text));
         if (matched) {
             categories.push(rule.category);
             console.warn(`[import] Auto-added category '${rule.category}' to '${evt.name}': ${rule.reason}`);
