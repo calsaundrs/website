@@ -15,7 +15,9 @@
     "optimize:css": "node optimize-css.js",
     "optimize:critical": "node create-critical-css.js",
     "optimize:all": "npm run optimize:css && npm run optimize:critical",
-    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap"
+    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap",
+    "test": "npx playwright test tests/smoke/",
+    "test:smoke": "npx playwright test tests/smoke/"
   },
   "dependencies": {
     "@react-email/render": "^1.2.3",
@@ -50,6 +52,8 @@
     "postcss": "^8.5.8",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^3.4.19",
+    "@playwright/test": "^1.49.0",
+    "serve": "^14.2.4",
     "typescript": "^5.0.0"
   },
   "engines": {

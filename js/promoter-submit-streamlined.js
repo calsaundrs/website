@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const venueDetailsContent = document.getElementById('venue-details-content');
     const changeVenueBtn = document.getElementById('change-venue');
     const addNewVenueBtn = document.getElementById('add-new-venue');
+    // New venue elements
+    const NEW_VENUE_ID = 'new';
+    const newVenueNameInput = document.getElementById('new-venue-name');
+    const newVenueAddressInput = document.getElementById('new-venue-address');
+    const newVenuePostcodeInput = document.getElementById('new-venue-postcode');
+    const newVenueForm = document.getElementById('new-venue-form');
+    const cancelNewVenueBtn = document.getElementById('cancel-new-venue');
 
     // Poster parser elements
     const uploadArea = document.getElementById('upload-area');
@@ -22,22 +29,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const extractedFields = document.getElementById('extracted-fields');
     const useExtractedBtn = document.getElementById('use-extracted');
     const ignoreExtractedBtn = document.getElementById('ignore-extracted');
+    const uploadPreview = document.getElementById('upload-preview');
 
     let extractedEventData = null;
+    let currentObjectURL = null;
 
     // Initialize poster parser
     initializePosterParser();
+    
+    // Initialize recurring events functionality (only on pages with recurring config)
+    if (isRecurringCheckbox && recurringConfig) {
+        initializeRecurringEvents();
+    }
 
-    // Initialize recurring events functionality
-    initializeRecurringEvents();
+    // Initialize venue search (only on pages with venue search)
+    if (venueSearch && venueResults) {
+        initializeVenueSearch();
+    }
 
-    // Initialize venue search
-    initializeVenueSearch();
-
-    // Initialize form submission
-    initializeFormSubmission();
-
+    // Initialize form submission (only on pages with the form)
+    if (form) {
+        initializeFormSubmission();
+    }
     function initializePosterParser() {
+        if (!uploadArea || !posterUpload) return;
+
         // Handle file upload
         uploadArea.addEventListener('click', () => {
             posterUpload.click();
@@ -70,25 +86,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Handle extracted data buttons
-        useExtractedBtn.addEventListener('click', () => {
-            if (extractedEventData) {
-                applyExtractedData(extractedEventData);
-                extractedData.classList.add('hidden');
-            }
-        });
+        if (useExtractedBtn) {
+            useExtractedBtn.addEventListener('click', () => {
+                if (extractedEventData) {
+                    applyExtractedData(extractedEventData);
+                    extractedData.classList.add('hidden');
+                }
+            });
+        }
 
-        ignoreExtractedBtn.addEventListener('click', () => {
-            extractedData.classList.add('hidden');
-            extractedEventData = null;
-        });
+        if (ignoreExtractedBtn) {
+            ignoreExtractedBtn.addEventListener('click', () => {
+                extractedData.classList.add('hidden');
+                extractedEventData = null;
+            });
+        }
+
+        // Handle remove upload (supports both promoter-submit-new and promoter-tool)
+        const removeUploadBtn = document.getElementById('remove-upload') || document.getElementById('remove-poster');
+        if (removeUploadBtn) {
+            removeUploadBtn.addEventListener('click', () => {
+                posterUpload.value = '';
+                if (currentObjectURL) {
+                    URL.revokeObjectURL(currentObjectURL);
+                    currentObjectURL = null;
+                }
+                const previewContainer = uploadPreview || document.getElementById('poster-preview');
+                if (previewContainer) previewContainer.classList.add('hidden');
+                uploadArea.classList.remove('hidden');
+                if (extractedData) extractedData.classList.add('hidden');
+                extractedEventData = null;
+            });
+        }
     }
 
+    function showUploadPreview(file) {
+        // Support both promoter-submit-new.html (upload-preview) and promoter-tool.html (poster-preview)
+        const previewContainer = uploadPreview || document.getElementById('poster-preview');
+        if (!previewContainer) return;
+
+        const thumbnail = document.getElementById('preview-thumbnail');
+        const filename = document.getElementById('preview-filename') || document.getElementById('poster-filename');
+        const filesize = document.getElementById('preview-filesize');
+
+        // Revoke previous object URL to prevent memory leak
+        if (currentObjectURL) {
+            URL.revokeObjectURL(currentObjectURL);
+        }
+        currentObjectURL = URL.createObjectURL(file);
+
+        if (thumbnail) thumbnail.src = currentObjectURL;
+        if (filename) filename.textContent = file.name;
+        if (filesize) {
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+            filesize.textContent = sizeMB >= 1 ? `${sizeMB} MB` : `${(file.size / 1024).toFixed(0)} KB`;
+        }
+
+        uploadArea.classList.add('hidden');
+        previewContainer.classList.remove('hidden');
+    }
     async function handlePosterUpload(file) {
         if (!file.type.startsWith('image/')) {
             alert('Please select an image file');
             return;
         }
 
+        // Show image preview immediately
+        showUploadPreview(file);
         // Show processing state
         aiProcessing.classList.remove('hidden');
         extractedData.classList.add('hidden');
@@ -126,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Poster analysis error:', error);
-            alert('Failed to analyze poster. Please fill in the details manually.');
+            // Don't alert — the preview is still showing, image is still attached
         } finally {
             aiProcessing.classList.add('hidden');
         }
@@ -327,11 +391,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[name="recurring-pattern"]').forEach(radio => {
             radio.addEventListener('change', updateRecurringPreview);
         });
+        const recurringStartDate = document.getElementById('recurring-start-date');
+        const recurringEndDate = document.getElementById('recurring-end-date');
+        const maxInstancesInput = document.getElementById('max-instances');
 
-        document.getElementById('recurring-start-date').addEventListener('change', updateRecurringPreview);
-        document.getElementById('recurring-end-date').addEventListener('change', updateRecurringPreview);
-        document.getElementById('max-instances').addEventListener('input', updateRecurringPreview);
-
+        if (recurringStartDate) recurringStartDate.addEventListener('change', updateRecurringPreview);
+        if (recurringEndDate) recurringEndDate.addEventListener('change', updateRecurringPreview);
+        if (maxInstancesInput) maxInstancesInput.addEventListener('input', updateRecurringPreview);
         // Auto-update recurring start date when main event date changes
         document.getElementById('date').addEventListener('change', (e) => {
             if (isRecurringCheckbox.checked) {
@@ -616,21 +682,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
+        if (changeVenueBtn) {
+            changeVenueBtn.addEventListener('click', () => {
+                venueIdInput.value = '';
+                venueSearch.value = '';
+                selectedVenueDetails.classList.add('hidden');
+                venueSearch.focus();
+            });
+        }
 
+        if (addNewVenueBtn && newVenueForm) {
+            addNewVenueBtn.addEventListener('click', () => {
+                newVenueForm.classList.remove('hidden');
+                addNewVenueBtn.classList.add('hidden');
+                venueIdInput.value = NEW_VENUE_ID;
+                if (selectedVenueDetails) selectedVenueDetails.classList.add('hidden');
+                if (newVenueNameInput) newVenueNameInput.focus();
+            });
+        }
 
-
-        changeVenueBtn.addEventListener('click', () => {
-            venueIdInput.value = '';
-            venueSearch.value = '';
-            selectedVenueDetails.classList.add('hidden');
-            venueSearch.focus();
-        });
-
-        addNewVenueBtn.addEventListener('click', () => {
-            // For now, just show a message - venue creation can be added later
-            alert('Venue creation feature coming soon! Please select an existing venue for now.');
-        });
-
+        if (cancelNewVenueBtn && newVenueForm) {
+            cancelNewVenueBtn.addEventListener('click', () => {
+                newVenueForm.classList.add('hidden');
+                if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
+                venueIdInput.value = '';
+                if (newVenueNameInput) newVenueNameInput.value = '';
+                if (newVenueAddressInput) newVenueAddressInput.value = '';
+                if (newVenuePostcodeInput) newVenuePostcodeInput.value = '';
+            });
+        }
         // Add event listeners for category checkboxes
         document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCategoriesDisplay);
@@ -665,22 +745,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('description', document.getElementById('description').value.trim());
                 formData.append('date', document.getElementById('date').value);
                 formData.append('start-time', document.getElementById('start-time').value);
+                // Preparing form data...
 
-                // Categories (multiple)
+                // Categories (send as comma-separated string for multipart parser compatibility)
                 const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked')).map(cb => cb.value);
-                selectedCategories.forEach(category => {
-                    formData.append('categories', category);
-                });
-
+                formData.append('categories', selectedCategories.join(','));
+                
+                formData.append('end-time', document.getElementById('end-time').value || '');
+                formData.append('price', document.getElementById('price').value.trim());
+                formData.append('age-restriction', document.getElementById('age-restriction').value.trim());
                 formData.append('link', document.getElementById('link').value.trim());
                 formData.append('contact-name', document.getElementById('contact-name').value.trim());
                 formData.append('contact-email', document.getElementById('contact-email').value.trim());
 
                 // Venue data
-                if (venueIdInput.value) {
+                if (venueIdInput.value === NEW_VENUE_ID) {
+                    formData.append('new-venue-name', newVenueNameInput.value.trim());
+                    formData.append('new-venue-address', newVenueAddressInput.value.trim());
+                    formData.append('new-venue-postcode', newVenuePostcodeInput.value.trim());
+                } else if (venueIdInput.value) {
                     formData.append('venue-id', venueIdInput.value);
                 }
-
+                // Always send venue name as fallback
+                if (venueSearch.value.trim()) {
+                    formData.append('venue-name', venueSearch.value.trim());
+                }
                 // Recurring event data
                 if (isRecurringCheckbox.checked) {
                     formData.append('is-recurring', 'true');
@@ -795,6 +884,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Venue validation
         if (!venueIdInput.value) {
             errors.push('Please select a venue');
+        } else if (venueIdInput.value === NEW_VENUE_ID) {
+            if (!newVenueNameInput.value.trim()) {
+                errors.push('Please enter a name for the new venue');
+                newVenueNameInput.classList.add('border-red-500');
+            } else {
+                newVenueNameInput.classList.remove('border-red-500');
+            }
         }
 
         // Recurring event validation
@@ -870,6 +966,9 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedVenueDetails.classList.add('hidden');
         venueResults.classList.add('hidden');
 
+        // Reset new venue form
+        if (newVenueForm) newVenueForm.classList.add('hidden');
+        if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
         // Update preview
         updateRecurringPreview();
     }

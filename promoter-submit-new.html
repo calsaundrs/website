@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Your Event | BrumOutLoud</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -47,17 +55,59 @@
     </style>
     </head>
 <body class="bg-gray-900 text-white min-h-screen">
-    <!-- Header -->
-    <header class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <a href="/" class="text-2xl font-bold text-purple-400">BrumOutLoud</a>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="/events.html" class="hover:text-purple-400 transition-colors">Events</a>
-                    <a href="/venues.html" class="hover:text-purple-400 transition-colors">Venues</a>
-                    <a href="/community.html" class="hover:text-purple-400 transition-colors">Community</a>
-                </nav>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <header
+        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
+                style="font-family: 'Outfit', sans-serif;">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
+                    Outloud</span>
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
+                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                    onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
+                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
+                <a href="/all-venues.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
+                <a href="/community.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
+                <a href="/contact.html"
+                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
+                <a href="/promoter-submit-new.html" class="nav-cta ml-4 text-white border-b-2 border-pink-500 pb-1">
+                    GET LISTED
+                </a>
             </div>
+            <div class="lg:hidden relative z-[60]">
+                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
+                    aria-label="Menu">
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
+                    <span
+                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                </button>
+            </div>
+        </nav>
+        <div id="menu"
+            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
+            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
+            <a href="/community.html"
+                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
+                GET LISTED
+            </a>
         </div>
     </header>
 
@@ -88,6 +138,21 @@
                         <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
                         <p class="text-sm text-gray-500">We'll try to extract event details automatically</p>
                         <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
+                    </div>
+
+                    <!-- Upload Preview -->
+                    <div id="upload-preview" class="hidden mt-4 p-4 bg-gray-800/50 border border-purple-500/30 rounded-lg">
+                        <div class="flex items-center gap-4">
+                            <img id="preview-thumbnail" src="" alt="Upload preview" class="w-24 h-24 object-cover rounded-lg border border-gray-600">
+                            <div class="flex-1">
+                                <p id="preview-filename" class="text-sm font-semibold text-white"></p>
+                                <p id="preview-filesize" class="text-xs text-gray-400 mt-1"></p>
+                                <p class="text-xs text-green-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Image attached</p>
+                            </div>
+                            <button type="button" id="remove-upload" class="text-gray-400 hover:text-red-400 transition-colors p-2" title="Remove image">
+                                <i class="fas fa-trash-alt text-lg"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- AI Processing Status -->
@@ -256,6 +321,32 @@
                         </div>
 
                         <div>
+                            <label for="end-time" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-clock mr-1"></i>End Time (Optional)
+                            </label>
+                            <input type="time" id="end-time" name="end-time"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white">
+                        </div>
+
+                        <div>
+                            <label for="price" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-pound-sign mr-1"></i>Price (Optional)
+                            </label>
+                            <input type="text" id="price" name="price"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="e.g. Free, £5, £10-£15">
+                        </div>
+
+                        <div>
+                            <label for="age-restriction" class="block text-sm font-semibold mb-2">
+                                <i class="fas fa-id-card mr-1"></i>Age Restriction (Optional)
+                            </label>
+                            <input type="text" id="age-restriction" name="age-restriction"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                   placeholder="e.g. 18+, All ages">
+                        </div>
+
+                        <div>
                             <label for="link" class="block text-sm font-semibold mb-2">
                                 <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                             </label>
@@ -296,6 +387,34 @@
                         <div class="text-center">
                             <button type="button" id="add-new-venue" class="btn-secondary px-6 py-3 rounded-lg">
                                 <i class="fas fa-plus mr-2"></i>Add New Venue
+                            </button>
+                        </div>
+
+                        <!-- New Venue Form (hidden by default) -->
+                        <div id="new-venue-form" class="hidden space-y-4 p-4 bg-gray-800/50 rounded-lg border border-purple-500/30">
+                            <h3 class="font-semibold text-purple-400 mb-2">
+                                <i class="fas fa-map-pin mr-2"></i>New Venue Details
+                            </h3>
+                            <div>
+                                <label for="new-venue-name" class="block text-sm font-semibold mb-2">Venue Name *</label>
+                                <input type="text" id="new-venue-name" name="new-venue-name" required
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="Enter venue name">
+                            </div>
+                            <div>
+                                <label for="new-venue-address" class="block text-sm font-semibold mb-2">Address</label>
+                                <input type="text" id="new-venue-address" name="new-venue-address"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="Full address">
+                            </div>
+                            <div>
+                                <label for="new-venue-postcode" class="block text-sm font-semibold mb-2">Postcode</label>
+                                <input type="text" id="new-venue-postcode" name="new-venue-postcode"
+                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                                       placeholder="e.g. B1 1AA">
+                            </div>
+                            <button type="button" id="cancel-new-venue" class="text-sm text-gray-400 hover:text-white">
+                                <i class="fas fa-times mr-1"></i>Cancel — use existing venue instead
                             </button>
                         </div>
                     </div>
@@ -432,6 +551,49 @@
         </div>
     </main>
 
+    <footer class="border-t-2 border-gray-800 p-8 mt-32">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin-login.html" class="text-gray-400 hover:text-white">Admin</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright and accessibility info -->
+        <div class="container mx-auto mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+            <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
+            <p class="mt-2">Celebrating Birmingham's vibrant LGBTQ+ community</p>
+            <p class="mt-2">
+                <a href="/accessibility.html" class="text-accent-color hover:text-white transition-colors">
+                    <i class="fas fa-universal-access mr-1"></i>Accessibility Features
+                </a>
+            </p>
+        </div>
+    </footer>
+
     <script src="/js/promoter-submit-streamlined.js"></script>
+    <script src="/js/accessibility.js" defer></script>
 </body>
 </html>
