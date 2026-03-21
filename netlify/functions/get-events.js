@@ -4,6 +4,8 @@ const RecurringEventsManager = require('./services/recurring-events-manager');
 
 // Version: 2025-01-27-v1 - Firestore-based events listing function
 
+const MAX_EVENTS_FETCH_LIMIT = 500;
+
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
     if (process.env.FIREBASE_PRIVATE_KEY) {
@@ -93,10 +95,14 @@ async function handlePublicView(queryParams) {
         console.log("Using simple query without ordering to avoid index requirements");
 
         // Fetch all approved events; limit applied after client-side date filtering
-        query = query.limit(500);
+        query = query.limit(MAX_EVENTS_FETCH_LIMIT);
 
         console.log("Executing Firestore query...");
         const snapshot = await query.get();
+
+        if (snapshot.size === MAX_EVENTS_FETCH_LIMIT) {
+            console.warn(`Maximum event fetch limit (${MAX_EVENTS_FETCH_LIMIT}) reached. Some events may not have been fetched.`);
+        }
         console.log(`Query returned ${snapshot.size} documents`);
 
         const events = [];
