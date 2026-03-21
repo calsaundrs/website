@@ -21,6 +21,76 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Category auto-suggestion rules: match keywords in event name + description
+const CATEGORY_RULES = [
+    {
+        keywords: ['fetish', 'glory hole', 'play area', 'leather daddies', 'kink', ' pup ', 'hardon'],
+        category: 'Adult',
+        reason: 'NSFW content detected'
+    },
+    {
+        keywords: ['drag queen', 'drag host', 'drag performer', 'in drag'],
+        category: 'Drag',
+        reason: 'Drag performance detected'
+    },
+    {
+        keywords: [' bingo'],
+        category: 'Bingo',
+        reason: 'Bingo format detected'
+    },
+    {
+        keywords: ['cabaret'],
+        category: 'Cabaret',
+        reason: 'Cabaret format detected'
+    },
+    {
+        keywords: ['karaoke'],
+        category: 'Karaoke',
+        reason: 'Karaoke format detected'
+    },
+    {
+        keywords: ['speed dating', 'singles night'],
+        category: 'Social',
+        reason: 'Dating/social event detected'
+    }
+];
+
+// Also detect "rubber" + "dress code" together as Adult content
+function hasRubberDressCode(text) {
+    return text.includes('rubber') && text.includes('dress code');
+}
+
+/**
+ * Validates and auto-suggests categories for an event based on keyword matching.
+ * Mutates the categories array in place and logs warnings.
+ */
+function validateAndSuggestCategories(evt, categories) {
+    const text = ` ${(evt.name || '')} ${(evt.description || '')} `.toLowerCase();
+
+    // Apply keyword-based auto-categorisation rules
+    for (const rule of CATEGORY_RULES) {
+        if (categories.includes(rule.category)) continue;
+        const matched = rule.keywords.some(kw => text.includes(kw));
+        if (matched) {
+            categories.push(rule.category);
+            console.warn(`[import] Auto-added category '${rule.category}' to '${evt.name}': ${rule.reason}`);
+        }
+    }
+
+    // Special compound rule: rubber + dress code → Adult
+    if (!categories.includes('Adult') && hasRubberDressCode(text)) {
+        categories.push('Adult');
+        console.warn(`[import] Auto-added category 'Adult' to '${evt.name}': NSFW content detected (rubber + dress code)`);
+    }
+
+    // Warn about under-categorised events
+    if (categories.length === 0 || (categories.length === 1 && categories[0] === 'LGBT+')) {
+        console.warn(`[import] WARNING: '${evt.name}' has only generic categories ${JSON.stringify(categories)} — consider adding a specific category`);
+    }
+
+    return categories;
+}
+
 exports.handler = async (event, context) => {
     // CORS configuration allowing external API calls
     const headers = {
@@ -146,6 +216,9 @@ exports.handler = async (event, context) => {
                 } else if (Array.isArray(evt.categories)) {
                     categories = evt.categories;
                 }
+
+                // Validate and auto-suggest categories based on event content
+                categories = validateAndSuggestCategories(evt, categories);
 
                 let exists = false;
                 let existingDocId = null;
