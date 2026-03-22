@@ -141,9 +141,10 @@ async function generateEventsListingPage() {
         ).join('');
         
         // Replace placeholders with generated content, removing any old content until the end of the container
+        // Replace placeholder with generated content
         eventsHtml = eventsHtml.replace(
-            /<!-- EVENTS_GRID_SSG_PLACEHOLDER -->[\s\S]*?(?=\s*<\/div>\s*<!-- No Results State -->)/g,
-            `<!-- EVENTS_GRID_SSG_PLACEHOLDER -->\n${eventCardsHtml}`
+            /<!-- EVENTS_GRID_START -->[\s\S]*?<!-- EVENTS_GRID_END -->/g,
+            `<!-- EVENTS_GRID_START -->\n${eventCardsHtml}\n<!-- EVENTS_GRID_END -->`
         );
         
         eventsHtml = eventsHtml.replace(

@@ -82,10 +82,10 @@ async function generateVenuesListingPage() {
             `;
         }).join('');
         
-        // Replace placeholder with generated content, removing old content until the end of the container
+        // Replace placeholder with generated content
         venuesHtml = venuesHtml.replace(
-            /<!-- VENUES_GRID_SSG_PLACEHOLDER -->[\s\S]*?(?=\s*<\/div>\s*<!-- No Results State -->)/g,
-            `<!-- VENUES_GRID_SSG_PLACEHOLDER -->\n${venueCardsHtml}`
+            /<!-- VENUES_GRID_START -->[\s\S]*?<!-- VENUES_GRID_END -->/g,
+            `<!-- VENUES_GRID_START -->\n${venueCardsHtml}\n<!-- VENUES_GRID_END -->`
         );
 
         
