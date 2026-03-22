@@ -369,6 +369,13 @@ exports.handler = async function (event, context) {
                 <!-- Title -->
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-6 leading-[0.9]">{{event.name}}</h1>
 
+                <!-- Description -->
+                {{#if (hasDescription event.description)}}
+                <div class="text-gray-300 leading-relaxed text-lg mb-8" style="line-height: 1.8;">
+                    {{{formatDescription event.description}}}
+                </div>
+                {{/if}}
+
                 <!-- Key Details Grid -->
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="bg-white/5 p-4">
@@ -452,22 +459,9 @@ exports.handler = async function (event, context) {
         </div>
     </section>
 
-    <!-- About + Other Dates -->
+    <!-- Other Dates -->
     <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="border-t border-white/10 pt-12">
-            {{#if (hasDescription event.description)}}
-            <div class="max-w-3xl">
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
-                    </h2>
-                    <div class="text-gray-300 leading-relaxed text-lg max-w-none" style="line-height: 1.8;">
-                        {{{formatDescription event.description}}}
-                    </div>
-                </section>
-            </div>
-            {{/if}}
-
+        <div>
             {{#if hasOtherInstances}}
             <section class="mt-12 max-w-3xl">
                 <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
