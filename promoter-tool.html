@@ -3,225 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud</title>
-    <meta name="description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features. Reach Birmingham's queer community.">
-    <meta name="keywords" content="submit LGBTQ+ events, Birmingham events, queer events, gay events, event submission, Brum Outloud">
-    <meta property="og:title" content="Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud">
-    <meta property="og:description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
+    <title>Add Event | Submit LGBTQ+ Events | Brum Outloud</title>
+    <meta name="description" content="Get in touch with Brum Outloud. Send us your questions, suggestions, or feedback about the LGBTQ+ scene in Birmingham. We're here to help!">
+    <meta name="keywords" content="contact Brum Outloud, LGBTQ+ Birmingham, gay scene feedback, queer community Birmingham">
+    <meta property="og:title" content="Contact Brum Outloud | LGBTQ+ Birmingham Community">
+    <meta property="og:description" content="Get in touch with Brum Outloud. Send us your questions, suggestions, or feedback about the LGBTQ+ scene in Birmingham.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://brumoutloud.co.uk/promoter-tool.html">
+    <meta property="og:url" content="https://brumoutloud.co.uk/contact.html">
     <meta property="og:image" content="https://brumoutloud.co.uk/progressflag.svg.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Add Event | Submit LGBTQ+ Events in Birmingham | Brum Outloud">
-    <meta name="twitter:description" content="Submit your LGBTQ+ events in Birmingham to Brum Outloud. Use our enhanced form with poster upload and smart features.">
-    
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="twitter:title" content="Contact Brum Outloud | LGBTQ+ Birmingham Community">
+    <meta name="twitter:description" content="Get in touch with Brum Outloud. Send us your questions, suggestions, or feedback about the LGBTQ+ scene in Birmingham.">
+
+    <!-- Performance: Optimized external resource loading -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="/css/tailwind.css" as="style">
-    <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/main.css">
-    
+
     <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
+
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script src="/js/main.js?v=2" defer></script>
     <script src="/js/accessibility.js" defer></script>
-    <script src="/js/error-handling.js" defer></script>
-    <script src="/js/form-validation.js" defer></script>
-    <script src="/js/pwa-manager.js" defer></script>
-    <script src="/js/seo-manager.js" defer></script>
+    
     <link rel="icon" href="/faviconV2.png" type="image/png">
-    <link rel="manifest" href="/manifest.json">
-    <style>
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-        .form-input {
-            background: rgba(31, 41, 55, 0.8);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            backdrop-filter: blur(10px);
-        }
-        .form-input:focus {
-            border-color: #E83A99;
-            box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
-        }
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Fix embossed text effect on mobile */
-        @media (max-width: 768px) {
-            .heading-gradient {
-                background: none;
-                -webkit-background-clip: initial;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                color: #FFFFFF;
-                text-shadow: none;
-            }
-        }
-        .accent-color {
-            color: #E83A99;
-        }
-        .accent-color-secondary {
-            color: #8B5CF6;
-        }
-        .loader {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid #E83A99;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .upload-area {
-            background: rgba(31, 41, 55, 0.3);
-            border: 2px dashed rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .upload-area:hover, .upload-area.dragover {
-            border-color: #E83A99;
-            background: rgba(232, 58, 153, 0.1);
-        }
-        .feature-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.2);
-            transition: all 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
-        }
-    </style>
+    <link rel="manifest" href="/manifest.json?v=2">
+    <meta name="theme-color" content="#ff007f">
 
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        :root {
+            --color-bg: #0d0115;
+            --color-pink: #ff007f;
+            --color-purple: #7a00ff;
+            --color-toxic: #ccff00;
+            --color-light: #f3e8ff;
         }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
+
         body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
         }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
         }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+
+        .neo-card {
+            background: rgba(13, 1, 21, 0.7);
+            border: 4px solid var(--color-light);
+            box-shadow: 8px 8px 0 var(--color-purple);
+            transition: all 0.2s ease;
         }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+
+        .heading-gradient {
+            color: var(--color-toxic);
+            -webkit-text-stroke: 1px var(--color-light);
         }
     </style>
-    </head>
-<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
+</head>
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -241,63 +88,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-tool.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
+            
+            <div class="hidden lg:flex gap-8 font-bold uppercase tracking-widest text-sm items-center">
+                <a href="/events.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">What's On</a>
+                <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Venues</a>
+                <a href="/community.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Community / Safe Space</a>
+                <a href="/contact.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Contact</a>
+                <a href="/promoter-tool.html" class="nav-cta ml-4">GET LISTED</a>
+            </div>
+            
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
                     aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)] self-end"></span>
                 </button>
             </div>
         </nav>
+        
         <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+            class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
+            <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">VENUES</a>
+            <a href="/community.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl">GET LISTED</a>
         </div>
     </header>
 
     <main class="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative z-10">
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-none tracking-wider heading-gradient">ADD <span class="accent-color">EVENT</span></h1>
-                <p class="mt-4 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto px-4">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
+                <h1 class="text-[clamp(2.5rem,8vw,5rem)] leading-none font-black mb-4 uppercase text-[var(--color-toxic)] drop-shadow-[4px_4px_0_var(--color-pink)] font-display" style="-webkit-text-stroke: 2px black;">ADD <span class="accent-color">EVENT</span></h1>
+                <p class="mt-4 text-base sm:text-lg md:text-xl text-[var(--color-light)] max-w-2xl mx-auto px-4">Submit your LGBTQ+ events to Brum Outloud with our enhanced form.</p>
             </div>
 
 
@@ -315,7 +145,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </h3>
                         
                         <div class="relative inline-block mb-4">
-                            <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors" id="upload-tips-toggle">
+                            <button type="button" class="text-[var(--color-toxic)] hover:text-blue-300 transition-colors" id="upload-tips-toggle">
                                 <i class="fas fa-info-circle text-lg"></i>
                             </button>
                             <div class="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="upload-tips">
@@ -334,8 +164,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         
                         <!-- Upload Area -->
                         <div id="upload-area" class="upload-area rounded-lg p-6 sm:p-8 text-center cursor-pointer">
-                            <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-gray-400 mb-3 sm:mb-4"></i>
-                            <p class="text-base sm:text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
+                            <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-zinc-400 mb-3 sm:mb-4"></i>
+                            <p class="text-base sm:text-lg text-[var(--color-light)] mb-2">Drop your event poster here or click to upload</p>
                             <p class="text-xs sm:text-sm text-gray-500">Required - We'll attempt to extract event details automatically</p>
                             <input type="file" id="poster-upload" name="promo-image" accept="image/*" required class="hidden">
                         </div>
@@ -347,7 +177,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-image text-accent-color mr-3"></i>
                                     <div>
                                         <p class="text-white font-medium" id="poster-filename">poster.jpg</p>
-                                        <p class="text-sm text-gray-400">Poster will be attached to your event</p>
+                                        <p class="text-sm text-zinc-400">Poster will be attached to your event</p>
                                     </div>
                                 </div>
                                 <button type="button" id="remove-poster" class="text-red-400 hover:text-red-300">
@@ -367,8 +197,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <!-- Upload Note Display -->
                         <div id="upload-note" class="hidden p-4 bg-gray-900/20 border border-gray-600 rounded-lg">
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-gray-400 mr-3"></i>
-                                <span class="text-gray-300">Poster uploaded successfully! You can now fill in your event details below.</span>
+                                <i class="fas fa-check-circle text-zinc-400 mr-3"></i>
+                                <span class="text-[var(--color-light)]">Poster uploaded successfully! You can now fill in your event details below.</span>
                             </div>
                         </div>
 
@@ -405,7 +235,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-tag mr-1"></i>Event Name <span class="text-red-400">*</span>
                                 </label>
                                 <input type="text" id="event-name" name="event-name" required 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="Enter your event name">
                             </div>
 
@@ -415,7 +245,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-align-left mr-1"></i>Event Description <span class="text-red-400">*</span>
                                 </label>
                                 <textarea id="description" name="description" rows="4" required 
-                                          class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base resize-vertical"
+                                          class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                           placeholder="Describe your event in detail..."></textarea>
                             </div>
 
@@ -425,7 +255,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-calendar mr-1"></i>Event Date <span class="text-red-400">*</span>
                                 </label>
                                 <input type="date" id="date" name="date" required 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                             </div>
 
                             <!-- Event Time -->
@@ -434,7 +264,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-clock mr-1"></i>Event Time <span class="text-red-400">*</span>
                                 </label>
                                 <input type="time" id="start-time" name="start-time" required 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                             </div>
 
                             <!-- Event Category -->
@@ -443,7 +273,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-tags mr-1"></i>Event Category <span class="text-red-400">*</span>
                                 </label>
                                 <select id="category-select" name="category-select" required 
-                                        class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base">
+                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                                     <option value="">Select a category</option>
                                     <option value="Comedy">Comedy</option>
                                     <option value="Drag">Drag</option>
@@ -470,7 +300,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                                 </label>
                                 <input type="url" id="link" name="link" 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="https://">
                             </div>
 
@@ -480,7 +310,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <label class="text-sm font-semibold accent-color-secondary">
                                         <i class="fas fa-redo mr-1"></i>Recurring Events
                                     </label>
-                                    <button type="button" class="text-blue-400 hover:text-blue-300 transition-colors ml-2" id="recurrence-tips-toggle">
+                                    <button type="button" class="text-[var(--color-toxic)] hover:text-blue-300 transition-colors ml-2" id="recurrence-tips-toggle">
                                         <i class="fas fa-info-circle text-sm"></i>
                                     </button>
                                     <div class="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 border border-gray-600 rounded-lg p-3 shadow-lg opacity-0 pointer-events-none transition-opacity z-10" id="recurrence-tips">
@@ -549,7 +379,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-edit mr-1"></i>Custom Recurrence Description
                                             </label>
                                             <textarea name="custom-recurrence-desc" 
-                                                      class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                      class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                       placeholder="e.g., Every first Saturday of the month, Every other Tuesday, etc."
                                                       rows="2"></textarea>
                                         </div>
@@ -561,7 +391,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                     <i class="fas fa-calendar-plus mr-1"></i>Start Date <span class="text-red-400">*</span>
                                                 </label>
                                                 <input type="date" name="recurrence-start-date" 
-                                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                        min="<?php echo date('Y-m-d'); ?>">
                                             </div>
                                             <div>
@@ -569,9 +399,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                     <i class="fas fa-calendar-minus mr-1"></i>End Date
                                                 </label>
                                                 <input type="date" name="recurrence-end-date" 
-                                                       class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                        min="<?php echo date('Y-m-d'); ?>">
-                                                <p class="text-xs text-gray-400 mt-1">Leave empty for ongoing events</p>
+                                                <p class="text-xs text-zinc-400 mt-1">Leave empty for ongoing events</p>
                                             </div>
                                         </div>
                                         
@@ -581,15 +411,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-hashtag mr-1"></i>Maximum Number of Instances
                                             </label>
                                             <input type="number" name="max-instances" 
-                                                   class="form-input w-full px-4 py-3 rounded-lg text-white transition-colors text-base"
+                                                   class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="52" min="1" max="1000" value="52">
-                                            <p class="text-xs text-gray-400 mt-1">Maximum number of events to create (default: 52 for weekly events)</p>
+                                            <p class="text-xs text-zinc-400 mt-1">Maximum number of events to create (default: 52 for weekly events)</p>
                                         </div>
                                         
                                         <!-- Preview Generated Events -->
                                         <div class="mb-4">
                                             <button type="button" id="preview-recurring" 
-                                                    class="btn-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                                                    class="btn border-4 border-black bg-black text-white hover:bg-[var(--color-pink)] hover:text-black hover:shadow-[4px_4px_0_black] transition-all px-4 py-3 font-bold uppercase flex items-center justify-center">
                                                 <i class="fas fa-eye mr-2"></i>Preview Generated Events
                                             </button>
                                         </div>
@@ -624,14 +454,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     </label>
                                     <div class="relative">
                                         <input type="text" id="venue-search" 
-                                               class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                               class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                placeholder="Search for a venue or type to create new...">
                                         <div id="venue-dropdown" class="hidden absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                             <!-- Venue options will be populated here -->
                                         </div>
                                     </div>
                                     <input type="hidden" id="venue-id" name="venue-id" value="">
-                                    <p class="text-xs text-gray-400 mt-1">Search for an existing venue or type to create a new one</p>
+                                    <p class="text-xs text-zinc-400 mt-1">Search for an existing venue or type to create a new one</p>
                                 </div>
                                 
                                 <!-- Selected Venue Details -->
@@ -662,7 +492,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-building mr-1"></i>Venue Name <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-name" name="new-venue-name" 
-                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                   class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="Enter venue name">
                                         </div>
 
@@ -672,7 +502,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-map mr-1"></i>Venue Address <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-address" name="new-venue-address" 
-                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                   class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="e.g., 123 Main Street, Birmingham">
                                         </div>
 
@@ -682,7 +512,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-mail-bulk mr-1"></i>Postcode <span class="text-red-400">*</span>
                                             </label>
                                             <input type="text" id="new-venue-postcode" name="new-venue-postcode" 
-                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                   class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="e.g., B1 1AA">
                                         </div>
 
@@ -692,7 +522,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <i class="fas fa-globe mr-1"></i>Venue Website
                                             </label>
                                             <input type="url" id="new-venue-website" name="new-venue-website" 
-                                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                                   class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="https://">
                                         </div>
                                     </div>
@@ -714,7 +544,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-user mr-1"></i>Contact Name <span class="text-red-400">*</span>
                                 </label>
                                 <input type="text" id="contact-name" name="contact-name" required 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="Your full name">
                             </div>
 
@@ -724,7 +554,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <i class="fas fa-envelope mr-1"></i>Contact Email <span class="text-red-400">*</span>
                                 </label>
                                 <input type="email" id="contact-email" name="contact-email" required 
-                                       class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 transition-colors text-base"
+                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="your.email@example.com">
                             </div>
                         </div>
@@ -732,7 +562,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
                     <!-- Submit Button -->
                     <div class="pt-6">
-                        <button type="submit" class="btn-primary btn-submit text-white font-bold py-4 px-8 rounded-lg transition-all w-full flex items-center justify-center text-lg">
+                        <button type="submit" class="w-full block text-center bg-[var(--color-toxic)] border-4 border-black text-black font-black py-4 px-6 text-xl lg:text-3xl uppercase hover:bg-black hover:text-[var(--color-toxic)] hover:shadow-[8px_8px_0_var(--color-toxic)] transition-all cursor-pointer mt-8 relative z-20">
                             <span id="submit-text">
                                 <i class="fas fa-paper-plane mr-2"></i>Submit Event
                             </span>
@@ -743,6 +573,65 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
         </section>
     </main>
+
+    <div class="mt-32 border-4 border-white">
+        <!-- Top Warning Strip -->
+        <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-white">
+            Warning: High volume queer chaos ahead
+        </div>
+        
+        <footer class="bg-black text-white p-8 md:p-16 relative overflow-hidden">
+            <!-- Background Accent -->
+            <div class="absolute -right-20 -bottom-10 font-accent text-[12rem] leading-none opacity-20 text-[var(--color-pink)] pointer-events-none select-none">
+                0121
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <!-- Left Col -->
+                <div>
+                    <h3 class="text-5xl font-black italic misprint mb-4">DON'T BE A STRANGER.</h3>
+                    <p class="mb-6 font-medium text-lg max-w-sm">Get on the blower. Drop your email here to get the secret location drops and early-bird tickets before they sell out.</p>
+                    
+                    <div class="flex gap-4 items-end max-w-sm">
+                        <div class="flex-grow">
+                            <input type="email" class="punk-input w-full text-lg py-2" placeholder="your@email.bab">
+                        </div>
+                        <button class="bg-[var(--color-pink)] text-white px-4 py-2 font-black uppercase text-sm border-2 border-white hover:bg-white hover:text-black transition-colors">
+                            Sub
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Col -->
+                <div class="flex flex-col md:items-end justify-between space-y-8 mt-8 md:mt-0">
+                    <div class="flex flex-wrap gap-4 md:gap-6 font-bold uppercase tracking-widest md:justify-end">
+                        <a href="/events.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                        <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
+                    </div>
+                    
+                    <div class="flex gap-6 font-bold text-xs uppercase tracking-widest md:justify-end mt-4">
+                        <a href="/privacy-policy.html" class="hover:text-[var(--color-toxic)] transition-colors">Privacy Policy</a>
+                        <a href="/terms-and-conditions.html" class="hover:text-[var(--color-toxic)] transition-colors">Terms & Conditions</a>
+                    </div>
+                    
+                    <div class="md:text-right mt-8">
+                        <div class="flex md:justify-end gap-4 mb-4">
+                            <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                        <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                        <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
+                        <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script src="/js/promoter-submit-streamlined.js?v=3"></script>
     
@@ -833,7 +722,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             renderDropdown(venues) {
                 if (venues.length === 0) {
                     this.dropdown.innerHTML = `
-                        <div class="p-3 text-gray-400 text-center">
+                        <div class="p-3 text-zinc-400 text-center">
                             <i class="fas fa-search mr-2"></i>No venues found
                         </div>
                     `;
@@ -844,7 +733,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="venue-option p-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0" 
                          data-venue-id="${venue.id}" data-venue-name="${venue.name}">
                         <div class="font-semibold text-white">${venue.name}</div>
-                        <div class="text-sm text-gray-400">${venue.address || 'No address'}</div>
+                        <div class="text-sm text-zinc-400">${venue.address || 'No address'}</div>
                     </div>
                 `).join('');
                 
@@ -886,24 +775,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 this.venueDetailsContent.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <div class="text-sm text-gray-400">Name</div>
+                            <div class="text-sm text-zinc-400">Name</div>
                             <div class="text-white font-semibold">${venue.name}</div>
                         </div>
                         <div>
-                            <div class="text-sm text-gray-400">Address</div>
+                            <div class="text-sm text-zinc-400">Address</div>
                             <div class="text-white">${venue.address || 'Not specified'}</div>
                         </div>
                         ${venue.postcode ? `
                         <div>
-                            <div class="text-sm text-gray-400">Postcode</div>
+                            <div class="text-sm text-zinc-400">Postcode</div>
                             <div class="text-white">${venue.postcode}</div>
                         </div>
                         ` : ''}
                         ${venue.website ? `
                         <div>
-                            <div class="text-sm text-gray-400">Website</div>
+                            <div class="text-sm text-zinc-400">Website</div>
                             <div class="text-white">
-                                <a href="${venue.website}" target="_blank" class="text-blue-400 hover:underline">${venue.website}</a>
+                                <a href="${venue.website}" target="_blank" class="text-[var(--color-toxic)] hover:underline">${venue.website}</a>
                             </div>
                         </div>
                         ` : ''}
@@ -1147,7 +1036,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             
             displayPreview(instances, parsedPattern = null, methodLabel = null) {
                 if (instances.length === 0) {
-                    this.previewContainer.innerHTML = '<p class="text-gray-400">No events would be generated with the current settings.</p>';
+                    this.previewContainer.innerHTML = '<p class="text-zinc-400">No events would be generated with the current settings.</p>';
                 } else {
                     const previewHTML = instances.slice(0, 10).map((date, index) => {
                         // Handle both Date objects and date strings
@@ -1158,11 +1047,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             month: 'long',
                             year: 'numeric'
                         });
-                        return `<div class="text-sm text-gray-300 mb-1">${index + 1}. ${formattedDate}</div>`;
+                        return `<div class="text-sm text-[var(--color-light)] mb-1">${index + 1}. ${formattedDate}</div>`;
                     }).join('');
                     
                     const remainingText = instances.length > 10 ? 
-                        `<div class="text-sm text-gray-400 mt-2">... and ${instances.length - 10} more events</div>` : '';
+                        `<div class="text-sm text-zinc-400 mt-2">... and ${instances.length - 10} more events</div>` : '';
                     
                     const patternInfo = parsedPattern ? 
                         `<div class="text-sm text-blue-300 mb-2">Parsed Pattern: <strong>${parsedPattern}</strong></div>` : '';

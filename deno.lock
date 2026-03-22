@@ -11,6 +11,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@playwright/test@^1.49.0",
         "npm:@react-email/render@^1.2.3",
         "npm:@remotion/bundler@^4.0.330",
         "npm:@remotion/cli@^4.0.330",
@@ -37,6 +38,7 @@
         "npm:react-dom@^18.2.0",
         "npm:react@^18.2.0",
         "npm:resend@^6.0.3",
+        "npm:serve@^14.2.4",
         "npm:sharp@~0.33.2",
         "npm:tailwindcss@^3.4.19",
         "npm:typescript@5",

@@ -981,14 +981,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatDate(dateString) {
         if (!dateString) return 'Unknown';
         
+        const dateStr = typeof dateString === 'string' ? dateString : '';
+        const hasNoTime = !dateStr.includes('T') || dateStr.includes('T00:00');
+        
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-GB', {
+        const options = {
             day: 'numeric',
             month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+            year: 'numeric'
+        };
+        if (!hasNoTime) {
+            options.hour = '2-digit';
+            options.minute = '2-digit';
+        }
+        return date.toLocaleDateString('en-GB', options) + (hasNoTime ? ' — Time TBC' : '');
     }
     
     function showNotification(message, type = 'info') {

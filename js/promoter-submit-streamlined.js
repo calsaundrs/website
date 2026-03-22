@@ -1,7 +1,7 @@
 // Streamlined Promoter Submission with Firebase Recurring Events Integration
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Streamlined promoter submission form loaded');
-    
+
     // Initialize form elements
     const form = document.getElementById('event-submission-form');
     const isRecurringCheckbox = document.getElementById('is-recurring');
@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const venueDetailsContent = document.getElementById('venue-details-content');
     const changeVenueBtn = document.getElementById('change-venue');
     const addNewVenueBtn = document.getElementById('add-new-venue');
-    
     // New venue elements
     const NEW_VENUE_ID = 'new';
     const newVenueNameInput = document.getElementById('new-venue-name');
@@ -52,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         initializeFormSubmission();
     }
-    
     function initializePosterParser() {
         if (!uploadArea || !posterUpload) return;
 
@@ -86,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 handlePosterUpload(e.target.files[0]);
             }
         });
-        
+
         // Handle extracted data buttons
         if (useExtractedBtn) {
             useExtractedBtn.addEventListener('click', () => {
@@ -147,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadArea.classList.add('hidden');
         previewContainer.classList.remove('hidden');
     }
-
     async function handlePosterUpload(file) {
         if (!file.type.startsWith('image/')) {
             alert('Please select an image file');
@@ -156,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show image preview immediately
         showUploadPreview(file);
-
         // Show processing state
         aiProcessing.classList.remove('hidden');
         extractedData.classList.add('hidden');
@@ -199,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             aiProcessing.classList.add('hidden');
         }
     }
-    
+
     function fileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -208,43 +204,43 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
-    
+
     function calculateNextOccurrence(description) {
         const today = new Date();
         const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        
+
         // Extract day from description (e.g., "Every Wednesday" -> "wednesday")
         const descriptionLower = description.toLowerCase();
         const dayMatch = dayNames.find(day => descriptionLower.includes(day));
-        
+
         if (dayMatch) {
             const targetDayIndex = dayNames.indexOf(dayMatch);
             const currentDayIndex = today.getDay();
-            
+
             // Calculate days until next occurrence
             let daysUntilNext = targetDayIndex - currentDayIndex;
             if (daysUntilNext <= 0) {
                 daysUntilNext += 7; // Next week
             }
-            
+
             // Create the next occurrence date
             const nextDate = new Date(today);
             nextDate.setDate(today.getDate() + daysUntilNext);
-            
+
             // Format as YYYY-MM-DD
             const year = nextDate.getFullYear();
             const month = String(nextDate.getMonth() + 1).padStart(2, '0');
             const day = String(nextDate.getDate()).padStart(2, '0');
-            
+
             return `${year}-${month}-${day}`;
         }
-        
+
         return null;
     }
-    
+
     function displayExtractedData(data) {
         const fields = [];
-        
+
         if (data.eventName) fields.push(`<strong>Event Name:</strong> ${data.eventName}`);
         if (data.date) fields.push(`<strong>Date:</strong> ${data.date}`);
         if (data.time) fields.push(`<strong>Time:</strong> ${data.time}`);
@@ -257,10 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.recurrence && data.recurrence.isRecurring) {
             fields.push(`<strong>Recurrence:</strong> ${data.recurrence.description || data.recurrence.pattern}`);
         }
-        
+
         extractedFields.innerHTML = fields.map(field => `<div>${field}</div>`).join('');
     }
-    
+
     function applyExtractedData(data) {
         if (data.eventName) {
             document.getElementById('event-name').value = data.eventName;
@@ -306,22 +302,22 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            
+
             // Get all available category values
             const availableCategories = Array.from(document.querySelectorAll('input[name="categories"]')).map(cb => cb.value);
-            
+
             // Select only categories that exist in our form
             data.categories.forEach(category => {
                 // Try exact match first
                 let checkbox = document.querySelector(`input[name="categories"][value="${category}"]`);
-                
+
                 // If no exact match, try case-insensitive match
                 if (!checkbox) {
-                    checkbox = Array.from(document.querySelectorAll('input[name="categories"]')).find(cb => 
+                    checkbox = Array.from(document.querySelectorAll('input[name="categories"]')).find(cb =>
                         cb.value.toLowerCase() === category.toLowerCase()
                     );
                 }
-                
+
                 // If still no match, try partial match for common variations
                 if (!checkbox) {
                     const categoryLower = category.toLowerCase();
@@ -339,22 +335,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         checkbox = document.querySelector('input[name="categories"][value="Social"]');
                     }
                 }
-                
+
                 if (checkbox) {
                     checkbox.checked = true;
                 }
             });
-            
+
             // Update selected categories display
             updateSelectedCategoriesDisplay();
         }
-        
+
         // Handle recurrence data from AI
         if (data.recurrence && data.recurrence.isRecurring) {
             // Check the recurring checkbox
             isRecurringCheckbox.checked = true;
             recurringConfig.classList.remove('hidden');
-            
+
             // Set the pattern if it matches our options
             if (data.recurrence.pattern) {
                 const patternRadio = document.querySelector(`input[name="recurring-pattern"][value="${data.recurrence.pattern}"]`);
@@ -362,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     patternRadio.checked = true;
                 }
             }
-            
+
             // Set the custom description if provided
             if (data.recurrence.description) {
                 const customDescField = document.getElementById('custom-recurrence-desc');
@@ -371,11 +367,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
+
         // Update recurring preview if needed
         updateRecurringPreview();
     }
-    
+
     function initializeRecurringEvents() {
         // Toggle recurring configuration visibility
         isRecurringCheckbox.addEventListener('change', () => {
@@ -390,12 +386,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             updateRecurringPreview();
         });
-        
+
         // Update preview when pattern or dates change
         document.querySelectorAll('input[name="recurring-pattern"]').forEach(radio => {
             radio.addEventListener('change', updateRecurringPreview);
         });
-        
         const recurringStartDate = document.getElementById('recurring-start-date');
         const recurringEndDate = document.getElementById('recurring-end-date');
         const maxInstancesInput = document.getElementById('max-instances');
@@ -403,7 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (recurringStartDate) recurringStartDate.addEventListener('change', updateRecurringPreview);
         if (recurringEndDate) recurringEndDate.addEventListener('change', updateRecurringPreview);
         if (maxInstancesInput) maxInstancesInput.addEventListener('input', updateRecurringPreview);
-        
         // Auto-update recurring start date when main event date changes
         document.getElementById('date').addEventListener('change', (e) => {
             if (isRecurringCheckbox.checked) {
@@ -414,29 +408,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        
+
         // Set initial state
         updateRecurringPreview();
     }
-    
+
     function updateRecurringPreview() {
         const previewDiv = document.getElementById('recurring-preview');
-        
+
         if (!isRecurringCheckbox.checked) {
             previewDiv.textContent = 'Select a pattern and start date to see a preview of upcoming dates.';
             return;
         }
-        
+
         const pattern = document.querySelector('input[name="recurring-pattern"]:checked');
         const startDate = document.getElementById('recurring-start-date').value;
         const endDate = document.getElementById('recurring-end-date').value;
         const maxInstances = parseInt(document.getElementById('max-instances').value) || 52;
-        
+
         if (!pattern || !startDate) {
             previewDiv.textContent = 'Select a pattern and start date to see a preview of upcoming dates.';
             return;
         }
-        
+
         try {
             const instances = calculateRecurringInstances({
                 startDate,
@@ -444,53 +438,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 pattern: pattern.value,
                 maxInstances
             });
-            
+
             if (instances.length === 0) {
                 previewDiv.textContent = 'No valid dates found for the selected pattern.';
                 return;
             }
-            
+
             const previewDates = instances.slice(0, 8).map(date => {
                 const d = new Date(date);
-                return d.toLocaleDateString('en-GB', { 
-                    weekday: 'short', 
-                    day: 'numeric', 
-                    month: 'short' 
+                return d.toLocaleDateString('en-GB', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
                 });
             });
-            
+
             let previewText = previewDates.join(', ');
             if (instances.length > 8) {
                 previewText += ` and ${instances.length - 8} more...`;
             }
-            
+
             previewDiv.innerHTML = `
                 <div class="text-green-400 font-semibold mb-2">✓ ${instances.length} events will be created</div>
                 <div class="text-sm">${previewText}</div>
             `;
-            
+
         } catch (error) {
             console.error('Error calculating recurring instances:', error);
             previewDiv.textContent = 'Error calculating preview. Please check your settings.';
         }
     }
-    
+
     function calculateRecurringInstances({ startDate, endDate, pattern, maxInstances }) {
         const start = new Date(startDate);
         const end = endDate ? new Date(endDate) : null;
-        
+
         const instances = [];
         let current = new Date(start);
         let count = 0;
-        
+
         while (count < maxInstances) {
             if (end && current > end) {
                 break;
             }
-            
+
             instances.push(new Date(current));
             count++;
-            
+
             switch (pattern) {
                 case 'weekly':
                     current.setDate(current.getDate() + 7);
@@ -508,42 +502,63 @@ document.addEventListener('DOMContentLoaded', () => {
                     return instances;
             }
         }
-        
+
         return instances;
     }
-    
+
     // Global variables
     let venues = [];
-    
+
     // Global venue matching function
     function findMatchingVenue(venueText) {
         if (!venues || venues.length === 0) return null;
-        
-        const searchText = venueText.toLowerCase();
-        
+
+        const searchText = venueText.toLowerCase().trim();
+
         // First, try exact name match
-        let match = venues.find(venue => 
+        let match = venues.find(venue =>
             venue.name.toLowerCase() === searchText
         );
-        
+
         if (match) return match;
-        
-        // Try partial name match (venue name contains search text)
-        match = venues.find(venue => 
-            venue.name.toLowerCase().includes(searchText) ||
-            searchText.includes(venue.name.toLowerCase())
-        );
-        
+
+        // Exact word boundary matching for tricky venues like "The Fox" vs "The Fox and Goose"
+        // If searchText is "Fox", we want to match "The Fox" but NOT "The Fox and Goose".
+        match = venues.find(venue => {
+            const venueNameLower = venue.name.toLowerCase();
+            // If the search string exactly matches a word inside the venue name (e.g. 'fox' matches 'the fox' but not 'the fox and goose', sort of )
+            // Actually, a better approach for "fox" is to see if venueNameLower is EXACTLY "the fox" or "fox".
+            if (searchText === 'fox' || searchText === 'the fox') {
+                return venueNameLower === 'the fox' || venueNameLower === 'fox';
+            }
+            if (searchText === 'fox and goose' || searchText === 'the fox and goose') {
+                return venueNameLower === 'the fox and goose' || venueNameLower === 'fox and goose';
+            }
+            return false;
+        });
+
         if (match) return match;
-        
+
+        // Try partial name match (venue name contains search text) - but be careful with short words
+        if (searchText.length > 3) {
+            match = venues.find(venue =>
+                venue.name.toLowerCase().includes(searchText) ||
+                searchText.includes(venue.name.toLowerCase())
+            );
+
+            if (match) return match;
+        }
+
         // Try address match
-        match = venues.find(venue => 
-            venue.address && venue.address.toLowerCase().includes(searchText)
-        );
-        
-        if (match) return match;
-        
-        // Try fuzzy matching for common venue names
+        if (searchText.length > 5) {
+            match = venues.find(venue =>
+                venue.address && venue.address.toLowerCase().includes(searchText)
+            );
+
+            if (match) return match;
+        }
+
+        // Try fuzzy matching for common venue names (Exact match on the key to avoid fox -> fox and goose)
         const commonVenueNames = {
             'victoria': 'The Victoria',
             'nightingale': 'The Nightingale Club',
@@ -556,35 +571,42 @@ document.addEventListener('DOMContentLoaded', () => {
             'fountain': 'The Fountain inn',
             'village': 'The Village Inn'
         };
-        
+
+        // Only trigger this if it's a standalone word or direct match to prevent 'fox' matching 'the fox and goose' via dictionary
         for (const [key, venueName] of Object.entries(commonVenueNames)) {
-            if (searchText.includes(key)) {
+            // Check if search text contains the key as an isolated word
+            const regex = new RegExp(`\\b${key}\\b`, 'i');
+            if (regex.test(searchText)) {
+                // extra protection for fox vs fox and goose
+                if (key === 'fox' && searchText.includes('goose')) {
+                    continue; // Skip if they actually meant fox and goose
+                }
                 match = venues.find(venue => venue.name === venueName);
                 if (match) return match;
             }
         }
-        
+
         return null;
     }
-    
+
     // Global venue selection function
     function selectVenue(id, name, address) {
         venueIdInput.value = id;
         venueSearch.value = name;
         venueResults.classList.add('hidden');
-        
+
         venueDetailsContent.innerHTML = `
             <div class="font-semibold">${name}</div>
             <div class="text-sm text-gray-400">${address}</div>
         `;
         selectedVenueDetails.classList.remove('hidden');
     }
-    
+
     // Update selected categories display
     function updateSelectedCategoriesDisplay() {
         const selectedCheckboxes = document.querySelectorAll('input[name="categories"]:checked');
         const selectedCategoriesDiv = document.getElementById('selected-categories');
-        
+
         if (selectedCheckboxes.length === 0) {
             selectedCategoriesDiv.textContent = 'Select one or more categories that apply to your event';
             selectedCategoriesDiv.className = 'text-sm text-gray-400';
@@ -594,27 +616,27 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedCategoriesDiv.className = 'text-sm text-green-400 font-medium';
         }
     }
-    
+
     function initializeVenueSearch() {
         let searchTimeout;
-        
+
         // Load venues on page load
         loadVenues();
-        
+
         venueSearch.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             const query = e.target.value.trim();
-            
+
             if (query.length < 2) {
                 venueResults.classList.add('hidden');
                 return;
             }
-            
+
             searchTimeout = setTimeout(() => {
                 searchVenues(query);
             }, 300);
         });
-        
+
         async function loadVenues() {
             try {
                 const response = await fetch('/.netlify/functions/get-venue-list');
@@ -625,18 +647,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error loading venues:', error);
             }
         }
-        
+
         function searchVenues(query) {
-            const filtered = venues.filter(venue => 
+            const filtered = venues.filter(venue =>
                 venue.name.toLowerCase().includes(query.toLowerCase()) ||
                 venue.address.toLowerCase().includes(query.toLowerCase())
             ).slice(0, 5);
-            
+
             if (filtered.length === 0) {
                 venueResults.classList.add('hidden');
                 return;
             }
-            
+
             venueResults.innerHTML = filtered.map(venue => `
                 <div class="venue-result p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-700/50 transition-colors"
                      data-venue-id="${venue.id}" data-venue-name="${venue.name}" data-venue-address="${venue.address}">
@@ -644,9 +666,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="text-sm text-gray-400">${venue.address}</div>
                 </div>
             `).join('');
-            
+
             venueResults.classList.remove('hidden');
-            
+
             // Add click handlers
             venueResults.querySelectorAll('.venue-result').forEach(result => {
                 result.addEventListener('click', () => {
@@ -658,11 +680,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         }
-        
 
-        
 
-        
         if (changeVenueBtn) {
             changeVenueBtn.addEventListener('click', () => {
                 venueIdInput.value = '';
@@ -692,42 +711,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (newVenuePostcodeInput) newVenuePostcodeInput.value = '';
             });
         }
-        
         // Add event listeners for category checkboxes
         document.querySelectorAll('input[name="categories"]').forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCategoriesDisplay);
         });
     }
-    
+
     function initializeFormSubmission() {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const submitButton = form.querySelector('button[type="submit"]');
             const submitText = document.getElementById('submit-text');
             const submitLoader = document.getElementById('submit-loader');
-            
+
             // Show loading state
             submitButton.disabled = true;
             submitText.classList.add('hidden');
             submitLoader.classList.remove('hidden');
-            
+
             try {
                 // Validate form
                 const validation = validateForm();
                 if (!validation.isValid) {
                     throw new Error(validation.errors.join(', '));
                 }
-                
+
                 // Prepare form data
                 const formData = new FormData();
-                
+
                 // Basic event data
                 formData.append('event-name', document.getElementById('event-name').value.trim());
                 formData.append('description', document.getElementById('description').value.trim());
                 formData.append('date', document.getElementById('date').value);
                 formData.append('start-time', document.getElementById('start-time').value);
-                
+                // Preparing form data...
+
                 // Categories (send as comma-separated string for multipart parser compatibility)
                 const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked')).map(cb => cb.value);
                 formData.append('categories', selectedCategories.join(','));
@@ -738,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('link', document.getElementById('link').value.trim());
                 formData.append('contact-name', document.getElementById('contact-name').value.trim());
                 formData.append('contact-email', document.getElementById('contact-email').value.trim());
-                
+
                 // Venue data
                 if (venueIdInput.value === NEW_VENUE_ID) {
                     formData.append('new-venue-name', newVenueNameInput.value.trim());
@@ -751,54 +770,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (venueSearch.value.trim()) {
                     formData.append('venue-name', venueSearch.value.trim());
                 }
-                
                 // Recurring event data
                 if (isRecurringCheckbox.checked) {
                     formData.append('is-recurring', 'true');
                     formData.append('recurring-pattern', document.querySelector('input[name="recurring-pattern"]:checked').value);
-                    
+
                     // Use main event date as recurring start date if not specified
                     let recurringStartDate = document.getElementById('recurring-start-date').value;
                     if (!recurringStartDate) {
                         recurringStartDate = document.getElementById('date').value;
                     }
                     formData.append('recurring-start-date', recurringStartDate);
-                    
+
                     const endDate = document.getElementById('recurring-end-date').value;
                     if (endDate) {
                         formData.append('recurring-end-date', endDate);
                     }
-                    
+
                     const maxInstances = document.getElementById('max-instances').value;
                     if (maxInstances) {
                         formData.append('max-instances', maxInstances);
                     }
-                    
+
                     const customDesc = document.getElementById('custom-recurrence-desc').value;
                     if (customDesc) {
                         formData.append('custom-recurrence-desc', customDesc);
                     }
                 }
-                
+
                 // Image file from poster parser
                 const posterFile = posterUpload.files[0];
                 if (posterFile) {
                     formData.append('promo-image', posterFile);
                 }
-                
+
                 // Submit to Firebase
                 const response = await fetch('/.netlify/functions/event-submission', {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({ message: 'Server error' }));
                     throw new Error(errorData.message || `HTTP ${response.status}`);
                 }
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showSuccess('Event submitted successfully! We\'ll review and approve it soon.');
                     form.reset();
@@ -806,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     throw new Error(result.message || 'Submission failed');
                 }
-                
+
             } catch (error) {
                 console.error('Form submission error:', error);
                 showError(`Submission failed: ${error.message}`);
@@ -821,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function validateForm() {
         const errors = [];
-        
+
         // Required fields
         const requiredFields = [
             { id: 'event-name', label: 'Event name' },
@@ -831,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'contact-name', label: 'Contact name' },
             { id: 'contact-email', label: 'Contact email' }
         ];
-        
+
         requiredFields.forEach(field => {
             const element = document.getElementById(field.id);
             if (!element.value.trim()) {
@@ -841,28 +859,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 element.classList.remove('border-red-500');
             }
         });
-        
+
         // Email validation
         const email = document.getElementById('contact-email').value;
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             errors.push('Please enter a valid email address');
         }
-        
+
         // Date validation
         const eventDate = new Date(document.getElementById('date').value);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         if (eventDate < today) {
             errors.push('Event date cannot be in the past');
         }
-        
+
         // Category validation
         const selectedCategories = document.querySelectorAll('input[name="categories"]:checked');
         if (selectedCategories.length === 0) {
             errors.push('Please select at least one category');
         }
-        
+
         // Venue validation
         if (!venueIdInput.value) {
             errors.push('Please select a venue');
@@ -874,27 +892,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVenueNameInput.classList.remove('border-red-500');
             }
         }
-        
+
         // Recurring event validation
         if (isRecurringCheckbox.checked) {
             const pattern = document.querySelector('input[name="recurring-pattern"]:checked');
             const startDate = document.getElementById('recurring-start-date').value;
-            
+
             if (!pattern) {
                 errors.push('Please select a recurrence pattern');
             }
-            
+
             if (!startDate) {
                 errors.push('Please select a recurrence start date');
             }
         }
-        
+
         return {
             isValid: errors.length === 0,
             errors: errors
         };
     }
-    
+
     function showSuccess(message) {
         // Create success message
         const successDiv = document.createElement('div');
@@ -905,9 +923,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>${message}</span>
             </div>
         `;
-        
+
         document.body.appendChild(successDiv);
-        
+
         // Auto-remove after 5 seconds
         setTimeout(() => {
             if (successDiv.parentNode) {
@@ -915,7 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 5000);
     }
-    
+
     function showError(message) {
         // Create error message
         const errorDiv = document.createElement('div');
@@ -926,9 +944,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>${message}</span>
             </div>
         `;
-        
+
         document.body.appendChild(errorDiv);
-        
+
         // Auto-remove after 8 seconds
         setTimeout(() => {
             if (errorDiv.parentNode) {
@@ -936,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 8000);
     }
-    
+
     function resetForm() {
         // Reset recurring events
         isRecurringCheckbox.checked = false;
@@ -951,7 +969,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset new venue form
         if (newVenueForm) newVenueForm.classList.add('hidden');
         if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
-
         // Update preview
         updateRecurringPreview();
     }

@@ -50,28 +50,31 @@ async function generateVenuesListingPage() {
             ).join(' ');
             
             return `
-                <div class="venue-card rounded-xl overflow-hidden cursor-pointer" 
+                <div class="venue-card p-0 group" 
                      onclick="window.location.href='/venue/${venue.slug}'">
-                    <div class="aspect-video bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover">` : '<i class="fas fa-building text-4xl text-gray-600"></i>'}
+                    <div class="item-card-image-container relative overflow-hidden bg-black">
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${venue.name}" class="item-card-image w-full h-full object-cover">` : `
+                            <div class="h-full w-full bg-black flex items-center justify-center">
+                                <i class="fas fa-building text-4xl text-gray-800"></i>
+                            </div>
+                        `}
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-white mb-2">${venue.name}</h3>
+                        <h3 class="text-2xl font-bold mb-3">${venue.name}</h3>
                         ${venue.address ? `
-                        <p class="text-gray-400 text-sm mb-3">
-                            <i class="fas fa-map-marker-alt mr-1"></i>${venue.address}
-                        </p>
+                            <p class="text-[var(--color-toxic)] font-bold text-sm mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2"></i>${venue.address}
+                            </p>
                         ` : ''}
-                        <p class="text-gray-300 text-sm mb-4 line-clamp-2">${venue.description || 'A fantastic LGBTQ+ venue in Birmingham.'}</p>
-                        <div class="flex flex-wrap gap-1 mb-4">
-                            ${categoryTags}
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            ${venue.description || 'A fantastic LGBTQ+ venue in Birmingham.'}
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            ${categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
                         </div>
-                        <div class="flex justify-between items-center">
-                            <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Venue
-                            </button>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-calendar"></i>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-eye mr-2"></i>VIEW VENUE
                             </button>
                         </div>
                     </div>
@@ -81,9 +84,10 @@ async function generateVenuesListingPage() {
         
         // Replace placeholder with generated content
         venuesHtml = venuesHtml.replace(
-            /<!-- VENUES_GRID_SSG_PLACEHOLDER -->/g,
-            venueCardsHtml
+            /<!-- VENUES_GRID_START -->[\s\S]*?<!-- VENUES_GRID_END -->/g,
+            `<!-- VENUES_GRID_START -->\n${venueCardsHtml}\n<!-- VENUES_GRID_END -->`
         );
+
         
         // Remove the loading state
         venuesHtml = venuesHtml.replace(

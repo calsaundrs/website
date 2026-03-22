@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Submission | Brum Outloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="/css/main.css">
@@ -18,6 +18,14 @@
 
     <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
+        :root {
+            --color-bg: #0d0115;
+            --color-pink: #ff007f;
+            --color-purple: #7a00ff;
+            --color-toxic: #ccff00;
+            --color-light: #f3e8ff;
+        }
+
         /* FOUC Prevention - Hide content until styles are loaded */
         .fouc-prevention {
             visibility: hidden;
@@ -87,14 +95,27 @@
         
         /* Critical CSS to prevent flashing */
         body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .neo-card {
+            background: rgba(13, 1, 21, 0.7);
+            border: 4px solid var(--color-light);
+            box-shadow: 8px 8px 0 var(--color-purple);
+            transition: all 0.2s ease;
         }
         
         /* Basic layout styles to prevent layout shift */
@@ -119,7 +140,7 @@
         }
     </style>
     </head>
-<body class="antialiased">
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -142,73 +163,57 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
+            
+            <div class="hidden lg:flex gap-8 font-bold uppercase tracking-widest text-sm items-center">
+                <a href="/events.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">What's On</a>
+                <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Venues</a>
+                <a href="/community.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Community / Safe Space</a>
+                <a href="/contact.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Contact</a>
+                <a href="/promoter-tool.html" class="nav-cta ml-4">GET LISTED</a>
+            </div>
+            
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
                     aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)]"></span>
+                    <span class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-[var(--color-toxic)] self-end"></span>
                 </button>
             </div>
         </nav>
+        
         <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+<<<<<<< Updated upstream
+            class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
+            <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">VENUES</a>
+            <a href="/community.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">CONTACT</a>
+            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl">GET LISTED</a>
         </div>
     </header>
 
     <main class="container mx-auto px-8 py-8 relative z-10">
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">TERMS OF <span class="accent-color">SUBMISSION</span></h1>
+                <h1 class="font-display uppercase text-7xl md:text-8xl leading-none tracking-wider text-white drop-shadow-[4px_4px_0_var(--color-pink)]">TERMS OF <span class="text-[var(--color-toxic)]">SUBMISSION</span></h1>
             </div>
 
-            <div class="card-bg p-8 md:p-12 text-left">
+            <div class="bg-white text-black p-8 md:p-12 text-left border-4 border-black shadow-[8px_8px_0_var(--color-purple)]">
                 <p class="mb-4"><strong>Last updated:</strong> 28th June 2025</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">1. Acceptance of Terms</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">1. Acceptance of Terms</h2>
                 <p>By submitting content (including but not limited to event details, venue information, and promotional images) to Brum Outloud, you agree to be bound by these Terms of Submission. If you do not agree with any part of these terms, please do not submit content.</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">2. Your Responsibilities as a Submitter</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">2. Your Responsibilities as a Submitter</h2>
                 <p>By submitting content, you warrant and represent that:</p>
-                <ul class="list-disc list-inside mb-4">
+                <ul class="list-disc font-medium space-y-2 list-inside mb-4">
                     <li>You are the owner of the content or have obtained all necessary rights, licenses, and permissions to submit the content to Brum Outloud and to grant us the rights outlined herein.</li>
                     <li>All information provided in your submission is accurate, complete, and truthful to the best of your knowledge.</li>
                     <li>The event or venue you are submitting is relevant to the LGBTQ+ community in Birmingham and aligns with the inclusive values of Brum Outloud.</li>
@@ -216,9 +221,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <li>Your submission does not contain any material that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, libelous, invasive of another's privacy, hateful, or racially, ethnically or otherwise objectionable.</li>
                 </ul>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">3. Our Rights Regarding Submissions</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">3. Our Rights Regarding Submissions</h2>
                 <p>Brum Outloud reserves the right to:</p>
-                <ul class="list-disc list-inside mb-4">
+                <ul class="list-disc font-medium space-y-2 list-inside mb-4">
                     <li>Review all submitted content for accuracy, completeness, and appropriateness before publication.</li>
                     <li>Edit, modify, or reformat any submitted content for clarity, grammar, spelling, or to fit our website's style and layout, without altering the core meaning.</li>
                     <li>Reject any submission for any reason, including but not limited to, content that does not meet our guidelines, is incomplete, inaccurate, or violates these terms.</li>
@@ -226,54 +231,81 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <li>Use, reproduce, publish, display, and distribute the submitted content on the Brum Outloud website and associated promotional channels (e.g., social media) for the purpose of promoting LGBTQ+ events and venues in Birmingham.</li>
                 </ul>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">4. No Guarantee of Publication</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">4. No Guarantee of Publication</h2>
                 <p>Submission of content does not guarantee publication on the Brum Outloud website. All submissions are subject to our internal review and approval process.</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">5. Disclaimer of Liability</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">5. Disclaimer of Liability</h2>
                 <p>Brum Outloud is a platform for information sharing. We are not responsible for the accuracy of submitted content, nor are we liable for any direct, indirect, incidental, special, consequential, or exemplary damages, including but not limited to, damages for loss of profits, goodwill, use, data or other intangible losses, resulting from the use or the inability to use the submission tools or the information published on our website.</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">6. Indemnification</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">6. Indemnification</h2>
                 <p>You agree to indemnify and hold harmless Brum Outloud, its affiliates, officers, directors, employees, and agents from any and all claims, liabilities, damages, losses, and expenses, including reasonable attorneys' fees and costs, arising out of or in any way connected with your submission of content or your breach of these Terms of Submission.</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">7. Changes to Terms</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">7. Changes to Terms</h2>
                 <p>We reserve the right to modify these Terms of Submission at any time. Any changes will be effective immediately upon posting on this page. Your continued use of our submission tools after any such changes constitutes your acceptance of the new Terms of Submission.</p>
 
-                <h2 class="font-anton text-2xl text-white mt-8 mb-4">8. Contact Us</h2>
+                <h2 class="font-display uppercase text-3xl text-[var(--color-purple)] mt-8 mb-4">8. Contact Us</h2>
                 <p>If you have any questions about these Terms of Submission, please <a href="/contact.html" class="underline hover:text-white">contact us</a>.</p>
             </div>
         </section>
     </main>
 
-    <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
+    <div class="mt-32 border-4 border-white">
+        <!-- Top Warning Strip -->
+        <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-white">
+            Warning: High volume queer chaos ahead
         </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-            <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+        <footer class="bg-black text-white p-8 md:p-16 relative overflow-hidden">
+            <!-- Background Accent -->
+            <div class="absolute -right-20 -bottom-10 font-accent text-[12rem] leading-none opacity-20 text-[var(--color-pink)] pointer-events-none select-none">
+                0121
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <!-- Left Col -->
+                <div>
+                    <h3 class="text-5xl font-black italic misprint mb-4">DON'T BE A STRANGER.</h3>
+                    <p class="mb-6 font-medium text-lg max-w-sm">Get on the blower. Drop your email here to get the secret location drops and early-bird tickets before they sell out.</p>
+                    
+                    <div class="flex gap-4 items-end max-w-sm">
+                        <div class="flex-grow">
+                            <input type="email" class="punk-input w-full text-lg py-2" placeholder="your@email.bab">
+                        </div>
+                        <button class="bg-[var(--color-pink)] text-white px-4 py-2 font-black uppercase text-sm border-2 border-white hover:bg-white hover:text-black transition-colors">
+                            Sub
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Col -->
+                <div class="flex flex-col md:items-end justify-between space-y-8 mt-8 md:mt-0">
+                    <div class="flex flex-wrap gap-4 md:gap-6 font-bold uppercase tracking-widest md:justify-end">
+                        <a href="/events.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                        <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
+                    </div>
+                    
+                    <div class="flex gap-6 font-bold text-xs uppercase tracking-widest md:justify-end mt-4">
+                        <a href="/privacy-policy.html" class="hover:text-[var(--color-toxic)] transition-colors">Privacy Policy</a>
+                        <a href="/terms-and-conditions.html" class="hover:text-[var(--color-toxic)] transition-colors">Terms & Conditions</a>
+                    </div>
+                    
+                    <div class="md:text-right mt-8">
+                        <div class="flex md:justify-end gap-4 mb-4">
+                            <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                        <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                        <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
+                        <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </footer>
     </div>
-</footer>
 
 </body>
 </html>
