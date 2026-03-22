@@ -296,6 +296,11 @@ exports.handler = async function (event, context) {
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
+        /* Add bottom padding on mobile when sticky ticket bar is visible */
+        @media (max-width: 1023px) {
+            body.has-ticket-bar { padding-bottom: 5rem; }
+        }
     </style>
 </head>
 <body>
@@ -328,143 +333,207 @@ exports.handler = async function (event, context) {
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="mx-auto px-4 py-8 max-w-4xl">
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative w-full" style="min-height: 50vh;">
+        <!-- Hero Image -->
+        <div class="absolute inset-0">
+            {{#if event.image}}
+            <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
+            {{else}}
+            <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
+            {{/if}}
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/60 to-transparent"></div>
+        </div>
 
-        <!-- Event Details -->
-        <div class="neo-card overflow-hidden">
-            <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-black flex items-center justify-center relative">
-                {{#if event.image}}
-                <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
-                {{else}}
-                <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/20 to-[var(--color-pink)]/20 flex items-center justify-center">
-                    <i class="fas fa-image text-6xl text-gray-700"></i>
-                </div>
-                {{/if}}
-                <div class="absolute top-4 left-4">
-                    <a href="/events" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
-                        <i class="fas fa-arrow-left mr-1"></i>BACK
-                    </a>
-                </div>
-                <div class="absolute top-4 right-4">
-                    <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
-                        <i class="fas fa-share mr-1"></i>SHARE
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-8">
-                <!-- Event Header -->
-                <div class="mb-8">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="text-center w-20 flex-shrink-0 border-r-2 border-[var(--color-toxic)] pr-4">
-                            <div class="text-4xl font-bold text-[var(--color-toxic)]">{{formatDay event.date}}</div>
-                            <div class="text-sm text-gray-400 uppercase font-bold">{{formatMonth event.date}}</div>
-                        </div>
-                        <div class="flex-1">
-                            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 uppercase">{{event.name}}</h1>
-                            <p class="text-lg text-[var(--color-toxic)] font-bold mb-2">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                {{event.venue.name}}
+        <!-- Hero Overlay Content -->
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+            <div class="max-w-7xl mx-auto w-full">
+                <!-- Breadcrumb -->
+                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+                    <a href="/events" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">What's On</a>
+                    <span class="text-gray-600 mx-2">/</span>
+                    <span class="text-white">Event</span>
+                </nav>
+
+                <!-- Date + Title -->
+                <div class="flex items-end gap-6 mb-6">
+                    <div class="text-center flex-shrink-0 border-r-2 border-[var(--color-toxic)] pr-6 hidden sm:block">
+                        <div class="text-5xl md:text-6xl font-black text-[var(--color-toxic)] font-display">{{formatDay event.date}}</div>
+                        <div class="text-sm text-gray-300 uppercase font-bold tracking-widest">{{formatMonth event.date}}</div>
+                    </div>
+                    <div class="flex-1">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-3">{{event.name}}</h1>
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg">
+                            <p class="text-[var(--color-toxic)] font-bold">
+                                <i class="fas fa-map-marker-alt mr-2"></i>{{event.venue.name}}
                             </p>
-                            <p class="text-gray-400 font-bold">
-                                <i class="fas fa-clock mr-2"></i>
-                                {{formatDate event.date}}
+                            <p class="text-gray-300 font-bold">
+                                <i class="fas fa-clock mr-2"></i>{{formatDate event.date}}
                             </p>
                         </div>
                     </div>
-                    
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        {{{categoryTags}}}
-                    </div>
                 </div>
 
-                <!-- Event Content -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Content -->
-                    <div class="lg:col-span-2">
-                        {{#if (hasDescription event.description)}}
-                        <div class="neo-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
-                                <i class="fas fa-info-circle mr-3 text-[var(--color-toxic)]"></i>About This Event
-                            </h2>
-                            <div class="text-gray-300 leading-relaxed prose prose-invert max-w-none">
-                                {{{formatDescription event.description}}}
-                            </div>
-                        </div>
-                        {{/if}}
-
-                        <!-- Other Events in Series -->
-                        {{#if hasOtherInstances}}
-                        <div class="neo-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
-                                <i class="fas fa-calendar mr-3 text-[var(--color-toxic)]"></i>Other Events in this Series
-                            </h2>
-                            <div class="space-y-4">
-                                {{#each otherInstances}}
-                                <a href="/event/{{slug}}" class="block border-2 border-white p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-[var(--color-purple)]/10 transition-all duration-200">
-                                    <div class="text-center w-20 flex-shrink-0">
-                                        <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
-                                        <p class="text-lg text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="font-bold text-white text-xl">{{name}}</h4>
-                                        <p class="text-sm text-gray-400">{{formatTime date}}</p>
-                                    </div>
-                                    <div class="text-[var(--color-toxic)]">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </div>
-                                </a>
-                                {{/each}}
-                            </div>
-                        </div>
-                        {{/if}}
-                    </div>
-
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
-
-                        <!-- Action Buttons -->
-                        {{#if event.details.link}}
-                        <div class="neo-card p-6">
-                            <div class="space-y-3">
-                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center">
-                                    <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
-                                </a>
-                            </div>
-                        </div>
-                        {{/if}}
-
-                        <!-- Add to Calendar -->
-                        <div class="neo-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
-                                <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i>Add to Calendar
-                            </h3>
-                            <div class="space-y-3">
-                                <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-outline w-full flex items-center justify-center text-sm">
-                                    <i class="fab fa-google mr-2"></i>GOOGLE CALENDAR
-                                </a>
-                                <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-outline w-full flex items-center justify-center text-sm">
-                                    <i class="fas fa-calendar-plus mr-2"></i>APPLE / OUTLOOK
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Share Event -->
-                        <div class="neo-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
-                                <i class="fas fa-share-alt mr-2 text-[var(--color-toxic)]"></i>Share This Event
-                            </h3>
-                            <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-neo w-full">
-                                <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
-                            </button>
-                        </div>
-                    </div>
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2">
+                    {{{categoryTags}}}
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+            <!-- Primary Content -->
+            <div class="lg:col-span-2 space-y-8">
+                {{#if (hasDescription event.description)}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg prose prose-invert max-w-none">
+                        {{{formatDescription event.description}}}
+                    </div>
+                </section>
+                {{/if}}
+
+                <!-- Other Events in Series -->
+                {{#if hasOtherInstances}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Other Dates
+                    </h2>
+                    <div class="space-y-3">
+                        {{#each otherInstances}}
+                        <a href="/event/{{slug}}" class="block border-2 border-white/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
+                            <div class="text-center w-16 flex-shrink-0">
+                                <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
+                                <p class="text-sm text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-white text-lg">{{name}}</h4>
+                                <p class="text-sm text-gray-400">{{formatTime date}}</p>
+                            </div>
+                            <div class="text-[var(--color-toxic)]">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </a>
+                        {{/each}}
+                    </div>
+                </section>
+                {{/if}}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- Tickets CTA -->
+                {{#if event.details.link}}
+                <div class="neo-card p-6">
+                    <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
+                        <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
+                    </a>
+                </div>
+                {{/if}}
+
+                <!-- Event Details -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">Details</h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-calendar-day mr-1 text-[var(--color-toxic)]"></i> Date</dt>
+                            <dd class="text-white font-semibold text-right">{{formatDateOnly event.date}}</dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-clock mr-1 text-[var(--color-toxic)]"></i> Time</dt>
+                            <dd class="text-white font-semibold text-right">{{formatTime event.date}}</dd>
+                        </div>
+                        {{#if event.isRecurring}}
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-redo mr-1 text-[var(--color-toxic)]"></i> Recurs</dt>
+                            <dd class="text-[var(--color-toxic)] font-semibold text-right">{{event.recurringInfo}}</dd>
+                        </div>
+                        {{/if}}
+                        {{#if event.price}}
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-tag mr-1 text-[var(--color-toxic)]"></i> Price</dt>
+                            <dd class="text-white font-semibold text-right">{{event.price}}</dd>
+                        </div>
+                        {{/if}}
+                        {{#if event.ageRestriction}}
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-id-card mr-1 text-[var(--color-toxic)]"></i> Age</dt>
+                            <dd class="text-white font-semibold text-right">{{event.ageRestriction}}</dd>
+                        </div>
+                        {{/if}}
+                        {{#if event.organizer}}
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-user mr-1 text-[var(--color-toxic)]"></i> Organizer</dt>
+                            <dd class="text-white font-semibold text-right">{{event.organizer}}</dd>
+                        </div>
+                        {{/if}}
+                    </dl>
+                </div>
+
+                <!-- Location -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-map-marker-alt mr-2 text-[var(--color-toxic)]"></i>Venue
+                    </h3>
+                    <p class="text-white font-bold text-lg mb-1">{{event.venue.name}}</p>
+                    {{#if event.venue.address}}
+                    <p class="text-gray-400 text-sm mb-4">{{event.venue.address}}</p>
+                    {{/if}}
+                    {{#if event.venue.slug}}
+                    <a href="/venue/{{event.venue.slug}}" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
+                        <i class="fas fa-external-link-alt mr-2"></i>VIEW VENUE
+                    </a>
+                    {{/if}}
+                </div>
+
+                <!-- Add to Calendar -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i>Calendar
+                    </h3>
+                    <div class="space-y-3">
+                        <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
+                            <i class="fab fa-google mr-2"></i>GOOGLE CALENDAR
+                        </a>
+                        <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
+                            <i class="fas fa-calendar-plus mr-2"></i>APPLE / OUTLOOK
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Share -->
+                <div class="neo-card p-6">
+                    <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-outline w-full flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
+                    </button>
+                </div>
+
+                {{#if event.accessibility}}
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 uppercase font-display">
+                        <i class="fas fa-universal-access mr-2 text-[var(--color-toxic)]"></i>Accessibility
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed">{{event.accessibility}}</p>
+                </div>
+                {{/if}}
+            </aside>
+        </div>
     </main>
+
+    <!-- Sticky mobile ticket bar -->
+    {{#if event.details.link}}
+    <div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black border-t-4 border-[var(--color-toxic)] p-3">
+        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center">
+            <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
+        </a>
+    </div>
+    {{/if}}
 
     <!-- Footer -->
     <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
@@ -511,6 +580,11 @@ exports.handler = async function (event, context) {
                 menu.classList.toggle('hidden');
                 menu.classList.toggle('flex');
             });
+        }
+
+        // Add body class if sticky ticket bar exists
+        if (document.querySelector('.fixed.bottom-0')) {
+            document.body.classList.add('has-ticket-bar');
         }
     </script>
 </body>
@@ -632,8 +706,8 @@ exports.handler = async function (event, context) {
             similarEvents: similarEvents,
             hasOtherInstances: otherInstances.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
-            categoryTags: (eventData.category || []).map(tag => 
-                '<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">' + tag + '</span>'
+            categoryTags: (eventData.category || []).map(tag =>
+                '<span class="category-tag">' + tag + '</span>'
             ).join('')
         };
 
