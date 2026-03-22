@@ -338,11 +338,11 @@ exports.handler = async function (event, context) {
         <!-- Hero Image -->
         <div class="absolute inset-0">
             {{#if event.image}}
-            <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
+            <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
             {{else}}
             <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
             {{/if}}
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
         </div>
 
         <!-- Hero Overlay Content -->
@@ -382,18 +382,21 @@ exports.handler = async function (event, context) {
         </div>
     </section>
 
+    <!-- Pride divider -->
+    <div class="h-[6px] progress-pride-bg"></div>
+
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
             <!-- Primary Content -->
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 space-y-10">
                 {{#if (hasDescription event.description)}}
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
                         <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
                     </h2>
-                    <div class="text-gray-300 leading-relaxed text-lg prose prose-invert max-w-none">
+                    <div class="text-gray-300 leading-relaxed text-lg max-w-none" style="line-height: 1.8;">
                         {{{formatDescription event.description}}}
                     </div>
                 </section>

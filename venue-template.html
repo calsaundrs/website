@@ -5,692 +5,355 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{VENUE_NAME}} - BrumOutLoud</title>
     <meta name="description" content="{{VENUE_DESCRIPTION}}">
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="{{VENUE_NAME}}">
     <meta property="og:description" content="{{VENUE_DESCRIPTION}}">
     <meta property="og:type" content="business.business">
     <meta property="og:url" content="https://brumoutloud.co.uk/venue/{{VENUE_SLUG}}">
     <meta property="og:image" content="{{VENUE_IMAGE_URL}}">
-    
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{VENUE_NAME}}">
     <meta name="twitter:description" content="{{VENUE_DESCRIPTION}}">
     <meta name="twitter:image" content="{{VENUE_IMAGE_URL}}">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
+
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    
+
     <style>
-        /* Base Styles */
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #FFFFFF;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
+        }
         body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-        }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
-            letter-spacing: 0.05em;
-        }
-
-        /* Updated Core Colour Palette Classes */
-        .accent-color { color: #E83A99; }
-        .bg-accent-color { background-color: #E83A99; }
-        .border-accent-color { border-color: #E83A99; }
-        .accent-color-secondary { color: #8B5CF6; }
-        .bg-accent-color-secondary { background-color: #8B5CF6; }
-
-        /* Modern Glassmorphism Components */
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1.25rem;
-        }
-
-        .venue-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Design System Section Styles */
-        .ds-section {
-            margin-bottom: 3rem;
-        }
-
-        /* Mobile-specific heading gradient fix */
-        @media (max-width: 768px) {
-            .heading-gradient {
-                background: none;
-                -webkit-background-clip: initial;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                color: #FFFFFF;
-                text-shadow: 0 0 10px rgba(232, 58, 153, 0.5);
-            }
-        }
-
-        /* Loading Animation */
-        .loader {
-            border: 3px solid rgba(75, 85, 99, 0.3);
-            border-top: 3px solid #E83A99;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-        }
-    </style>
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
         }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+
+        .neo-card {
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0 var(--color-pink);
+        }
+
+        .btn-neo {
+            background: var(--color-toxic);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+        }
+        .btn-neo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-pink);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--color-purple);
+            border-color: var(--color-purple);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--color-toxic);
+            color: var(--color-toxic);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sticker {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
         }
     </style>
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    </head>
+</head>
 <body>
     <!-- Header -->
-        <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY / SAFE SPACE</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
-                    aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative w-full" style="min-height: 50vh;">
+        <div class="absolute inset-0">
+            <img src="{{VENUE_IMAGE_URL}}" alt="{{VENUE_NAME}}" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
+        </div>
+
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+            <div class="max-w-7xl mx-auto w-full">
+                <!-- Breadcrumb -->
+                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
+                    <span class="text-gray-600 mx-2">/</span>
+                    <span class="text-white">{{VENUE_NAME}}</span>
+                </nav>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">{{VENUE_NAME}}</h1>
+
+                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
+                    <i class="fas fa-map-marker-alt mr-2"></i>{{VENUE_ADDRESS}}
+                </p>
+
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2">
+                    {{VENUE_TAGS}}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pride divider -->
+    <div class="h-[6px] progress-pride-bg"></div>
+
     <!-- Main Content -->
-    <main class="mx-auto px-8 py-8 max-w-4xl">
-        <div class="venue-card rounded-xl overflow-hidden">
-            <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
-                <img src="{{VENUE_IMAGE_URL}}" 
-                     alt="{{VENUE_NAME}}" 
-                     class="w-full h-full object-cover">
-                <div class="absolute top-4 right-4">
-                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-share mr-1"></i>Share
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+
+            <!-- Primary Content -->
+            <div class="lg:col-span-2 space-y-10">
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>{{VENUE_DESCRIPTION}}</p>
+                    </div>
+                </section>
+
+                <!-- Upcoming Events -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Upcoming Events
+                    </h2>
+                    <div id="events-container">
+                        <div class="text-center py-8">
+                            <div class="animate-spin h-8 w-8 border-b-2 border-[var(--color-toxic)] mx-auto"></div>
+                            <p class="text-gray-400 mt-2">Loading events...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- Visit Website CTA -->
+                <div class="neo-card p-6">
+                    <a href="{{VENUE_WEBSITE_URL}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
+                        <i class="fas fa-external-link-alt mr-2"></i>VISIT WEBSITE
+                    </a>
+                </div>
+
+                <!-- Opening Hours -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
+                    </h3>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        {{VENUE_OPENING_HOURS}}
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
+                    </h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
+                            <dd class="text-gray-300">{{VENUE_ADDRESS}}</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Share -->
+                <div class="neo-card p-6">
+                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
                     </button>
                 </div>
-            </div>
-            
-            <div class="p-8">
-                <!-- Venue Header -->
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-white mb-4">{{VENUE_NAME}}</h1>
-                    <p class="text-xl text-gray-300 mb-4">
-                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
-                        {{VENUE_ADDRESS}}
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        {{VENUE_TAGS}}
-                    </div>
-                </div>
-
-                <!-- Venue Content -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Content -->
-                    <div class="lg:col-span-2">
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Venue
-                            </h2>
-                            <p class="text-gray-300 leading-relaxed mb-4">
-                                {{VENUE_DESCRIPTION}}
-                            </p>
-                            <p class="text-gray-300 leading-relaxed">
-                                {{VENUE_ADDITIONAL_DESCRIPTION}}
-                            </p>
-                        </div>
-
-                        <!-- Gallery -->
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
-                            </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-2xl text-gray-600"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-4 text-center">
-                                Please note: these images are sourced from the venue's Google Places listing. We do not have control over which photos are displayed.
-                            </p>
-                        </div>
-
-                        <!-- Upcoming Events -->
-                        <div class="venue-card p-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Upcoming Events
-                            </h2>
-                            <div id="events-container" class="text-center py-8">
-                                <div class="loader mx-auto mb-4"></div>
-                                <p class="text-gray-400">Loading events...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
-                        <!-- Current Status -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
-                            </h3>
-                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
-                                <p class="font-bold text-lg">Open</p>
-                                <p class="text-sm">{{VENUE_STATUS_TEXT}}</p>
-                            </div>
-                        </div>
-
-                        <!-- Opening Hours -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
-                            </h3>
-                            <div class="space-y-2 text-gray-300 text-sm">
-                                {{VENUE_OPENING_HOURS}}
-                            </div>
-                        </div>
-
-                        <!-- Contact Info -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-address-card mr-2 text-accent-color"></i>Contact Information
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center gap-3 text-gray-400">
-                                    <i class="fas fa-globe w-5"></i>
-                                    <a href="{{VENUE_WEBSITE_URL}}" target="_blank" rel="noopener noreferrer" class="text-accent-color hover:underline">{{VENUE_WEBSITE_DISPLAY}}</a>
-                                </div>
-                                <div class="flex items-center gap-3 text-gray-400">
-                                    <i class="fas fa-map-marker-alt w-5"></i>
-                                    <span>{{VENUE_ADDRESS}}</span>
-                                </div>
-                                <div class="flex items-center gap-3 text-gray-400">
-                                    <i class="fas fa-clock w-5"></i>
-                                    <span>{{VENUE_HOURS_SUMMARY}}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="venue-card p-6">
-                            <div class="space-y-3">
-                                <a href="{{VENUE_WEBSITE_URL}}" target="_blank" rel="noopener noreferrer" 
-                                   class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
-                                    <i class="fas fa-external-link-alt mr-2"></i>Visit Website
-                                </a>
-                                <a href="/all-venues" class="btn-secondary btn-back text-white w-full py-3 px-6 rounded-lg font-bold text-center block">
-                                    <i class="fas fa-arrow-left arrow mr-2"></i>Back to Venues
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </aside>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8 mt-16">
-        <div class="container mx-auto grid md:grid-cols-2">
-            <div>
-                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white transition-colors">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white transition-colors">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white transition-colors">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white transition-colors">ADMIN</a></li>
-                    </ul>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white transition-colors">Terms and Conditions</a></li>
-                    </ul>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Load events for this venue with separate sections for recurring and one-off events
+        // Mobile menu toggle
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu').classList.toggle('hidden');
+            document.getElementById('menu').classList.toggle('flex');
+        });
+
+        // Share button
+        document.getElementById('share-button').addEventListener('click', function() {
+            var btn = this;
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{VENUE_NAME}} - Brum Outloud',
+                    text: '{{VENUE_DESCRIPTION}}',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                var original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
+                btn.classList.add('!border-green-400', '!text-green-400');
+                setTimeout(function() {
+                    btn.innerHTML = original;
+                    btn.classList.remove('!border-green-400', '!text-green-400');
+                }, 2000);
+            }
+        });
+
+        // Load events for this venue
         async function loadVenueEvents() {
             try {
-                const response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug={{VENUE_SLUG}}');
+                var response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug={{VENUE_SLUG}}');
                 if (!response.ok) throw new Error('Failed to fetch events');
-                const data = await response.json();
-                
-                const eventsContainer = document.getElementById('events-container');
-                
-                if (data.success && data.events.length > 0) {
-                    // Separate recurring and one-off events
-                    const recurringEvents = data.events.filter(event => event.isRecurringGroup || event.isRecurring || event.recurringInfo || event.recurringPattern);
-                    const oneOffEvents = data.events.filter(event => !event.isRecurringGroup && !event.isRecurring && !event.recurringInfo && !event.recurringPattern);
-                    
-                    let eventsHTML = '';
-                    
-                    // Recurring Events Section
-                    if (recurringEvents.length > 0) {
-                        eventsHTML += `
-                            <section class="ds-section mb-12">
-                                <div class="card-bg p-8 rounded-2xl">
-                                    <h3 class="font-anton text-3xl text-white mb-6 flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-full flex items-center justify-center mr-4">
-                                            <i class="fas fa-redo text-green-400 text-xl"></i>
-                                        </div>
-                                        Regular Events
-                                        <span class="ml-4 bg-green-500/20 text-green-300 text-sm px-4 py-2 rounded-full font-semibold">${recurringEvents.length} event${recurringEvents.length !== 1 ? 's' : ''}</span>
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        ${recurringEvents.map(event => renderEventCard(event, true)).join('')}
-                                    </div>
-                                </div>
-                            </section>
-                        `;
-                    }
-                    
-                    // One-off Events Section
-                    if (oneOffEvents.length > 0) {
-                        eventsHTML += `
-                            <section class="ds-section mb-12">
-                                <div class="card-bg p-8 rounded-2xl">
-                                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-full flex items-center justify-center mr-4">
-                                            <i class="fas fa-calendar-day text-blue-400 text-xl"></i>
-                                        </div>
-                                        Upcoming Events
-                                        <span class="ml-4 bg-blue-500/20 text-blue-300 text-sm px-4 py-2 rounded-full font-semibold">${oneOffEvents.length} event${oneOffEvents.length !== 1 ? 's' : ''}</span>
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        ${oneOffEvents.map(event => renderEventCard(event, false)).join('')}
-                                    </div>
-                                </div>
-                            </section>
-                        `;
-                    }
-                    
-                    eventsContainer.innerHTML = eventsHTML;
-                    
+                var data = await response.json();
+
+                var eventsContainer = document.getElementById('events-container');
+
+                if (data.success && data.events && data.events.length > 0) {
+                    var html = '<div class="space-y-3">';
+                    data.events.forEach(function(event) {
+                        var d = new Date(event.date);
+                        var day = d.getDate();
+                        var month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
+                        var time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-white/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
+                        html += '<div class="text-center w-16 flex-shrink-0">';
+                        html += '<p class="text-2xl font-bold text-[var(--color-toxic)]">' + day + '</p>';
+                        html += '<p class="text-sm text-gray-400 uppercase font-bold">' + month + '</p>';
+                        html += '</div>';
+                        html += '<div class="flex-grow">';
+                        html += '<h4 class="font-bold text-white text-lg">' + event.name + '</h4>';
+                        html += '<p class="text-sm text-gray-400">' + time + '</p>';
+                        html += '</div>';
+                        html += '<div class="text-[var(--color-toxic)]"><i class="fas fa-arrow-right"></i></div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                    eventsContainer.innerHTML = html;
                 } else {
-                    eventsContainer.innerHTML = `
-                        <div class="text-center py-16">
-                            <div class="w-32 h-32 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-8">
-                                <i class="fas fa-calendar-times text-4xl text-gray-600"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-white mb-4">No Upcoming Events</h3>
-                            <p class="text-gray-400 mb-8 text-lg">Check back soon for new events, or try adjusting your filters.</p>
-                            <a href="/promoter-submit-new.html" class="btn-primary text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center text-lg">
-                                <i class="fas fa-plus mr-3"></i>Submit an Event
-                            </a>
-                        </div>
-                    `;
+                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-white/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
                 }
             } catch (error) {
                 console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = `
-                    <div class="text-center py-16">
-                        <div class="w-32 h-32 bg-gradient-to-br from-red-600/20 to-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-8">
-                            <i class="fas fa-exclamation-triangle text-4xl text-red-500"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold text-white mb-4">Error Loading Events</h3>
-                        <p class="text-gray-400 text-lg">We're having trouble loading events right now. Please try again later.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        function renderEventCard(event, isRecurring) {
-            const tagsHTML = event.category && event.category.length > 0 ? 
-                event.category.map(cat => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${cat}</span>`).join('') : '';
-            const imageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80';
-            const isBoosted = event.promotion && event.promotion.boosted;
-            const venueName = event.venueName || 'TBC';
-            
-            let eventDate = new Date(event.date);
-            let formattedDate = eventDate.toLocaleDateString('en-GB', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-            });
-
-            // Handle recurring event display
-            let recurringBadge = '';
-            
-            if (isRecurring) {
-                if (event.isRecurringGroup) {
-                    // This is a grouped recurring event
-                    const pattern = event.recurringPattern;
-                    const instanceCount = event.instances ? event.instances.length : 0;
-                    const nextOccurrence = event.nextOccurrence ? new Date(event.nextOccurrence) : null;
-                    
-                    // Create pattern label
-                    let patternLabel = '';
-                    switch (pattern) {
-                        case 'weekly':
-                            patternLabel = 'Weekly';
-                            break;
-                        case 'monthly':
-                            patternLabel = 'Monthly';
-                            break;
-                        case 'daily':
-                            patternLabel = 'Daily';
-                            break;
-                        case 'bi-weekly':
-                            patternLabel = 'Bi-weekly';
-                            break;
-                        case 'yearly':
-                            patternLabel = 'Yearly';
-                            break;
-                        default:
-                            patternLabel = 'Recurring';
-                    }
-                    
-                    // Remove instance count - users don't need to know how many upcoming
-                    // if (instanceCount > 1) {
-                    //     patternLabel += ` (${instanceCount} upcoming)`;
-                    // }
-                    
-                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
-                    
-                    // Update date to show next occurrence
-                    if (nextOccurrence) {
-                        formattedDate = nextOccurrence.toLocaleDateString('en-GB', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            year: 'numeric' 
-                        });
-                    }
-                    
-                } else if (event.recurringInfo || event.recurringPattern) {
-                    // Individual recurring event
-                    const pattern = event.recurringPattern || extractRecurringPattern(event.recurringInfo);
-                    let patternLabel = '';
-                    
-                    switch (pattern) {
-                        case 'weekly':
-                            patternLabel = 'Weekly';
-                            break;
-                        case 'monthly':
-                            patternLabel = 'Monthly';
-                            break;
-                        case 'daily':
-                            patternLabel = 'Daily';
-                            break;
-                        case 'bi-weekly':
-                            patternLabel = 'Bi-weekly';
-                            break;
-                        case 'yearly':
-                            patternLabel = 'Yearly';
-                            break;
-                        default:
-                            patternLabel = 'Recurring';
-                    }
-                    
-                    recurringBadge = `<div class="absolute top-4 right-4 z-10"><span class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${patternLabel}</span></div>`;
-                }
-            }
-
-            return `
-                <div class="venue-card rounded-xl overflow-hidden relative">
-                    ${isBoosted ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Featured</span></div>' : ''}
-                    ${recurringBadge}
-                    <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                        <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=600&fit=crop&crop=center&auto=format&q=80'">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-gray-400">${formattedDate}</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mb-2 text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3rem; line-height: 1.5rem;">${event.name}</h3>
-                        <p class="text-gray-400 text-sm mb-3 text-left">${venueName}</p>
-                        <div class="flex gap-1 mb-4 overflow-hidden">
-                            ${tagsHTML}
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                <i class="fas fa-eye mr-1"></i>View Details
-                            </a>
-                            <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm">
-                                <i class="fas fa-share"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-        }
-
-        // Helper function to extract recurring pattern (fallback)
-        function extractRecurringPattern(recurringInfo) {
-            if (!recurringInfo) return null;
-            
-            const text = recurringInfo.toLowerCase();
-            if (text.includes('weekly') || text.includes('every week')) {
-                return 'weekly';
-            } else if (text.includes('monthly') || text.includes('every month')) {
-                return 'monthly';
-            } else if (text.includes('daily') || text.includes('every day')) {
-                return 'daily';
-            } else if (text.includes('bi-weekly') || text.includes('every two weeks')) {
-                return 'bi-weekly';
-            } else if (text.includes('yearly') || text.includes('annual')) {
-                return 'yearly';
-            } else {
-                return 'recurring';
+                document.getElementById('events-container').innerHTML = '<div class="text-center py-12 border-2 border-white/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
             }
         }
 
-        // Load events when page loads
         document.addEventListener('DOMContentLoaded', loadVenueEvents);
     </script>
 </body>

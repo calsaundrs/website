@@ -559,8 +559,8 @@
 
     <main class="container mx-auto px-4 py-12">
         <div class="text-center mb-12">
-            <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-                LGBTQ+ <span class="accent-color">VENUES</span> IN BIRMINGHAM
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black uppercase font-display misprint leading-none mb-4">
+                LGBTQ+ <span class="text-[var(--color-toxic)]">VENUES</span><br>IN BIRMINGHAM
             </h1>
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the best LGBTQ+ friendly bars, clubs, and spaces
                 in Birmingham. From iconic venues to hidden gems, find your perfect queer space.</p>
@@ -779,48 +779,76 @@
                     </div>
                 </div>
             
-                <div class="venue-card p-0 group" 
+                <div class="venue-card p-0 group"
                      onclick="window.location.href='/venue/equator-bar'">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="item-card-image w-full h-full object-cover">
                     </div>
                     <div class="p-6">
                         <h3 class="text-2xl font-bold mb-3">Equator Bar</h3>
-                        
-        <!-- Venue Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="venue-grid">
-            <!-- VENUES_GRID_START -->
-            <!-- VENUES_GRID_SSG_PLACEHOLDER -->
-            <!-- VENUES_GRID_END -->
-        </div>
-                    <div class="flex flex-wrap gap-4 md:gap-6 font-bold uppercase tracking-widest md:justify-end">
-                        <a href="/events.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
-                        <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
-                        <a href="/community.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
-                        <a href="/contact.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
-                        <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
-                    </div>
-                    
-                    <div class="flex gap-6 font-bold text-xs uppercase tracking-widest md:justify-end mt-4">
-                        <a href="/privacy-policy.html" class="hover:text-[var(--color-toxic)] transition-colors">Privacy Policy</a>
-                        <a href="/terms-and-conditions.html" class="hover:text-[var(--color-toxic)] transition-colors">Terms & Conditions</a>
-                    </div>
-                    
-                    <div class="md:text-right mt-8">
-                        <div class="flex md:justify-end gap-4 mb-4">
-                            <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
-                                <i class="fab fa-instagram"></i>
-                            </a>
+
+                            <p class="text-[var(--color-toxic)] font-bold text-sm mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2"></i>133 Hurst Street, Birmingham, B5 6SE
+                            </p>
+
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            A relaxed and sophisticated LGBTQ+ bar; Perfect for pre-club drinks and cocktails.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
-                        <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
-                        <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
-                        <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-eye mr-2"></i>VIEW VENUE
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+        </div>
+
+        <!-- No venues message -->
+        <div id="no-venues-message" class="hidden text-center py-16">
+            <i class="fas fa-store-slash text-4xl text-gray-600 mb-4 block"></i>
+            <h3 class="text-2xl font-bold text-white mb-2 uppercase font-display">No Venues Found</h3>
+            <p class="text-gray-400">Please try again later.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                </div>
             </div>
-        </footer>
-    </div>
+        </div>
+    </footer>
 
     <script>
         // --- Global State ---
@@ -960,37 +988,23 @@
             }
 
             venueGrid.innerHTML = venuesToDisplay.map(venue => {
-                // Debug: Log venue data for debugging
-                console.log('Rendering venue:', venue.name, 'slug:', venue.slug, 'link will be:', `/venue/${venue.slug}`);
-
-                const tagsHTML = (venue.tags || venue.category || []).length > 0 ?
-                    (venue.tags || venue.category || []).map(tag => `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full flex-shrink-0">${tag}</span>`).join('') : '';
+                const tagsHTML = (venue.tags || venue.category || []).map(tag =>
+                    `<span class="category-tag">${tag}</span>`
+                ).join('');
                 const imageUrl = venue.image && venue.image.url ? venue.image.url : 'https://placehold.co/400x300/1e1e1e/EAEAEA?text=Venue';
-                const isPopular = venue.popular || false;
-                const venueType = venue.type || 'venue';
 
                 return `
-                    <div class="venue-card rounded-xl overflow-hidden relative flex flex-col group cursor-pointer" onclick="window.location.href='/venue/${venue.slug}'">
-                        ${isPopular ? '<div class="absolute top-4 left-4 z-10"><span class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-star mr-1"></i>Popular</span></div>' : ''}
-                        <div class="aspect-2-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center overflow-hidden">
-                            <img src="${imageUrl}" alt="${venue.name}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300">
+                    <div class="venue-card p-0 group cursor-pointer" onclick="window.location.href='/venue/${venue.slug}'">
+                        <div class="item-card-image-container relative overflow-hidden bg-black">
+                            <img src="${imageUrl}" alt="${venue.name}" class="item-card-image w-full h-full object-cover">
                         </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-bold text-white mb-2 text-left group-hover:text-accent-color transition-colors">${venue.name}</h3>
-                            <p class="text-gray-400 text-sm mb-3 text-left">
-                                <i class="fas fa-map-marker-alt mr-1"></i>${venue.address || 'Address TBC'}
-                            </p>
-                            <p class="text-gray-300 text-sm mb-4 text-left line-clamp-2">${venue.description || 'No description available.'}</p>
-                            <div class="flex gap-1 mb-4 overflow-hidden">
-                                ${tagsHTML}
-                            </div>
-                            <div class="flex justify-between items-center mt-auto">
-                                <span class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-eye mr-1"></i>View Venue
-                                </span>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="event.stopPropagation(); window.location.href='/events?venue=${venue.slug}'">
-                                    <i class="fas fa-calendar"></i>
-                                </button>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">${venue.name}</h3>
+                            ${venue.address ? `<p class="text-[var(--color-toxic)] font-bold text-sm mb-3 flex items-center"><i class="fas fa-map-marker-alt mr-2"></i>${venue.address}</p>` : ''}
+                            <p class="text-gray-300 text-sm mb-6 line-clamp-2">${venue.description || 'No description available.'}</p>
+                            <div class="flex flex-wrap gap-2 mb-6">${tagsHTML}</div>
+                            <div class="flex gap-4">
+                                <button class="btn-primary flex-1"><i class="fas fa-eye mr-2"></i>VIEW VENUE</button>
                             </div>
                         </div>
                     </div>`;
