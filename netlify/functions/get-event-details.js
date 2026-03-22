@@ -334,19 +334,19 @@ exports.handler = async function (event, context) {
     </header>
 
     <!-- Hero Section - Full Bleed -->
-    <section class="relative w-full" style="min-height: 50vh;">
+    <section class="relative w-full" style="min-height: 35vh;">
         <!-- Hero Image -->
         <div class="absolute inset-0">
             {{#if event.image}}
-            <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.6) blur(8px); transform: scale(1.05);">
             {{else}}
             <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
             {{/if}}
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/80 to-[var(--color-bg)]/40"></div>
         </div>
 
         <!-- Hero Overlay Content -->
-        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 35vh;">
             <div class="max-w-7xl mx-auto w-full">
                 <!-- Breadcrumb -->
                 <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
@@ -428,6 +428,12 @@ exports.handler = async function (event, context) {
 
             <!-- Sidebar -->
             <aside class="space-y-6">
+                {{#if event.image}}
+                <div class="neo-card overflow-hidden">
+                    <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-auto object-contain">
+                </div>
+                {{/if}}
+
                 <!-- Tickets CTA -->
                 {{#if event.details.link}}
                 <div class="neo-card p-6">
