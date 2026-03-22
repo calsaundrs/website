@@ -205,104 +205,113 @@ exports.handler = async function (event, context) {
     
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     
     <style>
-        /* Base Styles */
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #FFFFFF;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
+        }
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
+        }
+
+        .neo-card {
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0 var(--color-pink);
+        }
+
+        .btn-neo {
+            background: var(--color-toxic);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+        }
+        .btn-neo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-pink);
         }
 
-        /* Updated Core Colour Palette Classes */
-        .accent-color { color: #E83A99; }
-        .bg-accent-color { background-color: #E83A99; }
-        .border-accent-color { border-color: #E83A99; }
-        .accent-color-secondary { color: #8B5CF6; }
-        .bg-accent-color-secondary { background-color: #8B5CF6; }
-
-        /* Modern Glassmorphism Components */
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1.25rem;
+        .btn-outline {
+            background: transparent;
+            color: var(--color-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--color-purple);
+            border-color: var(--color-purple);
         }
 
-        .venue-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .sticker {
             display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
         }
-        .status-badge.approved {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--color-toxic);
+            color: var(--color-toxic);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                     onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY / SAFE SPACE</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="text-white text-2xl">
@@ -310,12 +319,12 @@ exports.handler = async function (event, context) {
                 </button>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
@@ -323,22 +332,24 @@ exports.handler = async function (event, context) {
     <main class="mx-auto px-4 py-8 max-w-4xl">
 
         <!-- Event Details -->
-        <div class="venue-card rounded-xl overflow-hidden">
+        <div class="neo-card overflow-hidden">
             <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+            <div class="aspect-[2/1] bg-black flex items-center justify-center relative">
                 {{#if event.image}}
                 <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
                 {{else}}
-                <i class="fas fa-image text-6xl text-gray-600"></i>
+                <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/20 to-[var(--color-pink)]/20 flex items-center justify-center">
+                    <i class="fas fa-image text-6xl text-gray-700"></i>
+                </div>
                 {{/if}}
                 <div class="absolute top-4 left-4">
-                    <a href="/events.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-arrow-left mr-1"></i>Back
+                    <a href="/events" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
+                        <i class="fas fa-arrow-left mr-1"></i>BACK
                     </a>
                 </div>
                 <div class="absolute top-4 right-4">
-                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-share mr-1"></i>Share
+                    <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
+                        <i class="fas fa-share mr-1"></i>SHARE
                     </button>
                 </div>
             </div>
@@ -347,17 +358,17 @@ exports.handler = async function (event, context) {
                 <!-- Event Header -->
                 <div class="mb-8">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="text-center w-20 flex-shrink-0">
-                            <div class="text-4xl font-bold text-white">{{formatDay event.date}}</div>
-                            <div class="text-sm text-gray-400">{{formatMonth event.date}}</div>
+                        <div class="text-center w-20 flex-shrink-0 border-r-2 border-[var(--color-toxic)] pr-4">
+                            <div class="text-4xl font-bold text-[var(--color-toxic)]">{{formatDay event.date}}</div>
+                            <div class="text-sm text-gray-400 uppercase font-bold">{{formatMonth event.date}}</div>
                         </div>
                         <div class="flex-1">
-                            <h1 class="text-4xl font-bold text-white mb-2">{{event.name}}</h1>
-                            <p class="text-xl text-gray-300 mb-2">
-                                <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 uppercase">{{event.name}}</h1>
+                            <p class="text-lg text-[var(--color-toxic)] font-bold mb-2">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
                                 {{event.venue.name}}
                             </p>
-                            <p class="text-gray-400">
+                            <p class="text-gray-400 font-bold">
                                 <i class="fas fa-clock mr-2"></i>
                                 {{formatDate event.date}}
                             </p>
@@ -374,9 +385,9 @@ exports.handler = async function (event, context) {
                     <!-- Main Content -->
                     <div class="lg:col-span-2">
                         {{#if (hasDescription event.description)}}
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Event
+                        <div class="neo-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
+                                <i class="fas fa-info-circle mr-3 text-[var(--color-toxic)]"></i>About This Event
                             </h2>
                             <div class="text-gray-300 leading-relaxed prose prose-invert max-w-none">
                                 {{{formatDescription event.description}}}
@@ -386,22 +397,22 @@ exports.handler = async function (event, context) {
 
                         <!-- Other Events in Series -->
                         {{#if hasOtherInstances}}
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-calendar mr-3 text-accent-color"></i>Other Events in this Series
+                        <div class="neo-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
+                                <i class="fas fa-calendar mr-3 text-[var(--color-toxic)]"></i>Other Events in this Series
                             </h2>
                             <div class="space-y-4">
                                 {{#each otherInstances}}
-                                <a href="/event/{{slug}}" class="venue-card p-4 flex items-center space-x-4 hover:bg-gray-800 transition-colors duration-200 block">
+                                <a href="/event/{{slug}}" class="block border-2 border-white p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-[var(--color-purple)]/10 transition-all duration-200">
                                     <div class="text-center w-20 flex-shrink-0">
-                                        <p class="text-2xl font-bold text-white">{{formatDay date}}</p>
-                                        <p class="text-lg text-gray-400">{{formatMonth date}}</p>
+                                        <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
+                                        <p class="text-lg text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
                                     </div>
                                     <div class="flex-grow">
                                         <h4 class="font-bold text-white text-xl">{{name}}</h4>
                                         <p class="text-sm text-gray-400">{{formatTime date}}</p>
                                     </div>
-                                    <div class="text-accent-color">
+                                    <div class="text-[var(--color-toxic)]">
                                         <i class="fas fa-arrow-right"></i>
                                     </div>
                                 </a>
@@ -416,37 +427,37 @@ exports.handler = async function (event, context) {
 
                         <!-- Action Buttons -->
                         {{#if event.details.link}}
-                        <div class="venue-card p-6">
+                        <div class="neo-card p-6">
                             <div class="space-y-3">
-                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold flex items-center justify-center">
-                                    <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
+                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center">
+                                    <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
                                 </a>
                             </div>
                         </div>
                         {{/if}}
 
                         <!-- Add to Calendar -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-calendar-plus mr-2 text-accent-color"></i>Add to Calendar
+                        <div class="neo-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
+                                <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i>Add to Calendar
                             </h3>
                             <div class="space-y-3">
-                                <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
-                                    <i class="fab fa-google mr-2"></i>Google Calendar
+                                <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-outline w-full flex items-center justify-center text-sm">
+                                    <i class="fab fa-google mr-2"></i>GOOGLE CALENDAR
                                 </a>
-                                <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-secondary text-white w-full py-2 px-4 rounded-lg text-sm flex items-center justify-center">
-                                    <i class="fas fa-calendar-plus mr-2"></i>Apple/Outlook/Other
+                                <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-outline w-full flex items-center justify-center text-sm">
+                                    <i class="fas fa-calendar-plus mr-2"></i>APPLE / OUTLOOK
                                 </a>
                             </div>
                         </div>
 
                         <!-- Share Event -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Event
+                        <div class="neo-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
+                                <i class="fas fa-share-alt mr-2 text-[var(--color-toxic)]"></i>Share This Event
                             </h3>
-                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                <i class="fas fa-share-alt mr-2"></i>Share Event
+                            <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-neo w-full">
+                                <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
                             </button>
                         </div>
                     </div>
@@ -456,36 +467,52 @@ exports.handler = async function (event, context) {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8">
-        <div class="container mx-auto grid md:grid-cols-2">
-            <div>
-                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                 </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                    </ul>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
                 </div>
-                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                    </ul>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
+                        <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+    </script>
 </body>
 </html>`;
 

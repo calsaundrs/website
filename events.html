@@ -391,9 +391,9 @@
         /* Event Card Styles */
         .event-card {
             background-color: #000000;
-            border: 4px solid white;
+            border: 3px solid white;
             border-radius: 0;
-            box-shadow: 8px 8px 0px var(--color-purple);
+            box-shadow: 6px 6px 0px var(--color-purple);
             transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
@@ -417,7 +417,7 @@
         .event-card:hover {
             transform: translateY(-5px) rotate(1deg);
             border-color: var(--color-toxic);
-            box-shadow: 12px 12px 0px var(--color-pink);
+            box-shadow: 8px 8px 0px var(--color-pink);
         }
         .event-card:hover::before {
             background: rgba(0,0,0,0.2);
@@ -430,7 +430,7 @@
         .event-card img {
             transition: transform 0.6s ease;
             transform-origin: center center;
-            border-bottom: 4px solid white;
+            border-bottom: 3px solid white;
         }
 
         .event-card:hover img {
@@ -442,16 +442,16 @@
             font-family: 'Syne', sans-serif;
             text-transform: uppercase;
             font-weight: 800;
-            font-size: 1.5rem;
-            line-height: 1.2;
-            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            line-height: 1.25;
+            margin-bottom: 0.5rem;
             text-align: left;
         }
 
         .event-card p {
             color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
         }
 
         .event-card .btn-primary,
@@ -817,7 +817,6 @@
         </nav>
         
         <div id="menu"
-        <div id="menu"
             class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
             <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
             <a href="/all-venues.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">VENUES</a>
@@ -958,7 +957,674 @@
 
             <!-- Event Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="event-grid">
-                <!-- Events will be populated dynamically -->
+                <!-- EVENTS_GRID_SSG_PLACEHOLDER -->
+
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/big-brum-boogie-x-queer-tango-birmingham-2026-03-29'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113504/brumoutloud/events/c8imjgyovhm7zz4uvhhq.jpg" alt="Big Brum Boogie x Queer Tango Birmingham" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                29 Mar 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                15:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Big Brum Boogie x Queer Tango Birmingham</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Venue TBC
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Big Brum Boogie is Birmingham's queer social dance event where there are no fixed gender roles and dance is truly for everyone. This special edition features a Beginners Argentine Tango class led by Queer Tango Birmingham at 2pm, followed by social dancing at 3pm. No partner or experience needed. Fully accessible and welcoming to all.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/xxl-birmingham-nightingale-club-2026-04-03'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113503/brumoutloud/events/ixcz9gp5rxgmceekgjxk.jpg" alt="XXL Birmingham @ Nightingale Club" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                3 Apr 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                23:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">XXL Birmingham @ Nightingale Club</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            The Midlands' biggest night out for Bears, Blokes and everyone in between. XXL Birmingham has found its new home at the Nightingale Club. A private members club night with a fetish-friendly dress code: leather, rubber, denim, sports kit, military, workwear and more. Voted Midlands Best Monthly One Nighter four years running.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/nightingale-saturdays-2026-04-04'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113378/brumoutloud/events/b0jx3mwporgzmzmjuxey.jpg" alt="Nightingale Saturdays" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                4 Apr 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                20:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Nightingale Saturdays</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            TBC
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Birmingham's biggest queer Saturday night at the Nightingale Club. The Midlands' number one LGBTQ+ destination open every Saturday.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/britney-vs-gaga-the-club-night-2026-04-04'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113501/brumoutloud/events/nwg6bn945mqnkzavtjpp.jpg" alt="Britney VS Gaga - The Club Night" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                4 Apr 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                21:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Britney VS Gaga - The Club Night</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            O2 Institute 2
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Battle of the pop icons - Britney vs Gaga themed night with DJ sets and entertainment.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/pink-noize-fest-2026-2026-04-25'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113359/brumoutloud/events/y4fwzgvdodgpj1nizemj.jpg" alt="Pink Noize Fest 2026" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                25 Apr 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                15:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Pink Noize Fest 2026</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Centrala
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            A queer-run, DIY, anti-fascist hardcore music festival at Centrala, Birmingham. Pink Noize brings together the best in queer hardcore, punk, and adjacent heavy music in a fully inclusive, safer space. All profits go to The Sameer Project and Birmingham Queers for Palestine. An unmissable event for Birmingham's queer underground music scene.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/xxl-birmingham-nightingale-club-2026-05-01'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113357/brumoutloud/events/qdxr38icozlbsxluybq8.jpg" alt="XXL Birmingham @ Nightingale Club" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                1 May 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                23:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">XXL Birmingham @ Nightingale Club</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            The Midlands' biggest night out for Bears, Blokes and everyone in between. XXL Birmingham has found its new home at the Nightingale Club. A private members club night with a fetish-friendly dress code: leather, rubber, denim, sports kit, military, workwear and more. Voted Midlands Best Monthly One Nighter four years running.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/nightingale-saturdays-2026-05-02'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113355/brumoutloud/events/y58jve5mz8vxpdi5tjme.jpg" alt="Nightingale Saturdays" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                2 May 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                01:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Nightingale Saturdays</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Birmingham's biggest queer Saturday night at the Nightingale Club. The Midlands' number one LGBTQ+ destination open every Saturday.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/dilf-birmingham-pride--2026-05-22'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774115098/brumoutloud/events/nzzadu3zbjekwqeubfdd.jpg" alt="DILF Birmingham: PRIDE!" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Pride
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                22 May 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                22:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">DILF Birmingham: PRIDE!</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Eden Bar
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            DILF celebrates Birmingham Pride at Eden Bar! Seven hours of pride anthems, floor fillers and vocal house. No dress code — wear what you like, or wear gear (leather, rubber, jocks, underwear, singlets, kilts, shorts, sports kit, work gear). Cloakroom and changing area available. DILF is the UK's favourite gay pop-up party for daddies and admirers. Membership required (free at dilf.uk).
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/birmingham-pride-2026-day-2-2026-05-24'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113256/brumoutloud/events/s82ulv8y5wwrvgb72xdu.jpg" alt="Birmingham Pride 2026 — Day 2" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Pride
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                24 May 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                13:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Birmingham Pride 2026 — Day 2</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Smithfield
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Day two of Birmingham Pride 2026 at the Smithfield site. Sunday 24th May features the Main Stage, Cabaret Marquee, Dance Arena, community stalls and food vendors. Performers include Björn Again. A full day of LGBTQ+ celebration in the heart of Birmingham.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/ladies-wild-night-2026-06-06'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774114774/brumoutloud/events/evxwbl5xud7t9ceczca6.jpg" alt="Ladies Wild Night" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                6 Jun 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                20:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Ladies Wild Night</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Bolehall Manor Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            A wild night out for ladies and women-loving-women with DJs and dancing.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/nightingale-club-thursdays-2026-06-11'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113245/brumoutloud/events/ggaad5t5kw3idmridgle.jpg" alt="Nightingale Club Thursdays" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                11 Jun 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                01:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Nightingale Club Thursdays</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            The Midlands' biggest queer Thursday night! Pop, hyperpop and house until 1am, then R&B, dancehall, hip-hop and bashment from 1am. Cheap drinks all night.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/the-westlife-experience-featuring-heffa-trott-2026-06-12'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113244/brumoutloud/events/j9vkrdtiq7pqlry3puiw.jpg" alt="The Westlife Experience Featuring Heffa Trott" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                12 Jun 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                20:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">The Westlife Experience Featuring Heffa Trott</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Beech Tree Miners Welfare Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            A tribute to Westlife with special guest Heffa Trott providing drag entertainment.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/drag-bingo-2026-06-26'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113228/brumoutloud/events/i7sl9bzp2ozubke3yf21.jpg" alt="Drag Bingo" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Drag
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                26 Jun 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                20:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Drag Bingo</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            E57 Social Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Drag bingo night with hilarious drag hosts, games, and fantastic prizes.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/nightingale-saturdays-2026-06-27'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113227/brumoutloud/events/jc1tri0w80vy4jltdzqd.jpg" alt="Nightingale Saturdays" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                27 Jun 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                01:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Nightingale Saturdays</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Birmingham's biggest queer Saturday night at the Nightingale Club. The Midlands' number one LGBTQ+ destination open every Saturday.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/drag-bingo-2026-07-24'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113223/brumoutloud/events/ksliljntol4lhdm0eapz.jpg" alt="Drag Bingo" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Drag
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                24 Jul 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                20:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Drag Bingo</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Landrover Sports And Social Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Drag bingo night with hilarious drag hosts, games, and fantastic prizes.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/xxl-birmingham-nightingale-club-2026-08-07'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113220/brumoutloud/events/n32adfbfnpdmlqknevhq.jpg" alt="XXL Birmingham @ Nightingale Club" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Club Night
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                7 Aug 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                23:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">XXL Birmingham @ Nightingale Club</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Nightingale Club
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            The Midlands' biggest night out for Bears, Blokes and everyone in between. XXL Birmingham has found its new home at the Nightingale Club. A private members club night with a fetish-friendly dress code: leather, rubber, denim, sports kit, military, workwear and more. Voted Midlands Best Monthly One Nighter four years running.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/birmingham-fetish-weekend-2026-2026-11-14'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113215/brumoutloud/events/ojeoxvtiypgmaqgepmmj.jpg" alt="Birmingham Fetish Weekend 2026" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                14 Nov 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                18:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Birmingham Fetish Weekend 2026</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Birmingham
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Birmingham Fetish Weekend returns for 2026 — 2 days, 4 events, 1 fierce new era. One of the UK's premier fetish events, featuring dungeons, workshops, traders, bars and some of the best fetish DJs and performers in the country. A must-attend event for Birmingham's kink and fetish community.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="event-card p-0 group" 
+                     onclick="window.location.href='/event/birmingham-fetish-weekend-2026-day-2-2026-11-15'">
+                    <div class="relative h-64 overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1774113213/brumoutloud/events/xkeewion2jiou82664wf.jpg" alt="Birmingham Fetish Weekend 2026 — Day 2" class="w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="filter-chip">
+                                Event
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-sm">
+                                <i class="far fa-calendar-alt mr-2"></i>
+                                15 Nov 2026
+                            </div>
+                            <div class="text-[var(--color-pink)] font-bold text-sm">
+                                <i class="far fa-clock mr-2"></i>
+                                12:00
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Birmingham Fetish Weekend 2026 — Day 2</h3>
+                        <p class="text-gray-400 text-sm mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            Birmingham
+                        </p>
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Day two of Birmingham Fetish Weekend 2026. 2 days, 4 events, 1 fierce new era. Features dungeons, workshops, traders, bars and the UK's finest fetish DJs and performers. Join Birmingham's kink community for an unmissable weekend of play and celebration.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="btn-primary flex-1">
+                                <i class="fas fa-ticket-alt mr-2"></i>VIEW DETAILS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
             </div>
 
             <!-- No Results State -->
@@ -1218,36 +1884,94 @@
             return 'Event';
         }
 
+        // Scrape static events from DOM if present
+        function scrapeEventsFromDOM() {
+            const grid = document.getElementById('event-grid');
+            if (!grid) return [];
+            
+            const cards = grid.querySelectorAll('.event-card');
+            if (cards.length === 0) return [];
+            
+            const scraped = [];
+            cards.forEach(card => {
+                try {
+                    // Extract info from DOM
+                    const name = card.querySelector('h3')?.textContent || '';
+                    const slug = card.getAttribute('onclick')?.match(/'\/event\/(.*?)'/)?.[1] || '';
+                    
+                    if (!name) return;
+                    
+                    const dateText = card.querySelector('.text-\\[var\\(--color-toxic\\)\\]')?.textContent?.trim() || '';
+                    const timeText = card.querySelector('.text-\\[var\\(--color-pink\\)\\]')?.textContent?.trim() || '';
+                    const venueName = card.querySelector('.text-gray-400')?.textContent?.trim() || '';
+                    const description = card.querySelector('.text-gray-300')?.textContent?.trim() || '';
+                    const imageUrl = card.querySelector('img')?.src || '';
+                    const category = card.querySelector('.filter-chip')?.textContent?.trim() || 'Event';
+                    
+                    scraped.push({
+                        id: `scraped-${slug || Math.random()}`,
+                        name: name,
+                        slug: slug,
+                        date: dateText, // Store raw text for display
+                        time: timeText,
+                        venueName: venueName,
+                        description: description,
+                        image: { url: imageUrl },
+                        category: [category],
+                        status: 'approved',
+                        isScraped: true
+                    });
+                } catch (e) {
+                    console.warn('Error scraping card:', e);
+                }
+            });
+            
+            if (scraped.length > 0) {
+                console.log(`Scraped ${scraped.length} events from static HTML`);
+            }
+            return scraped;
+        }
+
         // Fetch events from Firestore
         async function fetchEvents() {
-            showLoading();
+            // Try to scrape first to show something immediately
+            if (allEvents.length === 0) {
+                allEvents = scrapeEventsFromDOM();
+            }
+
+            // Only show loading if we have NO data yet
+            if (allEvents.length === 0) {
+                showLoading();
+            }
+            
             try {
-                // Try to fetch from Netlify function
-                const response = await fetch('/.netlify/functions/get-events');
+                // Try to fetch from Netlify function (local or production)
+                let apiUrl = '/.netlify/functions/get-events';
+                
+                // If on localhost and local function 404s, we can try production direct
+                // BUT only if we specifically want to
+                const response = await fetch(apiUrl);
 
                 if (response.ok) {
                     const data = await response.json();
 
                     if (data.success) {
                         allEvents = data.events || [];
-                        // Removed data source indicator
                         console.log(`Fetched ${allEvents.length} events from API`);
-
                     } else {
-                        console.error('API returned error:', data.error);
                         throw new Error(data.error || 'API returned an error');
                     }
                 } else {
-                    console.error('API request failed:', response.status, response.statusText);
                     throw new Error(`API request failed: ${response.status}`);
                 }
             } catch (error) {
-                console.error('Error fetching events:', error);
-
-                // Fallback to sample data for testing
-                console.log('Using fallback sample data for testing');
-                allEvents = getSampleEvents();
-                // Using fallback sample data
+                console.warn('API fetch failed, using existing data or samples:', error);
+                
+                // If we have NO data (after scraping and fetch), THEN use samples
+                if (allEvents.length === 0) {
+                    console.log('Using fallback sample data for testing');
+                    allEvents = getSampleEvents();
+                }
             }
 
             // Populate filter options
@@ -1839,47 +2563,14 @@
                 formattedTime = (extractedTime === '00:00' && !event.time) ? 'TBC' : extractedTime;
             }
 
-            // Create tag display for mobile - allow wrapping but limit to 5 tags max
             const eventCategories = event.category || event.categories || event.categoryIds || [];
-            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
-                const maxVisibleTags = 5;
-                const visibleTags = eventCategories.slice(0, maxVisibleTags);
-                const remainingCount = eventCategories.length - maxVisibleTags;
 
-                const tagElements = visibleTags.map(cat =>
-                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
-                ).join('');
-
-                if (remainingCount > 0) {
-                    return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full mr-1 mb-1">+${remainingCount} more</span>`;
-                }
-
-                return tagElements;
-            })() : '';
-
-            // Create elegant tag display for desktop - show max 3 tags + count
-            const categoryTagsDesktop = Array.isArray(eventCategories) && eventCategories.length > 0 ? (() => {
-                const maxVisibleTags = 3;
-                const visibleTags = eventCategories.slice(0, maxVisibleTags);
-                const remainingCount = eventCategories.length - maxVisibleTags;
-
-                const tagElements = visibleTags.map(cat =>
-                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 flex-shrink-0">${cat}</span>`
-                ).join('');
-
-                if (remainingCount > 0) {
-                    return tagElements + `<span class="inline-block bg-gray-600/20 text-gray-400 text-xs px-2 py-1 rounded-full flex-shrink-0">+${remainingCount} more</span>`;
-                }
-
-                return tagElements;
-            })() : '';
-
-            // Handle image — use real image or a beautiful gradient fallback
+            // Handle image
             const rawImageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : null;
             const isPlaceholder = !rawImageUrl || rawImageUrl.includes('placehold.co') || rawImageUrl.includes('placeholder');
             const imageUrl = isPlaceholder ? null : rawImageUrl;
 
-            // Get venue name - handle both string and array formats
+            // Get venue name
             let venueName = 'TBC';
             if (event.venueName) {
                 venueName = Array.isArray(event.venueName) ? event.venueName[0] : event.venueName;
@@ -1887,95 +2578,49 @@
                 venueName = Array.isArray(event.venue.name) ? event.venue.name[0] : event.venue.name;
             }
 
-            // Pick gradient class based on the first category
-            const gradientClass = getGradientClass(eventCategories, event.name);
-
-            // Build the hero section — real image or emoji-scatter fallback
-            const emoji = getCategoryEmoji(eventCategories, event.name);
             const catLabel = getCategoryLabel(eventCategories, event.name);
-            const scatterHtml = emoji.map(e => `<span>${e}</span>`).join('');
-            const heroHtml = imageUrl
-                ? `<div class="relative overflow-hidden group h-56 rounded-t-2xl">
-                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                       <div class="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
-                       <div class="absolute bottom-0 left-0 w-full p-4 flex flex-col justify-end">
-                           <div class="text-white font-bold text-lg leading-tight line-clamp-2 drop-shadow-md">${event.name}</div>
-                           <div class="text-zinc-300 text-xs font-semibold uppercase tracking-wider mt-1 drop-shadow-md">${venueName}</div>
-                       </div>
-                   </div>`
-                : `<div class="event-hero-fallback ${gradientClass} h-56">
-                       <div class="hero-scatter">${scatterHtml}</div>
-                       <span class="hero-emoji-big">${emoji[0]}</span>
-                       <div class="hero-accent-bar"></div>
-                       <div class="hero-cat-pill">${catLabel}</div>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
-                       <div class="fallback-text-wrap">
-                           <div class="fallback-text">${event.name}</div>
-                           <div class="fallback-venue">${venueName}</div>
-                       </div>
-                   </div>`;
 
-            if (type === 'desktop') {
-                return `
-                    <div class="event-card flex flex-col h-full">
-                        ${heroHtml}
-                        <div class="p-4 flex flex-col flex-grow justify-between">
-                            <p class="text-zinc-400 text-sm mb-4 flex items-center gap-3">
-                                <span class="flex items-center"><i class="fas fa-calendar mr-2 text-pink-500"></i> ${formattedDate}</span>
-                                <span class="flex items-center"><i class="fas fa-clock mr-2 text-pink-500"></i> ${formattedTime}</span>
-                            </p>
-                            <div class="flex gap-1 mb-4 overflow-hidden whitespace-nowrap">
-                                ${categoryTagsDesktop}
-                            </div>
-                            <div class="flex justify-between items-center mt-auto">
-                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-eye mr-1"></i>View Details
-                                </a>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
-                                    <i class="fas fa-share"></i>
-                                </button>
-                            </div>
+            // Neo-Print card template (matches SSG output)
+            return `
+                <div class="event-card p-0 group" onclick="window.location.href='/event/${event.slug}'" style="cursor:pointer">
+                    <div class="relative h-48 overflow-hidden bg-black">
+                        ${imageUrl
+                            ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">`
+                            : `<div class="event-hero-fallback h-full w-full bg-black flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-gray-800"></i>
+                               </div>`
+                        }
+                        <div class="absolute top-3 right-3 z-20">
+                            <span class="filter-chip">${catLabel}</span>
                         </div>
                     </div>
-                `;
-            } else {
-                return `
-                    <div class="event-card overflow-hidden">
-                        <!-- Hero Section -->
-                        ${heroHtml}
-                        
-                        <!-- Content Section -->
-                        <div class="p-4 flex flex-col justify-between h-full w-full">
-                            <!-- Date, Time and Venue - Compact Layout -->
-                            <div class="flex flex-col gap-2 text-zinc-300 text-sm mb-3">
-                                <div class="flex items-center">
-                                    <i class="fas fa-calendar text-pink-500 mr-2 w-4"></i>
-                                    <span>${formattedDate}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-clock text-pink-500 mr-2 w-4"></i>
-                                    <span>${formattedTime}</span>
-                                </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-xs">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                ${formattedDate}
                             </div>
-                            
-                            <!-- Category Tags - Compact -->
-                            ${categoryTags ? `<div class="flex flex-wrap gap-1 mb-2">${categoryTags}</div>` : ''}
-                            
-                            <!-- Action Buttons - Compact -->
-                            <div class="flex justify-end gap-2">
-                                <a href="/event/${event.slug}" class="btn-primary text-white px-2 py-1 rounded text-xs flex items-center">
-                                    <i class="fas fa-eye mr-1"></i>
-                                    Details
-                                </a>
-                                <button class="btn-secondary text-white px-2 py-1 rounded text-xs" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
-                                    <i class="fas fa-share"></i>
-                                </button>
+                            <div class="text-[var(--color-pink)] font-bold text-xs">
+                                <i class="far fa-clock mr-1"></i>
+                                ${formattedTime}
                             </div>
                         </div>
+                        <h3 class="text-lg font-bold mb-2">${event.name}</h3>
+                        <p class="text-gray-400 text-xs mb-2 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            ${venueName}
+                        </p>
+                        <p class="text-gray-300 text-xs mb-4 line-clamp-2">
+                            ${event.description || 'Join us for this fantastic LGBTQ+ event in Birmingham.'}
+                        </p>
+                        <div class="flex gap-3">
+                            <a href="/event/${event.slug}" class="btn-primary flex-1 text-sm" onclick="event.stopPropagation()">
+                                <i class="fas fa-ticket-alt mr-1"></i>VIEW DETAILS
+                            </a>
+                        </div>
                     </div>
-                `;
-            }
+                </div>
+            `;
         }
 
         // Share event function
@@ -2068,7 +2713,7 @@
             return chip;
         }
 
-        // Create recurring event card
+        // Create recurring event card (Neo-Print style)
         function createRecurringEventCard(event, type) {
             const nextOccurrence = new Date(event.nextOccurrence || event.date);
             const formattedDate = nextOccurrence.toLocaleDateString('en-GB', {
@@ -2079,10 +2724,6 @@
             });
 
             const eventCategories = event.category || event.categories || event.categoryIds || [];
-            const categoryTags = Array.isArray(eventCategories) && eventCategories.length > 0 ?
-                eventCategories.slice(0, 3).map(cat =>
-                    `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
-                ).join('') : '';
 
             const rawImageUrl = event.image ? (typeof event.image === 'string' ? event.image : event.image.url) : null;
             const isPlaceholder = !rawImageUrl || rawImageUrl.includes('placehold.co') || rawImageUrl.includes('placeholder');
@@ -2110,90 +2751,49 @@
             };
 
             const recurrencePattern = getRecurrencePattern(event);
-
-            const recurringBadge = `
-                <div class="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold" style="z-index:3">
-                    <i class="fas fa-redo mr-1"></i>${recurrencePattern}
-                </div>
-            `;
-
-            const recurringInfo = `
-                <div class="text-sm text-purple-400 mb-2">
-                    <i class="fas fa-calendar-alt mr-1"></i>
-                    Next: ${formattedDate}
-                </div>
-            `;
-
-            // Build hero — real image or emoji-scatter fallback
-            const gradientClass = getGradientClass(eventCategories, event.name);
-            const emoji = getCategoryEmoji(eventCategories, event.name);
             const catLabel = getCategoryLabel(eventCategories, event.name);
-            const scatterHtml = emoji.map(e => `<span>${e}</span>`).join('');
-            const heroHtml = imageUrl
-                ? `<div class="relative overflow-hidden group h-56 rounded-t-2xl">
-                       <img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                       <div class="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent"></div>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
-                       ${recurringBadge}
-                       <div class="absolute bottom-0 left-0 w-full p-4 flex flex-col justify-end">
-                           <div class="text-white font-bold text-lg leading-tight line-clamp-2 drop-shadow-md">${event.name}</div>
-                           <div class="text-zinc-300 text-xs font-semibold uppercase tracking-wider mt-1 drop-shadow-md">${venueName}</div>
-                       </div>
-                   </div>`
-                : `<div class="event-hero-fallback ${gradientClass} h-56">
-                       <div class="hero-scatter">${scatterHtml}</div>
-                       <span class="hero-emoji-big">${emoji[0]}</span>
-                       <div class="hero-accent-bar"></div>
-                       <div class="hero-cat-pill">${catLabel}</div>
-                       ${event.featured ? '<div class="absolute top-2 left-2 bg-accent-color text-white text-xs px-2 py-1 rounded" style="z-index:5">Featured</div>' : ''}
-                       ${recurringBadge}
-                       <div class="fallback-text-wrap">
-                           <div class="fallback-text">${event.name}</div>
-                           <div class="fallback-venue">${venueName}</div>
-                       </div>
-                   </div>`;
 
-            if (type === 'desktop') {
-                return `
-                    <div class="event-card flex flex-col h-full border-2 border-purple-500/30">
-                        ${heroHtml}
-                        <div class="p-4 flex flex-col flex-grow justify-between">
-                            ${recurringInfo}
-                            <div class="flex gap-1 mb-4 pt-1 overflow-hidden whitespace-nowrap">
-                                ${categoryTags}
-                            </div>
-                            <div class="flex justify-between items-center mt-auto">
-                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-eye mr-1"></i>View Series
-                                </a>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
-                                    <i class="fas fa-share"></i>
-                                </button>
-                            </div>
+            return `
+                <div class="event-card p-0 group" onclick="window.location.href='/event/${event.slug}'" style="cursor:pointer">
+                    <div class="relative h-48 overflow-hidden bg-black">
+                        ${imageUrl
+                            ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">`
+                            : `<div class="event-hero-fallback h-full w-full bg-black flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-gray-800"></i>
+                               </div>`
+                        }
+                        <div class="absolute top-3 left-3 z-20">
+                            <span class="filter-chip" style="background:var(--color-purple);color:white;border-color:var(--color-purple)">
+                                <i class="fas fa-redo mr-1"></i>${recurrencePattern}
+                            </span>
+                        </div>
+                        <div class="absolute top-3 right-3 z-20">
+                            <span class="filter-chip">${catLabel}</span>
                         </div>
                     </div>
-                `;
-            } else {
-                return `
-                    <div class="event-card overflow-hidden border-2 border-purple-500/30">
-                        ${heroHtml}
-                        <div class="p-4 flex flex-col justify-between h-full">
-                            ${recurringInfo}
-                            <div class="flex flex-wrap gap-1 mb-3 pt-1">
-                                ${categoryTags}
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <a href="/event/${event.slug}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm">
-                                    <i class="fas fa-eye mr-1"></i>View Series
-                                </a>
-                                <button class="btn-secondary text-white px-3 py-2 rounded-lg text-sm" onclick="shareEvent(event, '${event.name}', '/event/${event.slug}')">
-                                    <i class="fas fa-share"></i>
-                                </button>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-xs">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                Next: ${formattedDate}
                             </div>
                         </div>
+                        <h3 class="text-lg font-bold mb-2">${event.name}</h3>
+                        <p class="text-gray-400 text-xs mb-2 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            ${venueName}
+                        </p>
+                        <p class="text-gray-300 text-xs mb-4 line-clamp-2">
+                            ${event.description || 'Join us for this fantastic LGBTQ+ event in Birmingham.'}
+                        </p>
+                        <div class="flex gap-3">
+                            <a href="/event/${event.slug}" class="btn-primary flex-1 text-sm" onclick="event.stopPropagation()">
+                                <i class="fas fa-eye mr-1"></i>VIEW SERIES
+                            </a>
+                        </div>
                     </div>
-                `;
-            }
+                </div>
+            `;
         }
 
         // Mobile menu functionality
