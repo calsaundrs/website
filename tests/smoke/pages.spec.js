@@ -3,6 +3,15 @@ const { test, expect } = require('@playwright/test');
 test.describe('Page Load Smoke Tests', () => {
   test('home page loads', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    
+    const title = await page.title();
+    if (title.includes('Down for Upgrades')) {
+      // Maintenance mode: verify minimal content and return
+      await expect(page).toHaveTitle(/Down for Upgrades/i);
+      await expect(page.locator('body')).toHaveClass(/grain/);
+      return;
+    }
+
     await expect(page).toHaveTitle(/Brum\s*Out\s*loud/i);
     // Wait for FOUC prevention to finish (adds 'loaded' class to body)
     await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 5000 }).catch(() => {});
