@@ -342,7 +342,7 @@ exports.handler = async function (event, context) {
             {{else}}
             <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
             {{/if}}
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] from-5% via-[var(--color-bg)]/90 via-40% to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] from-15% via-[var(--color-bg)]/95 via-50% to-[var(--color-bg)]/60"></div>
         </div>
 
         <!-- Hero Overlay Content -->
