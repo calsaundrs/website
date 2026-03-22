@@ -382,9 +382,6 @@ exports.handler = async function (event, context) {
         </div>
     </section>
 
-    <!-- Pride divider -->
-    <div class="h-[6px] progress-pride-bg"></div>
-
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">

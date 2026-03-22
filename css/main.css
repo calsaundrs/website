@@ -180,18 +180,7 @@ h1, h2, h3, .font-display {
 
 /* Progress Pride Gradient Background for structural motifs */
 .progress-pride-bg {
-    background: linear-gradient(to right, 
-        #000000 0%, #000000 9.09%,
-        #613915 9.09%, #613915 18.18%,
-        #74D7EE 18.18%, #74D7EE 27.27%,
-        #FFAFC8 27.27%, #FFAFC8 36.36%,
-        #ffffff 36.36%, #ffffff 45.45%,
-        #E40303 45.45%, #E40303 54.54%, 
-        #FF8C00 54.54%, #FF8C00 63.63%, 
-        #FFED00 63.63%, #FFED00 72.72%, 
-        #008026 72.72%, #008026 81.81%, 
-        #24408E 81.81%, #24408E 90.90%, 
-        #732982 90.90%, #732982 100%);
+    background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
 }
 
 /* Enhanced Accessibility Styles */
