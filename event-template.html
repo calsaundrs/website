@@ -154,192 +154,169 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="bg-[var(--color-bg)]">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 pb-12 pt-10">
-            <div class="max-w-7xl mx-auto w-full">
-                <!-- Breadcrumb -->
-                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
-                    <a href="/events" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">What's On</a>
-                    <span class="text-gray-600 mx-2">/</span>
-                    <span class="text-white">Event</span>
-                </nav>
+    <!-- Hero: Poster + Event Info -->
+    <section class="max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-12">
+        <!-- Breadcrumb -->
+        <nav class="mb-8 text-sm font-bold uppercase tracking-widest">
+            <a href="/events" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">What's On</a>
+            <span class="text-gray-600 mx-2">/</span>
+            <span class="text-[var(--color-toxic)]">Event</span>
+        </nav>
 
-                <!-- Date + Title -->
-                <div class="flex items-end gap-6 mb-6">
-                    <div class="text-center flex-shrink-0 border-r-2 border-[var(--color-toxic)] pr-6 hidden sm:block">
-                        <div class="text-5xl md:text-6xl font-black text-[var(--color-toxic)] font-display">{{event.dayOfMonth}}</div>
-                        <div class="text-sm text-gray-300 uppercase font-bold tracking-widest">{{event.monthAbbr}}</div>
-                    </div>
-                    <div class="flex-1">
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-3">{{event.name}}</h1>
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg">
-                            <p class="text-[var(--color-toxic)] font-bold">
-                                <i class="fas fa-map-marker-alt mr-2"></i>{{event.venue.name}}
-                            </p>
-                            <p class="text-gray-300 font-bold">
-                                <i class="fas fa-clock mr-2"></i>{{event.formattedDate}}
-                            </p>
-                        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-14">
+            <!-- Poster -->
+            <div class="lg:col-span-2">
+                {{#if event.imageUrl}}
+                <div class="sticky top-24">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                        <img src="{{event.imageUrl}}" alt="{{event.name}}" class="relative w-full h-auto object-contain bg-black">
                     </div>
                 </div>
+                {{else}}
+                <div class="aspect-[3/4] bg-gradient-to-br from-[var(--color-purple)]/20 to-[var(--color-pink)]/20 flex items-center justify-center">
+                    <i class="fas fa-calendar-star text-6xl text-[var(--color-purple)]/30"></i>
+                </div>
+                {{/if}}
+            </div>
 
+            <!-- Event Info -->
+            <div class="lg:col-span-3 flex flex-col">
                 <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 mb-5">
                     {{#each event.category}}
                     <span class="category-tag">{{this}}</span>
                     {{/each}}
                 </div>
+
+                <!-- Title -->
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-6 leading-[0.9]">{{event.name}}</h1>
+
+                <!-- Key Details Grid -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-calendar-day mr-1 text-[var(--color-toxic)]"></i> Date</div>
+                        <div class="text-white font-bold text-lg">{{event.formattedDate}}</div>
+                    </div>
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-clock mr-1 text-[var(--color-toxic)]"></i> Time</div>
+                        <div class="text-white font-bold text-lg">{{event.time}}</div>
+                    </div>
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-toxic)]"></i> Venue</div>
+                        <div class="text-white font-bold text-lg">{{event.venue.name}}</div>
+                    </div>
+                    {{#if event.price}}
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-tag mr-1 text-[var(--color-toxic)]"></i> Price</div>
+                        <div class="text-white font-bold text-lg">{{event.price}}</div>
+                    </div>
+                    {{/if}}
+                    {{#if event.isRecurring}}
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-redo mr-1 text-[var(--color-toxic)]"></i> Recurs</div>
+                        <div class="text-[var(--color-toxic)] font-bold text-lg">{{event.recurringInfo}}</div>
+                    </div>
+                    {{/if}}
+                    {{#if event.ageRestriction}}
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-id-card mr-1 text-[var(--color-toxic)]"></i> Age</div>
+                        <div class="text-white font-bold text-lg">{{event.ageRestriction}}</div>
+                    </div>
+                    {{/if}}
+                    {{#if event.organizer}}
+                    <div class="bg-white/5 p-4">
+                        <div class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1"><i class="fas fa-user mr-1 text-[var(--color-toxic)]"></i> Organizer</div>
+                        <div class="text-white font-bold text-lg">{{event.organizer}}</div>
+                    </div>
+                    {{/if}}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3 mb-8">
+                    {{#if event.ticketLink}}
+                    <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg py-4">
+                        <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
+                    </a>
+                    {{/if}}
+                    <div class="grid grid-cols-2 gap-3">
+                        {{#if event.venue.slug}}
+                        <a href="/venue/{{event.venue.slug}}" class="btn-outline flex items-center justify-center text-sm !py-3">
+                            <i class="fas fa-store mr-2"></i>VIEW VENUE
+                        </a>
+                        {{/if}}
+                        <button id="share-button" class="btn-outline flex items-center justify-center text-sm !py-3">
+                            <i class="fas fa-share-alt mr-2"></i>SHARE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add to Calendar -->
+                <div class="border-t border-white/10 pt-6">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-3"><i class="fas fa-calendar-plus mr-1 text-[var(--color-toxic)]"></i> Add to Calendar</p>
+                    <div class="flex gap-3">
+                        {{#if event.googleCalendarUrl}}
+                        <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold uppercase tracking-wider text-gray-300 hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-google mr-1"></i> Google
+                        </a>
+                        {{/if}}
+                        {{#if event.icalUrl}}
+                        <span class="text-gray-600">|</span>
+                        <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="text-sm font-bold uppercase tracking-wider text-gray-300 hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fas fa-calendar-plus mr-1"></i> Apple / Outlook
+                        </a>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{#if event.accessibility}}
+                <div class="border-t border-white/10 pt-6 mt-6">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-universal-access mr-1 text-[var(--color-toxic)]"></i> Accessibility</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">{{event.accessibility}}</p>
+                </div>
+                {{/if}}
+            </div>
         </div>
     </section>
 
-    <!-- Main Content -->
+    <!-- About + Other Dates -->
     <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
-
-            <!-- Primary Content -->
-            <div class="lg:col-span-2 space-y-10">
+        <div class="border-t border-white/10 pt-12">
+            <div class="max-w-3xl">
                 <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                    <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
                         <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
                     </h2>
                     <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
                         {{event.description}}
                     </div>
                 </section>
-
-                {{#if event.otherInstances}}
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Other Dates
-                    </h2>
-                    <div class="space-y-3">
-                        {{#each event.otherInstances}}
-                        <a href="/event/{{this.slug}}" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
-                            <div class="text-center w-16 flex-shrink-0">
-                                <p class="text-2xl font-bold text-[var(--color-toxic)]">{{this.dayOfMonth}}</p>
-                                <p class="text-sm text-gray-400 uppercase font-bold">{{this.monthAbbr}}</p>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-white text-lg">{{this.name}}</h4>
-                                <p class="text-sm text-gray-400">{{this.time}}</p>
-                            </div>
-                            <div class="text-[var(--color-toxic)]">
-                                <i class="fas fa-arrow-right"></i>
-                            </div>
-                        </a>
-                        {{/each}}
-                    </div>
-                </section>
-                {{/if}}
             </div>
 
-            <!-- Sidebar -->
-            <aside class="space-y-6">
-                {{#if event.imageUrl}}
-                <div class="neo-card overflow-hidden">
-                    <img src="{{event.imageUrl}}" alt="{{event.name}}" class="w-full h-auto object-contain">
-                </div>
-                {{/if}}
-
-                {{#if event.ticketLink}}
-                <div class="neo-card p-6">
-                    <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
-                        <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
+            {{#if event.otherInstances}}
+            <section class="mt-12 max-w-3xl">
+                <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
+                    <span class="text-[var(--color-toxic)] mr-2">///</span> Other Dates
+                </h2>
+                <div class="space-y-3">
+                    {{#each event.otherInstances}}
+                    <a href="/event/{{this.slug}}" class="block bg-white/5 p-4 flex items-center space-x-4 hover:bg-[var(--color-purple)]/10 transition-all duration-200">
+                        <div class="text-center w-16 flex-shrink-0">
+                            <p class="text-2xl font-bold text-[var(--color-toxic)]">{{this.dayOfMonth}}</p>
+                            <p class="text-sm text-gray-400 uppercase font-bold">{{this.monthAbbr}}</p>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-white text-lg">{{this.name}}</h4>
+                            <p class="text-sm text-gray-400">{{this.time}}</p>
+                        </div>
+                        <div class="text-[var(--color-toxic)]">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </a>
+                    {{/each}}
                 </div>
-                {{/if}}
-
-                <!-- Event Details -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">Details</h3>
-                    <dl class="space-y-3 text-sm">
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-calendar-day mr-1 text-[var(--color-toxic)]"></i> Date</dt>
-                            <dd class="text-white font-semibold text-right">{{event.formattedDate}}</dd>
-                        </div>
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-clock mr-1 text-[var(--color-toxic)]"></i> Time</dt>
-                            <dd class="text-white font-semibold text-right">{{event.time}}</dd>
-                        </div>
-                        {{#if event.isRecurring}}
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-redo mr-1 text-[var(--color-toxic)]"></i> Recurs</dt>
-                            <dd class="text-[var(--color-toxic)] font-semibold text-right">{{event.recurringInfo}}</dd>
-                        </div>
-                        {{/if}}
-                        {{#if event.price}}
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-tag mr-1 text-[var(--color-toxic)]"></i> Price</dt>
-                            <dd class="text-white font-semibold text-right">{{event.price}}</dd>
-                        </div>
-                        {{/if}}
-                        {{#if event.ageRestriction}}
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-id-card mr-1 text-[var(--color-toxic)]"></i> Age</dt>
-                            <dd class="text-white font-semibold text-right">{{event.ageRestriction}}</dd>
-                        </div>
-                        {{/if}}
-                        {{#if event.organizer}}
-                        <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-400 font-bold uppercase tracking-wider"><i class="fas fa-user mr-1 text-[var(--color-toxic)]"></i> Organizer</dt>
-                            <dd class="text-white font-semibold text-right">{{event.organizer}}</dd>
-                        </div>
-                        {{/if}}
-                    </dl>
-                </div>
-
-                <!-- Location -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-map-marker-alt mr-2 text-[var(--color-toxic)]"></i>Venue
-                    </h3>
-                    <p class="text-white font-bold text-lg mb-1">{{event.venue.name}}</p>
-                    {{#if event.venue.address}}
-                    <p class="text-gray-400 text-sm mb-4">{{event.venue.address}}</p>
-                    {{/if}}
-                    {{#if event.venue.slug}}
-                    <a href="/venue/{{event.venue.slug}}" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
-                        <i class="fas fa-external-link-alt mr-2"></i>VIEW VENUE
-                    </a>
-                    {{/if}}
-                </div>
-
-                <!-- Add to Calendar -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i>Calendar
-                    </h3>
-                    <div class="space-y-3">
-                        {{#if event.googleCalendarUrl}}
-                        <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
-                            <i class="fab fa-google mr-2"></i>GOOGLE CALENDAR
-                        </a>
-                        {{/if}}
-                        {{#if event.icalUrl}}
-                        <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="btn-outline w-full flex items-center justify-center text-sm !py-2">
-                            <i class="fas fa-calendar-plus mr-2"></i>APPLE / OUTLOOK
-                        </a>
-                        {{/if}}
-                    </div>
-                </div>
-
-                <!-- Share -->
-                <div class="neo-card p-6">
-                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
-                        <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
-                    </button>
-                </div>
-
-                {{#if event.accessibility}}
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-3 uppercase font-display">
-                        <i class="fas fa-universal-access mr-2 text-[var(--color-toxic)]"></i>Accessibility
-                    </h3>
-                    <p class="text-gray-300 text-sm leading-relaxed">{{event.accessibility}}</p>
-                </div>
-                {{/if}}
-            </aside>
+            </section>
+            {{/if}}
         </div>
     </main>
 
