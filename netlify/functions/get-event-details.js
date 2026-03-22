@@ -4,7 +4,7 @@ const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
 
-// Version: 2025-01-27-v1 - Firestore-based event details function
+// Version: 2026-03-22-v2 - Redesigned event detail page layout
 
 const eventService = new FirestoreEventService();
 const recurringManager = new RecurringEventsManager();
