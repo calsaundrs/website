@@ -332,7 +332,7 @@
 
                 <!-- Share -->
                 <div class="neo-card p-6">
-                    <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-outline w-full flex items-center justify-center">
+                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
                         <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
                     </button>
                 </div>
@@ -408,6 +408,23 @@
         // Add body class if sticky ticket bar exists
         if (document.querySelector('.fixed.bottom-0')) {
             document.body.classList.add('has-ticket-bar');
+        }
+
+        // Share button functionality
+        const shareButton = document.getElementById('share-button');
+        if (shareButton) {
+            shareButton.addEventListener('click', () => {
+                const shareData = { title: '{{event.name}}', url: window.location.href };
+                if (navigator.share) {
+                    navigator.share(shareData).catch(err => console.error('Share failed:', err));
+                } else {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        const originalContent = shareButton.innerHTML;
+                        shareButton.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
+                        setTimeout(() => { shareButton.innerHTML = originalContent; }, 2000);
+                    }).catch(err => console.error('Copy failed:', err));
+                }
+            });
         }
     </script>
 </body>
