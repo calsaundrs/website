@@ -212,7 +212,7 @@ exports.handler = async function (event, context) {
     <style>
         :root {
             --color-bg: #0D0115;
-            --color-light: #FFFFFF;
+            --color-light: #f3e8ff;
             --color-toxic: #CCFF00;
             --color-purple: #9B5DE5;
             --color-pink: #E83A99;
@@ -407,7 +407,7 @@ exports.handler = async function (event, context) {
                     </h2>
                     <div class="space-y-3">
                         {{#each otherInstances}}
-                        <a href="/event/{{slug}}" class="block border-2 border-white/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
+                        <a href="/event/{{slug}}" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
                             <div class="text-center w-16 flex-shrink-0">
                                 <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
                                 <p class="text-sm text-gray-400 uppercase font-bold">{{formatMonth date}}</p>

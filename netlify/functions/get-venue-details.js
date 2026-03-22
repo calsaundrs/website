@@ -495,7 +495,7 @@ function getVenueTemplate() {
     <style>
         :root {
             --color-bg: #0D0115;
-            --color-light: #FFFFFF;
+            --color-light: #f3e8ff;
             --color-toxic: #CCFF00;
             --color-purple: #9B5DE5;
             --color-pink: #E83A99;
@@ -736,7 +736,7 @@ function getVenueTemplate() {
                     </h2>
                     <div class="space-y-4">
                         {{#each googlePlaces.reviews}}
-                        <div class="border-2 border-white/20 p-5">
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
                             <div class="flex items-center justify-between mb-3">
                                 <p class="font-bold text-white uppercase text-sm">{{author}}</p>
                                 <div class="flex text-sm text-yellow-400">
@@ -768,7 +768,7 @@ function getVenueTemplate() {
                     </h2>
                     <div class="space-y-3">
                         {{#each upcomingEvents}}
-                        <a href="/event/{{slug}}" class="block border-2 border-white/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
+                        <a href="/event/{{slug}}" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
                             <div class="text-center w-16 flex-shrink-0">
                                 <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
                                 <p class="text-sm text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
@@ -920,13 +920,13 @@ function getVenueTemplate() {
     <div id="imageModal" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center p-4">
         <div class="relative max-w-5xl max-h-full">
             <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black border-2 border-white w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
                 <i class="fas fa-times"></i>
             </button>
-            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-white w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-white w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -1104,7 +1104,7 @@ function getVenueTemplate() {
                         const month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
                         const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-white/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
+                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
                         html += '<div class="text-center w-16 flex-shrink-0">';
                         html += '<p class="text-2xl font-bold text-[var(--color-toxic)]">' + day + '</p>';
                         html += '<p class="text-sm text-gray-400 uppercase font-bold">' + month + '</p>';
@@ -1124,13 +1124,13 @@ function getVenueTemplate() {
                     
                 } else {
                     console.log('📭 No events found');
-                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-white/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
+                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
                 }
             } catch (error) {
                 console.error('❌ Error loading events:', error);
                 const eventsContainer = document.getElementById('events-container');
                 if (eventsContainer) {
-                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-white/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
+                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
                 }
             }
         }

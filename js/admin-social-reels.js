@@ -480,7 +480,7 @@ class SocialReelsGenerator {
                             <div class="mb-4">
                                 <div class="w-20 h-20 mx-auto mb-3 bg-white bg-opacity-20 rounded-full flex items-center justify-center relative">
                                     <i class="fas fa-video text-3xl"></i>
-                                    <div class="absolute inset-0 border-2 border-white border-opacity-30 rounded-full animate-spin"></div>
+                                    <div class="absolute inset-0 border-2 border-[#f3e8ff] border-opacity-30 rounded-full animate-spin"></div>
                                 </div>
                                 <h3 class="font-bold text-xl mb-1">${videoData.event.name}</h3>
                                 <p class="text-sm opacity-90 mb-1">${videoData.event.venue.name}</p>
