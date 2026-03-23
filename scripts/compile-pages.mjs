@@ -33,22 +33,26 @@ async function compilePages() {
                 
                 // Extract metadata if available (using simple regex for now)
                 // Format: <!-- TITLE: My Title -->
-                const titleMatch = content.match(/<!-- TITLE: (.*?) -->/);
-                const descMatch = content.match(/<!-- DESCRIPTION: (.*?) -->/);
+                const titleMatch = content.match(/<!--\s*TITLE:\s*(.*?)\s*-->/);
+                const descMatch = content.match(/<!--\s*DESCRIPTION:\s*(.*?)\s*-->/);
+                const extraHeadMatch = content.match(/<!--\s*EXTRA_HEAD:\s*([\s\S]*?)\s*-->/);
                 
-                const title = titleMatch ? titleMatch[1] : file.replace('.html', '').replace(/-/g, ' ');
-                const description = descMatch ? descMatch[1] : 'Birmingham\'s vibrant LGBTQ+ scene.';
-                
-                // Remove metadata comments from the body content
-                const cleanBody = content
-                    .replace(/<!-- TITLE: .*? -->/, '')
-                    .replace(/<!-- DESCRIPTION: .*? -->/, '');
+                const title = titleMatch ? titleMatch[1] : 'Brum Outloud';
+                const description = descMatch ? descMatch[1] : 'Birmingham\'s LGBTQ+ Scene';
+                const extraHead = extraHeadMatch ? extraHeadMatch[1] : '';
+
+                // Remove the metadata comments from the content
+                let body = content
+                    .replace(/<!--\s*TITLE:.*?\s*-->/, '')
+                    .replace(/<!--\s*DESCRIPTION:.*?\s*-->/, '')
+                    .replace(/<!--\s*EXTRA_HEAD:[\s\S]*?\s*-->/, '');
 
                 const html = template({
                     title,
                     description,
-                    body: cleanBody,
-                    path: file
+                    extra_head: extraHead,
+                    body,
+                    path: file.replace('.html', '')
                 });
 
                 const outputPath = path.join(rootDir, file);
