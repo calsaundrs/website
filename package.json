@@ -14,8 +14,8 @@
     "render:reel": "cd remotion-templates && npm run render",
     "optimize:css": "node optimize-css.js",
     "optimize:critical": "node create-critical-css.js",
-    "optimize:all": "npm run optimize:css && npm run optimize:critical",
-    "build": "npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap",
+    "build:pages": "node scripts/compile-pages.mjs",
+    "build": "npm run build:pages && npm run optimize:all && npm run build:venues:simple && npm run build:events && npm run build:events-listing && npm run build:venues-listing && npm run generate-sitemap",
     "test": "npx playwright test tests/smoke/",
     "test:smoke": "npx playwright test tests/smoke/"
   },

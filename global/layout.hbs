@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Brum Outloud</title>
+    <meta name="description" content="{{description}}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{title}} | Brum Outloud">
+    <meta property="og:description" content="{{description}}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://brumoutloud.co.uk/{{path}}">
+    <meta property="og:image" content="https://brumoutloud.co.uk/progressflag.svg.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="apple-touch-icon" href="/faviconV2.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8a2be2">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FOUC Prevention -->
+    <style>
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <script src="/js/fouc-prevention.js"></script>
+</head>
+<body class="antialiased fouc-prevention">
+    {{> header}}
+
+    <main>
+        {{{body}}}
+    </main>
+
+    {{> footer}}
+
+    <!-- Scripts -->
+    <script src="/js/main.js" defer></script>
+</body>
+</html>
