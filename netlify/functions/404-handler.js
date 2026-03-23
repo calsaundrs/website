@@ -1,4 +1,6 @@
 const admin = require('firebase-admin');
+const fs = require('fs');
+const path = require('path');
 
 let firebaseInitialized = false;
 let db = null;
@@ -96,10 +98,6 @@ function processEventForPublic(eventData, eventId) {
         ticketLink: eventData.ticketLink || null,
         eventLink: eventData.eventLink || null,
         facebookEvent: eventData.facebookEvent || null,
-        recurringInfo: eventData.recurringInfo || null,
-        boostedListingStartDate: eventData.boostedListingStartDate || null,
-        boostedListingEndDate: eventData.boostedListingEndDate || null,
-        otherInstances: []
     };
 }
 
@@ -128,201 +126,95 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-GB', options);
 }
 
-// Generate event page HTML
+// Generate event page HTML using global layout parts
 function generateEventPage(event) {
+    // Load reusable UI parts
+    const headerPath = path.join(process.cwd(), 'global', 'header.html');
+    const footerPath = path.join(process.cwd(), 'global', 'footer.html');
+    
+    let header = '';
+    let footer = '';
+    
+    try {
+        header = fs.readFileSync(headerPath, 'utf8');
+        footer = fs.readFileSync(footerPath, 'utf8');
+    } catch (e) {
+        console.warn('Could not load global header/footer, using fallbacks');
+    }
+
+    const body = `
+    <section class="max-w-4xl mx-auto py-16 px-4">
+        <div class="bg-white text-black border-4 border-black shadow-[12px_12px_0_#7a00ff] overflow-hidden">
+            <div class="relative h-64 md:h-96">
+                <img src="${event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=675&fit=crop'}" 
+                     alt="${event.name}" 
+                     class="w-full h-full object-cover">
+                <div class="absolute bottom-0 left-0 bg-[#ff007f] text-white px-6 py-2 border-r-4 border-t-4 border-black font-syne font-black uppercase text-xl">
+                    ${event.category ? event.category[0] : 'EVENT'}
+                </div>
+            </div>
+            
+            <div class="p-8 md:p-12">
+                <h1 class="font-syne font-black uppercase text-5xl md:text-6xl mb-6 leading-none text-black">${event.name}</h1>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="space-y-4">
+                        <div class="flex items-center text-xl font-bold">
+                            <i class="fas fa-calendar-alt w-10 text-[#7a00ff]"></i>
+                            <span>${formatDate(event.date)}</span>
+                        </div>
+                        <div class="flex items-center text-xl font-bold">
+                            <i class="fas fa-map-marker-alt w-10 text-[#7a00ff]"></i>
+                            <span>${event.venue?.name || 'Venue TBC'}</span>
+                        </div>
+                        ${event.price ? `<div class="flex items-center text-xl font-bold">
+                            <i class="fas fa-pound-sign w-10 text-[#7a00ff]"></i>
+                            <span>${event.price}</span>
+                        </div>` : ''}
+                    </div>
+                </div>
+
+                ${event.description ? `
+                <div class="prose prose-xl max-w-none font-medium mb-12">
+                    ${event.description}
+                </div>` : ''}
+
+                <div class="flex flex-wrap gap-4 pt-8 border-t-4 border-[#f3e8ff]">
+                    ${event.ticketLink ? `
+                    <a href="${event.ticketLink}" target="_blank" rel="noopener noreferrer" class="bg-[#ccff00] text-black px-8 py-4 font-black uppercase tracking-widest border-4 border-black hover:bg-black hover:text-white transition-all shadow-[4px_4px_0_black]">
+                        GET TICKETS
+                    </a>` : ''}
+                    <a href="/events" class="bg-white text-black px-8 py-4 font-black uppercase tracking-widest border-4 border-black hover:bg-[#7a00ff] hover:text-white transition-all shadow-[4px_4px_0_black]">
+                        BACK TO EVENTS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>`;
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${event.name} - BrumOutLoud</title>
-    <meta name="description" content="${event.description || 'Event details'}">
-    
-    <!-- Open Graph Meta Tags -->
+    <title>${event.name} | Brum Outloud</title>
+    <meta name="description" content="${event.description?.substring(0, 160) || 'Event details'}">
     <meta property="og:title" content="${event.name}">
-    <meta property="og:description" content="${event.description || 'Event details'}">
+    <meta property="og:description" content="${event.description?.substring(0, 160) || 'Event details'}">
     <meta property="og:type" content="event">
-    <meta property="og:url" content="https://brumoutloud.co.uk/event/${event.slug}">
-    <meta property="og:image" content="${event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80'}">
+    <meta property="og:image" content="${event.image?.url || ''}">
     
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="${event.name}">
-    <meta name="twitter:description" content="${event.description || 'Event details'}">
-    <meta name="twitter:image" content="${event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80'}">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    
-    <style>
-        body {
-            background: linear-gradient(135deg, #111827 0%, #7C3AED 50%, #111827 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-        }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
-            letter-spacing: 0.05em;
-        }
-        .accent-color { color: #E83A99; }
-        .bg-accent-color { background-color: #E83A99; }
-        .border-accent-color { border-color: #E83A99; }
-        .accent-color-secondary { color: #8B5CF6; }
-        .bg-accent-color-secondary { background-color: #8B5CF6; }
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1.25rem;
-        }
-        .event-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/fouc-prevention.js"></script>
 </head>
-<body>
-    <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white" style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy">
-            </a>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-8 py-8">
-        <div class="max-w-4xl mx-auto">
-            <!-- Event Header -->
-            <div class="card-bg p-8 mb-8">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Event Image -->
-                    <div class="lg:w-1/3">
-                        <img src="${event.image?.url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center&auto=format&q=80'}" 
-                             alt="${event.name}" 
-                             class="w-full h-64 object-cover rounded-lg">
-                    </div>
-                    
-                    <!-- Event Info -->
-                    <div class="lg:w-2/3">
-                        <h1 class="font-anton text-4xl lg:text-5xl heading-gradient mb-4">${event.name}</h1>
-                        
-                        <div class="space-y-4 mb-6">
-                            ${event.date ? `<div class="flex items-center text-lg">
-                                <i class="fas fa-calendar-alt text-accent-color mr-3"></i>
-                                <span>${formatDate(event.date)}</span>
-                            </div>` : ''}
-                            
-                            ${event.venue?.name ? `<div class="flex items-center text-lg">
-                                <i class="fas fa-map-marker-alt text-accent-color mr-3"></i>
-                                <span>${event.venue.name}</span>
-                            </div>` : ''}
-                            
-                            ${event.category && event.category.length > 0 ? `<div class="flex items-center text-lg">
-                                <i class="fas fa-tags text-accent-color mr-3"></i>
-                                <span>${event.category.join(', ')}</span>
-                            </div>` : ''}
-                        </div>
-                        
-                        <div class="flex flex-wrap gap-3">
-                            ${event.ticketLink ? `<a href="${event.ticketLink}" target="_blank" rel="noopener noreferrer" class="btn-primary text-white px-6 py-3 rounded-lg font-bold">
-                                <i class="fas fa-ticket-alt mr-2"></i>Get Tickets
-                            </a>` : ''}
-                            
-                            <a href="/events" class="btn-secondary text-white px-6 py-3 rounded-lg font-bold">
-                                <i class="fas fa-arrow-left mr-2"></i>Back to Events
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Event Description -->
-            ${event.description ? `<div class="card-bg p-8 mb-8">
-                <h2 class="font-anton text-2xl heading-gradient mb-4">About This Event</h2>
-                <p class="text-lg leading-relaxed">${event.description}</p>
-            </div>` : ''}
-            
-            <!-- Event Details -->
-            <div class="card-bg p-8">
-                <h2 class="font-anton text-2xl heading-gradient mb-6">Event Details</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    ${event.date ? `<div class="flex items-center">
-                        <i class="fas fa-calendar-alt text-accent-color mr-3 text-xl"></i>
-                        <div>
-                            <div class="font-semibold">Date & Time</div>
-                            <div>${formatDate(event.date)}</div>
-                        </div>
-                    </div>` : ''}
-                    
-                    ${event.venue?.name ? `<div class="flex items-center">
-                        <i class="fas fa-map-marker-alt text-accent-color mr-3 text-xl"></i>
-                        <div>
-                            <div class="font-semibold">Venue</div>
-                            <div>${event.venue.name}</div>
-                        </div>
-                    </div>` : ''}
-                    
-                    ${event.price ? `<div class="flex items-center">
-                        <i class="fas fa-pound-sign text-accent-color mr-3 text-xl"></i>
-                        <div>
-                            <div class="font-semibold">Price</div>
-                            <div>${event.price}</div>
-                        </div>
-                    </div>` : ''}
-                    
-                    ${event.ageRestriction ? `<div class="flex items-center">
-                        <i class="fas fa-users text-accent-color mr-3 text-xl"></i>
-                        <div>
-                            <div class="font-semibold">Age Restriction</div>
-                            <div>${event.ageRestriction}</div>
-                        </div>
-                    </div>` : ''}
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8 mt-16">
-        <div class="container mx-auto text-center">
-            <h3 class="font-anton text-3xl leading-tight text-white mb-4">BE SEEN,<br>BE HEARD.</h3>
-        </div>
-    </footer>
+<body class="antialiased fouc-prevention">
+    ${header}
+    <main>${body}</main>
+    ${footer}
+    <script src="/js/main.js" defer></script>
 </body>
 </html>`;
 }
@@ -334,17 +226,13 @@ async function getEventBySlug(slug) {
     }
     
     try {
-        const eventsRef = db.collection('events');
-        const snapshot = await eventsRef
+        const snapshot = await db.collection('events')
             .where('slug', '==', slug)
             .where('status', '==', 'approved')
             .limit(1)
             .get();
         
-        if (snapshot.empty) {
-            return null;
-        }
-        
+        if (snapshot.empty) return null;
         const doc = snapshot.docs[0];
         return processEventForPublic(doc.data(), doc.id);
     } catch (error) {
@@ -354,80 +242,34 @@ async function getEventBySlug(slug) {
 }
 
 exports.handler = async function(event, context) {
-    console.log('404 handler called with event:', JSON.stringify(event, null, 2));
+    const pathValue = event.path || (event.queryStringParameters && event.queryStringParameters.path) || '';
     
-    // Get path from multiple possible sources
-    let path = event.path;
-    if (event.queryStringParameters && event.queryStringParameters.path) {
-        path = event.queryStringParameters.path;
-    }
-    
-    console.log('Processing path:', path);
-    
-    // Check if this is an event URL
-    if (path && path.startsWith('/event/')) {
-        const slug = path.replace('/event/', '');
-        console.log('Extracted slug:', slug);
-        
-        // Try to get the event from Firestore
+    if (pathValue.startsWith('/event/')) {
+        const slug = pathValue.replace('/event/', '');
         const eventData = await getEventBySlug(slug);
-        console.log('Event data found:', eventData ? 'yes' : 'no');
         
         if (eventData) {
-            console.log('Generating event page for:', eventData.name);
-            // Generate and return the event page
-            const html = generateEventPage(eventData);
-            
             return {
                 statusCode: 200,
-                headers: {
-                    'Content-Type': 'text/html',
-                    'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
-                },
-                body: html
+                headers: { 'Content-Type': 'text/html', 'Cache-Control': 'public, max-age=3600' },
+                body: generateEventPage(eventData)
             };
-        } else {
-            console.log('No event found for slug:', slug);
         }
-    } else {
-        console.log('Path does not start with /event/:', path);
     }
     
-    // If not an event or event not found, return the static 404 page
+    // Return the static 404 page
     try {
-        const fs = require('fs');
-        const path = require('path');
         const static404Path = path.join(process.cwd(), '404.html');
-        const static404Content = fs.readFileSync(static404Path, 'utf8');
-        
         return {
             statusCode: 404,
-            headers: {
-                'Content-Type': 'text/html'
-            },
-            body: static404Content
+            headers: { 'Content-Type': 'text/html' },
+            body: fs.readFileSync(static404Path, 'utf8')
         };
     } catch (error) {
-        console.error('Error reading static 404 page:', error);
-        // Fallback 404 response
         return {
             statusCode: 404,
-            headers: {
-                'Content-Type': 'text/html'
-            },
-            body: `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Page Not Found</title>
-                </head>
-                <body>
-                    <h1>Page Not Found</h1>
-                    <p>The page you're looking for doesn't exist.</p>
-                    <a href="/">Go Home</a>
-                </body>
-                </html>
-            `
+            headers: { 'Content-Type': 'text/html' },
+            body: '<h1>404 - Page Not Found</h1>'
         };
     }
-}; 
+};
