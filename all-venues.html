@@ -503,9 +503,8 @@
             </h1>
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the best LGBTQ+ friendly bars, clubs, and spaces
                 in Birmingham. From iconic venues to hidden gems, find your perfect queer space.</p>
+            <p id="venue-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
         </div>
-
-
 
         <!-- Venues Grid -->
         <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
@@ -770,9 +769,10 @@
                     <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
                         <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
                         <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
+                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
                         <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
                         <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
                     </div>
                 </div>
                 <div class="md:text-right">
@@ -790,10 +790,15 @@
     </footer>
 
     <script>
-        // Hide loading screen on page load
+        // Hide loading screen on page load & count venues
         document.addEventListener('DOMContentLoaded', function () {
             var loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen) loadingScreen.classList.add('hidden');
+            var cards = document.querySelectorAll('.venue-card');
+            var countEl = document.getElementById('venue-count');
+            if (countEl && cards.length) {
+                countEl.textContent = cards.length + (cards.length === 1 ? ' venue' : ' venues');
+            }
         });
     </script>
 
