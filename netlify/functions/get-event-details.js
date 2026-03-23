@@ -4,7 +4,7 @@ const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
 
-// Version: 2025-01-27-v1 - Firestore-based event details function
+// Version: 2026-03-22-v2 - Redesigned event detail page layout
 
 const eventService = new FirestoreEventService();
 const recurringManager = new RecurringEventsManager();
@@ -212,7 +212,7 @@ exports.handler = async function (event, context) {
     <style>
         :root {
             --color-bg: #0D0115;
-            --color-light: #FFFFFF;
+            --color-light: #f3e8ff;
             --color-toxic: #CCFF00;
             --color-purple: #9B5DE5;
             --color-pink: #E83A99;
@@ -296,6 +296,11 @@ exports.handler = async function (event, context) {
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
+        /* Add bottom padding on mobile when sticky ticket bar is visible */
+        @media (max-width: 1023px) {
+            body.has-ticket-bar { padding-bottom: 5rem; }
+        }
     </style>
 </head>
 <body>
@@ -328,143 +333,172 @@ exports.handler = async function (event, context) {
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="mx-auto px-4 py-8 max-w-4xl">
+    <!-- Top Bar: Key Info -->
+    <section class="max-w-5xl mx-auto px-6 md:px-12 pt-8">
+        <!-- Breadcrumb -->
+        <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+            <a href="/events" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">What's On</a>
+            <span class="text-gray-600 mx-2">/</span>
+            <span class="text-[var(--color-toxic)]">Event</span>
+        </nav>
 
-        <!-- Event Details -->
-        <div class="neo-card overflow-hidden">
-            <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-black flex items-center justify-center relative">
-                {{#if event.image}}
-                <img src="{{event.image.url}}" alt="{{event.name}}" class="w-full h-full object-cover">
-                {{else}}
-                <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/20 to-[var(--color-pink)]/20 flex items-center justify-center">
-                    <i class="fas fa-image text-6xl text-gray-700"></i>
-                </div>
+        <!-- Category Tags -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            {{{categoryTags}}}
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-5xl lg:text-7xl font-black text-white uppercase font-display misprint leading-[0.9] mb-6">{{event.name}}</h1>
+
+        <!-- Key Info Strip -->
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-lg mb-6">
+            <span class="text-[var(--color-toxic)] font-bold">
+                <i class="fas fa-calendar-day mr-2"></i>{{formatDateOnly event.date}}
+            </span>
+            <span class="text-white font-bold">
+                <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>{{formatTime event.date}}
+            </span>
+            <span class="text-white font-bold">
+                <i class="fas fa-map-marker-alt mr-2 text-[var(--color-toxic)]"></i>{{event.venue.name}}
+            </span>
+            {{#if event.price}}
+            <span class="text-white font-bold">
+                <i class="fas fa-tag mr-2 text-[var(--color-toxic)]"></i>{{event.price}}
+            </span>
+            {{/if}}
+            {{#if event.ageRestriction}}
+            <span class="text-white font-bold">
+                <i class="fas fa-id-card mr-2 text-[var(--color-toxic)]"></i>{{event.ageRestriction}}
+            </span>
+            {{/if}}
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="flex flex-wrap gap-3 mb-10">
+            {{#if event.details.link}}
+            <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo flex items-center justify-center text-lg px-8 py-4">
+                <i class="fas fa-ticket-alt mr-2"></i>GET TICKETS
+            </a>
+            {{/if}}
+            <button id="share-button" class="bg-[var(--color-pink)] text-white font-bold uppercase tracking-wider px-8 py-4 text-lg border-3 border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--color-toxic)] transition-all cursor-pointer flex items-center">
+                <i class="fas fa-share-alt mr-2"></i>SHARE
+            </button>
+        </div>
+    </section>
+
+    <!-- Poster -->
+    {{#if event.image}}
+    <section class="max-w-5xl mx-auto px-6 md:px-12 mb-12">
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-40 group-hover:opacity-70 transition-opacity duration-300"></div>
+            <img src="{{event.image.url}}" alt="{{event.name}}" class="relative w-full h-auto object-contain bg-black">
+        </div>
+    </section>
+    {{/if}}
+
+    <!-- Description -->
+    <main class="max-w-5xl mx-auto px-6 md:px-12 py-12">
+        {{#if (hasDescription event.description)}}
+        <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
+                <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
+            </h2>
+            <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                {{{formatDescription event.description}}}
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- Secondary Info -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 pt-12 border-t border-white/10">
+            <!-- Venue -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
+                    <i class="fas fa-map-marker-alt mr-1 text-[var(--color-toxic)]"></i> Venue
+                </h3>
+                <p class="text-white font-bold text-lg mb-1">{{event.venue.name}}</p>
+                {{#if event.venue.address}}
+                <p class="text-gray-400 text-sm mb-3">{{event.venue.address}}</p>
                 {{/if}}
-                <div class="absolute top-4 left-4">
-                    <a href="/events" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
-                        <i class="fas fa-arrow-left mr-1"></i>BACK
+                {{#if event.venue.slug}}
+                <a href="/venue/{{event.venue.slug}}" class="text-[var(--color-toxic)] font-bold text-sm uppercase tracking-wider hover:underline">
+                    View Venue <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+                {{/if}}
+            </div>
+
+            <!-- Calendar -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
+                    <i class="fas fa-calendar-plus mr-1 text-[var(--color-toxic)]"></i> Save to Calendar
+                </h3>
+                <div class="flex flex-col gap-2">
+                    <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="text-white font-bold hover:text-[var(--color-toxic)] transition-colors">
+                        <i class="fab fa-google mr-2"></i>Google Calendar
+                    </a>
+                    <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="text-white font-bold hover:text-[var(--color-toxic)] transition-colors">
+                        <i class="fas fa-calendar-plus mr-2"></i>Apple / Outlook
                     </a>
                 </div>
-                <div class="absolute top-4 right-4">
-                    <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-outline text-white px-3 py-1 text-sm !border-2 !py-1">
-                        <i class="fas fa-share mr-1"></i>SHARE
-                    </button>
-                </div>
             </div>
-            
-            <div class="p-8">
-                <!-- Event Header -->
-                <div class="mb-8">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="text-center w-20 flex-shrink-0 border-r-2 border-[var(--color-toxic)] pr-4">
-                            <div class="text-4xl font-bold text-[var(--color-toxic)]">{{formatDay event.date}}</div>
-                            <div class="text-sm text-gray-400 uppercase font-bold">{{formatMonth event.date}}</div>
-                        </div>
-                        <div class="flex-1">
-                            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 uppercase">{{event.name}}</h1>
-                            <p class="text-lg text-[var(--color-toxic)] font-bold mb-2">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                {{event.venue.name}}
-                            </p>
-                            <p class="text-gray-400 font-bold">
-                                <i class="fas fa-clock mr-2"></i>
-                                {{formatDate event.date}}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        {{{categoryTags}}}
-                    </div>
-                </div>
 
-                <!-- Event Content -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Content -->
-                    <div class="lg:col-span-2">
-                        {{#if (hasDescription event.description)}}
-                        <div class="neo-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
-                                <i class="fas fa-info-circle mr-3 text-[var(--color-toxic)]"></i>About This Event
-                            </h2>
-                            <div class="text-gray-300 leading-relaxed prose prose-invert max-w-none">
-                                {{{formatDescription event.description}}}
-                            </div>
-                        </div>
-                        {{/if}}
-
-                        <!-- Other Events in Series -->
-                        {{#if hasOtherInstances}}
-                        <div class="neo-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4 uppercase">
-                                <i class="fas fa-calendar mr-3 text-[var(--color-toxic)]"></i>Other Events in this Series
-                            </h2>
-                            <div class="space-y-4">
-                                {{#each otherInstances}}
-                                <a href="/event/{{slug}}" class="block border-2 border-white p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-[var(--color-purple)]/10 transition-all duration-200">
-                                    <div class="text-center w-20 flex-shrink-0">
-                                        <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
-                                        <p class="text-lg text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="font-bold text-white text-xl">{{name}}</h4>
-                                        <p class="text-sm text-gray-400">{{formatTime date}}</p>
-                                    </div>
-                                    <div class="text-[var(--color-toxic)]">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </div>
-                                </a>
-                                {{/each}}
-                            </div>
-                        </div>
-                        {{/if}}
-                    </div>
-
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
-
-                        <!-- Action Buttons -->
-                        {{#if event.details.link}}
-                        <div class="neo-card p-6">
-                            <div class="space-y-3">
-                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center">
-                                    <i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS
-                                </a>
-                            </div>
-                        </div>
-                        {{/if}}
-
-                        <!-- Add to Calendar -->
-                        <div class="neo-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
-                                <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i>Add to Calendar
-                            </h3>
-                            <div class="space-y-3">
-                                <a href="{{calendarLinks.google}}" target="_blank" rel="noopener noreferrer" class="btn-outline w-full flex items-center justify-center text-sm">
-                                    <i class="fab fa-google mr-2"></i>GOOGLE CALENDAR
-                                </a>
-                                <a href="{{calendarLinks.ical}}" download="{{event.slug}}.ics" class="btn-outline w-full flex items-center justify-center text-sm">
-                                    <i class="fas fa-calendar-plus mr-2"></i>APPLE / OUTLOOK
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Share Event -->
-                        <div class="neo-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center uppercase">
-                                <i class="fas fa-share-alt mr-2 text-[var(--color-toxic)]"></i>Share This Event
-                            </h3>
-                            <button onclick="navigator.share ? navigator.share({title: '{{event.name}}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'))" class="btn-neo w-full">
-                                <i class="fas fa-share-alt mr-2"></i>SHARE EVENT
-                            </button>
-                        </div>
-                    </div>
+            <!-- Extra Details -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
+                    <i class="fas fa-info-circle mr-1 text-[var(--color-toxic)]"></i> Details
+                </h3>
+                <div class="space-y-2 text-sm">
+                    {{#if event.isRecurring}}
+                    <p class="text-[var(--color-toxic)] font-bold"><i class="fas fa-redo mr-2"></i>{{event.recurringInfo}}</p>
+                    {{/if}}
+                    {{#if event.organizer}}
+                    <p class="text-white font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>{{event.organizer}}</p>
+                    {{/if}}
+                    {{#if event.accessibility}}
+                    <p class="text-gray-300"><i class="fas fa-universal-access mr-2 text-[var(--color-toxic)]"></i>{{event.accessibility}}</p>
+                    {{/if}}
                 </div>
             </div>
         </div>
+
+        <!-- Other Dates -->
+        {{#if hasOtherInstances}}
+        <section class="mt-12 pt-12 border-t border-white/10">
+            <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
+                <span class="text-[var(--color-toxic)] mr-2">///</span> Other Dates
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {{#each otherInstances}}
+                <a href="/event/{{slug}}" class="block bg-white/5 p-5 flex items-center space-x-4 hover:bg-[var(--color-purple)]/10 transition-all duration-200 group">
+                    <div class="text-center w-16 flex-shrink-0">
+                        <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
+                        <p class="text-sm text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-white text-lg">{{name}}</h4>
+                        <p class="text-sm text-gray-400">{{formatTime date}}</p>
+                    </div>
+                    <div class="text-[var(--color-toxic)] group-hover:translate-x-1 transition-transform">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+                {{/each}}
+            </div>
+        </section>
+        {{/if}}
     </main>
+
+    <!-- Sticky mobile bar: Tickets + Share -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black border-t-4 border-[var(--color-toxic)] p-3 flex gap-2">
+        {{#if event.details.link}}
+        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo flex-1 flex items-center justify-center">
+            <i class="fas fa-ticket-alt mr-2"></i>TICKETS
+        </a>
+        {{/if}}
+        <button id="share-button-mobile" class="bg-[var(--color-pink)] text-white font-bold uppercase tracking-wider px-4 py-3 border-3 border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] flex items-center justify-center cursor-pointer {{#unless event.details.link}}flex-1{{/unless}}">
+            <i class="fas fa-share-alt mr-2"></i>SHARE
+        </button>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
@@ -512,6 +546,28 @@ exports.handler = async function (event, context) {
                 menu.classList.toggle('flex');
             });
         }
+
+        // Add body class if sticky ticket bar exists
+        if (document.querySelector('.fixed.bottom-0')) {
+            document.body.classList.add('has-ticket-bar');
+        }
+
+        // Share button functionality
+        function handleShare(btn) {
+            const shareData = { title: '{{event.name}}', url: window.location.href };
+            if (navigator.share) {
+                navigator.share(shareData).catch(err => console.error('Share failed:', err));
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    const originalContent = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>COPIED!';
+                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+                }).catch(err => console.error('Copy failed:', err));
+            }
+        }
+        document.querySelectorAll('#share-button, #share-button-mobile').forEach(btn => {
+            btn.addEventListener('click', () => handleShare(btn));
+        });
     </script>
 </body>
 </html>`;
@@ -632,8 +688,8 @@ exports.handler = async function (event, context) {
             similarEvents: similarEvents,
             hasOtherInstances: otherInstances.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
-            categoryTags: (eventData.category || []).map(tag => 
-                '<span class="inline-block bg-blue-100/20 text-blue-300 text-sm px-3 py-1 rounded-full">' + tag + '</span>'
+            categoryTags: (eventData.category || []).map(tag =>
+                '<span class="category-tag">' + tag + '</span>'
             ).join('')
         };
 

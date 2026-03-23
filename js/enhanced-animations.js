@@ -10,9 +10,9 @@ class EnhancedAnimations {
 
     init() {
         this.setupLoadingScreen();
-        this.setupScrollReveals();
         this.setupPageTransitions();
         this.setupStaggeredAnimations();
+        this.setupScrollReveals();
         this.setupIntersectionObserver();
         this.setupSmoothScrolling();
         this.setupTouchInteractions();

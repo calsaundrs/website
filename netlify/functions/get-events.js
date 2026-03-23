@@ -104,23 +104,61 @@ async function handlePublicView(queryParams) {
         const snapshot = await query.get();
         console.log(`Query returned ${snapshot.size} documents`);
 
+        const now = new Date();
         const events = [];
-        let processedCount = 0;
-        let skippedCount = 0;
 
-        // Process events and fetch venue data for each
+        // First pass: map raw docs, filter out past/invalid dates (cheap — no DB calls)
+        const candidateDocs = [];
         for (const doc of snapshot.docs) {
             const rawData = doc.data();
-            console.log(`Raw event data for ${rawData['Event Name'] || rawData.name}:`, {
-                venue: rawData.venue,
-                venueName: rawData['Venue Name'],
-                venueSlug: rawData['Venue Slug'],
-                image: rawData.image,
-                promoImage: rawData['Promo Image'],
-                cloudinaryId: rawData['Cloudinary Public ID']
-            });
+            const dateStr = rawData['Date'] || rawData.date;
+            if (!dateStr) continue;
+            const eventDate = new Date(dateStr);
+            if (isNaN(eventDate.getTime()) || eventDate < now) continue;
 
-            // Map Firestore field names to expected field names (support both legacy and new field names)
+            // Apply search filter early before expensive processing
+            if (filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                const name = rawData['Event Name'] || rawData.name || '';
+                const desc = rawData['Description'] || rawData.description || '';
+                if (!name.toLowerCase().includes(searchLower) && !desc.toLowerCase().includes(searchLower)) continue;
+            }
+
+            candidateDocs.push({ doc, rawData });
+        }
+
+        console.log(`${snapshot.size} docs fetched, ${candidateDocs.length} are upcoming`);
+
+        // Batch-fetch all needed venues in one go (instead of N+1 queries)
+        const uniqueVenueSlugs = [...new Set(
+            candidateDocs
+                .map(({ rawData }) => rawData['Venue Slug'] || rawData.venueSlug)
+                .filter(Boolean)
+        )];
+
+        const venueMap = new Map();
+        if (uniqueVenueSlugs.length > 0) {
+            // Firestore 'in' queries support up to 30 values per batch
+            const BATCH_SIZE = 30;
+            for (let i = 0; i < uniqueVenueSlugs.length; i += BATCH_SIZE) {
+                const batch = uniqueVenueSlugs.slice(i, i + BATCH_SIZE);
+                try {
+                    const venueSnapshot = await db.collection('venues')
+                        .where('slug', 'in', batch)
+                        .get();
+                    venueSnapshot.forEach(vDoc => {
+                        const v = processVenueForPublic({ id: vDoc.id, ...vDoc.data() });
+                        venueMap.set(v.slug, v);
+                    });
+                } catch (err) {
+                    console.warn('Venue batch fetch failed:', err.message);
+                }
+            }
+            console.log(`Fetched ${venueMap.size} venues in ${Math.ceil(uniqueVenueSlugs.length / BATCH_SIZE)} batch(es)`);
+        }
+
+        // Second pass: build event objects with venue data from the map
+        for (const { doc, rawData } of candidateDocs) {
             const eventData = {
                 id: doc.id,
                 name: rawData['Event Name'] || rawData.name,
@@ -132,7 +170,7 @@ async function handlePublicView(queryParams) {
                 venueId: rawData['venueId'] || rawData.venueId,
                 venueName: rawData['Venue Name'] || rawData.venueName,
                 venueSlug: rawData['Venue Slug'] || rawData.venueSlug,
-                venue: rawData.venue, // Pass the venue object directly
+                venue: rawData.venue,
                 image: extractImageInfo(rawData),
                 link: rawData['Link'] || rawData.link,
                 ticketLink: rawData['Ticket Link'] || rawData.ticketLink,
@@ -144,84 +182,24 @@ async function handlePublicView(queryParams) {
                 submittedBy: rawData['Submitter Email'] || rawData.submittedBy,
                 approvedBy: rawData.approvedBy,
                 approvedAt: rawData.approvedAt,
-                // Add new standardized fields for compatibility
                 cloudinaryPublicId: rawData.cloudinaryPublicId || rawData['Cloudinary Public ID'],
                 promoImage: rawData.promoImage || rawData['Promo Image']
             };
 
-            // Convert venue object to venueName string for compatibility with live events page
+            // Convert venue object to venueName string for compatibility
             if (eventData.venue && eventData.venue.name && !eventData.venueName) {
                 eventData.venueName = Array.isArray(eventData.venue.name) ? eventData.venue.name[0] : eventData.venue.name;
             }
 
-            // Fetch venue data if we have a venue slug
-            let venueData = null;
-            if (eventData.venueSlug) {
-                try {
-                    const venueRef = db.collection('venues');
-                    const venueQuery = venueRef.where('slug', '==', eventData.venueSlug);
-                    const venueSnapshot = await venueQuery.get();
-                    if (!venueSnapshot.empty) {
-                        const venueDoc = venueSnapshot.docs[0];
-                        venueData = processVenueForPublic({
-                            id: venueDoc.id,
-                            ...venueDoc.data()
-                        });
-                        console.log(`Found venue data for ${eventData.name}:`, venueData.name);
-                    }
-                } catch (error) {
-                    console.log(`Error fetching venue data for ${eventData.name}:`, error);
-                }
-            }
-
-            console.log(`Processing event: ${eventData.name} (status: ${eventData.status}, date: ${eventData.date}, venue: ${JSON.stringify(eventData.venue)}, image: ${JSON.stringify(eventData.image)})`);
-
-            // Apply date filtering client-side
-            if (eventData.date) {
-                try {
-                    const eventDate = new Date(eventData.date);
-                    const now = new Date();
-
-                    // Check if the date is valid
-                    if (isNaN(eventDate.getTime())) {
-                        console.log(`Invalid date for event ${eventData.name}: ${eventData.date}`);
-                        skippedCount++;
-                        continue; // Skip this event
-                    }
-
-                    console.log(`Date comparison for ${eventData.name}: eventDate=${eventDate.toISOString()}, now=${now.toISOString()}, isPast=${eventDate < now}`);
-
-                    // Filter out past events (events before today)
-                    if (eventDate < now) {
-                        console.log(`Skipping past event ${eventData.name} (date: ${eventDate.toISOString()})`);
-                        skippedCount++;
-                        continue; // Skip this event
-                    }
-                } catch (dateError) {
-                    console.log(`Error processing date for event ${eventData.name}: ${eventData.date}`, dateError);
-                    skippedCount++;
-                    continue; // Skip this event
-                }
-            }
-
-            // Apply search filtering client-side (Firestore doesn't support full-text search)
-            if (filters.search) {
-                const searchLower = filters.search.toLowerCase();
-                const nameMatch = eventData.name && eventData.name.toLowerCase().includes(searchLower);
-                const descMatch = eventData.description && eventData.description.toLowerCase().includes(searchLower);
-                if (!nameMatch && !descMatch) {
-                    console.log(`Skipping event ${eventData.name} due to search filter`);
-                    skippedCount++;
-                    continue; // Skip this event
-                }
-            }
+            // Look up venue from the batch map
+            const venueSlug = eventData.venueSlug;
+            const venueData = venueSlug ? (venueMap.get(venueSlug) || null) : null;
 
             const processedEvent = await processEventForPublic(eventData, venueData);
             events.push(processedEvent);
-            processedCount++;
         }
 
-        console.log(`Processed ${processedCount} events, skipped ${skippedCount} events`);
+        console.log(`Processed ${events.length} events`);
 
         // Sort events by date (client-side since we can't orderBy in Firestore yet)
         events.sort((a, b) => {
@@ -329,18 +307,9 @@ async function handleAdminView(queryParams) {
 }
 
 function extractImageInfo(eventData, venueData = null) {
-    console.log(`Extracting image for event: ${eventData['Event Name'] || eventData.name}`);
-    console.log(`Available image fields:`, {
-        cloudinaryId: eventData['Cloudinary Public ID'] || eventData.cloudinaryPublicId,
-        promoImage: eventData['Promo Image'] || eventData.promoImage,
-        image: eventData.image,
-        legacyCloudinaryId: eventData['Cloudinary Public ID']
-    });
-
     // Check for standardized Cloudinary Public ID first (new field name)
     const cloudinaryId = eventData.cloudinaryPublicId || eventData['Cloudinary Public ID'];
     if (cloudinaryId && process.env.CLOUDINARY_CLOUD_NAME) {
-        console.log(`Using Cloudinary ID: ${cloudinaryId}`);
         return {
             url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${cloudinaryId}`,
             alt: eventData['Event Name'] || eventData.name
@@ -360,7 +329,6 @@ function extractImageInfo(eventData, venueData = null) {
         }
 
         if (imageUrl) {
-            console.log(`Using promo image: ${imageUrl}`);
             return {
                 url: imageUrl,
                 alt: eventData['Event Name'] || eventData.name
@@ -381,7 +349,6 @@ function extractImageInfo(eventData, venueData = null) {
         }
 
         if (imageUrl) {
-            console.log(`Using image field: ${imageUrl}`);
             return {
                 url: imageUrl,
                 alt: eventData['Event Name'] || eventData.name
@@ -391,14 +358,12 @@ function extractImageInfo(eventData, venueData = null) {
 
     // Fallback to venue image if available
     if (venueData && venueData.image && venueData.image.url) {
-        console.log(`Using venue image as fallback: ${venueData.image.url}`);
         return {
             url: venueData.image.url,
             alt: `${eventData['Event Name'] || eventData.name} at ${venueData.name}`
         };
     }
 
-    console.log(`No valid image found, returning null`);
     return null;
 }
 
@@ -420,15 +385,6 @@ async function handleVenuesView() {
             const processedVenue = processVenueForPublic({
                 id: doc.id,
                 ...venueData
-            });
-
-            // Debug: Log raw venue data to see what fields exist
-            console.log(`Raw venue data for ${processedVenue.name}:`, {
-                id: doc.id,
-                hasImageField: !!venueData.image,
-                hasPhotoField: !!venueData.Photo,
-                hasCloudinaryId: !!venueData['Cloudinary Public ID'],
-                processedImage: processedVenue.image
             });
 
             // Only include venues that have some form of image (Cloudinary or will use placeholder)
