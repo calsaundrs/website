@@ -226,11 +226,11 @@
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-8">
         <p class="text-gray-600 text-xs uppercase tracking-widest mb-4"><i class="fas fa-check-circle text-[var(--color-toxic)] mr-1"></i> Last verified: March 2026 · <a href="/contact" class="text-[var(--color-pink)] hover:text-white">Report outdated info</a></p>
         <div class="flex flex-wrap gap-2 items-center">
-            <button class="filter-pill active" data-filter="all">All</button>
-            <button class="filter-pill" data-filter="sports">Sports & Fitness</button>
-            <button class="filter-pill" data-filter="arts">Arts & Culture</button>
-            <button class="filter-pill" data-filter="social">Social & Gaming</button>
-            <button class="filter-pill" data-filter="community">Community & Support</button>
+            <button class="filter-pill active" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-pill" data-filter="sports" aria-pressed="false">Sports & Fitness</button>
+            <button class="filter-pill" data-filter="arts" aria-pressed="false">Arts & Culture</button>
+            <button class="filter-pill" data-filter="social" aria-pressed="false">Social & Gaming</button>
+            <button class="filter-pill" data-filter="community" aria-pressed="false">Community & Support</button>
         </div>
     </section>
 
@@ -267,7 +267,7 @@
                     <img src="https://birminghambullsrfc.com/assets/images/about-team.jpg" alt="Birmingham Bulls RFC team" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
-                            <img src="https://birminghambullsrfc.com/assets/images/bulls-logo.png" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <img src="https://birminghambullsrfc.com/assets/images/bulls-logo.png" alt="" class="club-card-logo" aria-hidden="true" loading="lazy" onerror="this.style.display='none'">
                             <div>
                                 <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Birmingham Bulls RFC</h3>
                                 <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-football-ball mr-1"></i> Rugby</p>
@@ -299,7 +299,7 @@
                     <img src="https://i0.wp.com/birminghamswifts.co.uk/wp-content/uploads/2025/05/parkrun-takeover-May-2025-scaled.jpg?fit=1440%2C960&ssl=1" alt="Birmingham Swifts parkrun" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
-                            <img src="https://birminghamswifts.co.uk/wp-content/uploads/2025/06/Blue-2025-logo-reduced.jpg" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <img src="https://birminghamswifts.co.uk/wp-content/uploads/2025/06/Blue-2025-logo-reduced.jpg" alt="" class="club-card-logo" aria-hidden="true" loading="lazy" onerror="this.style.display='none'">
                             <div>
                                 <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Birmingham Swifts</h3>
                                 <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-shoe-prints mr-1"></i> Running</p>
@@ -384,7 +384,7 @@
                     <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/02/Birmingham-Pride-Performance-1024x768.jpg" alt="Rainbow Voices performing at Birmingham Pride" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
-                            <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/01/RV-logo.jpg" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/01/RV-logo.jpg" alt="" class="club-card-logo" aria-hidden="true" loading="lazy" onerror="this.style.display='none'">
                             <div>
                                 <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Rainbow Voices</h3>
                                 <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-microphone mr-1"></i> Choir</p>
@@ -631,8 +631,9 @@
         // Category filter
         document.querySelectorAll('.filter-pill').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.filter-pill').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
                 btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
                 const filter = btn.dataset.filter;
                 document.querySelectorAll('[data-category]').forEach(section => {
                     const divider = section.previousElementSibling;
