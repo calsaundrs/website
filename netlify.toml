@@ -114,6 +114,28 @@
 
 
 
+# Rule for the CLUBS page
+[[redirects]]
+  from = "/clubs"
+  to = "/clubs.html"
+  status = 200
+
+# Rule for the BIRMINGHAM PRIDE page
+[[redirects]]
+  from = "/birmingham-pride"
+  to = "/birmingham-pride.html"
+  status = 200
+
+[[redirects]]
+  from = "/pride"
+  to = "/birmingham-pride.html"
+  status = 200
+
+[[redirects]]
+  from = "/pride-guide"
+  to = "/birmingham-pride.html"
+  status = 200
+
 # Rule for the COMMUNITY page
 [[redirects]]
   from = "/community"

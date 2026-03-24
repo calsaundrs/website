@@ -105,12 +105,56 @@
             border: 4px solid var(--color-light);
             box-shadow: 6px 6px 0 var(--color-purple);
             background: #000;
-            padding: 1.5rem;
             transition: all 0.2s ease;
+            overflow: hidden;
         }
         .club-card:hover {
             transform: translate(-3px, -3px);
             box-shadow: 10px 10px 0 var(--color-pink);
+        }
+        .club-card-body {
+            padding: 1.5rem;
+        }
+        .club-card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: grayscale(0.3) contrast(1.1);
+            transition: filter 0.3s ease;
+            display: block;
+        }
+        .club-card:hover .club-card-img {
+            filter: grayscale(0) contrast(1.2);
+        }
+        .club-card-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            border: 2px solid var(--color-light);
+            background: #fff;
+            flex-shrink: 0;
+        }
+        /* Featured club card — full width */
+        .club-card-featured {
+            border: 4px solid var(--color-toxic);
+            box-shadow: 8px 8px 0 var(--color-purple);
+            background: #000;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        .club-card-featured:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 12px 12px 0 var(--color-pink);
+        }
+        .club-card-featured img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            filter: grayscale(0.2) contrast(1.1);
+            transition: filter 0.3s ease;
+        }
+        .club-card-featured:hover img {
+            filter: grayscale(0) contrast(1.2);
         }
 
         /* Section divider */
@@ -138,7 +182,9 @@
             <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
                 <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
                 <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/community" class="text-[var(--color-toxic)] transition-colors">COMMUNITY / SAFE SPACE</a>
+                <a href="/clubs" class="text-[var(--color-toxic)] transition-colors">CLUBS</a>
+                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
                 <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
                 <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
@@ -149,7 +195,9 @@
         <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
             <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
             <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
-            <a href="/community" class="block text-[var(--color-toxic)] text-4xl py-4 font-display font-black">COMMUNITY</a>
+            <a href="/clubs" class="block text-[var(--color-toxic)] text-4xl py-4 font-display font-black">CLUBS</a>
+            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
             <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
             <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
@@ -157,8 +205,21 @@
 
     <!-- Page Title -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pt-10 pb-6">
+        <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">25+ CLUBS & GROUPS</div>
         <h1 class="text-5xl md:text-6xl lg:text-8xl font-black text-white uppercase font-display misprint leading-[0.9] mb-3">Clubs &<br>Groups</h1>
-        <p class="text-gray-400 text-lg max-w-xl">Birmingham's queer community goes way beyond the bar scene. Sports teams, social groups, creative clubs and support networks — find your people, bab.</p>
+        <p class="text-gray-400 text-lg max-w-xl mb-8">Birmingham's queer community goes way beyond the bar scene. Sports teams, social groups, creative clubs and support networks — find your people, bab.</p>
+        <!-- Hero image grid -->
+        <div class="grid grid-cols-3 gap-2 mb-2">
+            <div class="border-4 border-[var(--color-light)] overflow-hidden" style="box-shadow: 4px 4px 0 var(--color-purple);">
+                <img src="https://birminghambullsrfc.com/assets/images/about-team.jpg" alt="Birmingham Bulls RFC team photo" class="w-full h-32 md:h-48 object-cover" style="filter: contrast(1.1) saturate(1.1);" loading="eager" onerror="this.parentElement.style.display='none'">
+            </div>
+            <div class="border-4 border-[var(--color-light)] overflow-hidden" style="box-shadow: 4px 4px 0 var(--color-pink);">
+                <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/02/Birmingham-Pride-Performance-1024x768.jpg" alt="Rainbow Voices performing at Birmingham Pride" class="w-full h-32 md:h-48 object-cover" style="filter: contrast(1.1) saturate(1.1);" loading="eager" onerror="this.parentElement.style.display='none'">
+            </div>
+            <div class="border-4 border-[var(--color-light)] overflow-hidden" style="box-shadow: 4px 4px 0 var(--color-toxic);">
+                <img src="https://i0.wp.com/birminghamswifts.co.uk/wp-content/uploads/2025/05/parkrun-takeover-May-2025-scaled.jpg?fit=1440%2C960&ssl=1" alt="Birmingham Swifts parkrun takeover" class="w-full h-32 md:h-48 object-cover" style="filter: contrast(1.1) saturate(1.1);" loading="eager" onerror="this.parentElement.style.display='none'">
+            </div>
+        </div>
     </section>
 
     <!-- Filters -->
@@ -182,64 +243,94 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Blaze FC</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-futbol mr-1"></i> Football</p>
-                    <p class="text-gray-400 text-sm mb-3">All-gender inclusive LGBTQ+ football team. Trains Wednesday evenings, Sunday morning matches. Open to all experience levels. Founded 2005.</p>
-                    <a href="https://birminghamblazefc.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghamblazefc.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <img src="https://birminghambullsrfc.com/assets/images/about-team.jpg" alt="Birmingham Bulls RFC team" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
+                    <div class="club-card-body">
+                        <div class="flex items-center gap-3 mb-1">
+                            <img src="https://birminghambullsrfc.com/assets/images/bulls-logo.png" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <div>
+                                <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Birmingham Bulls RFC</h3>
+                                <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-football-ball mr-1"></i> Rugby</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3 mt-2">Gay and inclusive rugby union team. Competed at the Bingham Cup and hosted the Union Cup 2023 — Europe's largest LGBTQ+ rugby tournament. Founded 2011.</p>
+                        <a href="https://birminghambullsrfc.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghambullsrfc.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Bulls RFC</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-football-ball mr-1"></i> Rugby</p>
-                    <p class="text-gray-400 text-sm mb-3">Gay and inclusive rugby union team. Competed at the Bingham Cup and hosted the Union Cup 2023 — Europe's largest LGBTQ+ rugby tournament. Founded 2011.</p>
-                    <a href="https://birminghambullsrfc.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghambullsrfc.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Blaze FC</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-futbol mr-1"></i> Football</p>
+                        <p class="text-gray-400 text-sm mb-3">All-gender inclusive LGBTQ+ football team. Trains Wednesday evenings, Sunday morning matches. Open to all experience levels. Founded 2005.</p>
+                        <a href="https://birminghamblazefc.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghamblazefc.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Swifts</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-shoe-prints mr-1"></i> Running</p>
-                    <p class="text-gray-400 text-sm mb-3">Free LGBTQ+ running club for all abilities. Weekly Thursday evening social runs, Saturday parkruns, and Couch to 5K programmes. Post-run socials at The Fox. Also runs a 50+ subgroup.</p>
-                    <a href="https://birminghamswifts.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghamswifts.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <img src="https://i0.wp.com/birminghamswifts.co.uk/wp-content/uploads/2025/05/parkrun-takeover-May-2025-scaled.jpg?fit=1440%2C960&ssl=1" alt="Birmingham Swifts parkrun" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
+                    <div class="club-card-body">
+                        <div class="flex items-center gap-3 mb-1">
+                            <img src="https://birminghamswifts.co.uk/wp-content/uploads/2025/06/Blue-2025-logo-reduced.jpg" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <div>
+                                <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Birmingham Swifts</h3>
+                                <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-shoe-prints mr-1"></i> Running</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3 mt-2">Free LGBTQ+ running club for all abilities. Weekly Thursday evening social runs, Saturday parkruns, and Couch to 5K programmes. Post-run socials at The Fox. Also runs a 50+ subgroup.</p>
+                        <a href="https://birminghamswifts.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">birminghamswifts.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Moseley Shoals</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-swimmer mr-1"></i> Swimming</p>
-                    <p class="text-gray-400 text-sm mb-3">Social LGBTQ+ swimming club, mixed ability from splash &amp; chat to competition standard. Mondays 8:15pm at Northfield Pool, Wednesdays 9pm. Founded 2000.</p>
-                    <a href="https://moseleyshoals.org.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">moseleyshoals.org.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Moseley Shoals</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-swimmer mr-1"></i> Swimming</p>
+                        <p class="text-gray-400 text-sm mb-3">Social LGBTQ+ swimming club, mixed ability from splash &amp; chat to competition standard. Mondays 8:15pm at Northfield Pool, Wednesdays 9pm. Founded 2000.</p>
+                        <a href="https://moseleyshoals.org.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">moseleyshoals.org.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Midlands Out Badminton</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-table-tennis mr-1"></i> Badminton</p>
-                    <p class="text-gray-400 text-sm mb-3">Friendly LGBTQ+ social badminton. Saturdays 9:30am–12:30pm at Aston University Sport Centre. £6 per session, no membership needed — just drop in. Founded 2003.</p>
-                    <a href="https://midlandsoutbadminton.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">midlandsoutbadminton.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Midlands Out Badminton</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-table-tennis mr-1"></i> Badminton</p>
+                        <p class="text-gray-400 text-sm mb-3">Friendly LGBTQ+ social badminton. Saturdays 9:30am–12:30pm at Aston University Sport Centre. £6 per session, no membership needed — just drop in. Founded 2003.</p>
+                        <a href="https://midlandsoutbadminton.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">midlandsoutbadminton.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Unicorns CC</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-baseball-ball mr-1"></i> Cricket</p>
-                    <p class="text-gray-400 text-sm mb-3">LGBTQ+ inclusive cricket — only the second club of its kind in the world. Training at Edgbaston. Open to any age, gender, background or experience. Founded 2020.</p>
-                    <a href="https://bhamunicorns.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">bhamunicorns.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Unicorns CC</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-baseball-ball mr-1"></i> Cricket</p>
+                        <p class="text-gray-400 text-sm mb-3">LGBTQ+ inclusive cricket — only the second club of its kind in the world. Training at Edgbaston. Open to any age, gender, background or experience. Founded 2020.</p>
+                        <a href="https://bhamunicorns.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">bhamunicorns.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Gay City Bowlers</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-bowling-ball mr-1"></i> Bowling</p>
-                    <p class="text-gray-400 text-sm mb-3">Monthly LGBTQ+ ten-pin bowling social at Lane 7, The Cube, followed by food and drinks at Eden Bar. £18 per person for 2 games.</p>
-                    <a href="https://gaycitybowlers.com/birmingham" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">gaycitybowlers.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Gay City Bowlers</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-bowling-ball mr-1"></i> Bowling</p>
+                        <p class="text-gray-400 text-sm mb-3">Monthly LGBTQ+ ten-pin bowling social at Lane 7, The Cube, followed by food and drinks at Eden Bar. £18 per person for 2 games.</p>
+                        <a href="https://gaycitybowlers.com/birmingham" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">gaycitybowlers.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Badgers Quadball</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-quidditch mr-1"></i> Quadball</p>
-                    <p class="text-gray-400 text-sm mb-3">Community Quadball club — the only full-contact mixed-gender sport in the world. Low-pressure, good vibes. Open to all regardless of experience. Founded 2022.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Badgers Quadball</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-quidditch mr-1"></i> Quadball</p>
+                        <p class="text-gray-400 text-sm mb-3">Community Quadball club — the only full-contact mixed-gender sport in the world. Low-pressure, good vibes. Open to all regardless of experience. Founded 2022.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Boot Women</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-hiking mr-1"></i> Walking</p>
-                    <p class="text-gray-400 text-sm mb-3">LGBTQ+ women's walking group. Monthly walks welcoming all abilities. Check Birmingham LGBT Centre for current details.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Boot Women</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-hiking mr-1"></i> Walking</p>
+                        <p class="text-gray-400 text-sm mb-3">LGBTQ+ women's walking group. Monthly walks welcoming all abilities. Check Birmingham LGBT Centre for current details.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -254,28 +345,42 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Rainbow Voices</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-microphone mr-1"></i> Choir</p>
-                    <p class="text-gray-400 text-sm mb-3">West Midlands LGBTQ+ community choir. No audition needed, no music reading required. Tuesdays 7:45pm at Theatre at Longbridge Village. Performed at Commonwealth Games opening ceremony. Founded 1995.</p>
-                    <a href="https://rainbowvoices.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">rainbowvoices.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/02/Birmingham-Pride-Performance-1024x768.jpg" alt="Rainbow Voices performing at Birmingham Pride" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
+                    <div class="club-card-body">
+                        <div class="flex items-center gap-3 mb-1">
+                            <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/01/RV-logo.jpg" alt="" class="club-card-logo" loading="lazy" onerror="this.style.display='none'">
+                            <div>
+                                <h3 class="text-xl font-black text-white uppercase font-display leading-tight">Rainbow Voices</h3>
+                                <p class="text-[var(--color-toxic)] font-bold text-sm"><i class="fas fa-microphone mr-1"></i> Choir</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3 mt-2">West Midlands LGBTQ+ community choir. No audition needed, no music reading required. Tuesdays 7:45pm at Theatre at Longbridge Village. Performed at Commonwealth Games opening ceremony. Founded 1995.</p>
+                        <a href="https://rainbowvoices.co.uk" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">rainbowvoices.co.uk <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Journey Film Club</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-film mr-1"></i> Film</p>
-                    <p class="text-gray-400 text-sm mb-3">Non-profit queer film club. Shows twice monthly at Birmingham LGBT Centre, 151 Hurst Street. A relaxed space to watch and discuss LGBTQ+ cinema.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Journey Film Club</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-film mr-1"></i> Film</p>
+                        <p class="text-gray-400 text-sm mb-3">Non-profit queer film club. Shows twice monthly at Birmingham LGBT Centre, 151 Hurst Street. A relaxed space to watch and discuss LGBTQ+ cinema.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Bards & Books</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-book mr-1"></i> Book Club</p>
-                    <p class="text-gray-400 text-sm mb-3">Friendly LGBT book club running 8+ years. First Monday of each month, 11am–1pm at Birmingham LGBT Centre. Members vote on the monthly book. 25+ age group.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Bards & Books</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-book mr-1"></i> Book Club</p>
+                        <p class="text-gray-400 text-sm mb-3">Friendly LGBT book club running 8+ years. First Monday of each month, 11am–1pm at Birmingham LGBT Centre. Members vote on the monthly book. 25+ age group.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham LGBTQ+ Writers</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-pen-fancy mr-1"></i> Writing</p>
-                    <p class="text-gray-400 text-sm mb-3">A space for queer writers to meet and share work. Third Thursday of each month at Birmingham LGBT Centre, 151 Hurst Street.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham LGBTQ+ Writers</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-pen-fancy mr-1"></i> Writing</p>
+                        <p class="text-gray-400 text-sm mb-3">A space for queer writers to meet and share work. Third Thursday of each month at Birmingham LGBT Centre, 151 Hurst Street.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -290,21 +395,27 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Gaymers</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-dice mr-1"></i> Board Games</p>
-                    <p class="text-gray-400 text-sm mb-3">Safe space for LGBTQ+ community and allies to meet over board games. Last Sunday of every month at 1pm at Sliced n Diced, Selly Oak. £4 for 4 hours. Founded 2021.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Gaymers</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-dice mr-1"></i> Board Games</p>
+                        <p class="text-gray-400 text-sm mb-3">Safe space for LGBTQ+ community and allies to meet over board games. Last Sunday of every month at 1pm at Sliced n Diced, Selly Oak. £4 for 4 hours. Founded 2021.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Mids Bears</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-paw mr-1"></i> Bear Community</p>
-                    <p class="text-gray-400 text-sm mb-3">Non-profit social and networking group for Bears, Cubs, Otters and admirers across the Midlands. Monthly meetups in Birmingham plus annual Bear Weekend. Founded 2012.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Mids Bears</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-paw mr-1"></i> Bear Community</p>
+                        <p class="text-gray-400 text-sm mb-3">Non-profit social and networking group for Bears, Cubs, Otters and admirers across the Midlands. Monthly meetups in Birmingham plus annual Bear Weekend. Founded 2012.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Bisexual Queer Group</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heart mr-1"></i> Social</p>
-                    <p class="text-gray-400 text-sm mb-3">Support and social group for anyone under the bi/pan umbrella. Monthly board games, conversation, and community. Find them on the Meetup app.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Bisexual Queer Group</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heart mr-1"></i> Social</p>
+                        <p class="text-gray-400 text-sm mb-3">Support and social group for anyone under the bi/pan umbrella. Monthly board games, conversation, and community. Find them on the Meetup app.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -319,59 +430,77 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Golden Babs</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-star mr-1"></i> 50+ Community</p>
-                    <p class="text-gray-400 text-sm mb-3">Vibrant LGBTQ+ community group for over 50s. Every Tuesday 10:30am–1pm at Birmingham LGBT Centre. Arts &amp; crafts, films, dance, poetry, music, workshops.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Golden Babs</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-star mr-1"></i> 50+ Community</p>
+                        <p class="text-gray-400 text-sm mb-3">Vibrant LGBTQ+ community group for over 50s. Every Tuesday 10:30am–1pm at Birmingham LGBT Centre. Arts &amp; crafts, films, dance, poetry, music, workshops.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Yarana Group</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-globe-asia mr-1"></i> South Asian & Middle Eastern LGBTQIA+</p>
-                    <p class="text-gray-400 text-sm mb-3">Safe inclusive space for LGBTQIA+ people from Asian and Middle Eastern heritage. Every three weeks, Saturday 4–6pm at Birmingham LGBT Centre.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Yarana Group</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-globe-asia mr-1"></i> South Asian & Middle Eastern LGBTQIA+</p>
+                        <p class="text-gray-400 text-sm mb-3">Safe inclusive space for LGBTQIA+ people from Asian and Middle Eastern heritage. Every three weeks, Saturday 4–6pm at Birmingham LGBT Centre.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Finding a Voice</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-bullhorn mr-1"></i> South Asian LGBTQ+</p>
-                    <p class="text-gray-400 text-sm mb-3">Support group for LGBTQ+ South Asians in Birmingham. Contact via Birmingham LGBT Centre for meeting details.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Finding a Voice</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-bullhorn mr-1"></i> South Asian LGBTQ+</p>
+                        <p class="text-gray-400 text-sm mb-3">Support group for LGBTQ+ South Asians in Birmingham. Contact via Birmingham LGBT Centre for meeting details.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">UNMUTED</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-fist-raised mr-1"></i> LGBTQ+ People of Colour</p>
-                    <p class="text-gray-400 text-sm mb-3">Support network for LGBTQ+ POC. Highlights racism, faith and LGBTQ+ identity intersection, and challenges facing trans BAME people.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">UNMUTED</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-fist-raised mr-1"></i> LGBTQ+ People of Colour</p>
+                        <p class="text-gray-400 text-sm mb-3">Support network for LGBTQ+ POC. Highlights racism, faith and LGBTQ+ identity intersection, and challenges facing trans BAME people.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">African Rainbow Family</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-rainbow mr-1"></i> LGBTQIA+ African Heritage</p>
-                    <p class="text-gray-400 text-sm mb-3">Registered grassroots charity supporting LGBTQIA+ people of African heritage and wider BAME groups. Contact via Birmingham LGBT Centre.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">African Rainbow Family</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-rainbow mr-1"></i> LGBTQIA+ African Heritage</p>
+                        <p class="text-gray-400 text-sm mb-3">Registered grassroots charity supporting LGBTQIA+ people of African heritage and wider BAME groups. Contact via Birmingham LGBT Centre.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Imaan</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-moon mr-1"></i> LGBTQI Muslim Support</p>
-                    <p class="text-gray-400 text-sm mb-3">UK's leading LGBTQI Muslim support charity with monthly meetings held in Birmingham. Online forum and in-person events.</p>
-                    <a href="https://imaanlondon.wordpress.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">imaanlondon.wordpress.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Imaan</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-moon mr-1"></i> LGBTQI Muslim Support</p>
+                        <p class="text-gray-400 text-sm mb-3">UK's leading LGBTQI Muslim support charity with monthly meetings held in Birmingham. Online forum and in-person events.</p>
+                        <a href="https://imaanlondon.wordpress.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">imaanlondon.wordpress.com <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Out Central</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-user-friends mr-1"></i> Youth Group (13–19)</p>
-                    <p class="text-gray-400 text-sm mb-3">Youth group for ages 13–19 who are LGBT or questioning. Trips out, social activities, and a safe space to be yourself. Via Birmingham LGBT Centre.</p>
-                    <a href="https://blgbt.org/community-groups/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">blgbt.org <i class="fas fa-external-link-alt text-xs"></i></a>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Out Central</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-user-friends mr-1"></i> Youth Group (13–19)</p>
+                        <p class="text-gray-400 text-sm mb-3">Youth group for ages 13–19 who are LGBT or questioning. Trips out, social activities, and a safe space to be yourself. Via Birmingham LGBT Centre.</p>
+                        <a href="https://blgbt.org/community-groups/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold text-sm hover:text-white transition-colors">blgbt.org <i class="fas fa-external-link-alt text-xs"></i></a>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">GBT Men's Health & Social</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heartbeat mr-1"></i> Health & Wellbeing</p>
-                    <p class="text-gray-400 text-sm mb-3">Safe space for gay, bi, and trans men to socialise and discuss physical and mental health. Non-judgmental, positive and informative. At Birmingham LGBT Centre.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">GBT Men's Health & Social</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heartbeat mr-1"></i> Health & Wellbeing</p>
+                        <p class="text-gray-400 text-sm mb-3">Safe space for gay, bi, and trans men to socialise and discuss physical and mental health. Non-judgmental, positive and informative. At Birmingham LGBT Centre.</p>
+                    </div>
                 </div>
 
                 <div class="club-card">
-                    <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Cafe Queer</h3>
-                    <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-mug-hot mr-1"></i> Mental Health Support</p>
-                    <p class="text-gray-400 text-sm mb-3">Support and social group for those experiencing depression or other mental illness. A welcoming space at Birmingham LGBT Centre.</p>
+                    <div class="club-card-body">
+                        <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Cafe Queer</h3>
+                        <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-mug-hot mr-1"></i> Mental Health Support</p>
+                        <p class="text-gray-400 text-sm mb-3">Support and social group for those experiencing depression or other mental illness. A welcoming space at Birmingham LGBT Centre.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -379,11 +508,21 @@
         <div class="section-divider mb-16"></div>
 
         <!-- Birmingham LGBT Centre callout -->
-        <section class="mb-16 border-4 border-[var(--color-toxic)] p-8 md:p-12 text-center" style="box-shadow: 8px 8px 0 var(--color-purple);">
-            <h2 class="text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">Birmingham LGBT Centre</h2>
-            <p class="text-gray-300 text-lg max-w-2xl mx-auto mb-2">The hub for Birmingham's LGBTQ+ community. Hosts 40+ independent groups and services including sexual health, counselling, youth support, and domestic violence services.</p>
-            <p class="text-gray-400 mb-6"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i> 151 Hurst Street, Birmingham B5 6EW</p>
-            <a href="https://blgbt.org/community-groups/" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors">See All Groups at BLGBT <i class="fas fa-external-link-alt text-sm ml-1"></i></a>
+        <section class="mb-16 border-4 border-[var(--color-toxic)] overflow-hidden" style="box-shadow: 8px 8px 0 var(--color-purple);">
+            <div class="md:flex">
+                <div class="md:w-1/3 flex-shrink-0">
+                    <img src="https://blgbt.org/wp-content/uploads/2022/10/IMG_7218.jpeg" alt="Birmingham LGBT Centre building" class="w-full h-48 md:h-full object-cover" style="filter: contrast(1.1) saturate(1.1);" loading="lazy" onerror="this.parentElement.style.display='none'">
+                </div>
+                <div class="p-8 md:p-12 text-center md:text-left flex-1">
+                    <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
+                        <img src="https://blgbt.org/wp-content/uploads/2022/10/Birmingham-LGBT-Pink-Logo.svg" alt="BLGBT logo" class="h-10" loading="lazy" onerror="this.style.display='none'">
+                        <h2 class="text-3xl md:text-4xl font-black text-white uppercase font-display misprint">Birmingham LGBT Centre</h2>
+                    </div>
+                    <p class="text-gray-300 text-lg max-w-2xl mb-2">The hub for Birmingham's LGBTQ+ community. Hosts 40+ independent groups and services including sexual health, counselling, youth support, and domestic violence services.</p>
+                    <p class="text-gray-400 mb-6"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i> 151 Hurst Street, Birmingham B5 6EW</p>
+                    <a href="https://blgbt.org/community-groups/" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors">See All Groups at BLGBT <i class="fas fa-external-link-alt text-sm ml-1"></i></a>
+                </div>
+            </div>
         </section>
 
         <!-- Submit CTA -->
