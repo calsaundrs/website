@@ -347,6 +347,30 @@
             </div>
         </section>
 
+        <!-- First Time? -->
+        <section class="content-block" id="first-time" style="border-color: var(--color-pink); box-shadow: 6px 6px 0 var(--color-toxic);">
+            <h2 class="text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">First Time at Pride?</h2>
+            <p class="text-gray-300 text-base mb-6">Whether you're newly out, still questioning, or just visiting Birmingham for the first time — you're welcome here. No gatekeeping, no dress code, no expectations. Here's what to know:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase mb-1"><i class="fas fa-heart text-[var(--color-pink)] mr-2"></i>You don't have to be "out"</h3>
+                    <p class="text-gray-400 text-sm">Plenty of people come to Pride as allies, with friends, or just to check the vibe. Nobody's going to ask you to explain yourself. Come as you are.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase mb-1"><i class="fas fa-user text-[var(--color-toxic)] mr-2"></i>Coming alone is fine</h3>
+                    <p class="text-gray-400 text-sm">Loads of people do. The parade is a great place to join in — you'll be surrounded by people. Venue staff in the Gay Village are friendly and used to solo visitors.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase mb-1"><i class="fas fa-tshirt text-[var(--color-purple)] mr-2"></i>Wear whatever you want</h3>
+                    <p class="text-gray-400 text-sm">Rainbow flag? Go for it. Normal clothes? Also fine. Drag? Incredible. There's no right way to do Pride. Comfy shoes are a good shout though — the parade is 1.5 miles.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase mb-1"><i class="fas fa-shield-alt text-[var(--color-toxic)] mr-2"></i>It's safe</h3>
+                    <p class="text-gray-400 text-sm">Birmingham Pride has dedicated safety teams, welfare tents, and police liaison officers. The Gay Village is a well-established safe space. If anything feels off, speak to any steward.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- The Parade -->
         <section class="content-block" id="parade">
             <h2 class="text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">The Parade</h2>
@@ -450,8 +474,9 @@
             <h2 class="text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">Pride Events</h2>
             <p class="text-gray-300 text-base mb-6">Pride weekend events at venues across Birmingham — afterparties, brunches, viewing parties, club nights. As events are announced, they'll appear here.</p>
             <div id="pride-events-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"></div>
-            <div id="pride-events-empty" class="hidden text-center py-8">
-                <p class="text-gray-600 uppercase font-bold text-sm tracking-widest"><i class="fas fa-calendar-plus mr-2"></i>Pride 2026 events will appear here as they're submitted. Check back closer to May!</p>
+            <div id="pride-events-empty" class="hidden text-center py-8 border-2 border-dashed border-gray-800">
+                <p class="text-gray-500 uppercase font-bold text-sm tracking-widest mb-2"><i class="fas fa-calendar-plus mr-2"></i>Pride 2026 events coming soon</p>
+                <p class="text-gray-600 text-sm">Afterparties, brunches, club nights and more will appear here as venues announce them. Follow us on <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white">Instagram</a> for updates.</p>
             </div>
             <div class="mt-4">
                 <a href="/events" class="text-[var(--color-pink)] font-bold text-sm uppercase tracking-widest hover:text-white transition-colors"><i class="fas fa-arrow-right mr-1"></i> See all events on Brum Outloud</a>
@@ -513,7 +538,24 @@
                     <p class="text-gray-500 text-sm">Must book online. ID on the day for wristband</p>
                 </div>
             </div>
-            <p class="text-gray-500 text-sm mb-6">Festival day tickets, weekend tickets and street party tickets available — check <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white">birminghampride.com</a> for current pricing.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <div class="key-fact">
+                    <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Day Ticket</p>
+                    <p class="text-white font-black text-xl font-display">FROM ~£30</p>
+                    <p class="text-gray-500 text-sm">Sat or Sun festival access</p>
+                </div>
+                <div class="key-fact">
+                    <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Weekend</p>
+                    <p class="text-white font-black text-xl font-display">FROM ~£50</p>
+                    <p class="text-gray-500 text-sm">Both days + street party</p>
+                </div>
+                <div class="key-fact">
+                    <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Street Party</p>
+                    <p class="text-white font-black text-xl font-display">FROM ~£10</p>
+                    <p class="text-gray-500 text-sm">Gay Village access only</p>
+                </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-6"><i class="fas fa-info-circle mr-1"></i> Prices are indicative based on previous years. Final 2026 pricing at <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white">birminghampride.com</a></p>
             <div class="text-center">
                 <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors"><i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS</a>
             </div>
