@@ -277,6 +277,29 @@
             transform: translate(-2px, -2px);
             box-shadow: 4px 4px 0 var(--color-purple);
         }
+
+        /* Marquee ticker */
+        .marquee-strip {
+            overflow: hidden;
+            white-space: nowrap;
+            background: var(--color-toxic);
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.6rem 0;
+            user-select: none;
+        }
+        .marquee-inner {
+            display: inline-block;
+            animation: marquee-scroll 30s linear infinite;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
     <script src="/js/fouc-prevention.js"></script>
 </head>
@@ -315,54 +338,68 @@
     <!-- Hero -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pt-10 pb-4">
         <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">YOUR ULTIMATE GUIDE</div>
-        <h1 class="text-[2rem] sm:text-6xl md:text-7xl lg:text-9xl font-black text-white uppercase font-display misprint leading-[0.85] mb-4" style="word-break: normal;">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
-        <p class="text-gray-200 text-lg md:text-xl max-w-2xl mb-8">One of the UK's largest LGBTQ+ festivals. 75,000+ parade spectators. 29 years of celebrating who we are.</p>
+        <div class="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-start">
 
-        <!-- Key Facts -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            <div class="key-fact">
-                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Dates</p>
-                <p class="text-white font-black text-lg font-display">23 – 24 MAY</p>
-                <p class="text-gray-300 text-sm">Saturday & Sunday</p>
+            <!-- Left: heading + subtext + CTA + jump links -->
+            <div>
+                <h1 class="font-black text-white uppercase font-display misprint leading-[0.85] mb-5" style="font-size: clamp(2.6rem, 10vw, 9rem);">
+                    <span class="block">Birmingham</span>
+                    <span class="block" style="white-space: nowrap;">Pride <span class="text-[var(--color-toxic)]">2026</span></span>
+                </h1>
+                <p class="text-gray-200 text-lg md:text-xl mb-8">One of the UK's largest LGBTQ+ festivals. 75,000+ parade spectators. 29 years of celebrating who we are.</p>
+                <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors"><i class="fas fa-ticket-alt mr-2"></i>GET TICKETS AT BIRMINGHAMPRIDE.COM</a>
+                <!-- Quick Jump Links -->
+                <div class="flex flex-wrap gap-2 mt-8">
+                    <a href="#first-time" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">First Timer?</a>
+                    <a href="#parade" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Parade</a>
+                    <a href="#lineup" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Lineup</a>
+                    <a href="#venues" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Venues</a>
+                    <a href="#tickets" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Tickets</a>
+                    <a href="#getting-there" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Getting There</a>
+                    <a href="#accessibility" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Accessibility</a>
+                    <a href="#faq" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">FAQ</a>
+                </div>
             </div>
-            <div class="key-fact">
-                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Location</p>
-                <p class="text-white font-black text-lg font-display">SMITHFIELD LIVE</p>
-                <p class="text-gray-300 text-sm">Digbeth + Gay Village</p>
-            </div>
-            <div class="key-fact">
-                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Parade</p>
-                <p class="text-white font-black text-lg font-display">SAT 12 NOON</p>
-                <p class="text-gray-300 text-sm">FREE — no ticket needed</p>
-            </div>
-            <div class="key-fact">
-                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Tickets</p>
-                <p class="text-white font-black text-lg font-display">ON SALE NOW</p>
-                <p class="text-gray-300 text-sm">Under 12s go free</p>
-            </div>
-        </div>
 
-        <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors"><i class="fas fa-ticket-alt mr-2"></i>GET TICKETS AT BIRMINGHAMPRIDE.COM</a>
+            <!-- Right: hero image + key facts -->
+            <div>
+                <div class="hero-image mt-8 lg:mt-0 mb-4" style="height: 340px;">
+                    <img src="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png" alt="Birmingham Pride parade and festival celebration montage" loading="eager">
+                </div>
+                <!-- Key Facts -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="key-fact">
+                        <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Dates</p>
+                        <p class="text-white font-black text-lg font-display">23 – 24 MAY</p>
+                        <p class="text-gray-300 text-sm">Saturday & Sunday</p>
+                    </div>
+                    <div class="key-fact">
+                        <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Location</p>
+                        <p class="text-white font-black text-lg font-display">SMITHFIELD LIVE</p>
+                        <p class="text-gray-300 text-sm">Digbeth + Gay Village</p>
+                    </div>
+                    <div class="key-fact">
+                        <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Parade</p>
+                        <p class="text-white font-black text-lg font-display">SAT 12 NOON</p>
+                        <p class="text-gray-300 text-sm">FREE — no ticket needed</p>
+                    </div>
+                    <div class="key-fact">
+                        <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Tickets</p>
+                        <p class="text-white font-black text-lg font-display">ON SALE NOW</p>
+                        <p class="text-gray-300 text-sm">Under 12s go free</p>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Quick Jump Links -->
-        <div class="flex flex-wrap gap-2 mt-8 mb-4">
-            <a href="#first-time" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">First Timer?</a>
-            <a href="#parade" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Parade</a>
-            <a href="#lineup" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Lineup</a>
-            <a href="#venues" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Venues</a>
-            <a href="#tickets" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Tickets</a>
-            <a href="#getting-there" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Getting There</a>
-            <a href="#accessibility" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Accessibility</a>
-            <a href="#faq" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">FAQ</a>
-        </div>
-
-        <!-- Hero Image -->
-        <div class="hero-image mt-4" style="height: 320px; md:height: 420px;">
-            <img src="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png" alt="Birmingham Pride parade and festival celebration montage" loading="eager">
         </div>
     </section>
 
     <div class="max-w-6xl mx-auto px-6 md:px-12 py-8"><div class="section-divider"></div></div>
+
+    <!-- Marquee ticker -->
+    <div class="marquee-strip">
+        <div class="marquee-inner">&nbsp;· BIRMINGHAM PRIDE 2026 &nbsp;· SAT 23 MAY &nbsp;· SUN 24 MAY &nbsp;· SMITHFIELD LIVE DIGBETH &nbsp;· GAY VILLAGE HURST STREET &nbsp;· PARADE FREE · 12 NOON &nbsp;· 29 YEARS &amp; COUNTING &nbsp;· 75,000+ PARADE-GOERS &nbsp;· KATY B · SIGALA · DANNY BEARD · NADINE COYLE · BJORN AGAIN · BONEY M &nbsp;· BIRMINGHAM PRIDE 2026 &nbsp;· SAT 23 MAY &nbsp;· SUN 24 MAY &nbsp;· SMITHFIELD LIVE DIGBETH &nbsp;· GAY VILLAGE HURST STREET &nbsp;· PARADE FREE · 12 NOON &nbsp;· 29 YEARS &amp; COUNTING &nbsp;· 75,000+ PARADE-GOERS &nbsp;· KATY B · SIGALA · DANNY BEARD · NADINE COYLE · BJORN AGAIN · BONEY M &nbsp;</div>
+    </div>
 
     <main class="max-w-6xl mx-auto px-6 md:px-12 pb-20">
 
@@ -416,7 +453,7 @@
         </section>
 
         <!-- The Parade -->
-        <section class="content-block" id="parade">
+        <section class="content-block" id="parade" style="box-shadow: 6px 6px 0 var(--color-toxic);">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">The Parade</h2>
             <div class="sticker bg-[var(--color-toxic)] !text-black text-sm mb-6">FREE — NO TICKET NEEDED</div>
             <div class="text-gray-300 text-base space-y-3 mb-6">
@@ -448,7 +485,7 @@
         </section>
 
         <!-- Lineup -->
-        <section class="content-block" id="lineup">
+        <section class="content-block" id="lineup" style="border-color: var(--color-purple); box-shadow: 6px 6px 0 var(--color-pink);">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-2">2026 Lineup</h2>
             <p class="text-gray-300 text-sm mb-8">Announced so far — more acts still to come. Full lineup at <a href="https://birminghampride.com/line-up/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white">birminghampride.com/line-up</a></p>
 
@@ -581,7 +618,7 @@
         </section>
 
         <!-- Venue Guide -->
-        <section class="content-block" id="venues">
+        <section class="content-block" id="venues" style="box-shadow: 6px 6px 0 var(--color-toxic);">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">Gay Village Venue Guide</h2>
             <p class="text-gray-300 text-base mb-6">The Gay Village on Hurst Street is the heart of Birmingham's LGBTQ+ scene — a short walk from New Street Station and the Bullring. These are the venues you need to know for Pride weekend.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -620,7 +657,7 @@
         </section>
 
         <!-- Tickets -->
-        <section class="content-block" id="tickets">
+        <section class="content-block" id="tickets" style="border-color: var(--color-toxic); box-shadow: 6px 6px 0 var(--color-pink);">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4">Tickets & Pricing</h2>
             <p class="text-gray-300 text-base mb-6">Tickets on sale now at <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white font-bold">birminghampride.com</a></p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
