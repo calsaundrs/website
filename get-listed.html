@@ -5,273 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Your LGBTQ+ Venue Listed in Birmingham | Brum Outloud</title>
     <meta name="description" content="List your LGBTQ+ friendly venue in Birmingham on Brum Outloud. Reach a vibrant community looking for queer spaces, bars, and clubs.">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
 
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
+    <script src="/js/fouc-prevention.js"></script>
+
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        :root {
+            --color-bg: #0d0115;
+            --color-pink: #ff007f;
+            --color-purple: #7a00ff;
+            --color-toxic: #ccff00;
+            --color-light: #f3e8ff;
         }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
+
         body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
         }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
         }
     </style>
-    
-        <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    </head>
-<body class="fouc-prevention antialiased">
-        <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
-        <div class="loading-text">Loading Brum Outloud...</div>
-        <div class="loading-spinner"></div>
-    </div>
+</head>
 
-    
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-[#f3e8ff]/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
-                    aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
+            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
+            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <section class="text-center mb-8">
-            <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-    LIST YOUR <span class="accent-color">LGBTQ+ VENUE</span>
-</h1>
-<h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Join Birmingham's essential guide for the LGBTQ+ community and connect with a vibrant, engaged audience.</h2>
-            </div>
+    <main class="max-w-4xl mx-auto px-6 md:px-12 pt-10 pb-20">
+        <div class="text-center mb-12">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">VENUE OWNERS</div>
+            <h1 class="text-5xl md:text-6xl lg:text-8xl font-black text-white uppercase font-display misprint leading-[0.9] mb-3">List Your <span class="text-[var(--color-toxic)]">Venue</span></h1>
+            <p class="text-gray-400 text-lg max-w-xl mx-auto">Join Birmingham's essential guide for the LGBTQ+ community and connect with a vibrant, engaged audience.</p>
+        </div>
 
-            <form name="venue-submission" id="venue-form" class="card-bg p-8 md:p-12 space-y-6" method="POST" action="/.netlify/functions/venue-submission" enctype="multipart/form-data">
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form name="venue-submission" id="venue-form" class="bg-black border-4 border-[var(--color-purple)] p-8 md:p-12 shadow-[12px_12px_0_var(--color-toxic)] relative" method="POST" action="/.netlify/functions/venue-submission" enctype="multipart/form-data">
+            <div class="sticker bg-white text-black text-xs absolute -top-4 -left-4 -rotate-12">GET ON THE MAP</div>
+
+            <div class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Name</label>
-                        <input type="text" id="venue-name" name="venue-name" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                        <label for="venue-name" class="block font-display font-black text-xl uppercase text-[var(--color-light)] mb-2">Venue Name</label>
+                        <input type="text" id="venue-name" name="venue-name" class="w-full bg-white text-black border-4 border-black p-4 text-lg font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="What's it called?">
                     </div>
-                     <div>
-                        <label for="address" class="block text-sm font-semibold mb-2 accent-color-secondary">Address</label>
-                        <input type="text" id="address" name="address" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                    <div>
+                        <label for="address" class="block font-display font-black text-xl uppercase text-[var(--color-light)] mb-2">Address</label>
+                        <input type="text" id="address" name="address" class="w-full bg-white text-black border-4 border-black p-4 text-lg font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="Where is it?">
                     </div>
                 </div>
-                <div>
-                    <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">The Vibe (Description)</label>
-                    <textarea id="description" name="description" rows="4" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" placeholder="e.g., A relaxed, friendly pub perfect for a quiet pint..."></textarea>
-                </div>
-                <div>
-                    <label for="photo" class="block text-sm font-semibold mb-2 accent-color-secondary">Venue Photo</label>
-                    <input type="file" id="photo" name="photo" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600" accept="image/png, image/jpeg, image/webp">
-                </div>
-                 <div>
-                    <label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact Email (for verification)</label>
-                    <input type="email" id="contact-email" name="contact-email" class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
-                </div>
-                <div class="text-right pt-4">
-                    <button type="submit" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity">Submit for Review</button>
-                </div>
-            </form>
-        </section>
-    </main>
-    
-    <div id="footer-placeholder"></div>
 
-    <footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-            <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                </ul>
+                <div>
+                    <label for="description" class="block font-display font-black text-xl uppercase text-[var(--color-light)] mb-2">The Vibe (Description)</label>
+                    <textarea id="description" name="description" rows="4" class="w-full bg-white text-black border-4 border-black p-4 text-lg font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all resize-y" placeholder="e.g., A relaxed, friendly pub perfect for a quiet pint..."></textarea>
+                </div>
+
+                <div>
+                    <label for="photo" class="block font-display font-black text-xl uppercase text-[var(--color-light)] mb-2">Venue Photo</label>
+                    <input type="file" id="photo" name="photo" class="w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-6 file:border-4 file:border-black file:bg-[var(--color-light)] file:text-black file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-[var(--color-toxic)] file:transition-colors file:cursor-pointer" accept="image/png, image/jpeg, image/webp">
+                </div>
+
+                <div>
+                    <label for="contact-email" class="block font-display font-black text-xl uppercase text-[var(--color-light)] mb-2">Your Contact Email</label>
+                    <input type="email" id="contact-email" name="contact-email" class="w-full bg-white text-black border-4 border-black p-4 text-lg font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="For verification">
+                </div>
+
+                <div class="text-right pt-4">
+                    <button type="submit" class="bg-[var(--color-toxic)] text-black border-4 border-black px-8 py-4 font-display font-black text-2xl uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[6px_6px_0_var(--color-purple)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_var(--color-purple)] w-full sm:w-auto text-center cursor-pointer">
+                        Submit for Review
+                    </button>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
+                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+    </script>
+</body>
 </html>
