@@ -1,465 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Your LGBTQ+ Event to Brum Outloud | Simple Form</title>
-    <meta name="description"
-        content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
+    <meta name="description" content="Use our simple form to submit your LGBTQ+ event details to Brum Outloud. Get your Birmingham queer events listed quickly and easily.">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link rel="stylesheet" href="/css/tailwind.css">
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <link rel="manifest" href="/manifest.json">
 
-    <!-- FOUC Prevention Script -->
     <script src="/js/fouc-prevention.js"></script>
     <script src="/js/main.js"></script>
     <script src="/js/error-handling.js"></script>
     <script src="/js/form-validation.js"></script>
-    <!-- Removed: event-submission-manager.js conflicts with the inline form handler (targets wrong form ID) -->
     <script src="/js/poster-parser-enhanced.js?v=2"></script>
     <script src="/js/recurring-events-enhanced.js"></script>
     <script src="/js/code-cleanup-manager.js"></script>
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-    <link rel="manifest" href="/manifest.json">
+
     <style>
+        :root {
+            --color-bg: #0d0115;
+            --color-pink: #ff007f;
+            --color-purple: #7a00ff;
+            --color-toxic: #ccff00;
+            --color-light: #f3e8ff;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+        }
+
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
         }
-    </style>
 
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .form-field {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.15);
+            color: white;
+            transition: all 0.3s ease;
         }
 
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .form-field:focus {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-pink);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            outline: none;
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
-    <!-- End Google Tag Manager -->
-    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
-            patience!</p>
-    </div>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
 
-    <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-[#f3e8ff]/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S
-                    ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
-                    aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
+            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
+            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
-    <main class="container mx-auto px-8 py-8 relative z-10">
-        <section class="text-center mb-8">
-            <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">
-                    SUBMIT YOUR <span class="accent-color">LGBTQ+ EVENT</span>
-                </h1>
-                <h2 class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Easily add your Birmingham queer events to Brum
-                    Outloud.</h2>
-            </div>
+    <main class="max-w-4xl mx-auto px-6 md:px-12 pt-10 pb-20">
+        <div class="text-center mb-12">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">PROMOTERS</div>
+            <h1 class="text-5xl md:text-6xl lg:text-8xl font-black text-white uppercase font-display misprint leading-[0.9] mb-3">Submit Your <span class="text-[var(--color-toxic)]">Event</span></h1>
+            <p class="text-gray-200 text-lg max-w-xl mx-auto">Easily add your Birmingham queer events to Brum Outloud.</p>
+        </div>
 
-            <div class="card-bg p-8 md:p-12">
-                <h2 class="font-anton text-3xl text-white mb-6">Submit a Single Event</h2>
-                <form id="single-event-form" class="space-y-6">
-                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
-                        <div class="space-y-6">
-                            <div><label for="event-name"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Event
-                                    Name</label><input type="text" id="event-name" name="event-name"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+        <div class="bg-black border-4 border-[var(--color-purple)] p-8 md:p-12 shadow-[12px_12px_0_var(--color-toxic)] relative">
+            <div class="sticker bg-white text-black text-xs absolute -top-4 -left-4 -rotate-12">SINGLE EVENT</div>
 
-                            <div><label for="contact-email"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Your Contact
-                                    Email</label><input type="email" id="contact-email" name="contact-email"
-                                    placeholder="So we can contact you with any issues"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required></div>
+            <form id="single-event-form" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="event-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Event Name</label>
+                            <input type="text" id="event-name" name="event-name" class="form-field" required>
+                        </div>
 
+                        <div>
+                            <label for="contact-email" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Your Contact Email</label>
+                            <input type="email" id="contact-email" name="contact-email" placeholder="So we can contact you with any issues" class="form-field" required>
+                        </div>
+
+                        <div>
+                            <label for="venue-select" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Venue</label>
+                            <select id="venue-select" name="venueId" class="form-field" required>
+                                <option value="">Loading venues...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="category-select" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Categories (Select all that apply)</label>
+                            <select id="category-select" name="categoryIds" class="form-field" multiple required>
+                                <option value="">Loading categories...</option>
+                            </select>
+                        </div>
+
+                        <div id="new-venue-fields" class="hidden space-y-6 transition-all duration-300">
                             <div>
-                                <label for="venue-select"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Venue</label>
-                                <select id="venue-select" name="venueId"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
-                                    <option value="">Loading venues...</option>
-                                </select>
+                                <label for="new-venue-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">New Venue Name</label>
+                                <input type="text" id="new-venue-name" class="form-field">
                             </div>
                             <div>
-                                <label for="category-select"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Categories (Select
-                                    all that apply)</label>
-                                <select id="category-select" name="categoryIds"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" multiple
-                                    required>
-                                    <option value="">Loading categories...</option>
-                                </select>
-                            </div>
-                            <div id="new-venue-fields" class="hidden space-y-6 transition-all duration-300">
-                                <div>
-                                    <label for="new-venue-name"
-                                        class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue
-                                        Name</label>
-                                    <input type="text" id="new-venue-name"
-                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                                </div>
-                                <div>
-                                    <label for="new-venue-address"
-                                        class="block text-sm font-semibold mb-2 accent-color-secondary">New Venue
-                                        Address</label>
-                                    <input type="text" id="new-venue-address"
-                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"
-                                        placeholder="e.g., 123 Main Street, Birmingham">
-                                </div>
-                            </div>
-                            <div><label for="description"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Description</label><textarea
-                                    id="description" name="description" rows="3"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"></textarea>
+                                <label for="new-venue-address" class="block font-display font-black text-sm uppercase tracking-widest mb-2">New Venue Address</label>
+                                <input type="text" id="new-venue-address" class="form-field" placeholder="e.g., 123 Main Street, Birmingham">
                             </div>
                         </div>
-                        <div class="space-y-6">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label for="date"
-                                        class="block text-sm font-semibold mb-2 accent-color-secondary">Date</label><input
-                                        type="date" id="date" name="date"
-                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+
+                        <div>
+                            <label for="description" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Description</label>
+                            <textarea id="description" name="description" rows="3" class="form-field"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="date" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Date</label>
+                                <input type="date" id="date" name="date" class="form-field" required>
+                            </div>
+                            <div>
+                                <label for="start-time" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Start Time</label>
+                                <input type="time" id="start-time" name="start-time" class="form-field" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="link" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Ticket Link (Optional)</label>
+                            <input type="url" id="link" name="link" class="form-field" placeholder="https://">
+                        </div>
+
+                        <div class="mb-4 p-4 border-2 border-gray-600 bg-black/50">
+                            <label class="block font-display font-black text-sm uppercase tracking-widest mb-3">Recurrence (Optional)</label>
+                            <div class="flex flex-wrap items-center space-x-4 mb-4">
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-none" name="recurrence-type" value="none" class="mr-2" checked>
+                                    <label for="recurrence-none" class="text-gray-300">No Recurrence</label>
                                 </div>
-                                <div><label for="start-time"
-                                        class="block text-sm font-semibold mb-2 accent-color-secondary">Start
-                                        Time</label><input type="time" id="start-time" name="start-time"
-                                        class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700" required>
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly" class="mr-2">
+                                    <label for="recurrence-weekly" class="text-gray-300">Weekly</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-monthly" name="recurrence-type" value="monthly" class="mr-2">
+                                    <label for="recurrence-monthly" class="text-gray-300">Monthly</label>
                                 </div>
                             </div>
-                            <div><label for="link"
-                                    class="block text-sm font-semibold mb-2 accent-color-secondary">Ticket Link
-                                    (Optional)</label><input type="url" id="link" name="link"
-                                    class="w-full p-3 bg-gray-900/50 rounded-lg border border-gray-700"
-                                    placeholder="https://"></div>
-                            <div class="mb-4 p-4 border border-gray-700 rounded-lg bg-gray-800/50">
-                                <label class="block text-lg font-bold mb-3 accent-color-secondary">Recurrence
-                                    (Optional)</label>
-                                <div class="flex flex-wrap items-center space-x-4 mb-4">
-                                    <div class="flex items-center">
-                                        <input type="radio" id="recurrence-none" name="recurrence-type" value="none"
-                                            class="form-radio h-5 w-5 text-accent-color" checked>
-                                        <label for="recurrence-none" class="ml-2 text-gray-300">No Recurrence</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly"
-                                            class="form-radio h-5 w-5 text-accent-color">
-                                        <label for="recurrence-weekly" class="ml-2 text-gray-300">Weekly</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="radio" id="recurrence-monthly" name="recurrence-type"
-                                            value="monthly" class="form-radio h-5 w-5 text-accent-color">
-                                        <label for="recurrence-monthly" class="ml-2 text-gray-300">Monthly</label>
+                            <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
+                                <div id="recurrence-preview" class="hidden p-4 bg-black/50 border-2 border-gray-600">
+                                    <h4 class="text-sm font-semibold mb-2 text-[var(--color-toxic)]">Preview of Next 3 Months:</h4>
+                                    <div id="preview-dates" class="text-sm text-gray-300 space-y-1"></div>
+                                </div>
+                                <div id="weekly-options" class="hidden">
+                                    <label class="block font-display font-black text-sm uppercase tracking-widest mb-2">Repeat on:</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="1" class="mr-2"><span>Monday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="2" class="mr-2"><span>Tuesday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="3" class="mr-2"><span>Wednesday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="4" class="mr-2"><span>Thursday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="5" class="mr-2"><span>Friday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="6" class="mr-2"><span>Saturday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="0" class="mr-2"><span>Sunday</span></label>
                                     </div>
                                 </div>
-                                <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
-                                    <!-- Preview Section -->
-                                    <div id="recurrence-preview"
-                                        class="hidden p-4 bg-gray-800/50 rounded-lg border border-gray-600">
-                                        <h4 class="text-sm font-semibold mb-2 accent-color-secondary">Preview of Next 3
-                                            Months:</h4>
-                                        <div id="preview-dates" class="text-sm text-gray-300 space-y-1"></div>
-                                    </div>
-                                    <!-- Weekly Options -->
-                                    <div id="weekly-options" class="hidden">
-                                        <label class="block text-sm font-semibold mb-2 accent-color-secondary">Repeat
-                                            on:</label>
-                                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="1"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Monday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="2"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Tuesday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="3"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Wednesday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="4"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Thursday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="5"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Friday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="6"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Saturday</span></label>
-                                            <label class="flex items-center"><input type="checkbox" name="weekly_days"
-                                                    value="0"
-                                                    class="form-checkbox h-4 w-4 rounded bg-gray-700 border-gray-600 text-accent-color focus:ring-accent-color">
-                                                <span class="ml-2">Sunday</span></label>
-                                        </div>
-                                    </div>
 
-                                    <!-- Monthly Options -->
-                                    <div id="monthly-options" class="hidden space-y-4">
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold mb-2 accent-color-secondary">Monthly
-                                                Recurrence Type:</label>
-                                            <div class="flex items-center space-x-4">
-                                                <div class="flex items-center">
-                                                    <input type="radio" id="monthly-type-date" name="monthly_type"
-                                                        value="date" class="form-radio h-4 w-4 text-accent-color"
-                                                        checked>
-                                                    <label for="monthly-type-date" class="ml-2 text-gray-300">By Date
-                                                        (e.g., 15th of every month)</label>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <input type="radio" id="monthly-type-day" name="monthly_type"
-                                                        value="day" class="form-radio h-4 w-4 text-accent-color">
-                                                    <label for="monthly-type-day" class="ml-2 text-gray-300">By Day
-                                                        (e.g., 2nd Friday of every month)</label>
-                                                </div>
+                                <div id="monthly-options" class="hidden space-y-4">
+                                    <div>
+                                        <label class="block font-display font-black text-sm uppercase tracking-widest mb-2">Monthly Recurrence Type:</label>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex items-center">
+                                                <input type="radio" id="monthly-type-date" name="monthly_type" value="date" class="mr-2" checked>
+                                                <label for="monthly-type-date" class="text-gray-300">By Date (e.g., 15th of every month)</label>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <input type="radio" id="monthly-type-day" name="monthly_type" value="day" class="mr-2">
+                                                <label for="monthly-type-day" class="text-gray-300">By Day (e.g., 2nd Friday of every month)</label>
                                             </div>
                                         </div>
-                                        <input type="hidden" name="recurring-info" id="recurring-info-hidden">
-                                        <div><label for="promo-image"
-                                                class="block text-sm font-semibold mb-2 accent-color-secondary">Promo
-                                                Image</label><input type="file" id="promo-image" name="promo-image"
-                                                class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-700 file:text-white hover:file:bg-gray-600"
-                                                accept="image/png, image/jpeg, image/gif"></div>
+                                    </div>
+                                    <input type="hidden" name="recurring-info" id="recurring-info-hidden">
+                                    <div>
+                                        <label for="promo-image" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Promo Image</label>
+                                        <input type="file" id="promo-image" name="promo-image" class="w-full text-sm text-gray-200 file:mr-4 file:py-3 file:px-6 file:border-4 file:border-black file:bg-[var(--color-light)] file:text-black file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-[var(--color-toxic)] file:transition-colors file:cursor-pointer" accept="image/png, image/jpeg, image/gif">
                                     </div>
                                 </div>
-                                <div id="form-status" class="text-center hidden p-4 rounded-lg"></div>
-                                <div class="mt-6 flex items-center justify-end space-x-4">
-                                    <div class="flex items-center">
-                                        <input id="terms-agree" type="checkbox"
-                                            class="h-4 w-4 rounded border-gray-300 text-accent-color focus:ring-accent-color">
-                                        <label for="terms-agree" class="ml-2 block text-sm text-gray-400">I agree to the
-                                            <a href="/terms-of-submission.html" target="_blank"
-                                                class="underline hover:text-white">Terms of Submission</a></label>
-                                    </div>
-                                    <button type="submit" id="submit-button"
-                                        class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                                        disabled>Submit Event</button>
+                            </div>
+                            <div id="form-status" class="text-center hidden p-4"></div>
+                            <div class="mt-6 flex items-center justify-end space-x-4">
+                                <div class="flex items-center">
+                                    <input id="terms-agree" type="checkbox" class="h-4 w-4 mr-2">
+                                    <label for="terms-agree" class="text-sm text-gray-200">I agree to the
+                                        <a href="/terms-of-submission.html" target="_blank" class="underline hover:text-white">Terms of Submission</a></label>
                                 </div>
-                </form>
-            </div>
-        </section>
+                                <button type="submit" id="submit-button" class="bg-[var(--color-toxic)] text-black border-4 border-black px-6 py-3 font-display font-black text-lg uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[4px_4px_0_var(--color-purple)] cursor-pointer disabled:opacity-50" disabled>Submit Event</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </main>
 
-    <footer class="border-t-2 border-gray-800 p-8">
-        <div class="container mx-auto grid md:grid-cols-2">
-            <div>
-                <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer"
-                        class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a>
-                        </li>
-                        <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white">Promoter
-                                Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                    </ul>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community &
-                                FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy
-                                Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html"
-                                class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                    </ul>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
+                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+    </script>
 
     <script>
         function initializeForm() {
@@ -483,7 +320,6 @@
             });
 
             // --- Categories Population ---
-            console.log('Populating categories...');
             const categories = ["Comedy", "Drag", "Live Music", "Party", "Pride", "Social", "Theatre", "Viewing Party", "Kink", "Community", "Exhibition", "Health", "Quiz", "Trans & Non-Binary", "Sober", "Queer Women & Sapphic"];
             categorySelect.innerHTML = '';
             categories.forEach(categoryName => {
@@ -492,10 +328,8 @@
                 option.textContent = categoryName;
                 categorySelect.appendChild(option);
             });
-            console.log('Categories populated.');
 
             // --- Fetch venues ---
-            console.log('Fetching venues...');
             const VENUES_API_ENDPOINT = '/.netlify/functions/get-venue-list';
             const CACHE_KEY = 'brumoutloud_venues_cache';
 
@@ -513,54 +347,32 @@
             const cachedData = localStorage.getItem(CACHE_KEY);
             let hasShownCached = false;
 
-            // 1. Instant load from cache if available
             if (cachedData) {
                 try {
                     const parsedCache = JSON.parse(cachedData);
                     if (parsedCache && parsedCache.timestamp && (Date.now() - parsedCache.timestamp < 3600000) && Array.isArray(parsedCache.venues)) {
                         populateDropdown(parsedCache.venues);
                         hasShownCached = true;
-                        console.log(`⚡ Instantly loaded ${parsedCache.venues.length} venues from cache for dropdown`);
                     }
-                } catch (e) {
-                    console.error('Dropdown cache parsing error:', e);
-                }
+                } catch (e) { console.error('Dropdown cache parsing error:', e); }
             }
 
-            // 2. Fetch fresh data in the background
             fetch(VENUES_API_ENDPOINT)
                 .then(response => {
                     if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
                     return response.json();
                 })
                 .then(venues => {
-                    console.log('Fresh venues fetched:', venues);
                     const venuesArray = Array.isArray(venues.venues) ? venues.venues : (Array.isArray(venues) ? venues : []);
-
                     if (venuesArray.length > 0) {
-                        // Update cache
-                        localStorage.setItem(CACHE_KEY, JSON.stringify({
-                            timestamp: Date.now(),
-                            venues: venuesArray
-                        }));
-
-                        // If we didn't show cached data, or if we want to seamlessly update (harder with dropdowns without losing selection, so we only update if it was empty)
-                        if (!hasShownCached) {
-                            populateDropdown(venuesArray);
-                            console.log('Dropdown populated with fresh data.');
-                        } else {
-                            // Silently updated cache for next time or for the venue grid page
-                            console.log('Dropdown cache refreshed silently in background.');
-                        }
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), venues: venuesArray }));
+                        if (!hasShownCached) populateDropdown(venuesArray);
                     }
                 })
                 .catch(error => {
                     console.error('Failed to load venues:', error);
-                    if (!hasShownCached) {
-                        venueSelect.innerHTML = '<option value="">Could not load venues</option>';
-                    }
+                    if (!hasShownCached) venueSelect.innerHTML = '<option value="">Could not load venues</option>';
                 });
-
 
             venueSelect.addEventListener('change', () => {
                 if (venueSelect.value === '__CREATE_NEW__') {
@@ -582,7 +394,6 @@
             const monthlyTypeRadios = document.querySelectorAll('input[name="monthly_type"]');
             const monthlyByDateOptionsDiv = document.getElementById('monthly-by-date-options');
             const monthlyByDayOptionsDiv = document.getElementById('monthly-by-day-options');
-            const recurringInfoHiddenInput = document.querySelector('input[name="recurring-info"]');
 
             const updateRecurrenceVisibility = () => {
                 const selectedRecurrenceType = document.querySelector('input[name="recurrence-type"]:checked').value;
@@ -592,29 +403,30 @@
                 recurringOptionsDiv.classList.add('hidden');
                 weeklyOptionsDiv.classList.add('hidden');
                 monthlyOptionsDiv.classList.add('hidden');
-                endDateDiv.classList.add('hidden');
-                document.getElementById('recurrence-exceptions').classList.add('hidden');
+                if (endDateDiv) endDateDiv.classList.add('hidden');
+                const exceptionsDiv = document.getElementById('recurrence-exceptions');
+                if (exceptionsDiv) exceptionsDiv.classList.add('hidden');
 
                 if (selectedRecurrenceType === 'weekly') {
                     recurringOptionsDiv.classList.remove('hidden');
                     weeklyOptionsDiv.classList.remove('hidden');
-                    endDateDiv.classList.remove('hidden');
-                    document.getElementById('recurrence-exceptions').classList.remove('hidden');
+                    if (endDateDiv) endDateDiv.classList.remove('hidden');
+                    if (exceptionsDiv) exceptionsDiv.classList.remove('hidden');
                 } else if (selectedRecurrenceType === 'monthly') {
                     recurringOptionsDiv.classList.remove('hidden');
                     monthlyOptionsDiv.classList.remove('hidden');
-                    endDateDiv.classList.remove('hidden');
-                    document.getElementById('recurrence-exceptions').classList.remove('hidden');
+                    if (endDateDiv) endDateDiv.classList.remove('hidden');
+                    if (exceptionsDiv) exceptionsDiv.classList.remove('hidden');
                     updateMonthlyOptionsVisibility();
                 }
             };
 
             const updateMonthlyOptionsVisibility = () => {
                 const selectedMonthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                monthlyByDateOptionsDiv.classList.add('hidden');
-                monthlyByDayOptionsDiv.classList.add('hidden');
-                if (selectedMonthlyType === 'date') monthlyByDateOptionsDiv.classList.remove('hidden');
-                else if (selectedMonthlyType === 'day') monthlyByDayOptionsDiv.classList.remove('hidden');
+                if (monthlyByDateOptionsDiv) monthlyByDateOptionsDiv.classList.add('hidden');
+                if (monthlyByDayOptionsDiv) monthlyByDayOptionsDiv.classList.add('hidden');
+                if (selectedMonthlyType === 'date' && monthlyByDateOptionsDiv) monthlyByDateOptionsDiv.classList.remove('hidden');
+                else if (selectedMonthlyType === 'day' && monthlyByDayOptionsDiv) monthlyByDayOptionsDiv.classList.remove('hidden');
             };
 
             recurrenceTypeRadios.forEach(radio => radio.addEventListener('change', updateRecurrenceVisibility));
@@ -632,13 +444,13 @@
                     const weeklyDays = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
                     if (weeklyDays.length > 0) recurrenceData = { type: 'weekly', days: weeklyDays };
                 } else if (selectedType === 'monthly') {
-                    const monthlyType = document.querySelector('input[name="monthly_type"]:checked').value;
-                    if (monthlyType === 'date') {
-                        const dayOfMonth = document.getElementById('monthly-day-of-month').value;
+                    const mType = document.querySelector('input[name="monthly_type"]:checked').value;
+                    if (mType === 'date') {
+                        const dayOfMonth = document.getElementById('monthly-day-of-month')?.value;
                         if (dayOfMonth) recurrenceData = { type: 'monthly', monthlyType: 'date', dayOfMonth: parseInt(dayOfMonth, 10) };
-                    } else if (monthlyType === 'day') {
-                        const week = document.getElementById('monthly-week').value;
-                        const dayOfWeek = document.getElementById('monthly-day-of-week').value;
+                    } else if (mType === 'day') {
+                        const week = document.getElementById('monthly-week')?.value;
+                        const dayOfWeek = document.getElementById('monthly-day-of-week')?.value;
                         if (week && dayOfWeek) recurrenceData = { type: 'monthly', monthlyType: 'day', week: parseInt(week, 10), dayOfWeek: parseInt(dayOfWeek, 10) };
                     }
                 }
@@ -741,7 +553,7 @@
             const renderExceptionDates = () => {
                 if (!exceptionDatesList) return;
                 exceptionDatesList.innerHTML = exceptionDates.map(date => `
-                    <div class="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
+                    <div class="flex items-center justify-between p-2 bg-black/50 border border-gray-600">
                         <span class="text-sm text-gray-300">${new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
                         <button type="button" class="text-red-400 hover:text-red-300" data-exception-date="${date}"><i class="fas fa-times"></i></button>
                     </div>
@@ -764,7 +576,7 @@
 
                     if (errors.length > 0) {
                         statusDiv.innerHTML = `<ul class="text-left">${errors.map(err => `<li>${err}</li>`).join('')}</ul>`;
-                        statusDiv.className = 'p-4 rounded-lg bg-red-800/20 border border-red-500 text-white';
+                        statusDiv.className = 'p-4 bg-red-800/20 border-2 border-red-500 text-white';
                         statusDiv.classList.remove('hidden');
                         return;
                     }
@@ -778,11 +590,7 @@
                         const res = await fetch('/.netlify/functions/venue-submission', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                venueName: newVenueName,
-                                address: newVenueAddress,
-                                status: 'pending' // Firestore explicit status
-                            }),
+                            body: JSON.stringify({ venueName: newVenueName, address: newVenueAddress, status: 'pending' }),
                         });
                         const resJson = await res.json();
                         if (res.ok && resJson.success) venueId = resJson.id;
@@ -795,7 +603,6 @@
                     selectedCategories.forEach(c => formData.append('categoryIds', c));
                     const selectedRecType = document.querySelector('input[name="recurrence-type"]:checked').value;
                     if (selectedRecType !== 'none') {
-                        // Gather rule
                         let rule = { type: selectedRecType };
                         if (selectedRecType === 'weekly') rule.days = Array.from(document.querySelectorAll('input[name="weekly_days"]:checked')).map(cb => parseInt(cb.value, 10));
                         else {
@@ -803,7 +610,7 @@
                             if (mType === 'date') rule.dayOfMonth = parseInt(document.getElementById('monthly-day-of-month').value, 10);
                             else { rule.week = parseInt(document.getElementById('monthly-week').value, 10); rule.dayOfWeek = parseInt(document.getElementById('monthly-day-of-week').value, 10); }
                         }
-                        const endDate = document.getElementById('recurrence-end-date-input').value;
+                        const endDate = document.getElementById('recurrence-end-date-input')?.value;
                         if (endDate) rule.endDate = endDate;
                         if (exceptionDates.length > 0) rule.exceptions = exceptionDates;
                         formData.set('recurring-info', JSON.stringify(rule));
@@ -812,7 +619,7 @@
                     const subRes = await fetch('/.netlify/functions/event-submission', { method: 'POST', body: formData });
                     if (subRes.ok) {
                         statusDiv.textContent = 'Success! Event submitted.';
-                        statusDiv.className = 'p-4 rounded-lg bg-green-800 text-white';
+                        statusDiv.className = 'p-4 bg-green-800 text-white';
                         form.reset();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
@@ -822,7 +629,7 @@
                 } catch (err) {
                     console.error(err);
                     statusDiv.textContent = `Error: ${err.message}`;
-                    statusDiv.className = 'p-4 rounded-lg bg-red-800 text-white';
+                    statusDiv.className = 'p-4 bg-red-800 text-white';
                     submitButton.disabled = false;
                     submitButton.textContent = 'Submit Event';
                 }
@@ -833,5 +640,4 @@
         else initializeForm();
     </script>
 </body>
-
 </html>

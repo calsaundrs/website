@@ -6,428 +6,272 @@
     <title>Page Not Found (404) | Brum Outloud</title>
     <meta name="description" content="Sorry, the page you're looking for doesn't exist. Let us help you find what you're looking for in Birmingham's LGBTQ+ scene.">
     <meta name="robots" content="noindex">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.brumoutloud.co.uk/404.html">
-    
-    <!-- Performance optimizations -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-    
-    <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
-    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js" defer></script>
-    
-    <!-- Tailwind loaded with defer -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
-    
-    <!-- PWA and favicons -->
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-    <link rel="apple-touch-icon" href="/faviconV2.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#B564F7">
-    
+
     <style>
-        /* Critical CSS for 404 page */
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-in;
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #f3e8ff;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            min-height: 100vh;
+            margin: 0;
         }
-        
-        .search-container {
-            position: relative;
-            max-width: 400px;
-            margin: 0 auto;
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
-        
-        .search-input {
+
+        .sticker {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
+        }
+
+        .nav-card {
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            background: #000;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .nav-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 10px 10px 0 var(--color-pink);
+        }
+
+        .search-box {
             width: 100%;
-            padding: 12px 48px 12px 16px;
-            border: 2px solid #2e2e2e;
-            border-radius: 0.5rem;
-            background: #1e1e1e;
-            color: #EAEAEA;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            border: 3px solid var(--color-light);
+            background: #000;
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 1rem;
+            font-weight: 600;
         }
-        
-        .search-input:focus {
-            border-color: #B564F7;
-            box-shadow: 0 0 0 3px rgba(181, 100, 247, 0.2);
+        .search-box:focus {
+            border-color: var(--color-toxic);
             outline: none;
         }
-        
-        .search-button {
+        .search-btn {
             position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #B564F7;
-            border: none;
-            border-radius: 0.25rem;
-            padding: 8px 12px;
-            color: white;
-            cursor: pointer;
-        }
-        
-        .search-button:hover {
-            background: #9f4fd4;
-        }
-    </style>
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
+            right: 0;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            bottom: 0;
+            width: 3rem;
+            background: var(--color-toxic);
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
         }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .search-btn:hover {
+            background: #fff;
         }
     </style>
-    </head>
-<body class="antialiased">
-    <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <script src="/js/fouc-prevention.js"></script>
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+</head>
 
-<div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-    <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your patience!</p>
-</div>
-
-    <header
-        class="p-6 sticky top-0 z-[100] bg-[#09090b]/80 backdrop-blur-xl border-b border-[#f3e8ff]/5 transition-all duration-300">
-        <nav class="container mx-auto flex justify-between items-center max-w-7xl">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-3xl font-extrabold tracking-tight text-white group"
-                style="font-family: 'Outfit', sans-serif;">
-                <span
-                    class="bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:to-pink-400 transition-all duration-300">Brum
-                    Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag"
-                    class="h-6 w-auto ml-3 inline-block rounded-sm drop-shadow-md group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                    onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                    onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8 font-medium text-sm tracking-wide">
-                <a href="/events.html" class="text-zinc-400 hover:text-white transition-colors duration-200">WHAT'S ON</a>
-                <a href="/all-venues.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">VENUES</a>
-                <a href="/community.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">COMMUNITY</a>
-                <a href="/contact.html"
-                    class="text-zinc-400 hover:text-white transition-colors duration-200">CONTACT</a>
-                <a href="/promoter-submit-new.html" class="nav-cta ml-4">
-                    GET LISTED
-                </a>
+<body>
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] transition-all duration-300">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
-                    aria-label="Menu">
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span class="w-6 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400"></span>
-                    <span
-                        class="w-4 h-0.5 bg-white rounded-full transition-all group-hover:bg-pink-400 self-end"></span>
+                <button id="menu-btn" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu"
-            class="hidden lg:hidden fixed inset-0 bg-[#09090b]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-8 font-semibold">
-            <a href="/events.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">VENUES</a>
-            <a href="/community.html"
-                class="block text-white text-3xl hover:text-pink-400 transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-pink-400 transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new.html" class="nav-cta mt-8 text-xl px-10 py-4 shadow-pink-500/20 shadow-xl">
-                GET LISTED
-            </a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
+            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
+            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
-<main id="main-content" class="container mx-auto px-8 py-8 relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-    <section class="text-center mb-8 animate-fade-in">
-        <div class="spark-icon accent-color text-6xl mb-4" aria-hidden="true">✦</div>
-        <h1 class="font-anton text-9xl md:text-[15rem] leading-none tracking-wider heading-gradient">
-            404
+    <!-- 404 Content -->
+    <main class="max-w-4xl mx-auto px-6 md:px-12 py-16 md:py-24 text-center">
+        <div class="sticker text-[var(--color-pink)] text-sm mb-8">LOST IN THE VILLAGE</div>
+
+        <h1 class="text-[8rem] md:text-[12rem] lg:text-[16rem] font-black text-white font-display misprint leading-[0.85] mb-4">
+            4<span class="text-[var(--color-toxic)]">0</span>4
         </h1>
-        <h2 class="mt-4 text-3xl md:text-5xl text-gray-300 max-w-2xl mx-auto">
-            Page Not <span class="accent-color">Found</span>
+
+        <h2 class="text-2xl md:text-4xl font-black uppercase font-display misprint mb-6">
+            Page Not <span class="text-[var(--color-pink)]">Found</span>
         </h2>
-        <p class="mt-6 text-lg text-gray-400 max-w-xl mx-auto">
-            Sorry, the page you're looking for doesn't exist. It might have been moved, deleted, or you may have mistyped the URL. Let's help you find what you're looking for!
+
+        <p class="text-gray-400 text-lg max-w-xl mx-auto mb-10">
+            Sorry bab, the page you're looking for doesn't exist. It might have been moved, deleted, or you may have mistyped the URL.
         </p>
-        
-        <!-- Search functionality -->
-        <div class="mt-8 mb-8">
-            <h3 class="text-xl text-white mb-4">Search for events or venues:</h3>
-            <div class="search-container">
-                <input 
-                    type="search" 
-                    class="search-input" 
-                    placeholder="Search events, venues, or categories..."
-                    id="search-input"
-                    aria-label="Search site content"
-                >
-                <button type="button" class="search-button" id="search-button" aria-label="Search">
+
+        <!-- Search -->
+        <div class="max-w-md mx-auto mb-12">
+            <h3 class="font-bold text-sm text-[var(--color-toxic)] uppercase tracking-widest mb-4">Search for events or venues</h3>
+            <div class="relative">
+                <input type="search" class="search-box" placeholder="Search events, venues..." id="search-input" aria-label="Search site content">
+                <button type="button" class="search-btn" id="search-button" aria-label="Search">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
-        
-        <!-- Quick navigation options -->
-        <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
-            <a href="/" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
-                <i class="fas fa-home text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
-                <h3 class="font-bold text-white mb-2">Home</h3>
-                <p class="text-gray-400 text-sm">Back to the main page</p>
+
+        <!-- Quick Nav Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+            <a href="/" class="nav-card">
+                <i class="fas fa-home text-[var(--color-toxic)] text-2xl mb-3" aria-hidden="true"></i>
+                <h3 class="font-display font-black uppercase text-lg">Home</h3>
+                <p class="text-gray-400 text-xs mt-1 uppercase tracking-widest">Back to start</p>
             </a>
-            
-            <a href="/events.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
-                <i class="fas fa-calendar-alt text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
-                <h3 class="font-bold text-white mb-2">Events</h3>
-                <p class="text-gray-400 text-sm">Find LGBTQ+ events</p>
+            <a href="/events" class="nav-card">
+                <i class="fas fa-calendar-alt text-[var(--color-toxic)] text-2xl mb-3" aria-hidden="true"></i>
+                <h3 class="font-display font-black uppercase text-lg">Events</h3>
+                <p class="text-gray-400 text-xs mt-1 uppercase tracking-widest">What's on</p>
             </a>
-            
-            <a href="/all-venues.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
-                <i class="fas fa-map-marker-alt text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
-                <h3 class="font-bold text-white mb-2">Venues</h3>
-                <p class="text-gray-400 text-sm">Explore queer spaces</p>
+            <a href="/all-venues" class="nav-card">
+                <i class="fas fa-map-marker-alt text-[var(--color-toxic)] text-2xl mb-3" aria-hidden="true"></i>
+                <h3 class="font-display font-black uppercase text-lg">Venues</h3>
+                <p class="text-gray-400 text-xs mt-1 uppercase tracking-widest">Queer spaces</p>
             </a>
-            
-            <a href="/community.html" class="card-bg p-6 text-center hover:transform hover:scale-105 transition-all duration-200 group">
-                <i class="fas fa-users text-accent-color text-3xl mb-3 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
-                <h3 class="font-bold text-white mb-2">Community</h3>
-                <p class="text-gray-400 text-sm">Join the community</p>
+            <a href="/community" class="nav-card">
+                <i class="fas fa-users text-[var(--color-toxic)] text-2xl mb-3" aria-hidden="true"></i>
+                <h3 class="font-display font-black uppercase text-lg">Community</h3>
+                <p class="text-gray-400 text-xs mt-1 uppercase tracking-widest">Safe space</p>
             </a>
         </div>
-        
+
         <!-- Help section -->
-        <div class="mt-12 text-center">
-            <h3 class="text-xl text-white mb-4">Still can't find what you're looking for?</h3>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/contact.html" class="bg-accent-color text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity inline-flex items-center justify-center group">
-                    <i class="fas fa-envelope mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
-                    Contact Us
-                </a>
-                <button id="go-back-button" class="bg-gray-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors inline-flex items-center justify-center group">
-                    <i class="fas fa-arrow-left mr-2 group-hover:scale-110 transition-transform" aria-hidden="true"></i> 
-                    Go Back
-                </button>
-            </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/contact" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors px-6 py-2 no-underline">
+                <i class="fas fa-envelope mr-2" aria-hidden="true"></i>Contact Us
+            </a>
+            <button id="go-back-button" class="sticker bg-white !text-black text-sm hover:bg-[var(--color-toxic)] transition-colors px-6 py-2">
+                <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>Go Back
+            </button>
         </div>
-    </section>
-</main>
+    </main>
 
-<!-- Include the footer component -->
-<footer class="border-t-2 border-gray-800 p-8">
-    <div class="container mx-auto grid md:grid-cols-2">
-        <div>
-             <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-             <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
-             </div>
-        </div>
-        <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-            <div>
-                <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                <ul>
-                    <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                    <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                    <li class="mb-2"><a href="/promoter-submit-new.html" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                    <li class="mb-2"><a href="/admin-login.html" class="text-gray-400 hover:text-white">Admin</a></li>
-                </ul>
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div>
+                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
+                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
+                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
+                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
+                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
+                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
+                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
+                    </div>
+                </div>
+                <div class="md:text-right">
+                    <div class="flex md:justify-end gap-4 mb-4">
+                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <div class="sticker bg-white !text-black text-xs mb-4">EST. 2024</div>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="text-xs opacity-50 mt-1">Built in Digbeth. Powered by Riot.</p>
+                </div>
             </div>
-             <div>
-                <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                <ul>
-                    <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                    <li class="mb-2"><a href="/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
-                    <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                </ul>
-            </div>
         </div>
-    </div>
-    
-    <!-- Copyright and accessibility info -->
-    <div class="container mx-auto mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
-        <p>&copy; 2024 Brum Outloud. All rights reserved.</p>
-        <p class="mt-2">Celebrating Birmingham's vibrant LGBTQ+ community</p>
-    </div>
-</footer>
+    </footer>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+
+        // Search
         function performSearch() {
-            const searchTerm = document.getElementById('search-input').value.trim();
-            if (searchTerm) {
-                // Redirect to events page with search parameter
-                window.location.href = `/events.html?q=${encodeURIComponent(searchTerm)}`;
+            const term = document.getElementById('search-input').value.trim();
+            if (term) {
+                window.location.href = '/events.html?q=' + encodeURIComponent(term);
             }
         }
-        
-        // Go back functionality
-        function goBack() {
+        document.getElementById('search-button').addEventListener('click', performSearch);
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        // Go back
+        document.getElementById('go-back-button').addEventListener('click', function() {
             if (window.history.length > 1) {
                 window.history.back();
             } else {
                 window.location.href = '/';
             }
-        }
-        
-        // Event listeners using proper separation of concerns
-        const searchButton = document.getElementById('search-button');
-        const searchInput = document.getElementById('search-input');
-        const goBackButton = document.getElementById('go-back-button');
-        
-        if (searchButton) {
-            searchButton.addEventListener('click', performSearch);
-        }
-        
-        if (searchInput) {
-            // Allow Enter key to trigger search
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-        }
-        
-        if (goBackButton) {
-            goBackButton.addEventListener('click', goBack);
-        }
-        
-        // Track 404 errors for analytics
+        });
+
+        // Track 404 for analytics
         if (typeof gtag !== 'undefined') {
             gtag('event', '404_error', {
                 'page_location': window.location.href,
                 'page_referrer': document.referrer
             });
         }
-    });
-</script>
+    </script>
 </body>
 </html>

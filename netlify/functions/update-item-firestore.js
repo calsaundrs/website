@@ -1,8 +1,10 @@
 const admin = require('firebase-admin');
+const multipart = require('lambda-multipart-parser');
+const cloudinary = require('cloudinary').v2;
 
 exports.handler = async function (event, context) {
     console.log('Firestore item update called');
-    
+
     try {
         // Check environment variables
         const required = [
@@ -10,7 +12,7 @@ exports.handler = async function (event, context) {
             'FIREBASE_CLIENT_EMAIL',
             'FIREBASE_PRIVATE_KEY'
         ];
-        
+
         const missing = required.filter(varName => !process.env[varName]);
         if (missing.length > 0) {
             return {
@@ -23,7 +25,7 @@ exports.handler = async function (event, context) {
                 })
             };
         }
-        
+
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({
@@ -35,9 +37,40 @@ exports.handler = async function (event, context) {
             });
         }
         const db = admin.firestore();
-        
-        // Parse request body
-        const body = JSON.parse(event.body);
+
+        // Parse request body - handle both JSON and multipart/form-data
+        let body;
+        let imageFile = null;
+        const headers = event.headers || {};
+        const contentType = (headers['content-type'] || headers['Content-Type'] || '').toLowerCase();
+
+        if (contentType.includes('multipart/form-data')) {
+            const parsed = await multipart.parse(event);
+            const { files = [], ...fields } = parsed || {};
+
+            // The admin panel sends JSON data in a 'data' field
+            if (fields.data) {
+                body = JSON.parse(fields.data);
+            } else {
+                body = fields;
+            }
+
+            // Find uploaded image file
+            imageFile = files.find(f => f.fieldname === 'image' || f.fieldname === 'photo') || files[0];
+            if (imageFile && imageFile.content && imageFile.content.length) {
+                console.log('Image file found:', {
+                    fieldname: imageFile.fieldname,
+                    filename: imageFile.filename,
+                    contentType: imageFile.contentType,
+                    contentLength: imageFile.content.length
+                });
+            } else {
+                imageFile = null;
+            }
+        } else {
+            body = JSON.parse(event.body);
+        }
+
         const { itemId, itemType, ...updateData } = body;
         
         if (!itemId || !itemType) {
@@ -130,6 +163,30 @@ exports.handler = async function (event, context) {
             }
         }
         
+        // Upload image to Cloudinary if provided
+        if (imageFile) {
+            try {
+                cloudinary.config({
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET,
+                });
+
+                const base64Image = `data:${imageFile.contentType};base64,${imageFile.content.toString('base64')}`;
+                const folder = itemType === 'venue' ? 'venues' : 'events';
+                const uploadResult = await cloudinary.uploader.upload(base64Image, {
+                    folder: `brumoutloud/${folder}`,
+                    transformation: [{ width: 800, height: 800, crop: 'limit', quality: 'auto' }]
+                });
+
+                updateFields.image = uploadResult.secure_url;
+                console.log('Image uploaded to Cloudinary:', uploadResult.secure_url);
+            } catch (uploadError) {
+                console.error('Image upload failed:', uploadError.message);
+                // Continue without image update rather than failing the whole request
+            }
+        }
+
         // Update the document
         await docRef.update(updateFields);
         

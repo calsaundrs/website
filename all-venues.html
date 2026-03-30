@@ -468,12 +468,14 @@
                 <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
             
-            <div class="hidden lg:flex gap-8 font-bold uppercase tracking-widest text-sm items-center">
-                <a href="/events.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">What's On</a>
-                <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Venues</a>
-                <a href="/community.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Community / Safe Space</a>
-                <a href="/contact.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Contact</a>
-                <a href="/promoter-tool.html" class="nav-cta ml-4">GET LISTED</a>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             
             <div class="lg:hidden relative z-[60]">
@@ -488,11 +490,13 @@
         
         <div id="menu"
             class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
-            <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">VENUES</a>
-            <a href="/community.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">CONTACT</a>
-            <a href="/promoter-tool.html" class="nav-cta mt-8 text-xl">GET LISTED</a>
+            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
+            <a href="/all-venues" class="block text-[var(--color-toxic)] text-4xl py-4 font-display font-black">VENUES</a>
+            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
+            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
+            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
+            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
+            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
@@ -503,9 +507,8 @@
             </h1>
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">Discover the best LGBTQ+ friendly bars, clubs, and spaces
                 in Birmingham. From iconic venues to hidden gems, find your perfect queer space.</p>
+            <p id="venue-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
         </div>
-
-
 
         <!-- Venues Grid -->
         <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
@@ -770,9 +773,10 @@
                     <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
                         <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
                         <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
+                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
+                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
                         <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
                         <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
                     </div>
                 </div>
                 <div class="md:text-right">
@@ -790,10 +794,15 @@
     </footer>
 
     <script>
-        // Hide loading screen on page load
+        // Hide loading screen on page load & count venues
         document.addEventListener('DOMContentLoaded', function () {
             var loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen) loadingScreen.classList.add('hidden');
+            var cards = document.querySelectorAll('.venue-card');
+            var countEl = document.getElementById('venue-count');
+            if (countEl && cards.length) {
+                countEl.textContent = cards.length + (cards.length === 1 ? ' venue' : ' venues');
+            }
         });
     </script>
 

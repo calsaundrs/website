@@ -14,12 +14,16 @@
 # Main section redirects
 /whats-on           /events.html        301
 /venues             /all-venues.html    301
+/clubs              /clubs.html         301
+/birmingham-pride   /birmingham-pride.html  301
+/pride              /birmingham-pride.html  301
+/pride-guide        /birmingham-pride.html  301
 
 # Specific old root-level pages to new equivalents or homepage
 /about              /                   301  # Redirecting to homepage as no new /about.html or /about equivalent was provided
 /contact            /contact.html       301
 /where-to-stay      /                   301  # Redirecting to homepage as no new equivalent was provided
-/social-clubs       /                   301  # Redirecting to homepage as no new equivalent was provided
+/social-clubs       /clubs.html          301  # Redirecting to new clubs & groups directory
 /new-page           /                   301  # Redirecting to homepage (placeholder page)
 /new-page-1         /                   301  # Redirecting to homepage (placeholder page)
 /click              /                   301  # Redirecting to homepage as confirmed
