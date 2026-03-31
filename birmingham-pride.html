@@ -149,6 +149,7 @@
         /* Lineup cards */
         .lineup-card {
             border: 3px solid var(--color-light);
+            border-radius: 6px;
             background: #000;
             text-align: center;
             font-weight: 800;
@@ -206,11 +207,11 @@
             border-bottom: 3px solid var(--color-toxic);
         }
 
-        /* Bento lineup grid */
+        /* Bento lineup grid — 4 cols, headliners span 2×2 */
         .lineup-bento {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.75rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
         }
         .lineup-bento .lineup-card-headliner {
             grid-column: span 2;
@@ -221,24 +222,14 @@
             height: 100%;
             min-height: 280px;
         }
-        .lineup-bento .lineup-card-headliner .lineup-card-name {
-            font-size: 1rem;
-            padding: 0.6rem;
-        }
         .lineup-bento .lineup-card-headliner .lineup-headliner-badge {
             font-size: 0.7rem;
             padding: 0.3rem 0;
-        }
-        @media (max-width: 1023px) {
-            .lineup-bento { grid-template-columns: repeat(4, 1fr); }
+            border-radius: 6px 6px 0 0;
         }
         @media (max-width: 767px) {
-            .lineup-bento { grid-template-columns: repeat(3, 1fr); }
-            .lineup-bento .lineup-card-headliner .lineup-card-img { min-height: 200px; }
-        }
-        @media (max-width: 639px) {
             .lineup-bento { grid-template-columns: repeat(2, 1fr); }
-            .lineup-bento .lineup-card-headliner .lineup-card-img { min-height: 160px; }
+            .lineup-bento .lineup-card-headliner .lineup-card-img { min-height: 200px; }
         }
 
         /* Venue cards — now with images */
@@ -372,11 +363,11 @@
 
     <!-- Hero — full-bleed gradient background -->
     <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #0d0115 0%, #1a0a2e 50%, #0d0115 100%);">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-10 lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-10 lg:grid lg:grid-cols-5 lg:gap-8 lg:items-center">
             <!-- Left: heading + subtext + CTA -->
-            <div>
+            <div class="lg:col-span-3 relative z-10">
                 <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">YOUR ULTIMATE GUIDE</div>
-                <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase font-display leading-[0.85] mb-5" style="letter-spacing: -0.03em;">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
+                <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase font-display leading-[0.85] mb-5" style="letter-spacing: -0.03em; text-shadow: 0 4px 32px rgba(13, 1, 21, 0.8);">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
                 <p class="text-gray-200 text-lg md:text-xl mb-8">One of the UK's largest LGBTQ+ festivals. Three days including a free Friday community event. 75,000+ parade spectators. 29 years of celebrating who we are.</p>
                 <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors"><i class="fas fa-ticket-alt mr-2"></i>GET TICKETS</a>
                 <!-- Quick Jump Links -->
@@ -391,7 +382,7 @@
                 </div>
             </div>
             <!-- Right: hero image (transparent bg, no frame) -->
-            <div class="mt-10 lg:mt-0">
+            <div class="mt-10 lg:mt-0 lg:col-span-2 relative">
                 <img src="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png" alt="Birmingham Pride parade and festival celebration montage" loading="eager" class="w-full h-auto" style="max-height: 500px; object-fit: contain; filter: drop-shadow(0 4px 24px rgba(232,58,153,0.3));">
             </div>
         </div>
@@ -534,50 +525,40 @@
                     <span class="text-gray-200 font-bold text-sm uppercase tracking-widest">Main Stage</span>
                 </div>
                 <div class="lineup-bento mb-12">
-                    <!-- Headliners — 2x2 tiles -->
+                    <!-- Row 1-2: Headliners 2×2 -->
                     <a href="https://open.spotify.com/artist/2GDX5fSEhkWQ52PEjOhQ5p" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
                         <span class="lineup-headliner-badge">Headliner</span>
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/KATY-B-SQ-4.jpg" alt="Katy B" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Katy B <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
-                    </a>
-                    <!-- Supporting acts fill remaining cells -->
-                    <a href="https://housegospelchoir.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/HGC-SQ-2.jpg" alt="House Gospel Choir" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">HGC</div>
-                    </a>
-                    <a href="https://www.lynkslynkslynks.net/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/LYNKS-SQ.jpg" alt="Lynks" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Lynks</div>
-                    </a>
-                    <a href="https://open.spotify.com/artist/1RtyP3Yk376oIq4dB7VMzC" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/BOOTY-LUV-SQ.jpg" alt="Booty Luv" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Booty Luv <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
-                    </a>
-                    <a href="https://superfurry.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/SFA-SQ.jpg" alt="Super Furry Animals" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">SFA</div>
                     </a>
                     <a href="https://open.spotify.com/artist/1KCSPY1glIKqW2TotWuXOR" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
                         <span class="lineup-headliner-badge">Headliner</span>
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/SIGALA-SQ-3.jpg" alt="Sigala" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Sigala <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
+                    </a>
+                    <!-- Row 3-4: Supporting acts (8 tiles = 2 full rows of 4) -->
+                    <a href="https://www.instagram.com/dannybeard/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <span class="lineup-headliner-badge">Headliner</span>
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/DANNY-BEARD-SQ.jpg" alt="Danny Beard" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://housegospelchoir.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/HGC-SQ-2.jpg" alt="House Gospel Choir" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://www.lynkslynkslynks.net/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/LYNKS-SQ.jpg" alt="Lynks" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://open.spotify.com/artist/1RtyP3Yk376oIq4dB7VMzC" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/BOOTY-LUV-SQ.jpg" alt="Booty Luv" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://superfurry.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/SFA-SQ.jpg" alt="Super Furry Animals" class="lineup-card-img" loading="lazy">
                     </a>
                     <a href="https://open.spotify.com/artist/0zXY7bBZFvl0mNxPxzo1e4" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/LLEO-SQ.jpg" alt="Lleo" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Lleo <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
                     </a>
                     <div class="lineup-card">
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/NANSEE-SQ-2.jpg" alt="Nansee" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Nansee</div>
                     </div>
                     <a href="https://www.callmeunique.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/CALL-ME-UNIQUE-SQ-1.jpg" alt="Call Me Unique" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Call Me Unique</div>
-                    </a>
-                    <a href="https://www.instagram.com/dannybeard/" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
-                        <span class="lineup-headliner-badge">Headliner</span>
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/DANNY-BEARD-SQ.jpg" alt="Danny Beard" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Danny Beard <i class="fab fa-instagram text-[var(--color-pink)] text-xs ml-1"></i></div>
                     </a>
                 </div>
 
@@ -587,39 +568,41 @@
                     <span class="text-gray-200 font-bold text-sm uppercase tracking-widest">Main Stage</span>
                 </div>
                 <div class="lineup-bento mb-12">
-                    <!-- Headliners — 2x2 tiles -->
+                    <!-- Row 1-2: Headliners 2×2 -->
                     <a href="https://open.spotify.com/artist/7bSGiAWHIMjPkSbMBLCkae" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
                         <span class="lineup-headliner-badge" style="background: var(--color-purple);">Headliner</span>
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/NADINE-COYLE-SQ.jpg" alt="Nadine Coyle" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Nadine Coyle <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
-                    </a>
-                    <!-- Supporting acts -->
-                    <a href="https://www.instagram.com/amellebofficial/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/AMELLE-SQ.jpg" alt="Amelle Berrabah" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Amelle <i class="fab fa-instagram text-[var(--color-pink)] text-xs ml-1"></i></div>
-                    </a>
-                    <a href="https://open.spotify.com/artist/4lllannDzyb2z1jAkNgBV1" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/KELLY-LLORENNA-SQ.jpg" alt="Kelly Llorenna" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Kelly Llorenna <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
-                    </a>
-                    <a href="https://www.instagram.com/iamblackpeppa/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/BLACK-PEPPA-SQ-3.jpg" alt="Black Peppa" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Black Peppa <i class="fab fa-instagram text-[var(--color-pink)] text-xs ml-1"></i></div>
-                    </a>
-                    <a href="https://open.spotify.com/artist/4g7Fw878SETM9BJhY41l3T" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
-                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/NXDIA-SQ-2.jpg" alt="Nxdia" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Nxdia <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
                     </a>
                     <a href="https://open.spotify.com/artist/01mMpOgtcqpXBpbIFcSfmg" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
                         <span class="lineup-headliner-badge" style="background: var(--color-purple);">Headliner</span>
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/BJORN-AGAIN-SQ.jpg" alt="Bjorn Again" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Bjorn Again <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
                     </a>
-                    <a href="https://open.spotify.com/artist/4nDoRrQiYLOjQ1kUbUDPjn" target="_blank" rel="noopener noreferrer" class="lineup-card lineup-card-headliner block text-decoration-none">
+                    <!-- Row 3-4: Supporting acts (8 tiles = 2 full rows of 4) -->
+                    <a href="https://open.spotify.com/artist/4nDoRrQiYLOjQ1kUbUDPjn" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
                         <span class="lineup-headliner-badge" style="background: var(--color-purple);">Headliner</span>
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/BONEY-M-SQ-3.jpg" alt="Boney M" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Boney M <i class="fab fa-spotify text-[#1DB954] text-xs ml-1"></i></div>
                     </a>
+                    <a href="https://www.instagram.com/amellebofficial/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/AMELLE-SQ.jpg" alt="Amelle Berrabah" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://open.spotify.com/artist/4lllannDzyb2z1jAkNgBV1" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/KELLY-LLORENNA-SQ.jpg" alt="Kelly Llorenna" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://www.instagram.com/iamblackpeppa/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/BLACK-PEPPA-SQ-3.jpg" alt="Black Peppa" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <a href="https://open.spotify.com/artist/4g7Fw878SETM9BJhY41l3T" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/NXDIA-SQ-2.jpg" alt="Nxdia" class="lineup-card-img" loading="lazy">
+                    </a>
+                    <div class="lineup-card">
+                        <img src="https://birminghampride.com/wp-content/uploads/2025/12/ARTHI-SQ.jpg" alt="Arthi" class="lineup-card-img" loading="lazy">
+                    </div>
+                    <div class="lineup-card">
+                        <img src="https://birminghampride.com/wp-content/uploads/2026/03/VICTORIA-SCONE-SQ.jpg" alt="Victoria Scone" class="lineup-card-img" loading="lazy">
+                    </div>
+                    <div class="lineup-card">
+                        <img src="https://birminghampride.com/wp-content/uploads/2026/03/MICHELLE-LAWSON-SQ.jpg" alt="Michelle Lawson" class="lineup-card-img" loading="lazy">
+                    </div>
                 </div>
 
                 <!-- Dance Arena -->
@@ -627,15 +610,14 @@
                     <span class="text-[var(--color-pink)] font-black text-2xl sm:text-3xl font-display uppercase">Dance Arena</span>
                     <span class="text-gray-200 font-bold text-sm uppercase tracking-widest">Both Days</span>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-12">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-12">
                     <a href="https://jaguar-worldwide.com/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/JAGUAR-SQ.jpg" alt="Jaguar" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Jaguar</div>
                     </a>
                     <a href="https://www.bigang.co.uk/" target="_blank" rel="noopener noreferrer" class="lineup-card block text-decoration-none">
                         <img src="https://birminghampride.com/wp-content/uploads/2025/12/BIG-ANG-SQ.jpg" alt="Big Ang" class="lineup-card-img" loading="lazy">
-                        <div class="lineup-card-name">Big Ang</div>
                     </a>
+                    <div class="lineup-card" style="border-style: dashed; opacity: 0.5;"><div class="lineup-card-text text-gray-300">More TBA</div></div>
                     <div class="lineup-card" style="border-style: dashed; opacity: 0.5;"><div class="lineup-card-text text-gray-300">More TBA</div></div>
                 </div>
 
