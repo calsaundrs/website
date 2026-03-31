@@ -97,6 +97,40 @@
         .font-display { font-family: 'Syne', sans-serif; }
         .misprint { letter-spacing: -0.03em; line-height: 0.95; overflow-wrap: break-word; word-break: break-word; }
 
+        /* Premium Aesthetic Gradients & Textures */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+        }
+
+        .glass-panel {
+            background: var(--color-bg);
+            border-bottom: 2px solid var(--color-pink);
+        }
+
+        /* Animations */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        
+        .hover-lift {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
         .progress-pride-bg {
             background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
@@ -123,46 +157,55 @@
 
         /* Hero image */
         .hero-image {
-            border: 4px solid var(--color-light);
-            box-shadow: 8px 8px 0 var(--color-purple);
-            overflow: hidden;
             position: relative;
         }
         .hero-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: contrast(1.1) saturate(1.2);
-            transition: filter 0.3s ease;
+            filter: contrast(1.15) saturate(1.25);
+            transition: filter 0.5s ease, transform 0.5s ease;
         }
         .hero-image:hover img {
-            filter: contrast(1.2) saturate(1.3);
-        }
-        .hero-image::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 40%, rgba(13,1,21,0.6) 100%);
-            pointer-events: none;
+            filter: contrast(1.25) saturate(1.4);
+            transform: scale(1.02);
         }
 
         /* Lineup cards */
         .lineup-card {
-            border: 3px solid var(--color-light);
-            border-radius: 6px;
-            background: #000;
+            border-radius: 0;
+            background: #150A20;
+            border: 2px solid #331A40;
             text-align: center;
             font-weight: 800;
             text-transform: uppercase;
             font-family: 'Syne', sans-serif;
-            transition: all 0.15s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
             position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .lineup-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            padding: 3px;
+            background: linear-gradient(45deg, transparent, transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            transition: background 0.4s ease;
         }
         .lineup-card:hover {
-            border-color: var(--color-purple);
-            transform: translate(-2px, -2px);
-            box-shadow: 4px 4px 0 var(--color-pink);
+            transform: translateY(-6px) scale(1.03) rotate(1deg);
+            box-shadow: 0 15px 30px rgba(155, 93, 229, 0.3);
+            z-index: 10;
+        }
+        .lineup-card:hover::before {
+            background: linear-gradient(135deg, var(--color-pink), var(--color-toxic), var(--color-purple));
         }
         .lineup-card-img {
             width: 100%;
@@ -232,17 +275,20 @@
             .lineup-bento .lineup-card-headliner .lineup-card-img { min-height: 200px; }
         }
 
-        /* Venue cards — now with images */
+        /* Venue cards — glassmorphism */
         .venue-block {
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.03);
-            transition: all 0.15s ease;
+            border: 2px solid var(--color-purple);
+            background: #0a0a0a;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 rgba(155, 93, 229, 0.3);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: hidden;
         }
         .venue-block:hover {
-            border-color: var(--color-pink);
-            transform: translate(-2px, -2px);
-            box-shadow: 4px 4px 0 var(--color-purple);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(232, 58, 153, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(155, 93, 229, 0.2);
         }
         .venue-block-img {
             width: 100%;
@@ -277,10 +323,17 @@
 
         /* Key fact boxes */
         .key-fact {
-            border: 3px solid var(--color-light);
+            border: 2px solid var(--color-toxic);
             background: #000;
-            padding: 1.25rem;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 rgba(204, 255, 0, 0.3);
+            padding: 1.5rem;
             text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .key-fact:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-toxic);
         }
 
         /* FAQ */
@@ -290,18 +343,21 @@
 
         /* Event cards for dynamic section */
         .pride-event-card {
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid #333;
             background: #000;
-            padding: 1.25rem;
-            transition: all 0.15s ease;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 #333;
+            padding: 1.5rem;
+            transition: all 0.4s ease;
             display: block;
             text-decoration: none;
             color: inherit;
         }
         .pride-event-card:hover {
-            border-color: var(--color-pink);
-            transform: translate(-2px, -2px);
-            box-shadow: 4px 4px 0 var(--color-purple);
+            border-color: rgba(232, 58, 153, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
         /* Marquee ticker */
@@ -330,21 +386,22 @@
     <script src="/js/fouc-prevention.js"></script>
 </head>
 <body>
+    <div class="noise-overlay"></div>
     <!-- Header -->
     <header class="sticky top-0 z-[100] transition-all duration-300">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+        <nav class="glass-panel pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-gray-800/50">
             <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
             <div class="font-display font-black text-2xl md:text-3xl misprint leading-none">
                 <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
             <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors duration-300">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors duration-300">VENUES</a>
+                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors duration-300">CLUBS</a>
+                <a href="/birmingham-pride" class="text-[var(--color-toxic)] transition-colors duration-300 drop-shadow-[0_0_8px_rgba(204,255,0,0.5)]">PRIDE</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors duration-300">COMMUNITY</a>
+                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors duration-300">CONTACT</a>
+                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white hover:scale-105 transition-all duration-300">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="text-white text-2xl"><i class="fas fa-bars"></i></button>
@@ -363,27 +420,30 @@
 
     <!-- Hero — full-bleed gradient background -->
     <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #0d0115 0%, #1a0a2e 50%, #0d0115 100%);">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-10 lg:grid lg:grid-cols-5 lg:gap-8 lg:items-center">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-12 lg:grid lg:grid-cols-5 lg:gap-8 lg:items-center">
             <!-- Left: heading + subtext + CTA -->
-            <div class="lg:col-span-3 relative z-10">
-                <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">YOUR ULTIMATE GUIDE</div>
-                <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase font-display leading-[0.85] mb-5" style="letter-spacing: -0.03em; text-shadow: 0 4px 32px rgba(13, 1, 21, 0.8);">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
-                <p class="text-gray-200 text-lg md:text-xl mb-8">One of the UK's largest LGBTQ+ festivals. Three days including a free Friday community event. 75,000+ parade spectators. 29 years of celebrating who we are.</p>
-                <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-colors"><i class="fas fa-ticket-alt mr-2"></i>GET TICKETS</a>
+            <div class="lg:col-span-3 relative z-10 animate-fade-in-up">
+                <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 drop-shadow-md">YOUR ULTIMATE GUIDE</div>
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase font-display leading-[0.85] mb-6 drop-shadow-[0_10px_40px_rgba(0,0,0,0.8)]" style="letter-spacing: -0.03em;">Birmingham<br>Pride <span class="text-[var(--color-toxic)] opacity-90 drop-shadow-[0_0_30px_rgba(204,255,0,0.3)]">2026</span></h1>
+                <p class="text-gray-200 text-lg md:text-xl md:pr-10 mb-8 leading-relaxed">One of the UK's largest LGBTQ+ festivals returns. Three days of celebration including a free Friday community event, the massive Saturday parade, and the epic Gay Village festival. Yes babs, let's glow!</p>
+                <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-8">
+                    <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-all duration-300 hover:scale-[1.03] shadow-[0_0_20px_rgba(204,255,0,0.3)]"><i class="fas fa-ticket-alt mr-2"></i>BUY TICKETS</a>
+                    <span class="text-gray-300 text-sm italic">Parade is free. Under 12s free.</span>
+                </div>
                 <!-- Quick Jump Links -->
-                <div class="flex flex-wrap gap-2 mt-8">
-                    <a href="#about" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">About</a>
-                    <a href="#first-time" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">First Timer?</a>
-                    <a href="#parade" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Parade</a>
-                    <a href="#lineup" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Lineup</a>
-                    <a href="#venues" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Venues</a>
-                    <a href="#tickets" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">Tickets</a>
-                    <a href="#faq" class="text-xs font-bold uppercase tracking-widest text-gray-300 border-2 border-gray-700 px-3 py-1 hover:border-[var(--color-toxic)] hover:text-white transition-colors">FAQ</a>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <a href="#about" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">About</a>
+                    <a href="#first-time" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">First Timer?</a>
+                    <a href="#parade" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">Parade</a>
+                    <a href="#lineup" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">Lineup</a>
+                    <a href="#venues" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">Venues</a>
+                    <a href="#tickets" class="text-xs font-bold uppercase tracking-widest text-white bg-transparent border-2 border-white px-4 py-2 hover:bg-[var(--color-toxic)] hover:border-[var(--color-toxic)] hover:text-black transition-all duration-300">FAQ</a>
                 </div>
             </div>
             <!-- Right: hero image (transparent bg, no frame) -->
-            <div class="mt-10 lg:mt-0 lg:col-span-2 relative">
-                <img src="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png" alt="Birmingham Pride parade and festival celebration montage" loading="eager" class="w-full h-auto" style="max-height: 500px; object-fit: contain; filter: drop-shadow(0 4px 24px rgba(232,58,153,0.3));">
+            <div class="mt-12 lg:mt-0 lg:col-span-2 relative animate-fade-in-up delay-200">
+                <div class="absolute inset-0 bg-[var(--color-pink)] blur-[100px] opacity-20 rounded-full animate-pulse z-0"></div>
+                <img src="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png" alt="Birmingham Pride parade and festival celebration montage" loading="eager" class="w-full h-auto relative z-10 hover-lift" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 10px 40px rgba(232,58,153,0.4));">
             </div>
         </div>
         <!-- Key Facts bar -->
@@ -479,14 +539,16 @@
             <div class="lg:grid lg:grid-cols-5 lg:gap-12">
                 <!-- Left: route info -->
                 <div class="lg:col-span-3">
-                    <div class="text-gray-300 text-base md:text-lg space-y-3 mb-8">
-                        <p><strong class="text-white">Saturday 23 May 2026</strong> — Gather from 11am at Centenary Square. The parade steps off at <strong class="text-white">12 noon</strong>.</p>
-                        <p>The route is approximately <strong class="text-white">1.5 miles</strong> through the city centre, ending at the Gay Village.</p>
+                    <div class="text-gray-300 text-base md:text-lg space-y-3 mb-8 bg-[#0a0a0a] border-l-4 border-[var(--color-toxic)] p-6 shadow-[4px_4px_0_rgba(204,255,0,0.3)]">
+                        <p><strong class="text-[var(--color-toxic)]">Saturday 23 May 2026</strong> — Gather from 11am at Victoria Square. The parade steps off at <strong class="text-white">12 noon</strong>.</p>
+                        <p>The route is approximately <strong class="text-white">1.5 miles</strong> through the city centre, taking about 45 minutes before wrapping up at the Gay Village on Hurst Street.</p>
                     </div>
 
                     <h3 class="font-bold text-sm text-[var(--color-toxic)] uppercase tracking-widest mb-4">Parade Route</h3>
-                    <div class="space-y-0 mb-6">
-                        <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-white font-bold uppercase">Centenary Square</span><span class="text-gray-300 ml-2 text-sm">— gather from 11am</span></div>
+                    <div class="space-y-0 mb-6 bg-[#0a0a0a] p-6 border-2 border-[#222] w-fit shadow-[4px_4px_0_#222]">
+                        <div class="flex items-center gap-3"><div class="route-dot shadow-[0_0_10px_var(--color-toxic)]"></div><span class="text-white font-bold uppercase">Victoria Square</span><span class="text-gray-300 ml-2 text-sm">— gather from 11am</span></div>
+                        <div class="route-line"></div>
+                        <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-gray-300">Bennetts Hill</span></div>
                         <div class="route-line"></div>
                         <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-gray-300">New Street</span></div>
                         <div class="route-line"></div>
@@ -494,17 +556,17 @@
                         <div class="route-line"></div>
                         <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-gray-300">Carrs Lane</span></div>
                         <div class="route-line"></div>
-                        <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-gray-300">Smallbrook Queensway</span></div>
+                        <div class="flex items-center gap-3"><div class="route-dot"></div><span class="text-gray-300">St Martin's Circus / Smallbrook Queensway</span></div>
                         <div class="route-line"></div>
-                        <div class="flex items-center gap-3"><div class="route-dot end"></div><span class="text-white font-bold uppercase">Hurst Street — Gay Village</span><span class="text-gray-300 ml-2 text-sm">— finish</span></div>
+                        <div class="flex items-center gap-3"><div class="route-dot end shadow-[0_0_10px_var(--color-pink)]"></div><span class="text-white font-bold uppercase">Gay Village (Hurst St)</span><span class="text-gray-300 ml-2 text-sm">— finish</span></div>
                     </div>
-                    <p class="text-gray-300 text-sm"><i class="fas fa-wheelchair mr-1 text-[var(--color-toxic)]"></i> An accessible route (shorter, quieter) is available — email <a href="mailto:access@birminghampride.com" class="text-[var(--color-pink)] hover:text-white">access@birminghampride.com</a> in advance.</p>
+                    <p class="text-gray-300 text-sm bg-[var(--color-toxic)]/10 text-[var(--color-toxic)] p-3 rounded-lg border border-[var(--color-toxic)]/20 inline-block"><i class="fas fa-wheelchair mr-2"></i> An accessible route (shorter, quieter) is available — email <a href="mailto:access@birminghampride.com" class="font-bold underline hover:text-white">access@birminghampride.com</a> in advance.</p>
                 </div>
 
                 <!-- Right: map -->
-                <div class="lg:col-span-2 mt-8 lg:mt-0">
-                    <div class="border-4 border-[var(--color-light)] overflow-hidden h-full" style="box-shadow: 6px 6px 0 var(--color-purple); min-height: 350px;">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m40!1m12!1m3!1d4866.5!2d-1.9025!3d52.4785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m25!3e2!4m5!1s0x4870bc8a39e3a421%3A0x7c0dd7e082b11f7b!2sCentenary%20Square%2C%20Birmingham!3m2!1d52.4796!2d-1.9088!4m3!3m2!1d52.4793!2d-1.8975!4m3!3m2!1d52.4785!2d-1.8935!4m3!3m2!1d52.4768!2d-1.8928!4m3!3m2!1d52.4748!2d-1.8940!5e0!3m2!1sen!2suk!4v1" width="100%" height="100%" style="border:0; filter: invert(0.9) hue-rotate(180deg) contrast(1.2) saturate(0.3); min-height: 350px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Birmingham Pride parade route map — Centenary Square via New Street, High Street, Carrs Lane, Smallbrook Queensway to Hurst Street"></iframe>
+                <div class="lg:col-span-2 mt-12 lg:mt-0">
+                    <div class="overflow-hidden h-full border-4 border-[var(--color-toxic)] relative" style="box-shadow: 8px 8px 0 var(--color-purple); min-height: 400px; background: #000;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d19459.789188040446!2d-1.9216091217066928!3d52.476481134599525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x4870bc8b2098d5c3%3A0x6bba410fa4a6da7c!2sVictoria%20Square%2C%20Birmingham!3m2!1d52.4795493!2d-1.9023616!4m5!1s0x4870bd20de8060ab%3A0xc3144ef1f2b604bc!2sHurst%20St%2C%20Birmingham!3m2!1d52.4727145!2d-1.8973685!5e0!3m2!1sen!2suk!4v1711910000000!5m2!1sen!2suk" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Birmingham Pride parade route map — Victoria Square to Hurst Street"></iframe>
                     </div>
                 </div>
             </div>
@@ -514,10 +576,21 @@
         <div class="progress-pride-bg h-2 w-full"></div>
 
         <!-- Lineup — full-bleed subtle background -->
-        <section id="lineup" style="background: rgba(255,255,255,0.02);">
-            <div class="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase font-display misprint mb-2" style="border-left: 6px solid var(--color-purple); padding-left: 1rem;">2026 Lineup</h2>
-                <p class="text-gray-300 text-sm mb-10 ml-0 md:ml-5">Announced so far — more acts still to come. Full lineup at <a href="https://birminghampride.com/line-up/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white">birminghampride.com/line-up</a></p>
+        <section id="lineup" class="relative overflow-hidden" style="background: linear-gradient(135deg, rgba(20,5,30,0.8), rgba(0,0,0,0.9));">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%239b5de5\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+            <div class="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white uppercase font-display misprint mb-3" style="border-left: 6px solid var(--color-purple); padding-left: 1rem;">Lineup Details</h2>
+                        <div class="inline-flex items-center text-white text-sm font-bold uppercase tracking-widest py-2">
+                            <i class="fas fa-star text-[var(--color-pink)] mr-2"></i>
+                            MAIN STAGE ARTISTS
+                        </div>
+                    </div>
+                    <div class="max-w-md bg-[#0a0a0a] border-2 border-[var(--color-purple)] p-4 shadow-[4px_4px_0_rgba(155,93,229,0.3)] text-sm text-gray-300">
+                        <p>Check out the massive Pride weekend lineup. For full schedules and set times, visit the official site at <a href="https://birminghampride.com/line-up/" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors">birminghampride.com/line-up</a></p>
+                    </div>
+                </div>
 
                 <!-- Saturday Main Stage -->
                 <div class="lineup-day-header mb-6">
