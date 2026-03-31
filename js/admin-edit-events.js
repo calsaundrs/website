@@ -1204,7 +1204,7 @@ async function handleEditFormSubmit(event) {
             });
         } else {
             // Use the regular update function
-            response = await fetch('/.netlify/functions/update-item', {
+            response = await fetch('/.netlify/functions/update-item-firestore', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

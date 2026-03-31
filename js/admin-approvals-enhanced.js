@@ -726,14 +726,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { imageFile, newImage, ...otherData } = eventData;
                 formData.append('data', JSON.stringify(otherData));
                 
-                response = await fetch('/.netlify/functions/update-item', {
+                response = await fetch('/.netlify/functions/update-item-firestore', {
                     method: 'POST',
                     body: formData
                 });
             } else {
                 // Use JSON for non-file updates
                 const { imageFile, newImage, ...jsonData } = eventData;
-                response = await fetch('/.netlify/functions/update-item', {
+                response = await fetch('/.netlify/functions/update-item-firestore', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(jsonData)

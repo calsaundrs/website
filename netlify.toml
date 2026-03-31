@@ -160,11 +160,6 @@
     to = "/promoter-tool.html"
     status = 200
 
-# Route update-item to update-item-firestore (admin edit endpoint)
-[[redirects]]
-  from = "/.netlify/functions/update-item"
-  to = "/.netlify/functions/update-item-firestore"
-  status = 200
 
 # --- Admin Section Rules ---
 
