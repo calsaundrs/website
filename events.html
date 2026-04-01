@@ -274,6 +274,10 @@
         // State
         let allEvents = [];
         let activeFilter = 'all';
+        let currentOffset = 0;
+        let hasMoreEvents = false;
+        let isLoadingMore = false;
+        const PAGE_SIZE = 30;
         const grid = document.getElementById('event-grid');
         const countEl = document.getElementById('event-count');
 
@@ -287,22 +291,46 @@
             });
         });
 
-        // Fetch events from API
-        async function fetchEvents() {
+        // Fetch events from API with pagination
+        async function fetchEvents(loadMore = false) {
+            if (!loadMore) {
+                currentOffset = 0;
+                allEvents = [];
+            }
+
             try {
-                const res = await fetch('/.netlify/functions/get-events?limit=500');
+                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}`);
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
                 if (data.success && data.events) {
-                    allEvents = data.events;
+                    if (loadMore) {
+                        allEvents = allEvents.concat(data.events);
+                    } else {
+                        allEvents = data.events;
+                    }
+                    hasMoreEvents = data.hasMore || false;
+                    currentOffset += data.events.length;
                 } else {
                     throw new Error('No events in response');
                 }
             } catch (err) {
                 console.warn('Failed to fetch events:', err);
-                allEvents = [];
+                if (!loadMore) allEvents = [];
             }
             renderEvents();
+        }
+
+        // Load more handler
+        async function loadMoreEvents() {
+            if (isLoadingMore || !hasMoreEvents) return;
+            isLoadingMore = true;
+            const btn = document.getElementById('load-more-btn');
+            if (btn) {
+                btn.textContent = 'LOADING...';
+                btn.disabled = true;
+            }
+            await fetchEvents(true);
+            isLoadingMore = false;
         }
 
         // Date helpers
@@ -396,7 +424,20 @@
             const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
             prideBanner.classList.toggle('hidden', !hasPride);
 
-            grid.innerHTML = filtered.map(ev => createCard(ev)).join('');
+            let html = filtered.map(ev => createCard(ev)).join('');
+
+            // Show "Load More" button if the server has more events and we're on the unfiltered view
+            if (hasMoreEvents && activeFilter === 'all') {
+                html += `
+                    <div class="col-span-full flex justify-center mt-8">
+                        <button id="load-more-btn" onclick="loadMoreEvents()"
+                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem;">
+                            LOAD MORE EVENTS
+                        </button>
+                    </div>`;
+            }
+
+            grid.innerHTML = html;
         }
 
         function resetFilter() {
