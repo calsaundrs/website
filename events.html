@@ -165,7 +165,7 @@
                 <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
                 <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
                 <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/get-listed" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+                <a href="/promoter-submit" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="text-white text-2xl">
@@ -180,7 +180,7 @@
             <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
             <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
             <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
-            <a href="/get-listed" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
+            <a href="/promoter-submit" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
         </div>
     </header>
 
@@ -197,12 +197,25 @@
             <button class="filter-pill" data-filter="this-week">This Week</button>
             <button class="filter-pill" data-filter="this-weekend">This Weekend</button>
             <button class="filter-pill" data-filter="this-month">This Month</button>
+            <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
+                <i class="fas fa-eye-slash"></i> 18+
+            </button>
         </div>
         <p id="event-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
     </section>
 
     <!-- Event Grid -->
     <main class="max-w-6xl mx-auto px-6 md:px-12 pb-20">
+        <!-- Pride guide banner — shown when filtered results include Pride Weekend events -->
+        <div id="pride-banner" class="hidden mb-8 rounded-2xl overflow-hidden" style="border: 3px solid transparent; background: linear-gradient(#000,#000) padding-box, linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787) border-box;">
+            <a href="/birmingham-pride" class="flex items-center gap-4 px-6 py-4 no-underline" style="text-decoration:none;">
+                <span class="text-3xl">🏳️‍🌈</span>
+                <div>
+                    <p class="font-black text-white uppercase text-lg font-display leading-tight">Birmingham Pride Weekend — 22–25 May</p>
+                    <p class="text-sm" style="color:#ff69b4;">Events marked below are part of Pride weekend. See our full Pride guide →</p>
+                </div>
+            </a>
+        </div>
         <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             <!-- Skeleton loading cards -->
             <div class="skeleton-card"><div class="skeleton-img"></div><div class="p-4 space-y-3"><div class="skeleton-text w-1/3"></div><div class="skeleton-text w-full" style="height:1.25rem"></div><div class="skeleton-text w-2/3"></div></div></div>
@@ -264,6 +277,11 @@
         // State
         let allEvents = [];
         let activeFilter = 'all';
+        let currentOffset = 0;
+        let hasMoreEvents = false;
+        let isLoadingMore = false;
+        let showNSFW = false;
+        const PAGE_SIZE = 30;
         const grid = document.getElementById('event-grid');
         const countEl = document.getElementById('event-count');
 
@@ -277,22 +295,61 @@
             });
         });
 
-        // Fetch events from API
-        async function fetchEvents() {
+        // NSFW toggle
+        const nsfwToggle = document.getElementById('nsfw-toggle');
+        if (nsfwToggle) {
+            nsfwToggle.addEventListener('click', () => {
+                showNSFW = !showNSFW;
+                nsfwToggle.classList.toggle('active', showNSFW);
+                nsfwToggle.classList.toggle('opacity-60', !showNSFW);
+                nsfwToggle.classList.toggle('opacity-100', showNSFW);
+                nsfwToggle.innerHTML = showNSFW 
+                    ? '<i class="fas fa-eye"></i> 18+' 
+                    : '<i class="fas fa-eye-slash"></i> 18+';
+                renderEvents();
+            });
+        }
+
+        // Fetch events from API with pagination
+        async function fetchEvents(loadMore = false) {
+            if (!loadMore) {
+                currentOffset = 0;
+                allEvents = [];
+            }
+
             try {
-                const res = await fetch('/.netlify/functions/get-events');
+                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}`);
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
                 if (data.success && data.events) {
-                    allEvents = data.events;
+                    if (loadMore) {
+                        allEvents = allEvents.concat(data.events);
+                    } else {
+                        allEvents = data.events;
+                    }
+                    hasMoreEvents = data.hasMore || false;
+                    currentOffset += data.events.length;
                 } else {
                     throw new Error('No events in response');
                 }
             } catch (err) {
                 console.warn('Failed to fetch events:', err);
-                allEvents = [];
+                if (!loadMore) allEvents = [];
             }
             renderEvents();
+        }
+
+        // Load more handler
+        async function loadMoreEvents() {
+            if (isLoadingMore || !hasMoreEvents) return;
+            isLoadingMore = true;
+            const btn = document.getElementById('load-more-btn');
+            if (btn) {
+                btn.textContent = 'LOADING...';
+                btn.disabled = true;
+            }
+            await fetchEvents(true);
+            isLoadingMore = false;
         }
 
         // Date helpers
@@ -345,6 +402,9 @@
                 const d = new Date(ev.date);
                 if (isNaN(d.getTime())) return false;
                 if (d < now) return false;
+                // Filter out adult/NSFW events from the main public listing unless toggled
+                const cats = Array.isArray(ev.category) ? ev.category : [];
+                if (!showNSFW && cats.includes('Adult')) return false;
                 if (range) {
                     if (d < range.start || d > range.end) return false;
                 }
@@ -359,8 +419,12 @@
                 ? '1 event'
                 : filtered.length + ' events';
 
+            // Hide Pride banner when no results
+            const prideBanner = document.getElementById('pride-banner');
+
             // Render
             if (filtered.length === 0) {
+                prideBanner.classList.add('hidden');
                 grid.innerHTML = `
                     <div class="empty-state col-span-full">
                         <i class="fas fa-calendar-xmark text-5xl text-gray-700 mb-4"></i>
@@ -375,7 +439,24 @@
                 return;
             }
 
-            grid.innerHTML = filtered.map(ev => createCard(ev)).join('');
+            // Show Pride guide banner if any visible events are tagged Pride
+            const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
+            prideBanner.classList.toggle('hidden', !hasPride);
+
+            let html = filtered.map(ev => createCard(ev)).join('');
+
+            // Show "Load More" button if the server has more events and we're on the unfiltered view
+            if (hasMoreEvents && activeFilter === 'all') {
+                html += `
+                    <div class="col-span-full flex justify-center mt-8">
+                        <button id="load-more-btn" onclick="loadMoreEvents()"
+                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem;">
+                            LOAD MORE EVENTS
+                        </button>
+                    </div>`;
+            }
+
+            grid.innerHTML = html;
         }
 
         function resetFilter() {
@@ -426,6 +507,17 @@
                 venue = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
             }
 
+            // Pride badge
+            const cats = Array.isArray(ev.category) ? ev.category : [];
+            const prideBadge = cats.includes('Pride')
+                ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
+                : '';
+
+            // Adult/NSFW badge
+            const adultBadge = cats.includes('Adult')
+                ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
+                : '';
+
             const slug = ev.slug || '';
 
             return '<a href="/event/' + slug + '" class="event-card">'
@@ -437,6 +529,8 @@
                 + '</p>'
                 + '<h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-2">' + (ev.name || 'Untitled Event') + '</h3>'
                 + (venue ? '<p class="text-gray-400 text-sm"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
+                + prideBadge
+                + adultBadge
                 + '</div>'
                 + '</a>';
         }
