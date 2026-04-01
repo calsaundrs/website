@@ -197,6 +197,9 @@
             <button class="filter-pill" data-filter="this-week">This Week</button>
             <button class="filter-pill" data-filter="this-weekend">This Weekend</button>
             <button class="filter-pill" data-filter="this-month">This Month</button>
+            <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
+                <i class="fas fa-eye-slash"></i> 18+
+            </button>
         </div>
         <p id="event-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
     </section>
@@ -277,6 +280,7 @@
         let currentOffset = 0;
         let hasMoreEvents = false;
         let isLoadingMore = false;
+        let showNSFW = false;
         const PAGE_SIZE = 30;
         const grid = document.getElementById('event-grid');
         const countEl = document.getElementById('event-count');
@@ -290,6 +294,21 @@
                 renderEvents();
             });
         });
+
+        // NSFW toggle
+        const nsfwToggle = document.getElementById('nsfw-toggle');
+        if (nsfwToggle) {
+            nsfwToggle.addEventListener('click', () => {
+                showNSFW = !showNSFW;
+                nsfwToggle.classList.toggle('active', showNSFW);
+                nsfwToggle.classList.toggle('opacity-60', !showNSFW);
+                nsfwToggle.classList.toggle('opacity-100', showNSFW);
+                nsfwToggle.innerHTML = showNSFW 
+                    ? '<i class="fas fa-eye"></i> 18+' 
+                    : '<i class="fas fa-eye-slash"></i> 18+';
+                renderEvents();
+            });
+        }
 
         // Fetch events from API with pagination
         async function fetchEvents(loadMore = false) {
@@ -383,9 +402,9 @@
                 const d = new Date(ev.date);
                 if (isNaN(d.getTime())) return false;
                 if (d < now) return false;
-                // Filter out adult/NSFW events from the main public listing
+                // Filter out adult/NSFW events from the main public listing unless toggled
                 const cats = Array.isArray(ev.category) ? ev.category : [];
-                if (cats.includes('Adult')) return false;
+                if (!showNSFW && cats.includes('Adult')) return false;
                 if (range) {
                     if (d < range.start || d > range.end) return false;
                 }
@@ -494,6 +513,11 @@
                 ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
                 : '';
 
+            // Adult/NSFW badge
+            const adultBadge = cats.includes('Adult')
+                ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
+                : '';
+
             const slug = ev.slug || '';
 
             return '<a href="/event/' + slug + '" class="event-card">'
@@ -506,6 +530,7 @@
                 + '<h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-2">' + (ev.name || 'Untitled Event') + '</h3>'
                 + (venue ? '<p class="text-gray-400 text-sm"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
                 + prideBadge
+                + adultBadge
                 + '</div>'
                 + '</a>';
         }
