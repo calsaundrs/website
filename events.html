@@ -280,7 +280,7 @@
         // Fetch events from API
         async function fetchEvents() {
             try {
-                const res = await fetch('/.netlify/functions/get-events');
+                const res = await fetch('/.netlify/functions/get-events?limit=500');
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
                 if (data.success && data.events) {
