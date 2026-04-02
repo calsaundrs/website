@@ -128,7 +128,6 @@ exports.handler = async function (event, context) {
                 }
             }
             
-            console.log('Parsed fields:', Object.keys(body));
             console.log('Sample field values:', {
                 venueId: body.venueId,
                 id: body.id,

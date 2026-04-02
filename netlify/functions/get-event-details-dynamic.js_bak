@@ -589,8 +589,6 @@ async function getEventBySlug(slug) {
 }
 
 function processEventData(rawData) {
-    console.log("Processing raw event data:", rawData.name, "Raw data keys:", Object.keys(rawData));
-
     // Handle venue data - could be array or string
     let venueName = 'Venue TBC';
     let venueSlug = '';
@@ -639,8 +637,6 @@ function processEventData(rawData) {
 }
 
 exports.handler = async function (event, context) {
-    console.log('Event handler called with event:', JSON.stringify(event, null, 2));
-
     // Get slug from query parameters
     let slug = event.queryStringParameters?.slug;
     if (slug && slug.endsWith('.html')) {

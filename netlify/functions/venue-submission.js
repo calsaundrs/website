@@ -167,8 +167,6 @@ exports.handler = async function (event, context) {
         }
 
         const submission = { ...fields, files: Object.values(files) };
-        console.log('Final parsed submission fields:', Object.keys(fields));
-        console.log('Final parsed submission files:', Object.keys(files));
         console.log('Sample field values:', { name: fields.name, address: fields.address, description: fields.description });
 
         // Handle image upload

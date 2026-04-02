@@ -18,7 +18,6 @@ const googlePlacesService = new GooglePlacesService();
 
 exports.handler = async function(event, context) {
   try {
-    console.log('🔍 Event object:', JSON.stringify(event, null, 2));
     console.log('🔍 Query string parameters:', event.queryStringParameters);
     console.log('🔍 Path parameters:', event.pathParameters);
     console.log('🔍 Raw query string:', event.rawQuery);
@@ -171,13 +170,11 @@ async function getVenueBySlug(slug) {
     }
     
     console.log(`✅ Found venue: ${foundVenue.name}`);
-    console.log(`🔍 Venue data fields:`, Object.keys(foundVenue));
     
     // Get the raw venue data to access Google Place ID
     const rawVenueData = foundVenue;
     const googlePlaceId = rawVenueData.googlePlaceId || rawVenueData['Google Place ID'] || rawVenueData['googlePlaceId'];
     
-    console.log(`🔍 Raw venue data fields:`, Object.keys(rawVenueData));
     console.log(`🔍 Google Place ID from raw data:`, googlePlaceId);
     
     return {
