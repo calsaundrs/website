@@ -194,10 +194,10 @@
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-8">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex flex-wrap gap-2 items-center">
-                <button class="filter-pill active" data-filter="all">All</button>
-                <button class="filter-pill" data-filter="this-week">This Week</button>
-                <button class="filter-pill" data-filter="this-weekend">This Weekend</button>
-                <button class="filter-pill" data-filter="this-month">This Month</button>
+                <button class="filter-pill date-filter active" data-filter="all">All</button>
+                <button class="filter-pill date-filter" data-filter="this-week">This Week</button>
+                <button class="filter-pill date-filter" data-filter="this-weekend">This Weekend</button>
+                <button class="filter-pill date-filter" data-filter="this-month">This Month</button>
             </div>
             <div class="flex items-center">
                 <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
@@ -290,9 +290,9 @@
         const countEl = document.getElementById('event-count');
 
         // Filter buttons
-        document.querySelectorAll('.filter-pill').forEach(btn => {
+        document.querySelectorAll('.date-filter').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 activeFilter = btn.dataset.filter;
                 renderEvents();
@@ -464,8 +464,8 @@
         }
 
         function resetFilter() {
-            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-filter="all"]').classList.add('active');
+            document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
+            document.querySelector('.date-filter[data-filter="all"]').classList.add('active');
             activeFilter = 'all';
             renderEvents();
         }
