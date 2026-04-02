@@ -94,7 +94,6 @@ class MultipleVenueTester {
     this.testVenues = [
       'Eden Bar',
       'Equator Bar', 
-      'Sidewalk'
     ];
   }
 
