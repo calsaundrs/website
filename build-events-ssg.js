@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const Handlebars = require('handlebars');
+const FormattingService = require('./netlify/functions/services/formatting-service');
 
 // Add fetch for Node.js (if not available)
 if (typeof fetch === 'undefined') {
@@ -42,8 +43,11 @@ async function getAllEvents() {
             // Only include events that are today or in the future
             try {
                 const eventDateObj = new Date(eventData.date);
-                today.setHours(0,0,0,0);
-                if (!isNaN(eventDateObj) && eventDateObj >= today) {
+                // Reset today to midnight for "today onwards" comparison
+                const todayMidnight = new Date(today);
+                todayMidnight.setHours(0, 0, 0, 0);
+
+                if (!isNaN(eventDateObj) && eventDateObj >= todayMidnight) {
                     const processedEvent = processEventForPublic(eventData, eventData.id);
                     if (processedEvent && processedEvent.slug) {
                         events.push(processedEvent);
@@ -51,6 +55,38 @@ async function getAllEvents() {
                 }
             } catch (e) {
                 console.warn('Skipping event with unparsable date', eventData.date);
+            }
+        });
+
+        // Group by recurringGroupId to populate otherInstances
+        const recurringGroups = {};
+        events.forEach(event => {
+            if (event.recurringGroupId) {
+                if (!recurringGroups[event.recurringGroupId]) {
+                    recurringGroups[event.recurringGroupId] = [];
+                }
+                recurringGroups[event.recurringGroupId].push(event);
+            }
+        });
+
+        events.forEach(event => {
+            if (event.recurringGroupId && recurringGroups[event.recurringGroupId]) {
+                const others = recurringGroups[event.recurringGroupId]
+                    .filter(e => e.id !== event.id)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+                    .slice(0, 6);
+
+                event.otherInstances = others.map(o => {
+                    const d = new Date(o.date);
+                    return {
+                        slug: o.slug,
+                        name: o.name,
+                        date: o.date,
+                        dayOfMonth: d.getDate(),
+                        monthAbbr: d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase(),
+                        time: o.time
+                    };
+                });
             }
         });
         
@@ -76,7 +112,30 @@ function processEventForPublic(eventData, eventId) {
     }
 
     const eventDescription = eventData.description || '';
-    const eventDate = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
+    const eventDateISO = eventData.date ? (typeof eventData.date.toDate === 'function' ? eventData.date.toDate().toISOString() : new Date(eventData.date).toISOString()) : null;
+
+    // Format date for display as expected by template
+    let formattedDate = 'Date TBC';
+    let time = 'Time TBC';
+    if (eventDateISO) {
+        const d = new Date(eventDateISO);
+        formattedDate = d.toLocaleDateString('en-GB', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+
+        const dateStr = typeof eventData.date === 'string' ? eventData.date : '';
+        const hasNoTime = !dateStr.includes('T') || dateStr.includes('T00:00');
+        if (!hasNoTime) {
+            time = d.toLocaleTimeString('en-GB', {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+            if (time === '0:00' || time === '00:00') time = 'Time TBC';
+        }
+    }
 
     let imageUrl = null;
     if (eventData.cloudinaryPublicId) {
@@ -108,9 +167,12 @@ function processEventForPublic(eventData, eventId) {
         name: eventName,
         slug: eventSlug,
         description: eventDescription,
-        date: eventDate,
+        date: eventDateISO,
+        formattedDate: formattedDate,
+        time: time,
         venue: venueData,
-        image: imageUrl ? { url: imageUrl } : null,
+        image: { url: imageUrl }, // Maintain compatibility with templates expecting event.image.url
+        imageUrl: imageUrl, // Keep for templates explicitly using imageUrl
         category: eventData.category || ['Event'],
         price: eventData.price || null,
         ageRestriction: eventData.ageRestriction || null,
@@ -120,6 +182,7 @@ function processEventForPublic(eventData, eventId) {
         eventLink: eventData.eventLink || null,
         facebookEvent: eventData.facebookEvent || null,
         recurringInfo: eventData.recurringInfo || null,
+        recurringGroupId: eventData.recurringGroupId || null,
         boostedListingStartDate: eventData.boostedListingStartDate || null,
         boostedListingEndDate: eventData.boostedListingEndDate || null,
         otherInstances: [] 
@@ -155,6 +218,16 @@ async function main() {
         console.log('🚀 Starting Event SSG Build Process...');
         const templatePath = path.join(__dirname, 'event-template.html');
         const templateContent = await fs.readFile(templatePath, 'utf8');
+
+        // Register formatting helpers
+        Handlebars.registerHelper('formatDescription', function(description) {
+            return FormattingService.formatDescription(description);
+        });
+
+        Handlebars.registerHelper('hasDescription', function(description) {
+            return description && description !== null && description !== '' && description.trim() !== '';
+        });
+
         const template = Handlebars.compile(templateContent);
 
         const events = await getAllEvents();

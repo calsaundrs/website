@@ -242,14 +242,16 @@
 
     <!-- Description -->
     <main class="max-w-5xl mx-auto px-6 md:px-12 py-12">
+        {{#if (hasDescription event.description)}}
         <div class="max-w-3xl">
             <h2 class="text-2xl font-bold text-white mb-6 uppercase font-display">
                 <span class="text-[var(--color-toxic)] mr-2">///</span> About This Event
             </h2>
             <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
-                {{event.description}}
+                {{{formatDescription event.description}}}
             </div>
         </div>
+        {{/if}}
 
         <!-- Secondary Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 pt-12 border-t border-white/10">
