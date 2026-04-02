@@ -102,7 +102,7 @@ exports.handler = async function (event, context) {
                 <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
                 <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
                 <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <a href="https://brumoutloud.co.uk/promoter-submit-new" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
         </nav>
     </header>

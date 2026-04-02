@@ -111,7 +111,7 @@ loadEventDetails(eventSlug);
 
 ### Submission Pages
 
-#### 8. Event Submission (`promoter-submit-new.html`)
+#### 8. Event Submission (`promoter-submit.html`)
 **Purpose:** Public event submission form
 
 **Key Features:**
@@ -131,7 +131,7 @@ const recurrenceConfig = {
 };
 ```
 
-#### 9. Promoter Submit Page (`promoter-submit-new.html`)
+#### 9. Get Listed Page (`get-listed.html`)
 **Purpose:** Information about listing events and venues
 
 **Key Features:**

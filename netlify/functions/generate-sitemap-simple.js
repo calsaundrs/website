@@ -52,8 +52,8 @@ exports.handler = async function (event, context) {
             '/community.html',
             '/contact.html',
             '/promoter-tool.html',
-            '/promoter-submit-new.html',
-            '/promoter-submit-new',
+            '/promoter-submit.html',
+            '/get-listed.html',
             '/privacy-policy.html',
             '/terms-and-conditions.html',
             '/terms-of-submission.html'
@@ -208,8 +208,8 @@ function generateStaticSitemap() {
         '/community.html',
         '/contact.html',
         '/promoter-tool.html',
-        '/promoter-submit-new.html',
-        '/promoter-submit-new',
+        '/promoter-submit.html',
+        '/get-listed.html',
         '/privacy-policy.html',
         '/terms-and-conditions.html',
         '/terms-of-submission.html'

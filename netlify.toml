@@ -148,24 +148,17 @@
   to = "/contact.html"
   status = 200
 
-# Redirect old GET LISTED and Promoter Tools pages
+# Rule for the GET LISTED form page
 [[redirects]]
   from = "/get-listed"
-  to = "https://brumoutloud.co.uk/promoter-submit-new"
-  status = 301
-  force = true
+  to = "/get-listed.html"
+  status = 200
 
+# Rule for the Public Promoter Tools Page
 [[redirects]]
-  from = "/promoter-tool"
-  to = "https://brumoutloud.co.uk/promoter-submit-new"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/promoter-submit"
-  to = "https://brumoutloud.co.uk/promoter-submit-new"
-  status = 301
-  force = true
+    from = "/promoter-tool"
+    to = "/promoter-tool.html"
+    status = 200
 
 
 # --- Admin Section Rules ---
