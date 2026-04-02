@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{VENUE_NAME}} - BrumOutLoud</title>
+    <title>{{VENUE_NAME}} | LGBTQ+ Birmingham & West Midlands Venues | Brum Outloud</title>
     <meta name="description" content="{{VENUE_DESCRIPTION}}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{VENUE_NAME}}">
+    <meta property="og:title" content="{{VENUE_NAME}} | Brum Outloud">
     <meta property="og:description" content="{{VENUE_DESCRIPTION}}">
     <meta property="og:type" content="business.business">
     <meta property="og:url" content="https://brumoutloud.co.uk/venue/{{VENUE_SLUG}}">
@@ -15,9 +15,28 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{VENUE_NAME}}">
+    <meta name="twitter:title" content="{{VENUE_NAME}} | Brum Outloud">
     <meta name="twitter:description" content="{{VENUE_DESCRIPTION}}">
     <meta name="twitter:image" content="{{VENUE_IMAGE_URL}}">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "{{VENUE_NAME}}",
+      "description": "{{VENUE_DESCRIPTION}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{VENUE_ADDRESS}}",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://brumoutloud.co.uk/venue/{{VENUE_SLUG}}",
+      "image": "{{VENUE_IMAGE_URL}}"
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
