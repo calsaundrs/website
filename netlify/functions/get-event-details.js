@@ -1,5 +1,6 @@
 const FirestoreEventService = require('./services/firestore-event-service');
 const RecurringEventsManager = require('./services/recurring-events-manager');
+const FormattingService = require('./services/formatting-service');
 const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
@@ -167,10 +168,7 @@ exports.handler = async function (event, context) {
         }
 
         // Format description
-        let formattedDescription = eventData.description;
-        if (eventData.description && !eventData.series) {
-            // TODO: Add description formatting if needed
-        }
+        let formattedDescription = FormattingService.formatDescription(eventData.description);
 
                 // Use embedded template matching the design system
         const templateContent = `<!DOCTYPE html>
@@ -670,14 +668,7 @@ exports.handler = async function (event, context) {
         });
         
         Handlebars.registerHelper('formatDescription', function(description) {
-            if (!description) return '';
-            
-            // Convert line breaks to HTML
-            return description
-                .replace(/\n\n/g, '</p><p>') // Double line breaks become new paragraphs
-                .replace(/\n/g, '<br>') // Single line breaks become <br> tags
-                .replace(/^/, '<p>') // Start with <p>
-                .replace(/$/, '</p>'); // End with </p>
+            return FormattingService.formatDescription(description);
         });
 
         // Compile the template

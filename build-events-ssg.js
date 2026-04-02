@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const Handlebars = require('handlebars');
+const FormattingService = require('./netlify/functions/services/formatting-service');
 
 // Add fetch for Node.js (if not available)
 if (typeof fetch === 'undefined') {
@@ -155,6 +156,12 @@ async function main() {
         console.log('🚀 Starting Event SSG Build Process...');
         const templatePath = path.join(__dirname, 'event-template.html');
         const templateContent = await fs.readFile(templatePath, 'utf8');
+
+        // Register formatting helper
+        Handlebars.registerHelper('formatDescription', function(description) {
+            return FormattingService.formatDescription(description);
+        });
+
         const template = Handlebars.compile(templateContent);
 
         const events = await getAllEvents();
