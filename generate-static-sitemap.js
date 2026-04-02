@@ -51,8 +51,8 @@ async function generateSitemap() {
             '/community.html',
             '/contact.html',
             '/promoter-tool.html',
-            '/promoter-submit.html',
-            '/get-listed.html',
+            '/promoter-submit-new.html',
+            '/promoter-submit-new',
             '/privacy-policy.html',
             '/terms-and-conditions.html',
             '/terms-of-submission.html'

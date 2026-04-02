@@ -52,7 +52,7 @@ async function generateComprehensiveSitemap() {
     { url: '/community.html', changefreq: 'monthly', priority: '0.7' },
     { url: '/contact.html', changefreq: 'monthly', priority: '0.6' },
     { url: '/promoter-tool.html', changefreq: 'monthly', priority: '0.6' },
-    { url: '/get-listed.html', changefreq: 'monthly', priority: '0.5' },
+    { url: '/promoter-submit-new', changefreq: 'monthly', priority: '0.5' },
     { url: '/privacy-policy.html', changefreq: 'yearly', priority: '0.3' },
     { url: '/terms-and-conditions.html', changefreq: 'yearly', priority: '0.3' },
     { url: '/terms-of-submission.html', changefreq: 'yearly', priority: '0.3' }

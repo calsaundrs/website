@@ -1,0 +1,12 @@
+npm warn exec The following package was not found and will be installed: serve@14.2.6
+ INFO  Accepting connections at http://localhost:8888
+ HTTP  4/2/2026 6:51:39 PM ::1 GET /
+ HTTP  4/2/2026 6:51:39 PM ::1 Returned 200 in 383 ms
+ HTTP  4/2/2026 6:51:39 PM ::1 GET /css/main.css
+ HTTP  4/2/2026 6:51:39 PM ::1 GET /js/fouc-prevention.js
+ HTTP  4/2/2026 6:51:39 PM ::1 GET /video-poster.jpg
+ HTTP  4/2/2026 6:51:39 PM ::1 Returned 200 in 8 ms
+ HTTP  4/2/2026 6:51:39 PM ::1 Returned 200 in 4 ms
+ HTTP  4/2/2026 6:51:39 PM ::1 Returned 404 in 8 ms
+ HTTP  4/2/2026 6:51:40 PM ::1 GET /HouseOfAllureReel.mp4
+ HTTP  4/2/2026 6:51:40 PM ::1 Returned 206 in 110 ms

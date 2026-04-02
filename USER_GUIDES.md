@@ -87,7 +87,7 @@ Platform managers handling content approval and system maintenance.
 
 #### Standard Event Submission
 1. **Access the Submission Form**
-   - Go to `promoter-submit.html`
+   - Go to `promoter-submit-new.html`
    - Or click "Submit Event" in the navigation
 
 2. **Fill Out the Form**
@@ -138,7 +138,7 @@ Platform managers handling content approval and system maintenance.
 
 ### Venue Submission
 1. **Submit Venue Information**
-   - Go to `get-listed.html`
+   - Go to `promoter-submit-new.html`
    - Fill out venue details form
    - Include venue type and features
    - Provide contact information

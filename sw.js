@@ -23,7 +23,7 @@ const CORE_PAGES = [
   '/community.html',
   '/contact.html',
   '/promoter-tool.html',
-  '/get-listed.html',
+  '/promoter-submit-new',
   '/privacy-policy.html',
   '/terms-and-conditions.html',
   '/terms-of-submission.html',

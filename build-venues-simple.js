@@ -263,7 +263,7 @@ const templateContent = `<!DOCTYPE html>
                 <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
                 <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
                 <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
+                <a href="https://brumoutloud.co.uk/promoter-submit-new" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="text-white text-2xl">
@@ -276,7 +276,7 @@ const templateContent = `<!DOCTYPE html>
             <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
             <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
             <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+            <a href="https://brumoutloud.co.uk/promoter-submit-new" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 

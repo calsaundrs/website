@@ -337,7 +337,7 @@ class UserPersonaSimulator {
     }
 
     async visitGetListedPage() {
-        const response = await fetch('/get-listed.html');
+        const response = await fetch('/promoter-submit-new.html');
         if (!response.ok) throw new Error('Get listed page not accessible');
         return 'Get listed page loaded';
     }

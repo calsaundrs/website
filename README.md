@@ -219,7 +219,7 @@ const result = await fetch('/.netlify/functions/event-submission-firestore-only'
 - **Events** (`events.html`) - Searchable event listings
 - **Venues** (`all-venues.html`) - Venue directory
 - **Community** (`community.html`) - Community information
-- **Submission Forms** (`promoter-submit.html`, `get-listed.html`)
+- **Submission Forms** (`promoter-submit-new.html`)
 
 #### Admin Interface
 - **Login** (`admin-login.html`) - Firebase authentication
