@@ -153,7 +153,7 @@
   from = "/get-listed"
   to = "/get-listed.html"
   status = 200
-  
+
 # Rule for the Public Promoter Tools Page
 [[redirects]]
     from = "/promoter-tool"

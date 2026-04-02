@@ -28,7 +28,7 @@
     <script src="https://cdn.tailwindcss.com" defer></script>
     <script src="/js/main.js?v=2" defer></script>
     <script src="/js/accessibility.js" defer></script>
-    
+
     <link rel="icon" href="/faviconV2.png" type="image/png">
     <link rel="manifest" href="/manifest.json?v=2">
     <meta name="theme-color" content="#ff007f">
@@ -94,7 +94,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
                 <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
-            
+
             <div class="hidden lg:flex gap-8 font-bold uppercase tracking-widest text-sm items-center">
                 <a href="/events.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">What's On</a>
                 <a href="/all-venues.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Venues</a>
@@ -102,7 +102,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <a href="/contact.html" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Contact</a>
                 <a href="/promoter-tool.html" class="nav-cta ml-4">GET LISTED</a>
             </div>
-            
+
             <div class="lg:hidden relative z-[60]">
                 <button id="menu-btn" class="btn-menu text-white text-2xl group flex flex-col gap-1.5 p-2"
                     aria-label="Menu">
@@ -112,7 +112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </button>
             </div>
         </nav>
-        
+
         <div id="menu"
             class="hidden lg:hidden fixed inset-0 bg-[#0d0115]/95 backdrop-blur-md z-50 flex-col items-center justify-center space-y-8 font-bold uppercase tracking-widest">
             <a href="/events.html" class="block text-white text-3xl hover:text-[var(--color-toxic)] hover:line-through transition-colors">WHAT'S ON</a>
@@ -136,14 +136,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <h2 class="font-anton text-2xl sm:text-3xl text-white mb-4 sm:mb-6">
                     <i class="fas fa-calendar-plus mr-3 accent-color"></i>Event Submission Form
                 </h2>
-                
+
                 <form id="event-submission-form" class="space-y-6 sm:space-y-8">
                     <!-- Poster Upload Section -->
                     <div class="space-y-4">
                         <h3 class="text-lg sm:text-xl font-bold accent-color-secondary">
                             <i class="fas fa-image mr-2"></i>Step 1: Upload Event Poster <span class="text-red-400">*</span>
                         </h3>
-                        
+
                         <div class="relative inline-block mb-4">
                             <button type="button" class="text-[var(--color-toxic)] hover:text-blue-300 transition-colors" id="upload-tips-toggle">
                                 <i class="fas fa-info-circle text-lg"></i>
@@ -161,7 +161,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <div class="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                             </div>
                         </div>
-                        
+
                         <!-- Upload Area -->
                         <div id="upload-area" class="upload-area rounded-lg p-6 sm:p-8 text-center cursor-pointer">
                             <i class="fas fa-cloud-upload-alt text-3xl sm:text-4xl text-zinc-400 mb-3 sm:mb-4"></i>
@@ -227,14 +227,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <h3 class="text-xl font-bold accent-color-secondary">
                             <i class="fas fa-calendar-plus mr-2"></i>Step 2: Event Details
                         </h3>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                             <!-- Event Name -->
                             <div class="md:col-span-2">
                                 <label for="event-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-tag mr-1"></i>Event Name <span class="text-red-400">*</span>
                                 </label>
-                                <input type="text" id="event-name" name="event-name" required 
+                                <input type="text" id="event-name" name="event-name" required
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="Enter your event name">
                             </div>
@@ -244,7 +244,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="description" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-align-left mr-1"></i>Event Description <span class="text-red-400">*</span>
                                 </label>
-                                <textarea id="description" name="description" rows="4" required 
+                                <textarea id="description" name="description" rows="4" required
                                           class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                           placeholder="Describe your event in detail..."></textarea>
                             </div>
@@ -254,7 +254,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="date" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-calendar mr-1"></i>Event Date <span class="text-red-400">*</span>
                                 </label>
-                                <input type="date" id="date" name="date" required 
+                                <input type="date" id="date" name="date" required
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                             </div>
 
@@ -263,7 +263,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="start-time" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-clock mr-1"></i>Event Time <span class="text-red-400">*</span>
                                 </label>
-                                <input type="time" id="start-time" name="start-time" required 
+                                <input type="time" id="start-time" name="start-time" required
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                             </div>
 
@@ -272,7 +272,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="category-select" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-tags mr-1"></i>Event Category <span class="text-red-400">*</span>
                                 </label>
-                                <select id="category-select" name="category-select" required 
+                                <select id="category-select" name="category-select" required
                                         class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase">
                                     <option value="">Select a category</option>
                                     <option value="Comedy">Comedy</option>
@@ -299,7 +299,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="link" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-link mr-1"></i>Ticket Link (Optional)
                                 </label>
-                                <input type="url" id="link" name="link" 
+                                <input type="url" id="link" name="link"
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="https://">
                             </div>
@@ -322,23 +322,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <div class="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Recurring Event Toggle -->
                                 <div class="feature-card p-4 rounded-lg mb-4">
                                     <label class="flex items-center cursor-pointer">
-                                        <input type="checkbox" id="is-recurring" name="is-recurring" 
+                                        <input type="checkbox" id="is-recurring" name="is-recurring"
                                                class="mr-3 text-accent-color focus:ring-accent-color rounded">
                                         <span class="text-white font-semibold">This is a recurring event</span>
                                     </label>
                                 </div>
-                                
+
                                 <!-- Recurring Event Configuration (Hidden by default) -->
                                 <div id="recurring-config" class="hidden space-y-4">
                                     <div class="card-bg p-4 rounded-lg border border-blue-600/30">
                                         <h4 class="text-blue-300 font-semibold mb-4">
                                             <i class="fas fa-cog mr-2"></i>Recurring Event Configuration
                                         </h4>
-                                        
+
                                         <!-- Recurrence Pattern -->
                                         <div class="mb-4">
                                             <label class="block text-sm font-semibold mb-2 text-white">
@@ -346,51 +346,51 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                             </label>
                                             <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                 <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
-                                                    <input type="radio" name="recurrence-pattern" value="weekly" 
+                                                    <input type="radio" name="recurrence-pattern" value="weekly"
                                                            class="mr-2 text-accent-color focus:ring-accent-color">
                                                     <span class="text-white">Weekly</span>
                                                 </label>
                                                 <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
-                                                    <input type="radio" name="recurrence-pattern" value="bi-weekly" 
+                                                    <input type="radio" name="recurrence-pattern" value="bi-weekly"
                                                            class="mr-2 text-accent-color focus:ring-accent-color">
                                                     <span class="text-white">Bi-Weekly</span>
                                                 </label>
                                                 <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
-                                                    <input type="radio" name="recurrence-pattern" value="monthly" 
+                                                    <input type="radio" name="recurrence-pattern" value="monthly"
                                                            class="mr-2 text-accent-color focus:ring-accent-color">
                                                     <span class="text-white">Monthly</span>
                                                 </label>
                                                 <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
-                                                    <input type="radio" name="recurrence-pattern" value="yearly" 
+                                                    <input type="radio" name="recurrence-pattern" value="yearly"
                                                            class="mr-2 text-accent-color focus:ring-accent-color">
                                                     <span class="text-white">Yearly</span>
                                                 </label>
                                                 <label class="feature-card p-3 rounded-lg cursor-pointer hover:border-blue-500/50 transition-colors">
-                                                    <input type="radio" name="recurrence-pattern" value="custom" 
+                                                    <input type="radio" name="recurrence-pattern" value="custom"
                                                            class="mr-2 text-accent-color focus:ring-accent-color">
                                                     <span class="text-white">Custom</span>
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Custom Recurrence (Hidden by default) -->
                                         <div id="custom-recurrence" class="hidden mb-4">
                                             <label class="block text-sm font-semibold mb-2 text-white">
                                                 <i class="fas fa-edit mr-1"></i>Custom Recurrence Description
                                             </label>
-                                            <textarea name="custom-recurrence-desc" 
+                                            <textarea name="custom-recurrence-desc"
                                                       class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                       placeholder="e.g., Every first Saturday of the month, Every other Tuesday, etc."
                                                       rows="2"></textarea>
                                         </div>
-                                        
+
                                         <!-- Recurrence Duration -->
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                             <div>
                                                 <label class="block text-sm font-semibold mb-2 text-white">
                                                     <i class="fas fa-calendar-plus mr-1"></i>Start Date <span class="text-red-400">*</span>
                                                 </label>
-                                                <input type="date" name="recurrence-start-date" 
+                                                <input type="date" name="recurrence-start-date"
                                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                        min="<?php echo date('Y-m-d'); ?>">
                                             </div>
@@ -398,32 +398,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                                 <label class="block text-sm font-semibold mb-2 text-white">
                                                     <i class="fas fa-calendar-minus mr-1"></i>End Date
                                                 </label>
-                                                <input type="date" name="recurrence-end-date" 
+                                                <input type="date" name="recurrence-end-date"
                                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                        min="<?php echo date('Y-m-d'); ?>">
                                                 <p class="text-xs text-zinc-400 mt-1">Leave empty for ongoing events</p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Maximum Instances -->
                                         <div class="mb-4">
                                             <label class="block text-sm font-semibold mb-2 text-white">
                                                 <i class="fas fa-hashtag mr-1"></i>Maximum Number of Instances
                                             </label>
-                                            <input type="number" name="max-instances" 
+                                            <input type="number" name="max-instances"
                                                    class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="52" min="1" max="1000" value="52">
                                             <p class="text-xs text-zinc-400 mt-1">Maximum number of events to create (default: 52 for weekly events)</p>
                                         </div>
-                                        
+
                                         <!-- Preview Generated Events -->
                                         <div class="mb-4">
-                                            <button type="button" id="preview-recurring" 
+                                            <button type="button" id="preview-recurring"
                                                     class="btn border-4 border-black bg-black text-white hover:bg-[var(--color-pink)] hover:text-black hover:shadow-[4px_4px_0_black] transition-all px-4 py-3 font-bold uppercase flex items-center justify-center">
                                                 <i class="fas fa-eye mr-2"></i>Preview Generated Events
                                             </button>
                                         </div>
-                                        
+
                                         <!-- Preview Results -->
                                         <div id="recurring-preview" class="hidden">
                                             <h5 class="text-blue-300 font-semibold mb-2">Generated Events Preview:</h5>
@@ -442,10 +442,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <h3 class="text-xl font-bold accent-color-secondary">
                             <i class="fas fa-map-marker-alt mr-2"></i>Step 3: Venue Information
                         </h3>
-                        
+
                         <!-- Venue Selection -->
                         <div class="space-y-4">
-                            
+
                             <!-- Venue Selection Dropdown -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2">
@@ -453,7 +453,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <i class="fas fa-building mr-1"></i>Select Venue <span class="text-red-400">*</span>
                                     </label>
                                     <div class="relative">
-                                        <input type="text" id="venue-search" 
+                                        <input type="text" id="venue-search"
                                                class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                placeholder="Search for a venue or type to create new...">
                                         <div id="venue-dropdown" class="hidden absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
@@ -463,7 +463,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <input type="hidden" id="venue-id" name="venue-id" value="">
                                     <p class="text-xs text-zinc-400 mt-1">Search for an existing venue or type to create a new one</p>
                                 </div>
-                                
+
                                 <!-- Selected Venue Details -->
                                 <div id="selected-venue-details" class="hidden md:col-span-2">
                                     <div class="card-bg p-4 rounded-lg border border-green-600/30">
@@ -484,14 +484,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <i class="fas fa-plus-circle mr-2"></i>Create New Venue
                                     </h4>
                                     <p class="text-sm text-blue-200 mb-4">Fill in the details for your new venue below.</p>
-                                    
+
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <!-- New Venue Name -->
                                         <div>
                                             <label for="new-venue-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                                 <i class="fas fa-building mr-1"></i>Venue Name <span class="text-red-400">*</span>
                                             </label>
-                                            <input type="text" id="new-venue-name" name="new-venue-name" 
+                                            <input type="text" id="new-venue-name" name="new-venue-name"
                                                    class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="Enter venue name">
                                         </div>
@@ -501,7 +501,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                             <label for="new-venue-address" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                                 <i class="fas fa-map mr-1"></i>Venue Address <span class="text-red-400">*</span>
                                             </label>
-                                            <input type="text" id="new-venue-address" name="new-venue-address" 
+                                            <input type="text" id="new-venue-address" name="new-venue-address"
                                                    class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="e.g., 123 Main Street, Birmingham">
                                         </div>
@@ -511,7 +511,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                             <label for="new-venue-postcode" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                                 <i class="fas fa-mail-bulk mr-1"></i>Postcode <span class="text-red-400">*</span>
                                             </label>
-                                            <input type="text" id="new-venue-postcode" name="new-venue-postcode" 
+                                            <input type="text" id="new-venue-postcode" name="new-venue-postcode"
                                                    class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="e.g., B1 1AA">
                                         </div>
@@ -521,7 +521,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                             <label for="new-venue-website" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                                 <i class="fas fa-globe mr-1"></i>Venue Website
                                             </label>
-                                            <input type="url" id="new-venue-website" name="new-venue-website" 
+                                            <input type="url" id="new-venue-website" name="new-venue-website"
                                                    class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                                    placeholder="https://">
                                         </div>
@@ -536,14 +536,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <h3 class="text-xl font-bold accent-color-secondary">
                             <i class="fas fa-user mr-2"></i>Step 4: Contact Information
                         </h3>
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-6">
                             <!-- Contact Name -->
                             <div>
                                 <label for="contact-name" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-user mr-1"></i>Contact Name <span class="text-red-400">*</span>
                                 </label>
-                                <input type="text" id="contact-name" name="contact-name" required 
+                                <input type="text" id="contact-name" name="contact-name" required
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="Your full name">
                             </div>
@@ -553,7 +553,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <label for="contact-email" class="block text-sm font-semibold mb-2 accent-color-secondary">
                                     <i class="fas fa-envelope mr-1"></i>Contact Email <span class="text-red-400">*</span>
                                 </label>
-                                <input type="email" id="contact-email" name="contact-email" required 
+                                <input type="email" id="contact-email" name="contact-email" required
                                        class="w-full bg-black border-4 border-black p-4 font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-toxic)] focus:shadow-[4px_4px_0_var(--color-toxic)] transition-all uppercase"
                                        placeholder="your.email@example.com">
                             </div>
@@ -579,7 +579,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-[#f3e8ff]">
             Warning: High volume queer chaos ahead
         </div>
-        
+
         <footer class="bg-black text-white p-8 md:p-16 relative overflow-hidden">
             <!-- Background Accent -->
             <div class="absolute -right-20 -bottom-10 font-accent text-[12rem] leading-none opacity-20 text-[var(--color-pink)] pointer-events-none select-none">
@@ -591,7 +591,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div>
                     <h3 class="text-5xl font-black italic misprint mb-4">DON'T BE A STRANGER.</h3>
                     <p class="mb-6 font-medium text-lg max-w-sm">Get on the blower. Drop your email here to get the secret location drops and early-bird tickets before they sell out.</p>
-                    
+
                     <div class="flex gap-4 items-end max-w-sm">
                         <div class="flex-grow">
                             <input type="email" class="punk-input w-full text-lg py-2" placeholder="your@email.bab">
@@ -601,7 +601,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Right Col -->
                 <div class="flex flex-col md:items-end justify-between space-y-8 mt-8 md:mt-0">
                     <div class="flex flex-wrap gap-4 md:gap-6 font-bold uppercase tracking-widest md:justify-end">
@@ -612,12 +612,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <a href="/promoter-tool.html" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
                         <a href="/admin/settings" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Admin</a>
                     </div>
-                    
+
                     <div class="flex gap-6 font-bold text-xs uppercase tracking-widest md:justify-end mt-4">
                         <a href="/privacy-policy.html" class="hover:text-[var(--color-toxic)] transition-colors">Privacy Policy</a>
                         <a href="/terms-and-conditions.html" class="hover:text-[var(--color-toxic)] transition-colors">Terms & Conditions</a>
                     </div>
-                    
+
                     <div class="md:text-right mt-8">
                         <div class="flex md:justify-end gap-4 mb-4">
                             <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
@@ -634,7 +634,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
 
     <script src="/js/promoter-submit-streamlined.js?v=3"></script>
-    
+
     <script>
         // Venue Search and Selection System
         class VenueSelector {
@@ -642,18 +642,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 this.venues = [];
                 this.selectedVenue = null;
                 this.searchTimeout = null;
-                
+
                 this.searchInput = document.getElementById('venue-search');
                 this.dropdown = document.getElementById('venue-dropdown');
                 this.venueIdInput = document.getElementById('venue-id');
                 this.selectedVenueDetails = document.getElementById('selected-venue-details');
                 this.venueDetailsContent = document.getElementById('venue-details-content');
                 this.newVenueFields = document.getElementById('new-venue-fields');
-                
+
                 this.initializeEventListeners();
                 this.loadInitialVenues();
             }
-            
+
             initializeEventListeners() {
                 // Search input events
                 this.searchInput.addEventListener('input', (e) => {
@@ -662,18 +662,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         this.handleSearch(e.target.value);
                     }, 300);
                 });
-                
+
                 this.searchInput.addEventListener('focus', () => {
                     this.showDropdown();
                 });
-                
+
                 // Click outside to close dropdown
                 document.addEventListener('click', (e) => {
                     if (!this.searchInput.contains(e.target) && !this.dropdown.contains(e.target)) {
                         this.hideDropdown();
                     }
                 });
-                
+
                 // Keyboard navigation
                 this.searchInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
@@ -681,15 +681,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     }
                 });
             }
-            
+
             async loadInitialVenues() {
                 try {
                     const response = await fetch('/.netlify/functions/get-venue-list');
-                    
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    
+
                     const data = await response.json();
                     if (Array.isArray(data)) {
                         this.venues = data.map(v => ({ id: v.id, name: v.name, address: v.address || '' }));
@@ -702,13 +702,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.error('Error loading venues:', error);
                 }
             }
-            
+
             async handleSearch(query) {
                 if (query.length < 2) {
                     this.renderDropdown(this.venues);
                     return;
                 }
-                
+
                 try {
                     // Simple client-side filter against preloaded venues
                     const q = query.toLowerCase();
@@ -718,7 +718,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     console.error('Error searching venues:', error);
                 }
             }
-            
+
             renderDropdown(venues) {
                 if (venues.length === 0) {
                     this.dropdown.innerHTML = `
@@ -728,18 +728,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     `;
                     return;
                 }
-                
+
                 const venueOptions = venues.map(venue => `
-                    <div class="venue-option p-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0" 
+                    <div class="venue-option p-3 hover:bg-gray-700 cursor-pointer border-b border-gray-600 last:border-b-0"
                          data-venue-id="${venue.id}" data-venue-name="${venue.name}">
                         <div class="font-semibold text-white">${venue.name}</div>
                         <div class="text-sm text-zinc-400">${venue.address || 'No address'}</div>
                     </div>
                 `).join('');
-                
+
                 // Add "Create New Venue" option
                 const createNewOption = `
-                    <div class="venue-option p-3 hover:bg-blue-600 cursor-pointer border-b border-gray-600 last:border-b-0 bg-blue-500/20" 
+                    <div class="venue-option p-3 hover:bg-blue-600 cursor-pointer border-b border-gray-600 last:border-b-0 bg-blue-500/20"
                          data-venue-id="new" data-venue-name="Create New Venue">
                         <div class="font-semibold text-blue-300">
                             <i class="fas fa-plus mr-2"></i>Create New Venue
@@ -747,15 +747,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <div class="text-sm text-blue-200">Add a new venue to our database</div>
                     </div>
                 `;
-                
+
                 this.dropdown.innerHTML = venueOptions + createNewOption;
-                
+
                 // Add click listeners to venue options
                 this.dropdown.querySelectorAll('.venue-option').forEach(option => {
                     option.addEventListener('click', () => {
                         const venueId = option.dataset.venueId;
                         const venueName = option.dataset.venueName;
-                        
+
                         if (venueId === 'new') {
                             this.selectNewVenue();
                         } else {
@@ -765,12 +765,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     });
                 });
             }
-            
+
             selectVenue(venue) {
                 this.selectedVenue = venue;
                 this.venueIdInput.value = venue.id;
                 this.searchInput.value = venue.name;
-                
+
                 // Show venue details
                 this.venueDetailsContent.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -798,40 +798,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         ` : ''}
                     </div>
                 `;
-                
+
                 this.selectedVenueDetails.classList.remove('hidden');
                 this.newVenueFields.classList.add('hidden');
                 this.hideDropdown();
             }
-            
+
             selectNewVenue() {
                 this.selectedVenue = null;
                 this.venueIdInput.value = 'new';
                 this.searchInput.value = '';
-                
+
                 this.selectedVenueDetails.classList.add('hidden');
                 this.newVenueFields.classList.remove('hidden');
                 this.hideDropdown();
-                
+
                 // Focus on the new venue name field
                 document.getElementById('new-venue-name').focus();
             }
-            
+
             showDropdown() {
                 this.dropdown.classList.remove('hidden');
             }
-            
+
             hideDropdown() {
                 this.dropdown.classList.add('hidden');
             }
         }
-        
+
         // Initialize venue selector when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             new VenueSelector();
             new RecurringEventsManager();
         });
-        
+
         // Recurring Events Management System
         class RecurringEventsManager {
             constructor() {
@@ -841,38 +841,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 this.previewButton = document.getElementById('preview-recurring');
                 this.previewResults = document.getElementById('recurring-preview');
                 this.previewContainer = document.getElementById('preview-results');
-                
+
                 this.initializeEventListeners();
             }
-            
+
             initializeEventListeners() {
                 // Toggle recurring configuration
                 this.isRecurringCheckbox.addEventListener('change', () => {
                     this.toggleRecurringConfig();
                 });
-                
+
                 // Handle recurrence pattern changes
                 document.querySelectorAll('input[name="recurrence-pattern"]').forEach(radio => {
                     radio.addEventListener('change', () => {
                         this.handlePatternChange();
                     });
                 });
-                
+
                 // Preview button
                 this.previewButton.addEventListener('click', () => {
                     this.generatePreview();
                 });
-                
+
                 // Date validation
                 document.querySelector('input[name="recurrence-start-date"]').addEventListener('change', () => {
                     this.validateDates();
                 });
-                
+
                 document.querySelector('input[name="recurrence-end-date"]').addEventListener('change', () => {
                     this.validateDates();
                 });
             }
-            
+
             toggleRecurringConfig() {
                 if (this.isRecurringCheckbox.checked) {
                     this.recurringConfig.classList.remove('hidden');
@@ -882,23 +882,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     this.previewResults.classList.add('hidden');
                 }
             }
-            
+
             handlePatternChange() {
                 const selectedPattern = document.querySelector('input[name="recurrence-pattern"]:checked');
-                
+
                 if (selectedPattern && selectedPattern.value === 'custom') {
                     this.customRecurrence.classList.remove('hidden');
                 } else {
                     this.customRecurrence.classList.add('hidden');
                 }
-                
+
                 // Update max instances based on pattern
                 this.updateMaxInstances(selectedPattern ? selectedPattern.value : null);
             }
-            
+
             updateMaxInstances(pattern) {
                 const maxInstancesInput = document.querySelector('input[name="max-instances"]');
-                
+
                 switch (pattern) {
                     case 'weekly':
                         maxInstancesInput.value = '52';
@@ -916,28 +916,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         maxInstancesInput.value = '52';
                 }
             }
-            
+
             validateDates() {
                 const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
                 const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
-                
+
                 if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
                     alert('End date must be after start date');
                     document.querySelector('input[name="recurrence-end-date"]').value = '';
                 }
             }
-            
+
             generatePreview() {
                 const pattern = document.querySelector('input[name="recurrence-pattern"]:checked');
                 const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
                 const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
                 const maxInstances = parseInt(document.querySelector('input[name="max-instances"]').value) || 52;
-                
+
                 if (!pattern || !startDate) {
                     alert('Please select a recurrence pattern and start date');
                     return;
                 }
-                
+
                 if (pattern.value === 'custom') {
                     // Use enhanced custom recurrence parser
                     this.generateCustomPreview(startDate, endDate, maxInstances);
@@ -947,15 +947,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     this.displayPreview(instances);
                 }
             }
-            
+
             async generateCustomPreview(startDate, endDate, maxInstances) {
                 const customDesc = document.querySelector('textarea[name="custom-recurrence-desc"]').value;
-                
+
                 if (!customDesc.trim()) {
                     alert('Please enter a custom recurrence description');
                     return;
                 }
-                
+
                 // Show loading state
                 this.previewContainer.innerHTML = `
                     <div class="flex items-center justify-center py-4">
@@ -964,7 +964,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                 `;
                 this.previewResults.classList.remove('hidden');
-                
+
                 try {
                     const response = await fetch('/.netlify/functions/custom-recurrence-parser', {
                         method: 'POST',
@@ -978,18 +978,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             maxInstances: maxInstances
                         })
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error('Failed to parse custom recurrence');
                     }
-                    
+
                     const data = await response.json();
-                    
+
                     if (data.success) {
-                        const methodLabel = data.method === 'ai_enhanced' ? 
-                            '<span class="text-green-400">AI Enhanced</span>' : 
+                        const methodLabel = data.method === 'ai_enhanced' ?
+                            '<span class="text-green-400">AI Enhanced</span>' :
                             '<span class="text-yellow-400">Rule Based</span>';
-                        
+
                         this.displayPreview(data.instances, data.parsedPattern, methodLabel);
                     } else {
                         alert('Error parsing custom recurrence: ' + data.message);
@@ -999,20 +999,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     alert('Error generating preview. Please try again.');
                 }
             }
-            
+
             calculateInstances(startDate, endDate, pattern, maxInstances) {
                 const instances = [];
                 let current = new Date(startDate);
                 let count = 0;
-                
+
                 while (count < maxInstances) {
                     if (endDate && current > new Date(endDate)) {
                         break;
                     }
-                    
+
                     instances.push(new Date(current));
                     count++;
-                    
+
                     switch (pattern) {
                         case 'weekly':
                             current.setDate(current.getDate() + 7);
@@ -1030,10 +1030,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             return instances;
                     }
                 }
-                
+
                 return instances;
             }
-            
+
             displayPreview(instances, parsedPattern = null, methodLabel = null) {
                 if (instances.length === 0) {
                     this.previewContainer.innerHTML = '<p class="text-zinc-400">No events would be generated with the current settings.</p>';
@@ -1049,38 +1049,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         });
                         return `<div class="text-sm text-[var(--color-light)] mb-1">${index + 1}. ${formattedDate}</div>`;
                     }).join('');
-                    
-                    const remainingText = instances.length > 10 ? 
+
+                    const remainingText = instances.length > 10 ?
                         `<div class="text-sm text-zinc-400 mt-2">... and ${instances.length - 10} more events</div>` : '';
-                    
-                    const patternInfo = parsedPattern ? 
+
+                    const patternInfo = parsedPattern ?
                         `<div class="text-sm text-blue-300 mb-2">Parsed Pattern: <strong>${parsedPattern}</strong></div>` : '';
-                    
-                    const methodInfo = methodLabel ? 
+
+                    const methodInfo = methodLabel ?
                         `<div class="text-sm mb-2">Processing Method: ${methodLabel}</div>` : '';
-                    
+
                     this.previewContainer.innerHTML = methodInfo + patternInfo + previewHTML + remainingText;
                 }
-                
+
                 this.previewResults.classList.remove('hidden');
             }
-            
+
             // Method to get recurring event data for form submission
             getRecurringEventData() {
                 if (!this.isRecurringCheckbox.checked) {
                     return null;
                 }
-                
+
                 const pattern = document.querySelector('input[name="recurrence-pattern"]:checked');
                 const startDate = document.querySelector('input[name="recurrence-start-date"]').value;
                 const endDate = document.querySelector('input[name="recurrence-end-date"]').value;
                 const maxInstances = parseInt(document.querySelector('input[name="max-instances"]').value) || 52;
                 const customDesc = document.querySelector('textarea[name="custom-recurrence-desc"]').value;
-                
+
                 if (!pattern || !startDate) {
                     throw new Error('Recurring event configuration is incomplete');
                 }
-                
+
                 return {
                     isRecurring: true,
                     recurringPattern: pattern.value,
