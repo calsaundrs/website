@@ -50,6 +50,29 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
+[[redirects]]
+  from = "/promoter-submit"
+  to = "/promoter-submit-new"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/promoter-submit.html"
+  to = "/promoter-submit-new"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/promoter-submit/"
+  to = "/promoter-submit-new"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/promoter-submit-new"
+  to = "/promoter-submit-new.html"
+  status = 200
+
 # Rule for individual EVENT pages (Firestore-based)
 [[redirects]]
   from = "/event/*"
