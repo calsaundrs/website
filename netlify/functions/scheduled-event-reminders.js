@@ -49,21 +49,18 @@ exports.handler = async (event, context) => {
 
     console.log(`📧 Found ${eventsSnapshot.size} events for tomorrow`);
 
-    const results = [];
-
-    for (const doc of eventsSnapshot.docs) {
+    const results = await Promise.all(eventsSnapshot.docs.map(async (doc) => {
       const eventData = doc.data();
       const promoterEmail = eventData.submittedBy || eventData.submitterEmail;
 
       if (!promoterEmail || promoterEmail === 'anonymous@brumoutloud.co.uk') {
         console.log(`⚠️ No valid email for event: ${eventData.name}`);
-        results.push({
+        return {
           eventId: doc.id,
           eventName: eventData.name,
           status: 'skipped',
           reason: 'No valid promoter email'
-        });
-        continue;
+        };
       }
 
       try {
@@ -79,35 +76,35 @@ exports.handler = async (event, context) => {
 
         if (emailResult.success) {
           console.log(`✅ Reminder sent for: ${eventData.name}`);
-          results.push({
+          return {
             eventId: doc.id,
             eventName: eventData.name,
             promoterEmail: promoterEmail,
             status: 'sent',
             messageId: emailResult.messageId
-          });
+          };
         } else {
           console.error(`❌ Failed to send reminder for: ${eventData.name}`, emailResult.error);
-          results.push({
+          return {
             eventId: doc.id,
             eventName: eventData.name,
             promoterEmail: promoterEmail,
             status: 'failed',
             error: emailResult.error
-          });
+          };
         }
 
       } catch (error) {
         console.error(`❌ Error processing event ${eventData.name}:`, error);
-        results.push({
+        return {
           eventId: doc.id,
           eventName: eventData.name,
           promoterEmail: promoterEmail,
           status: 'error',
           error: error.message
-        });
+        };
       }
-    }
+    }));
 
     const successCount = results.filter(r => r.status === 'sent').length;
     const failedCount = results.filter(r => r.status === 'failed' || r.status === 'error').length;
