@@ -135,8 +135,6 @@ exports.handler = async function (event, context) {
         console.log("Description length:", eventData.description ? eventData.description.length : 0);
         console.log("Description type:", typeof eventData.description);
         console.log("Details type:", typeof eventData.details);
-        console.log("All event fields:", Object.keys(eventData));
-        console.log("Raw event data:", JSON.stringify(eventData, null, 2));
 
         // Get other instances if this is a recurring event
         let otherInstances = [];

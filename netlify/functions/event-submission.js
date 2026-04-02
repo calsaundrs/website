@@ -155,7 +155,6 @@ exports.handler = async function (event, context) {
             }
             
             console.log('Form data parsed successfully');
-            console.log('Fields received:', Object.keys(submission));
             console.log('Category field:', submission['category-select']);
             console.log('Image file:', imageFileName ? { name: imageFileName, size: imageBuffer?.length } : 'No image');
             

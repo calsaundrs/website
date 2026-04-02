@@ -398,8 +398,6 @@ async function getVenueBySlug(slug) {
 }
 
 function processVenueForDetails(venueData) {
-    console.log("Processing venue data:", venueData.name || venueData['Venue Name'], "Keys:", Object.keys(venueData));
-
     // Extract image URL from various possible formats
     let imageUrl = null;
     if (venueData.image) {
