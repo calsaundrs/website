@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{event.name}} - BrumOutLoud</title>
+    <title>{{event.name}} | LGBTQ+ Birmingham & West Midlands Events | Brum Outloud</title>
     <meta name="description" content="{{event.description}}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{event.name}}">
+    <meta property="og:title" content="{{event.name}} | Brum Outloud">
     <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
     <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
@@ -15,9 +15,26 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{event.name}}">
+    <meta name="twitter:title" content="{{event.name}} | Brum Outloud">
     <meta name="twitter:description" content="{{event.description}}">
     <meta name="twitter:image" content="{{event.imageUrl}}">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "{{event.name}}",
+      "description": "{{event.description}}",
+      "startDate": "{{event.date}}",
+      "location": {
+        "@type": "Place",
+        "name": "{{event.venue.name}}"
+      },
+      "image": "{{event.imageUrl}}",
+      "url": "https://brumoutloud.co.uk/event/{{event.slug}}"
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
