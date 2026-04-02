@@ -1,0 +1,22 @@
+name: Trigger Jules on Labeled Issue
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  invoke-jules:
+    if: github.event.label.name == 'jules-fix'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke Jules Agent
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          prompt: |
+            A production error has occurred and requires attention. Please investigate the issue and fix the logic in the backend function.
+
+            Issue Title: ${{ github.event.issue.title }}
+            Issue Description:
+            ${{ github.event.issue.body }}
+
+          api_key: ${{ secrets.JULES_API_KEY }}
+          automation_mode: AUTO_CREATE_PR

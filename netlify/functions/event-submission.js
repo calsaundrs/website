@@ -558,6 +558,56 @@ exports.handler = async function (event, context) {
         
     } catch (error) {
         console.error('Error in Firestore-only event submission:', error);
+
+        // Create a GitHub Issue for Jules review
+        const githubToken = process.env.GITHUB_PAT || process.env.GITHUB_TOKEN;
+        if (githubToken) {
+            const owner = process.env.GITHUB_REPO_OWNER || 'calsaundrs';
+            const repo = process.env.GITHUB_REPO_NAME || 'website';
+
+            console.log(`Attempting to create GitHub issue for Jules review on ${owner}/${repo}...`);
+            try {
+                const issueBody = `The production form is failing with an error.
+
+**Source:** event-submission.js
+**Error Type:** ${error.constructor.name || 'Error'}
+**Error Message:** ${error.message || 'Unknown error'}
+
+**Stack Trace:**
+\`\`\`
+${error.stack ? error.stack.substring(0, 1500) : 'No stack trace available'}
+\`\`\`
+
+*Label this issue with \`jules-fix\` to trigger an automatic AI review and fix.*`;
+
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'Netlify-Function'
+                    },
+                    body: JSON.stringify({
+                        title: `[Production Error] Event Submission Failure: ${error.message || 'Unknown'}`,
+                        body: issueBody,
+                        labels: ['bug']
+                    })
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    console.error('Failed to create GitHub issue:', res.status, errText);
+                } else {
+                    console.log('✅ Successfully created GitHub issue for Jules review');
+                }
+            } catch (dispatchError) {
+                console.error('Error creating GitHub issue:', dispatchError);
+            }
+        } else {
+            console.log('⚠️ GITHUB_PAT or GITHUB_TOKEN not configured. Skipping GitHub issue creation.');
+        }
+
         return {
             statusCode: 500,
             headers: { 'Content-Type': 'application/json' },
