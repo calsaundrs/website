@@ -202,8 +202,7 @@ exports.handler = async function (event, context) {
             body: JSON.stringify({
                 error: 'Get venue data for pages failed',
                 message: error.message,
-                type: error.constructor.name,
-                stack: error.stack
+                type: error.constructor.name
             })
         };
     }

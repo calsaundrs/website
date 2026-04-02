@@ -99,8 +99,7 @@ exports.handler = async function (event, context) {
             body: JSON.stringify({
                 error: 'Get all venues for SSG failed',
                 message: error.message,
-                type: error.constructor.name,
-                stack: error.stack
+                type: error.constructor.name
             })
         };
     }
