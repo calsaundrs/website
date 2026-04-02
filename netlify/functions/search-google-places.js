@@ -58,8 +58,7 @@ exports.handler = async function(event, context) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: 'Failed to search Google Places',
-        message: error.message,
-        stack: error.stack
+        message: error.message
       })
     };
   }
