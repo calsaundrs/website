@@ -8,9 +8,9 @@ const FormattingService = {
      * Formats a description string into HTML.
      * Handles:
      * - HTML Escaping (XSS prevention)
-     * - Bold: **text**
-     * - Italic: *text*
-     * - Links: [text](url)
+     * - Bold: **text** (supports multi-line)
+     * - Italic: *text* (supports multi-line)
+     * - Links: [text](url) - Protected from mangling
      * - Paragraphs: Double line breaks
      * - Line breaks: Single line breaks
      *
@@ -20,43 +20,55 @@ const FormattingService = {
     formatDescription: function(text) {
         if (!text || typeof text !== 'string') return '';
 
-        // 1. Basic HTML Escaping
-        let html = text
+        // 1. Normalize, Trim and Escape
+        let html = text.trim()
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
 
-        // 2. Bold: **text**
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-        // 3. Italic: *text* (only if not preceded/followed by another asterisk to avoid conflict with bold)
-        html = html.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
-
-        // 4. Links: [text](url)
-        // Ensure the URL is also somewhat safe - we've already escaped & < > " '
+        // 2. Links: [text](url) - Process early with placeholders to protect URLs from bold/italic mangling
+        const links = [];
         html = html.replace(/\[(.*?)\]\((.*?)\)/g, (match, linkText, url) => {
             // Basic URL validation to ensure it looks like a link
             const isSafeUrl = /^(https?:\/\/|mailto:|\/)/i.test(url);
             if (isSafeUrl) {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--color-toxic)] transition-colors">${linkText}</a>`;
+                const placeholder = `__LINK_${links.length}__`;
+                // Format the linkText as it might contain bold/italic
+                const formattedLinkText = this.formatDescriptionPartial(linkText);
+                links.push(`<a href="${url}" target="_blank" rel="noopener noreferrer" class="underline hover:text-[var(--color-toxic)] transition-colors">${formattedLinkText}</a>`);
+                return placeholder;
             }
-            return match; // Return original if URL doesn't look safe/valid
+            return match;
+        });
+
+        // 3. Bold and Italic (supporting multi-line via 's' flag)
+        html = this.formatDescriptionPartial(html);
+
+        // 4. Restore Links
+        links.forEach((link, i) => {
+            html = html.replace(`__LINK_${i}__`, link);
         });
 
         // 5. Paragraphs and Line Breaks
-        // First, normalize line endings
-        html = html.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
-        // Double line breaks to paragraphs
-        html = html.split(/\n\n+/).map(para => {
+        // Split by two or more newlines, which may contain spaces
+        return html.split(/\n\s*\n+/).map(para => {
             // Single line breaks within paragraph to <br>
             const lineBroken = para.replace(/\n/g, '<br>');
             return `<p>${lineBroken}</p>`;
         }).join('');
+    },
 
-        return html;
+    /**
+     * Helper to apply bold and italic formatting.
+     */
+    formatDescriptionPartial: function(text) {
+        let partial = text.replace(/\*\*(.*?)\*\*/gs, '<strong>$1</strong>');
+        partial = partial.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/gs, '<em>$1</em>');
+        return partial;
     }
 };
 

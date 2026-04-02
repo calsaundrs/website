@@ -167,9 +167,6 @@ exports.handler = async function (event, context) {
             }
         }
 
-        // Format description
-        let formattedDescription = FormattingService.formatDescription(eventData.description);
-
                 // Use embedded template matching the design system
         const templateContent = `<!DOCTYPE html>
 <html lang="en">
