@@ -140,21 +140,27 @@ async function handlePublicView(queryParams) {
         if (uniqueVenueSlugs.length > 0) {
             // Firestore 'in' queries support up to 30 values per batch
             const BATCH_SIZE = 30;
+            const batchPromises = [];
+
             for (let i = 0; i < uniqueVenueSlugs.length; i += BATCH_SIZE) {
                 const batch = uniqueVenueSlugs.slice(i, i + BATCH_SIZE);
-                try {
-                    const venueSnapshot = await db.collection('venues')
-                        .where('slug', 'in', batch)
-                        .get();
-                    venueSnapshot.forEach(vDoc => {
-                        const v = processVenueForPublic({ id: vDoc.id, ...vDoc.data() });
-                        venueMap.set(v.slug, v);
+                const batchPromise = db.collection('venues')
+                    .where('slug', 'in', batch)
+                    .get()
+                    .then(venueSnapshot => {
+                        venueSnapshot.forEach(vDoc => {
+                            const v = processVenueForPublic({ id: vDoc.id, ...vDoc.data() });
+                            venueMap.set(v.slug, v);
+                        });
+                    })
+                    .catch(err => {
+                        console.warn('Venue batch fetch failed:', err.message);
                     });
-                } catch (err) {
-                    console.warn('Venue batch fetch failed:', err.message);
-                }
+                batchPromises.push(batchPromise);
             }
-            console.log(`Fetched ${venueMap.size} venues in ${Math.ceil(uniqueVenueSlugs.length / BATCH_SIZE)} batch(es)`);
+
+            await Promise.all(batchPromises);
+            console.log(`Fetched ${venueMap.size} venues in ${Math.ceil(uniqueVenueSlugs.length / BATCH_SIZE)} concurrent batch(es)`);
         }
 
         // Second pass: build event objects with venue data from the map

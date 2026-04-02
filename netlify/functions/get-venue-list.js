@@ -94,8 +94,7 @@ exports.handler = async function (event, context) {
             headers,
             body: JSON.stringify({
                 error: 'Failed to fetch venues',
-                details: error.message,
-                stack: error.stack
+                details: error.message
             })
         };
     }

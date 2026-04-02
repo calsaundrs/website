@@ -49,6 +49,8 @@ async function generateComprehensiveSitemap() {
     { url: '/', changefreq: 'weekly', priority: '1.0' },
     { url: '/events.html', changefreq: 'daily', priority: '0.9' },
     { url: '/all-venues.html', changefreq: 'weekly', priority: '0.8' },
+    { url: '/clubs', changefreq: 'monthly', priority: '0.7' },
+    { url: '/birmingham-pride', changefreq: 'monthly', priority: '0.7' },
     { url: '/community.html', changefreq: 'monthly', priority: '0.7' },
     { url: '/contact.html', changefreq: 'monthly', priority: '0.6' },
     { url: '/promoter-submit-new', changefreq: 'monthly', priority: '0.6' },
