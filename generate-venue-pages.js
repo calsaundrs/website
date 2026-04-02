@@ -109,32 +109,6 @@ const venues = [
         ]
     },
     {
-        name: 'Sidewalk',
-        slug: 'sidewalk',
-        description: 'Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.',
-        additionalDescription: 'This venue is a cornerstone of Birmingham\'s LGBTQ+ scene, offering a welcoming atmosphere and memorable experiences for all visitors.',
-        address: '125-127 Hurst Street, Birmingham, B5 6SE',
-        imageUrl: 'https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg',
-        websiteUrl: 'https://sidewalkbar.co.uk/',
-        websiteDisplay: 'sidewalkbar.co.uk',
-        statusText: 'Open until 2:00 AM',
-        hoursSummary: 'Open Daily 8 PM - 2 AM',
-        tags: [
-            '<span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Bar & Café</span>',
-            '<span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span>',
-            '<span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Southside</span>'
-        ],
-        openingHours: [
-            '<div class="flex justify-between"><span>Monday</span><span>Closed</span></div>',
-            '<div class="flex justify-between"><span>Tuesday</span><span>Closed</span></div>',
-            '<div class="flex justify-between"><span>Wednesday</span><span>8:00 PM - 2:00 AM</span></div>',
-            '<div class="flex justify-between"><span>Thursday</span><span>8:00 PM - 2:00 AM</span></div>',
-            '<div class="flex justify-between"><span>Friday</span><span>8:00 PM - 3:00 AM</span></div>',
-            '<div class="flex justify-between"><span>Saturday</span><span>8:00 PM - 3:00 AM</span></div>',
-            '<div class="flex justify-between"><span>Sunday</span><span>8:00 PM - 2:00 AM</span></div>'
-        ]
-    },
-    {
         name: 'The Fountain inn',
         slug: 'the-fountain-inn',
         description: 'Bar and rooms establishment; Traditional gay bar; Formerly men-only, now welcomes everyone.',

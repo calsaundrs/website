@@ -192,14 +192,18 @@
 
     <!-- Filters -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-8">
-        <div class="flex flex-wrap gap-2 items-center">
-            <button class="filter-pill active" data-filter="all">All</button>
-            <button class="filter-pill" data-filter="this-week">This Week</button>
-            <button class="filter-pill" data-filter="this-weekend">This Weekend</button>
-            <button class="filter-pill" data-filter="this-month">This Month</button>
-            <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
-                <i class="fas fa-eye-slash"></i> 18+
-            </button>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex flex-wrap gap-2 items-center">
+                <button class="filter-pill active" data-filter="all">All</button>
+                <button class="filter-pill" data-filter="this-week">This Week</button>
+                <button class="filter-pill" data-filter="this-weekend">This Weekend</button>
+                <button class="filter-pill" data-filter="this-month">This Month</button>
+            </div>
+            <div class="flex items-center">
+                <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-eye-slash"></i> 18+
+                </button>
+            </div>
         </div>
         <p id="event-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
     </section>

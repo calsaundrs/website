@@ -564,7 +564,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'nightingale': 'The Nightingale Club',
             'eden': 'Eden Bar',
             'missing': 'Missing Bar',
-            'sidewalk': 'Sidewalk',
             'glee': 'The Glee Club',
             'fox': 'The Fox',
             'hub': 'The Hub',
