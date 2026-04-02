@@ -48,6 +48,8 @@ async function generateSitemap() {
             '/',
             '/all-venues.html',
             '/events.html',
+            '/clubs.html',
+            '/birmingham-pride.html',
             '/community.html',
             '/contact.html',
             '/promoter-tool.html',
