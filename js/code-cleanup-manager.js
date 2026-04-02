@@ -4,7 +4,6 @@
  * 
  * Features:
  * - Remove debug console logs from production
- * - Clean up TODO comments
  * - Improve code formatting
  * - Remove unused code
  * - Performance optimization
