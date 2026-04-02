@@ -166,12 +166,6 @@ exports.handler = async function (event, context) {
             }
         }
 
-        // Format description
-        let formattedDescription = eventData.description;
-        if (eventData.description && !eventData.series) {
-            // TODO: Add description formatting if needed
-        }
-
                 // Use embedded template matching the design system
         const templateContent = `<!DOCTYPE html>
 <html lang="en">

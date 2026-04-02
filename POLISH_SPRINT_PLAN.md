@@ -147,7 +147,7 @@ Now that BrumOutLoud is live and the documentation is cleaned up, this polish sp
 - [ ] **Improve recurring event data structure** in Firestore
 
 #### **4.6 Code Cleanup**
-- [ ] **Remove TODO comments** and implement features
+- [x] **Remove TODO comments** and implement features
 - [ ] **Refactor duplicate code** into reusable functions
 - [ ] **Improve function documentation** with JSDoc
 - [ ] **Consistent code formatting** across all files
