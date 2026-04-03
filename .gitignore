@@ -7,3 +7,6 @@ node_modules
 test-results/
 playwright-report/
 .claude/
+series/
+event/
+css/tailwind.css

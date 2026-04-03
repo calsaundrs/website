@@ -5,7 +5,7 @@
   # Directory that contains the deploy-ready HTML files and assets.
   publish = "."
   functions = "netlify/functions"
-  command = "npm run build:css"
+  command = "npm run build:css && node fix-pride-page.js && node generate-series-pages.js"
   # Specify Node.js version to match package requirements
   environment = { NODE_VERSION = "20", NETLIFY_BUILD_TIMEOUT = "1800", NETLIFY_FUNCTION_TIMEOUT = "30" }
 
@@ -170,6 +170,37 @@
   from = "/contact"
   to = "/contact.html"
   status = 200
+
+# Rules for SERIES/RECURRING EVENTS landing pages
+[[redirects]]
+  from = "/series/*"
+  to = "/series/:splat.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/xxl"
+  to = "/series/xxl.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hardon"
+  to = "/series/hard-on.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/beefmince"
+  to = "/series/beefmince.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dilf"
+  to = "/series/dilf.html"
+  status = 200
+  force = true
 
 # Rule for the GET LISTED form page
 [[redirects]]

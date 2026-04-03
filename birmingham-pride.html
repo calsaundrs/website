@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birmingham Pride 2026 | Ultimate Guide — Dates, Lineup, Parade, Tickets | Brum Outloud</title>
-    <meta name="description" content="Your complete guide to Birmingham Pride 2026 in the West Midlands. Dates, lineup, parade route, tickets, venues, transport and accessibility info. Sat 23 – Sun 24 May 2026.">
+    <title>Birmingham Pride {{CURRENT_YEAR}} | Dates, Lineup & Parade Info | Brum Outloud</title>
+    <meta name="description" content="Your complete guide to Birmingham Pride {{CURRENT_YEAR}} in the West Midlands. Dates, lineup, parade route, tickets, venues, transport and accessibility info. {{PRIDE_DATES}}.">
     <link rel="canonical" href="https://www.brumoutloud.co.uk/birmingham-pride">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.brumoutloud.co.uk/birmingham-pride">
     <meta property="og:title" content="Birmingham Pride 2026 | Ultimate Guide — Dates, Lineup, Parade, Tickets">
-    <meta property="og:description" content="Your complete guide to Birmingham Pride 2026 in the West Midlands. Sat 23 – Sun 24 May 2026. Lineup, parade route, tickets, venues and more.">
+    <meta property="og:description" content="Your complete guide to Birmingham Pride 2026 in the West Midlands. Sat 23 - 24 May 2026. Lineup, parade route, tickets, venues and more.">
     <meta property="og:image" content="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png">
     <meta property="og:image:width" content="1024">
     <meta property="og:image:height" content="930">
@@ -903,6 +903,13 @@
                 <div class="md:grid md:grid-cols-2 md:gap-x-8">
                     <details class="group border-b-2 border-gray-800 py-4">
                         <summary class="flex items-center justify-between cursor-pointer list-none">
+                            <span class="font-bold text-white uppercase">When is Birmingham Pride 2025?</span>
+                            <span class="text-2xl text-[var(--color-toxic)] plus-icon font-bold">+</span>
+                        </summary>
+                        <p class="text-gray-200 mt-3">Birmingham Pride 2025 will take place on Saturday 24th May and Sunday 25th May 2025.</p>
+                    </details>
+                    <details class="group border-b-2 border-gray-800 py-4">
+                        <summary class="flex items-center justify-between cursor-pointer list-none">
                             <span class="font-bold text-white uppercase">When is Birmingham Pride 2026?</span>
                             <span class="text-2xl text-[var(--color-toxic)] plus-icon font-bold">+</span>
                         </summary>
@@ -1061,6 +1068,22 @@
             }
         }
         document.addEventListener('DOMContentLoaded', loadPrideEvents);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const d = new Date();
+            let year = d.getFullYear();
+            if (d.getMonth() > 4) { // June onwards
+                year += 1;
+            }
+            document.querySelectorAll('span.current-year').forEach(el => {
+                el.textContent = year;
+            });
+            document.title = `Birmingham Pride ${year} | Dates, Lineup & Parade Info | Brum Outloud`;
+            let metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.content = metaDesc.content.replace(/2026/g, year);
+        });
     </script>
 </body>
 </html>
