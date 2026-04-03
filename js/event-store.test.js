@@ -2,38 +2,27 @@ const { EventStore, EventAPI } = require('./event-store');
 
 describe('EventStore', () => {
   let store;
-  let originalFetch;
 
   beforeEach(() => {
     // Clear localStorage mock properly using jest-environment-jsdom
-    const localStorageMock = {
-      getItem: jest.fn().mockReturnValue(null),
-      setItem: jest.fn(),
-      removeItem: jest.fn(),
-      clear: jest.fn()
-    };
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      writable: true
-    });
+    window.localStorage.clear();
 
     // Setup fetch mock
-    originalFetch = global.fetch;
+    // Note: Node 20 / Jest 29 jsdom environment may not have global.fetch by default
     global.fetch = jest.fn();
+    jest.spyOn(global, 'fetch').mockImplementation(jest.fn());
 
     // Instantiate fresh store
     store = new EventStore();
   });
 
   afterEach(() => {
-    global.fetch = originalFetch;
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('loadEvents error handling', () => {
     it('should set loading to false and update error state when API fails', async () => {
       // Arrange: Mock fetch to simulate network error or failed API response
-      const errorMessage = 'HTTP error! status: 500';
       global.fetch.mockResolvedValueOnce({
         ok: false,
         status: 500
@@ -53,9 +42,6 @@ describe('EventStore', () => {
 
       // We should also ensure the error was actually logged
       expect(consoleSpy).toHaveBeenCalled();
-
-      // Cleanup
-      consoleSpy.mockRestore();
     });
 
     it('should handle network errors (fetch throws)', async () => {
@@ -71,9 +57,6 @@ describe('EventStore', () => {
       const state = store.getState();
       expect(state.loading).toBe(false);
       expect(state.error).toBe('Failed to load events. Please try again.');
-
-      // Cleanup
-      consoleSpy.mockRestore();
     });
   });
 });
