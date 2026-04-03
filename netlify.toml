@@ -298,6 +298,7 @@
   FIREBASE_PRIVATE_KEY = ""
   RESEND_API_KEY = ""
   ADMIN_EMAIL = ""
+  GEMINI_API_KEY = ""
 
 [context.deploy-preview.environment]
   CLOUDINARY_CLOUD_NAME = ""
@@ -308,3 +309,4 @@
   FIREBASE_PRIVATE_KEY = ""
   RESEND_API_KEY = ""
   ADMIN_EMAIL = ""
+  GEMINI_API_KEY = ""

@@ -2,7 +2,7 @@
 
 > The definitive, bold, and unapologetic guide to Birmingham's LGBTQ+ scene
 
-BrumOutLoud is a comprehensive, open-source events platform designed to be the go-to resource for LGBTQ+ events, venues, and community activities in Birmingham, UK. The platform utilizes a completely serverless backend, employing modern web technologies for maximum performance, excellent user experience, and accessibility.
+BrumOutLoud is a comprehensive, proprietary events platform designed to be the go-to resource for LGBTQ+ events, venues, and community activities in Birmingham, UK. The platform utilizes a completely serverless backend, employing modern web technologies for maximum performance, excellent user experience, and accessibility.
 
 ## 🌟 Platform Features
 
@@ -95,10 +95,14 @@ The project heavily relies on the JAMstack approach, ensuring decoupled front-en
 
 ### Important Scripts (`package.json`)
 - `npm run build:css` - Compiles Tailwind CSS.
-- `npm run build` - Full site build combining CSS compilation, SSG events/venues building, and sitemap generation.
+- `npm run build` - Local build script that runs CSS optimization, simple venue building, API endpoint building, and sitemap generation.
 - `npm run optimize:all` - Optimizes CSS assets (minify + critical CSS extraction).
 - `npm test` - Runs Playwright smoke tests.
 - `npm run render:reel` - Generates the weekly social reel via Remotion.
+
+### Netlify Deployment Build
+Note: The production Netlify build command defined in `netlify.toml` differs from the local script. It executes:
+`npm run build:css && node fix-pride-page.js && node generate-series-pages.js`
 
 ---
 
@@ -148,12 +152,16 @@ npm run test:smoke
 
 ## 🤝 Contributing
 
-We welcome community engagement! If you want to contribute:
+As a proprietary project, contribution is restricted to authorized team members and AI assistants.
 1. Ensure your code strictly follows standard conventions outlined in the codebase.
-2. Read the `AGENTS.md` guidelines for automated tools running on this repository.
+2. AI assistants and contributors should read the `AGENTS.md` guidelines before making changes.
 3. Test locally using `npm test`.
 4. Ensure the `.env` variables do not get committed.
 5. Create a descriptive Pull Request highlighting your changes.
+
+## 📄 License
+
+This project is proprietary and confidential. All rights reserved.
 
 ---
 
