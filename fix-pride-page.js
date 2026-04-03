@@ -17,7 +17,7 @@ async function fixPridePage() {
     content = content.replace(/\{\{PRIDE_DATES\}\}/g, `23-24 May ${year}`);
 
     // Remove the span tags from the schema too
-    content = content.replace(/<span class="current-year">2026<\/span>/g, year);
+    content = content.replace(/2026(?=<\/span>)/g, year);
 
     // If there is an existing script tag at the bottom doing client-side replacement, we can leave it or remove it.
     // Since we are statically building it correctly now, it's safer. Let's just write the changes.
