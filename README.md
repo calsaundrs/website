@@ -1,422 +1,172 @@
 # BrumOutLoud - Birmingham's LGBTQ+ Events Platform
 
-[![License](https://img.shields.io/badge/license-Private-red.svg)]()
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
-[![Firebase](https://img.shields.io/badge/database-Firestore-orange.svg)]()
-[![Netlify](https://img.shields.io/badge/hosting-Netlify-00AD9F.svg)]()
-
 > The definitive, bold, and unapologetic guide to Birmingham's LGBTQ+ scene
 
-BrumOutLoud is a comprehensive events platform designed to be the go-to resource for LGBTQ+ events, venues, and community activities in Birmingham, UK. Built with modern web technologies and a focus on accessibility, performance, and user experience.
+BrumOutLoud is a comprehensive, proprietary events platform designed to be the go-to resource for LGBTQ+ events, venues, and community activities in Birmingham, UK. The platform utilizes a completely serverless backend, employing modern web technologies for maximum performance, excellent user experience, and accessibility.
 
-## 🌟 Features
+## 🌟 Platform Features
 
 ### For Event-Goers
-- **Comprehensive Event Listings** - Discover upcoming LGBTQ+ events across Birmingham
-- **Advanced Filtering** - Find events by category, date, venue, and special features
-- **Venue Directory** - Explore LGBTQ+-friendly venues with detailed information
-- **Calendar Integration** - Add events directly to your calendar (Google, Apple, Outlook)
-- **Mobile-First Design** - Optimized for all devices with Progressive Web App features
-- **Accessibility Focused** - Full keyboard navigation and screen reader support
-- **Real-time Updates** - Live event information with automatic refresh
+- **Comprehensive Event Listings:** View up-to-date and recurring LGBTQ+ events across Birmingham.
+- **Venue Directory:** Explore LGBTQ+-friendly venues, along with mapped locations and info.
+- **Community Focus:** Specialized listings for the Birmingham Pride page and individual Club series.
+- **Fast Performance:** Using a Static Site Generation (SSG) strategy for main landing pages, providing instant load times.
+- **Mobile-First & PWA:** Optimized for all devices, functioning as a Progressive Web App (PWA) with offline capabilities.
+- **Calendar & Social Integration:** Add events to Apple/Google calendars or share on social networks.
 
 ### For Event Organizers
-- **Easy Event Submission** - Simple form-based event submission process
-- **Recurring Events Support** - Set up weekly, monthly, or custom recurring events
-- **Image Uploads** - High-quality image storage with automatic optimization
-- **AI-Powered Tools** - Extract event information from posters and spreadsheets
-- **Venue Management** - Submit and manage venue information
-- **Status Tracking** - Track submission status and approval workflow
-- **Bulk Upload** - Process multiple events from spreadsheets
+- **Intelligent Submission:** Drop an event poster, and our Gemini AI integration automatically extracts data to fill in the submission form.
+- **Recurring Events System:** Complete support for weekly, monthly, and custom recurring events.
+- **Media Optimization:** Cloudinary integration automatically transforms, scales, and compresses poster uploads.
+- **Rich Media Export:** Automated social media Reels and Stories generation using Remotion for Instagram/TikTok cross-promotion.
 
 ### For Administrators
-- **Approval Workflow** - Review and approve events and venues
-- **Content Management** - Full CRUD operations for events and venues
-- **AI Processing Tools** - Bulk process posters and spreadsheets
-- **Analytics Dashboard** - Monitor platform usage and performance
-- **User Management** - Firebase-based authentication and authorization
-- **Data Migration** - Tools for importing legacy event data
+- **Moderation Workflow:** A fully secured admin dashboard (Firebase Auth) to manage, approve, or reject submissions.
+- **Batch Processing & SEO Tools:** Admin tools to rebuild the Static Site Generation, optimize sitemaps, and automatically generate essential SEO structured data.
 
-## 🏗️ Architecture
+---
 
-### Technology Stack
-- **Frontend**: HTML5, CSS3 (Tailwind), Vanilla JavaScript
-- **Backend**: Netlify Functions (Node.js serverless)
-- **Database**: Firestore (Firebase)
-- **Authentication**: Firebase Authentication
-- **Image Storage**: Cloudinary
-- **AI Processing**: Google Gemini API
-- **Deployment**: Netlify with Git-based CI/CD
+## 🏗️ Architecture & Technology Stack
 
-### Key Components
-```
-┌─ Frontend (Static) ─────────────────────────┐
-│ • HTML pages with Tailwind CSS             │
-│ • Vanilla JavaScript for interactivity     │
-│ • Progressive Web App features             │
-│ • Responsive design with accessibility     │
-└─────────────────────────────────────────────┘
-                      ↓
-┌─ Serverless Functions ──────────────────────┐
-│ • 33+ Netlify Functions (Node.js)          │
-│ • RESTful API endpoints                    │
-│ • Authentication middleware                │
-│ • AI processing integration                │
-└─────────────────────────────────────────────┘
-                      ↓
-┌─ External Services ─────────────────────────┐
-│ • Firestore (Database)                     │
-│ • Cloudinary (Image Storage)               │
-│ • Firebase (Authentication)                │
-│ • Google Gemini (AI Processing)            │
-└─────────────────────────────────────────────┘
-```
+The project heavily relies on the JAMstack approach, ensuring decoupled front-end rendering from back-end logic.
 
-## 📚 Documentation
+### Frontend
+- **HTML5 & Vanilla JS:** Clean semantic HTML with ES6+ JavaScript.
+- **Tailwind CSS:** Utility-first CSS framework for rapid and robust styling.
+- **Static Site Generation (SSG):** Custom Node.js scripts handle fetching data from Firestore and pre-rendering `events.html` and `venues.html` prior to deployment.
 
-### Core Documentation
-- **[API Documentation](API_DOCUMENTATION.md)** - Complete API reference with examples
-- **[Frontend Documentation](FRONTEND_DOCUMENTATION.md)** - Frontend components and usage
-- **[Functions Documentation](FUNCTIONS_DOCUMENTATION.md)** - Serverless functions reference
-- **[Developer Guide](DEVELOPER_GUIDE.md)** - Setup, development, and deployment guide
-- **[SSG & FOUC Guide](SSG_AND_FOUC_GUIDE.md)** - Static site generation and performance optimization
+### Backend (Serverless)
+- **Netlify Functions:** Over 35 Node.js serverless functions acting as the core API for dynamic requests, admin actions, and scheduled cron jobs.
+- **Firebase (Firestore):** The primary NoSQL database containing Events, Venues, and Pending submissions.
+- **Firebase Authentication:** Handles authentication and security rules for admin dashboard access.
 
-### User Guides
-- **[User Journey Testing Report](USER_JOURNEY_TESTING_REPORT.md)** - Comprehensive testing results
-- **[Implementation Analysis](IMPLEMENTATION_ANALYSIS.md)** - Technical implementation details
-- **[Project Overview](GEMINI.md)** - Product vision and development roadmap
+### Third-Party Integrations
+- **Cloudinary:** Stores and serves optimized event poster and venue images.
+- **Google Gemini API:** AI-powered analysis extracting event details directly from uploaded posters.
+- **Resend API:** Transactional email handling to notify promoters and admins of submission statuses.
+- **Remotion:** Generates automated video reels and stories using data from the database.
 
-### Additional Resources
-- **[Netlify Configuration](netlify.toml)** - Deployment and build settings
-- **[Package Configuration](package.json)** - Dependencies and scripts
-- **[Design System](design-system.html)** - UI/UX reference (do not modify)
+---
 
-## 🚀 Quick Start
+## 🚀 Quick Start Guide
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Git
-- Accounts for: Firebase, Cloudinary, Google Cloud
-
-### Venues Data
-
-The venues listing page (`all-venues.html`) uses hardcoded venue data for maximum performance and reliability. Since venues don't change frequently, this approach eliminates all API dependencies and ensures instant loading.
-
-To update venue information, simply edit the hardcoded data in the `initializePage()` function within `all-venues.html`.
+- **Node.js** v20+
+- **npm** v9+
+- Accounts configured for: Firebase, Cloudinary, Resend, and Google Gemini.
 
 ### Installation
 
-1. **Clone and install:**
-```bash
-git clone <repository-url>
-cd brumoutloud-site
-npm install
-```
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd brumoutloud-site
+   npm install
+   ```
 
-2. **Set up environment variables:**
-```bash
-# Copy example file
-cp .env.example .env
+2. **Set up Environment Variables:**
+   Copy the `.env.example` to `.env` or set the following variables locally (these must be added to your Netlify Environment dashboard for production):
+   ```bash
+   FIREBASE_PROJECT_ID="your_project_id"
+   FIREBASE_CLIENT_EMAIL="your_client_email"
+   FIREBASE_PRIVATE_KEY="your_private_key"
+   CLOUDINARY_CLOUD_NAME="your_cloud_name"
+   CLOUDINARY_API_KEY="your_api_key"
+   CLOUDINARY_API_SECRET="your_secret"
+   GEMINI_API_KEY="your_gemini_key"
+   RESEND_API_KEY="your_resend_key"
+   ADMIN_EMAIL="admin@brumoutloud.co.uk"
+   ```
 
-# Add your API keys to .env file
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_CLIENT_EMAIL=your_client_email
-FIREBASE_PRIVATE_KEY=your_private_key
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_secret
-GEMINI_API_KEY=your_gemini_key
-```
+3. **Build the assets:**
+   ```bash
+   npm run build:css
+   ```
 
-3. **Build and start:**
-```bash
-npm run build:css
-netlify dev  # or npx live-server
-```
+4. **Run a local development server:**
+   You can either run the Netlify CLI or a simple server like `npx serve`:
+   ```bash
+   # Using Netlify CLI (Recommended to test serverless functions)
+   netlify dev
 
-### Project Structure
+   # Or using a simple static server
+   npx serve -l 8888
+   ```
+
+### Important Scripts (`package.json`)
+- `npm run build:css` - Compiles Tailwind CSS.
+- `npm run build` - Local build script that runs CSS optimization, simple venue building, API endpoint building, and sitemap generation.
+- `npm run optimize:all` - Optimizes CSS assets (minify + critical CSS extraction).
+- `npm test` - Runs Playwright smoke tests.
+- `npm run render:reel` - Generates the weekly social reel via Remotion.
+
+### Netlify Deployment Build
+Note: The production Netlify build command defined in `netlify.toml` differs from the local script. It executes:
+`npm run build:css && node fix-pride-page.js && node generate-series-pages.js`
+
+---
+
+## 📂 Project Structure
+
 ```
 brumoutloud-site/
-├── 📁 netlify/functions/    # 33+ serverless functions
-├── 📁 js/                   # Client-side JavaScript
-├── 📁 css/                  # Stylesheets (Tailwind + custom)
-├── 📁 global/               # Shared components
-├── 📄 *.html               # 24 page files
-├── 📄 package.json         # Dependencies
-└── 📄 netlify.toml        # Deployment config
+├── css/                  # Tailwind configuration and output stylesheets
+├── global/               # Shared global UI components (header, footer)
+├── js/                   # Main frontend JavaScript logic
+├── netlify/
+│   └── functions/        # Serverless API endpoints & cron jobs (Node.js)
+├── remotion-templates/   # Remotion video generation templates
+├── tests/                # Playwright E2E and smoke tests
+├── *.html                # Pre-rendered HTML templates and static pages
+├── package.json          # Dependencies and scripts
+└── netlify.toml          # Netlify build configurations and redirects
 ```
 
-## 🔧 Development
+---
 
-### Available Scripts
-```bash
-npm run build:css          # Build Tailwind CSS
-npm run build:css -- --watch  # Watch for CSS changes
-netlify dev                 # Start development server
-netlify deploy              # Deploy to staging
-netlify deploy --prod       # Deploy to production
-```
+## 📖 Core Documentation
 
-### Key Development Commands
-```bash
-# Test functions locally
-netlify functions:invoke function-name
+To dig deeper into specific parts of the project architecture, consult the specific documentation files available in the root:
 
-# Check function logs
-netlify functions:log
+- **[Frontend Documentation](FRONTEND_DOCUMENTATION.md)** - Explains the Vanilla JS, PWA implementation, styling, and UI architecture.
+- **[Functions Documentation](FUNCTIONS_DOCUMENTATION.md)** - Details all Netlify serverless functions, endpoints, and scheduled cron jobs.
+- **[API Documentation](API_DOCUMENTATION.md)** - RESTful interaction schemas.
+- **[Email System Documentation](EMAIL_SYSTEM_DOCUMENTATION.md)** - Explains the transactional email flow (Resend API).
+- **[SSG & FOUC Guide](SSG_AND_FOUC_GUIDE.md)** - Details the Static Site Generation implementation and Flash of Unstyled Content prevention.
+- **[SEO & Performance Guide](SEO_PERFORMANCE_GUIDE.md)** - Explains JSON-LD structured data and optimization efforts.
 
-# Environment management
-netlify env:list
-netlify env:set KEY value
-```
-
-## 📖 API Overview
-
-### Public Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/get-events-firestore` | GET | Retrieve event listings |
-| `/get-event-details-firestore` | GET | Get individual event details |
-| `/get-venues-firestore` | GET | Retrieve venue listings |
-| `/get-venue-details-firestore` | GET | Get individual venue details |
-| `/event-submission-firestore-only` | POST | Submit new events |
-| `/venue-submission-firestore-only` | POST | Submit new venues |
-| `/sitemap-firestore` | GET | XML sitemap for SEO |
-
-### Admin Endpoints (Auth Required)
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/get-pending-items-firestore` | GET | Items awaiting approval |
-| `/create-approved-event` | POST | Create/update approved events |
-| `/update-item-status-firestore-only` | POST | Update approval status |
-| `/process-poster` | POST | AI poster processing |
-| `/process-spreadsheet` | POST | Spreadsheet data extraction |
-
-### Example Usage
-```javascript
-// Get upcoming events
-const response = await fetch('/.netlify/functions/get-events-firestore');
-const { events } = await response.json();
-
-// Submit a new event
-const formData = new FormData();
-formData.append('eventName', 'Pride Night');
-formData.append('description', 'Weekly celebration...');
-formData.append('date', '2024-07-15');
-
-const result = await fetch('/.netlify/functions/event-submission-firestore-only', {
-  method: 'POST',
-  body: formData
-});
-```
-
-## 🎨 Frontend Components
-
-### Page Types
-
-#### Public Pages
-- **Homepage** (`index.html`) - Landing page with featured events
-- **Events** (`events.html`) - Searchable event listings
-- **Venues** (`all-venues.html`) - Venue directory
-- **Community** (`community.html`) - Community information
-- **Submission Forms** (`promoter-submit.html`, `get-listed.html`)
-
-#### Admin Interface
-- **Login** (`admin-login.html`) - Firebase authentication
-- **Approvals** (`admin-approvals.html`) - Content moderation
-- **Management** (`admin-edit-events.html`, `admin-manage-venues.html`)
-- **Tools** (`admin-poster-tool.html`) - AI processing tools
-
-### JavaScript Components
-```javascript
-// Core functionality
-- js/main.js           // Welcome modal, service worker
-- js/auth-guard.js     // Authentication for admin pages
-
-// Usage patterns
-- Event handling and form validation
-- API communication with error handling
-- Image upload with preview
-- Authentication state management
-```
-
-### CSS Framework
-- **Tailwind CSS** for utility-first styling
-- **Custom components** for brand-specific elements
-- **Responsive design** with mobile-first approach
-- **Accessibility features** built-in
-
-## 🔐 Security & Authentication
-
-### Authentication Flow
-1. **Firebase Authentication** for admin users
-2. **JWT tokens** for API authorization
-3. **Route protection** via auth guards
-4. **Secure environment variables** for API keys
-
-### Security Features
-- Input validation and sanitization
-- CORS headers for API security
-- Content Security Policy headers
-- Rate limiting on API endpoints
-- Secure image upload handling
-
-## 🚀 Deployment
-
-### Netlify Deployment
-- **Automatic deployment** from Git pushes
-- **Environment variables** managed in Netlify dashboard
-- **Function deployment** alongside static assets
-- **Custom domains** and SSL certificates
-
-### Build Process
-1. Install dependencies (`npm install`)
-2. Build CSS (`npm run build:css`)
-3. Deploy functions and static files
-4. Update environment variables
-5. Test deployment endpoints
-
-### Environment Configuration
-```toml
-# netlify.toml
-[build]
-  command = "npm run build:css"
-  functions = "netlify/functions"
-  publish = "."
-
-[[redirects]]
-  from = "/admin/*"
-  to = "/:splat"
-  status = 200
-```
+---
 
 ## 🧪 Testing
 
-### Manual Testing Checklist
-- [ ] Event submission and approval workflow
-- [ ] Image uploads and optimization
-- [ ] Authentication and authorization
-- [ ] Responsive design across devices
-- [ ] Accessibility with assistive technologies
-- [ ] Progressive Web App features
+We use [Playwright](https://playwright.dev/) for end-to-end smoke testing.
+To execute tests and verify functionality (ensure the local server is running or `baseURL` is correctly mapped):
 
-### Function Testing
 ```bash
-# Test individual functions
-netlify functions:invoke get-events
-netlify functions:invoke event-submission --payload='{"test": true}'
-
-# Test with authentication
-netlify functions:invoke get-pending-events --identity
+npm run test
+# OR
+npm run test:smoke
 ```
 
-## 📊 Performance & Monitoring
-
-### Performance Features
-- **Cloudinary CDN** for optimized image delivery
-- **Lazy loading** for images and content
-- **Service worker** for offline caching
-- **Minified assets** for faster loading
-
-### Monitoring
-- **Netlify Analytics** for deployment and function metrics
-- **Console logging** for error tracking
-- **Performance monitoring** via browser tools
-- **Uptime monitoring** for critical endpoints
+---
 
 ## 🤝 Contributing
 
-### Development Process
-1. **Fork repository** and create feature branch
-2. **Make changes** following coding standards
-3. **Test thoroughly** using manual and automated tests
-4. **Submit pull request** with clear description
-5. **Code review** and deployment
-
-### Coding Standards
-- **ES6+ JavaScript** with async/await patterns
-- **Semantic HTML** with accessibility features
-- **Tailwind CSS** with component-based styling
-- **RESTful API design** with consistent responses
-- **Error handling** with user-friendly messages
-
-### Pull Request Guidelines
-- Clear description of changes
-- Screenshots for UI modifications
-- Testing checklist completion
-- Documentation updates if needed
-
-## 📈 Analytics & Insights
-
-### Key Metrics
-- **Event submissions** per month
-- **Venue directory** growth
-- **User engagement** on event pages
-- **API performance** and error rates
-- **Mobile vs desktop** usage patterns
-
-### Future Enhancements
-- **User accounts** for event favorites
-- **Real-time notifications** for new events
-- **Advanced search** with AI-powered recommendations
-- **Mobile app** for iOS and Android
-- **Community features** like reviews and ratings
-
-## 🆘 Support & Troubleshooting
-
-### Common Issues
-1. **Function deployment errors** - Check logs and environment variables
-2. **Authentication failures** - Verify Firebase configuration
-3. **API connection issues** - Test endpoint connectivity
-4. **CSS build problems** - Check Tailwind configuration
-
-### Debug Commands
-```bash
-# Check function logs
-netlify functions:log
-
-# Test API connectivity
-curl https://your-site.netlify.app/.netlify/functions/get-events
-
-# Validate environment
-netlify env:list
-```
-
-### Resources
-- **[Netlify Functions Docs](https://docs.netlify.com/functions/overview/)**
-- **[Firestore Documentation](https://firebase.google.com/docs/firestore)**
-- **[Firebase Auth Guide](https://firebase.google.com/docs/auth)**
-- **[Tailwind CSS Docs](https://tailwindcss.com/docs)**
+As a proprietary project, contribution is restricted to authorized team members and AI assistants.
+1. Ensure your code strictly follows standard conventions outlined in the codebase.
+2. AI assistants and contributors should read the `AGENTS.md` guidelines before making changes.
+3. Test locally using `npm test`.
+4. Ensure the `.env` variables do not get committed.
+5. Create a descriptive Pull Request highlighting your changes.
 
 ## 📄 License
 
 This project is proprietary and confidential. All rights reserved.
 
-## 📞 Contact
-
-For questions, support, or collaboration opportunities:
-- **Development Team**: [Contact Information]
-- **Project Repository**: [GitHub/GitLab URL]
-- **Issue Tracking**: [Issue Tracker URL]
-- **Documentation**: Available in this repository
-
 ---
 
 ## 🏳️‍🌈 Community Impact
 
-BrumOutLoud is more than just an events platform - it's a vital resource for Birmingham's LGBTQ+ community. By providing a centralized, accessible, and user-friendly platform for discovering events and venues, we're helping to:
-
-- **Strengthen community connections** through easier event discovery
-- **Support local businesses** by increasing venue visibility
-- **Promote inclusive spaces** that welcome all community members
-- **Preserve event information** for future community reference
-- **Reduce barriers** to community participation
-
-Our commitment extends beyond technology to actively supporting and uplifting Birmingham's diverse LGBTQ+ community through thoughtful design, inclusive practices, and community-centered development.
-
----
-
-*Last updated: January 2025*
-*Platform Version: 2.0.0*
+BrumOutLoud actively shapes the ecosystem of LGBTQ+ life in Birmingham by providing an accessible, fast, and centralized repository for our communities' events. We lower the barrier to entry for smaller promoters using AI and automated toolings, aiming to keep our safe spaces visible and thriving.
 
 **Built with ❤️ for Birmingham's LGBTQ+ community**
