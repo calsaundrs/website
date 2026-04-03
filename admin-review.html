@@ -339,7 +339,7 @@
                 const dateInput = document.createElement('input');
                 dateInput.type = 'date';
                 dateInput.name = 'date';
-                dateInput.value = event.date ? `20${event.date.substring(0, 2)}-${event.date.substring(3, 5)}-${event.date.substring(6, 8)}` : '';
+                dateInput.value = event.date ? (event.date.length === 8 ? '20' + event.date.substring(0, 2) + '-' + event.date.substring(3, 5) + '-' + event.date.substring(6, 8) : event.date) : '';
                 dateDiv.appendChild(dateInput);
                 dateTimeDiv.appendChild(dateDiv);
 
