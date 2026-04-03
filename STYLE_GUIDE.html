@@ -28,7 +28,37 @@
         }
 
         .font-display { font-family: 'Syne', sans-serif; }
-        .misprint { letter-spacing: -0.03em; line-height: 0.95; text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple); }
+        .misprint {
+            letter-spacing: -0.03em;
+            line-height: 0.95;
+            text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple);
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .code-block {
+            background: #2a1b3d;
+            color: var(--color-toxic);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Utility specific for the style guide */
+        .guide-rule-card {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: #000;
+            padding: 1.5rem;
+        }
+        .guide-rule-header {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
 
         .noise-overlay {
             position: fixed;
@@ -130,153 +160,450 @@
 
         <!-- 01. COLOR PALETTE -->
         <section>
-            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">01. Colors</h2>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-                <!-- BG -->
-                <div class="space-y-2">
-                    <div class="h-32 w-full border-4 border-white bg-[var(--color-bg)]"></div>
-                    <p class="font-bold uppercase tracking-widest text-sm">Background</p>
-                    <p class="text-xs opacity-70"><span class="code-block">--color-bg</span><br>#0D0115</p>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">01. Colors & Usage</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Our palette is dark, moody, and highly contrasted. We use neon accents strictly for interactive elements, highlights, and hard borders.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Background Block -->
+                <div class="border-4 border-white p-6 bg-[var(--color-bg)]">
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase">Deep Void</h3>
+                        <span class="code-block text-white">#0D0115</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Primary background color. A very dark, slightly purple-tinted black.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for main body background.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use true black (#000) for nested cards.</p>
+                    </div>
                 </div>
-                <!-- Light -->
-                <div class="space-y-2">
-                    <div class="h-32 w-full border-4 border-black bg-[var(--color-light)]"></div>
-                    <p class="font-bold uppercase tracking-widest text-sm text-[var(--color-light)]">Light Text</p>
-                    <p class="text-xs opacity-70"><span class="code-block">--color-light</span><br>#F3E8FF</p>
+
+                <!-- Toxic Lime Block -->
+                <div class="border-4 border-[var(--color-toxic)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-toxic)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-toxic)]">Toxic Lime</h3>
+                        <span class="code-block text-[var(--color-toxic)]">#CCFF00</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Primary action color. The highest contrast accent in the palette.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for primary buttons and CTAs.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for prominent text highlights.</p>
+                        <p class="text-white"><i class="fas fa-times text-[var(--color-pink)] mr-2"></i> DON'T: Use as a background for large text.</p>
+                    </div>
                 </div>
-                <!-- Toxic -->
-                <div class="space-y-2">
-                    <div class="h-32 w-full border-4 border-white bg-[var(--color-toxic)]"></div>
-                    <p class="font-bold uppercase tracking-widest text-sm text-[var(--color-toxic)]">Toxic Lime</p>
-                    <p class="text-xs opacity-70"><span class="code-block">--color-toxic</span><br>#CCFF00</p>
+
+                <!-- Hot Pink Block -->
+                <div class="border-4 border-[var(--color-pink)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-pink)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-pink)]">Hot Pink</h3>
+                        <span class="code-block text-[var(--color-pink)]">#E83A99</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Secondary accent. Used for hover states, secondary borders, and warnings.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for hover borders on cards.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for secondary action stickers.</p>
+                        <p class="text-white"><i class="fas fa-times text-[var(--color-pink)] mr-2"></i> DON'T: Use next to Toxic Lime without a dark border separating them.</p>
+                    </div>
                 </div>
-                <!-- Purple -->
-                <div class="space-y-2">
-                    <div class="h-32 w-full border-4 border-white bg-[var(--color-purple)]"></div>
-                    <p class="font-bold uppercase tracking-widest text-sm text-[var(--color-purple)]">Electric Purple</p>
-                    <p class="text-xs opacity-70"><span class="code-block">--color-purple</span><br>#9B5DE5</p>
+
+                <!-- Electric Purple Block -->
+                <div class="border-4 border-[var(--color-purple)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-purple)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-purple)]">Electric Purple</h3>
+                        <span class="code-block text-[var(--color-purple)]">#9B5DE5</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Tertiary accent. Used for subtle drop shadows, categorization, and backgrounds.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for solid brutalist drop shadows.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Mix with 10% opacity for section backgrounds.</p>
+                    </div>
                 </div>
-                <!-- Pink -->
-                <div class="space-y-2">
-                    <div class="h-32 w-full border-4 border-white bg-[var(--color-pink)]"></div>
-                    <p class="font-bold uppercase tracking-widest text-sm text-[var(--color-pink)]">Hot Pink</p>
-                    <p class="text-xs opacity-70"><span class="code-block">--color-pink</span><br>#E83A99</p>
+
+                <!-- Light Text Block -->
+                <div class="border-4 border-white p-6 bg-white text-black">
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase">Light Text</h3>
+                        <span class="code-block text-black bg-gray-200">#F3E8FF</span>
+                    </div>
+                    <p class="text-sm text-gray-800 mb-4">A slightly purple-tinted off-white to reduce eye strain against the stark black.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-black"><i class="fas fa-check text-green-600 mr-2"></i> DO: Use for all standard headers and body text.</p>
+                        <p class="text-black"><i class="fas fa-check text-green-600 mr-2"></i> DO: Reduce to text-gray-200 or text-gray-300 for hierarchy.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-8 space-y-4">
-                <h3 class="font-bold text-lg">Pride Gradient (<span class="code-block">.progress-pride-bg</span>)</h3>
-                <div class="h-8 w-full progress-pride-bg border-2 border-white"></div>
+            <div class="mt-8">
+                <h3 class="font-bold text-lg mb-4 text-white">Progress Pride Gradient</h3>
+                <p class="text-sm text-gray-300 mb-4">Used specifically for footer boundaries and the main top nav boundary. Class: <span class="code-block">.progress-pride-bg</span></p>
+                <div class="h-8 w-full progress-pride-bg border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]"></div>
             </div>
         </section>
 
         <!-- 02. TYPOGRAPHY -->
         <section>
-            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">02. Typography</h2>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">02. Typography Rules</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Our typography is loud and unabashed. We use <span class="text-white font-bold">Syne</span> for display and impact, and <span class="text-white font-bold">Space Grotesk</span> for technical precision and readability.</p>
 
-            <div class="grid md:grid-cols-2 gap-12">
-                <div class="space-y-6">
-                    <div>
-                        <div class="sticker bg-[var(--color-pink)] text-white text-xs mb-2">HEADERS</div>
-                        <h3 class="font-display font-black text-5xl uppercase mb-2">Syne Bold</h3>
-                        <p class="text-sm opacity-80 mb-4">Used for all major headings. Must be uppercase. Often paired with the <span class="code-block">.misprint</span> class for large titles.</p>
+            <div class="space-y-12">
+                <!-- Syne block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-pink)] text-white text-xs mb-2">DISPLAY FONT</div>
+                        <h3 class="font-display font-black text-6xl uppercase leading-none">Syne</h3>
+                        <p class="text-base opacity-80">Used exclusively for major headings, hero text, and high-impact branding. It must <strong>always be uppercase</strong> and <strong>always font-black (800)</strong>.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use for H1, H2, and brand headers.</li>
+                                <li>Always set text-transform to uppercase.</li>
+                                <li>Apply <span class="code-block">.misprint</span> for text 5xl and above to tighten tracking and add text shadows.</li>
+                            </ul>
+                        </div>
+                        <div class="guide-rule-card mt-4 border-[var(--color-pink)]">
+                            <h4 class="guide-rule-header text-[var(--color-pink)]"><i class="fas fa-times mr-2"></i> DON'T:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Never use Syne for paragraph text or long sentences.</li>
+                                <li>Never use lowercase letters.</li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="p-6 border-2 border-dashed border-white/30 space-y-4 bg-black">
-                        <h1 class="font-display font-black text-6xl uppercase misprint">Heading 1</h1>
-                        <h2 class="font-display font-black text-4xl uppercase">Heading 2</h2>
-                        <h3 class="font-display font-black text-2xl uppercase">Heading 3</h3>
+                    <div class="md:col-span-7 bg-black border-4 border-white p-6 md:p-8 space-y-8">
+                        <div>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Hero Title (.misprint · 6xl-8xl)</p>
+                            <h1 class="font-display font-black text-6xl lg:text-7xl uppercase misprint">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
+                        </div>
+                        <hr class="border-gray-800">
+                        <div>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Section Header (4xl-5xl)</p>
+                            <h2 class="font-display font-black text-4xl uppercase" style="border-left: 6px solid var(--color-toxic); padding-left: 1rem;">What's On</h2>
+                        </div>
+                        <hr class="border-gray-800">
+                        <div>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Card Header (2xl-3xl)</p>
+                            <h3 class="font-display font-black text-2xl uppercase">The Nightingale Club</h3>
+                        </div>
                     </div>
                 </div>
 
-                <div class="space-y-6">
-                    <div>
-                        <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-2">BODY & UI</div>
-                        <h3 class="text-3xl font-bold mb-2">Space Grotesk</h3>
-                        <p class="text-sm opacity-80 mb-4">Used for all body text, buttons, and UI elements. Clean, technical, and highly legible.</p>
+                <!-- Space Grotesk block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-2">BODY & UI FONT</div>
+                        <h3 class="text-4xl font-bold tracking-tight">Space Grotesk</h3>
+                        <p class="text-base opacity-80">Used for everything else: paragraphs, buttons, forms, labels, and metadata. It brings a technical, structured balance to the chaotic display font.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use for all descriptive text (<span class="code-block">text-base</span> to <span class="code-block">text-lg</span>).</li>
+                                <li>Use heavy weights (bold) with uppercase and tracking (<span class="code-block">tracking-widest</span>) for small labels and buttons.</li>
+                                <li>Set body line-height to 1.6 (relaxed) to contrast the tight headers.</li>
+                            </ul>
+                        </div>
                     </div>
-                    
-                    <div class="p-6 border-2 border-dashed border-white/30 space-y-4 bg-black">
-                        <p class="text-lg font-bold text-[var(--color-toxic)]">Large Lead Text / Bold Body</p>
-                        <p class="text-base text-gray-300">Standard body copy. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                        <p class="text-sm uppercase tracking-widest font-bold">Small UI / Label Text</p>
+
+                    <div class="md:col-span-7 bg-black border-4 border-[var(--color-purple)] p-6 md:p-8 space-y-8">
+                        <div>
+                            <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Lead Text (text-lg · text-gray-200)</p>
+                            <p class="text-gray-200 text-lg leading-relaxed">Birmingham Pride is one of the UK's biggest and most vibrant LGBTQ+ Pride festivals. Established in 1997, it marks its 29th year celebrating queer life.</p>
+                        </div>
+                        <hr class="border-gray-800">
+                        <div>
+                            <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Standard Body (text-base · text-gray-300)</p>
+                            <p class="text-gray-300 text-base leading-relaxed">The weekend kicks off with a spectacular parade through the city centre on Saturday morning, followed by a multi-stage music festival in the Gay Village.</p>
+                        </div>
+                        <hr class="border-gray-800">
+                        <div class="flex flex-wrap gap-6">
+                            <div>
+                                <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-2">UI Label / Meta</p>
+                                <p class="font-bold text-sm uppercase tracking-widest text-[var(--color-toxic)]"><i class="fas fa-calendar-day mr-2"></i>Sat 23 May</p>
+                            </div>
+                            <div>
+                                <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-2">Button Text</p>
+                                <span class="font-bold text-sm uppercase tracking-widest text-white border-b-2 border-white pb-1">Read More</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 03. BUTTONS & STICKERS -->
+        <!-- 03. UI ELEMENTS & COMPONENTS -->
         <section>
-            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">03. UI Elements</h2>
-            
-            <div class="space-y-8">
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">03. UI Elements & Components</h2>
+
+            <div class="space-y-16">
+
+                <!-- Buttons and Links -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4 text-[var(--color-toxic)]">Stickers</h3>
-                    <p class="text-sm mb-4">Stickers are used for small labels, callouts, or prominent buttons. They have a built-in slight rotation.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <div class="sticker bg-[var(--color-pink)] text-white">CATEGORY TAG</div>
-                        <div class="sticker bg-[var(--color-purple)] text-white">NEW EVENT</div>
-                        <div class="sticker bg-[var(--color-toxic)] text-black">TICKETS</div>
-                        <div class="sticker bg-white text-black">SOLD OUT</div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Links & Buttons</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Interactive elements rely heavily on border thickness, strong hover states (inverting colors or scale), and high-contrast underlining.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Primary Actions</h4>
+                            <button class="w-full px-6 py-4 bg-[var(--color-toxic)] text-black font-black uppercase tracking-widest hover:bg-white transition-colors border-2 border-black">
+                                Primary Submit
+                            </button>
+                            <button class="w-full px-6 py-4 bg-[var(--color-pink)] text-white font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors border-2 border-black">
+                                Warning / Alert
+                            </button>
+                        </div>
+
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Secondary Actions</h4>
+                            <button class="w-full px-6 py-3 border-4 border-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+                                Outline Button
+                            </button>
+                            <button class="w-full px-6 py-3 border-4 border-gray-600 text-gray-400 font-bold uppercase tracking-widest cursor-not-allowed">
+                                Disabled State
+                            </button>
+                        </div>
+
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Inline Links</h4>
+                            <a href="#" class="block font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 hover:text-white transition-colors">THICK UNDERLINE LINK →</a>
+                            <a href="#" class="block font-bold text-[var(--color-pink)] text-sm uppercase tracking-widest hover:text-white transition-colors"><i class="fas fa-arrow-right mr-1"></i> Icon Link</a>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Stickers -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4 text-[var(--color-toxic)]">Standard Links / Buttons</h3>
-                    <div class="flex flex-wrap items-center gap-8 p-6 bg-black border-4 border-white">
-                        <a href="#" class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 hover:text-white transition-colors">VIEW EVENTS →</a>
-                        <button class="px-6 py-3 border-4 border-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">Secondary Action</button>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Stickers</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Stickers are small, rotated labels used for categorization, pricing, or status. They should always have a slight rotation applied via CSS transform.</p>
+
+                    <div class="bg-black border-4 border-white p-8 flex flex-wrap gap-8 items-center">
+                        <div class="space-y-2">
+                            <div class="sticker bg-[var(--color-pink)] text-white">CATEGORY TAG</div>
+                            <p class="text-xs text-gray-500 font-mono">.sticker.bg-[var(--color-pink)]</p>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="sticker bg-white !text-black hover:bg-[var(--color-toxic)] cursor-pointer">INTERACTIVE</div>
+                            <p class="text-xs text-gray-500 font-mono">.hover:bg-[var(--color-toxic)]</p>
+                        </div>
+                        <div class="space-y-2 relative">
+                            <div class="absolute -top-3 -right-3 bg-black text-[var(--color-toxic)] text-xs font-bold px-3 py-1 uppercase tracking-widest border-2 border-[var(--color-toxic)] z-10">Absolute</div>
+                            <div class="w-24 h-24 bg-[#111] border-2 border-white"></div>
+                            <p class="text-xs text-gray-500 font-mono mt-2">Corner Badge</p>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Marquee Ticker -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Marquee Ticker</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Used for announcements or creating a festival/event vibe across the full width of the screen.</p>
+
+                    <div class="border-y-4 border-white py-2">
+                        <div class="overflow-hidden whitespace-nowrap bg-[var(--color-toxic)] text-black font-display font-black text-sm tracking-[0.2em] uppercase py-2 select-none relative">
+                            <div class="inline-block animate-[marquee-scroll_20s_linear_infinite]">
+                                &nbsp;· NEXT EVENT: FRIDAY NIGHT &nbsp;· TICKETS ON SALE NOW &nbsp;· GAY VILLAGE HURST STREET &nbsp;· JOIN THE GUESTLIST &nbsp;·
+                            </div>
+                            <!-- Duplicated for seamless loop -->
+                            <div class="inline-block animate-[marquee-scroll_20s_linear_infinite] absolute top-2">
+                                &nbsp;· NEXT EVENT: FRIDAY NIGHT &nbsp;· TICKETS ON SALE NOW &nbsp;· GAY VILLAGE HURST STREET &nbsp;· JOIN THE GUESTLIST &nbsp;·
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes marquee-scroll {
+                            0% { transform: translateX(0); }
+                            100% { transform: translateX(-100%); }
+                        }
+                    </style>
+                </div>
+
             </div>
         </section>
 
-        <!-- 04. CARDS -->
+        <!-- 04. BRUTALIST CARDS & GRIDS -->
         <section>
-            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">04. Brutalist Cards</h2>
-            <p class="text-lg mb-8">The core layout component. Heavy borders, aggressive hover states, and stark contrast.</p>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">04. Cards & Grids</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Generic Card -->
-                <div class="brutalist-card p-8 group">
-                    <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">CARD LABEL</div>
-                    <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">DEFAULT CARD</h2>
-                    <p class="text-gray-300 mb-6">This is the <span class="code-block">.brutalist-card</span>. Notice the purple drop shadow that turns pink on hover.</p>
-                    <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">READ MORE →</div>
+            <div class="space-y-16">
+                <!-- Standard Brutalist Cards -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Standard Content Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">The core layout component. Heavy borders, aggressive hover states, and stark contrast. Base class: <span class="code-block">.brutalist-card</span>.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Generic Card -->
+                        <div class="brutalist-card p-8 group">
+                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">DEFAULT SHADOW</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">Standard Card</h2>
+                            <p class="text-gray-300 mb-6">Notice the purple drop shadow that turns pink and expands on hover. The background is pure black.</p>
+                            <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">READ MORE →</div>
+                        </div>
+
+                        <!-- Outline / Accent Card -->
+                        <div class="brutalist-card p-8 group border-[var(--color-toxic)] shadow-[6px_6px_0_var(--color-toxic)] hover:shadow-[10px_10px_0_var(--color-pink)]">
+                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">CUSTOM BORDER</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-pink)] transition-colors">Accent Card</h2>
+                            <p class="text-gray-300 mb-6">Cards can override the border and shadow colors using utility classes (e.g., <span class="code-block">shadow-[..._var(--color-toxic)]</span>).</p>
+                            <div class="font-black text-[var(--color-pink)] underline decoration-4 underline-offset-4">ACTION HERE →</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Pink Hover Card -->
-                <div class="brutalist-card p-8 group border-[var(--color-toxic)]">
-                    <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">FEATURED</div>
-                    <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-pink)] transition-colors">ACCENT BORDER</h2>
-                    <p class="text-gray-300 mb-6">Cards can have specific border colors applied via utility classes (e.g., <span class="code-block">border-[var(--color-toxic)]</span>).</p>
-                    <div class="font-black text-[var(--color-pink)] underline decoration-4 underline-offset-4">ACTION HERE →</div>
+                <!-- Event Cards -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Event & Venue Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">Used specifically for listing directories. They typically feature a top image container and tight padding.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
+                        <!-- Pride Style Event Card -->
+                        <div class="border-2 border-[#333] bg-[#000] shadow-[4px_4px_0_#333] hover:border-[rgba(232,58,153,0.5)] hover:shadow-[6px_10px_0_var(--color-pink)] hover:-translate-y-1 transition-all duration-400 group cursor-pointer flex flex-col">
+                            <div class="w-full h-40 overflow-hidden border-b-2 border-gray-800 relative">
+                                <div class="absolute top-2 right-2 sticker bg-[var(--color-toxic)] !text-black text-xs z-10">£15</div>
+                                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=300&fit=crop" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" alt="Event">
+                            </div>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <p class="text-white font-bold uppercase font-display leading-tight mb-2 text-xl group-hover:text-[var(--color-pink)]">Glitterbomb Party</p>
+                                <p class="text-[var(--color-toxic)] text-sm font-bold mt-auto"><i class="fas fa-calendar-day mr-1"></i>Fri 14 Jun</p>
+                                <p class="text-gray-300 text-sm mt-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>The Nightingale</p>
+                            </div>
+                        </div>
+
+                        <!-- Venue Style Block -->
+                        <div class="border-2 border-[var(--color-purple)] bg-[#0a0a0a] shadow-[4px_4px_0_rgba(155,93,229,0.3)] hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(232,58,153,0.5)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5),_0_0_20px_rgba(155,93,229,0.2)] hover:-translate-y-1 transition-all duration-400 group cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=600&h=300&fit=crop" class="w-full h-32 object-cover filter contrast-110 saturate-110 group-hover:contrast-120 group-hover:saturate-120 transition-all" alt="Venue">
+                            <div class="p-4">
+                                <h3 class="text-white font-bold uppercase group-hover:text-[var(--color-purple)] transition-colors">Missing Bar</h3>
+                                <p class="text-gray-400 text-xs mt-1">Drag shows, cabaret, pop DJs.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Bento Grid -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Bento Lineup Grid</h3>
+                    <p class="text-sm text-gray-300 mb-6">A dense, image-focused grid used for lineups. Headliners span 2x2 cells. Images have an inner gradient mask on hover.</p>
+
+                    <div class="bg-black p-6 border-4 border-white max-w-4xl mx-auto">
+                        <div class="grid grid-cols-4 gap-2">
+                            <!-- Headliner 2x2 -->
+                            <div class="col-span-2 row-span-2 relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden hover:scale-[1.02] hover:z-10 hover:shadow-[0_10px_30px_rgba(155,93,229,0.3)] transition-all">
+                                <span class="absolute top-0 inset-x-0 bg-[var(--color-pink)] text-white text-[0.6rem] font-bold tracking-widest py-1 text-center z-10">HEADLINER</span>
+                                <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-pink)] via-[var(--color-toxic)] to-[var(--color-purple)] opacity-0 group-hover:opacity-30 transition-opacity z-0 pointer-events-none"></div>
+                                <img src="https://images.unsplash.com/photo-1493225457124-a1a2a5f5f54b?w=400&h=400&fit=crop" class="w-full h-full object-cover filter contrast-110 saturate-110 group-hover:scale-105 transition-transform" alt="Artist">
+                            </div>
+                            <!-- Standard 1x1 -->
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1520635360276-79f3dbd809f6?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square flex items-center justify-center text-center p-2 hover:bg-[#2a1b3d] transition-colors">
+                                <span class="font-display font-black text-sm uppercase text-[var(--color-light)]">Local<br>Act</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
         <!-- 05. FORMS -->
         <section>
             <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">05. Forms</h2>
-            
-            <div class="brutalist-card p-8 bg-black">
-                <form class="space-y-6 max-w-xl">
-                    <div class="space-y-2">
-                        <label class="font-bold text-[var(--color-toxic)] uppercase tracking-widest text-sm">Event Name</label>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Form inputs (<span class="code-block">.punk-input</span>) feature thick bottom borders, zero rounded corners, and harsh focus states.</p>
+
+            <div class="brutalist-card p-8 bg-black shadow-[10px_10px_0_var(--color-purple)]">
+                <form class="space-y-8 max-w-xl">
+                    <div class="space-y-2 group">
+                        <label class="font-bold text-[var(--color-toxic)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Event Name</label>
                         <input type="text" class="punk-input w-full text-xl py-2" placeholder="e.g. Glittershit Summer Ball">
+                        <p class="text-xs text-gray-500 font-mono mt-1">.punk-input</p>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label class="font-bold text-[var(--color-pink)] uppercase tracking-widest text-sm">Description</label>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-2 group">
+                            <label class="font-bold text-[var(--color-purple)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Date</label>
+                            <input type="date" class="punk-input w-full text-lg py-2 text-white">
+                        </div>
+                        <div class="space-y-2 group">
+                            <label class="font-bold text-[var(--color-purple)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Time</label>
+                            <input type="time" class="punk-input w-full text-lg py-2 text-white">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 group">
+                        <label class="font-bold text-[var(--color-pink)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Description</label>
                         <textarea class="punk-input w-full text-lg py-2 h-32 resize-none" placeholder="What's going down?"></textarea>
                     </div>
 
-                    <div class="pt-4">
-                        <button type="submit" class="px-8 py-4 bg-[var(--color-toxic)] text-black font-black uppercase tracking-widest w-full hover:bg-white transition-colors border-2 border-black">
+                    <div class="pt-6">
+                        <button type="submit" class="px-8 py-5 bg-[var(--color-toxic)] text-black font-black uppercase tracking-widest w-full hover:bg-white hover:scale-[1.02] transition-all border-4 border-black shadow-[4px_4px_0_rgba(204,255,0,0.5)]">
                             SUBMIT EVENT
                         </button>
                     </div>
                 </form>
+            </div>
+        </section>
+
+        <!-- 06. COMPOSED LAYOUTS -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">06. Composed Layouts</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">How these elements come together to create full sections.</p>
+
+            <div class="space-y-16">
+
+                <!-- Mock Hero -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Hero Section</h3>
+                    <div class="border-4 border-white relative overflow-hidden bg-gradient-to-br from-[#0d0115] to-[#1a0a2e]">
+                        <!-- Abstract glow -->
+                        <div class="absolute -right-20 -top-20 w-96 h-96 bg-[var(--color-pink)] blur-[120px] opacity-20 rounded-full animate-pulse z-0 pointer-events-none"></div>
+
+                        <div class="relative z-10 px-8 py-16 md:py-24 max-w-3xl">
+                            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 drop-shadow-md">YOUR ULTIMATE GUIDE</div>
+                            <h1 class="text-5xl md:text-7xl font-black text-white uppercase font-display misprint mb-6">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
+                            <p class="text-gray-200 text-lg md:text-xl mb-8 leading-relaxed max-w-2xl">One of the UK's largest LGBTQ+ festivals returns. Two days of explosive celebration including the massive Saturday parade and the epic Gay Village festival.</p>
+
+                            <div class="flex flex-wrap gap-4 items-center">
+                                <a href="#" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-all duration-300 hover:scale-[1.03] shadow-[0_0_20px_rgba(204,255,0,0.3)] px-6 py-3">BUY TICKETS</a>
+                                <span class="text-gray-300 text-sm italic">Parade is free. Under 12s free.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mock Key Facts -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Key Facts Bar</h3>
+                    <div class="border-y-4 border-white bg-[#000]">
+                        <div class="grid grid-cols-2 md:grid-cols-4 divide-x-2 divide-gray-800">
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Dates</p>
+                                <p class="text-white font-black text-2xl font-display misprint">22 – 24 MAY</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Location</p>
+                                <p class="text-white font-black text-2xl font-display misprint">GAY VILLAGE</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Parade</p>
+                                <p class="text-white font-black text-2xl font-display misprint">SAT 12 NOON</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Tickets</p>
+                                <p class="text-white font-black text-2xl font-display misprint">ON SALE</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
