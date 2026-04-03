@@ -3,147 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neo-Print Style Guide | Brum Outloud</title>
+    <title>Brum Outloud | Brutalist Style Guide</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
         :root {
-            --color-bg: #0d0115;
-            --color-pink: #ff007f;
-            --color-purple: #7a00ff;
-            --color-toxic: #ccff00;
+            --color-bg: #0D0115;
             --color-light: #f3e8ff;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
         }
 
         body {
-            background-color: var(--color-bg);
+            background: var(--color-bg);
             color: var(--color-light);
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            margin: 0;
             overflow-x: hidden;
             line-height: 1.4;
         }
 
-        h1, h2, h3, .font-display {
-            font-family: 'Syne', sans-serif;
-            text-transform: uppercase;
-        }
-
-        .font-accent {
-            font-family: 'Bungee Outline', sans-serif;
-            text-transform: uppercase;
-        }
-
-        /* Heavy Grain Texture */
-        .grain {
-            position: relative;
-        }
-        .grain::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.08;
-            pointer-events: none;
-            z-index: 100;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* Misregistration / Ghosting Effect */
+        .font-display { font-family: 'Syne', sans-serif; }
         .misprint {
-            position: relative;
+            letter-spacing: -0.03em;
+            line-height: 0.95;
             text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple);
-            transition: text-shadow 0.2s ease;
-        }
-        .misprint:hover {
-            text-shadow: -5px -2px 0px var(--color-pink), 5px 2px 0px var(--color-toxic);
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
-        /* Ripped Edge Effect */
-        .ripped {
-            mask-image: 
-                linear-gradient(to bottom, black calc(100% - 14px), transparent calc(100% - 14px)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 40 15' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L5 8 L10 4 L15 12 L20 6 L25 15 L30 7 L35 11 L40 3 L40 0 L0 0 Z' fill='black'/%3E%3C/svg%3E");
-            mask-size: 100% 100%, 40px 15px;
-            mask-position: top, bottom left;
-            mask-repeat: no-repeat, repeat-x;
-            
-            -webkit-mask-image: 
-                linear-gradient(to bottom, black calc(100% - 14px), transparent calc(100% - 14px)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 40 15' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L5 8 L10 4 L15 12 L20 6 L25 15 L30 7 L35 11 L40 3 L40 0 L0 0 Z' fill='black'/%3E%3C/svg%3E");
-            -webkit-mask-size: 100% 100%, 40px 15px;
-            -webkit-mask-position: top, bottom left;
-            -webkit-mask-repeat: no-repeat, repeat-x;
-        }
-
-        /* Duct Tape Style */
-        .duct-tape {
-            background: #333;
-            color: white;
-            padding: 0.5rem 2rem;
-            transform: rotate(-1deg);
-            display: inline-block;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-            position: relative;
-        }
-        .duct-tape::before, .duct-tape::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            background: inherit;
-        }
-        .duct-tape::before { left: -5px; transform: skewY(10deg); }
-        .duct-tape::after { right: -5px; transform: skewY(-10deg); }
-
-        /* Sticker Effect */
-        .sticker {
-            background: white;
-            color: black;
-            padding: 0.5rem 1rem;
+        .code-block {
+            background: #2a1b3d;
+            color: var(--color-toxic);
+            padding: 0.2rem 0.4rem;
             border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Utility specific for the style guide */
+        .guide-rule-card {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: #000;
+            padding: 1.5rem;
+        }
+        .guide-rule-header {
             font-weight: 800;
-            transform: rotate(3deg);
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+        }
+
+        .sticker {
             display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
             transition: transform 0.2s;
         }
         .sticker:hover {
             transform: rotate(0deg) scale(1.1);
         }
 
-        /* Halftone Textures */
-        .halftone-bg {
-            background-image: radial-gradient(var(--color-pink) 1px, transparent 0);
-            background-size: 6px 6px;
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
 
-        .ink-bleed-hover:hover {
-            filter: url(#bleed);
+        .brutalist-card {
+            background: #000;
+            border: 4px solid var(--color-light);
+            box-shadow: 8px 8px 0 var(--color-purple);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Marquee Animation */
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            width: 100vw;
-            margin-left: -50vw;
-            left: 50%;
-            position: relative;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 15s linear infinite;
-        }
-        .marquee-content span {
-            display: inline-block;
-            padding-right: 2rem;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        .brutalist-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0 var(--color-pink);
+            border-color: var(--color-toxic);
         }
 
-        /* Punk Form Inputs */
+        /* Punk Form Inputs from existing style */
         .punk-input {
             background: transparent;
             border: none;
@@ -160,758 +117,508 @@
             padding-left: 0.5rem;
         }
 
-        section {
-            padding: 6rem 1.5rem;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .divider-heavy {
-            height: 40px;
-            background: repeating-linear-gradient(45deg, var(--color-toxic), var(--color-toxic) 10px, black 10px, black 20px);
-            margin: 4rem 0;
+        .code-block {
+            font-family: monospace;
+            background-color: rgba(255,255,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
         }
     </style>
 </head>
-<body class="grain">
 
-    <!-- SVG Filters for Ink Bleed -->
-    <svg style="position: absolute; width: 0; height: 0;">
-        <filter id="bleed">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="bleed" />
-            <feComposite in="SourceGraphic" in2="bleed" operator="atop" />
-        </filter>
-    </svg>
+<body>
+    <div class="noise-overlay"></div>
 
-    <!-- Header -->
-    <header class="relative pt-24 pb-32 overflow-hidden bg-black border-b-8 border-[var(--color-pink)] ripped">
-        <div class="absolute inset-0 halftone-bg opacity-20"></div>
-        <div class="relative z-10 text-center px-4 w-full">
-            <h1 class="text-[14vw] md:text-[9rem] lg:text-[10rem] font-black tracking-tighter misprint leading-none break-words mx-auto">
-                BRUM <br> <span class="text-[var(--color-purple)]">OUT</span>LOUD
-            </h1>
-            <div class="mt-8">
-                <span class="duct-tape text-lg md:text-2xl font-bold bg-[#eee] !text-black italic max-w-[90vw] whitespace-normal break-words">The Neo-Print Bible</span>
+    <!-- Header / Navigation Preview -->
+    <header class="sticky top-0 z-[100]">
+        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
+            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
             </div>
-        </div>
+            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+            </div>
+        </nav>
     </header>
 
-    <!-- Marquee Banner -->
-    <div class="bg-[var(--color-pink)] text-black font-black text-2xl py-3 border-b-4 border-black marquee-container uppercase tracking-widest">
-        <div class="marquee-content">
-            <span>Brum Outloud</span> <span>•</span> <span>No Cover Charge</span> <span>•</span> <span>Digbeth Sounds</span> <span>•</span> <span>Safe Space</span> <span>•</span> <span>Brum Outloud</span> <span>•</span> <span>No Cover Charge</span> <span>•</span> <span>Digbeth Sounds</span> <span>•</span> <span>Safe Space</span> <span>•</span>
-        </div>
-    </div>
-
-    <!-- Color Palette -->
-    <section>
-        <div class="flex items-center gap-4 mb-12">
-            <h2 class="text-5xl font-extrabold italic">01. Pigments</h2>
-        </div>
+    <main class="relative z-10 px-6 pt-16 pb-20 max-w-7xl mx-auto space-y-24">
         
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="relative group">
-                <div class="h-64 bg-[var(--color-pink)] border-4 border-white flex flex-col justify-end p-4">
-                    <span class="text-3xl font-black text-white">ELECTRIC PINK</span>
-                </div>
-                <div class="absolute -top-2 -right-2 sticker bg-black text-white text-xs">#FF007F</div>
-            </div>
-            <div class="relative group">
-                <div class="h-64 bg-[var(--color-purple)] border-4 border-white flex flex-col justify-end p-4">
-                    <span class="text-3xl font-black text-white">ULTRA VIOLET</span>
-                </div>
-                <div class="absolute -top-2 -right-2 sticker bg-black text-white text-xs">#7A00FF</div>
-            </div>
-            <div class="relative group">
-                <div class="h-64 bg-[var(--color-toxic)] border-4 border-white flex flex-col justify-end p-4">
-                    <span class="text-3xl font-black text-black">TOXIC LIME</span>
-                </div>
-                <div class="absolute -top-2 -right-2 sticker bg-black text-white text-xs">#CCFF00</div>
-            </div>
-            <div class="relative group">
-                <div class="h-64 bg-[var(--color-bg)] border-4 border-white flex flex-col justify-end p-4 halftone-bg">
-                    <span class="text-3xl font-black text-white">INK BLACK</span>
-                </div>
-                <div class="absolute -top-2 -right-2 sticker bg-black text-white text-xs">#0D0115</div>
-            </div>
-        </div>
-    </section>
+        <section class="mb-6">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-4 rotate-[-1deg] inline-block">LIVE STYLE GUIDE</div>
+            <h1 class="font-display font-black text-[3.5rem] md:text-[4.5rem] lg:text-[5rem] xl:text-[6rem] leading-[0.85] misprint uppercase mb-4 max-w-5xl">
+                THE BRUTALIST <br><span class="text-[var(--color-toxic)]">MANIFESTO</span>
+            </h1>
+            <p class="text-lg md:text-xl font-bold max-w-2xl text-gray-200 mb-4">
+                The visual rulebook for Brum Outloud. Heavy borders, toxic shadows, and unapologetic typography.
+            </p>
+        </section>
 
-    <div class="divider-heavy"></div>
+        <!-- 01. COLOR PALETTE -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">01. Colors & Usage</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Our palette is dark, moody, and highly contrasted. We use neon accents strictly for interactive elements, highlights, and hard borders.</p>
 
-    <!-- Typography Section -->
-    <section>
-        <h2 class="text-5xl font-extrabold italic mb-12">02. Propaganda (Typography)</h2>
-        
-        <div class="space-y-16">
-            <!-- Font 1: Syne -->
-            <div class="border-4 border-white p-8 relative halftone-bg">
-                <div class="absolute -top-4 -left-4 sticker bg-[var(--color-pink)] text-white">PRIMARY DISPLAY</div>
-                <div class="flex flex-col md:flex-row gap-8 items-start bg-black p-6 border-2 border-dashed border-white/50">
-                    <div class="md:w-1/3 space-y-4">
-                        <h3 class="text-5xl font-black">SYNE</h3>
-                        <div class="flex gap-2">
-                            <span class="px-2 py-1 bg-white text-black text-xs font-bold">BOLD 700</span>
-                            <span class="px-2 py-1 bg-white text-black text-xs font-bold">EXTRA BOLD 800</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Background Block -->
+                <div class="border-4 border-white p-6 bg-[var(--color-bg)]">
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase">Deep Void</h3>
+                        <span class="code-block text-white">#0D0115</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Primary background color. A very dark, slightly purple-tinted black.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for main body background.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use true black (#000) for nested cards.</p>
+                    </div>
+                </div>
+
+                <!-- Toxic Lime Block -->
+                <div class="border-4 border-[var(--color-toxic)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-toxic)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-toxic)]">Toxic Lime</h3>
+                        <span class="code-block text-[var(--color-toxic)]">#CCFF00</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Primary action color. The highest contrast accent in the palette.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for primary buttons and CTAs.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for prominent text highlights.</p>
+                        <p class="text-white"><i class="fas fa-times text-[var(--color-pink)] mr-2"></i> DON'T: Use as a background for large text.</p>
+                    </div>
+                </div>
+
+                <!-- Hot Pink Block -->
+                <div class="border-4 border-[var(--color-pink)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-pink)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-pink)]">Hot Pink</h3>
+                        <span class="code-block text-[var(--color-pink)]">#E83A99</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Secondary accent. Used for hover states, secondary borders, and warnings.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for hover borders on cards.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for secondary action stickers.</p>
+                        <p class="text-white"><i class="fas fa-times text-[var(--color-pink)] mr-2"></i> DON'T: Use next to Toxic Lime without a dark border separating them.</p>
+                    </div>
+                </div>
+
+                <!-- Electric Purple Block -->
+                <div class="border-4 border-[var(--color-purple)] p-6 bg-black relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-[var(--color-purple)] opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase text-[var(--color-purple)]">Electric Purple</h3>
+                        <span class="code-block text-[var(--color-purple)]">#9B5DE5</span>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-4">Tertiary accent. Used for subtle drop shadows, categorization, and backgrounds.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Use for solid brutalist drop shadows.</p>
+                        <p class="text-white"><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i> DO: Mix with 10% opacity for section backgrounds.</p>
+                    </div>
+                </div>
+
+                <!-- Light Text Block -->
+                <div class="border-4 border-white p-6 bg-white text-black">
+                    <div class="flex justify-between items-start mb-12">
+                        <h3 class="font-display font-black text-2xl uppercase">Light Text</h3>
+                        <span class="code-block text-black bg-gray-200">#F3E8FF</span>
+                    </div>
+                    <p class="text-sm text-gray-800 mb-4">A slightly purple-tinted off-white to reduce eye strain against the stark black.</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-black"><i class="fas fa-check text-green-600 mr-2"></i> DO: Use for all standard headers and body text.</p>
+                        <p class="text-black"><i class="fas fa-check text-green-600 mr-2"></i> DO: Reduce to text-gray-200 or text-gray-300 for hierarchy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="font-bold text-lg mb-4 text-white">Progress Pride Gradient</h3>
+                <p class="text-sm text-gray-300 mb-4">Used specifically for footer boundaries and the main top nav boundary. Class: <span class="code-block">.progress-pride-bg</span></p>
+                <div class="h-8 w-full progress-pride-bg border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]"></div>
+            </div>
+        </section>
+
+        <!-- 02. TYPOGRAPHY -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">02. Typography Rules</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Our typography is loud and unabashed. We use <span class="text-white font-bold">Syne</span> for display and impact, and <span class="text-white font-bold">Space Grotesk</span> for technical precision and readability.</p>
+
+            <div class="space-y-12">
+                <!-- Syne block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-pink)] text-white text-xs mb-2">DISPLAY FONT</div>
+                        <h3 class="font-display font-black text-6xl uppercase leading-none">Syne</h3>
+                        <p class="text-base opacity-80">Used exclusively for major headings, hero text, and high-impact branding. It must <strong>always be uppercase</strong> and <strong>always font-black (800)</strong>.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use for H1, H2, and brand headers.</li>
+                                <li>Always set text-transform to uppercase.</li>
+                                <li>Apply <span class="code-block">.misprint</span> for text 5xl and above to tighten tracking and add text shadows.</li>
+                            </ul>
                         </div>
-                        <p class="text-sm opacity-80 mt-4"><strong>USAGE:</strong> Massive headlines, section titles, and short, aggressive statements. Must always be uppercase. Often paired with the <code>.misprint</code> class for the ghosting effect.</p>
-                    </div>
-                    <div class="md:w-2/3 break-words">
-                        <p class="text-4xl font-black leading-none mb-4">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</p>
-                        <p class="text-6xl font-black text-[var(--color-toxic)] misprint">LOUD & PROUD</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Font 2: Space Grotesk -->
-            <div class="border-4 border-white p-8 relative bg-white/5">
-                <div class="absolute -top-4 -left-4 sticker bg-[var(--color-purple)] text-white">BODY & UI</div>
-                <div class="flex flex-col md:flex-row gap-8 items-start">
-                    <div class="md:w-1/3 space-y-4">
-                        <h3 class="text-5xl font-black font-display">SPACE GROTESK</h3>
-                        <div class="flex gap-2 flex-wrap">
-                            <span class="px-2 py-1 bg-white text-black text-xs font-bold">LIGHT 300</span>
-                            <span class="px-2 py-1 bg-white text-black text-xs font-bold">REGULAR 400</span>
-                            <span class="px-2 py-1 bg-white text-black text-xs font-bold">BOLD 700</span>
+                        <div class="guide-rule-card mt-4 border-[var(--color-pink)]">
+                            <h4 class="guide-rule-header text-[var(--color-pink)]"><i class="fas fa-times mr-2"></i> DON'T:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Never use Syne for paragraph text or long sentences.</li>
+                                <li>Never use lowercase letters.</li>
+                            </ul>
                         </div>
-                        <p class="text-sm opacity-80 mt-4 font-sans"><strong>USAGE:</strong> Body paragraphs, dates, UI components (buttons, inputs), and small descriptive text. It provides a technical, almost monospace feel that grounds the chaotic display font.</p>
                     </div>
-                    <div class="md:w-2/3 break-words font-sans">
-                        <p class="text-2xl mb-4">a b c d e f g h i j k l m n o p q r s t u v w x y z <br> 0 1 2 3 4 5 6 7 8 9 & @ # % * ! ?</p>
-                        <p class="text-lg font-light leading-relaxed border-l-4 border-[var(--color-pink)] pl-4">
-                            "Our events aren't just gatherings; they are visual interventions. We use high-contrast textures and misaligned colors to represent the beautiful friction of our community."
-                        </p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Font 3: Bungee Outline -->
-            <div class="border-4 border-[var(--color-toxic)] p-8 relative overflow-hidden">
-                <div class="absolute -top-4 -right-4 sticker bg-white !text-black transform rotate-12">TEXTURE ACCENT</div>
-                <div class="relative z-10 flex flex-col gap-4">
-                    <div class="space-y-2">
-                        <h3 class="text-3xl font-black font-display text-[var(--color-toxic)]">BUNGEE OUTLINE</h3>
-                        <p class="text-sm"><strong>USAGE:</strong> Strictly for massive background textures, cut-off words bleeding off the screen, and absolute chaos. Never use for readable sentences.</p>
-                    </div>
-                    <p class="font-accent text-[8rem] leading-none text-white/50 break-all -ml-4 hover:text-[var(--color-pink)] transition-colors cursor-default">
-                        RIOTRIOTRIOT
-                    </p>
-                </div>
-            </div>
-
-            <!-- Typography Rules -->
-            <div class="bg-black border-2 border-white/20 p-8">
-                <div class="duct-tape bg-[var(--color-pink)] w-full mb-8 text-xl">THE 4 RULES OF TEXT</div>
-                <ul class="space-y-6">
-                    <li class="flex items-start gap-4">
-                        <span class="text-3xl font-black text-[var(--color-toxic)]">1</span>
+                    <div class="md:col-span-7 bg-black border-4 border-white p-6 md:p-8 space-y-8">
                         <div>
-                            <strong class="text-xl uppercase tracking-widest block mb-1">No Lowercase Headers</strong>
-                            <p class="text-white/70">Syne must always scream. If it's a header, `text-transform: uppercase` is mandatory.</p>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Hero Title (.misprint · 6xl-8xl)</p>
+                            <h1 class="font-display font-black text-6xl lg:text-7xl uppercase misprint">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
                         </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <span class="text-3xl font-black text-[var(--color-toxic)]">2</span>
+                        <hr class="border-gray-800">
                         <div>
-                            <strong class="text-xl uppercase tracking-widest block mb-1">Embrace The Misprint</strong>
-                            <p class="text-white/70">Use the `.misprint` CSS class on primary headers to give them that cyan/magenta ghosting effect. Don't overuse it on body text or it becomes illegible.</p>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Section Header (4xl-5xl)</p>
+                            <h2 class="font-display font-black text-4xl uppercase" style="border-left: 6px solid var(--color-toxic); padding-left: 1rem;">What's On</h2>
                         </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <span class="text-3xl font-black text-[var(--color-toxic)]">3</span>
+                        <hr class="border-gray-800">
                         <div>
-                            <strong class="text-xl uppercase tracking-widest block mb-1">High Contrast Only</strong>
-                            <p class="text-white/70">Text must always pop. Use white, toxic lime, or electric pink on dark backgrounds. Never use dark grey text.</p>
+                            <p class="text-[var(--color-toxic)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Card Header (2xl-3xl)</p>
+                            <h3 class="font-display font-black text-2xl uppercase">The Nightingale Club</h3>
                         </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <span class="text-3xl font-black text-[var(--color-toxic)]">4</span>
+                    </div>
+                </div>
+
+                <!-- Space Grotesk block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-2">BODY & UI FONT</div>
+                        <h3 class="text-4xl font-bold tracking-tight">Space Grotesk</h3>
+                        <p class="text-base opacity-80">Used for everything else: paragraphs, buttons, forms, labels, and metadata. It brings a technical, structured balance to the chaotic display font.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use for all descriptive text (<span class="code-block">text-base</span> to <span class="code-block">text-lg</span>).</li>
+                                <li>Use heavy weights (bold) with uppercase and tracking (<span class="code-block">tracking-widest</span>) for small labels and buttons.</li>
+                                <li>Set body line-height to 1.6 (relaxed) to contrast the tight headers.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 bg-black border-4 border-[var(--color-purple)] p-6 md:p-8 space-y-8">
                         <div>
-                            <strong class="text-xl uppercase tracking-widest block mb-1">Break the Grid</strong>
-                            <p class="text-white/70">Don't be afraid to let massive typography bleed off the edge of the screen or overlap other containers using negative margins.</p>
+                            <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Lead Text (text-lg · text-gray-200)</p>
+                            <p class="text-gray-200 text-lg leading-relaxed">Birmingham Pride is one of the UK's biggest and most vibrant LGBTQ+ Pride festivals. Established in 1997, it marks its 29th year celebrating queer life.</p>
                         </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <div class="divider-heavy"></div>
-
-    <!-- Tone of Voice -->
-    <section>
-        <h2 class="text-5xl font-extrabold italic mb-12">03. The Gob (Tone of Voice)</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 mt-8">
-            <div class="bg-white text-black p-8 border-b-8 border-[var(--color-toxic)] rotate-1 hover:rotate-0 transition-transform">
-                <div class="sticker bg-[var(--color-pink)] text-white mb-4 -ml-4 -mt-12">RULE 1</div>
-                <h3 class="text-3xl font-black mb-2">BE LOUD, BAB.</h3>
-                <p class="font-sans font-medium">No corporate waffling. Speak like you're yelling over a techno DJ at 2 AM in a warehouse. We don't whisper; we project.</p>
-            </div>
-            <div class="bg-black text-white p-8 border-4 border-white border-dashed -rotate-1 hover:rotate-0 transition-transform">
-                <div class="sticker bg-[var(--color-purple)] text-white mb-4 -ml-4 -mt-12">RULE 2</div>
-                <h3 class="text-3xl font-black mb-2">UNAPOLOGETIC</h3>
-                <p class="font-sans font-medium">If a gig is going to tear the roof off, say it. Avoid polite phrases like "join us for a delightful evening." We are throwing a riot, not a tea party.</p>
-            </div>
-            <div class="bg-[var(--color-toxic)] text-black p-8 border-b-8 border-black rotate-2 hover:rotate-0 transition-transform">
-                <div class="sticker bg-black text-white mb-4 -ml-4 -mt-12">RULE 3</div>
-                <h3 class="text-3xl font-black mb-2">KEEP IT 0121</h3>
-                <p class="font-sans font-medium">Sprinkle the local flavour. Call them "bab" or "our kid". Say the lineup is "bostin'". Keep it natural—don't go full Peaky Blinders cosplay, just a nod to our roots.</p>
-            </div>
-        </div>
-
-        <div class="bg-black border-4 border-[var(--color-pink)] p-8 halftone-bg relative">
-             <div class="duct-tape bg-white !text-black text-xl mb-6">DO'S & DON'TS</div>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-sans bg-black/90 p-6 border-2 border-white/20">
-                 <div class="space-y-4">
-                     <div class="bg-red-900/30 p-4 border-l-4 border-red-500">
-                         <span class="text-xs font-bold text-red-400 tracking-widest uppercase block mb-1">DON'T (Boring)</span>
-                         <p class="opacity-80">"Please purchase your tickets in advance to secure your entry to the venue."</p>
-                     </div>
-                     <div class="bg-red-900/30 p-4 border-l-4 border-red-500">
-                         <span class="text-xs font-bold text-red-400 tracking-widest uppercase block mb-1">DON'T (Corporate)</span>
-                         <p class="opacity-80">"We welcome the LGBTQ+ community for a night of celebration and networking."</p>
-                     </div>
-                 </div>
-                 <div class="space-y-4">
-                     <div class="bg-[var(--color-toxic)]/10 p-4 border-l-4 border-[var(--color-toxic)]">
-                         <span class="text-xs font-bold text-[var(--color-toxic)] tracking-widest uppercase block mb-1">DO (Brum Outloud)</span>
-                         <p>"Grab your tickets before they're gone, bab. Don't be a melt at the door."</p>
-                     </div>
-                     <div class="bg-[var(--color-pink)]/10 p-4 border-l-4 border-[var(--color-pink)]">
-                         <span class="text-xs font-bold text-[var(--color-pink)] tracking-widest uppercase block mb-1">DO (Brum Outloud)</span>
-                         <p>"Bostin' line-up tonight. Get down here and tear up the dancefloor. Strictly queer chaos."</p>
-                     </div>
-                 </div>
-             </div>
-        </div>
-    </section>
-
-    <!-- Components -->
-    <section>
-        <h2 class="text-5xl font-extrabold italic mb-12">04. Assets</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-            <!-- Buttons -->
-            <div class="space-y-8 md:col-span-2">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">Stamped Interaction</h4>
-                <div class="flex flex-wrap gap-8">
-                    <button class="px-10 py-4 bg-[var(--color-toxic)] text-black font-black text-xl uppercase tracking-tighter transform -rotate-1 hover:rotate-0 transition-transform ink-bleed-hover">
-                        Enter the Void
-                    </button>
-                    <button class="px-10 py-4 border-4 border-white text-white font-black text-xl uppercase tracking-tighter transform rotate-1 hover:rotate-0 transition-transform">
-                        Join Riot
-                    </button>
-                </div>
-            </div>
-
-            <!-- Poster / Flyer Components -->
-            <div class="space-y-8 md:col-span-2 mt-8">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">Strict Grid Flyer Containers</h4>
-                <p class="text-sm opacity-80 font-sans mb-6 max-w-3xl">
-                    To keep the CSS grid from breaking, <strong>every image container must have the exact same aspect ratio</strong> (e.g., <code>aspect-[4/5]</code>). You then decide how the uploaded image behaves <em>inside</em> that locked box. Use <code>flex flex-col h-full</code> on the card to ensure all cards stretch to equal heights.
-                </p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
-                    
-                    <!-- Method 1: The Hard Crop -->
-                    <div class="flex flex-col bg-white text-black p-2 border-2 border-black rotate-1 hover:rotate-0 transition-all cursor-pointer shadow-[8px_8px_0_var(--color-toxic)] group h-full">
-                        <div class="duct-tape bg-[var(--color-pink)] !text-black text-xs mb-2 w-max absolute -top-4 -left-4 z-20">METHOD 1</div>
-                        
-                        <div class="bg-black text-white p-4 flex-grow flex flex-col relative z-10">
-                            <!-- UNIFORM CONTAINER: aspect-[4/5] -->
-                            <div class="w-full aspect-[4/5] bg-[var(--color-pink)] mb-4 halftone-bg flex items-center justify-center relative overflow-hidden border-b-4 border-white">
-                                 <!-- Simulating object-cover -->
-                                 <div class="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
-                                     <span class="text-white font-black text-4xl transform -rotate-12 text-center misprint !text-shadow-none">HARD<br>CROP</span>
-                                 </div>
-                            </div>
-                            
-                            <div class="flex flex-col flex-grow justify-between">
-                                <h5 class="text-3xl font-black leading-none mb-2">THE PUNISHER</h5>
-                                <div>
-                                    <p class="text-sm font-sans opacity-80 mb-2">Image uses <code>object-cover</code>. It fills the box completely but crops the edges off.</p>
-                                    <p class="text-xs uppercase font-bold text-[var(--color-toxic)]">Aesthetics > Info</p>
-                                </div>
-                            </div>
+                        <hr class="border-gray-800">
+                        <div>
+                            <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-1">Standard Body (text-base · text-gray-300)</p>
+                            <p class="text-gray-300 text-base leading-relaxed">The weekend kicks off with a spectacular parade through the city centre on Saturday morning, followed by a multi-stage music festival in the Gay Village.</p>
                         </div>
-                    </div>
-
-                    <!-- Method 2: The Halftone Letterbox -->
-                    <div class="flex flex-col bg-white text-black p-2 border-2 border-black -rotate-1 hover:rotate-0 transition-all cursor-pointer shadow-[8px_8px_0_var(--color-purple)] group h-full">
-                        <div class="duct-tape bg-[var(--color-purple)] text-white text-xs mb-2 w-max absolute -top-4 -left-4 z-20">METHOD 2</div>
-                        
-                        <div class="bg-black text-white p-4 flex-grow flex flex-col relative z-10">
-                            <!-- UNIFORM CONTAINER: aspect-[4/5] (Exactly the same as Method 1) -->
-                            <div class="w-full aspect-[4/5] bg-zinc-900 mb-4 halftone-dark flex items-center justify-center p-4 border-b-4 border-[var(--color-purple)] relative overflow-hidden">
-                                 <!-- Simulating an oddly shaped upload using object-contain -->
-                                 <div class="w-full aspect-video bg-[var(--color-toxic)] flex flex-col items-center justify-center shadow-[4px_4px_0_black] border-2 border-black transform rotate-2">
-                                     <span class="text-black font-black text-xl leading-none">WIDE</span>
-                                     <span class="text-black font-black text-xl leading-none">FLYER</span>
-                                 </div>
-                            </div>
-                            
-                            <div class="flex flex-col flex-grow justify-between">
-                                <h5 class="text-3xl font-black leading-none mb-2">SAFE SPACE MEETUP</h5>
-                                <div>
-                                    <p class="text-sm font-sans opacity-80 mb-2">Image uses <code>object-contain</code>. Shows the whole flyer, letting the halftone fill the void.</p>
-                                    <p class="text-xs uppercase font-bold text-[var(--color-purple)]">Info > Aesthetics</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Form Elements -->
-            <div class="space-y-8 md:col-span-2 mt-8">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">Data Entry (Inputs)</h4>
-                <div class="bg-white/5 border-2 border-dashed border-white/30 p-8 halftone-bg relative">
-                    <div class="max-w-xl mx-auto space-y-8 bg-black p-8 border-4 border-[var(--color-purple)] shadow-[8px_8px_0_var(--color-toxic)]">
-                        <div class="relative">
-                            <label class="block text-xs font-bold text-[var(--color-toxic)] mb-1 uppercase tracking-widest">Callsign / Name</label>
-                            <input type="text" class="punk-input w-full text-xl py-2" placeholder="Enter your alias...">
-                        </div>
-                        <div class="relative">
-                            <label class="block text-xs font-bold text-[var(--color-pink)] mb-1 uppercase tracking-widest">Frequency / Email</label>
-                            <input type="email" class="punk-input w-full text-xl py-2" placeholder="hello@void.net">
-                        </div>
-                        <label class="flex items-center gap-4 cursor-pointer group mt-4">
-                            <input type="checkbox" class="peer sr-only">
-                            <div class="w-8 h-8 border-4 border-white peer-checked:bg-[var(--color-toxic)] peer-checked:border-[var(--color-toxic)] transition-colors flex items-center justify-center">
-                                <span class="opacity-0 peer-checked:opacity-100 text-black font-black text-2xl leading-none transform -translate-y-0.5">×</span>
-                            </div>
-                            <span class="font-bold text-lg misprint select-none">I agree to the manifesto</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="divider-heavy"></div>
-
-    <!-- Structural UI -->
-    <section>
-        <h2 class="text-5xl font-extrabold italic mb-12">05. Architecture (Nav & Footer)</h2>
-        
-        <div class="space-y-16">
-            <!-- Navigation Header Concept -->
-            <div class="space-y-4">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">The Masthead (Navigation)</h4>
-                <div class="bg-white/5 border-2 border-dashed border-white/30 p-8 halftone-bg relative overflow-hidden">
-                    
-                    <!-- Example Nav -->
-                    <nav class="bg-black border-b-4 border-[var(--color-pink)] p-4 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-                        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none cursor-pointer">
-                            BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                        </div>
-                        
-                        <div class="hidden md:flex gap-8 font-bold uppercase tracking-widest text-sm">
-                            <a href="#" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Gigs</a>
-                            <a href="#" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">The Manifesto</a>
-                            <a href="#" class="hover:text-[var(--color-toxic)] hover:line-through transition-all">Info / Safe Space</a>
-                        </div>
-                        
-                        <button class="bg-[var(--color-toxic)] text-black px-4 md:px-6 py-2 font-black uppercase text-sm transform rotate-2 hover:rotate-0 transition-transform shadow-[2px_2px_0_white]">
-                            Tickets, Bab
-                        </button>
-                    </nav>
-
-                </div>
-            </div>
-
-            <!-- Footer Concept -->
-            <div class="space-y-4">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">The End of the Line (Footer)</h4>
-                
-                <!-- Example Footer -->
-                <div class="border-4 border-white">
-                    <!-- Top Warning Strip -->
-                    <div class="bg-[var(--color-toxic)] text-black p-2 text-center font-bold text-xs uppercase tracking-widest border-b-4 border-white">
-                        Warning: High volume queer chaos ahead
-                    </div>
-                    
-                    <footer class="bg-black text-white p-8 md:p-16 relative overflow-hidden halftone-bg">
-                        <!-- Background Accent -->
-                        <div class="absolute -right-20 -bottom-10 font-accent text-[12rem] leading-none opacity-20 text-[var(--color-pink)] pointer-events-none select-none">
-                            0121
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-                            <!-- Left Col -->
+                        <hr class="border-gray-800">
+                        <div class="flex flex-wrap gap-6">
                             <div>
-                                <h3 class="text-5xl font-black italic misprint mb-4">DON'T BE A STRANGER.</h3>
-                                <p class="mb-6 font-medium text-lg max-w-sm">Get on the blower. Drop your email here to get the secret location drops and early-bird tickets before they sell out.</p>
-                                
-                                <div class="flex gap-4 items-end max-w-sm">
-                                    <div class="flex-grow">
-                                        <input type="email" class="punk-input w-full text-lg py-2" placeholder="your@email.bab">
-                                    </div>
-                                    <button class="bg-[var(--color-pink)] text-white px-4 py-2 font-black uppercase text-sm border-2 border-white hover:bg-white hover:text-black transition-colors">
-                                        Sub
-                                    </button>
-                                </div>
+                                <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-2">UI Label / Meta</p>
+                                <p class="font-bold text-sm uppercase tracking-widest text-[var(--color-toxic)]"><i class="fas fa-calendar-day mr-2"></i>Sat 23 May</p>
                             </div>
-                            
-                            <!-- Right Col -->
-                            <div class="flex flex-col md:items-end justify-between space-y-8">
-                                <div class="flex gap-6 font-bold uppercase tracking-widest">
-                                    <a href="#" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Instagram</a>
-                                    <a href="#" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">TikTok</a>
-                                    <a href="#" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Dice.fm</a>
-                                </div>
-                                
-                                <div class="text-right">
-                                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">© 2026 BRUM OUTLOUD</p>
-                                </div>
-                            </div>
-                        </div>
-                    </footer>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="divider-heavy"></div>
-
-    <!-- Content Structures -->
-    <section>
-        <h2 class="text-5xl font-extrabold italic mb-12">06. Content Structures (The Meat)</h2>
-        
-        <div class="space-y-16">
-            <!-- Safer Space Policy -->
-            <div class="space-y-4">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">Safer Space Policy Block</h4>
-                <div class="bg-[var(--color-pink)] text-black p-8 md:p-12 relative rotate-1 hover:rotate-0 transition-transform">
-                    <div class="absolute -top-4 -right-4 sticker bg-black !text-white transform -rotate-12 text-2xl">NO DICKHEADS</div>
-                    <h3 class="text-4xl font-black italic mb-6">THE HOUSE RULES</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-sans font-bold text-lg">
-                        <ul class="space-y-4 list-disc pl-4 marker:text-black">
-                            <li>Zero tolerance for racism, sexism, homophobia, transphobia, or ableism.</li>
-                            <li>Respect pronouns. If you don't know, ask bab.</li>
-                            <li>Consent is mandatory. Do not touch without asking.</li>
-                        </ul>
-                        <ul class="space-y-4 list-disc pl-4 marker:text-black">
-                            <li>Look after each other. See someone struggling? Get a welfare officer.</li>
-                            <li>No flash photography on the dancefloor. Keep it in the moment.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gig List View -->
-            <div class="space-y-4">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">Gig Roster (List View)</h4>
-                <div class="border-4 border-white bg-black">
-                    <!-- Row 1 -->
-                    <div class="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 border-b-2 border-dashed border-white/30 hover:bg-white/10 transition-colors group">
-                        <div class="flex flex-col md:flex-row items-center md:gap-8 w-full md:w-auto text-center md:text-left">
-                            <div class="text-[var(--color-toxic)] font-black text-2xl md:text-3xl font-display">NOV 10</div>
                             <div>
-                                <h5 class="text-2xl font-bold uppercase">Warehouse Takeover Vol. 3</h5>
-                                <p class="text-sm opacity-70 font-sans">The Mill, Digbeth</p>
-                            </div>
-                        </div>
-                        <button class="mt-4 md:mt-0 px-6 py-2 border-2 border-[var(--color-pink)] text-[var(--color-pink)] font-black uppercase text-sm group-hover:bg-[var(--color-pink)] group-hover:text-black transition-colors w-full md:w-auto">
-                            TICKETS
-                        </button>
-                    </div>
-                    <!-- Row 2 -->
-                    <div class="flex flex-col md:flex-row items-center justify-between p-4 md:p-6 border-b-2 border-dashed border-white/30 hover:bg-white/10 transition-colors group">
-                        <div class="flex flex-col md:flex-row items-center md:gap-8 w-full md:w-auto text-center md:text-left">
-                            <div class="text-[var(--color-toxic)] font-black text-2xl md:text-3xl font-display">DEC 01</div>
-                            <div>
-                                <h5 class="text-2xl font-bold uppercase">Brum Outloud x Boiler Room</h5>
-                                <p class="text-sm opacity-70 font-sans">Secret Location</p>
-                            </div>
-                        </div>
-                        <button class="mt-4 md:mt-0 px-6 py-2 border-2 border-white/30 text-white/30 font-black uppercase text-sm cursor-not-allowed w-full md:w-auto" disabled>
-                            SOLD OUT
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resident DJs / Roster -->
-            <div class="space-y-4">
-                <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2">The Talent (Roster Grid)</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- DJ 1 -->
-                    <div class="relative group cursor-pointer">
-                        <div class="aspect-square bg-[var(--color-purple)] halftone-bg border-2 border-white mb-2 flex items-center justify-center overflow-hidden">
-                             <div class="w-full h-full bg-black/50 group-hover:bg-transparent transition-colors duration-300"></div>
-                        </div>
-                        <div class="absolute bottom-6 -left-2 bg-[var(--color-toxic)] text-black px-3 py-1 font-black uppercase text-xl transform -rotate-3 group-hover:rotate-0 transition-transform shadow-[4px_4px_0_black]">
-                            DJ VOID
-                        </div>
-                    </div>
-                    <!-- DJ 2 -->
-                    <div class="relative group cursor-pointer">
-                        <div class="aspect-square bg-[var(--color-pink)] border-2 border-white mb-2 flex items-center justify-center overflow-hidden">
-                            <div class="absolute inset-0 opacity-20" style="background: repeating-linear-gradient(45deg, black, black 10px, transparent 10px, transparent 20px);"></div>
-                            <div class="w-full h-full bg-black/50 group-hover:bg-transparent transition-colors duration-300 relative z-10"></div>
-                        </div>
-                        <div class="absolute bottom-6 -left-2 bg-white text-black px-3 py-1 font-black uppercase text-xl transform rotate-2 group-hover:rotate-0 transition-transform shadow-[4px_4px_0_black]">
-                            ACID BAB
-                        </div>
-                    </div>
-                    <!-- DJ 3 -->
-                    <div class="relative group cursor-pointer">
-                        <div class="aspect-square bg-white halftone-bg border-2 border-white mb-2 flex items-center justify-center overflow-hidden">
-                            <div class="w-full h-full bg-black/50 group-hover:bg-transparent transition-colors duration-300"></div>
-                        </div>
-                        <div class="absolute bottom-6 -left-2 bg-[var(--color-pink)] text-white px-3 py-1 font-black uppercase text-xl transform -rotate-2 group-hover:rotate-0 transition-transform shadow-[4px_4px_0_black]">
-                            TECHNO KID
-                        </div>
-                    </div>
-                     <!-- DJ 4 -->
-                    <div class="relative group cursor-pointer">
-                        <div class="aspect-square bg-[var(--color-toxic)] border-2 border-white mb-2 flex items-center justify-center overflow-hidden">
-                             <div class="w-full h-full bg-black/50 group-hover:bg-transparent transition-colors duration-300"></div>
-                        </div>
-                        <div class="absolute bottom-6 -left-2 bg-black text-white px-3 py-1 font-black uppercase text-xl transform rotate-3 group-hover:rotate-0 transition-transform shadow-[4px_4px_0_var(--color-pink)] border-2 border-white">
-                            SYNTHIA
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Graphics -->
-    <section class="pb-20">
-        <h2 class="text-5xl font-extrabold italic mb-12">07. Scratches</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="h-32 border-2 border-dashed border-white/30 flex items-center justify-center halftone-bg"></div>
-            <div class="h-32 bg-white/10 flex items-center justify-center ripped"></div>
-            <div class="h-32 bg-gradient-to-t from-[var(--color-pink)] to-transparent opacity-50"></div>
-            <div class="h-32 flex items-center justify-center">
-                <div class="sticker bg-white !text-black">VOID_FILL</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="divider-heavy"></div>
-
-    <!-- Social Assets -->
-    <section id="social-assets" class="pb-32">
-        <div class="flex items-end justify-between mb-8">
-            <h2 class="text-5xl font-extrabold italic">08. Social Kit (Remotion Templates)</h2>
-        </div>
-        <p class="text-lg opacity-80 font-sans mb-12 max-w-3xl">These templates are designed for your automated video reel generator (9:16 ratio). They map directly to the three core templates in your <code>remotion-templates</code> codebase, providing the visual rules for automated Instagram Reels and TikToks.</p>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-            
-            <!-- Template 1: Image Focus Reel -->
-            <div class="space-y-6 flex flex-col items-center">
-                <div class="text-center w-full">
-                    <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2 mb-2">ImageFocusReel.tsx</h4>
-                    <p class="text-sm opacity-60 font-sans">Prominent flyer background, high-contrast overlay blocks.</p>
-                </div>
-                
-                <!-- Reel Mockup -->
-                <div class="w-[280px] aspect-[9/16] bg-black border-4 border-white relative overflow-hidden flex flex-col shadow-[8px_8px_0_var(--color-toxic)]">
-                    <!-- Simulated Event Image Background -->
-                    <div class="absolute inset-0 bg-[var(--color-pink)] flex items-center justify-center opacity-60">
-                        <span class="text-black font-black text-6xl opacity-40 transform -rotate-12 mix-blend-multiply">FLYER<br>IMAGE</span>
-                    </div>
-                    <!-- Halftone Overlay to blend the image into the brand -->
-                    <div class="absolute inset-0 halftone-dark opacity-50 pointer-events-none"></div>
-                    
-                    <div class="relative z-10 p-5 h-full flex flex-col justify-between">
-                        <!-- Top -->
-                        <div class="flex justify-between items-start">
-                            <div class="sticker bg-white !text-black text-[10px] transform rotate-3">TONIGHT</div>
-                        </div>
-                        
-                        <!-- Bottom Info -->
-                        <div class="mt-auto flex flex-col gap-2">
-                            <div class="bg-black border-2 border-white p-4 ripped">
-                                <p class="text-[var(--color-toxic)] font-black text-xl leading-none mb-1 font-display">NOV 10</p>
-                                <h3 class="text-3xl font-black uppercase leading-none misprint mb-2 break-words text-white !text-shadow-none">WAREHOUSE TAKEOVER</h3>
-                                <p class="text-xs uppercase font-bold text-white/70 font-sans">The Mill, Digbeth</p>
-                            </div>
-                            <div class="bg-[var(--color-toxic)] text-black text-center p-2 font-black uppercase text-sm border-2 border-black transform rotate-1">
-                                Tickets in Bio
+                                <p class="text-[var(--color-purple)] text-xs font-bold font-sans uppercase tracking-widest mb-2">Button Text</p>
+                                <span class="font-bold text-sm uppercase tracking-widest text-white border-b-2 border-white pb-1">Read More</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Template 2: Minimalist Reel -->
-            <div class="space-y-6 flex flex-col items-center">
-                <div class="text-center w-full">
-                    <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2 mb-2">MinimalistReel.tsx</h4>
-                    <p class="text-sm opacity-60 font-sans">Brutalist text-only approach. Maximum legibility, zero distractions.</p>
+        <!-- 03. UI ELEMENTS & COMPONENTS -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">03. UI Elements & Components</h2>
+
+            <div class="space-y-16">
+
+                <!-- Buttons and Links -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Links & Buttons</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Interactive elements rely heavily on border thickness, strong hover states (inverting colors or scale), and high-contrast underlining.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Primary Actions</h4>
+                            <button class="w-full px-6 py-4 bg-[var(--color-toxic)] text-black font-black uppercase tracking-widest hover:bg-white transition-colors border-2 border-black">
+                                Primary Submit
+                            </button>
+                            <button class="w-full px-6 py-4 bg-[var(--color-pink)] text-white font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors border-2 border-black">
+                                Warning / Alert
+                            </button>
+                        </div>
+
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Secondary Actions</h4>
+                            <button class="w-full px-6 py-3 border-4 border-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+                                Outline Button
+                            </button>
+                            <button class="w-full px-6 py-3 border-4 border-gray-600 text-gray-400 font-bold uppercase tracking-widest cursor-not-allowed">
+                                Disabled State
+                            </button>
+                        </div>
+
+                        <div class="bg-black border-4 border-white p-6 space-y-6">
+                            <h4 class="text-sm text-gray-400 uppercase tracking-widest font-bold">Inline Links</h4>
+                            <a href="#" class="block font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 hover:text-white transition-colors">THICK UNDERLINE LINK →</a>
+                            <a href="#" class="block font-bold text-[var(--color-pink)] text-sm uppercase tracking-widest hover:text-white transition-colors"><i class="fas fa-arrow-right mr-1"></i> Icon Link</a>
+                        </div>
+                    </div>
                 </div>
-                
-                <!-- Reel Mockup -->
-                <div class="w-[280px] aspect-[9/16] bg-[var(--color-bg)] border-4 border-[var(--color-toxic)] relative overflow-hidden flex flex-col shadow-[8px_8px_0_var(--color-purple)]">
-                    <!-- Heavy Grain -->
-                    <div class="absolute inset-0 grain opacity-50 pointer-events-none"></div>
-                    
-                    <div class="relative z-10 p-6 h-full flex flex-col justify-center gap-6">
-                        
+
+                <!-- Stickers -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Stickers</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Stickers are small, rotated labels used for categorization, pricing, or status. They should always have a slight rotation applied via CSS transform.</p>
+
+                    <div class="bg-black border-4 border-white p-8 flex flex-wrap gap-8 items-center">
                         <div class="space-y-2">
-                            <div class="text-[var(--color-toxic)] font-black text-2xl font-display">DEC 01</div>
-                            <h3 class="text-5xl font-black uppercase leading-none misprint text-white">BOILER ROOM</h3>
-                            <div class="duct-tape bg-white !text-black text-xs transform -rotate-2">SECRET LOCATION</div>
+                            <div class="sticker bg-[var(--color-pink)] text-white">CATEGORY TAG</div>
+                            <p class="text-xs text-gray-500 font-mono">.sticker.bg-[var(--color-pink)]</p>
                         </div>
-
-                        <div class="space-y-2 mt-8">
-                            <p class="font-sans font-bold uppercase text-xs text-white/50 border-b border-white/20 pb-1">Featuring</p>
-                            <p class="text-xl font-black uppercase text-white">DJ VOID</p>
-                            <p class="text-xl font-black uppercase text-white">ACID BAB</p>
-                            <p class="text-xl font-black uppercase text-white">SYNTHIA</p>
+                        <div class="space-y-2">
+                            <div class="sticker bg-white !text-black hover:bg-[var(--color-toxic)] cursor-pointer">INTERACTIVE</div>
+                            <p class="text-xs text-gray-500 font-mono">.hover:bg-[var(--color-toxic)]</p>
                         </div>
-                        
-                        <div class="absolute bottom-0 left-0 w-full bg-[var(--color-toxic)] text-black p-3 text-center marquee-container font-black text-xs uppercase tracking-widest border-t-4 border-black">
-                            <div class="marquee-content" style="animation-duration: 5s;">
-                                <span>DOORS 10PM</span> <span>•</span> <span>DOORS 10PM</span> <span>•</span> <span>DOORS 10PM</span> <span>•</span>
-                            </div>
+                        <div class="space-y-2 relative">
+                            <div class="absolute -top-3 -right-3 bg-black text-[var(--color-toxic)] text-xs font-bold px-3 py-1 uppercase tracking-widest border-2 border-[var(--color-toxic)] z-10">Absolute</div>
+                            <div class="w-24 h-24 bg-[#111] border-2 border-white"></div>
+                            <p class="text-xs text-gray-500 font-mono mt-2">Corner Badge</p>
                         </div>
                     </div>
                 </div>
+
+                <!-- Marquee Ticker -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Marquee Ticker</h3>
+                    <p class="text-sm text-gray-300 mb-6 max-w-2xl">Used for announcements or creating a festival/event vibe across the full width of the screen.</p>
+
+                    <div class="border-y-4 border-white py-2">
+                        <div class="overflow-hidden whitespace-nowrap bg-[var(--color-toxic)] text-black font-display font-black text-sm tracking-[0.2em] uppercase py-2 select-none relative">
+                            <div class="inline-block animate-[marquee-scroll_20s_linear_infinite]">
+                                &nbsp;· NEXT EVENT: FRIDAY NIGHT &nbsp;· TICKETS ON SALE NOW &nbsp;· GAY VILLAGE HURST STREET &nbsp;· JOIN THE GUESTLIST &nbsp;·
+                            </div>
+                            <!-- Duplicated for seamless loop -->
+                            <div class="inline-block animate-[marquee-scroll_20s_linear_infinite] absolute top-2">
+                                &nbsp;· NEXT EVENT: FRIDAY NIGHT &nbsp;· TICKETS ON SALE NOW &nbsp;· GAY VILLAGE HURST STREET &nbsp;· JOIN THE GUESTLIST &nbsp;·
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes marquee-scroll {
+                            0% { transform: translateX(0); }
+                            100% { transform: translateX(-100%); }
+                        }
+                    </style>
+                </div>
+
             </div>
+        </section>
 
-            <!-- Template 3: Modern Gradient Reel -->
-            <div class="space-y-6 flex flex-col items-center">
-                <div class="text-center w-full">
-                    <h4 class="text-xl font-bold uppercase tracking-widest border-b border-white pb-2 mb-2">ModernGradientReel.tsx</h4>
-                    <p class="text-sm opacity-60 font-sans">Brand-heavy vibe using the pink/purple ink-bleed gradient.</p>
-                </div>
-                
-                <!-- Reel Mockup -->
-                <div class="w-[280px] aspect-[9/16] bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-purple)] border-4 border-black relative overflow-hidden flex flex-col shadow-[8px_8px_0_white]">
-                    <!-- Background Accent -->
-                    <div class="absolute top-1/4 -left-10 font-accent text-[8rem] leading-none opacity-20 text-white pointer-events-none select-none transform -rotate-90">
-                        RIOT
-                    </div>
-                    
-                    <div class="relative z-10 p-5 h-full flex flex-col">
-                        <!-- Top -->
-                        <div class="font-display font-black text-2xl misprint leading-none text-white text-center mt-4">
-                            BRUM<br>OUTLOUD
+        <!-- 04. BRUTALIST CARDS & GRIDS -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">04. Cards & Grids</h2>
+
+            <div class="space-y-16">
+                <!-- Standard Brutalist Cards -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Standard Content Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">The core layout component. Heavy borders, aggressive hover states, and stark contrast. Base class: <span class="code-block">.brutalist-card</span>.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Generic Card -->
+                        <div class="brutalist-card p-8 group">
+                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">DEFAULT SHADOW</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">Standard Card</h2>
+                            <p class="text-gray-300 mb-6">Notice the purple drop shadow that turns pink and expands on hover. The background is pure black.</p>
+                            <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">READ MORE →</div>
                         </div>
-                        
-                        <!-- Middle Card -->
-                        <div class="flex-grow flex items-center justify-center">
-                            <div class="bg-white text-black p-4 w-full transform rotate-2 border-2 border-black shadow-[4px_4px_0_black]">
-                                <div class="bg-[var(--color-toxic)] mb-3 h-24 halftone-dark flex items-center justify-center border-2 border-black">
-                                    <span class="text-black font-black text-xl">FLYER</span>
-                                </div>
-                                <h3 class="text-2xl font-black uppercase leading-none mb-1">SUNDAY SERVICE</h3>
-                                <p class="text-[10px] font-bold text-[var(--color-purple)] font-sans uppercase">Village Inn</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Bottom -->
-                        <div class="mb-4 text-center">
-                            <div class="sticker bg-black !text-white text-sm transform -rotate-3 border-2 border-white">
-                                FREE ENTRY
-                            </div>
+
+                        <!-- Outline / Accent Card -->
+                        <div class="brutalist-card p-8 group border-[var(--color-toxic)] shadow-[6px_6px_0_var(--color-toxic)] hover:shadow-[10px_10px_0_var(--color-pink)]">
+                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">CUSTOM BORDER</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-pink)] transition-colors">Accent Card</h2>
+                            <p class="text-gray-300 mb-6">Cards can override the border and shadow colors using utility classes (e.g., <span class="code-block">shadow-[..._var(--color-toxic)]</span>).</p>
+                            <div class="font-black text-[var(--color-pink)] underline decoration-4 underline-offset-4">ACTION HERE →</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Event Cards -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Event & Venue Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">Used specifically for listing directories. They typically feature a top image container and tight padding.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
+                        <!-- Pride Style Event Card -->
+                        <div class="border-2 border-[#333] bg-[#000] shadow-[4px_4px_0_#333] hover:border-[rgba(232,58,153,0.5)] hover:shadow-[6px_10px_0_var(--color-pink)] hover:-translate-y-1 transition-all duration-400 group cursor-pointer flex flex-col">
+                            <div class="w-full h-40 overflow-hidden border-b-2 border-gray-800 relative">
+                                <div class="absolute top-2 right-2 sticker bg-[var(--color-toxic)] !text-black text-xs z-10">£15</div>
+                                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=300&fit=crop" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" alt="Event">
+                            </div>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <p class="text-white font-bold uppercase font-display leading-tight mb-2 text-xl group-hover:text-[var(--color-pink)]">Glitterbomb Party</p>
+                                <p class="text-[var(--color-toxic)] text-sm font-bold mt-auto"><i class="fas fa-calendar-day mr-1"></i>Fri 14 Jun</p>
+                                <p class="text-gray-300 text-sm mt-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>The Nightingale</p>
+                            </div>
+                        </div>
+
+                        <!-- Venue Style Block -->
+                        <div class="border-2 border-[var(--color-purple)] bg-[#0a0a0a] shadow-[4px_4px_0_rgba(155,93,229,0.3)] hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(232,58,153,0.5)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5),_0_0_20px_rgba(155,93,229,0.2)] hover:-translate-y-1 transition-all duration-400 group cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=600&h=300&fit=crop" class="w-full h-32 object-cover filter contrast-110 saturate-110 group-hover:contrast-120 group-hover:saturate-120 transition-all" alt="Venue">
+                            <div class="p-4">
+                                <h3 class="text-white font-bold uppercase group-hover:text-[var(--color-purple)] transition-colors">Missing Bar</h3>
+                                <p class="text-gray-400 text-xs mt-1">Drag shows, cabaret, pop DJs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Grid -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Bento Lineup Grid</h3>
+                    <p class="text-sm text-gray-300 mb-6">A dense, image-focused grid used for lineups. Headliners span 2x2 cells. Images have an inner gradient mask on hover.</p>
+
+                    <div class="bg-black p-6 border-4 border-white max-w-4xl mx-auto">
+                        <div class="grid grid-cols-4 gap-2">
+                            <!-- Headliner 2x2 -->
+                            <div class="col-span-2 row-span-2 relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden hover:scale-[1.02] hover:z-10 hover:shadow-[0_10px_30px_rgba(155,93,229,0.3)] transition-all">
+                                <span class="absolute top-0 inset-x-0 bg-[var(--color-pink)] text-white text-[0.6rem] font-bold tracking-widest py-1 text-center z-10">HEADLINER</span>
+                                <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-pink)] via-[var(--color-toxic)] to-[var(--color-purple)] opacity-0 group-hover:opacity-30 transition-opacity z-0 pointer-events-none"></div>
+                                <img src="https://images.unsplash.com/photo-1493225457124-a1a2a5f5f54b?w=400&h=400&fit=crop" class="w-full h-full object-cover filter contrast-110 saturate-110 group-hover:scale-105 transition-transform" alt="Artist">
+                            </div>
+                            <!-- Standard 1x1 -->
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square hover:scale-105 hover:z-10 transition-all">
+                                <img src="https://images.unsplash.com/photo-1520635360276-79f3dbd809f6?w=200&h=200&fit=crop" class="w-full h-full object-cover" alt="Artist">
+                            </div>
+                            <div class="relative group cursor-pointer border-2 border-[#331A40] bg-[#150A20] overflow-hidden aspect-square flex items-center justify-center text-center p-2 hover:bg-[#2a1b3d] transition-colors">
+                                <span class="font-display font-black text-sm uppercase text-[var(--color-light)]">Local<br>Act</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-        
-        <!-- Standard Assets -->
-        <div class="mt-20 border-t-4 border-white/20 pt-12">
-            <h4 class="text-xl font-bold uppercase tracking-widest mb-8">Static Platform Assets</h4>
-            <div class="flex flex-wrap gap-12 items-start">
-                
-                <!-- Profile Avatar -->
-                <div class="space-y-4 flex flex-col items-center">
-                    <p class="text-sm opacity-60 font-sans text-center">Profile Avatar (1:1)</p>
+        </section>
+
+        <!-- 05. FORMS -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">05. Forms</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">Form inputs (<span class="code-block">.punk-input</span>) feature thick bottom borders, zero rounded corners, and harsh focus states.</p>
+
+            <div class="brutalist-card p-8 bg-black shadow-[10px_10px_0_var(--color-purple)]">
+                <form class="space-y-8 max-w-xl">
+                    <div class="space-y-2 group">
+                        <label class="font-bold text-[var(--color-toxic)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Event Name</label>
+                        <input type="text" class="punk-input w-full text-xl py-2" placeholder="e.g. Glittershit Summer Ball">
+                        <p class="text-xs text-gray-500 font-mono mt-1">.punk-input</p>
+                    </div>
                     
-                    <!-- We use a solid square wrapper to prevent transparent PNG glitches on social platforms, giving it the deep bg color and grain -->
-                    <div id="export-avatar-wrapper" class="w-64 h-64 bg-black flex items-center justify-center relative">
-                        <div class="absolute inset-0 grain opacity-50 pointer-events-none z-0"></div>
-                        
-                        <!-- Mathematically centered container -->
-                        <div class="w-48 h-48 rounded-full border-4 border-white bg-black relative shadow-[6px_6px_0_var(--color-toxic)] flex-shrink-0 z-10 flex flex-col items-center justify-center">
-                            
-                            <!-- Texture applied with rounded-full to stay inside the border -->
-                            <div class="absolute inset-0 rounded-full halftone-bg opacity-50 pointer-events-none z-0"></div>
-                            
-                            <!-- Optical centering applied here. Uppercase Syne font has built-in bottom spacing, so we push it down with pt-2 and translate-y-1 -->
-                            <div class="font-display font-black text-3xl tracking-tight misprint leading-none text-center text-white relative z-10 pt-2 translate-y-1">
-                                BRUM<br><span class="text-[var(--color-toxic)]">OUT</span>LOUD
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-2 group">
+                            <label class="font-bold text-[var(--color-purple)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Date</label>
+                            <input type="date" class="punk-input w-full text-lg py-2 text-white">
+                        </div>
+                        <div class="space-y-2 group">
+                            <label class="font-bold text-[var(--color-purple)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Time</label>
+                            <input type="time" class="punk-input w-full text-lg py-2 text-white">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 group">
+                        <label class="font-bold text-[var(--color-pink)] uppercase tracking-widest text-sm group-focus-within:text-white transition-colors">Description</label>
+                        <textarea class="punk-input w-full text-lg py-2 h-32 resize-none" placeholder="What's going down?"></textarea>
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit" class="px-8 py-5 bg-[var(--color-toxic)] text-black font-black uppercase tracking-widest w-full hover:bg-white hover:scale-[1.02] transition-all border-4 border-black shadow-[4px_4px_0_rgba(204,255,0,0.5)]">
+                            SUBMIT EVENT
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 06. COMPOSED LAYOUTS -->
+        <section>
+            <h2 class="font-display font-black text-4xl uppercase mb-8 border-b-4 border-white pb-2 inline-block">06. Composed Layouts</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-3xl">How these elements come together to create full sections.</p>
+
+            <div class="space-y-16">
+
+                <!-- Mock Hero -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Hero Section</h3>
+                    <div class="border-4 border-white relative overflow-hidden bg-gradient-to-br from-[#0d0115] to-[#1a0a2e]">
+                        <!-- Abstract glow -->
+                        <div class="absolute -right-20 -top-20 w-96 h-96 bg-[var(--color-pink)] blur-[120px] opacity-20 rounded-full animate-pulse z-0 pointer-events-none"></div>
+
+                        <div class="relative z-10 px-8 py-16 md:py-24 max-w-3xl">
+                            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 drop-shadow-md">YOUR ULTIMATE GUIDE</div>
+                            <h1 class="text-5xl md:text-7xl font-black text-white uppercase font-display misprint mb-6">Birmingham<br>Pride <span class="text-[var(--color-toxic)]">2026</span></h1>
+                            <p class="text-gray-200 text-lg md:text-xl mb-8 leading-relaxed max-w-2xl">One of the UK's largest LGBTQ+ festivals returns. Two days of explosive celebration including the massive Saturday parade and the epic Gay Village festival.</p>
+
+                            <div class="flex flex-wrap gap-4 items-center">
+                                <a href="#" class="sticker bg-[var(--color-toxic)] !text-black text-lg hover:bg-white transition-all duration-300 hover:scale-[1.03] shadow-[0_0_20px_rgba(204,255,0,0.3)] px-6 py-3">BUY TICKETS</a>
+                                <span class="text-gray-300 text-sm italic">Parade is free. Under 12s free.</span>
                             </div>
                         </div>
                     </div>
-                    
-                    <button onclick="exportImage('export-avatar-wrapper', 'brum-outloud-avatar.png', 4)" class="mt-2 px-4 py-2 bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-[var(--color-toxic)] transition-colors border-2 border-black shadow-[2px_2px_0_black]">
-                        ↓ Download PNG
-                    </button>
                 </div>
 
-                <!-- X / Meta Banner -->
-                <div class="space-y-4 flex-grow flex flex-col items-center">
-                    <p class="text-sm opacity-60 font-sans">Platform Banner (1500x500)</p>
-                    
-                    <!-- Padded wrapper to prevent clipping the drop shadow -->
-                    <div id="export-banner-wrapper" class="p-6 bg-transparent w-full flex items-center justify-center">
-                        <div class="w-full max-w-[600px] aspect-[3/1] bg-[var(--color-bg)] border-4 border-[var(--color-toxic)] relative overflow-hidden flex items-center justify-center shadow-lg ripped">
-                             <div class="absolute inset-0 halftone-bg opacity-30 pointer-events-none"></div>
-                             
-                             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-accent text-[6rem] md:text-[8rem] leading-none opacity-20 text-[var(--color-purple)] pointer-events-none select-none whitespace-nowrap">
-                                 0121
-                             </div>
-                             
-                             <div class="relative z-10 text-center w-full px-4">
-                                 <br>
-                                 <div class="font-display font-black text-lg md:text-2xl misprint leading-none bg-black p-3 border-2 border-white inline-block uppercase text-white shadow-[4px_4px_0_var(--color-toxic)]">
-                                    Birmingham's <span class="text-[var(--color-toxic)]">Queer</span> Agenda
-                                 </div>
-                             </div>
+                <!-- Mock Key Facts -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-toxic)]">Key Facts Bar</h3>
+                    <div class="border-y-4 border-white bg-[#000]">
+                        <div class="grid grid-cols-2 md:grid-cols-4 divide-x-2 divide-gray-800">
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Dates</p>
+                                <p class="text-white font-black text-2xl font-display misprint">22 – 24 MAY</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Location</p>
+                                <p class="text-white font-black text-2xl font-display misprint">GAY VILLAGE</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Parade</p>
+                                <p class="text-white font-black text-2xl font-display misprint">SAT 12 NOON</p>
+                            </div>
+                            <div class="py-8 px-4 text-center hover:-translate-y-1 transition-transform cursor-default">
+                                <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">Tickets</p>
+                                <p class="text-white font-black text-2xl font-display misprint">ON SALE</p>
+                            </div>
                         </div>
                     </div>
-
-                    <button onclick="exportImage('export-banner-wrapper', 'brum-outloud-banner.png', 3)" class="mt-2 px-4 py-2 bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-[var(--color-toxic)] transition-colors border-2 border-black shadow-[2px_2px_0_black]">
-                        ↓ Download PNG
-                    </button>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <footer class="bg-[var(--color-toxic)] text-black p-24 text-center">
-        <h2 class="text-6xl md:text-8xl font-black italic misprint mb-8">BRUM OUTLOUD.</h2>
-        <div class="flex flex-wrap justify-center gap-4">
-            <div class="duct-tape bg-black text-white">POSTERS</div>
-            <div class="duct-tape bg-black text-white">FLYERS</div>
-            <div class="duct-tape bg-black text-white">REVOLUTION</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Preview -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] relative z-10">
+        <div class="h-[6px] progress-pride-bg"></div>
+        <div class="container mx-auto px-6 py-16 text-center">
+            <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+            </div>
+            <p class="text-gray-200 text-lg mb-8 italic">Be seen. Be heard. Be proud.</p>
         </div>
     </footer>
 
-    <!-- Add html2canvas library to handle the export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        function exportImage(elementId, filename, scaleFactor) {
-            const element = document.getElementById(elementId);
-            
-            // html2canvas takes a "screenshot" of the DOM element
-            html2canvas(element, {
-                scale: scaleFactor, // Scales up the resolution so it looks crisp on social media
-                backgroundColor: null, // Preserves transparency
-                useCORS: true, // Helps load external fonts properly
-                logging: false
-            }).then(canvas => {
-                // Convert canvas to an image URL
-                const image = canvas.toDataURL("image/png");
-                
-                // Create a temporary link to trigger the download
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = image;
-                link.click();
-            });
-        }
-    </script>
 </body>
 </html>
