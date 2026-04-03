@@ -232,7 +232,7 @@ const templateContent = `<!DOCTYPE html>
                     </div>
                 </div>
                 <div class="md:text-right">
-                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; {{currentYear}} BRUM OUTLOUD</p>
                 </div>
             </div>
         </div>
