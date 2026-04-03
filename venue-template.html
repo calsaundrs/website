@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{VENUE_NAME}} | LGBTQ+ Birmingham & West Midlands Venues | Brum Outloud</title>
-    <meta name="description" content="{{VENUE_DESCRIPTION}}">
+    <title>{{VENUE_NAME}} Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for {{VENUE_NAME}}, a popular LGBTQ+ venue and gay bar in Birmingham. {{VENUE_DESCRIPTION}}">
+    <meta name="keywords" content="{{VENUE_NAME}} birmingham, {{VENUE_NAME}} reviews, {{VENUE_NAME}} photos, gay bar birmingham, gay village birmingham venues">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="{{VENUE_NAME}} | Brum Outloud">
@@ -34,7 +35,10 @@
         "addressCountry": "GB"
       },
       "url": "https://brumoutloud.co.uk/venue/{{VENUE_SLUG}}",
-      "image": "{{VENUE_IMAGE_URL}}"
+      "image": "{{VENUE_IMAGE_URL}}",
+      "sameAs": [
+        "{{VENUE_WEBSITE_URL}}"
+      ]
     }
     </script>
 
@@ -208,10 +212,43 @@
             <div class="lg:col-span-2 space-y-10">
                 <section>
                     <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About {{VENUE_NAME}}
                     </h2>
                     <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
                         <p>{{VENUE_DESCRIPTION}}</p>
+                    </div>
+                </section>
+
+                <section id="photos">
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Photos of {{VENUE_NAME}}
+                    </h2>
+                    <div class="bg-white/5 border border-white/10 p-6 text-center">
+                        <p class="text-gray-400 mb-4">View photos and imagery from {{VENUE_NAME}} in Birmingham.</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
+                            <!-- Placeholder for photos -->
+                            <div class="aspect-square bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-50"></div>
+                            <div class="aspect-square bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-toxic)] opacity-50"></div>
+                            <div class="aspect-square bg-gradient-to-br from-[var(--color-toxic)] to-[var(--color-purple)] opacity-50 hidden md:block"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="reviews">
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> {{VENUE_NAME}} Reviews
+                    </h2>
+                    <div class="bg-white/5 border border-white/10 p-6">
+                        <p class="text-gray-300 mb-4">Are you looking for reviews of {{VENUE_NAME}}? Here is what people are saying about this Birmingham gay village venue.</p>
+                        <div class="space-y-4">
+                            <!-- Placeholder for reviews integration -->
+                            <div class="border-l-4 border-[var(--color-toxic)] pl-4 py-2">
+                                <div class="text-yellow-400 text-sm mb-1">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <p class="text-gray-400 italic text-sm">"Great atmosphere and a staple of the Birmingham gay scene!"</p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 

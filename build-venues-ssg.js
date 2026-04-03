@@ -46,7 +46,15 @@ if (!admin.apps.length) {
     firebaseInitialized = true;
 }
 
-const db = admin.firestore();
+let db;
+if (firebaseInitialized) {
+    try {
+        db = admin.firestore();
+    } catch(e) {
+        console.warn('Could not initialize firestore', e.message);
+        firebaseInitialized = false;
+    }
+}
 
 // The exact template from get-venue-details.js
 const templateContent = `<!DOCTYPE html>
@@ -54,8 +62,9 @@ const templateContent = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{venue.name}} - BrumOutLoud</title>
-    <meta name="description" content="{{venue.description}}">
+    <title>{{venue.name}} Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for {{venue.name}}, a popular LGBTQ+ venue and gay bar in Birmingham. {{venue.description}}">
+    <meta name="keywords" content="{{venue.name}} birmingham, {{venue.name}} reviews, {{venue.name}} photos, gay bar birmingham, gay village birmingham venues">
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="{{venue.name}}">
@@ -357,7 +366,7 @@ const templateContent = `<!DOCTYPE html>
                         {{#if venue.description}}
                         <div class="venue-card p-6 mb-6">
                             <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About This Venue
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About {{venue.name}}
                             </h2>
                             <p class="text-gray-300 leading-relaxed">{{venue.description}}</p>
                         </div>
@@ -365,9 +374,9 @@ const templateContent = `<!DOCTYPE html>
 
                         <!-- Gallery -->
                         {{#if googlePlaces.images.length}}
-                        <div class="venue-card p-6 mb-6">
+                        <div class="venue-card p-6 mb-6" id="photos">
                             <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-images mr-3 text-accent-color"></i>Gallery
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of {{venue.name}}
                             </h2>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {{#each googlePlaces.images}}
@@ -384,10 +393,11 @@ const templateContent = `<!DOCTYPE html>
 
                         <!-- Google Reviews -->
                         {{#if googlePlaces.reviews.length}}
-                        <div class="venue-card p-6 mb-6">
+                        <div class="venue-card p-6 mb-6" id="reviews">
                             <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fab fa-google mr-3 text-accent-color"></i>Recent Reviews from Google
+                                <i class="fab fa-google mr-3 text-accent-color"></i>{{venue.name}} Reviews
                             </h2>
+                            <p class="text-gray-300 mb-4">Looking for reviews of {{venue.name}}? Here is what people are saying about this Birmingham venue.</p>
                             <div class="space-y-4">
                                 {{#each googlePlaces.reviews}}
                                 <div class="p-4 bg-gray-800/50 rounded-lg">
