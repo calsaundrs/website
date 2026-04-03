@@ -302,7 +302,17 @@
 
                 // Event Name
                 const eventNameDiv = document.createElement('div');
-                eventNameDiv.innerHTML = `<label>Event Name</label><input type="text" name="name" value="${event.name || ''}">`;
+
+                const eventNameLabel = document.createElement('label');
+                eventNameLabel.textContent = 'Event Name';
+                eventNameDiv.appendChild(eventNameLabel);
+
+                const eventNameInput = document.createElement('input');
+                eventNameInput.type = 'text';
+                eventNameInput.name = 'name';
+                eventNameInput.value = event.name || '';
+                eventNameDiv.appendChild(eventNameInput);
+
                 form.appendChild(eventNameDiv);
 
                 // Venue Select
@@ -320,21 +330,63 @@
                 // Date & Time
                 const dateTimeDiv = document.createElement('div');
                 dateTimeDiv.className = 'grid grid-cols-2 gap-4';
-                dateTimeDiv.innerHTML = `
-                    <div><label>Date</label><input type="date" name="date" value="${event.date ? `20${event.date.substring(0, 2)}-${event.date.substring(3, 5)}-${event.date.substring(6, 8)}` : ''}"></div>
-                    <div><label>Time</label><input type="time" name="time" value="${event.time || ''}"></div>
-                `;
+
+                const dateDiv = document.createElement('div');
+                const dateLabel = document.createElement('label');
+                dateLabel.textContent = 'Date';
+                dateDiv.appendChild(dateLabel);
+
+                const dateInput = document.createElement('input');
+                dateInput.type = 'date';
+                dateInput.name = 'date';
+                dateInput.value = event.date ? (event.date.length === 8 ? '20' + event.date.substring(0, 2) + '-' + event.date.substring(3, 5) + '-' + event.date.substring(6, 8) : event.date) : '';
+                dateDiv.appendChild(dateInput);
+                dateTimeDiv.appendChild(dateDiv);
+
+                const timeDiv = document.createElement('div');
+                const timeLabel = document.createElement('label');
+                timeLabel.textContent = 'Time';
+                timeDiv.appendChild(timeLabel);
+
+                const timeInput = document.createElement('input');
+                timeInput.type = 'time';
+                timeInput.name = 'time';
+                timeInput.value = event.time || '';
+                timeDiv.appendChild(timeInput);
+                dateTimeDiv.appendChild(timeDiv);
+
                 form.appendChild(dateTimeDiv);
 
                 // Ticket Link
                 const ticketLinkDiv = document.createElement('div');
-                ticketLinkDiv.innerHTML = `<label>Ticket Link</label><input type="url" name="link" value="${event.ticketLink || ''}" placeholder="https://">`;
+
+                const ticketLinkLabel = document.createElement('label');
+                ticketLinkLabel.textContent = 'Ticket Link';
+                ticketLinkDiv.appendChild(ticketLinkLabel);
+
+                const ticketLinkInput = document.createElement('input');
+                ticketLinkInput.type = 'url';
+                ticketLinkInput.name = 'link';
+                ticketLinkInput.value = event.ticketLink || '';
+                ticketLinkInput.placeholder = 'https://';
+                ticketLinkDiv.appendChild(ticketLinkInput);
+
                 form.appendChild(ticketLinkDiv);
 
                 // Description
                 const descriptionDiv = document.createElement('div');
                 descriptionDiv.className = 'md:col-span-2';
-                descriptionDiv.innerHTML = `<label>Description</label><textarea name="description" rows="3">${event.description || ''}</textarea>`;
+
+                const descriptionLabel = document.createElement('label');
+                descriptionLabel.textContent = 'Description';
+                descriptionDiv.appendChild(descriptionLabel);
+
+                const descriptionTextarea = document.createElement('textarea');
+                descriptionTextarea.name = 'description';
+                descriptionTextarea.rows = 3;
+                descriptionTextarea.value = event.description || '';
+                descriptionDiv.appendChild(descriptionTextarea);
+
                 form.appendChild(descriptionDiv);
 
                 // Recurrence Section
