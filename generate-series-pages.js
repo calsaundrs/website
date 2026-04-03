@@ -299,7 +299,7 @@ async function buildSeriesPages() {
 
         series.matchedEvents = formattedEvents;
 
-        const html = template(series);
+        const html = template({ ...series, currentYear });
         const filePath = path.join(seriesDir, `${series.slug}.html`);
         await fs.writeFile(filePath, html, 'utf8');
         console.log(`✅ Generated: ${filePath} (Found ${formattedEvents.length} events)`);
