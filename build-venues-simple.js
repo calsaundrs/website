@@ -141,21 +141,24 @@ const templateContent = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{venue.name}} - BrumOutLoud</title>
+    <title>{{venue.name}} — LGBTQ+ Venue in Birmingham | Brum Outloud</title>
     <meta name="description" content="{{venue.description}}">
-    
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
+
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{venue.name}}">
+    <meta property="og:title" content="{{venue.name}} — LGBTQ+ Venue in Birmingham | Brum Outloud">
     <meta property="og:description" content="{{venue.description}}">
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://brumoutloud.co.uk/venue/{{venue.slug}}">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
     {{#if venue.image}}
     <meta property="og:image" content="{{venue.image.url}}">
     {{/if}}
-    
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{venue.name}}">
+    <meta name="twitter:title" content="{{venue.name}} — LGBTQ+ Venue in Birmingham | Brum Outloud">
     <meta name="twitter:description" content="{{venue.description}}">
     {{#if venue.image}}
     <meta name="twitter:image" content="{{venue.image.url}}">
@@ -288,7 +291,7 @@ const templateContent = `<!DOCTYPE html>
             <!-- Hero Image -->
             <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
                 {{#if venue.image}}
-                <img src="{{venue.image.url}}" alt="{{venue.name}}" class="w-full h-full object-cover">
+                <img src="{{venue.image.url}}" alt="{{venue.name}} — LGBTQ+ venue in Birmingham" class="w-full h-full object-cover">
                 {{else}}
                 <i class="fas fa-building text-6xl text-gray-600"></i>
                 {{/if}}
@@ -339,7 +342,7 @@ const templateContent = `<!DOCTYPE html>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 {{#each googlePlaces.images}}
                                 <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover">
+                                    <img src="{{url}}" alt="Photo of {{../venue.name}} in Birmingham" class="w-full h-full object-cover">
                                 </div>
                                 {{/each}}
                             </div>

@@ -123,6 +123,14 @@
             opacity: 0.6;
         }
 
+        /* Mobile LCP optimisation: show poster image instead of loading 7MB video */
+        @media (max-width: 768px) {
+            .background-video { display: none; }
+            .video-background-container {
+                background: url('/video-poster.jpg') center/cover no-repeat;
+            }
+        }
+
         .video-overlay {
             position: absolute;
             top: 0;
@@ -167,7 +175,7 @@
 
     <div class="video-background-container">
         <div class="video-overlay"></div>
-        <video autoplay loop muted playsinline class="background-video" poster="/video-poster.jpg">
+        <video autoplay loop muted playsinline preload="metadata" class="background-video" poster="/video-poster.jpg">
             <source src="/HouseOfAllureReel.mp4" type="video/mp4">
         </video>
     </div>

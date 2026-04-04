@@ -123,6 +123,13 @@
   to = "/user-persona-testing.html"
   status = 200
 
+# 301 redirect /events.html to canonical /events URL (fixes duplicate content)
+[[redirects]]
+  from = "/events.html"
+  to = "/events"
+  status = 301
+  force = true
+
 # Rule for the main EVENTS listing page
 [[redirects]]
   from = "/events"

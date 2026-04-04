@@ -173,21 +173,24 @@ exports.handler = async function (event, context) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{event.name}} - BrumOutLoud</title>
+    <title>{{event.name}} — LGBTQ+ Event in Birmingham | Brum Outloud</title>
     <meta name="description" content="{{event.description}}">
-    
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/event/{{event.slug}}">
+
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{event.name}}">
+    <meta property="og:title" content="{{event.name}} — LGBTQ+ Event in Birmingham | Brum Outloud">
     <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
-    <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/event/{{event.slug}}">
     {{#if event.image}}
     <meta property="og:image" content="{{event.image.url}}">
     {{/if}}
-    
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{event.name}}">
+    <meta name="twitter:title" content="{{event.name}} — LGBTQ+ Event in Birmingham | Brum Outloud">
     <meta name="twitter:description" content="{{event.description}}">
     {{#if event.image}}
     <meta name="twitter:image" content="{{event.image.url}}">
@@ -388,7 +391,7 @@ exports.handler = async function (event, context) {
     <section class="max-w-5xl mx-auto px-6 md:px-12 mb-12">
         <div class="relative group">
             <div class="absolute -inset-1 bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-40 group-hover:opacity-70 transition-opacity duration-300"></div>
-            <img src="{{event.image.url}}" alt="{{event.name}}" class="relative w-full h-auto object-contain bg-black">
+            <img src="{{event.image.url}}" alt="{{event.name}} — LGBTQ+ event in Birmingham" class="relative w-full h-auto object-contain bg-black">
         </div>
     </section>
     {{/if}}
