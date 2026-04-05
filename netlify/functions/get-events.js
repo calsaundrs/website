@@ -80,7 +80,8 @@ async function handlePublicView(queryParams) {
         venues: queryParams.venues ? queryParams.venues.split(',') : [],
         search: queryParams.search || '',
         limit: parseInt(queryParams.limit) || 50,
-        offset: parseInt(queryParams.offset) || 0
+        offset: parseInt(queryParams.offset) || 0,
+        includeAdult: queryParams.includeAdult === 'true'
     };
 
     console.log("Public view filters:", filters);
@@ -207,8 +208,21 @@ async function handlePublicView(queryParams) {
 
         console.log(`Processed ${events.length} events`);
 
+        // Filter out adult events if includeAdult is false
+        let filteredEvents = events;
+        if (!filters.includeAdult) {
+            filteredEvents = events.filter(ev => {
+                let cats = [];
+                if (Array.isArray(ev.category)) cats = ev.category;
+                else if (typeof ev.category === 'string') cats = ev.category.split(',').map(s => s.trim());
+
+                const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+                return !isNSFW;
+            });
+        }
+
         // Sort events by date (client-side since we can't orderBy in Firestore yet)
-        events.sort((a, b) => {
+        filteredEvents.sort((a, b) => {
             try {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
@@ -225,12 +239,12 @@ async function handlePublicView(queryParams) {
             }
         });
 
-        console.log(`Sorted ${events.length} events by date`);
+        console.log(`Sorted ${filteredEvents.length} events by date`);
 
         // Group recurring events using the new manager
         const recurringManager = new RecurringEventsManager();
-        const groupedEvents = recurringManager.groupRecurringEvents(events);
-        console.log(`Grouped ${events.length} events into ${groupedEvents.length} display items`);
+        const groupedEvents = recurringManager.groupRecurringEvents(filteredEvents);
+        console.log(`Grouped ${filteredEvents.length} events into ${groupedEvents.length} display items`);
 
         // Apply pagination after date filtering and grouping
         const pagedGroupedEvents = groupedEvents.slice(filters.offset, filters.offset + filters.limit);

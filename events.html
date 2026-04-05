@@ -351,7 +351,7 @@
             }
 
             try {
-                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}`);
+                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}&includeAdult=${showNSFW}`);
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
                 if (data.success && data.events) {
@@ -436,8 +436,15 @@
                 if (isNaN(d.getTime())) return false;
                 if (d < now) return false;
                 // Filter out adult/NSFW events from the main public listing unless toggled
-                const cats = Array.isArray(ev.category) ? ev.category : [];
-                if (!showNSFW && cats.includes('Adult')) return false;
+                let cats = [];
+                if (Array.isArray(ev.category)) {
+                    cats = ev.category;
+                } else if (typeof ev.category === 'string') {
+                    cats = ev.category.split(',').map(s => s.trim());
+                }
+                const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+
+                if (!showNSFW && isNSFW) return false;
                 if (range) {
                     if (d < range.start || d > range.end) return false;
                 }
@@ -541,13 +548,20 @@
             }
 
             // Pride badge
-            const cats = Array.isArray(ev.category) ? ev.category : [];
+            let cats = [];
+            if (Array.isArray(ev.category)) {
+                cats = ev.category;
+            } else if (typeof ev.category === 'string') {
+                cats = ev.category.split(',').map(s => s.trim());
+            }
+
             const prideBadge = cats.includes('Pride')
                 ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
                 : '';
 
             // Adult/NSFW badge
-            const adultBadge = cats.includes('Adult')
+            const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+            const adultBadge = isNSFW
                 ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
                 : '';
 
