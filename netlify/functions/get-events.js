@@ -190,7 +190,8 @@ async function handlePublicView(queryParams) {
                 approvedBy: rawData.approvedBy,
                 approvedAt: rawData.approvedAt,
                 cloudinaryPublicId: rawData.cloudinaryPublicId || rawData['Cloudinary Public ID'],
-                promoImage: rawData.promoImage || rawData['Promo Image']
+                promoImage: rawData.promoImage || rawData['Promo Image'],
+                ageRestriction: rawData['Age Restriction'] || rawData.ageRestriction
             };
 
             // Convert venue object to venueName string for compatibility
@@ -213,8 +214,11 @@ async function handlePublicView(queryParams) {
         if (!filters.includeAdult) {
             filteredEvents = events.filter(ev => {
                 let cats = [];
-                if (Array.isArray(ev.category)) cats = ev.category;
-                else if (typeof ev.category === 'string') cats = ev.category.split(',').map(s => s.trim());
+                if (Array.isArray(ev.category)) {
+                    cats = ev.category;
+                } else if (typeof ev.category === 'string') {
+                    cats = ev.category.split(',').map(s => s.trim());
+                }
 
                 const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
                 return !isNSFW;
