@@ -110,7 +110,7 @@ function formatDate(dateStr) {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
-        timeZone: 'UTC'
+        timeZone: 'Europe/London'
     });
 }
 
@@ -119,7 +119,7 @@ function formatTime(dateStr) {
     if (isNaN(d.getTime())) return '';
     const s = typeof dateStr === 'string' ? dateStr : '';
     if (!s.includes('T') || s.includes('T00:00')) return '';
-    const t = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
+    const t = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', timeZone: 'Europe/London' });
     return (t === '0:00' || t === '00:00') ? '' : t;
 }
 

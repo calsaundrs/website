@@ -60,9 +60,9 @@
 /whats-on/birmingham-fetishmen-the-second-cmming          /event/birmingham-fetishmen:-the-second-c*mming 301
 /whats-on/birmingham-pride-2025                           /event/birmingham-pride-2025 301
 /whats-on/boltz-live                                      /events # No direct new event slug, redirecting to main events page
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau      /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Check for better match or map to /events if no new match
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-a9tdk /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Consolidating to cleaner old version
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-lnl59 /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Consolidating to cleaner old version
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau      /events 301 # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-a9tdk /events 301 # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-lnl59 /events 301 # No direct new event slug, redirecting to main events page
 /whats-on/cabaret-libert                                  /events # No direct new event slug, redirecting to main events page
 /whats-on/cabaret-libert-gdtpd                            /events # No direct new event slug, redirecting to main events page
 /whats-on/candy-fridays-with-dj-darlo                     /event/karaoke-with-dahliah-rivers-2025-01-01 301 # Assuming this is the closest new event for now
