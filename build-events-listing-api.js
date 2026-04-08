@@ -1,179 +1,131 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-// Build events listing page using deployed API endpoints
+// Build events listing page by pre-rendering event cards into events.html
+// This replaces skeleton loaders with real event cards so Googlebot can index them
 async function generateEventsListingPage() {
     try {
         console.log('🚀 Starting Events Listing SSG from API...');
-        
-        // Try to fetch from deployed API endpoint
-        // Use existing production site during builds
+
         const apiUrl = 'https://brumoutloud.co.uk';
         const eventsApiUrl = `${apiUrl}/.netlify/functions/get-events`;
-        
+
         console.log('📡 Fetching events from:', eventsApiUrl);
-        
-        // Use dynamic import for fetch
+
         const { default: fetch } = await import('node-fetch');
-        
+
         const response = await fetch(eventsApiUrl, {
-            headers: {
-                'User-Agent': 'Netlify-Build-SSG'
-            }
+            headers: { 'User-Agent': 'Netlify-Build-SSG' }
         });
-        
+
         if (!response.ok) {
             throw new Error(`API responded with ${response.status}: ${response.statusText}`);
         }
-        
+
         const apiData = await response.json();
         const events = apiData.events || [];
-        
+
         console.log(`📊 Fetched ${events.length} events from API`);
-        
+
         if (events.length === 0) {
             console.log('⚠️ No events found, skipping SSG generation');
             return;
         }
-        
-        // Read the current events.html template
+
+        // Filter to future events and sort by date
+        const now = new Date();
+        now.setUTCHours(0, 0, 0, 0);
+        const futureEvents = events.filter(ev => {
+            const d = new Date(ev.date);
+            return !isNaN(d.getTime()) && d >= now;
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        console.log(`📊 ${futureEvents.length} future events to pre-render`);
+
+        // Read the current events.html
         const eventsHtmlPath = path.join(process.cwd(), 'events.html');
         let eventsHtml = await fs.readFile(eventsHtmlPath, 'utf8');
-        
-        // Generate event cards HTML matching design system
-        const eventCardsHtml = events.map(event => {
-            const imageUrl = event.imageUrl || event.image?.url || '';
-            const categories = Array.isArray(event.category) ? event.category : (event.category ? [event.category] : []);
-            
-            const categoryTags = categories.map(cat => 
-                `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">${cat}</span>`
-            ).join(' ');
-            
-            // Format date safely
-            let dateDisplay = '';
-            let timeDisplay = '';
-            try {
-                const eventDate = new Date(event.date || event.startDate);
-                if (!isNaN(eventDate.getTime())) {
-                    dateDisplay = eventDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' });
-                    timeDisplay = eventDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                }
-            } catch (e) {
-                dateDisplay = 'TBC';
-                timeDisplay = 'TBC';
-            }
-            
-            return `
-                <div class="event-card p-0 group" 
-                     onclick="window.location.href='/event/${event.slug}'" style="cursor:pointer">
-                    <div class="relative h-48 overflow-hidden bg-black">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${event.name}" class="w-full h-full object-cover">` : `
-                            <div class="event-hero-fallback h-full w-full bg-black flex items-center justify-center">
-                                <i class="fas fa-image text-4xl text-gray-800"></i>
-                            </div>
-                        `}
-                        <div class="absolute top-3 right-3 z-20">
-                            <span class="filter-chip">
-                                ${getCategoryLabel(categories, event.name)}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center text-[var(--color-toxic)] font-bold text-xs">
-                                <i class="far fa-calendar-alt mr-1"></i>
-                                ${dateDisplay}
-                            </div>
-                            <div class="text-[var(--color-pink)] font-bold text-xs">
-                                <i class="far fa-clock mr-1"></i>
-                                ${timeDisplay}
-                            </div>
-                        </div>
-                        <h3 class="text-lg font-bold mb-2">${event.name}</h3>
-                        <p class="text-gray-400 text-xs mb-2 flex items-center">
-                            <i class="fas fa-map-marker-alt mr-1"></i>
-                            ${event.venueName || event.venue?.name || 'Venue TBC'}
-                        </p>
-                        <p class="text-gray-300 text-xs mb-4 line-clamp-2">
-                            ${event.description || 'Join us for this fantastic LGBTQ+ event in Birmingham.'}
-                        </p>
-                        <div class="flex gap-3">
-                            <a href="/event/${event.slug}" class="btn-primary flex-1 text-sm">
-                                <i class="fas fa-ticket-alt mr-1"></i>VIEW DETAILS
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        // Helper function for category labels
-        function getCategoryLabel(categories, eventName) {
-            const cats = (categories || []).map(c => c.toLowerCase());
-            const name = (eventName || '').toLowerCase();
 
-            if (cats.some(c => c.includes('trans')) || name.includes('trans')) return 'Trans';
-            if (cats.some(c => c.includes('pride')) || name.includes('pride')) return 'Pride';
-            if (cats.some(c => c.includes('drag')) || name.includes('drag')) return 'Drag';
-            if (cats.some(c => c.includes('cabaret')) || name.includes('cabaret')) return 'Cabaret';
-            if (cats.some(c => c.includes('clubbing')) || name.includes('club')) return 'Club Night';
-            return 'Event';
-        }
-        
-        // Generate featured events slideshow (use first 5 events)
-        const featuredEvents = events.slice(0, 5);
-        const featuredSlideshowHtml = featuredEvents.map((event, index) => {
-            const imageUrl = event.imageUrl || event.image?.url || '';
-            
-            return `
-                <div class="slide ${index === 0 ? 'active' : ''}" style="background-image: url('${imageUrl}');">
-                    <div class="slide-content">
-                        <h2>${event.name}</h2>
-                        <p>${event.venueName || event.venue?.name || 'TBC'}</p>
-                        <a href="/event/${event.slug}" class="btn-primary">View Event</a>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        const featuredDotsHtml = featuredEvents.map((_, index) => 
-            `<span class="dot ${index === 0 ? 'active' : ''}" onclick="currentSlide(${index + 1})"></span>`
-        ).join('');
-        
-        // Replace placeholders with generated content, removing any old content until the end of the container
-        // Replace placeholder with generated content
-        eventsHtml = eventsHtml.replace(
-            /<!-- EVENTS_GRID_START -->[\s\S]*?<!-- EVENTS_GRID_END -->/g,
-            `<!-- EVENTS_GRID_START -->\n${eventCardsHtml}\n<!-- EVENTS_GRID_END -->`
-        );
-        
-        eventsHtml = eventsHtml.replace(
-            /<!-- FEATURED_SLIDESHOW_SSG_PLACEHOLDER -->[\s\S]*?(?=\s*<\/div>\s*<!-- Navigation Dots -->)/g,
-            `<!-- FEATURED_SLIDESHOW_SSG_PLACEHOLDER -->\n${featuredSlideshowHtml}`
-        );
-        
-        eventsHtml = eventsHtml.replace(
-            /<!-- FEATURED_DOTS_SSG_PLACEHOLDER -->[\s\S]*?(?=\s*<\/div>\s*<\/div>\s*<!-- Next\/Prev Buttons -->)/g,
-            `<!-- FEATURED_DOTS_SSG_PLACEHOLDER -->\n${featuredDotsHtml}`
-        );
-        
-        // Remove the loading state
-        eventsHtml = eventsHtml.replace(
-            /<div class="col-span-full text-center text-gray-400 flex justify-center items-center gap-4 py-12">[\s\S]*?<\/div>/,
-            ''
-        );
-        
+        // Generate event cards matching the existing createCard() format in events.html
+        const eventCardsHtml = futureEvents.map(ev => {
+            const date = formatDate(ev.date);
+            const time = formatTime(ev.date);
+            const name = ev.name || 'Untitled Event';
+            const escapedName = escapeHtml(name);
+            const slug = ev.slug || '';
+
+            // Get image URL
+            const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
+            const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
+            const imgHtml = isPlaceholder
+                ? '<div class="event-placeholder"><i class="fas fa-image"></i></div>'
+                : `<img src="${escapeHtml(rawUrl)}" alt="${escapedName} — LGBTQ+ event in Birmingham" loading="lazy">`;
+
+            // Get venue name
+            let venue = '';
+            if (ev.venueName) {
+                venue = Array.isArray(ev.venueName) ? ev.venueName[0] : ev.venueName;
+            } else if (ev.venue && ev.venue.name) {
+                venue = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
+            }
+
+            return `<a href="/event/${slug}" class="event-card">`
+                + imgHtml
+                + '<div class="card-body">'
+                + '<p class="text-[var(--color-toxic)] font-bold text-sm mb-1">'
+                + '<i class="fas fa-calendar-day mr-1"></i>' + date
+                + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-1 text-[var(--color-toxic)]"></i>' + time + '</span>' : '')
+                + '</p>'
+                + '<h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-2">' + escapedName + '</h3>'
+                + (venue ? '<p class="text-gray-400 text-sm"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
+                + '</div>'
+                + '</a>';
+        }).join('\n            ');
+
+        // Replace skeleton loaders inside #event-grid with pre-rendered cards
+        const skeletonRegex = /<div id="event-grid"[^>]*>[\s\S]*?<\/main>/;
+        const replacement = `<div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            ${eventCardsHtml}
+        </div>
+    </main>`;
+
+        eventsHtml = eventsHtml.replace(skeletonRegex, replacement);
+
         // Write the updated HTML
         await fs.writeFile(eventsHtmlPath, eventsHtml, 'utf8');
-        
-        console.log('✅ Successfully generated static events listing page');
-        console.log(`📊 Generated ${events.length} event cards`);
-        console.log(`🎯 Generated ${featuredEvents.length} featured slides`);
-        
+
+        console.log('✅ Successfully pre-rendered events listing page');
+        console.log(`📊 Injected ${futureEvents.length} event cards`);
+
     } catch (error) {
         console.error('❌ Error generating events listing SSG:', error);
-        console.log('⚠️ Events listing will remain dynamic');
+        console.log('⚠️ Events listing will remain dynamic (skeleton loaders preserved)');
     }
+}
+
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return 'Date TBC';
+    return d.toLocaleDateString('en-GB', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'Europe/London'
+    });
+}
+
+function formatTime(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    const s = typeof dateStr === 'string' ? dateStr : '';
+    if (!s.includes('T') || s.includes('T00:00')) return '';
+    const t = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', timeZone: 'Europe/London' });
+    return (t === '0:00' || t === '00:00') ? '' : t;
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // Run if called directly
@@ -181,4 +133,4 @@ if (require.main === module) {
     generateEventsListingPage();
 }
 
-module.exports = { generateEventsListingPage }; 
+module.exports = { generateEventsListingPage };

@@ -123,6 +123,13 @@
   to = "/user-persona-testing.html"
   status = 200
 
+# 301 redirect /events.html to canonical /events URL (fixes duplicate content)
+[[redirects]]
+  from = "/events.html"
+  to = "/events"
+  status = 301
+  force = true
+
 # Rule for the main EVENTS listing page
 [[redirects]]
   from = "/events"
@@ -163,6 +170,22 @@
 [[redirects]]
   from = "/community"
   to = "/community.html"
+  status = 200
+
+# SEO content guide pages
+[[redirects]]
+  from = "/birmingham-gay-bars"
+  to = "/birmingham-gay-bars.html"
+  status = 200
+
+[[redirects]]
+  from = "/gay-birmingham-guide"
+  to = "/gay-birmingham-guide.html"
+  status = 200
+
+[[redirects]]
+  from = "/birmingham-drag-shows"
+  to = "/birmingham-drag-shows.html"
   status = 200
 
 # Rule for the CONTACT page

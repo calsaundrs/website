@@ -12,7 +12,7 @@
 /favicon.ico /faviconV2.png          301
 
 # Main section redirects
-/whats-on           /events.html        301
+/whats-on           /events        301
 /venues             /all-venues.html    301
 /clubs              /clubs.html         301
 /birmingham-pride   /birmingham-pride.html  301
@@ -40,7 +40,7 @@
 /the-loft               /venue/the-loft             301
 /nightingale-club       /venue/the-nightingale-club 301
 
-# Specific old event paths with unique IDs or duplicates (map to canonical new event or /events.html)
+# Specific old event paths with unique IDs or duplicates (map to canonical new event or /events)
 # Sorted alphabetically by old path for easier review
 
 # Direct matches for old Squarespace event slugs to new /event/ slugs (from sitemap comparison)
@@ -52,72 +52,72 @@
 /whats-on/beefmince-birmingham-cwrp8                      /event/beefmince-birmingham 301
 /whats-on/beginners-bollyqueer-birmingham                 /event/beginners-bollyqueer-birmingham 301
 /whats-on/beginners-bollyqueer-birmingham-swxtw           /event/beginners-bollyqueer-birmingham 301
-/whats-on/bfm-9th-birthday-party                          /events.html # No direct new event slug, redirecting to main events page
+/whats-on/bfm-9th-birthday-party                          /events # No direct new event slug, redirecting to main events page
 /whats-on/big-titty-life-with-dahliah-rivers              /event/big-titty-life-with-dahliah-rivers 301
 /whats-on/billys-underwear-party                          /event/billys-underwear-party-march25 301 # Assuming this maps to the march25 version if that's canonical
 /whats-on/billys-underwear-party-march25                  /event/billys-underwear-party-march25 301
 /whats-on/birmingham-bizarre-bazaar-after-party           /event/birmingham-bizarre-bazaar-&-after-party 301
 /whats-on/birmingham-fetishmen-the-second-cmming          /event/birmingham-fetishmen:-the-second-c*mming 301
 /whats-on/birmingham-pride-2025                           /event/birmingham-pride-2025 301
-/whats-on/boltz-live                                      /events.html # No direct new event slug, redirecting to main events page
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau      /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Check for better match or map to /events.html if no new match
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-a9tdk /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Consolidating to cleaner old version
-/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-lnl59 /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau 301 # Consolidating to cleaner old version
-/whats-on/cabaret-libert                                  /events.html # No direct new event slug, redirecting to main events page
-/whats-on/cabaret-libert-gdtpd                            /events.html # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live                                      /events # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau      /events 301 # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-a9tdk /events 301 # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-lnl59 /events 301 # No direct new event slug, redirecting to main events page
+/whats-on/cabaret-libert                                  /events # No direct new event slug, redirecting to main events page
+/whats-on/cabaret-libert-gdtpd                            /events # No direct new event slug, redirecting to main events page
 /whats-on/candy-fridays-with-dj-darlo                     /event/karaoke-with-dahliah-rivers-2025-01-01 301 # Assuming this is the closest new event for now
 /whats-on/candy-fridays-with-dj-darlo-j5fm5               /event/karaoke-with-dahliah-rivers-2025-01-01 301 # Assuming this is the closest new event for now
-/whats-on/carry-on-camping                                /events.html # No direct new event slug, redirecting to main events page
-/whats-on/carry-on-camping-1                              /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty                /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty-49f4k          /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b    /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-ef3hh /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-58wln /events.html # No direct new event slug, redirecting to main events page
-/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-pfthz /events.html # No direct new event slug, redirecting to main events page
-/whats-on/community-campfire-for-trans-day-of-visibility  /events.html # No direct new event slug, redirecting to main events page
+/whats-on/carry-on-camping                                /events # No direct new event slug, redirecting to main events page
+/whats-on/carry-on-camping-1                              /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty                /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty-49f4k          /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b    /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-ef3hh /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-58wln /events # No direct new event slug, redirecting to main events page
+/whats-on/charli-xcx-unofficial-afterparty-49f4k-gxk7b-pfthz /events # No direct new event slug, redirecting to main events page
+/whats-on/community-campfire-for-trans-day-of-visibility  /events # No direct new event slug, redirecting to main events page
 /whats-on/cr5qt926awutsch4b2w8irp6sqsley                  /event/choriza-may:-the-davinci-code-easter-special 301
 /whats-on/cr5qt926awutsch4b2w8irp6sqsley-5bnht            /event/choriza-may:-the-davinci-code-easter-special 301
-/whats-on/dare2bare-blackout-3be82                        /events.html # No direct new event slug, redirecting to main events page
-/whats-on/dare2bare-shag-tag-edition                      /events.html # No direct new event slug, redirecting to main events page
+/whats-on/dare2bare-blackout-3be82                        /events # No direct new event slug, redirecting to main events page
+/whats-on/dare2bare-shag-tag-edition                      /events # No direct new event slug, redirecting to main events page
 /whats-on/danny-beard                                     /event/danny-beard-live-@-the-village 301
 /whats-on/dilf-birmingham-pride-edition                   /event/dilf-birmingham---pride-edition 301
 /whats-on/dilf-birmingham-the-return                      /event/dilf-birmingham---pride-edition 301 # Assuming old 'return' maps to pride edition
-/whats-on/disco-pussy-presents-the-pssy-strikes-back      /events.html # No direct new event slug, redirecting to main events page
+/whats-on/disco-pussy-presents-the-pssy-strikes-back      /events # No direct new event slug, redirecting to main events page
 /whats-on/divina-de-campo-i-do-think                      /event/divina-de-campo---i-do-think 301
-/whats-on/dolls-club-collectors-edition                   /events.html # No direct new event slug, redirecting to main events page
-/whats-on/dolls-club-with-special-guest-angel-pinks       /events.html # No direct new event slug, redirecting to main events page
-/whats-on/drag-brunch                                     /events.html # No direct new event slug, redirecting to main events page
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black /events.html # No direct new event slug, redirecting to main events page
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e-jzwbr /events.html # Consolidating to /events.html
-/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e-jzwbr-pjyg4 /events.html # Consolidating to /events.html
+/whats-on/dolls-club-collectors-edition                   /events # No direct new event slug, redirecting to main events page
+/whats-on/dolls-club-with-special-guest-angel-pinks       /events # No direct new event slug, redirecting to main events page
+/whats-on/drag-brunch                                     /events # No direct new event slug, redirecting to main events page
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black /events # No direct new event slug, redirecting to main events page
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e-jzwbr /events # Consolidating to /events
+/whats-on/drag-race-uk-viewing-party-hosted-by-yshee-black-lwmbn-fb3cp-rd8lp-xkmzl-la94e-4alln-xkn5e-jzwbr-pjyg4 /events # Consolidating to /events
 /whats-on/dr-bev-ballcrusher                               /event/dr-bev-ballcrusher---camp-cabaret 301 # Assuming this maps to camp cabaret version
 /whats-on/dr-bev-ballcrusher-camp-cabaret                  /event/dr-bev-ballcrusher---camp-cabaret 301
-/whats-on/early-doors-with-pam-catz                        /events.html # No direct new event slug, redirecting to main events page
-/whats-on/early-doors-with-pam-catz-bjn7g                  /events.html # No direct new event slug, redirecting to main events page
-/whats-on/eat-drink-drag-with-tiana-biscuit                /events.html # No direct new event slug, redirecting to main events page
-/whats-on/eat-drink-drag-with-tiana-biscuit-snwmb          /events.html # No direct new event slug, redirecting to main events page
+/whats-on/early-doors-with-pam-catz                        /events # No direct new event slug, redirecting to main events page
+/whats-on/early-doors-with-pam-catz-bjn7g                  /events # No direct new event slug, redirecting to main events page
+/whats-on/eat-drink-drag-with-tiana-biscuit                /events # No direct new event slug, redirecting to main events page
+/whats-on/eat-drink-drag-with-tiana-biscuit-snwmb          /events # No direct new event slug, redirecting to main events page
 /whats-on/edens-eurovision-watch-party-grand-final-live    /event/eden's-eurovision-watch-party!-grand-final-live 301
-/whats-on/ellie-loft-live-lounge                           /events.html # No direct new event slug, redirecting to main events page
+/whats-on/ellie-loft-live-lounge                           /events # No direct new event slug, redirecting to main events page
 /whats-on/eurovision-viewing-party-the-old-joint-stock     /event/eurovision-viewing-party-@-the-old-joint-stock 301
 /whats-on/the-faaaaaaaabulous-ceri-dupree-show             /event/the-faaaaaaaabulous-ceri-dupree-show 301
 /whats-on/fatt-butchers-big-meaty-gameshow                 /event/fatt-butcher's-big-meaty-gameshow 301
 /whats-on/fatt-butchers-big-meaty-gameshow-1               /event/fatt-butcher's-big-meaty-gameshow 301
 /whats-on/fatt-butchers-big-meaty-gameshow-1-bwkk3         /event/fatt-butcher's-big-meaty-gameshow 301
-/whats-on/flirt                                            /events.html # No direct new event slug, redirecting to main events page
-/whats-on/friday-night-fever-with-ashleigh-marc            /events.html # No direct new event slug, redirecting to main events page
-/whats-on/friday-night-fever-with-ashleigh-marc-ew64k      /events.html # No direct new event slug, redirecting to main events page
-/whats-on/funkd-up-thursdays                               /events.html # No direct new event slug, redirecting to main events page
-/whats-on/funkd-up-thursdays-a4n7b                         /events.html # No direct new event slug, redirecting to main events page
+/whats-on/flirt                                            /events # No direct new event slug, redirecting to main events page
+/whats-on/friday-night-fever-with-ashleigh-marc            /events # No direct new event slug, redirecting to main events page
+/whats-on/friday-night-fever-with-ashleigh-marc-ew64k      /events # No direct new event slug, redirecting to main events page
+/whats-on/funkd-up-thursdays                               /events # No direct new event slug, redirecting to main events page
+/whats-on/funkd-up-thursdays-a4n7b                         /events # No direct new event slug, redirecting to main events page
 /whats-on/the-gaybourhood-events-wlw-afterparty            /event/the-gaybourhood-events:-pride-wlw-afterparty 301
-/whats-on/ginger-johnson-blows-off                         /events.html # No direct new event slug, redirecting to main events page
+/whats-on/ginger-johnson-blows-off                         /events # No direct new event slug, redirecting to main events page
 /whats-on/girls-day-party-1                                /event/girls-day-party-+-1 301
 /whats-on/the-gob-lip-sync-competetion-first-heat          /event/the-gob:-lip-sync-competition---first-heat 301
 /whats-on/grlz-only-uk-birmingham-pride-exclusive-event-for-queer-women /event/grlz-only-uk---birmingham-pride--exclusive-event-for-queer-women 301
@@ -127,78 +127,78 @@
 /whats-on/heshethey-birmingham                             /event/he.she.they.---birmingham 301
 /whats-on/horse-meat-disco-1                               /event/horse-meat-disco 301
 /whats-on/house-of-allures-powerplay                       /event/house-of-allure's-powerplay 301
-/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9                   /events.html # Random ID, redirecting to main events page
-/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9-g6azn             /events.html # Random ID, redirecting to main events page
-/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9-g6azn-3fal9       /events.html # Random ID, redirecting to main events page
-/whats-on/jack-banting-loft-live-lounge                    /events.html # No direct new event slug, redirecting to main events page
-/whats-on/journey-film-club-presents-double-feature-screening-frankenstein-bride-of-frankenstein /events.html # No direct new event slug, redirecting to main events page
-/whats-on/journey-film-club-presents-milk                  /events.html # No direct new event slug, redirecting to main events page
-/whats-on/journey-film-club-presents-the-rocky-horror-picture-show /events.html # No direct new event slug, redirecting to main events page
-/whats-on/joseph-whelan-live                               /events.html # No direct new event slug, redirecting to main events page
+/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9                   /events # Random ID, redirecting to main events page
+/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9-g6azn             /events # Random ID, redirecting to main events page
+/whats-on/io209p4sp2d9ycbwkxjm4juv8mqzf9-g6azn-3fal9       /events # Random ID, redirecting to main events page
+/whats-on/jack-banting-loft-live-lounge                    /events # No direct new event slug, redirecting to main events page
+/whats-on/journey-film-club-presents-double-feature-screening-frankenstein-bride-of-frankenstein /events # No direct new event slug, redirecting to main events page
+/whats-on/journey-film-club-presents-milk                  /events # No direct new event slug, redirecting to main events page
+/whats-on/journey-film-club-presents-the-rocky-horror-picture-show /events # No direct new event slug, redirecting to main events page
+/whats-on/joseph-whelan-live                               /events # No direct new event slug, redirecting to main events page
 /whats-on/just-may-tales-of-a-pork-chop                    /event/just-may:-tale-of-a-pork-chop 301 # Consolidating to new event slug
-/whats-on/killer-queens-present-dungeons-drag-queens-murder-mystery /events.html # No direct new event slug, redirecting to main events page
-/whats-on/karaoke-saturdays-with-miss-minnie               /events.html # No direct new event slug, redirecting to main events page
-/whats-on/karaoke-with-miss-minnie                         /events.html # No direct new event slug, redirecting to main events page
-/whats-on/lady-gaga-mayhem-album-release-special-the-davinci-code /events.html # No direct new event slug, redirecting to main events page
+/whats-on/killer-queens-present-dungeons-drag-queens-murder-mystery /events # No direct new event slug, redirecting to main events page
+/whats-on/karaoke-saturdays-with-miss-minnie               /events # No direct new event slug, redirecting to main events page
+/whats-on/karaoke-with-miss-minnie                         /events # No direct new event slug, redirecting to main events page
+/whats-on/lady-gaga-mayhem-album-release-special-the-davinci-code /events # No direct new event slug, redirecting to main events page
 /whats-on/lana-del-slay                                    /event/lana-del-slay 301
 /whats-on/lgbt-craft-fayre                                 /event/lgbt+-craft-fayre 301
-/whats-on/mayhem-party                                     /events.html # No direct new event slug, redirecting to main events page
-/whats-on/michael-marouli-christmas-roast                  /events.html # No direct new event slug, redirecting to main events page
-/whats-on/mirage-amuro-you-think-im-a-btch                 /events.html # No direct new event slug, redirecting to main events page
-/whats-on/miss-penny-the-slaybulls-christmas-fundraiser    /events.html # No direct new event slug, redirecting to main events page
-/whats-on/mistys-madhouse-payday-special-with-aislin-love  /events.html # No direct new event slug, redirecting to main events page
+/whats-on/mayhem-party                                     /events # No direct new event slug, redirecting to main events page
+/whats-on/michael-marouli-christmas-roast                  /events # No direct new event slug, redirecting to main events page
+/whats-on/mirage-amuro-you-think-im-a-btch                 /events # No direct new event slug, redirecting to main events page
+/whats-on/miss-penny-the-slaybulls-christmas-fundraiser    /events # No direct new event slug, redirecting to main events page
+/whats-on/mistys-madhouse-payday-special-with-aislin-love  /events # No direct new event slug, redirecting to main events page
 /whats-on/myra-dubois-cosmic-empath                        /event/myra-dubois:-cosmic-empath 301
-/whats-on/new-years-eve-rerun                              /events.html # No direct new event slug, redirecting to main events page
-/whats-on/pams-take-your-pick-game-show-night              /events.html # No direct new event slug, redirecting to main events page
-/whats-on/pams-take-your-pick-game-show-night-b62nw        /events.html # No direct new event slug, redirecting to main events page
-/whats-on/pams-take-your-pick-game-show-night-b62nw-l7c2d  /events.html # No direct new event slug, redirecting to main events page
+/whats-on/new-years-eve-rerun                              /events # No direct new event slug, redirecting to main events page
+/whats-on/pams-take-your-pick-game-show-night              /events # No direct new event slug, redirecting to main events page
+/whats-on/pams-take-your-pick-game-show-night-b62nw        /events # No direct new event slug, redirecting to main events page
+/whats-on/pams-take-your-pick-game-show-night-b62nw-l7c2d  /events # No direct new event slug, redirecting to main events page
 /whats-on/plug-hole-alt-pride                              /event/plughole-presents:-alt-pride 301
-/whats-on/pop-up-party-with-amy-laqueefa                   /events.html # No direct new event slug, redirecting to main events page
-/whats-on/pride-cabaret-fundraiser                         /events.html # No direct new event slug, redirecting to main events page
-/whats-on/princess-party-with-tiana-biscuit                /events.html # No direct new event slug, redirecting to main events page
-/whats-on/princess-party-with-tiana-biscuit-6spzz          /events.html # No direct new event slug, redirecting to main events page
-/whats-on/queenz-drag-me-to-the-disco                      /events.html # No direct new event slug, redirecting to main events page
+/whats-on/pop-up-party-with-amy-laqueefa                   /events # No direct new event slug, redirecting to main events page
+/whats-on/pride-cabaret-fundraiser                         /events # No direct new event slug, redirecting to main events page
+/whats-on/princess-party-with-tiana-biscuit                /events # No direct new event slug, redirecting to main events page
+/whats-on/princess-party-with-tiana-biscuit-6spzz          /events # No direct new event slug, redirecting to main events page
+/whats-on/queenz-drag-me-to-the-disco                      /events # No direct new event slug, redirecting to main events page
 /whats-on/rainbow-voices-30-years-of-greats                /event/rainbow-voices:-30-years-of-greats 301
-/whats-on/reign                                            /events.html # No direct new event slug, redirecting to main events page
+/whats-on/reign                                            /events # No direct new event slug, redirecting to main events page
 /whats-on/rogue-minogue-kylie-after-party                  /event/rogue-minogue:-kylie-after-party 301
-/whats-on/ru-pauls-drag-race-werq-the-world-tour-2025      /events.html # No direct new event slug, redirecting to main events page
-/whats-on/sabrina-carpenter-unofficial-after-party         /events.html # No direct new event slug, redirecting to main events page
-/whats-on/sapphira-plane-morphine                          /events.html # No direct new event slug, redirecting to main events page
-/whats-on/saturday-night-party-with-twiggy                 /events.html # No direct new event slug, redirecting to main events page
-/whats-on/saturday-night-party-with-twiggy-nn8p6           /events.html # No direct new event slug, redirecting to main events page
-/whats-on/saturday-sinner                                  /events.html # No direct new event slug, redirecting to main events page
-/whats-on/saturday-sinner-4y4jb                            /events.html # No direct new event slug, redirecting to main events page
+/whats-on/ru-pauls-drag-race-werq-the-world-tour-2025      /events # No direct new event slug, redirecting to main events page
+/whats-on/sabrina-carpenter-unofficial-after-party         /events # No direct new event slug, redirecting to main events page
+/whats-on/sapphira-plane-morphine                          /events # No direct new event slug, redirecting to main events page
+/whats-on/saturday-night-party-with-twiggy                 /events # No direct new event slug, redirecting to main events page
+/whats-on/saturday-night-party-with-twiggy-nn8p6           /events # No direct new event slug, redirecting to main events page
+/whats-on/saturday-sinner                                  /events # No direct new event slug, redirecting to main events page
+/whats-on/saturday-sinner-4y4jb                            /events # No direct new event slug, redirecting to main events page
 /whats-on/scssr-first-cut                                  /event/scssr:-first-cut 301
-/whats-on/second-self-drag                                 /events.html # No direct new event slug, redirecting to main events page
-/whats-on/season-6-the-big-takeover-birmingham             /events.html # No direct new event slug, redirecting to main events page
+/whats-on/second-self-drag                                 /events # No direct new event slug, redirecting to main events page
+/whats-on/season-6-the-big-takeover-birmingham             /events # No direct new event slug, redirecting to main events page
 /whats-on/send-in-the-clowns-little-flop-of-horrors-10     /event/send-in-the-clowns:-little-flop-of-horrors 301 # Assuming this maps to the main 'little flop' event
 /whats-on/solihull-pride-2025                              /event/solihull-pride-2025 301
-/whats-on/sophie-oke-with-sophie-stication                 /events.html # No direct new event slug, redirecting to main events page
-/whats-on/the-southside-sessions-free-live-music           /events.html # No direct new event slug, redirecting to main events page
-/whats-on/ss2dm6lc0018hbwaugaqjnlwp7uvwz                   /events.html # Random ID, redirecting to main events page
-/whats-on/stourbridge-pride                                /events.html # No direct new event slug, redirecting to main events page
+/whats-on/sophie-oke-with-sophie-stication                 /events # No direct new event slug, redirecting to main events page
+/whats-on/the-southside-sessions-free-live-music           /events # No direct new event slug, redirecting to main events page
+/whats-on/ss2dm6lc0018hbwaugaqjnlwp7uvwz                   /events # Random ID, redirecting to main events page
+/whats-on/stourbridge-pride                                /events # No direct new event slug, redirecting to main events page
 /whats-on/sugababes-unofficial-after-party                 /event/sugababes-unofficial-after-party 301
-/whats-on/the-taylor-swift-eras-drag-party                 /events.html # No direct new event slug, redirecting to main events page
+/whats-on/the-taylor-swift-eras-drag-party                 /events # No direct new event slug, redirecting to main events page
 /whats-on/tales-of-a-pork-chop                             /event/just-may:-tale-of-a-pork-chop 301
 /whats-on/the-drag-baptism-birminghams-open-drag-night     /event/the-drag-baptism:-birmingham's-open-drag-night 301
-/whats-on/the-westlands-saturday-live-in-the-lady-garden   /events.html # No direct new event slug, redirecting to main events page
-/whats-on/thursday-thunder-with-pam-catz                   /events.html # No direct new event slug, redirecting to main events page
-/whats-on/thursday-thunder-with-pam-catz-7a6kr             /events.html # No direct new event slug, redirecting to main events page
-/whats-on/treble-bass-glamcocks-with-cake-boi              /events.html # No direct new event slug, redirecting to main events page
+/whats-on/the-westlands-saturday-live-in-the-lady-garden   /events # No direct new event slug, redirecting to main events page
+/whats-on/thursday-thunder-with-pam-catz                   /events # No direct new event slug, redirecting to main events page
+/whats-on/thursday-thunder-with-pam-catz-7a6kr             /events # No direct new event slug, redirecting to main events page
+/whats-on/treble-bass-glamcocks-with-cake-boi              /events # No direct new event slug, redirecting to main events page
 /whats-on/treble-bass-pride-special-with-adam-all          /event/treble-&-bass:-pride-special-with-adam-all 301
 /whats-on/village-inn-new-venue-grand-opening              /venue/the-village-inn 301 # Redirecting to the main venue page
-/whats-on/walsall-pride-2024                               /events.html # No direct new event slug, redirecting to main events page
+/whats-on/walsall-pride-2024                               /events # No direct new event slug, redirecting to main events page
 /whats-on/walsall-pride-2025                               /event/walsall-pride-2025 301
 /whats-on/wolverhampton-pride-2025                         /event/wolverhampton-pride-2025 301
 /whats-on/xxl-bears                                        /event/xxl-pride 301 # Assuming this is the best fit for XXL bears
-/whats-on/xxl-halloween                                    /events.html # No direct new event slug, redirecting to main events page
-/whats-on/xxl-leather                                      /events.html # No direct new event slug, redirecting to main events page
-/whats-on/xxl-leather-ft6ca                                /events.html # No direct new event slug, redirecting to main events page
-/whats-on/xxl-novembear                                    /events.html # No direct new event slug, redirecting to main events page
+/whats-on/xxl-halloween                                    /events # No direct new event slug, redirecting to main events page
+/whats-on/xxl-leather                                      /events # No direct new event slug, redirecting to main events page
+/whats-on/xxl-leather-ft6ca                                /events # No direct new event slug, redirecting to main events page
+/whats-on/xxl-novembear                                    /events # No direct new event slug, redirecting to main events page
 /whats-on/xxl-old                                          /event/xxl-pride 301 # Redirecting to specific XXL event
 /whats-on/xxl-pride                                        /event/xxl-pride 301
-/whats-on/yarana-asian-and-middle-eastern-lgbtqia-meet-up-group /events.html # No direct new event slug, redirecting to main events page
-/whats-on/yarana-asian-and-middle-eastern-lgbtqia-meet-up-group-hsfd3 /events.html # No direct new event slug, redirecting to main events page
+/whats-on/yarana-asian-and-middle-eastern-lgbtqia-meet-up-group /events # No direct new event slug, redirecting to main events page
+/whats-on/yarana-asian-and-middle-eastern-lgbtqia-meet-up-group-hsfd3 /events # No direct new event slug, redirecting to main events page
 
 # Old News Article Redirects to new /news/ slugs
 # (Note: News section now redirects to homepage as per your confirmation)

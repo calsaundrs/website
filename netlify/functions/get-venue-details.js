@@ -99,14 +99,58 @@ exports.handler = async function(event, context) {
     // Register Handlebars helpers
     registerHandlebarsHelpers();
 
+    // SEO copy pack: venue-specific meta titles & descriptions
+    const venueMetaOverrides = {
+      'the-fox': {
+        metaTitle: 'The Fox Birmingham | Gay Bar in the Gay Village | Brum Outloud',
+        metaDescription: 'The little gay bar with the big gay heart. Karaoke Fri, acoustic Sat, drag Sun. Open Thu-Sun on Lower Essex Street, Birmingham Gay Village.'
+      },
+      'nightingale': {
+        metaTitle: 'Nightingale Club Birmingham | Iconic LGBTQ+ Superclub | Brum Outloud',
+        metaDescription: "Birmingham's iconic LGBTQ+ superclub on Kent Street. Two floors, multiple bars, huge capacity. POUNDED Thursdays, Big Saturgay. Open Thu-Sat from 10pm."
+      },
+      'equator-bar': {
+        metaTitle: 'Equator Bar Birmingham | Hurst Street LGBTQ+ Bar | Brum Outloud',
+        metaDescription: "Hurst Street's little gem. A relaxed LGBTQ+ bar serving coffee by day and cocktails by night, at the heart of the Gay Village for 20+ years."
+      },
+      'missing-bar': {
+        metaTitle: 'Missing Bar Birmingham | Gay Village Party Bar | Brum Outloud',
+        metaDescription: "Birmingham's party bar on Bromsgrove Street. Drag shows, karaoke, late nights and huge energy. Open till 4am Fri-Sat in the Gay Village."
+      },
+      'eden-bar': {
+        metaTitle: 'Eden Bar Birmingham | Cabaret Bar & Live Shows | Brum Outloud',
+        metaDescription: "Gooch Street's award-winning LGBTQ+ cabaret bar. Two floors, a terrace, pool table and live cabaret from across the UK. Open Wed-Sun."
+      },
+      'glamorous': {
+        metaTitle: 'Glamorous Birmingham | Late-Night LGBTQ+ Nightclub | Brum Outloud',
+        metaDescription: "Hurst Street's late-night LGBTQ+ nightclub, open until 6am. Recently renovated in 2025 with new management and quality DJs all week."
+      },
+      'the-village-inn': {
+        metaTitle: 'The Village Inn Birmingham | Cabaret Bar | Brum Outloud',
+        metaDescription: "The beating heart of Birmingham's Gay Village. Cabaret bar with drag, live entertainment and a warm welcome seven nights a week."
+      },
+      'the-fountain-inn': {
+        metaTitle: 'The Fountain Inn Birmingham | Traditional Gay Bar | Brum Outloud',
+        metaDescription: "One of Birmingham's most beloved traditional gay pubs on Wrentham Street. Welcoming, affordable and always part of the community."
+      },
+      'the-loft': {
+        metaTitle: 'The Loft Birmingham | Gay Bar in the Gay Village | Brum Outloud',
+        metaDescription: "A relaxed, laid-back LGBTQ+ bar in Birmingham's Gay Village. Great drinks, friendly crowd and no pressure — just good vibes."
+      }
+    };
+
+    const metaOverride = venueMetaOverrides[slug] || {};
+
     // Prepare template data
     const templateData = {
       venue: venue,
+      metaTitle: metaOverride.metaTitle || `${venue.name} — LGBTQ+ Venue in Birmingham | Brum Outloud`,
+      metaDescription: metaOverride.metaDescription || venue.description,
       googlePlaces: googlePlacesData,
       upcomingEvents: upcomingEvents,
       hasUpcomingEvents: upcomingEvents.length > 0,
       categoryTags: generateCategoryTags(venue.category || []),
-      shareUrl: `https://brumoutloud.co.uk/venue/${slug}`,
+      shareUrl: `https://www.brumoutloud.co.uk/venue/${slug}`,
       calendarLinks: generateCalendarLinks(upcomingEvents[0]) // For first upcoming event
     };
 
@@ -460,25 +504,83 @@ function getVenueTemplate() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{venue.name}} - BrumOutLoud</title>
-    <meta name="description" content="{{venue.description}}">
+    <title>{{metaTitle}}</title>
+    <meta name="description" content="{{metaDescription}}">
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{venue.name}}">
-    <meta property="og:description" content="{{venue.description}}">
+    <meta property="og:title" content="{{metaTitle}}">
+    <meta property="og:description" content="{{metaDescription}}">
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://brumoutloud.co.uk/venue/{{venue.slug}}">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
     {{#if venue.image}}
     <meta property="og:image" content="{{venue.image.url}}">
     {{/if}}
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{venue.name}}">
-    <meta name="twitter:description" content="{{venue.description}}">
+    <meta name="twitter:title" content="{{metaTitle}}">
+    <meta name="twitter:description" content="{{metaDescription}}">
     {{#if venue.image}}
     <meta name="twitter:image" content="{{venue.image.url}}">
     {{/if}}
+
+    <!-- LocalBusiness Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "{{venue.name}}",
+      "description": "{{venue.description}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{venue.address}}",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://www.brumoutloud.co.uk/venue/{{venue.slug}}",
+      {{#if venue.image}}
+      "image": "{{venue.image.url}}",
+      {{/if}}
+      {{#if venue.website}}
+      "sameAs": ["{{venue.website}}"],
+      {{/if}}
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4744,
+        "longitude": -1.8958
+      }
+    }
+    </script>
+
+    <!-- FAQPage Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where is {{venue.name}} in Birmingham?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{venue.name}} is located at {{venue.address}}, in Birmingham's Gay Village. It's a short walk from Birmingham New Street station."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is {{venue.name}} LGBTQ+ friendly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. {{venue.name}} is an LGBTQ+ venue in Birmingham's Gay Village. It welcomes everyone regardless of gender identity or sexual orientation."
+          }
+        }
+      ]
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -629,7 +731,7 @@ function getVenueTemplate() {
     <section class="relative w-full" style="min-height: 50vh;">
         <div class="absolute inset-0">
             {{#if venue.image}}
-            <img src="{{venue.image.url}}" alt="{{venue.name}}" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <img src="{{venue.image.url}}" alt="{{venue.name}} — LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
             {{else}}
             <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
             {{/if}}
@@ -721,7 +823,7 @@ function getVenueTemplate() {
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {{#each googlePlaces.images}}
                         <div class="gallery-item" onclick="openImageModal('{{url}}')">
-                            <img src="{{url}}" alt="Venue photo" class="w-full h-full object-cover">
+                            <img src="{{url}}" alt="Photo of {{../venue.name}} in Birmingham" class="w-full h-full object-cover">
                         </div>
                         {{/each}}
                     </div>

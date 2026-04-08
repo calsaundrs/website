@@ -44,19 +44,25 @@ async function generateComprehensiveSitemap() {
   const baseUrl = 'https://www.brumoutloud.co.uk';
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
   
-  // Add static pages
+  // Add static pages (using clean canonical URLs without .html extensions)
   const staticPages = [
     { url: '/', changefreq: 'weekly', priority: '1.0' },
-    { url: '/events.html', changefreq: 'daily', priority: '0.9' },
-    { url: '/all-venues.html', changefreq: 'weekly', priority: '0.8' },
-    { url: '/clubs', changefreq: 'monthly', priority: '0.7' },
-    { url: '/birmingham-pride', changefreq: 'monthly', priority: '0.7' },
-    { url: '/community.html', changefreq: 'monthly', priority: '0.7' },
-    { url: '/contact.html', changefreq: 'monthly', priority: '0.6' },
+    { url: '/events', changefreq: 'daily', priority: '0.9' },
+    { url: '/all-venues', changefreq: 'weekly', priority: '0.8' },
+    { url: '/clubs', changefreq: 'weekly', priority: '0.8' },
+    { url: '/birmingham-pride', changefreq: 'weekly', priority: '0.8' },
+    { url: '/community', changefreq: 'monthly', priority: '0.7' },
+    { url: '/contact', changefreq: 'monthly', priority: '0.6' },
     { url: '/promoter-submit-new', changefreq: 'monthly', priority: '0.6' },
-    { url: '/privacy-policy.html', changefreq: 'yearly', priority: '0.3' },
-    { url: '/terms-and-conditions.html', changefreq: 'yearly', priority: '0.3' },
-    { url: '/terms-of-submission.html', changefreq: 'yearly', priority: '0.3' }
+    { url: '/promoter-tool', changefreq: 'monthly', priority: '0.6' },
+    { url: '/get-listed', changefreq: 'monthly', priority: '0.5' },
+    { url: '/birmingham-gay-bars', changefreq: 'monthly', priority: '0.8' },
+    { url: '/gay-birmingham-guide', changefreq: 'monthly', priority: '0.8' },
+    { url: '/birmingham-drag-shows', changefreq: 'monthly', priority: '0.8' },
+    { url: '/accessibility', changefreq: 'yearly', priority: '0.3' },
+    { url: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
+    { url: '/terms-and-conditions', changefreq: 'yearly', priority: '0.3' },
+    { url: '/terms-of-submission', changefreq: 'yearly', priority: '0.3' }
   ];
 
   console.log('Adding static pages...');
@@ -94,7 +100,7 @@ async function generateComprehensiveSitemap() {
     console.log(`Found ${venues.length} venues`);
 
     venues.forEach(venue => {
-      if (venue.slug && venue.image && venue.image.url && !venue.image.url.includes('placehold.co')) {
+      if (venue.slug) {
         const venueUrl = `${baseUrl}/venue/${venue.slug}`;
         sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
       }
