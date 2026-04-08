@@ -172,6 +172,22 @@
   to = "/community.html"
   status = 200
 
+# SEO content guide pages
+[[redirects]]
+  from = "/birmingham-gay-bars"
+  to = "/birmingham-gay-bars.html"
+  status = 200
+
+[[redirects]]
+  from = "/gay-birmingham-guide"
+  to = "/gay-birmingham-guide.html"
+  status = 200
+
+[[redirects]]
+  from = "/birmingham-drag-shows"
+  to = "/birmingham-drag-shows.html"
+  status = 200
+
 # Rule for the CONTACT page
 [[redirects]]
   from = "/contact"

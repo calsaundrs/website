@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{VENUE_NAME}} Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
-    <meta name="description" content="Read reviews, view photos, and see upcoming events for {{VENUE_NAME}}, a popular LGBTQ+ venue and gay bar in Birmingham. {{VENUE_DESCRIPTION}}">
+    <title>{{VENUE_META_TITLE}}</title>
+    <meta name="description" content="{{VENUE_META_DESCRIPTION}}">
     <meta name="keywords" content="{{VENUE_NAME}} birmingham, {{VENUE_NAME}} reviews, {{VENUE_NAME}} photos, gay bar birmingham, gay village birmingham venues">
     <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/{{VENUE_SLUG}}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{VENUE_NAME}} Reviews, Photos & Events | Brum Outloud">
-    <meta property="og:description" content="{{VENUE_DESCRIPTION}}">
+    <meta property="og:title" content="{{VENUE_META_TITLE}}">
+    <meta property="og:description" content="{{VENUE_META_DESCRIPTION}}">
     <meta property="og:type" content="business.business">
     <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/{{VENUE_SLUG}}">
     <meta property="og:image" content="{{VENUE_IMAGE_URL}}">
@@ -19,8 +19,8 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{VENUE_NAME}} Reviews, Photos & Events | Brum Outloud">
-    <meta name="twitter:description" content="{{VENUE_DESCRIPTION}}">
+    <meta name="twitter:title" content="{{VENUE_META_TITLE}}">
+    <meta name="twitter:description" content="{{VENUE_META_DESCRIPTION}}">
     <meta name="twitter:image" content="{{VENUE_IMAGE_URL}}">
 
     <!-- Structured Data -->
@@ -41,6 +41,32 @@
       "image": "{{VENUE_IMAGE_URL}}",
       "sameAs": [
         "{{VENUE_WEBSITE_URL}}"
+      ]
+    }
+    </script>
+
+    <!-- FAQPage Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where is {{VENUE_NAME}} in Birmingham?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{VENUE_NAME}} is located at {{VENUE_ADDRESS}}, in Birmingham's Gay Village. It's a short walk from Birmingham New Street station."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is {{VENUE_NAME}} LGBTQ+ friendly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. {{VENUE_NAME}} is an LGBTQ+ venue in Birmingham's Gay Village. It welcomes everyone regardless of gender identity or sexual orientation."
+          }
+        }
       ]
     }
     </script>

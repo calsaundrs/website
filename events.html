@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LGBT Events Birmingham | Gay Events & Club Nights | Brum Outloud</title>
-    <meta name="description" content="Discover the best LGBT events in Birmingham. Find gay events, club nights, drag shows, and queer performances happening in the Birmingham gay village.">
+    <title>LGBTQ+ Events Birmingham | Gay Village What's On | Brum Outloud</title>
+    <meta name="description" content="Find every LGBTQ+ event in Birmingham and the West Midlands — drag shows, club nights, Pride parties, and more. Updated daily.">
     <meta name="keywords" content="lgbt events birmingham, gay events birmingham, gay village birmingham events, birmingham gay events, gay nights">
     <link rel="canonical" href="https://www.brumoutloud.co.uk/events">
 
@@ -45,6 +45,40 @@
           { "@type": "ListItem", "position": 2, "name": "Events", "item": "https://brumoutloud.co.uk/events" }
         ]
       }
+    }
+    </script>
+
+    <!-- FAQPage (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What LGBTQ+ events are on in Birmingham this week?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Birmingham has LGBTQ+ events most nights of the week in the Gay Village. Regular nights include POUNDED at The Nightingale (Thursdays), Big Saturgay (Saturdays), Foxeoke karaoke at The Fox (Fridays), drag at The Village Inn, and cabaret at Eden Bar. This page lists every upcoming LGBTQ+ event and is updated daily."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where are LGBTQ+ events held in Birmingham?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most LGBTQ+ events in Birmingham take place in the Gay Village on Hurst Street, Southside. Key venues include The Nightingale Club (Kent Street), The Fox (Lower Essex Street), Missing Bar (Bromsgrove Street), Eden Bar (Gooch Street), The Village Inn (Kent Street) and Glamorous (Hurst Street)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are there 18+ or adult LGBTQ+ events in Birmingham?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Some LGBTQ+ events in Birmingham are 18+ only or feature adult content. On this page, use the 18+ toggle to include adult events in the listings. These events are hidden by default."
+          }
+        }
+      ]
     }
     </script>
 
@@ -107,6 +141,64 @@
             background: var(--color-toxic);
             color: #000;
             border-color: var(--color-toxic);
+        }
+
+        /* NSFW toggle */
+        .nsfw-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            cursor: pointer;
+            background: none;
+            border: 3px solid #444;
+            padding: 0.4rem 1rem 0.4rem 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .nsfw-toggle:hover {
+            border-color: var(--color-pink);
+        }
+        .nsfw-toggle[aria-pressed="true"] {
+            border-color: var(--color-pink);
+            background: rgba(232, 58, 153, 0.15);
+        }
+        .nsfw-toggle-track {
+            position: relative;
+            width: 2.5rem;
+            height: 1.375rem;
+            background: #333;
+            border: 2px solid #555;
+            display: block;
+            transition: all 0.2s ease;
+        }
+        .nsfw-toggle[aria-pressed="true"] .nsfw-toggle-track {
+            background: var(--color-pink);
+            border-color: var(--color-pink);
+        }
+        .nsfw-toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 0.875rem;
+            height: 0.875rem;
+            background: #888;
+            display: block;
+            transition: all 0.2s ease;
+        }
+        .nsfw-toggle[aria-pressed="true"] .nsfw-toggle-thumb {
+            left: calc(100% - 1rem);
+            background: white;
+        }
+        .nsfw-toggle-label {
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #666;
+            font-family: 'Syne', sans-serif;
+            transition: color 0.2s ease;
+        }
+        .nsfw-toggle[aria-pressed="true"] .nsfw-toggle-label {
+            color: var(--color-pink);
         }
 
         /* Event cards */
@@ -224,6 +316,14 @@
         <p class="text-gray-400 text-lg max-w-xl">Your complete guide to LGBT events in Birmingham. From the biggest gay club nights in the village to intimate community gatherings.</p>
     </section>
 
+    <!-- AEO Answer Box -->
+    <section class="max-w-6xl mx-auto px-6 md:px-12 pb-6">
+        <div style="border-left: 6px solid var(--color-toxic); background: rgba(204, 255, 0, 0.05); padding: 1.5rem 1.5rem 1.5rem 2rem; max-width: 48rem;">
+            <p class="text-white text-lg font-bold mb-2">Birmingham has LGBTQ+ events most nights of the week, mostly in the Gay Village on Hurst Street.</p>
+            <p class="text-gray-300">Regular nights include drag shows at <a href="/venue/the-village-inn" class="text-[var(--color-pink)] font-bold hover:text-white">The Village Inn</a>, karaoke at <a href="/venue/the-fox" class="text-[var(--color-pink)] font-bold hover:text-white">The Fox</a>, club nights at <a href="/venue/nightingale-club" class="text-[var(--color-pink)] font-bold hover:text-white">The Nightingale</a>, and cabaret at <a href="/venue/eden-bar" class="text-[var(--color-pink)] font-bold hover:text-white">Eden Bar</a>. Filter by date or category below.</p>
+        </div>
+    </section>
+
     <!-- Filters -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-8">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -234,8 +334,11 @@
                 <button class="filter-pill date-filter" data-filter="this-month">This Month</button>
             </div>
             <div class="flex items-center">
-                <button id="nsfw-toggle" class="filter-pill flex items-center gap-2 border-dashed opacity-60 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-eye-slash"></i> 18+
+                <button id="nsfw-toggle" class="nsfw-toggle" aria-pressed="false">
+                    <span class="nsfw-toggle-track">
+                        <span class="nsfw-toggle-thumb"></span>
+                    </span>
+                    <span class="nsfw-toggle-label">18+</span>
                 </button>
             </div>
         </div>
@@ -336,12 +439,7 @@
         if (nsfwToggle) {
             nsfwToggle.addEventListener('click', () => {
                 showNSFW = !showNSFW;
-                nsfwToggle.classList.toggle('active', showNSFW);
-                nsfwToggle.classList.toggle('opacity-60', !showNSFW);
-                nsfwToggle.classList.toggle('opacity-100', showNSFW);
-                nsfwToggle.innerHTML = showNSFW 
-                    ? '<i class="fas fa-eye"></i> 18+' 
-                    : '<i class="fas fa-eye-slash"></i> 18+';
+                nsfwToggle.setAttribute('aria-pressed', showNSFW);
                 fetchEvents();
             });
         }
