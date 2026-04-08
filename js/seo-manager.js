@@ -47,11 +47,11 @@ class SEOManager {
         return {
             path,
             isHome: path === '/' || path === '/index.html',
-            isEvents: path === '/events.html',
-            isVenues: path === '/all-venues.html',
-            isSubmit: path === '/promoter-tool.html',
-            isCommunity: path === '/community.html',
-            isContact: path === '/contact.html',
+            isEvents: path === '/events.html' || path === '/events',
+            isVenues: path === '/all-venues.html' || path === '/all-venues',
+            isSubmit: path === '/promoter-tool.html' || path === '/promoter-tool',
+            isCommunity: path === '/community.html' || path === '/community',
+            isContact: path === '/contact.html' || path === '/contact',
             urlParams
         };
     }
@@ -620,12 +620,16 @@ class SEOManager {
     }
 
     /**
-     * Track events
+     * Track events — pushes to GTM dataLayer and stores locally for debugging
      */
     trackEvent(eventName, data = {}) {
-        // In production, this would send to analytics service
-        ErrorHandler.log('SEO Event:', eventName, data);
-        
+        // Push to GTM dataLayer
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: eventName,
+            ...data
+        });
+
         // Store in localStorage for debugging
         try {
             const events = JSON.parse(localStorage.getItem('seo_events') || '[]');
@@ -634,11 +638,11 @@ class SEOManager {
                 data,
                 timestamp: new Date().toISOString()
             });
-            
-            if (events.length > 100) events.shift(); // Keep only last 100 events
+
+            if (events.length > 100) events.shift();
             localStorage.setItem('seo_events', JSON.stringify(events));
         } catch (error) {
-            ErrorHandler.warn('Failed to store SEO event:', error);
+            // Silently fail — localStorage may be full or unavailable
         }
     }
 }

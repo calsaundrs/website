@@ -164,6 +164,32 @@ const templateContent = `<!DOCTYPE html>
     <meta name="twitter:image" content="{{venue.image.url}}">
     {{/if}}
 
+    <!-- LocalBusiness Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "{{venue.name}}",
+      "description": "{{venue.description}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{venue.address}}",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://www.brumoutloud.co.uk/venue/{{venue.slug}}",
+      {{#if venue.image}}
+      "image": "{{venue.image.url}}",
+      {{/if}}
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4744,
+        "longitude": -1.8958
+      }
+    }
+    </script>
+
     <!-- FAQPage Schema (AEO) -->
     <script type="application/ld+json">
     {

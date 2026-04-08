@@ -195,10 +195,42 @@ exports.handler = async function (event, context) {
     {{#if event.image}}
     <meta name="twitter:image" content="{{event.image.url}}">
     {{/if}}
-    
+
+    <!-- Event Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "{{event.name}}",
+      "description": "{{event.description}}",
+      "startDate": "{{event.date}}",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "{{event.venue.name}}",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Birmingham",
+          "addressRegion": "West Midlands",
+          "addressCountry": "GB"
+        }
+      },
+      {{#if event.image}}
+      "image": "{{event.image.url}}",
+      {{/if}}
+      "url": "https://www.brumoutloud.co.uk/event/{{event.slug}}",
+      "organizer": {
+        "@type": "Organization",
+        "name": "Brum Outloud",
+        "url": "https://www.brumoutloud.co.uk"
+      }
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
+
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
