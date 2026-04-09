@@ -73,6 +73,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preload" as="image" href="{{VENUE_IMAGE_URL}}" fetchpriority="high">
 
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -206,7 +207,7 @@
     <!-- Hero Section - Full Bleed -->
     <section class="relative w-full" style="min-height: 50vh;">
         <div class="absolute inset-0">
-            <img src="{{VENUE_IMAGE_URL}}" alt="Photo of {{VENUE_NAME}} LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <img src="{{VENUE_IMAGE_URL}}" alt="Photo of {{VENUE_NAME}} LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);" fetchpriority="high">
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
         </div>
 
