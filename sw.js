@@ -78,48 +78,39 @@ self.addEventListener('install', (event) => {
 // Function to cache SSG pages (event and venue pages)
 async function cacheSSGPages(cache) {
   try {
-    // Cache event pages
-    const eventPages = await getEventPages();
-    if (eventPages.length > 0) {
-      console.log(`Service Worker: Attempting to cache ${eventPages.length} event pages`);
-      for (const page of eventPages) {
+    // Fetch both event and venue pages concurrently
+    const [eventPages, venuePages] = await Promise.all([
+      getEventPages(),
+      getVenuePages()
+    ]);
+
+    // Combine all pages to cache concurrently
+    const allPages = [
+      ...eventPages.map(page => ({ url: page, type: 'event' })),
+      ...venuePages.map(page => ({ url: page, type: 'venue' }))
+    ];
+
+    if (allPages.length > 0) {
+      console.log(`Service Worker: Attempting to cache ${allPages.length} SSG pages concurrently`);
+
+      // Cache all pages in parallel
+      await Promise.allSettled(allPages.map(async (pageObj) => {
+        const { url, type } = pageObj;
         try {
           // Use fetch with no-cache to avoid 206 partial responses
-          const response = await fetch(page, { cache: 'no-cache' });
+          const response = await fetch(url, { cache: 'no-cache' });
           if (response.ok && response.status === 200) {
-            await cache.put(page, response);
-            console.log('Service Worker: Cached event page:', page);
+            await cache.put(url, response);
+            console.log(`Service Worker: Cached ${type} page:`, url);
           } else {
-            console.log(`Service Worker: Skipping event page (${response.status}):`, page);
+            console.log(`Service Worker: Skipping ${type} page (${response.status}):`, url);
           }
         } catch (err) {
-          console.log('Service Worker: Failed to cache event page:', page, err.message);
+          console.log(`Service Worker: Failed to cache ${type} page:`, url, err.message);
         }
-      }
+      }));
     } else {
-      console.log('Service Worker: No event pages to cache');
-    }
-    
-    // Cache venue pages
-    const venuePages = await getVenuePages();
-    if (venuePages.length > 0) {
-      console.log(`Service Worker: Attempting to cache ${venuePages.length} venue pages`);
-      for (const page of venuePages) {
-        try {
-          // Use fetch with no-cache to avoid 206 partial responses
-          const response = await fetch(page, { cache: 'no-cache' });
-          if (response.ok && response.status === 200) {
-            await cache.put(page, response);
-            console.log('Service Worker: Cached venue page:', page);
-          } else {
-            console.log(`Service Worker: Skipping venue page (${response.status}):`, page);
-          }
-        } catch (err) {
-          console.log('Service Worker: Failed to cache venue page:', page, err.message);
-        }
-      }
-    } else {
-      console.log('Service Worker: No venue pages to cache');
+      console.log('Service Worker: No SSG pages to cache');
     }
   } catch (err) {
     console.log('Service Worker: Error caching SSG pages:', err);
