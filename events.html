@@ -584,7 +584,7 @@
             const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
             prideBanner.classList.toggle('hidden', !hasPride);
 
-            let html = filtered.map(ev => createCard(ev)).join('');
+            let html = filtered.map((ev, index) => createCard(ev, index === 0)).join('');
 
             // Show "Load More" button if the server has more events and we're on the unfiltered view
             if (hasMoreEvents && activeFilter === 'all') {
@@ -629,16 +629,28 @@
         }
 
         // Build card HTML
-        function createCard(ev) {
+        function createCard(ev, isFirst) {
             const date = formatDate(ev.date);
             const time = formatTime(ev.date);
 
             // Image
             const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
             const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
-            const imgHtml = isPlaceholder
-                ? '<div class="event-placeholder"><i class="fas fa-image"></i></div>'
-                : '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" loading="lazy">';
+            let imgHtml = '';
+
+            if (isPlaceholder) {
+                imgHtml = '<div class="event-placeholder"><i class="fas fa-image"></i></div>';
+            } else {
+                if (isFirst) {
+                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" fetchpriority="high">';
+                    // Dynamically inject preload link to document head for the first image
+                    if (!document.querySelector('link[rel="preload"][href="' + rawUrl + '"]')) {
+                        document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + rawUrl + '" fetchpriority="high">');
+                    }
+                } else {
+                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" loading="lazy">';
+                }
+            }
 
             // Venue
             let venue = '';
