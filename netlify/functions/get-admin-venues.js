@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 exports.handler = async function(event, context) {
     // Enable CORS
@@ -28,6 +29,17 @@ exports.handler = async function(event, context) {
     try {
         console.log('Admin Venues: Starting function');
         
+        // Verify authentication
+        try {
+            await verifyAuth(event);
+        } catch (authError) {
+            return {
+                statusCode: authError.statusCode || 401,
+                headers,
+                body: JSON.stringify({ error: authError.message })
+            };
+        }
+
         // Check environment variables
         const required = [
             'FIREBASE_PROJECT_ID',

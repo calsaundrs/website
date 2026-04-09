@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -33,6 +34,20 @@ exports.handler = async function(event, context) {
   try {
     console.log('📢 Getting system notifications from Firestore...');
     
+    // Verify authentication
+    try {
+        await verifyAuth(event);
+    } catch (authError) {
+        return {
+            statusCode: authError.statusCode || 401,
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ success: false, error: authError.message })
+        };
+    }
+
     // Get recent notifications (last 24 hours by default)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     

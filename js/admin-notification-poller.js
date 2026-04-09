@@ -38,8 +38,17 @@ class AdminNotificationPoller {
       // Check for new event submissions
       await this.checkForNewSubmissions();
       
+      // Import auth headers
+      let authOptions = {};
+      try {
+          const authModule = await import('./auth-guard.js');
+          authOptions = await authModule.getAuthHeaders();
+      } catch (e) {
+          console.warn('Auth module not available or failed:', e);
+      }
+
       // Check for general system notifications
-      const response = await fetch('/.netlify/functions/get-notifications');
+      const response = await fetch('/.netlify/functions/get-notifications', authOptions);
       const data = await response.json();
       
       if (data.success && data.data.length > 0) {
@@ -66,8 +75,17 @@ class AdminNotificationPoller {
 
   async checkForNewSubmissions() {
     try {
+      // Import auth headers
+      let authOptions = {};
+      try {
+          const authModule = await import('./auth-guard.js');
+          authOptions = await authModule.getAuthHeaders();
+      } catch (e) {
+          console.warn('Auth module not available or failed:', e);
+      }
+
       // Get pending events to check for new submissions
-      const response = await fetch('/.netlify/functions/get-pending-events');
+      const response = await fetch('/.netlify/functions/get-pending-events', authOptions);
       const data = await response.json();
       
       if (data.success && data.events && data.events.length > 0) {

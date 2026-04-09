@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 // Version: 2025-01-27-v1 - Firestore-based pending items function
 
@@ -17,6 +18,20 @@ const db = admin.firestore();
 
 exports.handler = async function (event, context) {
     console.log("🔍 PENDING ITEMS: Function called");
+
+    // Verify authentication
+    try {
+        await verifyAuth(event);
+    } catch (authError) {
+        return {
+            statusCode: authError.statusCode || 401,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            },
+            body: JSON.stringify({ error: authError.message })
+        };
+    }
     console.log("📋 PENDING ITEMS: HTTP Method:", event.httpMethod);
     console.log("📋 PENDING ITEMS: Query params:", event.queryStringParameters);
     

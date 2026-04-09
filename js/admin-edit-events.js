@@ -151,7 +151,17 @@ function filterEvents(filter) {
 async function loadVenues() {
     try {
         console.log('Admin Edit Events: Loading venues...');
-        const response = await fetch('/.netlify/functions/get-admin-venues');
+
+        // Import auth headers
+        let authOptions = {};
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders();
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
+        const response = await fetch('/.netlify/functions/get-admin-venues', authOptions);
         
         if (response.ok) {
             allVenues = await response.json();
@@ -172,8 +182,17 @@ async function loadAllEvents() {
     try {
         console.log('Admin Edit Events: Loading all events...');
         
+        // Import auth headers
+        let authOptions = {};
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders();
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
         // Load all events (both future and past) for manage events view
-        const response = await fetch('/.netlify/functions/get-admin-events?status=approved');
+        const response = await fetch('/.netlify/functions/get-admin-events?status=approved', authOptions);
         console.log('Admin Edit Events: Response status:', response.status);
         
         if (response.ok) {
@@ -1078,6 +1097,14 @@ function populateEditForm(event) {
 async function handleEditFormSubmit(event) {
     event.preventDefault();
     
+    // Import auth headers
+    let authModule;
+    try {
+        authModule = await import('./auth-guard.js');
+    } catch (e) {
+        console.warn('Auth module not available or failed:', e);
+    }
+
     const formData = new FormData();
     
     // Basic event data
@@ -1195,20 +1222,34 @@ async function handleEditFormSubmit(event) {
                 updateSeries: true // Update all instances in the series
             };
             
-            response = await fetch('/.netlify/functions/update-recurring-event', {
+            let authOptions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
+            };
+            if (authModule) {
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            }
+
+            response = await fetch('/.netlify/functions/update-recurring-event', {
+                ...authOptions,
                 body: JSON.stringify(recurringData)
             });
         } else {
             // Use the regular update function
-            response = await fetch('/.netlify/functions/update-item-firestore', {
+            let authOptions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
+            };
+            if (authModule) {
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            }
+
+            response = await fetch('/.netlify/functions/update-item-firestore', {
+                ...authOptions,
                 body: JSON.stringify(eventData)
             });
         }
@@ -1232,6 +1273,20 @@ async function handleDeleteEvent(eventId) {
     if (!event) {
         console.error('Admin Edit Events: No event found for deletion');
         return;
+    }
+
+    // Import auth headers
+    let authOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const authModule = await import('./auth-guard.js');
+        authOptions = await authModule.getAuthHeaders(authOptions);
+    } catch (e) {
+        console.warn('Auth module not available or failed:', e);
     }
     
     console.log('Admin Edit Events: Deleting event:', event.id, event.name);
@@ -1263,10 +1318,7 @@ async function handleDeleteEvent(eventId) {
     
     try {
         const response = await fetch('/.netlify/functions/delete-event', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            ...authOptions,
             body: JSON.stringify({
                 eventId: event.id,
                 deleteSeries: deleteSeries
@@ -1389,6 +1441,20 @@ function setupRecurringModalEventListeners() {
 
 async function saveRecurringChanges(seriesId) {
     try {
+        // Import auth headers
+        let authOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders(authOptions);
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
         // Collect form data
         const data = {
             seriesId: seriesId,
@@ -1452,10 +1518,7 @@ async function saveRecurringChanges(seriesId) {
         
         // Send to backend as JSON
         const response = await fetch('/.netlify/functions/update-recurring-series', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            ...authOptions,
             body: JSON.stringify(data)
         });
         
@@ -1488,11 +1551,22 @@ async function handleEndRecurringSeries(seriesId) {
     }
     
     try {
-        const response = await fetch('/.netlify/functions/end-recurring-series', {
+        // Import auth headers
+        let authOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
+            }
+        };
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders(authOptions);
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
+        const response = await fetch('/.netlify/functions/end-recurring-series', {
+            ...authOptions,
             body: JSON.stringify({
                 seriesId: seriesId
             })
@@ -1519,11 +1593,22 @@ async function handleRegenerateInstances(seriesId) {
     }
     
     try {
-        const response = await fetch('/.netlify/functions/regenerate-instances', {
+        // Import auth headers
+        let authOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
+            }
+        };
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders(authOptions);
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
+        const response = await fetch('/.netlify/functions/regenerate-instances', {
+            ...authOptions,
             body: JSON.stringify({
                 seriesId: seriesId
             })
@@ -1656,15 +1741,26 @@ async function handleBulkStatusChange(newStatus) {
     }
     
     try {
+        // Import auth headers
+        let authOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders(authOptions);
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
         let successCount = 0;
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
             const response = await fetch('/.netlify/functions/update-item-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                ...authOptions,
                 body: JSON.stringify({
                     itemId: eventId,
                     newStatus: newStatus,
@@ -1697,15 +1793,26 @@ async function handleBulkDelete() {
     }
     
     try {
+        // Import auth headers
+        let authOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        try {
+            const authModule = await import('./auth-guard.js');
+            authOptions = await authModule.getAuthHeaders(authOptions);
+        } catch (e) {
+            console.warn('Auth module not available or failed:', e);
+        }
+
         let successCount = 0;
         const eventIds = Array.from(selectedEvents);
         
         for (const eventId of eventIds) {
             const response = await fetch('/.netlify/functions/delete-event', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                ...authOptions,
                 body: JSON.stringify({
                     eventId: eventId,
                     deleteSeries: false // For bulk delete, only delete individual events
@@ -1829,6 +1936,20 @@ function closeConvertToRecurringModal() {
 async function handleConvertToRecurringSubmit(event) {
     event.preventDefault();
     
+    // Import auth headers
+    let authOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        const authModule = await import('./auth-guard.js');
+        authOptions = await authModule.getAuthHeaders(authOptions);
+    } catch (e) {
+        console.warn('Auth module not available or failed:', e);
+    }
+
     const formData = new FormData(event.target);
     const eventId = formData.get('eventId');
     const recurringPattern = formData.get('recurringPattern');
@@ -1849,10 +1970,7 @@ async function handleConvertToRecurringSubmit(event) {
     
     try {
         const response = await fetch('/.netlify/functions/convert-to-recurring', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            ...authOptions,
             body: JSON.stringify({
                 eventId: eventId,
                 recurringPattern: recurringPattern,

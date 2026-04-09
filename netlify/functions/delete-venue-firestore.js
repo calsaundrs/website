@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -25,6 +26,17 @@ exports.handler = async function(event, context) {
 
   try {
     console.log('🗑️ Delete venue function called');
+
+    // Verify authentication
+    try {
+        await verifyAuth(event);
+    } catch (authError) {
+        return {
+            statusCode: authError.statusCode || 401,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: authError.message })
+        };
+    }
     
     // Parse the request body
     let requestBody;
