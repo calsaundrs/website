@@ -235,7 +235,8 @@ function generateVenuePage(venue) {
         'glamorous': { metaTitle: 'Glamorous Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "Hurst Street\u2019s late-night LGBTQ+ nightclub, open until 6am. Renovated in 2025 with new management. See reviews, photos and upcoming events." },
         'the-village-inn': { metaTitle: 'The Village Inn Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "The beating heart of Birmingham\u2019s Gay Village. Cabaret bar with drag and live entertainment seven nights a week. See reviews, photos and what\u2019s on." },
         'the-fountain-inn': { metaTitle: 'The Fountain Inn Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "One of Birmingham\u2019s most beloved traditional gay pubs on Wrentham Street. Welcoming and affordable. See reviews, photos and upcoming events." },
-        'the-loft': { metaTitle: 'The Loft Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "A laid-back LGBTQ+ bar in Birmingham\u2019s Gay Village. Great drinks, friendly crowd, no pressure. See reviews, photos and what\u2019s on this week." }
+        'the-loft': { metaTitle: 'The Loft Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "A laid-back LGBTQ+ bar in Birmingham\u2019s Gay Village. Great drinks, friendly crowd, no pressure. See reviews, photos and what\u2019s on this week." },
+        'the-hub': { metaTitle: 'The Hub at Eden Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud', metaDescription: "Event space with chillout area and roof garden within Eden Bar Birmingham. See reviews, photos, upcoming events and hire info." }
     };
     const metaOverride = venueMetaOverrides[venue.slug] || {};
 

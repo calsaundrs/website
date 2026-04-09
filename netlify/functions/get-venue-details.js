@@ -154,6 +154,10 @@ exports.handler = async function(event, context) {
       'the-loft': {
         metaTitle: 'The Loft Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud',
         metaDescription: "A laid-back LGBTQ+ bar in Birmingham\u2019s Gay Village. Great drinks, friendly crowd, no pressure. See reviews, photos and what\u2019s on this week."
+      },
+      'the-hub': {
+        metaTitle: 'The Hub at Eden Birmingham | Reviews, Photos & What\u2019s On | Brum Outloud',
+        metaDescription: "Event space with chillout area and roof garden within Eden Bar Birmingham. See reviews, photos, upcoming events and hire info."
       }
     };
 

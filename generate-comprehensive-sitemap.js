@@ -97,7 +97,8 @@ async function generateComprehensiveSitemap() {
     console.error('Error fetching events:', eventError.message);
   }
 
-  // Add ALL venues with valid images
+  // Add ALL venues (excluding closed venues)
+  const excludedVenueSlugs = new Set(['sidewalk']); // Closed venues
   const addedVenueSlugs = new Set();
   try {
     console.log('Fetching all venues...');
@@ -106,7 +107,7 @@ async function generateComprehensiveSitemap() {
     console.log(`Found ${venues.length} venues`);
 
     venues.forEach(venue => {
-      if (venue.slug) {
+      if (venue.slug && !excludedVenueSlugs.has(venue.slug)) {
         addedVenueSlugs.add(venue.slug);
         const venueUrl = `${baseUrl}/venue/${venue.slug}`;
         sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
@@ -119,7 +120,7 @@ async function generateComprehensiveSitemap() {
   // Fallback: add known static venue pages if API fetch failed or missed them
   const knownVenueSlugs = [
     'eden-bar', 'equator-bar', 'glamorous', 'missing-bar',
-    'the-fountain-inn', 'the-fox', 'the-nightingale-club', 'the-village-inn'
+    'the-fountain-inn', 'the-fox', 'the-hub', 'the-nightingale-club', 'the-village-inn'
   ];
   knownVenueSlugs.forEach(slug => {
     if (!addedVenueSlugs.has(slug)) {
