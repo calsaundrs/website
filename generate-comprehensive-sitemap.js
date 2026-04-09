@@ -62,7 +62,12 @@ async function generateComprehensiveSitemap() {
     { url: '/accessibility', changefreq: 'yearly', priority: '0.3' },
     { url: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
     { url: '/terms-and-conditions', changefreq: 'yearly', priority: '0.3' },
-    { url: '/terms-of-submission', changefreq: 'yearly', priority: '0.3' }
+    { url: '/terms-of-submission', changefreq: 'yearly', priority: '0.3' },
+    // Series / recurring event landing pages
+    { url: '/series/xxl', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/hard-on', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/beefmince', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/dilf', changefreq: 'weekly', priority: '0.8' }
   ];
 
   console.log('Adding static pages...');
