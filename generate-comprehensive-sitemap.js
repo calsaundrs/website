@@ -93,6 +93,7 @@ async function generateComprehensiveSitemap() {
   }
 
   // Add ALL venues with valid images
+  const addedVenueSlugs = new Set();
   try {
     console.log('Fetching all venues...');
     const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues');
@@ -101,6 +102,7 @@ async function generateComprehensiveSitemap() {
 
     venues.forEach(venue => {
       if (venue.slug) {
+        addedVenueSlugs.add(venue.slug);
         const venueUrl = `${baseUrl}/venue/${venue.slug}`;
         sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
       }
@@ -108,6 +110,18 @@ async function generateComprehensiveSitemap() {
   } catch (venueError) {
     console.error('Error fetching venues:', venueError.message);
   }
+
+  // Fallback: add known static venue pages if API fetch failed or missed them
+  const knownVenueSlugs = [
+    'eden-bar', 'equator-bar', 'glamorous', 'missing-bar',
+    'the-fountain-inn', 'the-fox', 'the-nightingale-club', 'the-village-inn'
+  ];
+  knownVenueSlugs.forEach(slug => {
+    if (!addedVenueSlugs.has(slug)) {
+      console.log(`Adding fallback venue: ${slug}`);
+      sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    }
+  });
 
   sitemap += `</urlset>`;
   
