@@ -4,26 +4,23 @@
 
 # Venue Pages - Handled by netlify.toml
 
-# Homepage redirect (if old homepage was different, unlikely but good to have)
-/       /index.html   301
-
 # Fix common 404 errors
 /settings    /admin-settings.html    301
 /favicon.ico /faviconV2.png          301
 
-# Main section redirects
-/whats-on           /events        301
-/venues             /all-venues.html    301
-/clubs              /clubs.html         301
-/birmingham-pride   /birmingham-pride.html  301
-/pride              /birmingham-pride.html  301
-/pride-guide        /birmingham-pride.html  301
+# Main section redirects (use clean URLs to match canonicals)
+/whats-on           /events             301
+/venues             /all-venues         301
+/clubs              /clubs              301
+/birmingham-pride   /birmingham-pride   301
+/pride              /birmingham-pride   301
+/pride-guide        /birmingham-pride   301
 
 # Specific old root-level pages to new equivalents or homepage
 /about              /                   301  # Redirecting to homepage as no new /about.html or /about equivalent was provided
-/contact            /contact.html       301
+/contact            /contact            301
 /where-to-stay      /                   301  # Redirecting to homepage as no new equivalent was provided
-/social-clubs       /clubs.html          301  # Redirecting to new clubs & groups directory
+/social-clubs       /clubs               301  # Redirecting to new clubs & groups directory
 /new-page           /                   301  # Redirecting to homepage (placeholder page)
 /new-page-1         /                   301  # Redirecting to homepage (placeholder page)
 /click              /                   301  # Redirecting to homepage as confirmed
@@ -59,7 +56,7 @@
 /whats-on/birmingham-bizarre-bazaar-after-party           /event/birmingham-bizarre-bazaar-&-after-party 301
 /whats-on/birmingham-fetishmen-the-second-cmming          /event/birmingham-fetishmen:-the-second-c*mming 301
 /whats-on/birmingham-pride-2025                           /event/birmingham-pride-2025 301
-/whats-on/boltz-live                                      /events # No direct new event slug, redirecting to main events page
+/whats-on/boltz-live                                      /events 301 # No direct new event slug, redirecting to main events page
 /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau      /events 301 # No direct new event slug, redirecting to main events page
 /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-a9tdk /events 301 # No direct new event slug, redirecting to main events page
 /whats-on/boltz-live-with-amy-laqueefa-brenda-labeau-lnl59 /events 301 # No direct new event slug, redirecting to main events page

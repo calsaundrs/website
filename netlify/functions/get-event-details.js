@@ -10,6 +10,23 @@ const path = require('path');
 const eventService = new FirestoreEventService();
 const recurringManager = new RecurringEventsManager();
 
+// Retry helper for transient Firestore failures (reduces 5xx errors)
+async function withRetry(fn, { retries = 2, delay = 500, label = 'operation' } = {}) {
+  for (let attempt = 1; attempt <= retries + 1; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt <= retries) {
+        console.warn(`⚠️ ${label} failed (attempt ${attempt}/${retries + 1}), retrying in ${delay}ms...`, error.message);
+        await new Promise(r => setTimeout(r, delay));
+        delay *= 2;
+      } else {
+        throw error;
+      }
+    }
+  }
+}
+
 /**
  * Converts a date object to an ISO string suitable for ICS files (YYYYMMDDTHHMMSSZ).
  * @param {Date} date The date to convert.
@@ -119,7 +136,7 @@ exports.handler = async function (event, context) {
         console.log("Attempting to fetch event with slug:", slug);
         
         // Use the new Firestore service to get event data
-        const eventData = await eventService.getEventBySlug(slug);
+        const eventData = await withRetry(() => eventService.getEventBySlug(slug), { label: 'Firestore event query' });
         
         if (!eventData) {
             console.log("No event found with slug:", slug);
@@ -732,8 +749,12 @@ exports.handler = async function (event, context) {
         console.error('Error in get-event-details:', error);
         
         return {
-            statusCode: 500,
-            body: 'Internal server error. Please try again later.'
+            statusCode: 503,
+            headers: {
+                'Content-Type': 'text/html',
+                'Retry-After': '300'
+            },
+            body: 'Service temporarily unavailable. Please try again later.'
         };
     }
 };
