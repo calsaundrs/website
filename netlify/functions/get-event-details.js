@@ -7,6 +7,8 @@ const path = require('path');
 
 // Version: 2026-03-22-v2 - Redesigned event detail page layout
 
+const { withRetry } = require('./services/retry');
+
 const eventService = new FirestoreEventService();
 const recurringManager = new RecurringEventsManager();
 
@@ -119,7 +121,7 @@ exports.handler = async function (event, context) {
         console.log("Attempting to fetch event with slug:", slug);
         
         // Use the new Firestore service to get event data
-        const eventData = await eventService.getEventBySlug(slug);
+        const eventData = await withRetry(() => eventService.getEventBySlug(slug), { label: 'Firestore event query' });
         
         if (!eventData) {
             console.log("No event found with slug:", slug);
@@ -732,8 +734,12 @@ exports.handler = async function (event, context) {
         console.error('Error in get-event-details:', error);
         
         return {
-            statusCode: 500,
-            body: 'Internal server error. Please try again later.'
+            statusCode: 503,
+            headers: {
+                'Content-Type': 'text/html',
+                'Retry-After': '300'
+            },
+            body: 'Service temporarily unavailable. Please try again later.'
         };
     }
 };

@@ -62,7 +62,12 @@ async function generateComprehensiveSitemap() {
     { url: '/accessibility', changefreq: 'yearly', priority: '0.3' },
     { url: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
     { url: '/terms-and-conditions', changefreq: 'yearly', priority: '0.3' },
-    { url: '/terms-of-submission', changefreq: 'yearly', priority: '0.3' }
+    { url: '/terms-of-submission', changefreq: 'yearly', priority: '0.3' },
+    // Series / recurring event landing pages
+    { url: '/series/xxl', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/hard-on', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/beefmince', changefreq: 'weekly', priority: '0.8' },
+    { url: '/series/dilf', changefreq: 'weekly', priority: '0.8' }
   ];
 
   console.log('Adding static pages...');
@@ -92,7 +97,9 @@ async function generateComprehensiveSitemap() {
     console.error('Error fetching events:', eventError.message);
   }
 
-  // Add ALL venues with valid images
+  // Add ALL venues (excluding closed venues)
+  const excludedVenueSlugs = new Set(['sidewalk']); // Closed venues
+  const addedVenueSlugs = new Set();
   try {
     console.log('Fetching all venues...');
     const venuesData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-venues');
@@ -100,7 +107,8 @@ async function generateComprehensiveSitemap() {
     console.log(`Found ${venues.length} venues`);
 
     venues.forEach(venue => {
-      if (venue.slug) {
+      if (venue.slug && !excludedVenueSlugs.has(venue.slug)) {
+        addedVenueSlugs.add(venue.slug);
         const venueUrl = `${baseUrl}/venue/${venue.slug}`;
         sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
       }
@@ -108,6 +116,18 @@ async function generateComprehensiveSitemap() {
   } catch (venueError) {
     console.error('Error fetching venues:', venueError.message);
   }
+
+  // Fallback: add known static venue pages if API fetch failed or missed them
+  const knownVenueSlugs = [
+    'eden-bar', 'equator-bar', 'glamorous', 'missing-bar',
+    'the-fountain-inn', 'the-fox', 'the-hub', 'the-nightingale-club', 'the-village-inn'
+  ];
+  knownVenueSlugs.forEach(slug => {
+    if (!addedVenueSlugs.has(slug)) {
+      console.log(`Adding fallback venue: ${slug}`);
+      sitemap += `  <url>\n    <loc>${escapeXml(baseUrl + '/venue/' + slug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    }
+  });
 
   sitemap += `</urlset>`;
   

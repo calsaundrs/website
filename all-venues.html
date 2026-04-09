@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gay Village Birmingham | LGBTQ+ Bars, Clubs & Venues | Brum Outloud</title>
+    <title>Gay Bars Birmingham | Every LGBTQ+ Venue in the Gay Village | Brum Outloud</title>
     <meta name="description"
-        content="Explore Birmingham's Gay Village. From cosy locals like The Fox to superclubs like The Nightingale — find every LGBTQ+ bar and venue.">
+        content="Complete guide to every gay bar and LGBTQ+ venue in Birmingham's Gay Village. Reviews, opening hours, events and photos for all venues on the scene.">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.brumoutloud.co.uk/all-venues">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.brumoutloud.co.uk/all-venues.html">
-    <meta property="og:title" content="LGBTQ+ Venues & Gay Bars in Birmingham & West Midlands | Brum Outloud">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/all-venues">
+    <meta property="og:title" content="Gay Bars Birmingham | Every LGBTQ+ Venue in the Gay Village | Brum Outloud">
     <meta property="og:description"
-        content="Discover the best LGBTQ+ friendly venues, gay bars, clubs, and queer spaces in Birmingham and the West Midlands with Brum Outloud.">
+        content="Complete guide to every gay bar and LGBTQ+ venue in Birmingham's Gay Village. Reviews, opening hours, events and photos for all venues on the scene.">
     <meta property="og:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -25,10 +25,10 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.brumoutloud.co.uk/all-venues.html">
-    <meta name="twitter:title" content="LGBTQ+ Venues & Gay Bars in Birmingham & West Midlands | Brum Outloud">
+    <meta name="twitter:url" content="https://www.brumoutloud.co.uk/all-venues">
+    <meta name="twitter:title" content="Gay Bars Birmingham | Every LGBTQ+ Venue in the Gay Village | Brum Outloud">
     <meta name="twitter:description"
-        content="Discover the best LGBTQ+ friendly venues, gay bars, clubs, and queer spaces in Birmingham and the West Midlands with Brum Outloud.">
+        content="Complete guide to every gay bar and LGBTQ+ venue in Birmingham's Gay Village. Reviews, opening hours, events and photos for all venues on the scene.">
     <meta name="twitter:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
     <meta name="twitter:creator" content="@brumoutloud">
     <meta name="twitter:site" content="@brumoutloud">
@@ -121,7 +121,7 @@
           "name": "How many gay bars are in Birmingham?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Birmingham has around a dozen LGBTQ+ bars and venues, mostly in the Gay Village on Hurst Street. Key venues include The Fox, The Nightingale Club, Missing Bar, Eden Bar, The Village Inn, Equator Bar, Glamorous, and The Fountain Inn."
+            "text": "Birmingham has 9 LGBTQ+ bars and venues, mostly in the Gay Village on Hurst Street. Key venues include The Fox, The Nightingale Club, Missing Bar, Eden Bar, The Village Inn, Equator Bar, Glamorous, The Fountain Inn, and The Hub."
           }
         },
         {
@@ -245,6 +245,10 @@
             border-radius: 0 !important;
             box-shadow: 6px 6px 0 var(--color-purple) !important;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .venue-card:hover {
@@ -563,7 +567,7 @@
 
         <!-- AEO Answer Box -->
         <div style="border-left: 6px solid var(--color-toxic); background: rgba(204, 255, 0, 0.05); padding: 1.5rem 1.5rem 1.5rem 2rem; margin-top: 2rem; max-width: 48rem;">
-            <p class="text-white text-lg font-bold mb-2">Birmingham has around a dozen LGBTQ+ bars and venues, most located in the Gay Village on Hurst Street, Southside.</p>
+            <p class="text-white text-lg font-bold mb-2">Birmingham has 9 LGBTQ+ bars and venues, most located in the Gay Village on Hurst Street, Southside.</p>
             <p class="text-gray-300">The village is a 5-minute walk from New Street station. Key venues include <a href="/venue/the-fox" class="text-[var(--color-pink)] font-bold hover:text-white">The Fox</a>, <a href="/venue/the-nightingale-club" class="text-[var(--color-pink)] font-bold hover:text-white">The Nightingale Club</a>, <a href="/venue/missing-bar" class="text-[var(--color-pink)] font-bold hover:text-white">Missing Bar</a>, <a href="/venue/eden-bar" class="text-[var(--color-pink)] font-bold hover:text-white">Eden Bar</a>, and <a href="/venue/the-village-inn" class="text-[var(--color-pink)] font-bold hover:text-white">The Village Inn</a>. Browse the full directory below.</p>
         </div>
         </div>
@@ -571,8 +575,7 @@
         <!-- Venues Grid -->
         <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/glamorous'">
+                <a href="/venue/glamorous" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg" alt="Glamorous" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -590,16 +593,15 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
+                </a>
 
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/the-fountain-inn'">
+
+                <a href="/venue/the-fountain-inn" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg" alt="The Fountain inn" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -617,15 +619,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/the-village-inn'">
+                </a>
+
+                <a href="/venue/the-village-inn" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg" alt="The Village Inn" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -643,15 +644,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/the-fox'">
+                </a>
+
+                <a href="/venue/the-fox" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg" alt="The Fox" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -669,15 +669,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/the-nightingale-club'">
+                </a>
+
+                <a href="/venue/the-nightingale-club" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -695,15 +694,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/eden-bar'">
+                </a>
+
+                <a href="/venue/eden-bar" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Eden Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -721,15 +719,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group" 
-                     onclick="window.location.href='/venue/missing-bar'">
+                </a>
+
+                <a href="/venue/missing-bar" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Missing Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -747,15 +744,14 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
-            
-                <div class="venue-card p-0 group"
-                     onclick="window.location.href='/venue/equator-bar'">
+                </a>
+
+                <a href="/venue/equator-bar" class="venue-card p-0 group">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -773,12 +769,38 @@
                             <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
                         </div>
                         <div class="flex gap-4">
-                            <button class="btn-primary flex-1">
+                            <span class="btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>VIEW VENUE
-                            </button>
+                            </span>
                         </div>
                     </div>
-                </div>
+                </a>
+
+
+                <a href="/venue/the-hub" class="venue-card p-0 group">
+                    <div class="item-card-image-container relative overflow-hidden bg-black">
+                        <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1755119210/brumoutloud_venues/z7gqqdtd6kknrxwvw6nr.jpg" alt="The Hub" class="item-card-image w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-3">The Hub</h3>
+
+                            <p class="text-[var(--color-toxic)] font-bold text-sm mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2"></i>Within Eden, 138 Gooch St, Birmingham
+                            </p>
+
+                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">
+                            Event space with chillout area and roof garden within Eden Bar. Hosts promo events and available to hire.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="btn-primary flex-1">
+                                <i class="fas fa-eye mr-2"></i>VIEW VENUE
+                            </span>
+                        </div>
+                    </div>
+                </a>
 
         </div>
 
