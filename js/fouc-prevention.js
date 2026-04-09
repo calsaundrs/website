@@ -3,6 +3,14 @@
  * Prevents Flash of Unstyled Content across all pages
  */
 
+// Debug logging helper
+const DEBUG = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const debugLog = (...args) => {
+    if (DEBUG) {
+        console.log(...args);
+    }
+};
+
 // Immediately hide content to prevent FOUC
 (function() {
     'use strict';
@@ -37,7 +45,7 @@
             }
         `;
         document.head.insertBefore(criticalStyle, document.head.firstChild);
-        console.log('FOUC Prevention: Critical CSS injected');
+        debugLog('FOUC Prevention: Critical CSS injected');
     } catch (error) {
         console.error('FOUC Prevention: Error injecting critical CSS:', error);
     }
@@ -73,7 +81,7 @@ class FOUCPrevention {
     
     startLoading() {
         try {
-            console.log('FOUC Prevention: Starting loading process');
+            debugLog('FOUC Prevention: Starting loading process');
             
             // Multiple triggers to ensure content shows
             const triggers = [
@@ -99,7 +107,7 @@ class FOUCPrevention {
             
             // Show content when any trigger fires
             Promise.race(triggers).then(() => {
-                console.log('FOUC Prevention: Trigger fired, showing content');
+                debugLog('FOUC Prevention: Trigger fired, showing content');
                 setTimeout(() => this.showContent(), 100);
             }).catch(error => {
                 console.error('FOUC Prevention: Error in triggers:', error);
@@ -108,7 +116,7 @@ class FOUCPrevention {
             
             // Additional safety timeout
             setTimeout(() => {
-                console.log('FOUC Prevention: Safety timeout triggered');
+                debugLog('FOUC Prevention: Safety timeout triggered');
                 this.showContent();
             }, 2000);
             
@@ -121,11 +129,11 @@ class FOUCPrevention {
     showContent() {
         try {
             if (this.isContentShown) {
-                console.log('FOUC Prevention: Content already shown');
+                debugLog('FOUC Prevention: Content already shown');
                 return;
             }
             
-            console.log('FOUC Prevention: Showing content');
+            debugLog('FOUC Prevention: Showing content');
             this.isContentShown = true;
             
             // Add loaded class to html and body
@@ -134,24 +142,24 @@ class FOUCPrevention {
             
             // Hide loading screen with animation
             if (this.loadingScreen) {
-                console.log('FOUC Prevention: Hiding loading screen');
+                debugLog('FOUC Prevention: Hiding loading screen');
                 this.loadingScreen.classList.add('hidden');
                 
                 // Remove loading screen from DOM after animation
                 setTimeout(() => {
                     if (this.loadingScreen && this.loadingScreen.parentNode) {
                         this.loadingScreen.parentNode.removeChild(this.loadingScreen);
-                        console.log('FOUC Prevention: Loading screen removed from DOM');
+                        debugLog('FOUC Prevention: Loading screen removed from DOM');
                     }
                 }, 500);
             } else {
-                console.log('FOUC Prevention: No loading screen found');
+                debugLog('FOUC Prevention: No loading screen found');
             }
             
             // Trigger custom event for other scripts
             window.dispatchEvent(new CustomEvent('foucContentLoaded'));
             
-            console.log('FOUC Prevention: Content shown successfully');
+            debugLog('FOUC Prevention: Content shown successfully');
             
         } catch (error) {
             console.error('FOUC Prevention: Error in showContent:', error);
@@ -161,7 +169,7 @@ class FOUCPrevention {
     
     emergencyShow() {
         try {
-            console.log('FOUC Prevention: Emergency show triggered');
+            debugLog('FOUC Prevention: Emergency show triggered');
             document.documentElement.classList.add('loaded');
             this.body.classList.add('loaded');
             const loadingScreen = document.getElementById('loadingScreen');
@@ -175,7 +183,7 @@ class FOUCPrevention {
     
     // Public method to manually show content
     forceShowContent() {
-        console.log('FOUC Prevention: Force show requested');
+        debugLog('FOUC Prevention: Force show requested');
         this.showContent();
     }
 }
@@ -184,11 +192,11 @@ class FOUCPrevention {
 try {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('FOUC Prevention: DOM ready, initializing');
+            debugLog('FOUC Prevention: DOM ready, initializing');
             window.foucPrevention = new FOUCPrevention();
         });
     } else {
-        console.log('FOUC Prevention: DOM already ready, initializing immediately');
+        debugLog('FOUC Prevention: DOM already ready, initializing immediately');
         window.foucPrevention = new FOUCPrevention();
     }
 } catch (error) {
@@ -197,7 +205,7 @@ try {
 
 // Emergency fallback - show content after 3 seconds no matter what
 setTimeout(() => {
-    console.log('FOUC Prevention: Emergency fallback triggered');
+    debugLog('FOUC Prevention: Emergency fallback triggered');
     if (window.foucPrevention) {
         window.foucPrevention.forceShowContent();
     } else {
@@ -212,7 +220,7 @@ setTimeout(() => {
 
 // Manual override for debugging
 window.forceFOUCShow = function() {
-    console.log('FOUC Prevention: Manual override triggered');
+    debugLog('FOUC Prevention: Manual override triggered');
     if (window.foucPrevention) {
         window.foucPrevention.forceShowContent();
     } else {
