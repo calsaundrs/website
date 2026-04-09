@@ -49,11 +49,20 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Loading dashboard statistics...');
 
         try {
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
             // Load pending events
             let pendingEvents = [];
             try {
                 console.log('Fetching pending events...');
-                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items');
+                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items', authOptions);
                 if (!pendingEventsResponse.ok) {
                     throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
                 }
@@ -76,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let pendingVenues = [];
             try {
                 console.log('Fetching pending venues...');
-                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-items');
+                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-items', authOptions);
                 if (pendingVenuesResponse.ok) {
                     const venuesData = await pendingVenuesResponse.json();
 
@@ -210,7 +219,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load recent activity
     async function loadRecentActivity() {
         try {
-            const response = await fetch('/.netlify/functions/get-recent-activity');
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/get-recent-activity', authOptions);
             const activity = await response.json();
 
             dashboardData.recentActivity = activity;
@@ -303,7 +321,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load settings
     async function loadSettings() {
         try {
-            const response = await fetch('/.netlify/functions/get-settings');
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/get-settings', authOptions);
             const settings = await response.json();
 
             // Populate form fields
@@ -326,6 +353,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save settings
     async function saveSettings(formData) {
         try {
+            // Import auth headers
+            let authOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
             const settings = {
                 GEMINI_MODEL: formData.get('geminiModel'),
                 GOOGLE_PLACES_API_KEY: formData.get('googlePlacesApiKey'),
@@ -337,10 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             const response = await fetch('/.netlify/functions/update-settings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                ...authOptions,
                 body: JSON.stringify(settings)
             });
 
@@ -376,7 +414,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check for new submissions
     async function checkForNewSubmissions() {
         try {
-            const response = await fetch('/.netlify/functions/get-pending-items');
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/get-pending-items', authOptions);
             const pendingItems = await response.json();
 
             const currentTime = Date.now();
@@ -520,11 +567,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Call the rebuild function
                         console.log('Calling rebuild function...');
-                        const response = await fetch('/.netlify/functions/build-venues-ssg', {
+
+                        let authOptions = {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
-                            },
+                            }
+                        };
+                        try {
+                            const authModule = await import('./auth-guard.js');
+                            authOptions = await authModule.getAuthHeaders(authOptions);
+                        } catch (e) {
+                            console.warn('Auth module not available or failed:', e);
+                        }
+
+                        const response = await fetch('/.netlify/functions/build-venues-ssg', {
+                            ...authOptions,
                             body: JSON.stringify({
                                 action: 'rebuild',
                                 source: 'admin-panel'
@@ -661,11 +719,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Call the rebuild function
                         console.log('Calling rebuild events function...');
-                        const response = await fetch('/.netlify/functions/build-events-ssg', {
+
+                        let authOptions = {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
-                            },
+                            }
+                        };
+                        try {
+                            const authModule = await import('./auth-guard.js');
+                            authOptions = await authModule.getAuthHeaders(authOptions);
+                        } catch (e) {
+                            console.warn('Auth module not available or failed:', e);
+                        }
+
+                        const response = await fetch('/.netlify/functions/build-events-ssg', {
+                            ...authOptions,
                             body: JSON.stringify({
                                 action: 'rebuild',
                                 source: 'admin-panel'

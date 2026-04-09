@@ -1,9 +1,24 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 exports.handler = async function (event, context) {
     console.log('Getting admin events with comprehensive recurring system');
     
     try {
+        // Verify authentication
+        try {
+            await verifyAuth(event);
+        } catch (authError) {
+            return {
+                statusCode: authError.statusCode || 401,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({ success: false, error: authError.message })
+            };
+        }
+
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({

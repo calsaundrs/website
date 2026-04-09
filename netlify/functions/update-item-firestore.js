@@ -1,11 +1,23 @@
 const admin = require('firebase-admin');
 const multipart = require('lambda-multipart-parser');
 const cloudinary = require('cloudinary').v2;
+const { verifyAuth } = require('./utils/auth');
 
 exports.handler = async function (event, context) {
     console.log('Firestore item update called');
 
     try {
+        // Verify authentication
+        try {
+            await verifyAuth(event);
+        } catch (authError) {
+            return {
+                statusCode: authError.statusCode || 401,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: authError.message })
+            };
+        }
+
         // Check environment variables
         const required = [
             'FIREBASE_PROJECT_ID',

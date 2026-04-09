@@ -59,7 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadVenues() {
         try {
             console.log('🏢 Loading venues for edit form...');
-            const response = await fetch('/.netlify/functions/get-admin-venues');
+
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/get-admin-venues', authOptions);
             
             if (response.ok) {
                 const data = await response.json();
@@ -83,7 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
             showLoadingState();
             
             console.log('🔍 Loading pending items...');
-            const response = await fetch('/.netlify/functions/get-pending-items');
+
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/get-pending-items', authOptions);
             
             if (response.ok) {
                 const data = await response.json();
@@ -432,9 +452,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 itemType: type
             };
             
-            const response = await fetch(`/.netlify/functions/${endpoint}`, {
+            // Import auth headers
+            let authOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json' }
+            };
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch(`/.netlify/functions/${endpoint}`, {
+                ...authOptions,
                 body: JSON.stringify(requestBody)
             });
             
@@ -664,6 +695,14 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         
         try {
+            // Import auth headers
+            let authModule;
+            try {
+                authModule = await import('./auth-guard.js');
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
             // Check if we have a current event for editing
             if (!window.currentEventForEdit) {
                 console.error('❌ SAVE: No current event for editing');
@@ -726,16 +765,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { imageFile, newImage, ...otherData } = eventData;
                 formData.append('data', JSON.stringify(otherData));
                 
+                let authOptions = {
+                    method: 'POST'
+                };
+                if (authModule) {
+                    authOptions = await authModule.getAuthHeaders(authOptions);
+                }
+
                 response = await fetch('/.netlify/functions/update-item-firestore', {
-                    method: 'POST',
+                    ...authOptions,
                     body: formData
                 });
             } else {
                 // Use JSON for non-file updates
                 const { imageFile, newImage, ...jsonData } = eventData;
-                response = await fetch('/.netlify/functions/update-item-firestore', {
+
+                let authOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' }
+                };
+                if (authModule) {
+                    authOptions = await authModule.getAuthHeaders(authOptions);
+                }
+
+                response = await fetch('/.netlify/functions/update-item-firestore', {
+                    ...authOptions,
                     body: JSON.stringify(jsonData)
                 });
             }
@@ -783,9 +837,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log(`🔄 REJECT: Starting rejection for ${type} ${id}`);
             
-            const response = await fetch('/.netlify/functions/update-item-status', {
+            // Import auth headers
+            let authOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json' }
+            };
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            const response = await fetch('/.netlify/functions/update-item-status', {
+                ...authOptions,
                 body: JSON.stringify({
                     itemId: id,
                     newStatus: 'rejected',

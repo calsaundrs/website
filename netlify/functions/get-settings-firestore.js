@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 // Version: 2025-01-27-v1 - Firestore-based settings function
 
@@ -19,6 +20,20 @@ exports.handler = async function (event, context) {
     console.log("get-settings function called");
     
     try {
+        // Verify authentication
+        try {
+            await verifyAuth(event);
+        } catch (authError) {
+            return {
+                statusCode: authError.statusCode || 401,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                body: JSON.stringify({ error: authError.message })
+            };
+        }
+
         const queryParams = event.queryStringParameters || {};
         const settingKey = queryParams.key; // Optional: get specific setting
 

@@ -122,6 +122,15 @@ class SocialReelsGenerator {
         this.showLoading(true);
         
         try {
+            // Import auth headers
+            let authOptions = {};
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders();
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
             // Use the same endpoint as the main events page
             const url = '/.netlify/functions/get-events';
             const params = new URLSearchParams();
@@ -142,7 +151,7 @@ class SocialReelsGenerator {
             
             console.log('📡 Fetching from:', `${url}?${params.toString()}`);
             
-            const response = await fetch(`${url}?${params.toString()}`);
+            const response = await fetch(`${url}?${params.toString()}`, authOptions);
             const data = await response.json();
             
             if (data.success !== false && data.events) {
@@ -394,12 +403,23 @@ class SocialReelsGenerator {
         console.log('🎯 Generating actual video for template:', this.selectedTemplate);
         
         try {
-            // First try the full Remotion integration
-            const response = await fetch('/.netlify/functions/generate-social-reel', {
+            // Import auth headers
+            let authOptions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
+            };
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            // First try the full Remotion integration
+            const response = await fetch('/.netlify/functions/generate-social-reel', {
+                ...authOptions,
                 body: JSON.stringify({
                     eventId: event.id,
                     template: this.selectedTemplate,
@@ -419,12 +439,23 @@ class SocialReelsGenerator {
         } catch (error) {
             console.log('🎭 Using demo video generator for immediate preview');
             
-            // Fallback to demo generator for immediate functionality
-            const demoResponse = await fetch('/.netlify/functions/generate-demo-video', {
+            // Import auth headers
+            let authOptions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
+            };
+            try {
+                const authModule = await import('./auth-guard.js');
+                authOptions = await authModule.getAuthHeaders(authOptions);
+            } catch (e) {
+                console.warn('Auth module not available or failed:', e);
+            }
+
+            // Fallback to demo generator for immediate functionality
+            const demoResponse = await fetch('/.netlify/functions/generate-demo-video', {
+                ...authOptions,
                 body: JSON.stringify({
                     eventId: event.id,
                     template: this.selectedTemplate,

@@ -1,9 +1,21 @@
 const admin = require('firebase-admin');
+const { verifyAuth } = require('./utils/auth');
 
 exports.handler = async function (event, context) {
     console.log('Delete event from Firestore called');
     
     try {
+        // Verify authentication
+        try {
+            await verifyAuth(event);
+        } catch (authError) {
+            return {
+                statusCode: authError.statusCode || 401,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ success: false, error: authError.message })
+            };
+        }
+
         // Initialize Firebase
         if (!admin.apps.length) {
             admin.initializeApp({

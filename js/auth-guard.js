@@ -14,6 +14,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/**
+ * Returns the current user's ID token.
+ * @returns {Promise<string|null>}
+ */
+export async function getIdToken() {
+  const user = auth.currentUser;
+  if (user) {
+    return await user.getIdToken();
+  }
+
+  // Wait for auth to initialize if not already
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubscribe();
+      if (user) {
+        resolve(await user.getIdToken());
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+/**
+ * Helper to add Authorization header to fetch options.
+ * @param {Object} options - Existing fetch options.
+ * @returns {Promise<Object>} - Options with Authorization header.
+ */
+export async function getAuthHeaders(options = {}) {
+  const token = await getIdToken();
+  if (token) {
+    return {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    };
+  }
+  return options;
+}
+
 // This function checks the user's auth state
 onAuthStateChanged(auth, (user) => {
   // If there's no user, and we are not already on the login page...

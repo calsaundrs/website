@@ -1,6 +1,7 @@
 const FirestoreEventService = require('./services/firestore-event-service');
 const admin = require('firebase-admin');
 const RecurringEventsManager = require('./services/recurring-events-manager');
+const { verifyAuth } = require('./utils/auth');
 
 // Version: 2025-01-27-v1 - Firestore-based events listing function
 
@@ -42,6 +43,15 @@ exports.handler = async function (event, context) {
         if (view === 'venues') {
             return await handleVenuesView();
         } else if (view === 'admin') {
+            try {
+                await verifyAuth(event);
+            } catch (authError) {
+                return {
+                    statusCode: authError.statusCode || 401,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ error: authError.message })
+                };
+            }
             return await handleAdminView(queryParams);
         } else {
             return await handlePublicView(queryParams);
