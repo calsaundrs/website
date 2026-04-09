@@ -8,17 +8,14 @@
 /settings    /admin-settings.html    301
 /favicon.ico /faviconV2.png          301
 
-# Main section redirects (use clean URLs to match canonicals)
+# Main section redirects (clean URL rewrites handled by netlify.toml)
 /whats-on           /events             301
 /venues             /all-venues         301
-/clubs              /clubs              301
-/birmingham-pride   /birmingham-pride   301
 /pride              /birmingham-pride   301
 /pride-guide        /birmingham-pride   301
 
 # Specific old root-level pages to new equivalents or homepage
 /about              /                   301  # Redirecting to homepage as no new /about.html or /about equivalent was provided
-/contact            /contact            301
 /where-to-stay      /                   301  # Redirecting to homepage as no new equivalent was provided
 /social-clubs       /clubs               301  # Redirecting to new clubs & groups directory
 /new-page           /                   301  # Redirecting to homepage (placeholder page)

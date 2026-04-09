@@ -125,7 +125,7 @@ async function generateComprehensiveSitemap() {
   knownVenueSlugs.forEach(slug => {
     if (!addedVenueSlugs.has(slug)) {
       console.log(`Adding fallback venue: ${slug}`);
-      sitemap += `  <url>\n    <loc>${baseUrl}/venue/${slug}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+      sitemap += `  <url>\n    <loc>${escapeXml(baseUrl + '/venue/' + slug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
     }
   });
 

@@ -7,25 +7,10 @@ const path = require('path');
 
 // Version: 2026-03-22-v2 - Redesigned event detail page layout
 
+const { withRetry } = require('./services/retry');
+
 const eventService = new FirestoreEventService();
 const recurringManager = new RecurringEventsManager();
-
-// Retry helper for transient Firestore failures (reduces 5xx errors)
-async function withRetry(fn, { retries = 2, delay = 500, label = 'operation' } = {}) {
-  for (let attempt = 1; attempt <= retries + 1; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (attempt <= retries) {
-        console.warn(`⚠️ ${label} failed (attempt ${attempt}/${retries + 1}), retrying in ${delay}ms...`, error.message);
-        await new Promise(r => setTimeout(r, delay));
-        delay *= 2;
-      } else {
-        throw error;
-      }
-    }
-  }
-}
 
 /**
  * Converts a date object to an ISO string suitable for ICS files (YYYYMMDDTHHMMSSZ).

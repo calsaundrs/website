@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const Handlebars = require('handlebars');
 const GooglePlacesService = require('./services/google-places-service');
+const { withRetry } = require('./services/retry');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -15,23 +16,6 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const googlePlacesService = new GooglePlacesService();
-
-// Retry helper for transient Firestore/API failures (reduces 5xx errors)
-async function withRetry(fn, { retries = 2, delay = 500, label = 'operation' } = {}) {
-  for (let attempt = 1; attempt <= retries + 1; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (attempt <= retries) {
-        console.warn(`⚠️ ${label} failed (attempt ${attempt}/${retries + 1}), retrying in ${delay}ms...`, error.message);
-        await new Promise(r => setTimeout(r, delay));
-        delay *= 2; // exponential backoff
-      } else {
-        throw error;
-      }
-    }
-  }
-}
 
 exports.handler = async function(event, context) {
   try {
