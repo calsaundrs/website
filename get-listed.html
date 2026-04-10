@@ -14,7 +14,7 @@
     <meta name="description" content="List your LGBTQ+ friendly venue in Birmingham on Brum Outloud. Reach a vibrant community looking for queer spaces, bars, and clubs.">
     <link rel="canonical" href="https://www.brumoutloud.co.uk/get-listed">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
@@ -65,7 +65,7 @@
                 <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
+                <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toxic">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>

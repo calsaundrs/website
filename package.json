@@ -2,7 +2,7 @@
   "name": "brumoutloud-site",
   "version": "1.0.0",
   "scripts": {
-    "build:css": "npx tailwindcss build -o css/tailwind.css",
+    "build:css": "npx tailwindcss -i css/tailwind-input.css -o css/tailwind.css",
     "build:venues": "node build-venues-ssg.js",
     "build:venues:simple": "node build-venues-simple.js",
     "build:events": "node build-events-ssg.js",
