@@ -370,6 +370,49 @@ const templateContent = `<!DOCTYPE html>
                             </h2>
                             <p class="text-gray-300 leading-relaxed">{{venue.description}}</p>
                         </div>
+                        {{else}}
+                        {{#if googlePlaces.editorialSummary}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About {{venue.name}}
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">{{googlePlaces.editorialSummary}}</p>
+                            <p class="text-xs text-gray-500 mt-2">Description from Google</p>
+                        </div>
+                        {{/if}}
+                        {{/if}}
+
+                        {{#if hasAmenities}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                {{#if googlePlaces.amenities.servesCocktails}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>{{/if}}
+                                {{#if googlePlaces.amenities.servesBeer}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>{{/if}}
+                                {{#if googlePlaces.amenities.servesWine}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>{{/if}}
+                                {{#if googlePlaces.amenities.servesCoffee}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☕ Coffee</span>{{/if}}
+                                {{#if googlePlaces.amenities.liveMusic}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🎤 Live music</span>{{/if}}
+                                {{#if googlePlaces.amenities.outdoorSeating}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>{{/if}}
+                                {{#if googlePlaces.amenities.goodForGroups}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>{{/if}}
+                                {{#if googlePlaces.amenities.allowsDogs}}<span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🐶 Dog friendly</span>{{/if}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        {{#if hasAccessibility}}
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
+                            </h2>
+                            <ul class="text-gray-300 space-y-1 text-sm">
+                                {{#if googlePlaces.accessibility.wheelchairAccessibleEntrance}}<li>✓ Wheelchair accessible entrance</li>{{/if}}
+                                {{#if googlePlaces.accessibility.wheelchairAccessibleParking}}<li>✓ Wheelchair accessible parking</li>{{/if}}
+                                {{#if googlePlaces.accessibility.wheelchairAccessibleRestroom}}<li>✓ Wheelchair accessible restroom</li>{{/if}}
+                                {{#if googlePlaces.accessibility.wheelchairAccessibleSeating}}<li>✓ Wheelchair accessible seating</li>{{/if}}
+                            </ul>
+                            <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
+                        </div>
                         {{/if}}
 
                         <!-- Gallery -->
@@ -386,7 +429,9 @@ const templateContent = `<!DOCTYPE html>
                                 {{/each}}
                             </div>
                             <p class="text-xs text-gray-500 mt-4 text-center">
-                                Images sourced from Google Places
+                                Photos via Google{{#if photoAttributions.length}} · By
+                                {{#each photoAttributions}}{{#if uri}}<a href="{{uri}}" class="underline" rel="nofollow">{{name}}</a>{{else}}{{name}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}
+                                {{/if}}
                             </p>
                         </div>
                         {{/if}}
@@ -879,12 +924,32 @@ async function generateVenuePage(venue) {
         // Generate category tags
         const categoryTags = generateCategoryTags(venue.category);
         
+        // Derived flags / lists for the template (Google Places sections).
+        // Currently SSG ships empty Google Places data so these are all falsy,
+        // but the wiring is in place if/when SSG is switched to fetch real data.
+        const hasAmenities = !!googlePlaces.amenities
+            && Object.values(googlePlaces.amenities).some(Boolean);
+        const hasAccessibility = !!googlePlaces.accessibility
+            && Object.values(googlePlaces.accessibility).some(Boolean);
+
+        const photoAttributions = [];
+        const seenAttributionNames = new Set();
+        for (const img of (googlePlaces.images || [])) {
+            if (img.attribution && !seenAttributionNames.has(img.attribution.name)) {
+                seenAttributionNames.add(img.attribution.name);
+                photoAttributions.push(img.attribution);
+            }
+        }
+
         // Prepare template data
         const templateData = {
             venue: venue,
             upcomingEvents: upcomingEvents,
             hasUpcomingEvents: upcomingEvents.length > 0,
             googlePlaces: googlePlaces,
+            hasAmenities,
+            hasAccessibility,
+            photoAttributions,
             categoryTags: categoryTags
         };
         

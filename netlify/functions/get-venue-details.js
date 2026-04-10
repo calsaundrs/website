@@ -147,12 +147,31 @@ exports.handler = async function(event, context) {
 
     const metaOverride = venueMetaOverrides[slug] || {};
 
+    // Derived booleans / lists for the template (Handlebars has no logic helpers
+    // for these and we want to skip whole sections cleanly when empty).
+    const hasAmenities = !!googlePlacesData.amenities
+      && Object.values(googlePlacesData.amenities).some(Boolean);
+    const hasAccessibility = !!googlePlacesData.accessibility
+      && Object.values(googlePlacesData.accessibility).some(Boolean);
+
+    const photoAttributions = [];
+    const seenAttributionNames = new Set();
+    for (const img of (googlePlacesData.images || [])) {
+      if (img.attribution && !seenAttributionNames.has(img.attribution.name)) {
+        seenAttributionNames.add(img.attribution.name);
+        photoAttributions.push(img.attribution);
+      }
+    }
+
     // Prepare template data
     const templateData = {
       venue: venue,
       metaTitle: metaOverride.metaTitle || `${venue.name} — LGBTQ+ Venue in Birmingham | Brum Outloud`,
       metaDescription: metaOverride.metaDescription || venue.description,
       googlePlaces: googlePlacesData,
+      hasAmenities,
+      hasAccessibility,
+      photoAttributions,
       upcomingEvents: upcomingEvents,
       hasUpcomingEvents: upcomingEvents.length > 0,
       categoryTags: generateCategoryTags(venue.category || []),
@@ -800,6 +819,36 @@ function getVenueTemplate() {
                         <p>{{venue.description}}</p>
                     </div>
                 </section>
+                {{else}}
+                {{#if googlePlaces.editorialSummary}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>{{googlePlaces.editorialSummary}}</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Description from Google</p>
+                </section>
+                {{/if}}
+                {{/if}}
+
+                {{#if hasAmenities}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> What You'll Find
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        {{#if googlePlaces.amenities.servesCocktails}}<span class="category-tag">🍸 Cocktails</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesBeer}}<span class="category-tag">🍺 Beer</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesWine}}<span class="category-tag">🍷 Wine</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesCoffee}}<span class="category-tag">☕ Coffee</span>{{/if}}
+                        {{#if googlePlaces.amenities.liveMusic}}<span class="category-tag">🎤 Live music</span>{{/if}}
+                        {{#if googlePlaces.amenities.outdoorSeating}}<span class="category-tag">☀️ Outdoor seating</span>{{/if}}
+                        {{#if googlePlaces.amenities.goodForGroups}}<span class="category-tag">👯 Good for groups</span>{{/if}}
+                        {{#if googlePlaces.amenities.allowsDogs}}<span class="category-tag">🐶 Dog friendly</span>{{/if}}
+                    </div>
+                </section>
                 {{/if}}
 
                 {{#if venue.accessibility}}
@@ -821,6 +870,21 @@ function getVenueTemplate() {
                 </section>
                 {{/if}}
 
+                {{#if hasAccessibility}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Accessibility (via Google)
+                    </h2>
+                    <ul class="text-gray-300 text-base space-y-1">
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleEntrance}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible entrance</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleParking}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible parking</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleRestroom}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible restroom</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleSeating}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible seating</li>{{/if}}
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
+                </section>
+                {{/if}}
+
                 <!-- Google Places Gallery -->
                 {{#if googlePlaces.images.length}}
                 <section>
@@ -834,7 +898,11 @@ function getVenueTemplate() {
                         </div>
                         {{/each}}
                     </div>
-                    <p class="text-xs text-gray-500 mt-4">Images sourced from Google Places</p>
+                    <p class="text-xs text-gray-500 mt-4">
+                        Photos via Google{{#if photoAttributions.length}} · By
+                        {{#each photoAttributions}}{{#if uri}}<a href="{{uri}}" class="underline" rel="nofollow">{{name}}</a>{{else}}{{name}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}
+                        {{/if}}
+                    </p>
                 </section>
                 {{/if}}
 

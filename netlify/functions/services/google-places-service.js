@@ -13,13 +13,19 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+// Bumped to v1 when migrating from legacy Places API to Places API (New) v1.
+// Changing the prefix invalidates stale cache entries that were stored under
+// the legacy fetch path so they get re-hydrated from the new API.
+const CACHE_COLLECTION = 'google_places_cache_v1';
+const CACHE_KEY_PREFIX = 'places_v1_';
+
 class GooglePlacesService {
   constructor() {
     this.apiKey = process.env.GOOGLE_PLACES_API_KEY;
     this.cache = new Map();
     this.cacheExpiration = 24 * 60 * 60 * 1000; // 24 hours
     this.enabled = !!this.apiKey;
-    
+
     if (!this.enabled) {
       console.warn('⚠️ Google Places API key not found. Service will return empty data.');
     }
@@ -40,7 +46,7 @@ class GooglePlacesService {
     } = options;
 
     const placeId = venueData.googlePlaceId || venueData['Google Place ID'] || venueData.google_place_id;
-    
+
     if (!placeId) {
       console.log(`📍 No Google Place ID found for venue: ${venueData.name}`);
       return this.getEmptyGooglePlacesData();
@@ -51,8 +57,8 @@ class GooglePlacesService {
       return this.getEmptyGooglePlacesData();
     }
 
-    const cacheKey = `places_${placeId}`;
-    
+    const cacheKey = `${CACHE_KEY_PREFIX}${placeId}`;
+
     // Check cache first
     if (useCache && !forceRefresh && this.cache.has(cacheKey)) {
       const cachedData = this.cache.get(cacheKey);
@@ -64,16 +70,16 @@ class GooglePlacesService {
 
     try {
       console.log(`🔍 Fetching Google Places data for: ${venueData.name} (Place ID: ${placeId})`);
-      
+
       const placesData = await this.fetchPlaceDetails(placeId, maxImages, maxReviews);
-      
+
       // Cache the result
       if (useCache) {
         this.cache.set(cacheKey, {
           data: placesData,
           timestamp: Date.now()
         });
-        
+
         // Also store in Firestore for persistent caching
         await this.storePlacesDataInFirestore(placeId, placesData);
       }
@@ -83,121 +89,142 @@ class GooglePlacesService {
 
     } catch (error) {
       console.error(`❌ Error fetching Google Places data for ${venueData.name}:`, error);
-      
+
       // Try to get cached data from Firestore as fallback
       const fallbackData = await this.getPlacesDataFromFirestore(placeId);
       if (fallbackData) {
         console.log(`📦 Using Firestore cached data as fallback for: ${venueData.name}`);
         return fallbackData;
       }
-      
+
       return this.getEmptyGooglePlacesData();
     }
   }
 
   /**
-   * Fetch place details from Google Places API
-   * @param {string} placeId - Google Place ID
-   * @param {number} maxImages - Maximum number of images to fetch
-   * @param {number} maxReviews - Maximum number of reviews to fetch
-   * @returns {Object} Place details
+   * Fetch place details from Google Places API (New) v1.
+   * Docs: https://developers.google.com/maps/documentation/places/web-service/place-details
    */
   async fetchPlaceDetails(placeId, maxImages = 8, maxReviews = 5) {
-    const fields = [
+    const fieldMask = [
+      // Existing-equivalent fields
       'photos',
-      'reviews', 
+      'reviews',
       'rating',
-      'user_ratings_total',
-      'opening_hours',
-      'formatted_phone_number',
-      'website',
-      'business_status'
+      'userRatingCount',
+      'regularOpeningHours',
+      'currentOpeningHours.openNow',
+      'nationalPhoneNumber',
+      'internationalPhoneNumber',
+      'websiteUri',
+      'businessStatus',
+      // Amenity flags
+      'servesBeer',
+      'servesWine',
+      'servesCocktails',
+      'servesCoffee',
+      'liveMusic',
+      'outdoorSeating',
+      'goodForGroups',
+      'allowsDogs',
+      // Accessibility
+      'accessibilityOptions',
+      // Misc
+      'googleMapsUri',
+      'editorialSummary',
+      'priceLevel',
     ].join(',');
 
-    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${this.apiKey}`;
-    
-    const response = await fetch(detailsUrl);
-    const data = await response.json();
+    const url = `https://places.googleapis.com/v1/places/${placeId}`;
+    const response = await fetch(url, {
+      headers: {
+        'X-Goog-Api-Key': this.apiKey,
+        'X-Goog-FieldMask': fieldMask,
+      },
+    });
 
-    if (data.status !== 'OK') {
-      throw new Error(`Google Places API error: ${data.status} - ${data.error_message || 'Unknown error'}`);
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`Google Places API error: ${response.status} - ${body}`);
     }
 
-    const result = data.result;
-    
+    const result = await response.json();
+
     return {
-      images: await this.processPhotos(result.photos || [], maxImages),
+      // Preserved keys (consumers depend on these)
+      images: this.processPhotos(result.photos || [], maxImages),
       reviews: this.processReviews(result.reviews || [], maxReviews),
-      rating: result.rating || null,
-      reviewCount: result.user_ratings_total || 0,
-      openingHours: result.opening_hours?.weekday_text || [],
-      isOpen: result.opening_hours?.open_now || null,
-      phone: result.formatted_phone_number || null,
-      website: result.website || null,
-      businessStatus: result.business_status || null,
-      lastUpdated: new Date().toISOString()
+      rating: result.rating ?? null,
+      reviewCount: result.userRatingCount ?? 0,
+      openingHours: result.regularOpeningHours?.weekdayDescriptions || [],
+      isOpen: result.currentOpeningHours?.openNow ?? null,
+      phone: result.nationalPhoneNumber || result.internationalPhoneNumber || null,
+      website: result.websiteUri || null,
+      businessStatus: result.businessStatus || null,
+      lastUpdated: new Date().toISOString(),
+      // New keys
+      amenities: {
+        servesBeer: result.servesBeer ?? null,
+        servesWine: result.servesWine ?? null,
+        servesCocktails: result.servesCocktails ?? null,
+        servesCoffee: result.servesCoffee ?? null,
+        liveMusic: result.liveMusic ?? null,
+        outdoorSeating: result.outdoorSeating ?? null,
+        goodForGroups: result.goodForGroups ?? null,
+        allowsDogs: result.allowsDogs ?? null,
+      },
+      accessibility: result.accessibilityOptions || null,
+      googleMapsUri: result.googleMapsUri || null,
+      editorialSummary: result.editorialSummary?.text || null,
+      priceLevel: result.priceLevel || null,
     };
   }
 
   /**
-   * Process Google Places photos
-   * @param {Array} photos - Google Places photos array
-   * @param {number} maxImages - Maximum number of images to process
-   * @returns {Array} Processed image objects
+   * Process Google Places photos.
+   * Places API (New) returns `photos[].name` like `places/{placeId}/photos/{photoId}`,
+   * fetched via `https://places.googleapis.com/v1/{name}/media`.
+   * We embed the API key in the URL so the browser can load images directly,
+   * matching the legacy behaviour.
    */
-  async processPhotos(photos, maxImages) {
-    const images = [];
-    const photoLimit = Math.min(photos.length, maxImages);
-    
-    for (let i = 0; i < photoLimit; i++) {
-      const photo = photos[i];
-      const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&maxheight=600&photo_reference=${photo.photo_reference}&key=${this.apiKey}`;
-      
-      images.push({
-        url: imageUrl,
-        width: photo.width || 800,
-        height: photo.height || 600,
-        source: 'google_places'
-      });
-    }
-    
-    return images;
+  processPhotos(photos, maxImages) {
+    return photos.slice(0, maxImages).map((photo) => {
+      const attribution = photo.authorAttributions?.[0] || null;
+      return {
+        url: `https://places.googleapis.com/v1/${photo.name}/media`
+          + `?maxWidthPx=800&maxHeightPx=600&key=${this.apiKey}`,
+        width: photo.widthPx || 800,
+        height: photo.heightPx || 600,
+        source: 'google_places',
+        attribution: attribution
+          ? { name: attribution.displayName, uri: attribution.uri || null }
+          : null,
+      };
+    });
   }
 
   /**
-   * Process Google Places reviews
-   * @param {Array} reviews - Google Places reviews array
-   * @param {number} maxReviews - Maximum number of reviews to process
-   * @returns {Array} Processed review objects
+   * Process Google Places reviews (New API shape).
    */
   processReviews(reviews, maxReviews) {
-    const processedReviews = [];
-    const reviewLimit = Math.min(reviews.length, maxReviews);
-    
-    for (let i = 0; i < reviewLimit; i++) {
-      const review = reviews[i];
-      processedReviews.push({
-        author: review.author_name,
-        rating: review.rating,
-        text: review.text,
-        time: review.time,
-        relativeTime: review.relative_time_description,
-        profilePhoto: review.profile_photo_url,
-        source: 'google_places'
-      });
-    }
-    
-    return processedReviews;
+    return reviews.slice(0, maxReviews).map((review) => ({
+      author: review.authorAttribution?.displayName || 'Anonymous',
+      authorUri: review.authorAttribution?.uri || null,
+      rating: review.rating,
+      text: review.text?.text || review.originalText?.text || '',
+      time: review.publishTime,
+      relativeTime: review.relativePublishTimeDescription,
+      profilePhoto: review.authorAttribution?.photoUri || null,
+      source: 'google_places',
+    }));
   }
 
   /**
    * Store Google Places data in Firestore for caching
-   * @param {string} placeId - Google Place ID
-   * @param {Object} placesData - Places data to cache
    */
   async storePlacesDataInFirestore(placeId, placesData) {
     try {
-      await db.collection('google_places_cache').doc(placeId).set({
+      await db.collection(CACHE_COLLECTION).doc(placeId).set({
         ...placesData,
         cachedAt: admin.firestore.FieldValue.serverTimestamp()
       });
@@ -208,29 +235,27 @@ class GooglePlacesService {
 
   /**
    * Get cached Google Places data from Firestore
-   * @param {string} placeId - Google Place ID
-   * @returns {Object|null} Cached places data or null
    */
   async getPlacesDataFromFirestore(placeId) {
     try {
-      const doc = await db.collection('google_places_cache').doc(placeId).get();
-      
+      const doc = await db.collection(CACHE_COLLECTION).doc(placeId).get();
+
       if (!doc.exists) {
         return null;
       }
-      
+
       const data = doc.data();
       const cachedAt = data.cachedAt?.toDate() || new Date(0);
-      
+
       // Check if cache is still valid (within 7 days for Firestore cache)
       const cacheAge = Date.now() - cachedAt.getTime();
       if (cacheAge > 7 * 24 * 60 * 60 * 1000) { // 7 days
         return null;
       }
-      
+
       // Remove Firestore metadata
       delete data.cachedAt;
-      
+
       return data;
     } catch (error) {
       console.warn('Failed to get cached Google Places data from Firestore:', error);
@@ -240,7 +265,6 @@ class GooglePlacesService {
 
   /**
    * Get empty Google Places data structure
-   * @returns {Object} Empty places data
    */
   getEmptyGooglePlacesData() {
     return {
@@ -253,20 +277,33 @@ class GooglePlacesService {
       phone: null,
       website: null,
       businessStatus: null,
-      lastUpdated: null
+      lastUpdated: null,
+      amenities: {
+        servesBeer: null,
+        servesWine: null,
+        servesCocktails: null,
+        servesCoffee: null,
+        liveMusic: null,
+        outdoorSeating: null,
+        goodForGroups: null,
+        allowsDogs: null,
+      },
+      accessibility: null,
+      googleMapsUri: null,
+      editorialSummary: null,
+      priceLevel: null,
     };
   }
 
   /**
    * Clear cache for a specific place
-   * @param {string} placeId - Google Place ID
    */
   async clearCache(placeId) {
-    const cacheKey = `places_${placeId}`;
+    const cacheKey = `${CACHE_KEY_PREFIX}${placeId}`;
     this.cache.delete(cacheKey);
-    
+
     try {
-      await db.collection('google_places_cache').doc(placeId).delete();
+      await db.collection(CACHE_COLLECTION).doc(placeId).delete();
     } catch (error) {
       console.warn('Failed to clear Firestore cache:', error);
     }
@@ -277,15 +314,15 @@ class GooglePlacesService {
    */
   async clearAllCache() {
     this.cache.clear();
-    
+
     try {
       const batch = db.batch();
-      const snapshot = await db.collection('google_places_cache').get();
-      
+      const snapshot = await db.collection(CACHE_COLLECTION).get();
+
       snapshot.docs.forEach(doc => {
         batch.delete(doc.ref);
       });
-      
+
       await batch.commit();
     } catch (error) {
       console.warn('Failed to clear all Firestore cache:', error);
@@ -294,7 +331,6 @@ class GooglePlacesService {
 
   /**
    * Get cache statistics
-   * @returns {Object} Cache statistics
    */
   getCacheStats() {
     return {
@@ -308,9 +344,8 @@ class GooglePlacesService {
   }
 
   /**
-   * Search for venues using Google Places API
-   * @param {string} query - Search query
-   * @returns {Array} Search results
+   * Search for venues using Places API (New) Text Search.
+   * Docs: https://developers.google.com/maps/documentation/places/web-service/text-search
    */
   async searchVenues(query) {
     if (!this.enabled) {
@@ -318,22 +353,29 @@ class GooglePlacesService {
     }
 
     try {
-      const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&type=establishment&key=${this.apiKey}`;
-      
-      const response = await fetch(searchUrl);
-      const data = await response.json();
-      
-      if (data.status !== 'OK') {
-        console.error(`Google Places search error: ${data.status} - ${data.error_message || 'Unknown error'}`);
+      const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': this.apiKey,
+          'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.types,places.photos',
+        },
+        body: JSON.stringify({ textQuery: query }),
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        console.error(`Google Places search error: ${response.status} - ${body}`);
         return [];
       }
 
-      return data.results.map(place => ({
-        placeId: place.place_id,
-        name: place.name,
-        address: place.formatted_address,
+      const data = await response.json();
+      return (data.places || []).map((place) => ({
+        placeId: place.id,
+        name: place.displayName?.text,
+        address: place.formattedAddress,
         rating: place.rating,
-        userRatingsTotal: place.user_ratings_total,
+        userRatingsTotal: place.userRatingCount,
         types: place.types,
         photos: place.photos ? place.photos.length : 0
       }));
@@ -346,7 +388,6 @@ class GooglePlacesService {
 
   /**
    * Test Google Places API connectivity
-   * @returns {Object} Test results
    */
   async testConnection() {
     if (!this.enabled) {
@@ -359,23 +400,27 @@ class GooglePlacesService {
     try {
       // Test with a known place ID (Google headquarters)
       const testPlaceId = 'ChIJj61dQgK6j4AR4GeTYWZsKWw';
-      const testUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${testPlaceId}&fields=name,rating&key=${this.apiKey}`;
-      
-      const response = await fetch(testUrl);
-      const data = await response.json();
-      
-      if (data.status === 'OK') {
+      const response = await fetch(`https://places.googleapis.com/v1/places/${testPlaceId}`, {
+        headers: {
+          'X-Goog-Api-Key': this.apiKey,
+          'X-Goog-FieldMask': 'id,displayName,rating',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
         return {
           success: true,
           message: 'Google Places API connection successful',
-          testResult: data.result
-        };
-      } else {
-        return {
-          success: false,
-          error: `API Error: ${data.status} - ${data.error_message || 'Unknown error'}`
+          testResult: data
         };
       }
+
+      const body = await response.text();
+      return {
+        success: false,
+        error: `API Error: ${response.status} - ${body}`
+      };
     } catch (error) {
       return {
         success: false,
@@ -385,4 +430,4 @@ class GooglePlacesService {
   }
 }
 
-module.exports = GooglePlacesService; 
+module.exports = GooglePlacesService;
