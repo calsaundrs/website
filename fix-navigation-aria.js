@@ -58,4 +58,3 @@ function processDirectory(directory) {
 }
 
 processDirectory(directoryPath);
-processDirectory(path.join(directoryPath, 'venue'));

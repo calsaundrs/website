@@ -39,5 +39,3 @@ function processDirectory(directory) {
 
 // Process root HTMLs and the venue directory, etc
 processDirectory(directoryPath);
-// Also explicitly do the venue folder
-processDirectory(path.join(directoryPath, 'venue'));
