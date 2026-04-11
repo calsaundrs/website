@@ -62,8 +62,10 @@
 </head>
 
 <body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
+    <!-- Giant Background Watermark -->
+    <div class="watermark-bg text-[var(--color-pink)]">CONTACT</div>
     <!-- Background Texture -->
-    <div class="grain"></div>
+    <div class="noise-overlay"></div>
     
     <!-- Header -->
     <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
@@ -100,45 +102,45 @@
     <main class="container mx-auto px-4 py-16 relative z-10">
         <section class="max-w-4xl mx-auto">
             <div class="text-center mb-16 relative">
-                <!-- Duct Tape Decoration -->
-                <div class="duct-tape rotate-[-3deg] w-48 text-center left-1/2 -translate-x-1/2 -top-6 text-sm">TALK TO US</div>
+                <div class="sticker bg-[var(--color-purple)] text-white text-sm mb-4 inline-block transform -rotate-2">TALK TO US</div>
                 
-                <h1 class="font-anton text-[4rem] md:text-8xl leading-none tracking-tight heading-gradient pt-8 misprint">
-                CONTACT <span class="bg-[var(--color-pink)] text-[#000] px-4 mx-2 border-4 border-black rotate-2 inline-block shadow-[6px_6px_0_var(--color-toxic)]">BRUM OUTLOUD</span>
+                <h1 class="text-[clamp(4rem,10vw,8rem)] font-black text-white uppercase font-display misprint leading-[0.85] mb-6 shadow-glow">
+                    CONTACT <span class="bg-[var(--color-pink)] text-black px-4 mx-2 border-4 border-black rotate-2 inline-block shadow-[6px_6px_0_var(--color-toxic)]">BRUM OUTLOUD</span>
                 </h1>
                 
-                <h2 class="mt-8 text-2xl font-black font-display uppercase text-[var(--color-light)]">Got a question, suggestion, or feedback about the LGBTQ+ scene in Birmingham?</h2>
+                <h2 class="mt-8 text-2xl font-black font-display uppercase text-[var(--color-light)]">Got a question, suggestion, or feedback about the scene?</h2>
             </div>
 
+
             <div class="max-w-2xl mx-auto">
-                <form name="contact" method="POST" netlify class="bg-black border-4 border-[var(--color-purple)] p-8 md:p-12 shadow-[12px_12px_0_var(--color-toxic)] mx-auto relative transform rotate-[1deg]">
+                <form name="contact" method="POST" netlify class="brutalist-card p-8 md:p-12 mx-auto relative transform rotate-[0.5deg]">
                     
-                    <div class="sticker bg-white text-black text-xs absolute -top-4 -left-4 -rotate-12">YRIGHT BAB?</div>
+                    <div class="sticker bg-white !text-black text-xs absolute -top-4 -left-4 -rotate-12">Y'RIGHT BAB?</div>
 
                     <div class="space-y-8">
                         <div>
-                            <label for="name" class="block font-display font-black text-2xl uppercase text-[var(--color-light)] mb-2">Your Name</label>
-                            <input type="text" id="name" name="name" class="w-full bg-white text-black border-4 border-black p-4 text-xl font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="Who's asking?">
+                            <label for="name" class="block font-display font-black text-sm uppercase tracking-widest text-[var(--color-toxic)] mb-2">Your Name</label>
+                            <input type="text" id="name" name="name" class="punk-input w-full px-4 py-4" required placeholder="Who's asking?">
                         </div>
                         
                         <div>
-                            <label for="email" class="block font-display font-black text-2xl uppercase text-[var(--color-light)] mb-2">Your Email</label>
-                            <input type="email" id="email" name="email" class="w-full bg-white text-black border-4 border-black p-4 text-xl font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="So we can hit you back">
+                            <label for="email" class="block font-display font-black text-sm uppercase tracking-widest text-[var(--color-toxic)] mb-2">Your Email</label>
+                            <input type="email" id="email" name="email" class="punk-input w-full px-4 py-4" required placeholder="So we can hit you back">
                         </div>
                         
                         <div>
-                            <label for="subject" class="block font-display font-black text-2xl uppercase text-[var(--color-light)] mb-2">Subject</label>
-                            <input type="text" id="subject" name="subject" class="w-full bg-white text-black border-4 border-black p-4 text-xl font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all" required placeholder="What's the tea?">
+                            <label for="subject" class="block font-display font-black text-sm uppercase tracking-widest text-[var(--color-toxic)] mb-2">Subject</label>
+                            <input type="text" id="subject" name="subject" class="punk-input w-full px-4 py-4" required placeholder="What's the tea?">
                         </div>
                         
                         <div>
-                            <label for="message" class="block font-display font-black text-2xl uppercase text-[var(--color-light)] mb-2">Message</label>
-                            <textarea id="message" name="message" rows="5" class="w-full bg-white text-black border-4 border-black p-4 text-xl font-bold font-['Space_Grotesk'] focus:outline-none focus:border-[var(--color-pink)] focus:shadow-[6px_6px_0_var(--color-purple)] transition-all resize-y" required placeholder="Spill it..."></textarea>
+                            <label for="message" class="block font-display font-black text-sm uppercase tracking-widest text-[var(--color-toxic)] mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="punk-input w-full px-4 py-4 resize-y" required placeholder="Spill it..."></textarea>
                         </div>
                         
-                        <div class="text-right pt-6">
-                            <button type="submit" class="bg-[var(--color-toxic)] text-black border-4 border-black px-8 py-4 font-display font-black text-2xl uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[6px_6px_0_var(--color-purple)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_var(--color-purple)] w-full sm:w-auto text-center cursor-pointer">
-                                Send It
+                        <div class="pt-6">
+                            <button type="submit" class="bg-[var(--color-toxic)] text-black border-4 border-black px-8 py-4 font-display font-black text-2xl uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[6px_6px_0_var(--color-purple)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_var(--color-purple)] w-full text-center cursor-pointer">
+                                Send Message
                             </button>
                         </div>
                     </div>
@@ -195,17 +197,6 @@
 </footer>
 
 
-    <script>
-        // Mobile menu
-        const menuBtn = document.getElementById('menu-btn');
-        const menu = document.getElementById('menu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
-            });
-        }
-    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>
