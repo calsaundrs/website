@@ -73,7 +73,244 @@
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Google Tag Manager -->
-    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
+
+    <main class="max-w-4xl mx-auto px-6 md:px-12 pt-10 pb-20">
+        <div class="text-center mb-12">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">PROMOTERS</div>
+            <h1 class="text-5xl md:text-6xl lg:text-8xl font-black text-white uppercase font-display misprint leading-[0.9] mb-3">Submit Your <span class="text-[var(--color-toxic)]">Event</span></h1>
+            <p class="text-gray-200 text-lg max-w-xl mx-auto">Easily add your Birmingham queer events to Brum Outloud.</p>
+        </div>
+
+        <div class="bg-black border-4 border-[var(--color-purple)] p-8 md:p-12 shadow-[12px_12px_0_var(--color-toxic)] relative">
+            <div class="sticker bg-white text-black text-xs absolute -top-4 -left-4 -rotate-12">SINGLE EVENT</div>
+
+            <form id="single-event-form" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="event-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Event Name</label>
+                            <input type="text" id="event-name" name="event-name" class="form-field" required>
+                        </div>
+
+                        <div>
+                            <label for="contact-email" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Your Contact Email</label>
+                            <input type="email" id="contact-email" name="contact-email" placeholder="So we can contact you with any issues" class="form-field" required>
+                        </div>
+
+                        <div>
+                            <label for="venue-select" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Venue</label>
+                            <select id="venue-select" name="venueId" class="form-field" required>
+                                <option value="">Loading venues...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="category-select" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Categories (Select all that apply)</label>
+                            <select id="category-select" name="categoryIds" class="form-field" multiple required>
+                                <option value="">Loading categories...</option>
+                            </select>
+                        </div>
+
+                        <div id="new-venue-fields" class="hidden space-y-6 transition-all duration-300">
+                            <div>
+                                <label for="new-venue-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">New Venue Name</label>
+                                <input type="text" id="new-venue-name" class="form-field">
+                            </div>
+                            <div>
+                                <label for="new-venue-address" class="block font-display font-black text-sm uppercase tracking-widest mb-2">New Venue Address</label>
+                                <input type="text" id="new-venue-address" class="form-field" placeholder="e.g., 123 Main Street, Birmingham">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="description" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Description</label>
+                            <textarea id="description" name="description" rows="3" class="form-field"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="date" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Date</label>
+                                <input type="date" id="date" name="date" class="form-field" required>
+                            </div>
+                            <div>
+                                <label for="start-time" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Start Time</label>
+                                <input type="time" id="start-time" name="start-time" class="form-field" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="link" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Ticket Link (Optional)</label>
+                            <input type="url" id="link" name="link" class="form-field" placeholder="https://">
+                        </div>
+
+                        <div class="mb-4 p-4 border-2 border-gray-600 bg-black/50">
+                            <label class="block font-display font-black text-sm uppercase tracking-widest mb-3">Recurrence (Optional)</label>
+                            <div class="flex flex-wrap items-center space-x-4 mb-4">
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-none" name="recurrence-type" value="none" class="mr-2" checked>
+                                    <label for="recurrence-none" class="text-gray-300">No Recurrence</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-weekly" name="recurrence-type" value="weekly" class="mr-2">
+                                    <label for="recurrence-weekly" class="text-gray-300">Weekly</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="recurrence-monthly" name="recurrence-type" value="monthly" class="mr-2">
+                                    <label for="recurrence-monthly" class="text-gray-300">Monthly</label>
+                                </div>
+                            </div>
+                            <div id="recurring-options" class="space-y-6 pt-4 border-t border-gray-700 hidden">
+                                <div id="recurrence-preview" class="hidden p-4 bg-black/50 border-2 border-gray-600">
+                                    <h4 class="text-sm font-semibold mb-2 text-[var(--color-toxic)]">Preview of Next 3 Months:</h4>
+                                    <div id="preview-dates" class="text-sm text-gray-300 space-y-1"></div>
+                                </div>
+                                <div id="weekly-options" class="hidden">
+                                    <label class="block font-display font-black text-sm uppercase tracking-widest mb-2">Repeat on:</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-gray-300">
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="1" class="mr-2"><span>Monday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="2" class="mr-2"><span>Tuesday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="3" class="mr-2"><span>Wednesday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="4" class="mr-2"><span>Thursday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="5" class="mr-2"><span>Friday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="6" class="mr-2"><span>Saturday</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="weekly_days" value="0" class="mr-2"><span>Sunday</span></label>
+                                    </div>
+                                </div>
+
+                                <div id="monthly-options" class="hidden space-y-4">
+                                    <div>
+                                        <label class="block font-display font-black text-sm uppercase tracking-widest mb-2">Monthly Recurrence Type:</label>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex items-center">
+                                                <input type="radio" id="monthly-type-date" name="monthly_type" value="date" class="mr-2" checked>
+                                                <label for="monthly-type-date" class="text-gray-300">By Date (e.g., 15th of every month)</label>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <input type="radio" id="monthly-type-day" name="monthly_type" value="day" class="mr-2">
+                                                <label for="monthly-type-day" class="text-gray-300">By Day (e.g., 2nd Friday of every month)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="recurring-info" id="recurring-info-hidden">
+                                    <div>
+                                        <label for="promo-image" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Promo Image</label>
+                                        <input type="file" id="promo-image" name="promo-image" class="w-full text-sm text-gray-200 file:mr-4 file:py-3 file:px-6 file:border-4 file:border-black file:bg-[var(--color-light)] file:text-black file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-[var(--color-toxic)] file:transition-colors file:cursor-pointer" accept="image/png, image/jpeg, image/gif">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="form-status" class="text-center hidden p-4"></div>
+                            <div class="mt-6 flex items-center justify-end space-x-4">
+                                <div class="flex items-center">
+                                    <input id="terms-agree" type="checkbox" class="h-4 w-4 mr-2">
+                                    <label for="terms-agree" class="text-sm text-gray-200">I agree to the
+                                        <a href="/terms-of-submission.html" target="_blank" class="underline hover:text-white">Terms of Submission</a></label>
+                                </div>
+                                <button type="submit" id="submit-button" class="bg-[var(--color-toxic)] text-black border-4 border-black px-6 py-3 font-display font-black text-lg uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[4px_4px_0_var(--color-purple)] cursor-pointer disabled:opacity-50" disabled>Submit Event</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+    </script>
 
     <script>
         function initializeForm() {

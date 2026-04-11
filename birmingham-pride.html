@@ -532,7 +532,7 @@
         <section class="max-w-7xl mx-auto px-6 md:px-12 pt-12">
             <div class="aeo-glass-card p-6 md:p-8 relative overflow-hidden group max-w-4xl">
                 <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
-
+                <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4 mt-2 inline-block">AEO SYNOPSIS</div>
                 <p class="text-white text-lg font-bold mb-2">Birmingham Pride 2026 takes place 22-24 May. The parade starts at noon on Saturday from Centenary Square — it's free to watch.</p>
                 <p class="text-gray-300">The main festival runs Saturday and Sunday in the Gay Village on Hurst Street. Tickets available from <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold hover:text-white">birminghampride.com</a>. Under 12s go free. See our full guide below for lineup, venues, transport, and accessibility info.</p>
             </div>
@@ -1027,7 +1027,67 @@
 </footer>
 
 
-    
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+
+        // Dynamic Pride events loader
+        async function loadPrideEvents() {
+            const grid = document.getElementById('pride-events-grid');
+            const empty = document.getElementById('pride-events-empty');
+            try {
+                const res = await fetch('/.netlify/functions/get-events');
+                if (!res.ok) throw new Error(res.status);
+                const data = await res.json();
+                const events = Array.isArray(data.events) ? data.events : (Array.isArray(data) ? data : []);
+
+                const prideEvents = events.filter(e => {
+                    const date = e.date || e.startDate || '';
+                    return date >= '2026-05-18' && date <= '2026-05-25';
+                }).slice(0, 6);
+
+                if (prideEvents.length === 0) {
+                    grid.style.display = 'none';
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                grid.innerHTML = prideEvents.map(e => {
+                    const name = e.name || e.title || 'Pride Event';
+                    const date = e.date || e.startDate || '';
+                    const venue = e.venueName || (e.venue && e.venue.name) || '';
+                    const image = (e.image && e.image.url) ? e.image.url : (e.image || e.imageUrl || e.flyer || '');
+                    const slug = e.slug || '';
+                    const href = slug ? '/event/' + slug : '/events';
+                    const dateStr = date ? new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
+                    
+                    const imgHTML = image 
+                        ? '<div class="w-full h-40 overflow-hidden border-b-2 border-gray-800"><img src="' + image + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"></div>' 
+                        : '';
+
+                    return '<a href="' + href + '" class="pride-event-card group">'
+                        + imgHTML
+                        + '<div class="p-6 flex flex-col flex-grow">'
+                        + '<p class="text-white font-bold uppercase font-display leading-tight mb-2">' + name + '</p>'
+                        + (dateStr ? '<p class="text-[var(--color-toxic)] text-sm font-bold mt-auto"><i class="fas fa-calendar-day mr-1"></i>' + dateStr + '</p>' : '')
+                        + (venue ? '<p class="text-gray-300 text-sm mt-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
+                        + '</div></a>';
+                }).join('');
+            } catch (err) {
+                console.log('Could not load Pride events:', err);
+                grid.style.display = 'none';
+                empty.classList.remove('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadPrideEvents);
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

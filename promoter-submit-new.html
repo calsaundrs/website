@@ -2,7 +2,562 @@
 <html lang="en">
 <head>
     <!-- Google Tag Manager -->
-    
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="UTF-8">
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Event | BrumOutLoud</title>
+
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+
+    <script src="/js/fouc-prevention.js"></script>
+
+    <style>
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
+    <div class="watermark-bg text-[var(--color-pink)]">SUBMIT</div>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Header -->
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 md:px-12 pt-10 pb-20">
+        <div class="text-center mb-12">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6">PROMOTERS & ORGANISERS</div>
+            <h1 class="text-5xl md:text-6xl lg:text-8xl font-black text-white uppercase font-display misprint leading-[0.9] mb-3">Submit <span class="text-[var(--color-toxic)]">Event</span></h1>
+            <p class="text-gray-200 text-lg max-w-xl mx-auto">Share your LGBTQ+ event with the Birmingham community. Our streamlined form makes it easy to get your event listed quickly.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="event-submission-form" class="space-y-8">
+            <!-- Poster Upload Section -->
+            <div class="brutalist-card p-8 group">
+                <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
+                    <i class="fas fa-image mr-2"></i>Event Poster/Image
+                </h2>
+
+                <!-- Upload Area -->
+                <div id="upload-area" class="border-4 border-dashed border-gray-600 p-8 text-center hover:border-[var(--color-pink)] transition-colors cursor-pointer">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-200 mb-4"></i>
+                    <p class="text-lg text-gray-300 mb-2">Drop your event poster here or click to upload</p>
+                    <p class="text-sm text-gray-300">We'll try to extract event details automatically</p>
+                    <input type="file" id="poster-upload" name="promo-image" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Upload Preview -->
+                <div id="upload-preview" class="hidden mt-4 p-4 bg-black/50 border-2 border-[var(--color-purple)]">
+                    <div class="flex items-center gap-4">
+                        <img id="preview-thumbnail" src="" alt="Upload preview" class="w-24 h-24 object-cover border-2 border-gray-600">
+                        <div class="flex-1">
+                            <p id="preview-filename" class="text-sm font-semibold text-white"></p>
+                            <p id="preview-filesize" class="text-xs text-gray-200 mt-1"></p>
+                            <p class="text-xs text-green-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Image attached</p>
+                        </div>
+                        <button type="button" id="remove-upload" class="text-gray-200 hover:text-red-400 transition-colors p-2" title="Remove image">
+                            <i class="fas fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Processing Status -->
+                <div id="ai-processing" class="hidden mt-4 p-4 bg-blue-900/20 border-2 border-blue-600">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400 mr-3"></div>
+                        <span class="text-blue-300">AI is analyzing your poster...</span>
+                    </div>
+                </div>
+
+                <!-- Extracted Data Preview -->
+                <div id="extracted-data" class="hidden mt-4 p-4 bg-green-900/20 border-2 border-green-600">
+                    <h3 class="text-green-300 font-semibold mb-3">
+                        <i class="fas fa-magic mr-2"></i>Extracted Information
+                    </h3>
+                    <div id="extracted-fields" class="space-y-2 text-sm"></div>
+                    <div class="mt-4 flex space-x-3">
+                        <button type="button" id="use-extracted" class="px-4 py-2 bg-green-600 text-white font-bold uppercase text-sm hover:bg-green-700 border-2 border-black">
+                            <i class="fas fa-check mr-2"></i>Use Extracted Info
+                        </button>
+                        <button type="button" id="ignore-extracted" class="px-4 py-2 bg-gray-600 text-white font-bold uppercase text-sm hover:bg-gray-700 border-2 border-black">
+                            <i class="fas fa-times mr-2"></i>Ignore
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Event Information -->
+            <div class="brutalist-card p-8 group">
+                <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
+                    <i class="fas fa-calendar-plus mr-2"></i>Event Details
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="event-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Event Name *
+                        </label>
+                        <input type="text" id="event-name" name="event-name" required
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="Enter your event name">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="description" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Description *
+                        </label>
+                        <textarea id="description" name="description" rows="4" required
+                                  class="punk-input w-full px-4 py-3"
+                                  placeholder="Tell us about your event..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="date" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Event Date *
+                        </label>
+                        <input type="date" id="date" name="date" required
+                               class="punk-input w-full px-4 py-3">
+                    </div>
+
+                    <div>
+                        <label for="start-time" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Start Time *
+                        </label>
+                        <input type="time" id="start-time" name="start-time" required
+                               class="punk-input w-full px-4 py-3">
+                    </div>
+
+                    <div>
+                        <label class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Categories *
+                        </label>
+                        <div class="space-y-3">
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Comedy" class="mr-2">
+                                    <span>Comedy</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Drag" class="mr-2">
+                                    <span>Drag</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Live Music" class="mr-2">
+                                    <span>Live Music</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Party" class="mr-2">
+                                    <span>Party</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Pride" class="mr-2">
+                                    <span>Pride</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Social" class="mr-2">
+                                    <span>Social</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Theatre" class="mr-2">
+                                    <span>Theatre</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Viewing Party" class="mr-2">
+                                    <span>Viewing Party</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Kink" class="mr-2">
+                                    <span>Kink</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Community" class="mr-2">
+                                    <span>Community</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Exhibition" class="mr-2">
+                                    <span>Exhibition</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Health" class="mr-2">
+                                    <span>Health</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Quiz" class="mr-2">
+                                    <span>Quiz</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Trans & Non-Binary" class="mr-2">
+                                    <span>Trans & Non-Binary</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Sober" class="mr-2">
+                                    <span>Sober</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Queer Women & Sapphic" class="mr-2">
+                                    <span>Queer Women & Sapphic</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Nightlife" class="mr-2">
+                                    <span>Nightlife</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Competition" class="mr-2">
+                                    <span>Competition</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Games" class="mr-2">
+                                    <span>Games</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Cabaret" class="mr-2">
+                                    <span>Cabaret</span>
+                                </label>
+                                <label class="inline-flex items-center px-3 py-2 bg-black/50 border-2 border-gray-600 cursor-pointer hover:border-[var(--color-pink)] transition-colors text-sm">
+                                    <input type="checkbox" name="categories" value="Show" class="mr-2">
+                                    <span>Show</span>
+                                </label>
+                            </div>
+                            <div id="selected-categories" class="text-sm text-gray-200">
+                                Select one or more categories that apply to your event
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="end-time" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            End Time (Optional)
+                        </label>
+                        <input type="time" id="end-time" name="end-time"
+                               class="punk-input w-full px-4 py-3">
+                    </div>
+
+                    <div>
+                        <label for="price" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Price (Optional)
+                        </label>
+                        <input type="text" id="price" name="price"
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="e.g. Free, £5, £10-£15">
+                    </div>
+
+                    <div>
+                        <label for="age-restriction" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Age Restriction (Optional)
+                        </label>
+                        <input type="text" id="age-restriction" name="age-restriction"
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="e.g. 18+, All ages">
+                    </div>
+
+                    <div>
+                        <label for="link" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Ticket Link (Optional)
+                        </label>
+                        <input type="url" id="link" name="link"
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="https://">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venue Selection -->
+            <div class="brutalist-card p-8 group">
+                <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
+                    <i class="fas fa-map-marker-alt mr-2"></i>Venue
+                </h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <label for="venue-search" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Search Venues
+                        </label>
+                        <input type="text" id="venue-search"
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="Start typing to search venues...">
+                        <input type="hidden" id="venue-id" name="venue-id">
+                    </div>
+
+                    <div id="venue-results" class="hidden space-y-2 max-h-48 overflow-y-auto"></div>
+
+                    <div id="selected-venue-details" class="hidden p-4 bg-black/50 border-2 border-[var(--color-purple)]">
+                        <h3 class="font-semibold text-[var(--color-toxic)] mb-2">Selected Venue</h3>
+                        <div id="venue-details-content"></div>
+                        <button type="button" id="change-venue" class="text-sm text-gray-200 hover:text-white mt-2">
+                            <i class="fas fa-edit mr-1"></i>Change venue
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="button" id="add-new-venue" class="bg-black border-2 border-[var(--color-light)] px-6 py-3 font-bold uppercase text-sm hover:bg-[var(--color-purple)] transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Add New Venue
+                        </button>
+                    </div>
+
+                    <!-- New Venue Form (hidden by default) -->
+                    <div id="new-venue-form" class="hidden space-y-4 p-4 bg-black/50 border-2 border-[var(--color-purple)]">
+                        <h3 class="font-display font-black text-[var(--color-toxic)] mb-2">
+                            <i class="fas fa-map-pin mr-2"></i>New Venue Details
+                        </h3>
+                        <div>
+                            <label for="new-venue-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Venue Name *</label>
+                            <input type="text" id="new-venue-name" name="new-venue-name" required
+                                   class="punk-input w-full px-4 py-3"
+                                   placeholder="Enter venue name">
+                        </div>
+                        <div>
+                            <label for="new-venue-address" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Address</label>
+                            <input type="text" id="new-venue-address" name="new-venue-address"
+                                   class="punk-input w-full px-4 py-3"
+                                   placeholder="Full address">
+                        </div>
+                        <div>
+                            <label for="new-venue-postcode" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Postcode</label>
+                            <input type="text" id="new-venue-postcode" name="new-venue-postcode"
+                                   class="punk-input w-full px-4 py-3"
+                                   placeholder="e.g. B1 1AA">
+                        </div>
+                        <button type="button" id="cancel-new-venue" class="text-sm text-gray-200 hover:text-white">
+                            <i class="fas fa-times mr-1"></i>Cancel — use existing venue instead
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recurring Events -->
+            <div class="brutalist-card p-8 group">
+                <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
+                    <i class="fas fa-redo mr-2"></i>Recurring Event
+                </h2>
+
+                <div class="space-y-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is-recurring" name="is-recurring" class="mr-3 h-5 w-5">
+                        <label for="is-recurring" class="text-lg font-semibold">
+                            This is a recurring event
+                        </label>
+                    </div>
+
+                    <div id="recurring-config" class="hidden space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-display font-black text-sm uppercase tracking-widest mb-3">Recurrence Pattern *</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recurring-pattern" value="weekly" class="mr-2">
+                                        <span>Weekly</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recurring-pattern" value="bi-weekly" class="mr-2">
+                                        <span>Bi-weekly</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recurring-pattern" value="monthly" class="mr-2">
+                                        <span>Monthly</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recurring-pattern" value="yearly" class="mr-2">
+                                        <span>Yearly</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="recurring-pattern" value="custom" class="mr-2">
+                                        <span>Custom</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="recurring-start-date" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                                    Start Date *
+                                </label>
+                                <input type="date" id="recurring-start-date" name="recurring-start-date"
+                                       class="punk-input w-full px-4 py-3">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="recurring-end-date" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                                    End Date (Optional)
+                                </label>
+                                <input type="date" id="recurring-end-date" name="recurring-end-date"
+                                       class="punk-input w-full px-4 py-3">
+                            </div>
+
+                            <div>
+                                <label for="max-instances" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                                    Max Instances
+                                </label>
+                                <input type="number" id="max-instances" name="max-instances" value="52" min="1" max="1000"
+                                       class="punk-input w-full px-4 py-3">
+                                <p class="text-xs text-gray-200 mt-1">Maximum number of events to create (default: 52)</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="custom-recurrence-desc" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                                Custom Description (Optional)
+                            </label>
+                            <textarea id="custom-recurrence-desc" name="custom-recurrence-desc" rows="2"
+                                      class="punk-input w-full px-4 py-3"
+                                      placeholder="e.g., Every other Tuesday, First Friday of the month..."></textarea>
+                        </div>
+
+                        <div class="bg-black/50 p-4 border-2 border-gray-600">
+                            <h3 class="font-semibold mb-2 text-[var(--color-toxic)]">Preview</h3>
+                            <div id="recurring-preview" class="text-sm text-gray-300">
+                                Select a pattern and start date to see a preview of upcoming dates.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="brutalist-card p-8 group">
+                <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
+                    <i class="fas fa-user mr-2"></i>Contact Information
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="contact-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Contact Name *
+                        </label>
+                        <input type="text" id="contact-name" name="contact-name" required
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="Your name">
+                    </div>
+
+                    <div>
+                        <label for="contact-email" class="block font-display font-black text-sm uppercase tracking-widest mb-2">
+                            Contact Email *
+                        </label>
+                        <input type="email" id="contact-email" name="contact-email" required
+                               class="punk-input w-full px-4 py-3"
+                               placeholder="your@email.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="bg-[var(--color-toxic)] text-black border-4 border-black px-8 py-4 font-display font-black text-2xl uppercase hover:bg-[var(--color-pink)] hover:text-white transition-all shadow-[6px_6px_0_var(--color-purple)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_var(--color-purple)] cursor-pointer">
+                    <span id="submit-text">
+                        <i class="fas fa-paper-plane mr-2"></i>Submit Event
+                    </span>
+                    <div id="submit-loader" class="hidden">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
+                    </div>
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
     <script src="/js/promoter-submit-streamlined.js"></script>
     <script src="/js/main.js"></script>
 </body>

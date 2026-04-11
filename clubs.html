@@ -732,7 +732,37 @@
 </footer>
 
 
-    
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+
+        // Category filter
+        document.querySelectorAll('.filter-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-pill').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('[data-category]').forEach(section => {
+                    const divider = section.previousElementSibling;
+                    if (filter === 'all' || section.dataset.category === filter) {
+                        section.style.display = '';
+                        if (divider && divider.classList.contains('section-divider')) divider.style.display = '';
+                    } else {
+                        section.style.display = 'none';
+                        if (divider && divider.classList.contains('section-divider')) divider.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>

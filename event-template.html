@@ -329,7 +329,39 @@
 </footer>
 
 
-    
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+
+        // Add body class if sticky ticket bar exists
+        if (document.querySelector('.fixed.bottom-0')) {
+            document.body.classList.add('has-ticket-bar');
+        }
+
+        // Share button functionality
+        function handleShare(btn) {
+            const shareData = { title: '{{event.name}}', url: window.location.href };
+            if (navigator.share) {
+                navigator.share(shareData).catch(err => console.error('Share failed:', err));
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    const originalContent = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>COPIED!';
+                    setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+                }).catch(err => console.error('Copy failed:', err));
+            }
+        }
+        document.querySelectorAll('#share-button, #share-button-mobile').forEach(btn => {
+            btn.addEventListener('click', () => handleShare(btn));
+        });
+    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>

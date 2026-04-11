@@ -412,7 +412,306 @@
 </footer>
 
 
-    
+    <script>
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menu = document.getElementById('menu');
+        if (menuBtn && menu) {
+            menuBtn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+            });
+        }
+
+        // State
+        let allEvents = [];
+        let activeFilter = 'all';
+        let currentOffset = 0;
+        let hasMoreEvents = false;
+        let isLoadingMore = false;
+        let showNSFW = false;
+        const PAGE_SIZE = 30;
+        const grid = document.getElementById('event-grid');
+        const countEl = document.getElementById('event-count');
+
+        // Filter buttons
+        document.querySelectorAll('.date-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                renderEvents();
+            });
+        });
+
+        // NSFW toggle
+        const nsfwToggle = document.getElementById('nsfw-toggle');
+        if (nsfwToggle) {
+            nsfwToggle.addEventListener('click', () => {
+                showNSFW = !showNSFW;
+                nsfwToggle.setAttribute('aria-pressed', showNSFW);
+                fetchEvents();
+            });
+        }
+
+        // Fetch events from API with pagination
+        async function fetchEvents(loadMore = false) {
+            if (!loadMore) {
+                currentOffset = 0;
+                allEvents = [];
+            }
+
+            try {
+                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}&includeAdult=${showNSFW}`);
+                if (!res.ok) throw new Error(res.status);
+                const data = await res.json();
+                if (data.success && data.events) {
+                    if (loadMore) {
+                        allEvents = allEvents.concat(data.events);
+                    } else {
+                        allEvents = data.events;
+                    }
+                    hasMoreEvents = data.hasMore || false;
+                    currentOffset += data.events.length;
+                } else {
+                    throw new Error('No events in response');
+                }
+            } catch (err) {
+                console.warn('Failed to fetch events:', err);
+                if (!loadMore) allEvents = [];
+            }
+            renderEvents();
+        }
+
+        // Load more handler
+        async function loadMoreEvents() {
+            if (isLoadingMore || !hasMoreEvents) return;
+            isLoadingMore = true;
+            const btn = document.getElementById('load-more-btn');
+            if (btn) {
+                btn.textContent = 'LOADING...';
+                btn.disabled = true;
+            }
+            await fetchEvents(true);
+            isLoadingMore = false;
+        }
+
+        // Date helpers
+        function startOfDay(d) {
+            const r = new Date(d);
+            r.setUTCHours(0, 0, 0, 0);
+            return r;
+        }
+
+        function getDateRange(filter) {
+            const now = new Date();
+            const today = startOfDay(now);
+
+            if (filter === 'this-week') {
+                const day = today.getUTCDay();
+                const start = new Date(today);
+                start.setUTCDate(start.getUTCDate() - day + 1); // Monday
+                const end = new Date(start);
+                end.setUTCDate(end.getUTCDate() + 6); // Sunday
+                end.setUTCHours(23, 59, 59, 999);
+                return { start: today > start ? today : start, end };
+            }
+
+            if (filter === 'this-weekend') {
+                const day = today.getUTCDay();
+                const friday = new Date(today);
+                friday.setUTCDate(friday.getUTCDate() + (5 - day + 7) % 7);
+                if (day >= 5 || day === 0) friday.setTime(today.getTime()); // already weekend
+                const sunday = new Date(friday);
+                sunday.setUTCDate(friday.getUTCDate() + (day === 0 ? 0 : (7 - friday.getUTCDay())));
+                sunday.setUTCHours(23, 59, 59, 999);
+                return { start: today > friday ? today : friday, end: sunday };
+            }
+
+            if (filter === 'this-month') {
+                const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0, 23, 59, 59, 999));
+                return { start: today, end };
+            }
+
+            return null; // 'all' — no range filter
+        }
+
+        // Filter + render
+        function renderEvents() {
+            // Filter out past events and apply date range
+            const now = startOfDay(new Date());
+            const range = getDateRange(activeFilter);
+
+            let filtered = allEvents.filter(ev => {
+                const d = new Date(ev.date);
+                if (isNaN(d.getTime())) return false;
+                if (d < now) return false;
+                // Filter out adult/NSFW events from the main public listing unless toggled
+                let cats = [];
+                if (Array.isArray(ev.category)) {
+                    cats = ev.category;
+                } else if (typeof ev.category === 'string') {
+                    cats = ev.category.split(',').map(s => s.trim());
+                }
+                const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+
+                if (!showNSFW && isNSFW) return false;
+                if (range) {
+                    if (d < range.start || d > range.end) return false;
+                }
+                return true;
+            });
+
+            // Sort by date ascending
+            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Update count
+            countEl.textContent = filtered.length === 1
+                ? '1 event'
+                : filtered.length + ' events';
+
+            // Hide Pride banner when no results
+            const prideBanner = document.getElementById('pride-banner');
+
+            // Render
+            if (filtered.length === 0) {
+                prideBanner.classList.add('hidden');
+                grid.innerHTML = `
+                    <div class="empty-state col-span-full">
+                        <i class="fas fa-calendar-xmark text-5xl text-gray-700 mb-4"></i>
+                        <h2 class="text-2xl font-bold text-white font-display uppercase mb-2">No Events Found</h2>
+                        <p class="text-gray-400">${activeFilter === 'all'
+                            ? 'Check back soon — new events are added regularly.'
+                            : 'Try a different time range or check back later.'
+                        }</p>
+                        ${activeFilter !== 'all' ? '<button class="filter-pill active mt-6" onclick="resetFilter()">Show All Events</button>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            // Show Pride guide banner if any visible events are tagged Pride
+            const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
+            prideBanner.classList.toggle('hidden', !hasPride);
+
+            let html = filtered.map((ev, index) => createCard(ev, index === 0)).join('');
+
+            // Show "Load More" button if the server has more events and we're on the unfiltered view
+            if (hasMoreEvents && activeFilter === 'all') {
+                html += `
+                    <div class="col-span-full flex justify-center mt-8">
+                        <button id="load-more-btn" onclick="loadMoreEvents()"
+                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem;">
+                            LOAD MORE EVENTS
+                        </button>
+                    </div>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function resetFilter() {
+            document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
+            document.querySelector('.date-filter[data-filter="all"]').classList.add('active');
+            activeFilter = 'all';
+            renderEvents();
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return 'Date TBC';
+            return d.toLocaleDateString('en-GB', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                timeZone: 'UTC'
+            });
+        }
+
+        function formatTime(dateStr) {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return '';
+            const s = typeof dateStr === 'string' ? dateStr : '';
+            if (!s.includes('T') || s.includes('T00:00')) return '';
+            const t = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
+            return (t === '0:00' || t === '00:00') ? '' : t;
+        }
+
+        // Build card HTML
+        function createCard(ev, isFirst) {
+            const date = formatDate(ev.date);
+            const time = formatTime(ev.date);
+
+            // Image
+            const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
+            const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
+            let imgHtml = '';
+
+            if (isPlaceholder) {
+                imgHtml = '<div class="event-placeholder"><i class="fas fa-image"></i></div>';
+            } else {
+                if (isFirst) {
+                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" fetchpriority="high">';
+                    // Dynamically inject preload link to document head for the first image
+                    if (!document.querySelector('link[rel="preload"][href="' + rawUrl + '"]')) {
+                        document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + rawUrl + '" fetchpriority="high">');
+                    }
+                } else {
+                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" loading="lazy">';
+                }
+            }
+
+            // Venue
+            let venue = '';
+            if (ev.venueName) {
+                venue = Array.isArray(ev.venueName) ? ev.venueName[0] : ev.venueName;
+            } else if (ev.venue && ev.venue.name) {
+                venue = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
+            }
+
+            // Pride badge
+            let cats = [];
+            if (Array.isArray(ev.category)) {
+                cats = ev.category;
+            } else if (typeof ev.category === 'string') {
+                cats = ev.category.split(',').map(s => s.trim());
+            }
+
+            const prideBadge = cats.includes('Pride')
+                ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
+                : '';
+
+            // Adult/NSFW badge
+            const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+            const adultBadge = isNSFW
+                ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
+                : '';
+
+            const slug = ev.slug || '';
+
+            return '<a href="/event/' + slug + '" class="event-card group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm">'
+                + imgHtml
+                + '<div class="card-body bg-black flex flex-col justify-between h-full">'
+                + '<div>'
+                + '<p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">'
+                + '<i class="fas fa-calendar-day mr-1 opacity-70"></i>' + date
+                + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-1 text-[var(--color-toxic)] opacity-70"></i>' + time + '</span>' : '')
+                + '</p>'
+                + '<h3 class="text-2xl font-black text-white uppercase font-display leading-tight tracking-normal mb-3 group-hover:text-[var(--color-toxic)] transition-colors">' + (ev.name || 'Untitled Event') + '</h3>'
+                + (venue ? '<p class="text-gray-400 text-sm font-medium mb-3"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)] opacity-80"></i>' + venue + '</p>' : '')
+                + '</div>'
+                + '<div>'
+                + prideBadge
+                + adultBadge
+                + '</div>'
+                + '</div>'
+                + '</a>';
+        }
+
+        // Init
+        fetchEvents();
+    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>
