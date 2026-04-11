@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{venue.name}} Reviews, Photos & Events | LGBTQ+ Birmingham | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for {{venue.name}}, an LGBTQ+ venue in Birmingham. {{venue.description}}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/{{venue.slug}}">
+    <meta property="og:title" content="{{venue.name}} | LGBTQ+ Birmingham | Brum Outloud">
+    <meta property="og:description" content="{{venue.description}}">
+    {{#if venue.image}}
+    <meta property="og:image" content="{{venue.image.url}}">
+    {{else}}
+    <meta property="og:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    {{/if}}
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{venue.name}} | LGBTQ+ Birmingham | Brum Outloud">
+    <meta name="twitter:description" content="{{venue.description}}">
+    {{#if venue.image}}
+    <meta name="twitter:image" content="{{venue.image.url}}">
+    {{else}}
+    <meta name="twitter:image" content="https://www.brumoutloud.co.uk/progressflag.svg.png">
+    {{/if}}
+
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="{{venue.name}} birmingham, {{venue.name}} reviews, gay bar birmingham, gay village birmingham venues, LGBTQ+ Birmingham">
+    <meta name="robots" content="index, follow">
+    <meta name="geo.region" content="GB-WMD">
+    <meta name="geo.placename" content="Birmingham, UK">
+
+    <!-- LocalBusiness Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "{{venue.name}}",
+      "description": "{{venue.description}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{venue.address}}",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://www.brumoutloud.co.uk/venue/{{venue.slug}}",
+      {{#if venue.image}}
+      "image": "{{venue.image.url}}",
+      {{/if}}
+      {{#if venue.link}}
+      "sameAs": ["{{venue.link}}"],
+      {{/if}}
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4744,
+        "longitude": -1.8958
+      }
+    }
+    </script>
+
+    <!-- BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.brumoutloud.co.uk/" },
+        { "@type": "ListItem", "position": 2, "name": "Venues", "item": "https://www.brumoutloud.co.uk/all-venues" },
+        { "@type": "ListItem", "position": 3, "name": "{{venue.name}}", "item": "https://www.brumoutloud.co.uk/venue/{{venue.slug}}" }
+      ]
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <style>
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #f3e8ff;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
+        }
+        body {
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple); }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
+        }
+
+        .neo-card {
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0 var(--color-pink);
+        }
+
+        .btn-neo {
+            background: var(--color-toxic);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+        }
+        .btn-neo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-pink);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--color-purple);
+            border-color: var(--color-purple);
+        }
+
+        .sticker {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--color-toxic);
+            color: var(--color-toxic);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid var(--color-light);
+            transition: all 0.2s ease;
+        }
+        .gallery-item:hover {
+            border-color: var(--color-toxic);
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--color-pink);
+        }
+    </style>
+</head>
+<body>
+    <!-- GLOBAL_HEADER -->
+
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative w-full" style="min-height: 50vh;">
+        <div class="absolute inset-0">
+            {{#if venue.image}}
+            <img src="{{venue.image.url}}" alt="{{venue.name}} — LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            {{else}}
+            <div class="w-full h-full bg-gradient-to-br from-[var(--color-purple)]/30 to-[var(--color-pink)]/30"></div>
+            {{/if}}
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
+        </div>
+
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+            <div class="max-w-7xl mx-auto w-full">
+                <!-- Breadcrumb -->
+                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
+                    <span class="text-gray-600 mx-2">/</span>
+                    <span class="text-white">{{venue.name}}</span>
+                </nav>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">{{venue.name}}</h1>
+
+                {{#if venue.address}}
+                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
+                    <i class="fas fa-map-marker-alt mr-2"></i>{{venue.address}}
+                </p>
+                {{/if}}
+
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2">
+                    {{{categoryTags}}}
+                </div>
+
+                {{#if googlePlaces.rating}}
+                <div class="flex items-center gap-2 mt-4">
+                    <div class="flex text-yellow-400">
+                        {{#times googlePlaces.rating}}
+                        <i class="fas fa-star"></i>
+                        {{/times}}
+                        {{#times (subtract 5 googlePlaces.rating)}}
+                        <i class="far fa-star"></i>
+                        {{/times}}
+                    </div>
+                    <span class="text-white font-bold">{{googlePlaces.rating}}/5</span>
+                    <span class="text-gray-400 text-sm">({{googlePlaces.reviewCount}} Google reviews)</span>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+
+            <!-- Primary Content -->
+            <div class="lg:col-span-2 space-y-10">
+                {{#if venue.description}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>{{venue.description}}</p>
+                    </div>
+                </section>
+                {{else}}
+                {{#if googlePlaces.editorialSummary}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>{{googlePlaces.editorialSummary}}</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Description from Google</p>
+                </section>
+                {{/if}}
+                {{/if}}
+
+                {{#if hasAmenities}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> What You'll Find
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        {{#if googlePlaces.amenities.servesCocktails}}<span class="category-tag">🍸 Cocktails</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesBeer}}<span class="category-tag">🍺 Beer</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesWine}}<span class="category-tag">🍷 Wine</span>{{/if}}
+                        {{#if googlePlaces.amenities.servesCoffee}}<span class="category-tag">☕ Coffee</span>{{/if}}
+                        {{#if googlePlaces.amenities.liveMusic}}<span class="category-tag">🎤 Live music</span>{{/if}}
+                        {{#if googlePlaces.amenities.outdoorSeating}}<span class="category-tag">☀️ Outdoor seating</span>{{/if}}
+                        {{#if googlePlaces.amenities.goodForGroups}}<span class="category-tag">👯 Good for groups</span>{{/if}}
+                        {{#if googlePlaces.amenities.allowsDogs}}<span class="category-tag">🐶 Dog friendly</span>{{/if}}
+                    </div>
+                </section>
+                {{/if}}
+
+                {{#if hasAccessibility}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Accessibility (via Google)
+                    </h2>
+                    <ul class="text-gray-300 text-base space-y-1">
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleEntrance}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible entrance</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleParking}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible parking</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleRestroom}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible restroom</li>{{/if}}
+                        {{#if googlePlaces.accessibility.wheelchairAccessibleSeating}}<li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible seating</li>{{/if}}
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact" class="underline">let us know</a>.</p>
+                </section>
+                {{/if}}
+
+                <!-- Google Places Gallery -->
+                {{#if googlePlaces.images.length}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Gallery
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {{#each googlePlaces.images}}
+                        <div class="gallery-item" onclick="openImageModal('{{url}}')">
+                            <img src="{{url}}" alt="Photo of {{../venue.name}} in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        {{/each}}
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        Photos via Google{{#if photoAttributions.length}} · By
+                        {{#each photoAttributions}}{{#if uri}}<a href="{{uri}}" class="underline" rel="nofollow">{{name}}</a>{{else}}{{name}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}
+                        {{/if}}
+                    </p>
+                </section>
+                {{/if}}
+
+                <!-- Google Reviews -->
+                {{#if googlePlaces.reviews.length}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Reviews
+                    </h2>
+                    <div class="space-y-4">
+                        {{#each googlePlaces.reviews}}
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">{{author}}</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    {{#times rating}}
+                                    <i class="fas fa-star"></i>
+                                    {{/times}}
+                                    {{#times (subtract 5 rating)}}
+                                    <i class="far fa-star"></i>
+                                    {{/times}}
+                                </div>
+                            </div>
+                            {{#if text}}
+                            <p class="text-gray-300 text-sm leading-relaxed">{{text}}</p>
+                            {{/if}}
+                            {{#if relativeTime}}
+                            <p class="text-xs text-gray-500 mt-2">{{relativeTime}}</p>
+                            {{/if}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </section>
+                {{/if}}
+
+                <!-- Upcoming Events -->
+                {{#if hasUpcomingEvents}}
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Upcoming Events
+                    </h2>
+                    <div class="space-y-3">
+                        {{#each upcomingEvents}}
+                        <a href="/event/{{slug}}" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">
+                            <div class="text-center w-16 flex-shrink-0">
+                                <p class="text-2xl font-bold text-[var(--color-toxic)]">{{formatDay date}}</p>
+                                <p class="text-sm text-gray-400 uppercase font-bold">{{formatMonth date}}</p>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-white text-lg">{{name}}</h4>
+                                <p class="text-sm text-gray-400">{{formatTime date}}</p>
+                            </div>
+                            <div class="text-[var(--color-toxic)]">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </a>
+                        {{/each}}
+                    </div>
+                </section>
+                {{/if}}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- Visit Website CTA -->
+                {{#if venue.link}}
+                <div class="neo-card p-6">
+                    <a href="{{venue.link}}" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
+                        <i class="fas fa-external-link-alt mr-2"></i>VISIT WEBSITE
+                    </a>
+                </div>
+                {{/if}}
+
+                <!-- Current Status is intentionally omitted: this is static
+                     HTML baked at build time, so openNow would be stale
+                     within minutes. The weekly opening hours table below is
+                     structural and stays accurate. -->
+
+                <!-- Opening Hours -->
+                {{#if googlePlaces.openingHours.length}}
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
+                    </h3>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        {{#each googlePlaces.openingHours}}
+                        <p>{{this}}</p>
+                        {{/each}}
+                    </div>
+                </div>
+                {{else if venue.openingHours}}
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
+                    </h3>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        <pre class="whitespace-pre-wrap font-sans">{{venue.openingHours}}</pre>
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Contact -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
+                    </h3>
+                    <dl class="space-y-3 text-sm">
+                        {{#if venue.address}}
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
+                            <dd class="text-gray-300">{{venue.address}}</dd>
+                        </div>
+                        {{/if}}
+                        {{#if googlePlaces.phone}}
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-phone"></i></dt>
+                            <dd><a href="tel:{{googlePlaces.phone}}" class="text-white hover:text-[var(--color-toxic)] transition-colors">{{googlePlaces.phone}}</a></dd>
+                        </div>
+                        {{/if}}
+                        {{#if googlePlaces.googleMapsUri}}
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map"></i></dt>
+                            <dd><a href="{{googlePlaces.googleMapsUri}}" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[var(--color-toxic)] transition-colors">View on Google Maps</a></dd>
+                        </div>
+                        {{/if}}
+                    </dl>
+                </div>
+
+                <!-- Share -->
+                <div class="neo-card p-6">
+                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4">
+        <div class="relative max-w-5xl max-h-full">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- GLOBAL_FOOTER -->
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                const menu = document.getElementById('menu');
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+                const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+                menuBtn.setAttribute('aria-expanded', String(!expanded));
+            });
+        }
+
+        // Lightbox
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
+        function openImageModal(imageUrl) {
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+            galleryImages = Array.from(galleryItems).map(img => img.src);
+            currentImageIndex = galleryImages.indexOf(imageUrl);
+
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('imageModal').classList.remove('hidden');
+            document.getElementById('imageModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function nextImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        function previousImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeImageModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('imageModal').classList.contains('hidden')) {
+                if (e.key === 'Escape') closeImageModal();
+                else if (e.key === 'ArrowRight') nextImage();
+                else if (e.key === 'ArrowLeft') previousImage();
+            }
+        });
+
+        // Share button
+        const shareBtn = document.getElementById('share-button');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                const btn = this;
+                if (navigator.share) {
+                    navigator.share({
+                        title: '{{venue.name}} - Brum Outloud',
+                        text: '{{venue.description}}',
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
+                    setTimeout(function() { btn.innerHTML = original; }, 2000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -2,570 +2,627 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidewalk Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
-    <meta name="description" content="Read reviews, view photos, and see upcoming events for Sidewalk, a popular LGBTQ+ venue and gay bar in Birmingham. Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.">
-    <meta name="keywords" content="Sidewalk birmingham, Sidewalk reviews, Sidewalk photos, gay bar birmingham, gay village birmingham venues">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Sidewalk">
-    <meta property="og:description" content="Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.">
+    <title>Sidewalk Reviews, Photos & Events | LGBTQ+ Birmingham | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for Sidewalk, an LGBTQ+ venue in Birmingham. Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/sidewalk">
+
+    <!-- Open Graph -->
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://brumoutloud.co.uk/venue/sidewalk">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/sidewalk">
+    <meta property="og:title" content="Sidewalk | LGBTQ+ Birmingham | Brum Outloud">
+    <meta property="og:description" content="Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.">
     <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg">
-    
-    <!-- Twitter Card Meta Tags -->
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Sidewalk">
+    <meta name="twitter:title" content="Sidewalk | LGBTQ+ Birmingham | Brum Outloud">
     <meta name="twitter:description" content="Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg">
-    
+
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="Sidewalk birmingham, Sidewalk reviews, gay bar birmingham, gay village birmingham venues, LGBTQ+ Birmingham">
+    <meta name="robots" content="index, follow">
+    <meta name="geo.region" content="GB-WMD">
+    <meta name="geo.placename" content="Birmingham, UK">
+
+    <!-- LocalBusiness Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Sidewalk",
+      "description": "Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "125-127 Hurst Street, Birmingham, B5 6SE",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://www.brumoutloud.co.uk/venue/sidewalk",
+      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4744,
+        "longitude": -1.8958
+      }
+    }
+    </script>
+
+    <!-- BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.brumoutloud.co.uk/" },
+        { "@type": "ListItem", "position": 2, "name": "Venues", "item": "https://www.brumoutloud.co.uk/all-venues" },
+        { "@type": "ListItem", "position": 3, "name": "Sidewalk", "item": "https://www.brumoutloud.co.uk/venue/sidewalk" }
+      ]
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #f3e8ff;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
         }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
         body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
         }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple); }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+
+        .neo-card {
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0 var(--color-pink);
         }
-    </style>
-    
-    <!-- Performance: Optimized external resource loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-    
-    <link rel="preload" href="/css/main.css" as="style">
-    <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
-    
-    <style>
-        /* Base Styles */
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
+
+        .btn-neo {
+            background: var(--color-toxic);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
         }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
+        .btn-neo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-pink);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--color-purple);
+            border-color: var(--color-purple);
+        }
+
+        .sticker {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--color-toxic);
+            color: var(--color-toxic);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        /* Updated Core Colour Palette Classes */
-        .accent-color { color: #E83A99; }
-        .bg-accent-color { background-color: #E83A99; }
-        .border-accent-color { border-color: #E83A99; }
-        .accent-color-secondary { color: #8B5CF6; }
-        .bg-accent-color-secondary { background-color: #8B5CF6; }
-
-        /* Modern Glassmorphism Components */
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1.25rem;
+        .gallery-item {
+            aspect-ratio: 1;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid var(--color-light);
+            transition: all 0.2s ease;
         }
-
-        .venue-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .status-badge.approved {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
+        .gallery-item:hover {
+            border-color: var(--color-toxic);
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--color-pink);
         }
     </style>
 </head>
-<body class="fouc-prevention">
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
-        <div class="loading-text">Loading Brum Outloud...</div>
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                     onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-            </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+<body>
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
         </div>
-    </header>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
+
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative w-full" style="min-height: 50vh;">
+        <div class="absolute inset-0">
+            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg" alt="Sidewalk — LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
+        </div>
+
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+            <div class="max-w-7xl mx-auto w-full">
+                <!-- Breadcrumb -->
+                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
+                    <span class="text-gray-600 mx-2">/</span>
+                    <span class="text-white">Sidewalk</span>
+                </nav>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">Sidewalk</h1>
+
+                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
+                    <i class="fas fa-map-marker-alt mr-2"></i>125-127 Hurst Street, Birmingham, B5 6SE
+                </p>
+
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2">
+                    <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
+                </div>
+
+                <div class="flex items-center gap-2 mt-4">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="text-white font-bold">3.8/5</span>
+                    <span class="text-gray-400 text-sm">(121 Google reviews)</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
-        <!-- Venue Details -->
-        <div class="venue-card rounded-xl overflow-hidden">
-            <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
-                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522343/brumoutloud_venues/a93tdwbtqvyy9arbfzk9.jpg" alt="Sidewalk" class="w-full h-full object-cover">
-                <div class="absolute top-4 left-4">
-                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-arrow-left mr-1"></i>Back
-                    </a>
-                </div>
-                <div class="absolute top-4 right-4">
-                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-share mr-1"></i>Share
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-8">
-                <!-- Venue Header -->
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-white mb-4">Sidewalk</h1>
-                    <p class="text-xl text-gray-300 mb-4">
-                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
-                        125-127 Hurst Street, Birmingham, B5 6SE
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Venue</span>
+            <!-- Primary Content -->
+            <div class="lg:col-span-2 space-y-10">
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.</p>
                     </div>
-                </div>
+                </section>
 
-                <!-- Venue Content -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Content -->
-                    <div class="lg:col-span-2">
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About Sidewalk
-                            </h2>
-                            <p class="text-gray-300 leading-relaxed">Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> What You'll Find
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="category-tag">🍸 Cocktails</span>
+                        <span class="category-tag">🍺 Beer</span>
+                        <span class="category-tag">🍷 Wine</span>
+                        
+                        <span class="category-tag">🎤 Live music</span>
+                        <span class="category-tag">☀️ Outdoor seating</span>
+                        <span class="category-tag">👯 Good for groups</span>
+                        <span class="category-tag">🐶 Dog friendly</span>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Accessibility (via Google)
+                    </h2>
+                    <ul class="text-gray-300 text-base space-y-1">
+                        <li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible entrance</li>
+                        
+                        <li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible restroom</li>
+                        
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact" class="underline">let us know</a>.</p>
+                </section>
+
+                <!-- Google Places Gallery -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Gallery
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEFxCVNsBYpWIcTKAp6MPaKmelC4YIovybB3DxdakCjqMvFlpDYIPFaCoi5Frgx9rzc1CrERol-5OsQjIoiEvFKki6IAB_Yo5RDsU-huntBb5ohxI1VbfS5fgNrfeaSRvCRRbzWVSHQXGMp8ORQjKf7F8iGTO5hvpAGOFzdDvz31k_AXulJ8t_TWsn5avCoRKgh0bYrLCasGXEYAmmngMtC6xzOMJ3EkbOX9_Y17DY5b8aFG-FTG5x64-ySSqVi_JllE6dJfk1CCxOB1y_SCvjcGp6xS3pSabi0qVUxHjff2RHjjGgM2h_m8GCB5LqfPa7ZVhNmLZP28RLoTZoRbFOn5Yu9WEy0eqNNya0jixICgnNZeqnkPiUgpPBKy2xd3WTXJGlPlCGJnJieGJ0yOLo1VLTB1qEYQ9yVZozwIlRbVaw')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEFxCVNsBYpWIcTKAp6MPaKmelC4YIovybB3DxdakCjqMvFlpDYIPFaCoi5Frgx9rzc1CrERol-5OsQjIoiEvFKki6IAB_Yo5RDsU-huntBb5ohxI1VbfS5fgNrfeaSRvCRRbzWVSHQXGMp8ORQjKf7F8iGTO5hvpAGOFzdDvz31k_AXulJ8t_TWsn5avCoRKgh0bYrLCasGXEYAmmngMtC6xzOMJ3EkbOX9_Y17DY5b8aFG-FTG5x64-ySSqVi_JllE6dJfk1CCxOB1y_SCvjcGp6xS3pSabi0qVUxHjff2RHjjGgM2h_m8GCB5LqfPa7ZVhNmLZP28RLoTZoRbFOn5Yu9WEy0eqNNya0jixICgnNZeqnkPiUgpPBKy2xd3WTXJGlPlCGJnJieGJ0yOLo1VLTB1qEYQ9yVZozwIlRbVaw" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
                         </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGBckAcoNjmttE4FZ5HoqXzeA_t3jHvT4R_4pasPU5tptsMlzK4wYf1tBfbtmh7CIwLJtqTczRExLwph5xL7qpCAjtdXSjA9OytGCBnyS9O4XsFsOygopkHaOuKzCTEMcXzApCa-Vfn6VJXlZJne8-xtd4u1dOTCDZZuk2PFi5X5SmA75dT-qBps3uL601Xv2CrUSsxaVlrxBV3E9qPjJnBCsczLqVjhGO5TOIgvmlVjDOC0ddjsRnSh7aroo_1luCikZ-l18oARPTw2BBv-MywDkFc1c0S3gA7HMpttO6aZxjVmrpwnqTdZRQ0xQ2dYPVIV_JBgXnnBas80h8mLE64v8iurfxePQD7jAlV4dLhjR9w63WYtrlf9WecDma5-dB7U_oVA_RofVhhdXyRQSoih0TOi3dAHEXdl1Rm0VdqMWWU')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGBckAcoNjmttE4FZ5HoqXzeA_t3jHvT4R_4pasPU5tptsMlzK4wYf1tBfbtmh7CIwLJtqTczRExLwph5xL7qpCAjtdXSjA9OytGCBnyS9O4XsFsOygopkHaOuKzCTEMcXzApCa-Vfn6VJXlZJne8-xtd4u1dOTCDZZuk2PFi5X5SmA75dT-qBps3uL601Xv2CrUSsxaVlrxBV3E9qPjJnBCsczLqVjhGO5TOIgvmlVjDOC0ddjsRnSh7aroo_1luCikZ-l18oARPTw2BBv-MywDkFc1c0S3gA7HMpttO6aZxjVmrpwnqTdZRQ0xQ2dYPVIV_JBgXnnBas80h8mLE64v8iurfxePQD7jAlV4dLhjR9w63WYtrlf9WecDma5-dB7U_oVA_RofVhhdXyRQSoih0TOi3dAHEXdl1Rm0VdqMWWU" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEEGW-eKJfad1Uwbi8OpAXMIXJcsf41e5qQhAow_8kZU8y1FgEc2s5w3hpBkni8labDkfua8WIT2I-QwUGETaWPVQ_e1BuBMTI6cHUh9rWU_OLb2_QI81pYnvX9V00sT6Plk1RM4LVRXD1Bv00C8xggJnH6E3Gr_bKscSohWZKjzrkAMzYtyABV6toYPXL82aiwnJtJNxW7twJK57-abjl5PKy67LkF6j9H90P0GWa0VHT9QzPaTz2hRpV_hxVDQykT5TXlA0Ge-PcsUkU3YlkianPr81r0x-ureSHhj3fNUZRglKxV_d0OIK88WC56RcwVovqh7zRxfEGXfO9UvwIRBWOzZrFCWDuFX0QRuLL1CkupZVQ8nIZxTAuGDw_wVEUJx5BH7jXPSaL73sjI3eYuuzAqmu6bjYSQa3WRFoOxkP43B')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEEGW-eKJfad1Uwbi8OpAXMIXJcsf41e5qQhAow_8kZU8y1FgEc2s5w3hpBkni8labDkfua8WIT2I-QwUGETaWPVQ_e1BuBMTI6cHUh9rWU_OLb2_QI81pYnvX9V00sT6Plk1RM4LVRXD1Bv00C8xggJnH6E3Gr_bKscSohWZKjzrkAMzYtyABV6toYPXL82aiwnJtJNxW7twJK57-abjl5PKy67LkF6j9H90P0GWa0VHT9QzPaTz2hRpV_hxVDQykT5TXlA0Ge-PcsUkU3YlkianPr81r0x-ureSHhj3fNUZRglKxV_d0OIK88WC56RcwVovqh7zRxfEGXfO9UvwIRBWOzZrFCWDuFX0QRuLL1CkupZVQ8nIZxTAuGDw_wVEUJx5BH7jXPSaL73sjI3eYuuzAqmu6bjYSQa3WRFoOxkP43B" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGx7W_qBn9uZVX-DmyFckrLe56IXcSeL5EbowxrOf2WeHQ_E25e8vvs4mytVI5gdlJldWz7PksuQzRGeFnOzcaY_khDyVXt_LPm-IsSWrNQJdw6YfeY680n3ypnUGaCPdWuQ72gqEf38jVXLh6JUlPJt1HgP1LsUU2GhpTKMEVLNgw86SM20FI_Xccrdj7L1MxVDiV5hI3SZosQMQS0a2uHuzg76Vy9geA1torFBjV36TyZ3wsQnPZVBpivK0IEeHCnYIm-agq1pfT1LxdMFaUOghDAxXmLbXGeyzkSreKlKPJ4s6urv6FUs-vr4Bvb1SV3H5Df6KyVOBu8r3ir5-RnJTo-KaZaxObTxMybD1GiCNr3NOw1H5m0Wdb6D45XJuYJBS1vVv3lMW4m2Dn-_NcUidfSMfBXKIvvvvE3lAE')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGx7W_qBn9uZVX-DmyFckrLe56IXcSeL5EbowxrOf2WeHQ_E25e8vvs4mytVI5gdlJldWz7PksuQzRGeFnOzcaY_khDyVXt_LPm-IsSWrNQJdw6YfeY680n3ypnUGaCPdWuQ72gqEf38jVXLh6JUlPJt1HgP1LsUU2GhpTKMEVLNgw86SM20FI_Xccrdj7L1MxVDiV5hI3SZosQMQS0a2uHuzg76Vy9geA1torFBjV36TyZ3wsQnPZVBpivK0IEeHCnYIm-agq1pfT1LxdMFaUOghDAxXmLbXGeyzkSreKlKPJ4s6urv6FUs-vr4Bvb1SV3H5Df6KyVOBu8r3ir5-RnJTo-KaZaxObTxMybD1GiCNr3NOw1H5m0Wdb6D45XJuYJBS1vVv3lMW4m2Dn-_NcUidfSMfBXKIvvvvE3lAE" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEE50TJmAduApLo3UFDm8x7QJ2pKkX6F40bIUXMFuOLcPM7vpcLUP1jKG5oqtkxWoIw2RV1BoX_rAo4cBsSYBUMZ1lU0r3TmAnx0B3RfO5h2V_-X_DkKl8tP9iCXdBvw9qK3aFK2WqGQRggbHmdV_vaQjknGrui0wL4XYR-LWXAP-kbIsl8ZMKvwI8T69QSi-IHFTOozN75vvCPg7HvXAEPD2w6AwOIoILvz1YEHsAviV7UnSIiknXXMINYNuS_CM9I8T79ycyyVDlhQgoiazLIJB92VA-zNiuP5Qz_yFdKhyKsVIeP_5WiTz_dPU_lUokL7O5UTGlgE58lKHD-d01r9yH0fOhq_KTJqf2zmiZC7CzU2a3b6L1Pu1B0GsPg_9REB_aV_LnQ7fmgKVzM8z77kuVHdq0zoGt44SBfvwphzDA')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEE50TJmAduApLo3UFDm8x7QJ2pKkX6F40bIUXMFuOLcPM7vpcLUP1jKG5oqtkxWoIw2RV1BoX_rAo4cBsSYBUMZ1lU0r3TmAnx0B3RfO5h2V_-X_DkKl8tP9iCXdBvw9qK3aFK2WqGQRggbHmdV_vaQjknGrui0wL4XYR-LWXAP-kbIsl8ZMKvwI8T69QSi-IHFTOozN75vvCPg7HvXAEPD2w6AwOIoILvz1YEHsAviV7UnSIiknXXMINYNuS_CM9I8T79ycyyVDlhQgoiazLIJB92VA-zNiuP5Qz_yFdKhyKsVIeP_5WiTz_dPU_lUokL7O5UTGlgE58lKHD-d01r9yH0fOhq_KTJqf2zmiZC7CzU2a3b6L1Pu1B0GsPg_9REB_aV_LnQ7fmgKVzM8z77kuVHdq0zoGt44SBfvwphzDA" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGuMsuGLiNGIFKDNzQBzT8I4CwPfYYgTSv0pDSDaL0akdY27CTJxPvBfehyYZUiURWsDracOYT0yQmlvLpxMkCdiL-50sEe7b4OpzgOU0-O74mAU2TekI5wTtxwbSjA0HbkqzkQtVrTEJizdMgeclxsjFhW-w3xZ1dk3ejqc3xTuirpUXAzxsZOvy_2CMHu3SzyUlV3BJ94rxmSzxoHAqQhXr_qVp-4w_xPjinjkN1mMYdcUySlAOXQXKA0UtA37OjTOrTx3pDg7ORDJLBM7Lf2m_ZOkSMtHBqfyDRB3jivUvZHlvZCzQ3EBlQsZAgMpQQ4j06INEHTJihHeusdpVeui1f5_mfceoyz_ZK9qEI9la0Wm97vFIitCY_JK-1HgBABiSgqpqip-B7PRY8c_qA4ZTV0EeMHbvTYVWDm45Hw2Z_C')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGuMsuGLiNGIFKDNzQBzT8I4CwPfYYgTSv0pDSDaL0akdY27CTJxPvBfehyYZUiURWsDracOYT0yQmlvLpxMkCdiL-50sEe7b4OpzgOU0-O74mAU2TekI5wTtxwbSjA0HbkqzkQtVrTEJizdMgeclxsjFhW-w3xZ1dk3ejqc3xTuirpUXAzxsZOvy_2CMHu3SzyUlV3BJ94rxmSzxoHAqQhXr_qVp-4w_xPjinjkN1mMYdcUySlAOXQXKA0UtA37OjTOrTx3pDg7ORDJLBM7Lf2m_ZOkSMtHBqfyDRB3jivUvZHlvZCzQ3EBlQsZAgMpQQ4j06INEHTJihHeusdpVeui1f5_mfceoyz_ZK9qEI9la0Wm97vFIitCY_JK-1HgBABiSgqpqip-B7PRY8c_qA4ZTV0EeMHbvTYVWDm45Hw2Z_C" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEE9K9_5XfjiMGGVNmf5n64Www91J3dhhVPh8pY4oLs4It7DGV7e_4oX97oWnUDHAxC0fo3Z9So_EUQ8S5kMETmXPAqBAetujjycBtA6u1QGwiwkGG7GvL2YHyqoBDbSo4uwAPgnP9M7m4HSlR2Hj9oGANVxSt_cVKxR5Mgb6XtERdssSVRj3Pt3z3N_hwFcrGxFvuIz3gsfI0q8zJ89ARf8rFZNoM9YK-8Ss6cyb6o77DCk4wGxuDz_35N_KodtJzmHOz8M0iNL9pBJW5O2tAXSitMtv_ThBZCxutbjX0it9Vm0MqKJ2bb1Z1uc-wnu176-jAgPPdXeTrY4AoaSC7YyHdeE4jI63vEE3Gcrfr9CfwK2NzedScjRA1i5r-lDvSEArEOC1ObHt0UYgaa5866010H5O5umC7-FKjPsKVgRJO4r')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEE9K9_5XfjiMGGVNmf5n64Www91J3dhhVPh8pY4oLs4It7DGV7e_4oX97oWnUDHAxC0fo3Z9So_EUQ8S5kMETmXPAqBAetujjycBtA6u1QGwiwkGG7GvL2YHyqoBDbSo4uwAPgnP9M7m4HSlR2Hj9oGANVxSt_cVKxR5Mgb6XtERdssSVRj3Pt3z3N_hwFcrGxFvuIz3gsfI0q8zJ89ARf8rFZNoM9YK-8Ss6cyb6o77DCk4wGxuDz_35N_KodtJzmHOz8M0iNL9pBJW5O2tAXSitMtv_ThBZCxutbjX0it9Vm0MqKJ2bb1Z1uc-wnu176-jAgPPdXeTrY4AoaSC7YyHdeE4jI63vEE3Gcrfr9CfwK2NzedScjRA1i5r-lDvSEArEOC1ObHt0UYgaa5866010H5O5umC7-FKjPsKVgRJO4r" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGT0BF9leYr01DB5jduhr4_7UMrlF18BIUyLZljo5Ekq9EDV8VPE_W_I5PQ8nwn7Zw8Yn_BMU5_Osd3e_tpIyr-oFe7yaunVXiUa6uz0_hN-ct9mtWcqv4dKrzdAxGz0w4g6IffGxQSWYpVAEle45d2adVpY-Mn53XORYHEvtfxyB8wSq0dWDPTr_ATa4kIdIJVVSPpEiJmJD9H7gcRpAVSwuSsect2TvKxS8MLVBGSWUvJR2ds34kcDtvxpS46wgV8fzyaZz4mo_YsTJc1B9FLMilplCFnLqg4HuqQC12VwErE_BwAQSaFgIbqZPTOfD00AIhdIQkpTXnjntnd9hjYkjX1GrIypuYMSiqLNZzWm_KFd9cn-r-iGB2XBqiW2c5VODChq-VPdUvoD5rGz6UJjviMqmoox9kHvxHK9F2hZpmQ')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEGT0BF9leYr01DB5jduhr4_7UMrlF18BIUyLZljo5Ekq9EDV8VPE_W_I5PQ8nwn7Zw8Yn_BMU5_Osd3e_tpIyr-oFe7yaunVXiUa6uz0_hN-ct9mtWcqv4dKrzdAxGz0w4g6IffGxQSWYpVAEle45d2adVpY-Mn53XORYHEvtfxyB8wSq0dWDPTr_ATa4kIdIJVVSPpEiJmJD9H7gcRpAVSwuSsect2TvKxS8MLVBGSWUvJR2ds34kcDtvxpS46wgV8fzyaZz4mo_YsTJc1B9FLMilplCFnLqg4HuqQC12VwErE_BwAQSaFgIbqZPTOfD00AIhdIQkpTXnjntnd9hjYkjX1GrIypuYMSiqLNZzWm_KFd9cn-r-iGB2XBqiW2c5VODChq-VPdUvoD5rGz6UJjviMqmoox9kHvxHK9F2hZpmQ" alt="Photo of Sidewalk in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        Photos via Google · By
+                        <a href="https://maps.google.com/maps/contrib/113206846333083003841" class="underline" rel="nofollow">Vin Chenzo</a>, <a href="https://maps.google.com/maps/contrib/102099274992533593769" class="underline" rel="nofollow">Dóri</a>, <a href="https://maps.google.com/maps/contrib/108468709683405448052" class="underline" rel="nofollow">Matthew Lloyd AFHEA</a>, <a href="https://maps.google.com/maps/contrib/115529530119619043516" class="underline" rel="nofollow">Never Moore</a>, <a href="https://maps.google.com/maps/contrib/112916641978458891874" class="underline" rel="nofollow">Pande Monki</a>, <a href="https://maps.google.com/maps/contrib/103162450490783923921" class="underline" rel="nofollow">Gabriela Luz</a>, <a href="https://maps.google.com/maps/contrib/115356724475536884208" class="underline" rel="nofollow">Luke Moseley</a>
+                    </p>
+                </section>
 
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
-                            </h2>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>
-                                
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🎤 Live music</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🐶 Dog friendly</span>
+                <!-- Google Reviews -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Reviews
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Dóri</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
                             </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Very friendly stuff, grate prices. Nice enterieur. The atmosphere is very pleasant, there is a terrace which I really liked. Many cocktails to choose from, £12 for two before 8 p.m. 🏳️‍🌈👌</p>
+                            <p class="text-xs text-gray-500 mt-2">2 years ago</p>
                         </div>
-
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
-                            </h2>
-                            <ul class="text-gray-300 space-y-1 text-sm">
-                                <li>✓ Wheelchair accessible entrance</li>
-                                
-                                <li>✓ Wheelchair accessible restroom</li>
-                                
-                            </ul>
-                            <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
-                        </div>
-
-                        <!-- Gallery -->
-                        <div class="venue-card p-6 mb-6" id="photos">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of Sidewalk
-                            </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEECj4yiBVTIxSs9V-wC1wrMj9GV5xV6xtStShBjZXHosS2WD94u5j51dZ7D_8l0RFJTrsYqctDcgk4vPobuS8Geh1U8Ppm0v2DT5SMjZ5jw2WB-r_eM3mOHAv6j6-Lv6pIGMBTo0_gzj3jqV4oF7mxlnVO_tb7u1wC-4Pf5twXAzIW1ltBTzGb5QjPf0a4An86rQOC0N9uwMUnODdflopTqDhN6vuPHLOSAVgxySmD4vS69ajoQKGkNIRcTuMP06PDO3oybWIzcxuayTu6idKADrJNyS0XcLLd7mYwQVg6eUqwFiboXrwRm2VV-C4OmxjQauRWbd2q-4z0YKtLWXEbDsh-qvK8mnQJiKsgubBG5WCN8BwXtvg5tmRRtS_K6zoOG44Hik-qPKL2o-RBD1pF1VxhmjeNvEUgc-SX1t7JIrA" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEHsE-HLcGxhYEM_tCAZsvx-2aIRdj1P3zCB8ETbliH9FHg1bWICJKQR7mLuRZOgntUMYjP_KpxEFydTIE2YpdwlQrbtLZDRxpIZ_gr9yaMTv5BV3M77dLBfbo9eofDh_oUWF-0KrGNOgDPSQrHs7qeBIikGXOIX37UmstLVIjcHRtDaNLRbRPt_W0dKKfHZ9qOprshfUd4ikiwxf0vu9sp06H9pZvvIUfG_UvnP4BGMhP_s5-Gi8nrQvKNu3njEvwLNIlpLYcUcq2wvjRoyd9ro3_bbT4T9deNaJS_JOa4t8eAyOUoIxy8PSd9nqNMQQhnVZWqsnfirSCBxX0HaTDkSgoqbVV-IAMLcjP6WUxMuPF8jx2zoTMAeLKDyA2zMAGloeY1UBvsHUFOsZcGRVNHSbalDrpcnO14kYurOMnbQ62mD" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEEmcgZJ4duW76SizdjPvlZTd3gGUnEN0XCHj4LVVz95VS_sNgT9DjvKhegU-nZYc0gGflVrzb5PEVKNnCSfNB0NjXM_XNPFhsYoB7rnOK5RAqAxcQ7EoTsilLbBGyVgdJKs6PmjVdny7SdVrtGIXg9ofd88gb0zZlS8vQ9rZPeNx9uvuWIpnWWLHyHRZcYjLgoKMe83vMjWDcedKOejqbVSMwh2NagfivWwqPFUahKOTxFzQny3BlnWAWPIfCYq3_OstRzMHdncL-ZOV7O-9PPUw0NYJNBxepir4qWRTZOJvz5OUzCU2hXmrjKK98ynBlw5jD_ZWAuKABNiO-RK2s5EPEDOQ0F6SOrEMVFA1PdH1hm4dxOvuKnmXQhDuXCzpJvQkwbMR6fHfR9GOJ4A6t2-V3yrL0G4HXE2NSJ12Hwm2zHr" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEG1nRLl7RAH3bLoZWXMFbQUw-OxM05yz_k-_XS-av9G6Z9-VMh50gwtb5ypMoFc-HptQabFzgVzPrnDCLvo3FhBz3G8Fl9abuCyujULT5FJUd8hnd1P1Ll0sknfi_nN87_UR74pcFPe5i0KW2YIWg3aqSOIDo0VnYVmAk41pTmF2ROu_7w2PnfC1v9xwW-Uby-HSViSrDoU7k5IBmtt-7VRTAi_yFThu78z1DmnQn1SF2-_fZkxj_HdQ3yVJ6zxic42K8Sy3tzLnSlPU_7bqY6earg3xu2VLFisiLOykHOrzIehDWUKlh9H7IVOblXrgCfnhveO3J20BRuqKM3TcTo3V7PbGckyKI-3CwAqS9rGvpftmUaXXu10N7nTyIlUSHv_QyEwl-k-GsL4Avpbthy0lURqZgVLWSh9LFVGc2A" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEHOz994FT3Z0s45ZXp2R1VoO-O-3V-rcbxw03jwmDn6mbLELFa7ESq1aPSAG236KF5sXlba39Ref-3IUc3UB3030kEJFNLCS1NE0GIdLvEI0-ot7pLQSxsn9B3f1JhVh_jtL3JlktViUQZInNhlX32xQrHN08IwkkimNCsZnWXrKfahrJ_CthP_UYVyELARp298RQiQppGnb1Pvm3Tnw-ZRcsU0cXFG1DGbUu14KYgdebxDWW7Q91x6BjY5eE-P3Pc9MXq0AhtlkVCIocYmU-SyXV9PiRc5vWI476jCAAJbTf7kGWHvqrM_z3rwnycLp7ZV21v4tfHbFdGTCsLBfZSeshEdqXAii7bZNYDPKj2xUz-i7EWPwhmlomhlvAyt4_w3eNCEUP8WpmqIviCKaK3C69elFcdowJ5z8dK2oSqx7g" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEE2CSMdhFUfplHBeAoM0cKr2Q5zMDAfGL_NxOhoXHABLCTFZNGOeqSw74VdU91nt6J0nJ4tYhw4OwrprR97puGK0aycG_pRggFp-HEhdNAy_M7z4r4BZBYaZ5taKMnmmvLNFCrNRMYYAerw7BXALtO6-PJSTVynmJB0ULaGWX8IE2CLhcHlh-uew4G5RVCtPnlGyiaPJWP_vchVmweYuUXGIDtFzuVW3l4MmC5zsSIl2G_Gmf_8sjyI-SJNq8vexgrVnRjpzy5GhOivnaNpRwq1jAGBDtSLxZ9BcgPhTSU_jOIBwBvieEav-x_4pZoNK_dGVRZYi47DUY25m-ZMbfnHfA0XnoltWuku518-lRdxeGUV2YJ-4OiOAIIAQ9_KECHyUMUvtttTACx9WauhOrTwtE23jLB2hXgKHepxrdysDDHx" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEHnfNQu7Y4e2R5BdB0K_hdmahglelLyeQVN2wOOYytI_YvHsDd-S4R4rR1uPxVCyTXsDbLmCYDfI_TP3OcjbFfAR9_SoUPc6bPMIlIOKEQVvXDmkwVoGv3q0ryBoRAzudEHYH2dhA0QBRfSMJj0P9aDTElj_FMmaFT_IO65nQiqxNGdtS1OibDFisZ2VFTK4eKKEmG0c03uAArleXJFVRweaHjG2yB49fp-RwpIexS837FIJN-zb5Xfqiz3SWbE158JXyI885uev70TA8bC6ft9SmaM7vgldzNoWZ7Ejzrmhw1719nYLn_au_sAfkRnVzdW-CV1BBEYAnQUamkhV0cCe7DiAYMfP0H1IQrkdWt1v4Ogr_-Br5d2e3SFDD9iaM1jeJgmRsEdHc8f4ATS9wkULslIlrmtCF48tAJGVU1gdrwB" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ6x2yHWu9cEgR0Rgnq9qLogc%2Fphotos%2FAU_ZVEHS6yz4h2Pfr-2lMBBHNeU9tMi9MsKMKliIbRa7rIcq5EAxN5GC_WyFbmWgRNxX9TXcNDwNtAAxUgLNjJgIhS8b8ismV2vwPohB0DjQIGg58YarEXq-r29yfxSDJjdi5opwBJ105DBsAcXvWztRK0jQHw042w5SxK7e7JPbH36ktoytNnkzr8YQ5kr_Qw3xprd8qpCwkG9zn2NdCu4fDAnZRMdxvvsv-rZ1_2fwEtNUYM-8Yor7eZfpUYuk6ImnUxs9I_zZiCWnpjzoun26rCH8HONkoqKCWe6Hq76_2ZeTmXmKgjtWghbZ7jzyHdoDVAFyK3mBBR9oSEUE8riEw8EbJMQ4Nk_KTPQtlCDhASLfswUgm47ooV3wTLUoFQd9wFonLhpkQyZvuvOOt-u2yxAj_35B-WQ2er5lmFrMo_6otncr" alt="Venue photo" class="w-full h-full object-cover">
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Nataliia B</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-500 mt-4 text-center">
-                                Photos via Google · By
-                                <a href="https://maps.google.com/maps/contrib/113206846333083003841" class="underline" rel="nofollow">Vin Chenzo</a>, <a href="https://maps.google.com/maps/contrib/102099274992533593769" class="underline" rel="nofollow">Dóri</a>, <a href="https://maps.google.com/maps/contrib/108468709683405448052" class="underline" rel="nofollow">Matthew Lloyd AFHEA</a>, <a href="https://maps.google.com/maps/contrib/115529530119619043516" class="underline" rel="nofollow">Never Moore</a>, <a href="https://maps.google.com/maps/contrib/112916641978458891874" class="underline" rel="nofollow">Pande Monki</a>, <a href="https://maps.google.com/maps/contrib/103162450490783923921" class="underline" rel="nofollow">Gabriela Luz</a>, <a href="https://maps.google.com/maps/contrib/115356724475536884208" class="underline" rel="nofollow">Luke Moseley</a>
-                            </p>
-                        </div>
-
-                        <!-- Google Reviews -->
-                        <div class="venue-card p-6 mb-6" id="reviews">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fab fa-google mr-3 text-accent-color"></i>Sidewalk Reviews
-                            </h2>
-                            <p class="text-gray-300 mb-4">Looking for reviews of Sidewalk? Here is what people are saying about this Birmingham venue.</p>
-                            <div class="space-y-4">
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Dóri</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Very friendly stuff, grate prices. Nice enterieur. The atmosphere is very pleasant, there is a terrace which I really liked. Many cocktails to choose from, £12 for two before 8 p.m. 🏳️‍🌈👌</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Nataliia B</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">I ordered Margarita cocktail 2 for £14, they gave me a cocktail in a half glass. It seems like someone got a big sip already from that.
+                            <p class="text-gray-300 text-sm leading-relaxed">I ordered Margarita cocktail 2 for £14, they gave me a cocktail in a half glass. It seems like someone got a big sip already from that.
 We went to another place on the left and the coctail  service was better, at least all the glasses were full.
 Im pretty sure serving of cocktails is so bad there.</p>
+                            <p class="text-xs text-gray-500 mt-2">7 months ago</p>
+                        </div>
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Matthew Lloyd AFHEA</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
                                 </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Matthew Lloyd AFHEA</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Excellent new style and vibe. Warm and cosy. Good for chatting and hanging out. The bar now does excellent food until late too! I will defo be coming here more often now and will bring my social clubs.</p>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Excellent new style and vibe. Warm and cosy. Good for chatting and hanging out. The bar now does excellent food until late too! I will defo be coming here more often now and will bring my social clubs.</p>
+                            <p class="text-xs text-gray-500 mt-2">a year ago</p>
+                        </div>
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Anthony Bosworth</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
                                 </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Anthony Bosworth</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">I always come here once a month to catch up with some friends. The staff have always been welcoming and supportive to the public and they have some nice cocktail selections, shots and bombs.
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">I always come here once a month to catch up with some friends. The staff have always been welcoming and supportive to the public and they have some nice cocktail selections, shots and bombs.
 
 Usually every third week. A fur-meet take place. (To simplify what that means it’s people who love anthropomorphic animals, art and etc get to together to spread their love for the fandom).
 
 The staff have always been supportive for us and we cannot thank you enough!</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Chas Crumpton</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Their new food menu is amazing! So much choice for everyone! All served quickly and piping hot!  Hunters chicken was beautiful, and priced amazingly!</p>
-                                </div>
-                            </div>
-                            <div class="mt-8 text-center">
-                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
-                            </div>
+                            <p class="text-xs text-gray-500 mt-2">2 years ago</p>
                         </div>
-
-                        <!-- Upcoming Events -->
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Chas Crumpton</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Their new food menu is amazing! So much choice for everyone! All served quickly and piping hot!  Hunters chicken was beautiful, and priced amazingly!</p>
+                            <p class="text-xs text-gray-500 mt-2">a year ago</p>
+                        </div>
                     </div>
+                </section>
 
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
+                <!-- Upcoming Events -->
+            </div>
 
-                        <!-- Action Buttons -->
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- Visit Website CTA -->
 
-                        <!-- Current Status is intentionally omitted: this is
-                             static HTML baked at build time, so openNow would
-                             be stale within minutes. The weekly opening hours
-                             table below is structural and stays accurate. -->
+                <!-- Current Status is intentionally omitted: this is static
+                     HTML baked at build time, so openNow would be stale
+                     within minutes. The weekly opening hours table below is
+                     structural and stays accurate. -->
 
-                        <!-- Opening Hours -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
-                            </h3>
-                            <div class="space-y-2 text-gray-300 text-sm">
-                                <pre class="whitespace-pre-wrap">Mon - Wed: 4pm - 11pm
+                <!-- Opening Hours -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
+                    </h3>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        <pre class="whitespace-pre-wrap font-sans">Mon - Wed: 4pm - 11pm
 Thu: 4pm - 1am
 Fri - Sat: 12pm - 3am
 Sun: 12pm - 11pm</pre>
-                            </div>
-                        </div>
-                        
-                        <!-- Google Rating -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
-                            </h3>
-                            <div class="flex items-center space-x-2 text-xl mb-2">
-                                <div>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                </div>
-                                <p class="text-white font-semibold">3.8 <span class="text-gray-400">(121)</span></p>
-                            </div>
-                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
-                                View on Google Maps
-                            </a>
-                        </div>
-
-                        <!-- Contact Info -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
-                            </h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <p class="text-gray-400 text-sm">Phone</p>
-                                    <a href="tel:0121 666 6220" class="text-blue-400 hover:underline">
-                                        0121 666 6220
-                                    </a>
-                                </div>
-                                <div>
-                                    <p class="text-gray-400 text-sm">Website</p>
-                                    <a href="http://www.washhousebham.co.uk/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
-                                        Visit Website
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Share Venue -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
-                            </h3>
-                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                <i class="fas fa-share-alt mr-2"></i>Share Venue
-                            </button>
-                        </div>
                     </div>
                 </div>
-            </div>
+                
+                <!-- Contact -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
+                    </h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
+                            <dd class="text-gray-300">125-127 Hurst Street, Birmingham, B5 6SE</dd>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-phone"></i></dt>
+                            <dd><a href="tel:0121 666 6220" class="text-white hover:text-[var(--color-toxic)] transition-colors">0121 666 6220</a></dd>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map"></i></dt>
+                            <dd><a href="https://maps.google.com/?cid&#x3D;550155875783219409&amp;g_mp&#x3D;CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[var(--color-toxic)] transition-colors">View on Google Maps</a></dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Share -->
+                <div class="neo-card p-6">
+                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
+                    </button>
+                </div>
+            </aside>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8">
-        <div class="container mx-auto grid md:grid-cols-2">
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4">
+        <div class="relative max-w-5xl max-h-full">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
             <div>
-                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                 </div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                    </ul>
-                </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
             </div>
         </div>
-    </footer>
+
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                const menu = document.getElementById('menu');
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+                const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+                menuBtn.setAttribute('aria-expanded', String(!expanded));
+            });
+        }
+
+        // Lightbox
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
+        function openImageModal(imageUrl) {
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+            galleryImages = Array.from(galleryItems).map(img => img.src);
+            currentImageIndex = galleryImages.indexOf(imageUrl);
+
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('imageModal').classList.remove('hidden');
+            document.getElementById('imageModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function nextImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        function previousImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeImageModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('imageModal').classList.contains('hidden')) {
+                if (e.key === 'Escape') closeImageModal();
+                else if (e.key === 'ArrowRight') nextImage();
+                else if (e.key === 'ArrowLeft') previousImage();
+            }
+        });
+
+        // Share button
+        const shareBtn = document.getElementById('share-button');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                const btn = this;
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Sidewalk - Brum Outloud',
+                        text: 'Vibrant LGBTQ+ bar and café; Nestled in the heart of Southside; Aims to provide a warm and welcoming atmosphere.',
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
+                    setTimeout(function() { btn.innerHTML = original; }, 2000);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

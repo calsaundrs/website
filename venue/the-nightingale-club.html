@@ -2,582 +2,639 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Performance: DNS prefetch and preconnect for external resources -->
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://www.googleapis.com">
+    <link rel="dns-prefetch" href="https://www.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Nightingale Club Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
-    <meta name="description" content="Read reviews, view photos, and see upcoming events for The Nightingale Club, a popular LGBTQ+ venue and gay bar in Birmingham. Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.">
-    <meta name="keywords" content="The Nightingale Club birmingham, The Nightingale Club reviews, The Nightingale Club photos, gay bar birmingham, gay village birmingham venues">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="The Nightingale Club">
-    <meta property="og:description" content="Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.">
+    <title>The Nightingale Club Reviews, Photos & Events | LGBTQ+ Birmingham | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for The Nightingale Club, an LGBTQ+ venue in Birmingham. Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/the-nightingale-club">
+
+    <!-- Open Graph -->
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://brumoutloud.co.uk/venue/the-nightingale-club">
+    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/the-nightingale-club">
+    <meta property="og:title" content="The Nightingale Club | LGBTQ+ Birmingham | Brum Outloud">
+    <meta property="og:description" content="Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.">
     <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg">
-    
-    <!-- Twitter Card Meta Tags -->
+    <meta property="og:site_name" content="Brum Outloud">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="The Nightingale Club">
+    <meta name="twitter:title" content="The Nightingale Club | LGBTQ+ Birmingham | Brum Outloud">
     <meta name="twitter:description" content="Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg">
-    
+
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="The Nightingale Club birmingham, The Nightingale Club reviews, gay bar birmingham, gay village birmingham venues, LGBTQ+ Birmingham">
+    <meta name="robots" content="index, follow">
+    <meta name="geo.region" content="GB-WMD">
+    <meta name="geo.placename" content="Birmingham, UK">
+
+    <!-- LocalBusiness Schema (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "The Nightingale Club",
+      "description": "Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "18 Kent Street, Birmingham, B5 6RD, UK",
+        "addressLocality": "Birmingham",
+        "addressRegion": "West Midlands",
+        "addressCountry": "GB"
+      },
+      "url": "https://www.brumoutloud.co.uk/venue/the-nightingale-club",
+      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 52.4744,
+        "longitude": -1.8958
+      }
+    }
+    </script>
+
+    <!-- BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.brumoutloud.co.uk/" },
+        { "@type": "ListItem", "position": 2, "name": "Venues", "item": "https://www.brumoutloud.co.uk/all-venues" },
+        { "@type": "ListItem", "position": 3, "name": "The Nightingale Club", "item": "https://www.brumoutloud.co.uk/venue/the-nightingale-club" }
+      ]
+    }
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
     <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        :root {
+            --color-bg: #0D0115;
+            --color-light: #f3e8ff;
+            --color-toxic: #CCFF00;
+            --color-purple: #9B5DE5;
+            --color-pink: #E83A99;
         }
-        
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Critical CSS to prevent flashing */
         body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
         }
-        
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        .font-display { font-family: 'Syne', sans-serif; }
+        .misprint { letter-spacing: -0.03em; line-height: 0.95; text-shadow: -2px -1px 0px var(--color-pink), 2px 1px 0px var(--color-purple); }
+
+        .progress-pride-bg {
+            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
         }
-        
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+
+        .neo-card {
+            background-color: #000000;
+            border: 4px solid var(--color-light);
+            box-shadow: 6px 6px 0 var(--color-purple);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
+        .neo-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0 var(--color-pink);
         }
-    </style>
-    
-    <!-- Performance: Optimized external resource loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
-    
-    <link rel="preload" href="/css/main.css" as="style">
-    <link rel="stylesheet" href="/css/main.css">
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    
-    <!-- Tailwind loaded with defer to avoid render blocking -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
-    
-    <style>
-        /* Base Styles */
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            color: #EAEAEA;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
+
+        .btn-neo {
+            background: var(--color-toxic);
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            box-shadow: 4px 4px 0 var(--color-purple);
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
         }
-        .font-anton {
-            font-family: 'Anton', sans-serif;
+        .btn-neo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--color-pink);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid var(--color-light);
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--color-purple);
+            border-color: var(--color-purple);
+        }
+
+        .sticker {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border: 2px solid currentColor;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(-2deg);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid var(--color-toxic);
+            color: var(--color-toxic);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        /* Updated Core Colour Palette Classes */
-        .accent-color { color: #E83A99; }
-        .bg-accent-color { background-color: #E83A99; }
-        .border-accent-color { border-color: #E83A99; }
-        .accent-color-secondary { color: #8B5CF6; }
-        .bg-accent-color-secondary { background-color: #8B5CF6; }
-
-        /* Modern Glassmorphism Components */
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1.25rem;
+        .gallery-item {
+            aspect-ratio: 1;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid var(--color-light);
+            transition: all 0.2s ease;
         }
-
-        .venue-card {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            border-radius: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .status-badge.approved {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
+        .gallery-item:hover {
+            border-color: var(--color-toxic);
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--color-pink);
         }
     </style>
 </head>
-<body class="fouc-prevention">
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
-        <div class="loading-text">Loading Brum Outloud...</div>
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Header -->
-    <header class="p-8">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Site name with consolidated flag image and fallback -->
-            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
-               style="font-family: 'Omnes Pro', sans-serif;">
-                <span>Brum Outloud</span>
-                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
-                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
-                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
-                     onload="document.body.classList.add('flag-loaded')">
-            </a>
-            <div class="hidden lg:flex items-center space-x-8">
-                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
-                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
-                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
-                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
-                <!-- GET LISTED button styling reverted to original Tailwind classes -->
-                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
-            </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" class="text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
-            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
-            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
-            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
-            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
+<body>
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
         </div>
-    </header>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
+
+    <!-- Hero Section - Full Bleed -->
+    <section class="relative w-full" style="min-height: 50vh;">
+        <div class="absolute inset-0">
+            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club — LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
+        </div>
+
+        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
+            <div class="max-w-7xl mx-auto w-full">
+                <!-- Breadcrumb -->
+                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
+                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
+                    <span class="text-gray-600 mx-2">/</span>
+                    <span class="text-white">The Nightingale Club</span>
+                </nav>
+
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">The Nightingale Club</h1>
+
+                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
+                    <i class="fas fa-map-marker-alt mr-2"></i>18 Kent Street, Birmingham, B5 6RD, UK
+                </p>
+
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2">
+                    <span class="category-tag">LGBTQ+</span><span class="category-tag">Venue</span>
+                </div>
+
+                <div class="flex items-center gap-2 mt-4">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="text-white font-bold">3.4/5</span>
+                    <span class="text-gray-400 text-sm">(330 Google reviews)</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
 
-        <!-- Venue Details -->
-        <div class="venue-card rounded-xl overflow-hidden">
-            <!-- Hero Image -->
-            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
-                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club" class="w-full h-full object-cover">
-                <div class="absolute top-4 left-4">
-                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-arrow-left mr-1"></i>Back
-                    </a>
-                </div>
-                <div class="absolute top-4 right-4">
-                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
-                        <i class="fas fa-share mr-1"></i>Share
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-8">
-                <!-- Venue Header -->
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-white mb-4">The Nightingale Club</h1>
-                    <p class="text-xl text-gray-300 mb-4">
-                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
-                        18 Kent Street, Birmingham, B5 6RD, UK
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Venue</span>
+            <!-- Primary Content -->
+            <div class="lg:col-span-2 space-y-10">
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> About This Venue
+                    </h2>
+                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
+                        <p>Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.</p>
                     </div>
-                </div>
+                </section>
 
-                <!-- Venue Content -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Main Content -->
-                    <div class="lg:col-span-2">
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About The Nightingale Club
-                            </h2>
-                            <p class="text-gray-300 leading-relaxed">Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> What You'll Find
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="category-tag">🍸 Cocktails</span>
+                        <span class="category-tag">🍺 Beer</span>
+                        <span class="category-tag">🍷 Wine</span>
+                        
+                        <span class="category-tag">🎤 Live music</span>
+                        <span class="category-tag">☀️ Outdoor seating</span>
+                        <span class="category-tag">👯 Good for groups</span>
+                        
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Accessibility (via Google)
+                    </h2>
+                    <ul class="text-gray-300 text-base space-y-1">
+                        
+                        
+                        <li><i class="fas fa-check text-[var(--color-toxic)] mr-2"></i>Wheelchair accessible restroom</li>
+                        
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact" class="underline">let us know</a>.</p>
+                </section>
+
+                <!-- Google Places Gallery -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Gallery
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHCOyCYO1kbCpL3KlH199FiyuAvKZgfHXWBD1lSAZ4n6usnwOuowH8HC-iRpWihnNSKdqPuQjtvWvAHW5dL9pTN2Fg7FfGOUucd25ENLBWozcIdtFKGwFFK0PyKZrMY9MhkU9c-RHHluipME4UVuYvQg6hnq0y3Qm7cFF52TZNRRHtJiaVS6tiu6GUcN2hhCXhyHlgry1W5Ya8NVb2GA4u1Q3oRl7xsewWna5AzZJiEs_V2jbK7upxLaKppw6yyIcuUoLVAohJQarxN8egRpcGyGwlAlByNZc6wYYqgEgyyYMyYRpCitakODJdue9VvI9PPIzjpRE7mFjTuYqbvtP4wcW06HwMiSGurejZ6gss9YyyFvuckKWyNkjlqaAOOFLXrIpBHr1qRpN2IsFrWBzampb2Btq4NT3GnUN546UyWSrVk')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHCOyCYO1kbCpL3KlH199FiyuAvKZgfHXWBD1lSAZ4n6usnwOuowH8HC-iRpWihnNSKdqPuQjtvWvAHW5dL9pTN2Fg7FfGOUucd25ENLBWozcIdtFKGwFFK0PyKZrMY9MhkU9c-RHHluipME4UVuYvQg6hnq0y3Qm7cFF52TZNRRHtJiaVS6tiu6GUcN2hhCXhyHlgry1W5Ya8NVb2GA4u1Q3oRl7xsewWna5AzZJiEs_V2jbK7upxLaKppw6yyIcuUoLVAohJQarxN8egRpcGyGwlAlByNZc6wYYqgEgyyYMyYRpCitakODJdue9VvI9PPIzjpRE7mFjTuYqbvtP4wcW06HwMiSGurejZ6gss9YyyFvuckKWyNkjlqaAOOFLXrIpBHr1qRpN2IsFrWBzampb2Btq4NT3GnUN546UyWSrVk" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
                         </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEFI_3rdRk0231POvv6124YVexAPNQaO2faaCi1lAayWreEQxB4AaUQS8tHqOP5v0CDRjb_Y-stik63ioegcJMl8Gmuz23qZrKkX74m5hY_RxPjEEznRAuJQm61xi_EUtB8EyQ1GJGpDdvTeJK8EGEWY33RGkLdrPbWQj0V2lLBp_ry-H0QRXXzTq9PqU9IHd2myj2NfXhShLcLK8VlKd5ASNMP0LAF6rEgxtpLMJUboUdO-df-rRXmyIjbajLtqkQFxhO3QlHvVWAlYDYpsNqh5dWrTNIDOmYk9Eon6T5olBiTiYDP9VN4uQ4DZCgfcumR0N8zI5B9iZxEdy5S7__-sevX32dzNxwDupp0N-NOC4kSSC4H8s047sdleKOMBdhJMPb9dubFR4bpBim64zp9FvF_SlSbI-DdXRlzeI-6bxKgJ')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEFI_3rdRk0231POvv6124YVexAPNQaO2faaCi1lAayWreEQxB4AaUQS8tHqOP5v0CDRjb_Y-stik63ioegcJMl8Gmuz23qZrKkX74m5hY_RxPjEEznRAuJQm61xi_EUtB8EyQ1GJGpDdvTeJK8EGEWY33RGkLdrPbWQj0V2lLBp_ry-H0QRXXzTq9PqU9IHd2myj2NfXhShLcLK8VlKd5ASNMP0LAF6rEgxtpLMJUboUdO-df-rRXmyIjbajLtqkQFxhO3QlHvVWAlYDYpsNqh5dWrTNIDOmYk9Eon6T5olBiTiYDP9VN4uQ4DZCgfcumR0N8zI5B9iZxEdy5S7__-sevX32dzNxwDupp0N-NOC4kSSC4H8s047sdleKOMBdhJMPb9dubFR4bpBim64zp9FvF_SlSbI-DdXRlzeI-6bxKgJ" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHnoQ4UcEJ5C7A_Y3TzgND1eVHLIqiLe9qIPvJudLJsgdbLbk45eIHPjsGEOC3T4gP1scz6v91VX0bwiYEA-7aig0zG9dEFTAcyIK0iBYCg__5mRlBHVR6_9GQY269tpcO3zkUhB2INYmFXvM8rOWbDE8-HkqvKm1lSVuiOpPsAHifz28r32jqmc1R5WPKUW1iNDe5H53Cd85fjYLz1qUjkYdVgoHLVYmwCLiFxcLQUMC-C3A2Kd0mDMWL3vi0SPyDH3hMQsf4OO_0RrIQ-aAbdOKS-IL7UoEvGNFi58G3DYdkFL3vFcBcGQkBHrNABQviYYjCRdoRBOF-VUSx4IzkAJVchbCrJIeEEB_rB_XZpahAIxj0F3cGT_ndAPWb4nvNtcqpnLzK31m0rUgt7VMmqlsUW0z_GHYvucrq8fcyPcQ')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHnoQ4UcEJ5C7A_Y3TzgND1eVHLIqiLe9qIPvJudLJsgdbLbk45eIHPjsGEOC3T4gP1scz6v91VX0bwiYEA-7aig0zG9dEFTAcyIK0iBYCg__5mRlBHVR6_9GQY269tpcO3zkUhB2INYmFXvM8rOWbDE8-HkqvKm1lSVuiOpPsAHifz28r32jqmc1R5WPKUW1iNDe5H53Cd85fjYLz1qUjkYdVgoHLVYmwCLiFxcLQUMC-C3A2Kd0mDMWL3vi0SPyDH3hMQsf4OO_0RrIQ-aAbdOKS-IL7UoEvGNFi58G3DYdkFL3vFcBcGQkBHrNABQviYYjCRdoRBOF-VUSx4IzkAJVchbCrJIeEEB_rB_XZpahAIxj0F3cGT_ndAPWb4nvNtcqpnLzK31m0rUgt7VMmqlsUW0z_GHYvucrq8fcyPcQ" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEEEB9neHucrXYOkT7bizpN0t4s4JNWmdqZqgNJuxl9aMnTggDqFIE-mZ1jA3xcGAVXUJCKkumv_qy49Ip4CuQPJbSrI_Jf8XAsWEESnGy6F9Hh2n8LzHBwE6tx5P0guWq8bH82bqrZ8XdNoshZOojKBjkbpeBBIE_7d2cYrM1RXsRroVH8e9_95la0WrxZwHY-Wr4S9I5hHCijrcMJ4JFmDygCeLtbXQ_EBsk80bs62mcYAgtf2a-f18sCQExsNxIIBo_pAqSyh17uPJCAjAQ4m7sw-TNypvO85ZGtYNNiSYLU8g1h3LxYuL8hhS47mWp2NSWlbq1MLNUM1-tkoDfmjdhrM75VTWQWTsV5Ogo4TFG1eJtdExPuhjnQI84cnO57Ih6CkX5D8jGKLQxeuXnMfWIs_F9GsjgdKOicF8MECOu5L')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEEEB9neHucrXYOkT7bizpN0t4s4JNWmdqZqgNJuxl9aMnTggDqFIE-mZ1jA3xcGAVXUJCKkumv_qy49Ip4CuQPJbSrI_Jf8XAsWEESnGy6F9Hh2n8LzHBwE6tx5P0guWq8bH82bqrZ8XdNoshZOojKBjkbpeBBIE_7d2cYrM1RXsRroVH8e9_95la0WrxZwHY-Wr4S9I5hHCijrcMJ4JFmDygCeLtbXQ_EBsk80bs62mcYAgtf2a-f18sCQExsNxIIBo_pAqSyh17uPJCAjAQ4m7sw-TNypvO85ZGtYNNiSYLU8g1h3LxYuL8hhS47mWp2NSWlbq1MLNUM1-tkoDfmjdhrM75VTWQWTsV5Ogo4TFG1eJtdExPuhjnQI84cnO57Ih6CkX5D8jGKLQxeuXnMfWIs_F9GsjgdKOicF8MECOu5L" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEG8XEDUd_qOCs7t93fPmpKDPvGN8O6tRd1MNQSECf9K8uFkOhUjwzEFXG0VgtAHF6KES9itAgU1Ul86SWXKznPRMurL9pzE9tSorIv7UjombvEZKdy3Cok-aI4Wf2C_jd2rMhW88SNmpFG7sbEMnEGDejVyCTqvi3dWmC1q5T-ndhwxgbbBpgy_-KKEUmiOHa7wXdp-f7DKEMSPMqddlmldRNaiIW5HA0ZI1obSH2vUaBt5X4JVETDkvIL0hsu5c47Dgbs4kvspJ1MNj_RjTV0y3KBe4_gIUl8UUgGppPngVD9DwZN7Cpk7cXzqMAyYJHOz_Kz8OFuWCQPzKPtcQq0KS3Qy4wEo8EgXmjobNlFy1tKFAB9xcbW9q-qK_T98SIUH1CETrmId6pHyNB38ibQw0KrAtAptxtqCqTZpjE-7Gg')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEG8XEDUd_qOCs7t93fPmpKDPvGN8O6tRd1MNQSECf9K8uFkOhUjwzEFXG0VgtAHF6KES9itAgU1Ul86SWXKznPRMurL9pzE9tSorIv7UjombvEZKdy3Cok-aI4Wf2C_jd2rMhW88SNmpFG7sbEMnEGDejVyCTqvi3dWmC1q5T-ndhwxgbbBpgy_-KKEUmiOHa7wXdp-f7DKEMSPMqddlmldRNaiIW5HA0ZI1obSH2vUaBt5X4JVETDkvIL0hsu5c47Dgbs4kvspJ1MNj_RjTV0y3KBe4_gIUl8UUgGppPngVD9DwZN7Cpk7cXzqMAyYJHOz_Kz8OFuWCQPzKPtcQq0KS3Qy4wEo8EgXmjobNlFy1tKFAB9xcbW9q-qK_T98SIUH1CETrmId6pHyNB38ibQw0KrAtAptxtqCqTZpjE-7Gg" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEEE2ifXY8JFacZZTxLR35v-MtiTW3GDuBzcBCHdHRuQSiQIwlm0p9loCzdC03U9NMkD5geBoGn4qxsGIeViAwITYamXJyF-TVJLkwr6_1T2RlO-3FFXAMGhP2pccwK74nHSrZgkMgLeLtumG8FQIrQZWratz1TwJzp8Jn48-Em9jqUcBiePeat3c4KqSaWADiMv6HXHeZzIxwzVE64PxW4PnDnz-Grs4vFBK_iLdCcttDKgQ5Nsa-tHjvaa6DdCml3H7bhvyJN-V3c2f9lJ7b3lLIpbc87ys1tI2UTP1hTGJgeFSfw95vp9_96o6GFKEFbrs0RrTKz95XmWug0qYXmGd8-yBkx-pq2um7uCOU43hVIr3wiyZ7ZyUhr2MCTzFfNh0t0__YxQnPwhy4mDuu4-5MWYmpLDfrPYUmcOJWE')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEEE2ifXY8JFacZZTxLR35v-MtiTW3GDuBzcBCHdHRuQSiQIwlm0p9loCzdC03U9NMkD5geBoGn4qxsGIeViAwITYamXJyF-TVJLkwr6_1T2RlO-3FFXAMGhP2pccwK74nHSrZgkMgLeLtumG8FQIrQZWratz1TwJzp8Jn48-Em9jqUcBiePeat3c4KqSaWADiMv6HXHeZzIxwzVE64PxW4PnDnz-Grs4vFBK_iLdCcttDKgQ5Nsa-tHjvaa6DdCml3H7bhvyJN-V3c2f9lJ7b3lLIpbc87ys1tI2UTP1hTGJgeFSfw95vp9_96o6GFKEFbrs0RrTKz95XmWug0qYXmGd8-yBkx-pq2um7uCOU43hVIr3wiyZ7ZyUhr2MCTzFfNh0t0__YxQnPwhy4mDuu4-5MWYmpLDfrPYUmcOJWE" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHBUVGjRh6evbbntUQucCbrg2STLhYqrLRbUR-rXBC7jmSUUVQQym1FM8GJiNqvzee2r2SOsQBamuRwHIcjgNLXKtxeuu5LXPCc8ZdLBifhJiEuvE1I1gvKMREeaMf5Tz2koPq2Jz_kEc_bcN4OcVl3C1_GZkPBGgQX1PujVTCFF-J-Y7thltaxO4hnU2x6rb-rDx1Qq9R6jEXblHps-ilKKH8GG425Xvdu4EoKG6kRgBWm2F51wyXd3gDDAbsWLSsxk9kuL0TGMNP-nuj37ZMlWhj5AWsNHrlLeaF__kglAic8jK5hfqFK88z0OrbcP6f5Iv0Gd2jJn8ygk9uXkXIJAwsH6GqIwCMuWhxuwZhYN-A6Wyej88hh1ldaOGWd-clCub7z3X2y-hvQzyZTM3_sNOy33dG12oLXdxoYEswcGw')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHBUVGjRh6evbbntUQucCbrg2STLhYqrLRbUR-rXBC7jmSUUVQQym1FM8GJiNqvzee2r2SOsQBamuRwHIcjgNLXKtxeuu5LXPCc8ZdLBifhJiEuvE1I1gvKMREeaMf5Tz2koPq2Jz_kEc_bcN4OcVl3C1_GZkPBGgQX1PujVTCFF-J-Y7thltaxO4hnU2x6rb-rDx1Qq9R6jEXblHps-ilKKH8GG425Xvdu4EoKG6kRgBWm2F51wyXd3gDDAbsWLSsxk9kuL0TGMNP-nuj37ZMlWhj5AWsNHrlLeaF__kglAic8jK5hfqFK88z0OrbcP6f5Iv0Gd2jJn8ygk9uXkXIJAwsH6GqIwCMuWhxuwZhYN-A6Wyej88hh1ldaOGWd-clCub7z3X2y-hvQzyZTM3_sNOy33dG12oLXdxoYEswcGw" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="gallery-item" onclick="openImageModal('/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHeYJX2UpePOjRK89hjQzvSFYuKVpPkXzMzNMDs6i0Ap8Lkaq05xmajEbC8YpoheURTxe17FBdPHfVKhBJCbMXni4XJ8CuH3Z8bTDWATsczj-u4an78uEgYWyHOEwg-CJkbI7AXxO9ItWC2d8b5lbXX9c78KNkt1mw_mzNPcNuFKvbfMhWwiwNHWS3dl_OyRjrTpnTXEHJ_IEyj4vqFdA11F6ZRkg95DzFXLe2oYSYhgAl9xNHRpV61liTd0KtbB7COelRT3nqkqJkoo7HazbTVFR3GCBUYKJpWasWN8NYE4LxkpP7LlUjqSwPyCvHUGL-lBJQasqYF-w5IRc7ZBJYup2WFnfg0f6UTQTj8kbbBvzwljm4tdCi2eHW5H62qnc5j77UzBWfqBKmk-qx3Ekw-_vhNj13GIE_oaM4uGcA')">
+                            <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHeYJX2UpePOjRK89hjQzvSFYuKVpPkXzMzNMDs6i0Ap8Lkaq05xmajEbC8YpoheURTxe17FBdPHfVKhBJCbMXni4XJ8CuH3Z8bTDWATsczj-u4an78uEgYWyHOEwg-CJkbI7AXxO9ItWC2d8b5lbXX9c78KNkt1mw_mzNPcNuFKvbfMhWwiwNHWS3dl_OyRjrTpnTXEHJ_IEyj4vqFdA11F6ZRkg95DzFXLe2oYSYhgAl9xNHRpV61liTd0KtbB7COelRT3nqkqJkoo7HazbTVFR3GCBUYKJpWasWN8NYE4LxkpP7LlUjqSwPyCvHUGL-lBJQasqYF-w5IRc7ZBJYup2WFnfg0f6UTQTj8kbbBvzwljm4tdCi2eHW5H62qnc5j77UzBWfqBKmk-qx3Ekw-_vhNj13GIE_oaM4uGcA" alt="Photo of The Nightingale Club in Birmingham" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        Photos via Google · By
+                        <a href="https://maps.google.com/maps/contrib/114400027854745706054" class="underline" rel="nofollow">Daniel D. Reimer</a>, <a href="https://maps.google.com/maps/contrib/104987220470165766800" class="underline" rel="nofollow">Anna K</a>, <a href="https://maps.google.com/maps/contrib/110132853788891905946" class="underline" rel="nofollow">Lucie Jayne Bates</a>, <a href="https://maps.google.com/maps/contrib/102229294624684508265" class="underline" rel="nofollow">Angie “Dontpaniciamrealist” Pam</a>, <a href="https://maps.google.com/maps/contrib/116599506623992591783" class="underline" rel="nofollow">Giovanni Stanco</a>, <a href="https://maps.google.com/maps/contrib/116091087373253231444" class="underline" rel="nofollow">Lea Lukacs</a>, <a href="https://maps.google.com/maps/contrib/101520448747590870100" class="underline" rel="nofollow">Zed Nott</a>
+                    </p>
+                </section>
 
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
-                            </h2>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>
-                                
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🎤 Live music</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>
-                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>
-                                
+                <!-- Google Reviews -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
+                        <span class="text-[var(--color-toxic)] mr-2">///</span> Reviews
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">nevaeh</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="venue-card p-6 mb-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
-                            </h2>
-                            <ul class="text-gray-300 space-y-1 text-sm">
-                                
-                                
-                                <li>✓ Wheelchair accessible restroom</li>
-                                
-                            </ul>
-                            <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
-                        </div>
-
-                        <!-- Gallery -->
-                        <div class="venue-card p-6 mb-6" id="photos">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of The Nightingale Club
-                            </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEGog_JZUfc7YOgSXmb2T1Mc3LH9BD29HqbtO9V_07yAZYywxJpGUkymI4HTWpmDGJMIJbKbjozW4gUBgrEXm9wF0Wnj0-yjvcO1WcxXVDUMb1R6BeHMqh1l3R0uXFlc_iDi3G1cFnuuThiP8TRSaDcNV0S0LeLFARbdtIIVieVqvAUb-GkUlDtQkjZ2dwLaUiRO7fLX5bSXc943B2N8dNHiP0l7p5j4f4kYZoIg3oFkeJXHzoKdcqv9WLc7hUWhqhIrtCvcVzg2mJ3D8WwrHmz7NjTZ6JX6_gyb9I2PIEa7zBumLJKSe14i901bJD5VowFwJ52ynzwf4INOJXsxSbqUou1CzvdjUMe6RHjE4_Kjmwo5zuVlcR-K3THc2GQ1KG5S2QtKgrJBzGosSJJCPFx79JY4yFKdKGqNCb4lZ3bGldmC" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEGu1vOk1Y9XL96QYXwAPayW-kxeVUbe-KUFRJUEd23kSb3PIU5ZdhvR4zlJjF19EuvT-Ky_yWIpOug1YYnZUL48WretGPBgtAeonLFyDGT8XfQF1bZxAhInEZAHvhj4B9fm5Mf_VxrSffYf0u0g9_hLMCZ8XyuqLItzLCCbKFLO1ry47IJLZ19wPm4GRm0oCHtP8uUSvBCpr0Y1gcMCHk8D0xkGtMbjlWdQ5IbkZOffYmzs8VMba9acM09yAEU6BRZ5eirpbV-l7KOQ7kB-rRsa2TtkA7WlT7ZIXTpvSZ2y4Mqf9LfGXUf7tcDlqjjDKI2efRi2oWc8CSj6OMv1LYlHrkvf3Y2f7MBxTWHhJyMB9R8ZTRhE1rstpk2AMuCbd4Yh4GELQfSx9bVlAmgAWhbgaesrIFJRpLNzxPAVH1Jty0Pm" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEEnKvFjej2jnQjzW8l6idpqQdR3ot3zagnXE8-2bR2gNV_4ef8Q6_2zfmKfslGgbVXmhWzkdNMudVo37QOfpoWa1lKa0TKffprD0lfqbrWZIe6lVgdEnK1Kej3Gt3rplTsKOEQ5xx_TFhlFNsVaHvYqzK-56L0jjHt5v-RiT3RKCzbw6lK-BBCN7cvwXdH6CZgUi-wJpJg1RWcfTbGlwmuzi1mNfl_-XINxJNxbGeJYTad-c_uTh37kTsYJQgMHeZU43NfhfV8ssnkIU96Z4mmd7dCvmCgmVQHTXKOzKajT6gKtBUEQdOLAIP_tSuZD-fVnfFvFh3xCNtfchIIkMMrSIey3kRBCF4cGRAKj-2Hmo3epH8xDWRLxNVpdTaxpe5ywiLnDUHNt7VSvaG2mLhfOyKIPrXqOMoXASzFyRyi9YA" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEGBn5eJYnZ_G_yS5BergBH8NsaYZG83AvUsOaW6oOfEVtP8ONik7gNkao77LgLIRmZQMj_H0tQAqbXpiJGc0ifa2avY3dw8zm4z9CCX_wbSKog3xGyvu5IUrp9NF8CSKGP_u5hAOXvI9n-p9Go5t1ugv4_az7pjHqmk8ckwfOR4IIS3C8Uh_VImk4TcVi-Al-G1uyyPSzmz_yt6O1yW0xkR_J5hY_ieiqiL8_u4jg2rjTaf-IizQ8FriimyzFckKYnJcCzdADNbe0c40lvE5soz-EJEMoLzf3mqN7Z04eBEQCUX2TBp5Os3BuY1Zdy0CeQo2X532aWk2z1HtGtXdlaQJcFdTdI4bGk7DCvXKKME4Zav8tl_Q3nRF6mk4VwgEhvoYG8ldFTEaIVdOeofZVIXLJ1cSRZdvzrQhkRgalkdttn5" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEHK87WE7trt3UTJNwbC4TMxZRoGtbpsTrYkUyllTw2WLxIAgISQVo-TlHpQT9ZSY9q3_Vp1Q8SUa-TVU2rV-LzoU9rSiJNA0qsdpZUrVRUtkAgxGMkXP-aWX9dawf6rEscVW6Ur5Y_cu2kPMBCWiYUAfzVxP0fkMh9W_PYQvphO2bT7pInVy2KNw9biOzKgpQgklfoot_5ntI4hEAOh4aMWBM7v65O2Aoz98gN4qMb7Zxqk3fJMIaGBp70GP-eSaYl8fA9CivnziYfRX0Jt8U1iiNlL7Azj7mX7MnK3Amg20UZSE2u44E34_a7FAk0XrKVjulZMJL6i7nRlfHMc1sE6AU2DGHZFpSIixPiHS70EvO-E71eM8pgr6dGb_a8rtMj3Qk5UX3UM1Vf5czXdY_ETT3H2VduLXXF2JVyqVn-Fbg" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEFG8UF3IXMczulz2Z7eKXZaS5YQ-0UkGKC0T-vbbDnvadLSJctDVi-xPjw8X7AbqbeJd97EvyYTxTz9uY6ABU-gN-8nw-UHTkfHgGys9ClB72XjXTgwTEX_VdDB_lxbu8ry91l4cph3B3asp0uMD9f4JbREvPL_YY4ppFfgwnWfZNWc3RS-_gyLlJ3LW3GibT4ODtnGrsqPP3ro3YNdbVobsAS3dUd2F79qd7J5fZXSvJ6o_p9D-x564QDtFH_rMnhtAY_OatvZyAQJEU0zFm6OSDJO2ZtdneAHZIkaumcNTTmKL6g5rS3NfLGulg8RjFQj_VXIZSvmPzcjJgvj1t0gFUQvT1DKtCSiFwpY9H4Bzjw6hV1_YRTwiKhkNyzdp9D7xnmFCdTQPcou4fne7BYLRZzEZ4OUTMFMmohem7U" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEF_7llKyd7AcSQn-xc8rAHa9OTUPuNQ5IavpRZLrNjjRx43lnUXKMcDoHVMc_j3djn1Gzwsux1EakCWyGJjvoqQNDb3BdcIhVJT-GrGmZdu4cP6DeWYtt6A2IuEYP4zhaopv2r5oA-POLabFFIMrcbPsvevEzTu5zwchq_cr75pLHdzL8qq0k_sGpKNliyWAMnMaP5NGjmxZIcciD5VR0-Xl2pW3KjQufhG7KogUozN7vPaC7bq6m_csS7Cv5pFXwwLWk2lzaHBEyw6li3vLIzP-moXddpFz2X_fW9od0RzvPEvdPDSTdJSHQvkv9MLTiv4pQTvN6XEc6QpZUuDmCULBtnWFi3MDwsuDuHNkLYVsnI2T-Y5biPbmw3h49MeXNZAFpesTmmhMerpVh_CjcqFMwEVp6M-S2DORGF-5PRtOw" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
-                                    <img src="/api/places-photo?name&#x3D;places%2FChIJPds1XmK8cEgRHgOhLPQ8XtU%2Fphotos%2FAU_ZVEE4wMDqwzuML8Qi68hW1KMGdzzQEWdSqU1b5ISmWGAi5cuNz3W2x9_4x3J1Ev-J7YuzrH5o-palY6mBocZDowVnv5MrC4lZaldcOwyHLYAaLbNaKOCtYbniLvE1zHCgDURdVHv9pUep7U8Q3fWe3T0VSg4aWLNWBY5-whsg2sKW9TMWRX-ds61G0TdYo80e72KCw8E-acs9lhTanD_QlVtfvQ3aDz07q9BsUhmIwzGMVGk1Gy6MI0UxhsgOjDIMfzW1668vccNWN1bsGh6pH4xAiv_p31RnnTLaowny6TqvlMUQsqb5jBGi-fpiYvKIWspEW5BV7Jt9iROrRWQSZOfibwhBlvaI03O0F76WfM6cCJTZMBn-EnnVxgMZwXavC6i9WUVLSEhqbLoIfs9zlr7f52U6Flj10oGW1FjDkN4" alt="Venue photo" class="w-full h-full object-cover">
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-4 text-center">
-                                Photos via Google · By
-                                <a href="https://maps.google.com/maps/contrib/114400027854745706054" class="underline" rel="nofollow">Daniel D. Reimer</a>, <a href="https://maps.google.com/maps/contrib/104987220470165766800" class="underline" rel="nofollow">Anna K</a>, <a href="https://maps.google.com/maps/contrib/110132853788891905946" class="underline" rel="nofollow">Lucie Jayne Bates</a>, <a href="https://maps.google.com/maps/contrib/102229294624684508265" class="underline" rel="nofollow">Angie “Dontpaniciamrealist” Pam</a>, <a href="https://maps.google.com/maps/contrib/116599506623992591783" class="underline" rel="nofollow">Giovanni Stanco</a>, <a href="https://maps.google.com/maps/contrib/116091087373253231444" class="underline" rel="nofollow">Lea Lukacs</a>, <a href="https://maps.google.com/maps/contrib/101520448747590870100" class="underline" rel="nofollow">Zed Nott</a>
-                            </p>
-                        </div>
-
-                        <!-- Google Reviews -->
-                        <div class="venue-card p-6 mb-6" id="reviews">
-                            <h2 class="text-2xl font-bold text-white mb-4">
-                                <i class="fab fa-google mr-3 text-accent-color"></i>The Nightingale Club Reviews
-                            </h2>
-                            <p class="text-gray-300 mb-4">Looking for reviews of The Nightingale Club? Here is what people are saying about this Birmingham venue.</p>
-                            <div class="space-y-4">
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">nevaeh</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">i’ve always liked this club and have had good experiences here before, including enjoying the music on the night itself. unfortunately, what happened with security has completely changed how safe i feel here.
+                            <p class="text-gray-300 text-sm leading-relaxed">i’ve always liked this club and have had good experiences here before, including enjoying the music on the night itself. unfortunately, what happened with security has completely changed how safe i feel here.
 
 my friend and i were sexually assaulted on the dance floor. a security guard was nearby and appeared to look over, and while he may not have seen every detail, it was very clear from our body language that we were uncomfortable and trying to get away. no intervention was made.
 
 later, when we went outside to leave, a group of men approached us and wouldn’t leave us alone. another security guard stood nearby and watched without stepping in or asking them to move on.
 
 security’s role is to ensure people feel safe, especially when it’s clear someone is distressed. the lack of action made in both situations was extremely disappointing and left us feeling unprotected. i hope management takes this seriously and reviews staff training and response, because no one should feel unsafe in a venue like this.</p>
+                            <p class="text-xs text-gray-500 mt-2">2 months ago</p>
+                        </div>
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Destinymorgan.888</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
                                 </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Destinymorgan.888</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Great place to go with any amount of friends👯‍♀️, I’ve attended events🎉 here a hand full of times and i cant wait to attend future events😁
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Great place to go with any amount of friends👯‍♀️, I’ve attended events🎉 here a hand full of times and i cant wait to attend future events😁
 You can easily make new friends to spend time with if you decide to go solo😇
 I recommend coming to this nightclub whenever you are on a night out in town🥳
 
 They have many different rooms with all sorts of music playing so its nice to have that variety and to explore the grounds🤩</p>
+                            <p class="text-xs text-gray-500 mt-2">10 months ago</p>
+                        </div>
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">S E</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
                                 </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">S E</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Attended Halloween night in drag, got called disgusting by some women which my partner &amp; I reported to security.
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Attended Halloween night in drag, got called disgusting by some women which my partner &amp; I reported to security.
 security did not remove them, instead spoke to them for 20-30 seconds and let them come back to us to start going “next time keep your gob shut”.
 
 I will not be attending this venue again as it is clearly not a safe space, I expected a lot better from security given that it’s an LGBTQ venue but after telling my friends about the incident it seems this is a reoccurring theme at nightingales/village.
 
 I have reported the issue to the club with hopes that security can be properly trained but as of yet management have not emailed back.</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Ellie Fieldhouse</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">Filthy place full of kids, some looked underage, woman taking cash on reception was rude and arrogant! Went in there for literally two minutes came straight back out and asked for a refund as it was £10 each to enter, woman on reception didn&#x27;t even give eye contact and was rude with an attitude, disgusting place! Toilets were filthy, the whole place was hideous!</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="font-semibold text-white">Lea Lukacs</p>
-                                        <div class="text-xs">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                            <i class="far fa-star text-yellow-400"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-gray-300 text-sm">The less than pleasant experience started before I got there. The website has absolutely no information, their email address does not work and while they read their messages on social media, they do not respond to any of them. I managed to find out via other attendees that the performance I was interested was at 1am but I was ready to have a fun night it so it was no problem. Got there a couple of minutes before 10pm then everyone was kicked out to queue up again. They took us to a completely different room upstairs and then a couple of hours later let us downstairs again to the &#x27;main&#x27; room. No matter who I asked in the venue, no one seemed to have any information whatsoever which just felt weird considering they all worked there. The lack of communication from staff really created a confusing night but the performers were great which made things much better.</p>
-                                </div>
-                            </div>
-                            <div class="mt-8 text-center">
-                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
-                            </div>
+                            <p class="text-xs text-gray-500 mt-2">5 months ago</p>
                         </div>
-
-                        <!-- Upcoming Events -->
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Ellie Fieldhouse</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Filthy place full of kids, some looked underage, woman taking cash on reception was rude and arrogant! Went in there for literally two minutes came straight back out and asked for a refund as it was £10 each to enter, woman on reception didn&#x27;t even give eye contact and was rude with an attitude, disgusting place! Toilets were filthy, the whole place was hideous!</p>
+                            <p class="text-xs text-gray-500 mt-2">2 months ago</p>
+                        </div>
+                        <div class="border-2 border-[#f3e8ff]/20 p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-white uppercase text-sm">Lea Lukacs</p>
+                                <div class="flex text-sm text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">The less than pleasant experience started before I got there. The website has absolutely no information, their email address does not work and while they read their messages on social media, they do not respond to any of them. I managed to find out via other attendees that the performance I was interested was at 1am but I was ready to have a fun night it so it was no problem. Got there a couple of minutes before 10pm then everyone was kicked out to queue up again. They took us to a completely different room upstairs and then a couple of hours later let us downstairs again to the &#x27;main&#x27; room. No matter who I asked in the venue, no one seemed to have any information whatsoever which just felt weird considering they all worked there. The lack of communication from staff really created a confusing night but the performers were great which made things much better.</p>
+                            <p class="text-xs text-gray-500 mt-2">3 years ago</p>
+                        </div>
                     </div>
+                </section>
 
-                    <!-- Sidebar -->
-                    <div class="space-y-6">
+                <!-- Upcoming Events -->
+            </div>
 
-                        <!-- Action Buttons -->
+            <!-- Sidebar -->
+            <aside class="space-y-6">
+                <!-- Visit Website CTA -->
 
-                        <!-- Current Status is intentionally omitted: this is
-                             static HTML baked at build time, so openNow would
-                             be stale within minutes. The weekly opening hours
-                             table below is structural and stays accurate. -->
+                <!-- Current Status is intentionally omitted: this is static
+                     HTML baked at build time, so openNow would be stale
+                     within minutes. The weekly opening hours table below is
+                     structural and stays accurate. -->
 
-                        <!-- Opening Hours -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
-                            </h3>
-                            <div class="space-y-2 text-gray-300 text-sm">
-                                <p>Monday: Closed</p>
-                                <p>Tuesday: Closed</p>
-                                <p>Wednesday: Closed</p>
-                                <p>Thursday: 10:00 PM – 4:00 AM</p>
-                                <p>Friday: Closed</p>
-                                <p>Saturday: 10:00 PM – 4:00 AM</p>
-                                <p>Sunday: Closed</p>
-                            </div>
-                        </div>
-
-                        <!-- Google Rating -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
-                            </h3>
-                            <div class="flex items-center space-x-2 text-xl mb-2">
-                                <div>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                    <i class="far fa-star text-yellow-400"></i>
-                                </div>
-                                <p class="text-white font-semibold">3.4 <span class="text-gray-400">(330)</span></p>
-                            </div>
-                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
-                                View on Google Maps
-                            </a>
-                        </div>
-
-                        <!-- Contact Info -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
-                            </h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <p class="text-gray-400 text-sm">Phone</p>
-                                    <a href="tel:0121 622 1718" class="text-blue-400 hover:underline">
-                                        0121 622 1718
-                                    </a>
-                                </div>
-                                <div>
-                                    <p class="text-gray-400 text-sm">Website</p>
-                                    <a href="https://www.nightingaleclub.co.uk/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
-                                        Visit Website
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Share Venue -->
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
-                            </h3>
-                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
-                                <i class="fas fa-share-alt mr-2"></i>Share Venue
-                            </button>
-                        </div>
+                <!-- Opening Hours -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
+                    </h3>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        <p>Monday: Closed</p>
+                        <p>Tuesday: Closed</p>
+                        <p>Wednesday: Closed</p>
+                        <p>Thursday: 10:00 PM – 4:00 AM</p>
+                        <p>Friday: Closed</p>
+                        <p>Saturday: 10:00 PM – 4:00 AM</p>
+                        <p>Sunday: Closed</p>
                     </div>
                 </div>
-            </div>
+
+                <!-- Contact -->
+                <div class="neo-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
+                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
+                    </h3>
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
+                            <dd class="text-gray-300">18 Kent Street, Birmingham, B5 6RD, UK</dd>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-phone"></i></dt>
+                            <dd><a href="tel:0121 622 1718" class="text-white hover:text-[var(--color-toxic)] transition-colors">0121 622 1718</a></dd>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map"></i></dt>
+                            <dd><a href="https://maps.google.com/?cid&#x3D;15374793197307888414&amp;g_mp&#x3D;CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[var(--color-toxic)] transition-colors">View on Google Maps</a></dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Share -->
+                <div class="neo-card p-6">
+                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
+                    </button>
+                </div>
+            </aside>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t-2 border-gray-800 p-8">
-        <div class="container mx-auto grid md:grid-cols-2">
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4">
+        <div class="relative max-w-5xl max-h-full">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="previousImage()" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextImage()" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black border-2 border-[#f3e8ff] w-12 h-12 flex items-center justify-center hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
             <div>
-                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
-                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
-                 </div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
-                <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
-                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
-                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
-                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
-                    <ul>
-                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
-                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
-                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
-                    </ul>
-                </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
             </div>
         </div>
-    </footer>
+
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', function() {
+                const menu = document.getElementById('menu');
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+                const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+                menuBtn.setAttribute('aria-expanded', String(!expanded));
+            });
+        }
+
+        // Lightbox
+        let currentImageIndex = 0;
+        let galleryImages = [];
+
+        function openImageModal(imageUrl) {
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+            galleryImages = Array.from(galleryItems).map(img => img.src);
+            currentImageIndex = galleryImages.indexOf(imageUrl);
+
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('imageModal').classList.remove('hidden');
+            document.getElementById('imageModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function nextImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        function previousImage() {
+            if (galleryImages.length > 0) {
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                document.getElementById('modalImage').src = galleryImages[currentImageIndex];
+            }
+        }
+
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeImageModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('imageModal').classList.contains('hidden')) {
+                if (e.key === 'Escape') closeImageModal();
+                else if (e.key === 'ArrowRight') nextImage();
+                else if (e.key === 'ArrowLeft') previousImage();
+            }
+        });
+
+        // Share button
+        const shareBtn = document.getElementById('share-button');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                const btn = this;
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'The Nightingale Club - Brum Outloud',
+                        text: 'Birmingham&#x27;s oldest and largest LGBT venue; Heart of the local LGBTQIA+ nightlife and clubbing scene; Huge venue with capacity for 2000.',
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
+                    setTimeout(function() { btn.innerHTML = original; }, 2000);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
