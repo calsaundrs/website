@@ -136,18 +136,11 @@
     </script>
 
     <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
 
     <style>
-        :root {
-            --color-bg: #0D0115;
-            --color-light: #f3e8ff;
-            --color-toxic: #CCFF00;
-            --color-purple: #9B5DE5;
-            --color-pink: #E83A99;
-        }
         body {
             background: var(--color-bg);
             color: var(--color-light);
@@ -439,6 +432,7 @@
     <script src="/js/fouc-prevention.js"></script>
 </head>
 <body>
+    <div class="watermark-bg text-[var(--color-pink)]">PRIDE</div>
     <div class="noise-overlay"></div>
     <!-- Header -->
     <header class="sticky top-0 z-[100] transition-all duration-300">
@@ -535,7 +529,9 @@
 
         <!-- AEO Answer Box -->
         <section class="max-w-7xl mx-auto px-6 md:px-12 pt-12">
-            <div style="border-left: 6px solid var(--color-toxic); background: rgba(204, 255, 0, 0.05); padding: 1.5rem 1.5rem 1.5rem 2rem; max-width: 48rem;">
+            <div class="aeo-glass-card p-6 md:p-8 relative overflow-hidden group max-w-4xl">
+                <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+                <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4 mt-2 inline-block">AEO SYNOPSIS</div>
                 <p class="text-white text-lg font-bold mb-2">Birmingham Pride 2026 takes place 22-24 May. The parade starts at noon on Saturday from Centenary Square — it's free to watch.</p>
                 <p class="text-gray-300">The main festival runs Saturday and Sunday in the Gay Village on Hurst Street. Tickets available from <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] font-bold hover:text-white">birminghampride.com</a>. Under 12s go free. See our full guide below for lineup, venues, transport, and accessibility info.</p>
             </div>
@@ -598,7 +594,7 @@
             <div class="sticker bg-[var(--color-toxic)] !text-black text-sm mb-8">FREE — NO TICKET NEEDED</div>
 
             <div class="max-w-4xl">
-                <div class="text-gray-300 text-base md:text-lg space-y-3 mb-8 bg-[#0a0a0a] border-l-4 border-[var(--color-toxic)] p-6 shadow-[4px_4px_0_rgba(204,255,0,0.3)]">
+                <div class="brutalist-card p-6 mb-8 border-[var(--color-toxic)] shadow-[6px_6px_0_var(--color-toxic)] text-base md:text-lg space-y-3">
                     <p><strong class="text-[var(--color-toxic)]">Saturday 23 May 2026</strong> — Gather from 11am at Victoria Square. The parade steps off at <strong class="text-white">12 noon</strong>.</p>
                     <p>The route is approximately <strong class="text-white">1.5 miles</strong> through the city centre, taking about 45 minutes before wrapping up at the Gay Village on Hurst Street.</p>
                 </div>
@@ -764,10 +760,10 @@
                 <!-- Festival Stages -->
                 <h3 class="font-bold text-sm text-white uppercase tracking-widest mb-3">Festival Stages</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="venue-block p-4"><p class="text-white font-bold uppercase"><i class="fas fa-music text-[var(--color-pink)] mr-2"></i>Main Stage</p><p class="text-gray-300 text-sm mt-1">Live PAs, LGBTQIA+ performers, keynote speeches</p></div>
-                    <div class="venue-block p-4"><p class="text-white font-bold uppercase"><i class="fas fa-theater-masks text-[var(--color-purple)] mr-2"></i>Cabaret Marquee</p><p class="text-gray-300 text-sm mt-1">Drag royalty, burlesque, comedy</p></div>
-                    <div class="venue-block p-4"><p class="text-white font-bold uppercase"><i class="fas fa-headphones text-[var(--color-toxic)] mr-2"></i>Dance Arena</p><p class="text-gray-300 text-sm mt-1">DJs, queer club anthems, underground bangers</p></div>
-                    <div class="venue-block p-4"><p class="text-white font-bold uppercase"><i class="fas fa-users text-[var(--color-pink)] mr-2"></i>Community Stage</p><p class="text-gray-300 text-sm mt-1">Local talent, activism, spoken word, grassroots</p></div>
+                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-music text-[var(--color-pink)] mr-2"></i>Main Stage</p><p class="text-gray-300 text-sm mt-1">Live PAs, LGBTQIA+ performers, keynote speeches</p></div>
+                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-theater-masks text-[var(--color-purple)] mr-2"></i>Cabaret Marquee</p><p class="text-gray-300 text-sm mt-1">Drag royalty, burlesque, comedy</p></div>
+                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-headphones text-[var(--color-toxic)] mr-2"></i>Dance Arena</p><p class="text-gray-300 text-sm mt-1">DJs, queer club anthems, underground bangers</p></div>
+                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-users text-[var(--color-pink)] mr-2"></i>Community Stage</p><p class="text-gray-300 text-sm mt-1">Local talent, activism, spoken word, grassroots</p></div>
                 </div>
             </div>
         </section>
@@ -794,27 +790,27 @@
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4" style="border-left: 6px solid var(--color-toxic); padding-left: 1rem;">Which Venues Are Open for Pride?</h2>
                     <p class="text-gray-300 text-base mb-6">The Gay Village on Hurst Street is the heart of Birmingham's LGBTQ+ scene. These are the venues you need to know for Pride weekend.</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <a href="/venue/missing-bar" class="venue-block block">
+                        <a href="/venue/missing-bar" class="brutalist-card p-0 block group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Missing Bar" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">Missing Bar</h3><p class="text-gray-300 text-sm">First LGBT venue on Hurst Street. Drag shows, cabaret, pop DJs.</p></div>
                         </a>
-                        <a href="/venue/the-nightingale-club" class="venue-block block">
+                        <a href="/venue/the-nightingale-club" class="brutalist-card p-0 block group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">The Nightingale Club</h3><p class="text-gray-300 text-sm">Birmingham's oldest and most iconic LGBTQ+ club (est. 1969).</p></div>
                         </a>
-                        <a href="/venue/the-fox" class="venue-block block">
+                        <a href="/venue/the-fox" class="brutalist-card p-0 block group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg" alt="The Fox" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">The Fox</h3><p class="text-gray-300 text-sm">The only LGBTQ+ venue marketing to a lesbian audience. Est. 1901.</p></div>
                         </a>
-                        <div class="venue-block">
+                        <div class="brutalist-card p-0 group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Eden Bar" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">Eden Bar</h3><p class="text-gray-300 text-sm">Reopened and back in the heart of the scene.</p></div>
                         </div>
-                        <a href="/venue/the-village-inn" class="venue-block block">
+                        <a href="/venue/the-village-inn" class="brutalist-card p-0 block group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg" alt="The Village Inn" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">The Village Inn</h3><p class="text-gray-300 text-sm">Regular cabaret, drag, and a staple of the Village.</p></div>
                         </a>
-                        <div class="venue-block">
+                        <div class="brutalist-card p-0 group overflow-hidden">
                             <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/f_auto,q_auto,w_600,h_300,c_fill/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="venue-block-img" loading="lazy">
                             <div class="venue-block-info"><h3 class="text-white font-bold uppercase">Equator Bar</h3><p class="text-gray-300 text-sm">Coffee by day, gin bar by night.</p></div>
                         </div>
@@ -829,27 +825,27 @@
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase font-display misprint mb-4" style="border-left: 6px solid var(--color-pink); padding-left: 1rem;">How Much Are Pride Tickets?</h2>
                     <p class="text-gray-300 text-base mb-6">Tickets on sale now at <a href="https://birminghampride.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-pink)] hover:text-white font-bold">birminghampride.com</a></p>
                     <div class="space-y-3 mb-6">
-                        <div class="key-fact">
+                        <div class="brutalist-card border-[var(--color-toxic)] text-center p-6 group">
                             <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Parade</p>
                             <p class="text-white font-black text-3xl font-display">FREE</p>
                             <p class="text-gray-300 text-sm">No ticket needed — just turn up</p>
                         </div>
-                        <div class="key-fact">
+                        <div class="brutalist-card border-[var(--color-toxic)] text-center p-6 group">
                             <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Under 12s</p>
                             <p class="text-white font-black text-3xl font-display">FREE</p>
                             <p class="text-gray-300 text-sm">Must book online. ID on the day for wristband</p>
                         </div>
-                        <div class="key-fact">
+                        <div class="brutalist-card border-[var(--color-toxic)] text-center p-6 group">
                             <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Day Ticket</p>
                             <p class="text-white font-black text-xl font-display">FROM ~£30</p>
                             <p class="text-gray-300 text-sm">Sat or Sun festival access</p>
                         </div>
-                        <div class="key-fact">
+                        <div class="brutalist-card border-[var(--color-toxic)] text-center p-6 group">
                             <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Weekend</p>
                             <p class="text-white font-black text-xl font-display">FROM ~£50</p>
                             <p class="text-gray-300 text-sm">Both days + street party</p>
                         </div>
-                        <div class="key-fact">
+                        <div class="brutalist-card border-[var(--color-toxic)] text-center p-6 group">
                             <p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-1">Street Party</p>
                             <p class="text-white font-black text-xl font-display">FROM ~£10</p>
                             <p class="text-gray-300 text-sm">Gay Village access only</p>

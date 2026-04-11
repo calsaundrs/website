@@ -29,14 +29,6 @@
     <script src="/js/fouc-prevention.js"></script>
 
     <style>
-        :root {
-            --color-bg: #0d0115;
-            --color-pink: #ff007f;
-            --color-purple: #7a00ff;
-            --color-toxic: #ccff00;
-            --color-light: #f3e8ff;
-        }
-
         body {
             background-color: var(--color-bg);
             color: var(--color-light);
@@ -44,32 +36,11 @@
             overflow-x: hidden;
             line-height: 1.4;
         }
-
-        
-
-        .form-input {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.15);
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .form-input:focus {
-            background: rgba(255,255,255,0.1);
-            border-color: var(--color-pink);
-            box-shadow: 4px 4px 0 var(--color-purple);
-            outline: none;
-        }
-
-        .form-section {
-            background: rgba(0,0,0,0.5);
-            border: 3px solid var(--color-light);
-            box-shadow: 6px 6px 0 var(--color-purple);
-        }
     </style>
 </head>
 
 <body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
+    <div class="watermark-bg text-[var(--color-pink)]">SUBMIT</div>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -119,7 +90,7 @@
         <!-- Form -->
         <form id="event-submission-form" class="space-y-8">
             <!-- Poster Upload Section -->
-            <div class="form-section p-8">
+            <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
                     <i class="fas fa-image mr-2"></i>Event Poster/Image
                 </h2>
@@ -173,7 +144,7 @@
             </div>
 
             <!-- Basic Event Information -->
-            <div class="form-section p-8">
+            <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
                     <i class="fas fa-calendar-plus mr-2"></i>Event Details
                 </h2>
@@ -184,7 +155,7 @@
                             Event Name *
                         </label>
                         <input type="text" id="event-name" name="event-name" required
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="Enter your event name">
                     </div>
 
@@ -193,7 +164,7 @@
                             Description *
                         </label>
                         <textarea id="description" name="description" rows="4" required
-                                  class="form-input w-full px-4 py-3"
+                                  class="punk-input w-full px-4 py-3"
                                   placeholder="Tell us about your event..."></textarea>
                     </div>
 
@@ -202,7 +173,7 @@
                             Event Date *
                         </label>
                         <input type="date" id="date" name="date" required
-                               class="form-input w-full px-4 py-3">
+                               class="punk-input w-full px-4 py-3">
                     </div>
 
                     <div>
@@ -210,7 +181,7 @@
                             Start Time *
                         </label>
                         <input type="time" id="start-time" name="start-time" required
-                               class="form-input w-full px-4 py-3">
+                               class="punk-input w-full px-4 py-3">
                     </div>
 
                     <div>
@@ -315,7 +286,7 @@
                             End Time (Optional)
                         </label>
                         <input type="time" id="end-time" name="end-time"
-                               class="form-input w-full px-4 py-3">
+                               class="punk-input w-full px-4 py-3">
                     </div>
 
                     <div>
@@ -323,7 +294,7 @@
                             Price (Optional)
                         </label>
                         <input type="text" id="price" name="price"
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="e.g. Free, £5, £10-£15">
                     </div>
 
@@ -332,7 +303,7 @@
                             Age Restriction (Optional)
                         </label>
                         <input type="text" id="age-restriction" name="age-restriction"
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="e.g. 18+, All ages">
                     </div>
 
@@ -341,14 +312,14 @@
                             Ticket Link (Optional)
                         </label>
                         <input type="url" id="link" name="link"
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="https://">
                     </div>
                 </div>
             </div>
 
             <!-- Venue Selection -->
-            <div class="form-section p-8">
+            <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
                     <i class="fas fa-map-marker-alt mr-2"></i>Venue
                 </h2>
@@ -359,7 +330,7 @@
                             Search Venues
                         </label>
                         <input type="text" id="venue-search"
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="Start typing to search venues...">
                         <input type="hidden" id="venue-id" name="venue-id">
                     </div>
@@ -388,19 +359,19 @@
                         <div>
                             <label for="new-venue-name" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Venue Name *</label>
                             <input type="text" id="new-venue-name" name="new-venue-name" required
-                                   class="form-input w-full px-4 py-3"
+                                   class="punk-input w-full px-4 py-3"
                                    placeholder="Enter venue name">
                         </div>
                         <div>
                             <label for="new-venue-address" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Address</label>
                             <input type="text" id="new-venue-address" name="new-venue-address"
-                                   class="form-input w-full px-4 py-3"
+                                   class="punk-input w-full px-4 py-3"
                                    placeholder="Full address">
                         </div>
                         <div>
                             <label for="new-venue-postcode" class="block font-display font-black text-sm uppercase tracking-widest mb-2">Postcode</label>
                             <input type="text" id="new-venue-postcode" name="new-venue-postcode"
-                                   class="form-input w-full px-4 py-3"
+                                   class="punk-input w-full px-4 py-3"
                                    placeholder="e.g. B1 1AA">
                         </div>
                         <button type="button" id="cancel-new-venue" class="text-sm text-gray-200 hover:text-white">
@@ -411,7 +382,7 @@
             </div>
 
             <!-- Recurring Events -->
-            <div class="form-section p-8">
+            <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
                     <i class="fas fa-redo mr-2"></i>Recurring Event
                 </h2>
@@ -457,7 +428,7 @@
                                     Start Date *
                                 </label>
                                 <input type="date" id="recurring-start-date" name="recurring-start-date"
-                                       class="form-input w-full px-4 py-3">
+                                       class="punk-input w-full px-4 py-3">
                             </div>
                         </div>
 
@@ -467,7 +438,7 @@
                                     End Date (Optional)
                                 </label>
                                 <input type="date" id="recurring-end-date" name="recurring-end-date"
-                                       class="form-input w-full px-4 py-3">
+                                       class="punk-input w-full px-4 py-3">
                             </div>
 
                             <div>
@@ -475,7 +446,7 @@
                                     Max Instances
                                 </label>
                                 <input type="number" id="max-instances" name="max-instances" value="52" min="1" max="1000"
-                                       class="form-input w-full px-4 py-3">
+                                       class="punk-input w-full px-4 py-3">
                                 <p class="text-xs text-gray-200 mt-1">Maximum number of events to create (default: 52)</p>
                             </div>
                         </div>
@@ -485,7 +456,7 @@
                                 Custom Description (Optional)
                             </label>
                             <textarea id="custom-recurrence-desc" name="custom-recurrence-desc" rows="2"
-                                      class="form-input w-full px-4 py-3"
+                                      class="punk-input w-full px-4 py-3"
                                       placeholder="e.g., Every other Tuesday, First Friday of the month..."></textarea>
                         </div>
 
@@ -500,7 +471,7 @@
             </div>
 
             <!-- Contact Information -->
-            <div class="form-section p-8">
+            <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">
                     <i class="fas fa-user mr-2"></i>Contact Information
                 </h2>
@@ -511,7 +482,7 @@
                             Contact Name *
                         </label>
                         <input type="text" id="contact-name" name="contact-name" required
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="Your name">
                     </div>
 
@@ -520,7 +491,7 @@
                             Contact Email *
                         </label>
                         <input type="email" id="contact-email" name="contact-email" required
-                               class="form-input w-full px-4 py-3"
+                               class="punk-input w-full px-4 py-3"
                                placeholder="your@email.com">
                     </div>
                 </div>
