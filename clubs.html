@@ -277,70 +277,74 @@
 
 
     <!-- Page Title -->
-    <section class="max-w-6xl mx-auto px-6 md:px-12 pt-10 pb-6">
-        <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 rotate-[-2deg] inline-block">25+ CLUBS & GROUPS</div>
-        <h1 class="text-6xl md:text-8xl lg:text-9xl font-black text-white uppercase font-display misprint leading-[0.85] mb-6">Find Your<br><span class="text-[var(--color-toxic)]">People.</span></h1>
+    <section class="max-w-6xl mx-auto px-6 md:px-12 pt-10 pb-6 relative">
+        <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 inline-block transform -rotate-2">25+ CLUBS & GROUPS</div>
+        
+        <h1 class="text-[clamp(4rem,10vw,8.5rem)] font-black text-white uppercase font-display misprint leading-[0.85] mb-8 shadow-glow">
+            Find Your<br><span class="text-[var(--color-toxic)]">People.</span>
+        </h1>
         
         <div class="flex flex-col md:flex-row gap-8 items-center mb-12">
-            <p class="text-gray-200 text-xl md:text-2xl font-bold max-w-xl">Birmingham's queer community goes way beyond the bar scene. Sports teams, social groups, creative clubs and support networks — get involved, bab.</p>
-            <div class="hidden md:block w-32 h-2 bg-[var(--color-purple)]"></div>
+            <p class="text-white text-xl md:text-2xl font-bold max-w-xl opacity-90 italic">Birmingham's queer community goes way beyond the bar scene. Sports teams, social groups, creative clubs and support networks — get involved, bab.</p>
         </div>
 
         <!-- AEO Answer Box -->
-        <div style="border-left: 6px solid var(--color-toxic); background: rgba(204, 255, 0, 0.05); padding: 1.5rem 1.5rem 1.5rem 2rem; max-width: 48rem; margin-bottom: 2rem;">
-            <p class="text-white text-lg font-bold mb-2">Birmingham has 25+ LGBTQ+ clubs and groups covering sports, arts, social, and community support — most are drop-in friendly.</p>
-            <p class="text-gray-300">From inclusive rugby with <strong class="text-white">Birmingham Bulls RFC</strong> to board games with <strong class="text-white">Birmingham Gaymers</strong>, there's something for everyone beyond the bar scene. Browse by category below or check our <a href="/community" class="text-[var(--color-pink)] font-bold hover:text-white">community page</a> for support resources.</p>
+        <div class="aeo-glass-card p-8 max-w-4xl mb-12 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+            <p class="text-white text-lg font-bold mb-3">Birmingham has 25+ LGBTQ+ clubs and groups covering sports, arts, social, and community support — most are drop-in friendly.</p>
+            <p class="text-gray-300">From inclusive rugby with <strong class="text-white">Birmingham Bulls RFC</strong> to board games with <strong class="text-white">Birmingham Gaymers</strong>, there's something for everyone beyond the bar scene. Browse by category below.</p>
         </div>
 
         <!-- Hero image magazine layout -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
-            <div class="md:col-span-8 border-4 border-[var(--color-light)] overflow-hidden transition-transform hover:-translate-y-1" style="box-shadow: 12px 12px 0 var(--color-purple);">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+            <div class="md:col-span-8 brutalist-card !p-0 overflow-hidden transition-all duration-500 hover:shadow-glow transform rotate-[-0.5deg]">
                 <img src="https://birminghambullsrfc.com/assets/images/about-team.jpg" alt="Birmingham Bulls RFC team photo" class="w-full h-64 md:h-96 object-cover filter contrast-125 saturate-110" loading="eager" onerror="this.style.display='none'">
             </div>
-            <div class="md:col-span-4 flex flex-col gap-4">
-                <div class="border-4 border-[var(--color-light)] overflow-hidden transition-transform hover:-translate-y-1 h-1/2" style="box-shadow: 8px 8px 0 var(--color-pink);">
+            <div class="md:col-span-4 flex flex-col gap-6">
+                <div class="brutalist-card !p-0 overflow-hidden transition-all duration-500 hover:shadow-glow h-1/2 transform rotate-[1deg]">
                     <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/02/Birmingham-Pride-Performance-1024x768.jpg" alt="Rainbow Voices performing at Birmingham Pride" class="w-full h-full object-cover filter contrast-125 saturate-110" loading="eager" onerror="this.parentElement.style.display='none'">
                 </div>
-                <div class="border-4 border-[var(--color-light)] overflow-hidden transition-transform hover:-translate-y-1 h-1/2" style="box-shadow: 8px 8px 0 var(--color-toxic);">
+                <div class="brutalist-card !p-0 overflow-hidden transition-all duration-500 hover:shadow-glow h-1/2 transform rotate-[-1deg]">
                     <img src="https://i0.wp.com/birminghamswifts.co.uk/wp-content/uploads/2025/05/parkrun-takeover-May-2025-scaled.jpg?fit=1440%2C960&ssl=1" alt="Birmingham Swifts parkrun takeover" class="w-full h-full object-cover filter contrast-125 saturate-110" loading="eager" onerror="this.parentElement.style.display='none'">
                 </div>
             </div>
         </div>
     </section>
+    </section>
 
     <!-- Filters -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-12">
         <p class="text-gray-200 text-xs uppercase tracking-widest mb-4"><i class="fas fa-check-circle text-[var(--color-toxic)] mr-1"></i> Last verified: March 2026 · <a href="/contact" class="text-[var(--color-pink)] hover:text-white">Report outdated info</a></p>
-        <div class="flex flex-wrap gap-2 items-center">
-            <button class="filter-pill active" data-filter="all" aria-pressed="true">All</button>
-            <button class="filter-pill" data-filter="sports" aria-pressed="false">Sports & Fitness</button>
-            <button class="filter-pill" data-filter="arts" aria-pressed="false">Arts & Culture</button>
-            <button class="filter-pill" data-filter="social" aria-pressed="false">Social & Gaming</button>
-            <button class="filter-pill" data-filter="community" aria-pressed="false">Community & Support</button>
+        <div class="flex flex-wrap gap-3 items-center">
+            <button class="bg-[var(--color-toxic)] text-black border-2 border-black px-6 py-2 font-display font-black text-sm uppercase shadow-[4px_4px_0_var(--color-purple)] active hover:bg-white transition-all filter-pill" data-filter="all" aria-pressed="true">All</button>
+            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="sports" aria-pressed="false">Sports & Fitness</button>
+            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="arts" aria-pressed="false">Arts & Culture</button>
+            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="social" aria-pressed="false">Social & Gaming</button>
+            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="community" aria-pressed="false">Community & Support</button>
         </div>
     </section>
 
     <main class="max-w-6xl mx-auto px-6 md:px-12 pb-20">
 
         <!-- Just Show Up picks -->
-        <section class="mb-16 bg-[#0a0a0a] border-l-8 border-[var(--color-toxic)] p-8 md:p-12 shadow-[8px_8px_0_var(--color-pink)]">
-            <div class="flex flex-col md:flex-row gap-8 justify-between">
-                <div class="md:w-5/12 lg:w-1/3">
-                    <h2 class="text-3xl lg:text-4xl font-black text-white uppercase font-display misprint leading-tight mb-4">Don't know<br>where to<br>start?</h2>
-                    <p class="text-gray-300 text-lg mb-6">These groups are drop-in friendly. No membership, no commitment, just turn up and say hi.</p>
+        <section class="mb-16 brutalist-card !border-[var(--color-toxic)] p-8 md:p-12 transform rotate-[-0.5deg]">
+            <div class="flex flex-col md:flex-row gap-10 justify-between items-center relative z-10">
+                <div class="md:w-5/12 lg:w-1/3 text-center md:text-left">
+                    <h2 class="text-4xl lg:text-5xl font-black text-white uppercase font-display misprint leading-[0.8] mb-6 shadow-glow">Don't know<br>where to<br>start?</h2>
+                    <p class="text-white opacity-80 text-xl font-bold leading-tight">These groups are drop-in friendly. No commitment, just turn up and say hi.</p>
                 </div>
-                <div class="md:w-7/12 lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="brutalist-card p-5 group h-full">
-                        <p class="text-white font-black text-xl uppercase mb-1 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-dice text-[var(--color-toxic)] mr-2"></i>Birmingham Gaymers</p>
-                        <p class="text-gray-300 text-sm">Last Sun/month · Selly Oak · £4</p>
+                <div class="md:w-7/12 lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+                    <div class="brutalist-card p-6 group h-full hover:bg-white/5 transition-colors">
+                        <p class="text-white font-black text-2xl uppercase mb-2 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-dice text-[var(--color-toxic)] mr-2"></i>Birmingham Gaymers</p>
+                        <p class="text-[var(--color-light)] opacity-70 font-bold uppercase tracking-widest text-xs">Selly Oak · £4 · Monthly</p>
                     </div>
-                    <div class="brutalist-card p-5 group h-full border-[var(--color-purple)]">
-                        <p class="text-white font-black text-xl uppercase mb-1 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-table-tennis text-[var(--color-toxic)] mr-2"></i>MOB Badminton</p>
-                        <p class="text-gray-300 text-sm">Sat mornings · Aston Uni · £6</p>
+                    <div class="brutalist-card p-6 group h-full !border-[var(--color-purple)] hover:bg-white/5 transition-colors">
+                        <p class="text-white font-black text-2xl uppercase mb-2 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-table-tennis text-[var(--color-toxic)] mr-2"></i>MOB Badminton</p>
+                        <p class="text-[var(--color-light)] opacity-70 font-bold uppercase tracking-widest text-xs">Aston Uni · £6 · Weekly</p>
                     </div>
-                    <div class="brutalist-card p-5 group h-full border-[var(--color-pink)] sm:col-span-2">
-                        <p class="text-white font-black text-xl uppercase mb-1 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-shoe-prints text-[var(--color-toxic)] mr-2"></i>Birmingham Swifts</p>
-                        <p class="text-gray-300 text-sm">Thurs evenings · Free · All paces welcome</p>
+                    <div class="brutalist-card p-6 group h-full !border-[var(--color-pink)] sm:col-span-2 hover:bg-white/5 transition-colors">
+                        <p class="text-white font-black text-2xl uppercase mb-2 group-hover:text-[var(--color-toxic)] transition-colors"><i class="fas fa-shoe-prints text-[var(--color-toxic)] mr-2"></i>Birmingham Swifts</p>
+                        <p class="text-[var(--color-light)] opacity-70 font-bold uppercase tracking-widest text-xs">All paces welcome · <span class="text-[var(--color-toxic)]">FREE</span></p>
                     </div>
                 </div>
             </div>
@@ -353,7 +357,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://birminghambullsrfc.com/assets/images/about-team.jpg" alt="Birmingham Bulls RFC team" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
@@ -372,7 +376,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://lgbthistoryuk.org/w/images/e/eb/Birmingham_Blaze.jpg" alt="Birmingham Blaze FC" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Blaze FC</h3>
@@ -386,7 +390,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://i0.wp.com/birminghamswifts.co.uk/wp-content/uploads/2025/05/parkrun-takeover-May-2025-scaled.jpg?fit=1440%2C960&ssl=1" alt="Birmingham Swifts parkrun" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
@@ -405,7 +409,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://pridesports.org.uk/wp-content/uploads/2019/05/shoals.jpg" alt="Moseley Shoals swimming club" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Moseley Shoals</h3>
@@ -416,7 +420,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://pridesports.org.uk/wp-content/uploads/2019/05/midlandsout.jpg" alt="Midlands Out Badminton" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Midlands Out Badminton</h3>
@@ -427,7 +431,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://media.sportplan.net/thumbnail/club/4e20/60/300574/logo-1702748610424.png" alt="Birmingham Unicorns CC logo" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Unicorns CC</h3>
@@ -437,7 +441,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://img1.wsimg.com/isteam/ip/3963e24d-9c9f-43a3-bae6-31720baf463a/Gay%20City%20Bowlers_pink%20logo.png/:/rs=h:200,cg:true,m/qt=q:95" alt="Gay City Bowlers logo" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Gay City Bowlers</h3>
@@ -447,7 +451,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://images.prismic.io/chaser/aQFaJ7pReVYa3xyX_CorneliaTzana-282.jpg?auto=format,compress" alt="Birmingham Badgers Quadball team" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Badgers Quadball</h3>
@@ -456,7 +460,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://lgbthistoryuk.org/w/images/e/ea/Bootwomen.jpg" alt="Boot Women walking group" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Boot Women</h3>
@@ -477,7 +481,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://rainbowvoices.co.uk/wp-content/uploads/2025/02/Birmingham-Pride-Performance-1024x768.jpg" alt="Rainbow Voices performing at Birmingham Pride" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <div class="flex items-center gap-3 mb-1">
@@ -493,7 +497,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Journey Film Club</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-film mr-1"></i> Film</p>
@@ -501,7 +505,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Bards & Books</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-book mr-1"></i> Book Club</p>
@@ -509,7 +513,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham LGBTQ+ Writers</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-pen-fancy mr-1"></i> Writing</p>
@@ -528,7 +532,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://gaymingmag.com/wp-content/uploads/2021/10/chancecounters.jpg" alt="Birmingham Gaymers at Chance and Counters" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Gaymers</h3>
@@ -538,7 +542,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://www.midsbears.uk/wp-content/uploads/2025/06/cropped-WhatsApp-Image-2025-06-02-at-10.41.59.jpeg" alt="Mids Bears" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Mids Bears</h3>
@@ -547,7 +551,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Birmingham Bisexual Queer Group</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heart mr-1"></i> Social</p>
@@ -566,7 +570,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Golden Babs</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-star mr-1"></i> 50+ Community</p>
@@ -575,7 +579,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Yarana Group</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-globe-asia mr-1"></i> South Asian & Middle Eastern LGBTQIA+</p>
@@ -583,7 +587,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://www.pointsoflight.gov.uk/wp-content/uploads/2020/02/Khakan-Qureshi.png" alt="Khakan Qureshi, founder of Finding a Voice" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Finding a Voice</h3>
@@ -593,7 +597,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://birmingham-museums.transforms.svdcdn.com/production/Schools-content/Resources/Stand-Up-and-Speak-Out/unmuted-we-exist.jpg?w=300&h=184&q=100&auto=format&fit=crop&dm=1699873126&s=2a44912bc9b5b76ac8d8dba5a356f0ad" alt="UNMUTED banner at Birmingham Pride" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">UNMUTED</h3>
@@ -602,7 +606,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">African Rainbow Family</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-rainbow mr-1"></i> LGBTQIA+ African Heritage</p>
@@ -610,7 +614,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <img src="https://imaanlondon.wordpress.com/wp-content/uploads/2016/08/13516745_624930461003079_262413638963020175_n.jpg" alt="Imaan LGBTQI Muslim Support" class="club-card-img" loading="lazy" onerror="this.style.display='none'">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Imaan</h3>
@@ -620,7 +624,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Out Central</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-user-friends mr-1"></i> Youth Group (13–19)</p>
@@ -629,7 +633,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">GBT Men's Health & Social</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-heartbeat mr-1"></i> Health & Wellbeing</p>
@@ -637,7 +641,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">Cafe Queer</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-mug-hot mr-1"></i> Mental Health Support</p>
@@ -645,7 +649,7 @@
                     </div>
                 </div>
 
-                <div class="club-card">
+                <div class="brutalist-card !p-0 overflow-hidden group hover:shadow-glow transition-all duration-300">
                     <div class="club-card-body">
                         <h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-1">TransBrum</h3>
                         <p class="text-[var(--color-toxic)] font-bold text-sm mb-2"><i class="fas fa-transgender-alt mr-1"></i> Trans & Non-Binary Support</p>
@@ -732,23 +736,21 @@
 </footer>
 
 
+    <script src="/js/main.js"></script>
     <script>
-        // Mobile menu
-        const menuBtn = document.getElementById('menu-btn');
-        const menu = document.getElementById('menu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
-            });
-        }
-
         // Category filter
         document.querySelectorAll('.filter-pill').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-pill').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-                btn.classList.add('active');
+                document.querySelectorAll('.filter-pill').forEach(b => { 
+                    b.classList.remove('bg-[var(--color-toxic)]', 'text-black', 'shadow-[4px_4px_0_var(--color-purple)]', 'active');
+                    b.classList.add('bg-black/40', 'text-white', 'border-white/20');
+                    b.setAttribute('aria-pressed', 'false'); 
+                });
+                
+                btn.classList.add('bg-[var(--color-toxic)]', 'text-black', 'shadow-[4px_4px_0_var(--color-purple)]', 'active');
+                btn.classList.remove('bg-black/40', 'text-white', 'border-white/20');
                 btn.setAttribute('aria-pressed', 'true');
+                
                 const filter = btn.dataset.filter;
                 document.querySelectorAll('[data-category]').forEach(section => {
                     const divider = section.previousElementSibling;
@@ -763,6 +765,5 @@
             });
         });
     </script>
-    <script src="/js/main.js"></script>
 </body>
 </html>

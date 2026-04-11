@@ -532,20 +532,22 @@
 </header>
 
 
-    <main class="container mx-auto px-4 py-12">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black uppercase font-display misprint leading-[0.9] mb-4">
-                GAY VILLAGE <span class="text-[var(--color-toxic)]">BIRMINGHAM</span><br>VENUES & BARS
+    <main class="container mx-auto px-4 py-12 relative z-10">
+        <div class="text-center mb-16 relative">
+            <div class="sticker bg-[var(--color-purple)] text-white text-sm mb-4 inline-block transform -rotate-2 uppercase tracking-widest">DIRECTORY</div>
+            
+            <h1 class="text-[clamp(4rem,10vw,8.5rem)] font-black text-white uppercase font-display misprint leading-[0.85] mb-6 shadow-glow">
+                GAY VILLAGE <br><span class="text-[var(--color-toxic)]">BIRMINGHAM</span>
             </h1>
-            <p class="text-lg text-gray-300 max-w-2xl mx-auto">Discover the best gay bars, lesbian bars, clubs, saunas, and LGBTQ+ spaces
-                in the Birmingham gay village. From iconic venues like The Fox to hidden gems, find your perfect queer space.</p>
-            <p id="venue-count" class="text-gray-500 text-sm font-bold uppercase tracking-widest mt-4"></p>
+            
+            <p class="text-xl md:text-2xl font-bold text-white opacity-90 max-w-2xl mx-auto italic mb-8">Discover the iconic bars, clubs, saunas, and LGBTQ+ spaces defined by the scene.</p>
         </div>
+
 
         <!-- Venues Grid -->
         <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             
-                <a href="/venue/glamorous" class="venue-card p-0 group">
+                <a href="/venue/glamorous" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg" alt="Glamorous" class="item-card-image w-full h-full object-cover" fetchpriority="high">
                     </div>
@@ -571,7 +573,7 @@
                 </a>
 
 
-                <a href="/venue/the-fountain-inn" class="venue-card p-0 group">
+                <a href="/venue/the-fountain-inn" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750525630/brumoutloud_venues/skll02caqypuu6mcwevi.jpg" alt="The Fountain inn" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -596,7 +598,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/the-village-inn" class="venue-card p-0 group">
+                <a href="/venue/the-village-inn" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750523779/brumoutloud_venues/eef3pldclnhaahgsvcdb.jpg" alt="The Village Inn" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -621,7 +623,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/the-fox" class="venue-card p-0 group">
+                <a href="/venue/the-fox" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524201/brumoutloud_venues/gh2pkfvu5vgg9cxcczjc.jpg" alt="The Fox" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -646,7 +648,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/the-nightingale-club" class="venue-card p-0 group">
+                <a href="/venue/the-nightingale-club" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750521804/brumoutloud_venues/zpxr6pjmy6nd8vj25aup.jpg" alt="The Nightingale Club" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -671,7 +673,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/eden-bar" class="venue-card p-0 group">
+                <a href="/venue/eden-bar" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Eden Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -696,7 +698,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/missing-bar" class="venue-card p-0 group">
+                <a href="/venue/missing-bar" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Missing Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -721,7 +723,7 @@
                     </div>
                 </a>
 
-                <a href="/venue/equator-bar" class="venue-card p-0 group">
+                <a href="/venue/equator-bar" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -747,7 +749,7 @@
                 </a>
 
 
-                <a href="/venue/the-hub" class="venue-card p-0 group">
+                <a href="/venue/the-hub" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow">
                     <div class="item-card-image-container relative overflow-hidden bg-black">
                         <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1755119210/brumoutloud_venues/z7gqqdtd6kknrxwvw6nr.jpg" alt="The Hub" class="item-card-image w-full h-full object-cover">
                     </div>
@@ -782,15 +784,15 @@
         </div>
         
         <!-- AEO Answer Box -->
-        <div class="bg-[rgba(20,20,25,0.6)] backdrop-blur-xl border border-white/10 rounded-lg p-6 md:p-8 mt-16 max-w-5xl mx-auto relative shadow-2xl overflow-hidden group">
-            <div class="absolute top-0 left-0 w-full h-[2px] progress-pride-bg opacity-70"></div>
-            <div class="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
-                <div class="hidden sm:flex text-[var(--color-toxic)] text-3xl mt-1 opacity-80 mix-blend-screen drop-shadow-[0_0_10px_rgba(204,255,0,0.5)] transition-transform group-hover:scale-110 duration-500">
+        <div class="aeo-glass-card p-8 mt-20 max-w-5xl mx-auto relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+            <div class="flex flex-col sm:flex-row items-start gap-8 relative z-10">
+                <div class="hidden sm:flex text-[var(--color-toxic)] text-4xl mt-1 shadow-glow">
                     <i class="fas fa-search-location"></i>
                 </div>
                 <div>
-                     <h2 class="text-white text-lg md:text-xl font-bold mb-3 font-display uppercase tracking-wider leading-tight">Birmingham has 9 LGBTQ+ bars and venues, most located in the Gay Village on Hurst Street, Southside.</h2>
-                     <p class="text-gray-300 text-sm md:text-base leading-relaxed">The village is a 5-minute walk from New Street station. Key venues include <a href="/venue/the-fox" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Fox</a>, <a href="/venue/the-nightingale-club" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Nightingale Club</a>, <a href="/venue/missing-bar" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">Missing Bar</a>, <a href="/venue/eden-bar" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">Eden Bar</a>, and <a href="/venue/the-village-inn" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Village Inn</a>. Browse the directory above.</p>
+                     <h2 class="text-white text-2xl font-black mb-4 font-display uppercase tracking-widest leading-none shadow-glow">Birmingham has 9 LGBTQ+ bars and venues, most located in the Gay Village on Hurst Street, Southside.</h2>
+                     <p class="text-gray-200 text-lg leading-relaxed opacity-90">The village is a 5-minute walk from New Street station. Key venues include <a href="/venue/the-fox" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Fox</a>, <a href="/venue/the-nightingale-club" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Nightingale Club</a>, and <a href="/venue/the-village-inn" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">The Village Inn</a>.</p>
                 </div>
             </div>
         </div>
