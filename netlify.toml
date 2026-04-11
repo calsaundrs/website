@@ -88,6 +88,14 @@
   status = 200
   force = false
 
+# Proxy for Google Places photo media so the API key stays server-side.
+# See netlify/functions/places-photo.js.
+[[redirects]]
+  from = "/api/places-photo"
+  to = "/.netlify/functions/places-photo"
+  status = 200
+  force = true
+
 # Rule for the SSG build page
 [[redirects]]
   from = "/build"

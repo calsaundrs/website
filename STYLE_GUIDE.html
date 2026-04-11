@@ -12,8 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brum Outloud | Brutalist Style Guide</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
@@ -76,36 +76,14 @@
             mix-blend-mode: overlay;
         }
 
-        .sticker {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border: 2px solid currentColor;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transform: rotate(-2deg);
-            transition: transform 0.2s;
-        }
-        .sticker:hover {
-            transform: rotate(0deg) scale(1.1);
-        }
+        
+        
 
-        .progress-pride-bg {
-            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
-        }
+        
 
-        .brutalist-card {
-            background: #000;
-            border: 4px solid var(--color-light);
-            box-shadow: 8px 8px 0 var(--color-purple);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        
 
-        .brutalist-card:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0 var(--color-pink);
-            border-color: var(--color-toxic);
-        }
+        
 
         /* Punk Form Inputs from existing style */
         .punk-input {
@@ -135,23 +113,41 @@
 </head>
 
 <body>
+    <!-- Giant Background Watermark -->
+    <div class="watermark-bg text-[var(--color-pink)]">STYLE</div>
     <div class="noise-overlay"></div>
 
     <!-- Header / Navigation Preview -->
-    <header class="sticky top-0 z-[100]">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
-            </div>
-        </nav>
-    </header>
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
 
     <main class="relative z-10 px-6 pt-16 pb-20 max-w-7xl mx-auto space-y-24">
         
@@ -337,6 +333,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Bungee Outline block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-2">WATERMARK FONT</div>
+                        <h3 class="font-accent text-4xl tracking-widest text-[#FFF]">Bungee Outline</h3>
+                        <p class="text-base opacity-80">Used specifically for massive, viewport-spanning background watermarks. This font has aggressive impact but with zero visual weight thanks to the thin outline construction.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use via the <span class="code-block">.watermark-bg</span> component or <span class="code-block">.font-accent</span> utility.</li>
+                                <li>Render at absolutely massive scale (e.g. 25vw+).</li>
+                                <li>Set opacity extremely low (10-20%) so it sits deep in the background.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 bg-black border-4 border-white p-6 md:p-8 space-y-8 relative overflow-hidden h-64">
+                        <div class="watermark-bg !text-6xl !opacity-100 !static !transform-none !text-[var(--color-pink)] tracking-widest mt-4 ml-4">
+                            GAY SCENE
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -436,24 +456,24 @@
             <div class="space-y-16">
                 <!-- Standard Brutalist Cards -->
                 <div>
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Standard Content Cards</h3>
-                    <p class="text-sm text-gray-300 mb-6">The core layout component. Heavy borders, aggressive hover states, and stark contrast. Base class: <span class="code-block">.brutalist-card</span>.</p>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Toxic Glass Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">The core layout component. We've shifted from flat solid black to a dynamic physics-based glass aesthetic. Base class: <span class="code-block">.brutalist-card</span>.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                         <!-- Generic Card -->
                         <div class="brutalist-card p-8 group">
-                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">DEFAULT SHADOW</div>
+                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">GLASS DROP SHADOW</div>
                             <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">Standard Card</h2>
-                            <p class="text-gray-300 mb-6">Notice the purple drop shadow that turns pink and expands on hover. The background is pure black.</p>
+                            <p class="text-gray-300 mb-6">Notice the brutalist physics when hovered. The background is no longer black; it's a semi-transparent blur using backdrop-filter to let the watermark show through.</p>
                             <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">READ MORE →</div>
                         </div>
 
-                        <!-- Outline / Accent Card -->
-                        <div class="brutalist-card p-8 group border-[var(--color-toxic)] shadow-[6px_6px_0_var(--color-toxic)] hover:shadow-[10px_10px_0_var(--color-pink)]">
-                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">CUSTOM BORDER</div>
-                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-pink)] transition-colors">Accent Card</h2>
-                            <p class="text-gray-300 mb-6">Cards can override the border and shadow colors using utility classes (e.g., <span class="code-block">shadow-[..._var(--color-toxic)]</span>).</p>
-                            <div class="font-black text-[var(--color-pink)] underline decoration-4 underline-offset-4">ACTION HERE →</div>
+                        <!-- AEO Glass Card -->
+                        <div class="aeo-glass-card p-8 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4 mt-2">AEO COMPONENT</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 text-white">Answer Box</h2>
+                            <p class="text-gray-300 mb-6">Used specifically for semantic SEO/AEO blocks. Sits flush at the bottom of pages. Class: <span class="code-block">.aeo-glass-card</span>.</p>
                         </div>
                     </div>
                 </div>
@@ -617,15 +637,52 @@
     </main>
 
     <!-- Footer Preview -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] relative z-10">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-16 text-center">
-            <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-            <p class="text-gray-200 text-lg mb-8 italic">Be seen. Be heard. Be proud.</p>
-        </div>
-    </footer>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
 
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script src="/js/main.js"></script>
 </body>
 </html>

@@ -123,8 +123,8 @@
     }
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
 
@@ -184,44 +184,24 @@
 
         .video-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, var(--color-bg) 100%);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(13, 1, 21, 0.7) 0%, transparent 40%, rgba(13, 1, 21, 0.8) 100%), radial-gradient(circle at center, transparent 0%, var(--color-bg) 100%);
         }
 
-        .sticker {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border: 2px solid currentColor;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transform: rotate(-2deg);
-        }
+        
 
-        .progress-pride-bg {
-            background: linear-gradient(90deg, #000000 0%, #784F17 8%, #55CDFC 16%, #F7A8B8 24%, #FFFFFF 32%, #FFF430 40%, #FF8C00 48%, #E40303 56%, #FF8C00 64%, #FFF430 72%, #008026 80%, #004DFF 88%, #750787 100%);
-        }
+        
 
-        .brutalist-card {
-            background: #000;
-            border: 4px solid var(--color-light);
-            box-shadow: 8px 8px 0 var(--color-purple);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        
 
-        .brutalist-card:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0 var(--color-pink);
-            border-color: var(--color-toxic);
-        }
+        
     </style>
      <script src="/js/fouc-prevention.js"></script>
 </head>
 
 <body>
+    <!-- Giant Background Watermark -->
+    <div class="watermark-bg text-[var(--color-purple)]">BRUM</div>
     <div class="noise-overlay"></div>
 
     <div class="video-background-container">
@@ -232,35 +212,36 @@
     </div>
 
     <!-- Header -->
-    <header class="sticky top-0 z-[100]">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
-            </div>
-            <div class="lg:hidden">
-                <button id="menu-btn" class="text-white text-2xl"><i class="fas fa-bars"></i></button>
-            </div>
-        </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
-            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
-            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
-            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
-            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
-            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
-            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
-            <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
         </div>
-    </header>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
 
     <main class="relative z-10 px-6 pt-16 pb-20 max-w-7xl mx-auto">
         <section class="mb-6">
@@ -273,32 +254,27 @@
             </p>
         </section>
 
-        <!-- AEO Answer Box -->
-        <div style="border-left: 6px solid var(--color-toxic); background: rgba(204, 255, 0, 0.05); padding: 1.5rem 1.5rem 1.5rem 2rem; margin-bottom: 2rem; max-width: 48rem;">
-            <p class="text-white text-lg font-bold mb-2">Birmingham's Gay Village is an LGBTQ+ nightlife area on Hurst Street with around a dozen gay bars, clubs, and venues — a 5-minute walk from New Street station.</p>
-            <p class="text-gray-300">Use Brum Outloud to find <a href="/events" class="text-[var(--color-pink)] font-bold hover:text-white">what's on this week</a>, browse <a href="/all-venues" class="text-[var(--color-pink)] font-bold hover:text-white">every venue</a> in the village, or get the full <a href="/birmingham-pride" class="text-[var(--color-pink)] font-bold hover:text-white">Birmingham Pride 2026 guide</a>.</p>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <a href="/events" class="brutalist-card p-8 group">
-                <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">LGBT EVENTS BIRMINGHAM</div>
-                <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</h2>
-                <p class="text-gray-300 mb-6">Find every gay event, club night, drag show, and queer performance happening across the city.</p>
-                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">VIEW EVENTS →</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <a href="/events" class="brutalist-card p-6 md:p-8 group block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">
+                <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4 border-none shadow-[2px_2px_0_#000]">LGBT EVENTS BIRMINGHAM</div>
+                <h2 class="font-display font-black text-3xl md:text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</h2>
+                <p class="text-gray-300 mb-6 text-sm md:text-base leading-relaxed">Find every gay event, club night, drag show, and queer performance happening across the city.</p>
+                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 align-bottom mt-auto">VIEW EVENTS →</div>
             </a>
 
-            <a href="/all-venues" class="brutalist-card p-8 group">
-                <div class="sticker bg-[var(--color-pink)] text-white text-xs mb-4">GAY VILLAGE BIRMINGHAM</div>
-                <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">VENUES</h2>
-                <p class="text-gray-300 mb-6">Discover the best gay bars, clubs, saunas and safe spaces in Birmingham's gay village.</p>
-                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">BROWSE VENUES →</div>
+            <a href="/all-venues" class="brutalist-card p-6 md:p-8 group block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">
+                <div class="sticker bg-[var(--color-pink)] text-white text-xs mb-4 border-none shadow-[2px_2px_0_#000]">GAY VILLAGE BIRMINGHAM</div>
+                <h2 class="font-display font-black text-3xl md:text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">VENUES</h2>
+                <p class="text-gray-300 mb-6 text-sm md:text-base leading-relaxed">Discover the best gay bars, clubs, saunas and safe spaces in Birmingham's gay village.</p>
+                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 align-bottom mt-auto">BROWSE VENUES →</div>
             </a>
 
-            <a href="/birmingham-pride" class="brutalist-card p-8 group border-[var(--color-toxic)]">
-                <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">PRIDE 2026</div>
-                <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">PRIDE GUIDE</h2>
-                <p class="text-gray-300 mb-6">The definitive guide to Birmingham Pride. Dates, lineup, parade and more.</p>
-                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">GET THE GUIDE →</div>
+            <a href="/birmingham-pride" class="brutalist-card p-6 md:p-8 group block border-[var(--color-toxic)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">
+                <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4 border-none shadow-[2px_2px_0_#000]">PRIDE 2026</div>
+                <h2 class="font-display font-black text-3xl md:text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">PRIDE GUIDE</h2>
+                <p class="text-gray-300 mb-6 text-sm md:text-base leading-relaxed">The definitive guide to Birmingham Pride. Dates, lineup, parade and more.</p>
+                <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4 align-bottom mt-auto">GET THE GUIDE →</div>
             </a>
         </div>
 
@@ -307,61 +283,69 @@
             Background: <a href="https://www.instagram.com/_houseofallure_/" target="_blank" class="underline hover:text-white">House of Allure</a> 
             produced by <a href="https://www.instagram.com/dominus_von_vexo/" target="_blank" class="underline hover:text-white">Dominus Von Vexo</a>.
         </div>
+
+        <!-- AEO Answer Box -->
+        <div class="bg-[rgba(20,20,25,0.6)] backdrop-blur-xl border border-white/10 rounded-lg p-6 md:p-8 mt-16 max-w-5xl mx-auto relative shadow-2xl overflow-hidden group">
+            <div class="absolute top-0 left-0 w-full h-[2px] progress-pride-bg opacity-70"></div>
+            <div class="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
+                <div class="hidden sm:flex text-[var(--color-toxic)] text-3xl mt-1 opacity-80 mix-blend-screen drop-shadow-[0_0_10px_rgba(204,255,0,0.5)] transition-transform group-hover:scale-110 duration-500">
+                    <i class="fas fa-search-location"></i>
+                </div>
+                <div>
+                     <h2 class="text-white text-lg md:text-xl font-bold mb-3 font-display uppercase tracking-wider leading-tight">Birmingham's Gay Village is an LGBTQ+ nightlife area on Hurst Street with around a dozen gay bars, clubs, and venues — a 5-minute walk from New Street station.</h2>
+                     <p class="text-gray-300 text-sm md:text-base leading-relaxed">Use Brum Outloud to find <a href="/events" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">what's on this week</a>, browse <a href="/all-venues" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">every venue</a> in the village, or get the full <a href="/birmingham-pride" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors underline decoration-2 underline-offset-4">Birmingham Pride 2026 guide</a>.</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-32 relative z-10">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                <div class="lg:col-span-2">
-                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                    </div>
-                    <p class="text-gray-200 text-lg max-w-md mb-8 italic">Be seen. Be heard. Be proud. Birmingham's home for everything queer.</p>
-                    <div class="flex gap-4">
-                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" class="text-3xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
-                    </div>
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
                 </div>
-                
-                <div>
-                    <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">EXPLORE</h3>
-                    <ul class="space-y-4 font-bold text-sm uppercase">
-                        <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
-                        <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
-                        <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
-                        <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
-                    <ul class="space-y-4 font-bold text-sm uppercase">
-                        <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
-                        <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
-                        <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
-                    </ul>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
 
-            <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
             </div>
         </div>
-    </footer>
 
-    <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const menu = document.getElementById('menu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
-            });
-        }
-    </script>
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script src="/js/main.js"></script>
 </body>
-</html>
-body>
-
 </html>
