@@ -266,36 +266,35 @@
     <!-- Header -->
     <!-- Header -->
     <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-        <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
-            <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
-            </div>
-            <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
-            <a href="/events" class="block text-[var(--color-toxic)] text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
         </div>
-    </header>
+        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+        </div>
+        <div class="lg:hidden">
+            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+</header>
+
 
     <!-- Page Title -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pt-10 pb-6">
@@ -367,338 +366,53 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid md:grid-cols-3 gap-12">
-                <div>
-                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="font-display font-black text-4xl misprint leading-none mb-6">
+                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
                 </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
-                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
-                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
-                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
-                        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Clubs & Groups</a>
-                        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Pride Guide</a>
-                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
-                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                    </div>
-                </div>
-                <div class="md:text-right">
-                    <div class="flex md:justify-end gap-4 mb-4">
-                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
+            
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+                </ul>
+            </div>
         </div>
-    </footer>
 
-    <script>
-        // Mobile menu
-        const menuBtn = document.getElementById('menu-btn');
-        const menu = document.getElementById('menu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
-            });
-        }
+        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
-        // State
-        let allEvents = [];
-        let activeFilter = 'all';
-        let currentOffset = 0;
-        let hasMoreEvents = false;
-        let isLoadingMore = false;
-        let showNSFW = false;
-        const PAGE_SIZE = 30;
-        const grid = document.getElementById('event-grid');
-        const countEl = document.getElementById('event-count');
 
-        // Filter buttons
-        document.querySelectorAll('.date-filter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                activeFilter = btn.dataset.filter;
-                renderEvents();
-            });
-        });
-
-        // NSFW toggle
-        const nsfwToggle = document.getElementById('nsfw-toggle');
-        if (nsfwToggle) {
-            nsfwToggle.addEventListener('click', () => {
-                showNSFW = !showNSFW;
-                nsfwToggle.setAttribute('aria-pressed', showNSFW);
-                fetchEvents();
-            });
-        }
-
-        // Fetch events from API with pagination
-        async function fetchEvents(loadMore = false) {
-            if (!loadMore) {
-                currentOffset = 0;
-                allEvents = [];
-            }
-
-            try {
-                const res = await fetch(`/.netlify/functions/get-events?limit=${PAGE_SIZE}&offset=${currentOffset}&includeAdult=${showNSFW}`);
-                if (!res.ok) throw new Error(res.status);
-                const data = await res.json();
-                if (data.success && data.events) {
-                    if (loadMore) {
-                        allEvents = allEvents.concat(data.events);
-                    } else {
-                        allEvents = data.events;
-                    }
-                    hasMoreEvents = data.hasMore || false;
-                    currentOffset += data.events.length;
-                } else {
-                    throw new Error('No events in response');
-                }
-            } catch (err) {
-                console.warn('Failed to fetch events:', err);
-                if (!loadMore) allEvents = [];
-            }
-            renderEvents();
-        }
-
-        // Load more handler
-        async function loadMoreEvents() {
-            if (isLoadingMore || !hasMoreEvents) return;
-            isLoadingMore = true;
-            const btn = document.getElementById('load-more-btn');
-            if (btn) {
-                btn.textContent = 'LOADING...';
-                btn.disabled = true;
-            }
-            await fetchEvents(true);
-            isLoadingMore = false;
-        }
-
-        // Date helpers
-        function startOfDay(d) {
-            const r = new Date(d);
-            r.setUTCHours(0, 0, 0, 0);
-            return r;
-        }
-
-        function getDateRange(filter) {
-            const now = new Date();
-            const today = startOfDay(now);
-
-            if (filter === 'this-week') {
-                const day = today.getUTCDay();
-                const start = new Date(today);
-                start.setUTCDate(start.getUTCDate() - day + 1); // Monday
-                const end = new Date(start);
-                end.setUTCDate(end.getUTCDate() + 6); // Sunday
-                end.setUTCHours(23, 59, 59, 999);
-                return { start: today > start ? today : start, end };
-            }
-
-            if (filter === 'this-weekend') {
-                const day = today.getUTCDay();
-                const friday = new Date(today);
-                friday.setUTCDate(friday.getUTCDate() + (5 - day + 7) % 7);
-                if (day >= 5 || day === 0) friday.setTime(today.getTime()); // already weekend
-                const sunday = new Date(friday);
-                sunday.setUTCDate(friday.getUTCDate() + (day === 0 ? 0 : (7 - friday.getUTCDay())));
-                sunday.setUTCHours(23, 59, 59, 999);
-                return { start: today > friday ? today : friday, end: sunday };
-            }
-
-            if (filter === 'this-month') {
-                const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0, 23, 59, 59, 999));
-                return { start: today, end };
-            }
-
-            return null; // 'all' — no range filter
-        }
-
-        // Filter + render
-        function renderEvents() {
-            // Filter out past events and apply date range
-            const now = startOfDay(new Date());
-            const range = getDateRange(activeFilter);
-
-            let filtered = allEvents.filter(ev => {
-                const d = new Date(ev.date);
-                if (isNaN(d.getTime())) return false;
-                if (d < now) return false;
-                // Filter out adult/NSFW events from the main public listing unless toggled
-                let cats = [];
-                if (Array.isArray(ev.category)) {
-                    cats = ev.category;
-                } else if (typeof ev.category === 'string') {
-                    cats = ev.category.split(',').map(s => s.trim());
-                }
-                const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
-
-                if (!showNSFW && isNSFW) return false;
-                if (range) {
-                    if (d < range.start || d > range.end) return false;
-                }
-                return true;
-            });
-
-            // Sort by date ascending
-            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            // Update count
-            countEl.textContent = filtered.length === 1
-                ? '1 event'
-                : filtered.length + ' events';
-
-            // Hide Pride banner when no results
-            const prideBanner = document.getElementById('pride-banner');
-
-            // Render
-            if (filtered.length === 0) {
-                prideBanner.classList.add('hidden');
-                grid.innerHTML = `
-                    <div class="empty-state col-span-full">
-                        <i class="fas fa-calendar-xmark text-5xl text-gray-700 mb-4"></i>
-                        <h2 class="text-2xl font-bold text-white font-display uppercase mb-2">No Events Found</h2>
-                        <p class="text-gray-400">${activeFilter === 'all'
-                            ? 'Check back soon — new events are added regularly.'
-                            : 'Try a different time range or check back later.'
-                        }</p>
-                        ${activeFilter !== 'all' ? '<button class="filter-pill active mt-6" onclick="resetFilter()">Show All Events</button>' : ''}
-                    </div>
-                `;
-                return;
-            }
-
-            // Show Pride guide banner if any visible events are tagged Pride
-            const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
-            prideBanner.classList.toggle('hidden', !hasPride);
-
-            let html = filtered.map((ev, index) => createCard(ev, index === 0)).join('');
-
-            // Show "Load More" button if the server has more events and we're on the unfiltered view
-            if (hasMoreEvents && activeFilter === 'all') {
-                html += `
-                    <div class="col-span-full flex justify-center mt-8">
-                        <button id="load-more-btn" onclick="loadMoreEvents()"
-                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem;">
-                            LOAD MORE EVENTS
-                        </button>
-                    </div>`;
-            }
-
-            grid.innerHTML = html;
-        }
-
-        function resetFilter() {
-            document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
-            document.querySelector('.date-filter[data-filter="all"]').classList.add('active');
-            activeFilter = 'all';
-            renderEvents();
-        }
-
-        // Format date
-        function formatDate(dateStr) {
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return 'Date TBC';
-            return d.toLocaleDateString('en-GB', {
-                weekday: 'short',
-                day: 'numeric',
-                month: 'short',
-                timeZone: 'UTC'
-            });
-        }
-
-        function formatTime(dateStr) {
-            const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return '';
-            const s = typeof dateStr === 'string' ? dateStr : '';
-            if (!s.includes('T') || s.includes('T00:00')) return '';
-            const t = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
-            return (t === '0:00' || t === '00:00') ? '' : t;
-        }
-
-        // Build card HTML
-        function createCard(ev, isFirst) {
-            const date = formatDate(ev.date);
-            const time = formatTime(ev.date);
-
-            // Image
-            const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
-            const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
-            let imgHtml = '';
-
-            if (isPlaceholder) {
-                imgHtml = '<div class="event-placeholder"><i class="fas fa-image"></i></div>';
-            } else {
-                if (isFirst) {
-                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" fetchpriority="high">';
-                    // Dynamically inject preload link to document head for the first image
-                    if (!document.querySelector('link[rel="preload"][href="' + rawUrl + '"]')) {
-                        document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + rawUrl + '" fetchpriority="high">');
-                    }
-                } else {
-                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" loading="lazy">';
-                }
-            }
-
-            // Venue
-            let venue = '';
-            if (ev.venueName) {
-                venue = Array.isArray(ev.venueName) ? ev.venueName[0] : ev.venueName;
-            } else if (ev.venue && ev.venue.name) {
-                venue = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
-            }
-
-            // Pride badge
-            let cats = [];
-            if (Array.isArray(ev.category)) {
-                cats = ev.category;
-            } else if (typeof ev.category === 'string') {
-                cats = ev.category.split(',').map(s => s.trim());
-            }
-
-            const prideBadge = cats.includes('Pride')
-                ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
-                : '';
-
-            // Adult/NSFW badge
-            const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
-            const adultBadge = isNSFW
-                ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
-                : '';
-
-            const slug = ev.slug || '';
-
-            return '<a href="/event/' + slug + '" class="event-card group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm">'
-                + imgHtml
-                + '<div class="card-body bg-black flex flex-col justify-between h-full">'
-                + '<div>'
-                + '<p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2">'
-                + '<i class="fas fa-calendar-day mr-1 opacity-70"></i>' + date
-                + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-1 text-[var(--color-toxic)] opacity-70"></i>' + time + '</span>' : '')
-                + '</p>'
-                + '<h3 class="text-2xl font-black text-white uppercase font-display leading-tight tracking-normal mb-3 group-hover:text-[var(--color-toxic)] transition-colors">' + (ev.name || 'Untitled Event') + '</h3>'
-                + (venue ? '<p class="text-gray-400 text-sm font-medium mb-3"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)] opacity-80"></i>' + venue + '</p>' : '')
-                + '</div>'
-                + '<div>'
-                + prideBadge
-                + adultBadge
-                + '</div>'
-                + '</div>'
-                + '</a>';
-        }
-
-        // Init
-        fetchEvents();
-    </script>
+    
+    <script src="/js/main.js"></script>
 </body>
 </html>
