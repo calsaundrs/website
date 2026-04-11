@@ -2,438 +2,576 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missing Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud</title>
-    <meta name="description" content="Missing Bar is Birmingham’s late-night party bar in the Gay Village. Open till 4am Fri–Sat. See reviews, photos, upcoming drag shows and events.">
+    <title>Missing Bar Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for Missing Bar, a popular LGBTQ+ venue and gay bar in Birmingham. Birmingham&#x27;s Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.">
     <meta name="keywords" content="Missing Bar birmingham, Missing Bar reviews, Missing Bar photos, gay bar birmingham, gay village birmingham venues">
-    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/missing-bar">
-
+    
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Missing Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta property="og:description" content="Missing Bar is Birmingham’s late-night party bar in the Gay Village. Open till 4am Fri–Sat. See reviews, photos, upcoming drag shows and events.">
+    <meta property="og:title" content="Missing Bar">
+    <meta property="og:description" content="Birmingham&#x27;s Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.">
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/missing-bar">
+    <meta property="og:url" content="https://brumoutloud.co.uk/venue/missing-bar">
     <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg">
-    <meta property="og:site_name" content="Brum Outloud">
-    <meta property="og:locale" content="en_GB">
-
+    
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Missing Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta name="twitter:description" content="Missing Bar is Birmingham’s late-night party bar in the Gay Village. Open till 4am Fri–Sat. See reviews, photos, upcoming drag shows and events.">
+    <meta name="twitter:title" content="Missing Bar">
+    <meta name="twitter:description" content="Birmingham&#x27;s Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg">
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Missing Bar",
-      "description": "Birmingham's Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "48 Bromsgrove Street, Birmingham, West Midlands, B5 6NU",
-        "addressLocality": "Birmingham",
-        "addressRegion": "West Midlands",
-        "addressCountry": "GB"
-      },
-      "url": "https://brumoutloud.co.uk/venue/missing-bar",
-      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg",
-      "sameAs": [
-        "https://www.missingbar.co.uk/"
-      ]
-    }
-    </script>
-
-    <!-- FAQPage Schema (AEO) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Where is Missing Bar in Birmingham?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Missing Bar is located at 48 Bromsgrove Street, Birmingham, West Midlands, B5 6NU, in Birmingham's Gay Village. It's a short walk from Birmingham New Street station."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is Missing Bar LGBTQ+ friendly?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Missing Bar is an LGBTQ+ venue in Birmingham's Gay Village. It welcomes everyone regardless of gender identity or sexual orientation."
-          }
-        }
-      ]
-    }
-    </script>
-
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-
+    
+    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
-        :root {
-            --color-bg: #0D0115;
-            --color-light: #f3e8ff;
-            --color-toxic: #CCFF00;
-            --color-purple: #9B5DE5;
-            --color-pink: #E83A99;
+        /* FOUC Prevention - Hide content until styles are loaded */
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-text {
+            color: #B564F7;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 100, 247, 0.3);
+            border-top: 3px solid #B564F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Critical CSS to prevent flashing */
         body {
-            background: var(--color-bg);
-            color: var(--color-light);
-            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
         }
-        .font-display { font-family: 'Syne', sans-serif; }
-        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
-
         
-
+        /* Basic layout styles to prevent layout shift */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
         
+        /* Prevent pride flag from flashing at full size */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
         
-
-        .btn-neo {
-            background: var(--color-toxic);
-            color: #000;
-            font-weight: 700;
-            text-transform: uppercase;
+        /* Show flag after page loads */
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
+    </style>
+    
+    <!-- Performance: Optimized external resource loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
             letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            box-shadow: 4px 4px 0 var(--color-purple);
-            transition: all 0.2s ease;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-        }
-        .btn-neo:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0 var(--color-pink);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--color-light);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .btn-outline:hover {
-            background: var(--color-purple);
-            border-color: var(--color-purple);
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
         }
 
-        .category-tag {
-            display: inline-block;
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
             padding: 0.25rem 0.75rem;
-            border: 2px solid var(--color-toxic);
-            color: var(--color-toxic);
+            border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-weight: 600;
+            display: inline-block;
         }
-
-        
+        .status-badge.approved {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Header -->
-    <header class="sticky top-0 z-[100] transition-all duration-300">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                     onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toxic">
+                <button id="menu-btn" class="text-white text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
-            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
-            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
-            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
-            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
-            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
-            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
-            <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
-    <!-- Hero Section - Full Bleed -->
-    <section class="relative w-full" style="min-height: 50vh;">
-        <div class="absolute inset-0">
-            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Photo of Missing Bar LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
-        </div>
-
-        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
-            <div class="max-w-7xl mx-auto w-full">
-                <!-- Breadcrumb -->
-                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
-                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
-                    <span class="text-gray-600 mx-2">/</span>
-                    <span class="text-white">Missing Bar</span>
-                </nav>
-
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">Missing Bar</h1>
-
-                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
-                    <i class="fas fa-map-marker-alt mr-2"></i>48 Bromsgrove Street, Birmingham, West Midlands, B5 6NU
-                </p>
-
-                <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2">
-                    <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Party Bar</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Award-winning</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+    <main class="container mx-auto px-4 py-8">
 
-            <!-- Primary Content -->
-            <div class="lg:col-span-2 space-y-10">
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> About Missing Bar
-                    </h2>
-                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
-                        <p>Birmingham's Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.</p>
-                    </div>
-                </section>
-
-                <section id="photos">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Photos of Missing Bar
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6 text-center">
-                        <p class="text-gray-400 mb-4">View photos and imagery from Missing Bar in Birmingham.</p>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
-                            <!-- Placeholder for photos -->
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-toxic)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-toxic)] to-[var(--color-purple)] opacity-50 hidden md:block"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="reviews">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Missing Bar Reviews
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6">
-                        <p class="text-gray-300 mb-4">Are you looking for reviews of Missing Bar? Here is what people are saying about this Birmingham gay village venue.</p>
-                        <div class="space-y-4">
-                            <!-- Placeholder for reviews integration -->
-                            <div class="border-l-4 border-[var(--color-toxic)] pl-4 py-2">
-                                <div class="text-yellow-400 text-sm mb-1">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <p class="text-gray-400 italic text-sm">"Great atmosphere and a staple of the Birmingham gay scene!"</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Upcoming Events -->
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Upcoming Events
-                    </h2>
-                    <div id="events-container">
-                        <div class="text-center py-8">
-                            <div class="animate-spin h-8 w-8 border-b-2 border-[var(--color-toxic)] mx-auto"></div>
-                            <p class="text-gray-400 mt-2">Loading events...</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Sidebar -->
-            <aside class="space-y-6">
-                <!-- Visit Website CTA -->
-                <div class="neo-card p-6">
-                    <a href="https://www.missingbar.co.uk/" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
-                        <i class="fas fa-external-link-alt mr-2"></i>VISIT WEBSITE
+        <!-- Venue Details -->
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750522112/brumoutloud_venues/hklgqqh62nrj9853vkyi.jpg" alt="Missing Bar" class="w-full h-full object-cover">
+                <div class="absolute top-4 left-4">
+                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back
                     </a>
                 </div>
-
-                <!-- Opening Hours -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
-                    </h3>
-                    <div class="space-y-1 text-gray-300 text-sm">
-                        <div class="flex justify-between"><span>Monday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Tuesday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Wednesday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Thursday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Friday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Saturday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Sunday</span><span>8:00 PM - 2:00 AM</span></div>
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <!-- Venue Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-4">Missing Bar</h1>
+                    <p class="text-xl text-gray-300 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                        48 Bromsgrove Street, Birmingham, West Midlands, B5 6NU
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Venue</span>
                     </div>
                 </div>
 
-                <!-- Contact -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
-                    </h3>
-                    <dl class="space-y-3 text-sm">
-                        <div class="flex items-start gap-3">
-                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
-                            <dd class="text-gray-300">48 Bromsgrove Street, Birmingham, West Midlands, B5 6NU</dd>
+                <!-- Venue Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About Missing Bar
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">Birmingham&#x27;s Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.</p>
                         </div>
-                    </dl>
-                </div>
 
-                <!-- Share -->
-                <div class="neo-card p-6">
-                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
-                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
-                    </button>
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>
+                                
+                                
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🐶 Dog friendly</span>
+                            </div>
+                        </div>
+
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
+                            </h2>
+                            <ul class="text-gray-300 space-y-1 text-sm">
+                                <li>✓ Wheelchair accessible entrance</li>
+                                
+                                <li>✓ Wheelchair accessible restroom</li>
+                                
+                            </ul>
+                            <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
+                        </div>
+
+                        <!-- Gallery -->
+                        <div class="venue-card p-6 mb-6" id="photos">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of Missing Bar
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEFwtEetqifmoSfBytEUFzmgOxk4F-UwpZpIZf3dAiWkpbTHBDNITmpFNMylbfvO1inhuN2Q0Hpl9Rf4pU83dmHms94QA8-5xtxUqbACHP2N0OLrz8QzJE0VkKMfpbsvdD6y3HmMMocLVL-z9ThoVrovq1MIW5Zf8nhhuAY7BDQT70Xy7BF1ZJSfIaL0hTOy1SYU6keFY1sA2qv1QgtI3EEKuAUvx1oz4WiVrzkqosTigmdkAWY1Mt-A1FqBndZu_FsPxO2dcSuCJbovdsiSR1alBVhjEgMFG1BR-EfBN6AXCnZv-jAsEIOH8dzuK0Gyg65DVFHLvJz--oo9t-VmP-5zafIvI8Zl6rnsAUaCGBTlLc6hyHTjd2C4CJyK6mTtnI84AKZ4prL1kSIn4BDmo759eIQWaWkxb3OOkW4qKos" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEHEe3aQrqwhhs0hKhm4De1H92N1nHNyDE-RG1e2g5YGmkgYBkFtXUrW9rlNdNzbWkIh5sA6KyyO167W0s4U85UJWsa5rlIBgn2CUSMogEHhijUCr07vkq4nZRf1H9b7SFjVlg6SWR-RohqdRZ-5Et7JmahPHBCUWPbOPEAKzimwxTNoj4KNIjc6IWLURjRKu43l27NR21AAljqDvN3S5KDWlZs42jeN2vnO42EVX56J0zGVAMwrG3mfMUb39NWtowAEwSNdUJXckunJnCwkN9tI93Bf7Bb3G0DKUlz2LHJR2Q" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEHNps-TTrwuWxRHtMtRglcIaakduj5xBj5S_O1AcjE-CnNwrh5QqAqaZ2zcvOm_qoKC2HPDd3tjKye5uKKJayaftSDKyXWuobTGU8P6N17BhNecF88d2UtjSDj9B7KYYzXl7QoUcVrg72_xBSt-TYayS9rvFxjk4X6A4VoEcBjcTWrbE5YJAn4CJg42f5m3saYa-t7uQHSPXT9J6Z53eNrj5Nn1Pz1N7Aec-7Gi1OAu-ggmPfzA0H-Pp4WrMmzNoRHtrFWIUIcmPGUZofcqBU4NcxWxEBcvSlcCTaY3DUym6xS8YYy_tGAeOhc6Wl4fzBMoTEitjfkgqz5BYm0uBrYFQf82eaWpPGFAPdZf900lCYiuCnR7QOJsIiP0jap3r3S0QVWapMa_syIJbLqFmr1FSPQZRzxWclh2ITbfgUL9_x6OhTnTHzMhu67GNsfS" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEE_Cj3FfZQOBwgIzJfjmB2Jtg-DlMVpp5aYZ2vSIxWy2hOKOgMBKisg0rzC7J4pjVQ3smYT36Xxq4MymnuWjbwtX-m06ibvEWKMqIpQquqLV6G3oHyZNZn7Guwyzq87-ZuNEwCP6o-4Z_pjE5_y4uGz_0GnXiR5Me6WcFNp9J36B41jFKicEo8IscSyqWfj6bRgzIPx11qBZC6gf-ZZIdffKLeHOjFGaADkpB3B7_9wAhju4JnaDMnW_wrqCmlPtLYhJ0A8Ymh5oHdPOwNYofz2l1VJd2XJJFpvbGQy9j3JITqwO5pM9LTJbrKCOTuZqmNZp1AVmqd62PWu4SG7kCEke-OGvvGEws3OJ46riSYt2yzwFA8UJ59HR6QcPTcIdCliQ8gyH3mbZd0ykls7jGF5CQ7tYwYlfDFqlrI_Fp0" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEHZySVNz6qGAV6uOJw3lSabwyi5wH7Ha6CESnsvCsMNwmmyz-dmfhEXBkjD0YUmAPdDdipIVpT5vRxc6Kq6mZodC1FCrXEujNjbVZKHbpFgp4Wv1zhqD7f6kCQQI3Dknk5yXVvMerdDMOxyemMd9n4ZwMsfAq59jUYqXVgD8zLDdr7Xvxphv-D3fuiIV3-gUxRQBnGiwWkbEwut1ZuOSREjg-7caA1Upw0MmqXV86W3O7oAEsU-PUObVqNhm1ORm25f6XGnQhPDal_d0maBp_EDbQAJk6Dm3tQfw63M-Pkxx_QJtnpgyxe2-2ICpUYgbiEOdR3Uc-Z6UxlB_ImKbpNHYZt70r0pDuGZ3OokHZuBm6xLLb3V_d7I8vIEJXISdOlMonP-E9HJ1VrnyzBpQPcb1pgm-T0fVx_L6xcZVCWs5hFP" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEHWerHBL07bnUOVgjAg6m3RdLuwjvfzhkGE10aCtYnL5dCMu5hkaPeg3rJbMkmmXsoJn8F8bKlvg5l5JRa5Q_oeu81rxvmUz1dUw4Hrx-ZiTgWFPdcLb38xEIlCldjAxrKTgOzw92joQuUooXNx8CTLDtJnLYA_bfMynLSAXVK8in5X6DFytz58gTWufjb_5xC6ytZB6hBP0DH8e_RGwZ8l6u_CKDMqHCKz8S-D1wVDOmu2DR00PNuBrIL-G0WRUzaknE3tVqGIDTbjIhAfaIZ6p7TbyjMe6HR8khXpv9o3bkqIQMOU1m9t6XjjyCLsRPVFs1S6sa85IXghw5oagl5Dxnwl64B907OkhoI5Hdnyh2ZSIfJOuU8hguXzalLx4mHQEIUvom1_eXtuXegld3Yp1_meKE8tYxsjdOgaNuZTKAS5" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEFSrsorVCNoBMnHUHMozk1FIrKn22l8YtggOw2TILYWj8U1T3c68Yh_t2Nf2U8K-kSdvBQc3cloW2F6tHQg0rY0jBgpNyjPT84a09nfEnO2aFyqG7E7EtIQOTSrFhxos4obeFN1riseEBR5sPpcuTy4Hoy7HN4lkbqTiFBbxxJxBCk87sAwGuftduCB51O4iMKBdNSrz2nTQq0H8PziOPsnESPy_K4H5FETJy_n69mvE6cbOmsM5Y3dQCpuX31TjrUkTc1BzoxhSn0PmSXhpZUMk9z-GMkWknemKC46-nBSuKaBbgMo9BcFjDe6J_OMvKet6F1QasTfvggVGtiQff13JoKBCyjQ1oMsvfiGxeere3Hgeom-92PDtQfs0Svj1l2N79JEKUC8pcOHxWiJBXSvOpfFehhR1jk3uAjMblMmH6U" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJ3SfQfWK8cEgRC6oY3cvvP7U%2Fphotos%2FAU_ZVEG83e-ul9xZAphcttDBBx76GPZN9auXeuxFlcpnTReEgr5bZlwSnezhs2cQr-EKR46cES6nihbi9DHom0hnpUWBy_IHYDMThxdTZISn3tNw2sD5wtpYFKPatl5Xy3WZLd812IDMFCSaTiYQhFHVgyyP5JtXq_DmdnQ6ad_V4s2UDZTl6N_JrbxrpxROCcC0sePJRYXYevO-D_4oWZU1coH4huegcmfQ4f6N2sWyRnfOaA6QlReWTlZbqmZbHlSthht_YXl61HbN_dz4mH6kjOBtiyQIIbRSTZO317jHpt6olJ7a9fTDS6zmYrVEEJdh4CjVwxkdwoz_ffGaE7NDZfuH7JCedJRBuHkHoTObOw3B7zjrNrpUAsQCgQ4B6jaTXVF5va7WjOCJ2XWLmvL67YjOtd5KmmfYzIMEEYCqM9fzdBAV" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Photos via Google · By
+                                <a href="https://maps.google.com/maps/contrib/100622780169582439741" class="underline" rel="nofollow">John Winterbottom</a>, <a href="https://maps.google.com/maps/contrib/104764353032264108173" class="underline" rel="nofollow">Missing Bar</a>, <a href="https://maps.google.com/maps/contrib/117195053494155867082" class="underline" rel="nofollow">Sam</a>, <a href="https://maps.google.com/maps/contrib/114400027854745706054" class="underline" rel="nofollow">Daniel D. Reimer</a>, <a href="https://maps.google.com/maps/contrib/100950677426599810881" class="underline" rel="nofollow">Leon Barnfield</a>, <a href="https://maps.google.com/maps/contrib/101813894873132910748" class="underline" rel="nofollow">Sean Sweeney</a>, <a href="https://maps.google.com/maps/contrib/117276392885779544067" class="underline" rel="nofollow">Zaynub</a>, <a href="https://maps.google.com/maps/contrib/102906163359894438736" class="underline" rel="nofollow">Charles Bhachu</a>
+                            </p>
+                        </div>
+
+                        <!-- Google Reviews -->
+                        <div class="venue-card p-6 mb-6" id="reviews">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fab fa-google mr-3 text-accent-color"></i>Missing Bar Reviews
+                            </h2>
+                            <p class="text-gray-300 mb-4">Looking for reviews of Missing Bar? Here is what people are saying about this Birmingham venue.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Ryan Brooker</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Popped for a few drinks after Chinatown New year festival. Good section of on tap and alcohol free items. Really friendly bar staff who were happy to give my partner access to the accessible loo (they hold a key behind the bar). Good atmosphere/ vibe, regulars seems nice and the outdoor seating would be a great sunning spot in good weather.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">J</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">First time visiting Missing Bar whilst I travelled for business. Some of the regulars will whip their heads around to stare as you enter and it feels a little judgemental at first. I quietly sat like Billy-no-mates and enjoyed a pint while watching the locals. It was tame overall, but if you are looking for something lively, maybe try another bar.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Jon</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">I&#x27;ve been to missing bar on a few occasions with my son. Although a good enough atmosphere I&#x27;ve witness drug taking and selling. So what use are the security guards.
+
+Cannabis has a distinctive smell, yet security noses must be blocked.
+
+Some men have no respect for other couples. My son and his new partner have had issues with men approaching them and flirting with my son or his partner when they are sat on each others laps.
+
+I still go there but to be honest what I see.  I hate the place.
+
+I&#x27;ve reported to management drugs being sold in the toilets. To date . It&#x27;s not been addressed. This issue puts people at risk. You cannot have people under the influence of drugs in what is supposed to be a safe space. I don&#x27;t drink alcohol but I do go out with my son. I observe. And I see everything. I would not call missing bar a safe space.
+
+If I could stop my son going there I would on a heart beat.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Chakkri “Cindy Sexy Hot” Chookan</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">I am the trans pretty one and came here often I always got racist from another gays in the club. I am Asian and trans I know always happens and they told the bad things about me to all the bartender u should know that I am here with my bf only 2 of us I can’t make any problem they always talked bad and laugh at me I don’t know why but u should listen to me too not just listen with them only. I am nice girl please if u don’t remember me look at the picture because i already told one of the bartender but he ignore me go look at the camera guys I am a victim. I loved missing and I don’t want this happened to me again</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Hotwheels Sy handcycle camper</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Wow what a flipping amazing safe bar to be in during pride all the staff are amazing and dunno how they remembered my drink all time, the drag artists are amazing. I was so Welcomed by the staff and the locals, definitely be going to missing again. I went to pride but spent most of my time in missing bar until early hrs #wheelchairguy #carlingblack</p>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-center">
+                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+
+                        <!-- Action Buttons -->
+
+                        <!-- Current Status is intentionally omitted: this is
+                             static HTML baked at build time, so openNow would
+                             be stale within minutes. The weekly opening hours
+                             table below is structural and stays accurate. -->
+
+                        <!-- Opening Hours -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <p>Monday: 12:00 PM – 4:00 AM</p>
+                                <p>Tuesday: 12:00 PM – 3:00 AM</p>
+                                <p>Wednesday: 12:00 PM – 2:00 AM</p>
+                                <p>Thursday: 12:00 PM – 3:00 AM</p>
+                                <p>Friday: 12:00 PM – 4:00 AM</p>
+                                <p>Saturday: 12:00 PM – 4:00 AM</p>
+                                <p>Sunday: 12:00 PM – 2:00 AM</p>
+                            </div>
+                        </div>
+
+                        <!-- Google Rating -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                            </h3>
+                            <div class="flex items-center space-x-2 text-xl mb-2">
+                                <div>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                                <p class="text-white font-semibold">4 <span class="text-gray-400">(279)</span></p>
+                            </div>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                                View on Google Maps
+                            </a>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:0121 622 4256" class="text-blue-400 hover:underline">
+                                        0121 622 4256
+                                    </a>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="http://www.missingbar.co.uk/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Share Venue -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Venue
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </aside>
+            </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid md:grid-cols-3 gap-12">
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
-                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
                 </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
-                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
-                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
-                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
-                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
-                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
-                    </div>
-                </div>
-                <div class="md:text-right">
-                    <div class="flex md:justify-end gap-4 mb-4">
-                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                 <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('menu-btn').addEventListener('click', function() {
-            document.getElementById('menu').classList.toggle('hidden');
-            document.getElementById('menu').classList.toggle('flex');
-        });
-
-        // Share button
-        document.getElementById('share-button').addEventListener('click', function() {
-            var btn = this;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Missing Bar - Brum Outloud',
-                    text: 'Birmingham's Party Bar; Lively and welcoming venue; Cornerstone of LGBTQ+ nightlife; Award-winning for friendly atmosphere.',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                var original = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
-                btn.classList.add('!border-green-400', '!text-green-400');
-                setTimeout(function() {
-                    btn.innerHTML = original;
-                    btn.classList.remove('!border-green-400', '!text-green-400');
-                }, 2000);
-            }
-        });
-
-        // Load events for this venue
-        async function loadVenueEvents() {
-            try {
-                var response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=missing-bar');
-                if (!response.ok) throw new Error('Failed to fetch events');
-                var data = await response.json();
-
-                var eventsContainer = document.getElementById('events-container');
-
-                if (data.success && data.events && data.events.length > 0) {
-                    var html = '<div class="space-y-3">';
-                    data.events.forEach(function(event) {
-                        var d = new Date(event.date);
-                        var day = d.getDate();
-                        var month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
-                        var time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-
-                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
-                        html += '<div class="text-center w-16 flex-shrink-0">';
-                        html += '<p class="text-2xl font-bold text-[var(--color-toxic)]">' + day + '</p>';
-                        html += '<p class="text-sm text-gray-400 uppercase font-bold">' + month + '</p>';
-                        html += '</div>';
-                        html += '<div class="flex-grow">';
-                        html += '<h4 class="font-bold text-white text-lg">' + event.name + '</h4>';
-                        html += '<p class="text-sm text-gray-400">' + time + '</p>';
-                        html += '</div>';
-                        html += '<div class="text-[var(--color-toxic)]"><i class="fas fa-arrow-right"></i></div>';
-                        html += '</a>';
-                    });
-                    html += '</div>';
-                    eventsContainer.innerHTML = html;
-                } else {
-                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
-                }
-            } catch (error) {
-                console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadVenueEvents);
-    </script>
 </body>
 </html>

@@ -2,438 +2,559 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equator Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud</title>
-    <meta name="description" content="Equator Bar is a relaxed LGBTQ+ bar on Hurst Street, open 20+ years. Coffee by day, cocktails by night. See reviews, photos and upcoming events.">
+    <title>Equator Bar Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for Equator Bar, a popular LGBTQ+ venue and gay bar in Birmingham. Hurst Street&#x27;s &quot;Little Gem&quot;; Situated in the heart of Birmingham&#x27;s Gay Village; At the heart of the community for over 20 years.">
     <meta name="keywords" content="Equator Bar birmingham, Equator Bar reviews, Equator Bar photos, gay bar birmingham, gay village birmingham venues">
-    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/equator-bar">
-
+    
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Equator Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta property="og:description" content="Equator Bar is a relaxed LGBTQ+ bar on Hurst Street, open 20+ years. Coffee by day, cocktails by night. See reviews, photos and upcoming events.">
+    <meta property="og:title" content="Equator Bar">
+    <meta property="og:description" content="Hurst Street&#x27;s &quot;Little Gem&quot;; Situated in the heart of Birmingham&#x27;s Gay Village; At the heart of the community for over 20 years.">
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/equator-bar">
+    <meta property="og:url" content="https://brumoutloud.co.uk/venue/equator-bar">
     <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp">
-    <meta property="og:site_name" content="Brum Outloud">
-    <meta property="og:locale" content="en_GB">
-
+    
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Equator Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta name="twitter:description" content="Equator Bar is a relaxed LGBTQ+ bar on Hurst Street, open 20+ years. Coffee by day, cocktails by night. See reviews, photos and upcoming events.">
+    <meta name="twitter:title" content="Equator Bar">
+    <meta name="twitter:description" content="Hurst Street&#x27;s &quot;Little Gem&quot;; Situated in the heart of Birmingham&#x27;s Gay Village; At the heart of the community for over 20 years.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp">
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Equator Bar",
-      "description": "Hurst Street's "Little Gem"; Situated in the heart of Birmingham's Gay Village; At the heart of the community for over 20 years.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "123 Hurst Street, Birmingham, B5 6SE",
-        "addressLocality": "Birmingham",
-        "addressRegion": "West Midlands",
-        "addressCountry": "GB"
-      },
-      "url": "https://brumoutloud.co.uk/venue/equator-bar",
-      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp",
-      "sameAs": [
-        "https://www.equator-bar.co.uk/"
-      ]
-    }
-    </script>
-
-    <!-- FAQPage Schema (AEO) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Where is Equator Bar in Birmingham?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Equator Bar is located at 123 Hurst Street, Birmingham, B5 6SE, in Birmingham's Gay Village. It's a short walk from Birmingham New Street station."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is Equator Bar LGBTQ+ friendly?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Equator Bar is an LGBTQ+ venue in Birmingham's Gay Village. It welcomes everyone regardless of gender identity or sexual orientation."
-          }
-        }
-      ]
-    }
-    </script>
-
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-
+    
+    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
-        :root {
-            --color-bg: #0D0115;
-            --color-light: #f3e8ff;
-            --color-toxic: #CCFF00;
-            --color-purple: #9B5DE5;
-            --color-pink: #E83A99;
+        /* FOUC Prevention - Hide content until styles are loaded */
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-text {
+            color: #B564F7;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 100, 247, 0.3);
+            border-top: 3px solid #B564F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Critical CSS to prevent flashing */
         body {
-            background: var(--color-bg);
-            color: var(--color-light);
-            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
         }
-        .font-display { font-family: 'Syne', sans-serif; }
-        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
-
         
-
+        /* Basic layout styles to prevent layout shift */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
         
+        /* Prevent pride flag from flashing at full size */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
         
-
-        .btn-neo {
-            background: var(--color-toxic);
-            color: #000;
-            font-weight: 700;
-            text-transform: uppercase;
+        /* Show flag after page loads */
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
+    </style>
+    
+    <!-- Performance: Optimized external resource loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
             letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            box-shadow: 4px 4px 0 var(--color-purple);
-            transition: all 0.2s ease;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-        }
-        .btn-neo:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0 var(--color-pink);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--color-light);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .btn-outline:hover {
-            background: var(--color-purple);
-            border-color: var(--color-purple);
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
         }
 
-        .category-tag {
-            display: inline-block;
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
             padding: 0.25rem 0.75rem;
-            border: 2px solid var(--color-toxic);
-            color: var(--color-toxic);
+            border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-weight: 600;
+            display: inline-block;
         }
-
-        
+        .status-badge.approved {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Header -->
-    <header class="sticky top-0 z-[100] transition-all duration-300">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                     onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toxic">
+                <button id="menu-btn" class="text-white text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
-            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
-            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
-            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
-            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
-            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
-            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
-            <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
-    <!-- Hero Section - Full Bleed -->
-    <section class="relative w-full" style="min-height: 50vh;">
-        <div class="absolute inset-0">
-            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Photo of Equator Bar LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
-        </div>
-
-        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
-            <div class="max-w-7xl mx-auto w-full">
-                <!-- Breadcrumb -->
-                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
-                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
-                    <span class="text-gray-600 mx-2">/</span>
-                    <span class="text-white">Equator Bar</span>
-                </nav>
-
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">Equator Bar</h1>
-
-                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
-                    <i class="fas fa-map-marker-alt mr-2"></i>123 Hurst Street, Birmingham, B5 6SE
-                </p>
-
-                <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2">
-                    <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Bar</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Community</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+    <main class="container mx-auto px-4 py-8">
 
-            <!-- Primary Content -->
-            <div class="lg:col-span-2 space-y-10">
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> About Equator Bar
-                    </h2>
-                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
-                        <p>Hurst Street's "Little Gem"; Situated in the heart of Birmingham's Gay Village; At the heart of the community for over 20 years.</p>
-                    </div>
-                </section>
-
-                <section id="photos">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Photos of Equator Bar
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6 text-center">
-                        <p class="text-gray-400 mb-4">View photos and imagery from Equator Bar in Birmingham.</p>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
-                            <!-- Placeholder for photos -->
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-toxic)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-toxic)] to-[var(--color-purple)] opacity-50 hidden md:block"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="reviews">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Equator Bar Reviews
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6">
-                        <p class="text-gray-300 mb-4">Are you looking for reviews of Equator Bar? Here is what people are saying about this Birmingham gay village venue.</p>
-                        <div class="space-y-4">
-                            <!-- Placeholder for reviews integration -->
-                            <div class="border-l-4 border-[var(--color-toxic)] pl-4 py-2">
-                                <div class="text-yellow-400 text-sm mb-1">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <p class="text-gray-400 italic text-sm">"Great atmosphere and a staple of the Birmingham gay scene!"</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Upcoming Events -->
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Upcoming Events
-                    </h2>
-                    <div id="events-container">
-                        <div class="text-center py-8">
-                            <div class="animate-spin h-8 w-8 border-b-2 border-[var(--color-toxic)] mx-auto"></div>
-                            <p class="text-gray-400 mt-2">Loading events...</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Sidebar -->
-            <aside class="space-y-6">
-                <!-- Visit Website CTA -->
-                <div class="neo-card p-6">
-                    <a href="https://www.equator-bar.co.uk/" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
-                        <i class="fas fa-external-link-alt mr-2"></i>VISIT WEBSITE
+        <!-- Venue Details -->
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750524014/brumoutloud_venues/v6ykabboxlkeb1ivshjb.webp" alt="Equator Bar" class="w-full h-full object-cover">
+                <div class="absolute top-4 left-4">
+                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back
                     </a>
                 </div>
-
-                <!-- Opening Hours -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
-                    </h3>
-                    <div class="space-y-1 text-gray-300 text-sm">
-                        <div class="flex justify-between"><span>Monday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Tuesday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Wednesday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Thursday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Friday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Saturday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Sunday</span><span>8:00 PM - 2:00 AM</span></div>
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <!-- Venue Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-4">Equator Bar</h1>
+                    <p class="text-xl text-gray-300 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                        123 Hurst Street, Birmingham, B5 6SE
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Venue</span>
                     </div>
                 </div>
 
-                <!-- Contact -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
-                    </h3>
-                    <dl class="space-y-3 text-sm">
-                        <div class="flex items-start gap-3">
-                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
-                            <dd class="text-gray-300">123 Hurst Street, Birmingham, B5 6SE</dd>
+                <!-- Venue Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About Equator Bar
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">Hurst Street&#x27;s &quot;Little Gem&quot;; Situated in the heart of Birmingham&#x27;s Gay Village; At the heart of the community for over 20 years.</p>
                         </div>
-                    </dl>
-                </div>
 
-                <!-- Share -->
-                <div class="neo-card p-6">
-                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
-                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
-                    </button>
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>
+                                
+                                
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🐶 Dog friendly</span>
+                            </div>
+                        </div>
+
+
+                        <!-- Gallery -->
+                        <div class="venue-card p-6 mb-6" id="photos">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of Equator Bar
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEFODgPEybGiWztaiBMKASE4Q82o73hCUNcejR1mdA4oTDvAb1DSRTA-dmN8IciKKDvwd0inoVbmsseqa-rRJFzRyN37GAOH5lLMbKnciMXewEbvhG4s4zTgq3Th5tssgICN9rA5H2VfKEJQGVqVHUu9sJKoof0MtzwSzyR1L8fSmUZhiaWrjw6Xj0DWcHqhg-dK85qzK0ZfV0SvYn7HnQk3JanySC4Tldpq1g3uncWEAUAKLlWRjVLB2CcajKO7TZjly-M900YNd4RUPR0tTQlGS0w-S1ObcOYHad9JAGCP1g" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEFDrHqOUHyMfZsqurmy1ww_hgYZQpuv8go3B6CtIekrcT8EBQAFCC2_EHM8gKdAWzYuEDvurvw56I2g2R6sjeRg0M4nQ7EWV_GeoTunIslxiWgGnpQjNSpe-DsYJK63-0nNVaurir1T9aQIv8JGKE5hVamEipJpLzG4oEL_34p2i_rKXjihe6k3zIFIMAQ8NZyomGRfBofXsed6SAdIhp1FbdmesqaSAJH-FrMP_MO6bMqyLB2wiJh3x7T0EFVdjp3nqHWAXbUrQj6oaD25fk_L125nQP7VXV97ZvgF2fLWUwlRjZe8S1z1g6GSTadPUtRBYexa8tMv8pUCIvYMmQTXpvBsET_nSxyXqXRmEHN4KtB1-wO8rqgSLrm5o7w9PMYpjrg0PyJr3abVSzurd8nJ6E3L1AXR7fW3Rz0Lopj96qhUWRhpDuk1Bkn8s2DC" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEGmgcAeW1M9Tjia2gKu9aYA784-A2YVhEb6j92py_fVrDexcfXoK8dM2dZJmPE7D9GotcLaTo6vRScHjhOT5o1VTrl-JH1nRU8UEgT_bltRDNkBn6BgWtng-KSaKyB1OqrpP36lW82mB8fCOoLKRKC_Jedplk8G2MUI8mw7Q5YgoFgUK-kloyUQsj9yfmlouExxXhhPq5A7iLGZRHq-0Z7MSBGQsjudHmp3woa5cnCyNKuyk1LJxnJK0AYgO3c2w_slco1FDt9nCc-UEgSfyCmpeXMR6FE5LfCO5Wl0bwwhzg" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEEIGaFcNp2mwKAIMF4KA3R-NKdUKoWdUvgU90yCgAG0Dg-5Jwu0H4_xsiIIFZ2vd4R5wXfC9BJh9_bFbv0p4Yh4WUI_MzAwF6h8MDCUc125pEYywy2KhY6TySkRw3mhXstHNWg0H42fCLRy4TzvHI4CHrh8KjgWqaF6ak7sk0Yk9QxoLQc6-BfYSHesU8uoNTJYewbrhGnTXlXRZfSFiLdDAe3I0DOd7CViU0prJTLjNwkvm8idIC1xYOhqiRFDpzzqeqg3Utq8IiBHWG_krzwvtggA0uDUCRZTlBObXtu3Pg" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEF060LCRJsgohv7FHGUQ1kfcV0EzZ9l2C_qVhE6VJJsiWWR-tyo-oDFqqQtS06DIWcsSAXINp8WYAb8SIADY5Y6BGt35NL_603eK02hAikcZvHZr8GtAcsn-bQLLMfc5Y6Ofvoukq5Srwl9NjgGW41_CJ3C1lDxDnGJQsF1mKornLc2fmKLg1MJ2ilbEhy1RKKhNOg1WRg6clZTFO6SuplNTf6YG6zdIWVjdG3Z_SM5Js1JBOL4puJbHWo2wbM1Y6uybZ8MUAjm-0CPiGgqXx2VGHzGOEtqb7RFWIDlPumsrPhhVnKXXQbB8Urfr0ICoOckBjKaGcr4mATN9yCJC96hMJzz42l4z4EVtIFrnfTOknPDtNHd4wcjkP-to8XmW7BKKkhtRAR46C38cbQGAnQMdV7QYymuwNp4Gkurnd6q3Uud3M8z8l04lQ7o8qbN" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEFPo4TQbrqX75S-sU6uV80JPQtYqpllk0JRE3wyo9BuFr2q7NM8xlvYho5ebO_num9fbe3JXbkkkh8AvYRHWJvcQccyvU_niKFphT-RbZPr7N6_TiEmgfOSU2Pkmzxb8x4s88mHguNUbVsNvIuUFHsmGHlLoGrbTyrJue8zIlcp-LpTfgr77NHrjdSri-pDM-uT7Jda9vsrbNgypt3V33WbUAvMn-gasBMym9AaZqF-CH6TYdTLXQZ4igOHf84Ait175BmTB3a8Bg0dS4kniIGdXGIzsF4sxWjzVYi7mEZh-36bY5QYS9hE7AqQe9ZkO7hOTOXE9ub4C7aKCwwmWJ_7QS0MtSG-_McZohAv3qKYwIAVr2nnX_C4EJ_HeEDmyXCmUk2w7OkkFa5cMcopNOXyHPAX7-WCQCSk_Cfnz_HfUqg8vBDsyQOT2JuZFYa-" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEGH9eBSOHSQxtEb2ZpUhiBeqfuxA5EtHSv9HpmAUlDwnZ4VZQvNo7PjOmGtsrKFe5E6bzj5D5yjljd7CT08hyKnKx7-mDYpztuiL7mr8jmM7ci1kp7_uVZcq_NaCEUMDFK791VUAcDiM_iZX2bhen2eLY3H7rsRzO5oj1jLIqGN5KcI2drMnedX8E17xE7VP6xBlQCyGDyurt5G34EjRNArdgxZ03k3k75LIRQD8j9u5V-RpXzfDsv0sSlP_uSwwDCG0ab0XnRL21gHSJ_Be5NhzaCyaYIip2yVpjEY_LhErA" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJAbToiWK8cEgRbpS9xbYQ_5w%2Fphotos%2FAU_ZVEFUGJbIjqhqSAImevMn2nciPcBVLR4DzhqWC5a8Bl8dlsRQkhusSh36lCiXN25IzI4v6hzitEMKqfzt_rzveYF3aahLLmqISZ_IrSuuYmyRyjWKE_vulOfC0LepzaIaNEQFhkTaDF0r4PHnfeIKy2jheIjplcZ53GuIOgf3TbGS8OpWgYjPs7TrNwuVhCYH3y51SI4fQWhmMOtEMtWhJStacvzerKQYTOcVvktUds3Xcg4sPxGTIgNbU4wyEeIMiulG9PoL6gnFVn_huz7x2U00RxUr1APGVClaLCHd119AEg" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Photos via Google · By
+                                <a href="https://maps.google.com/maps/contrib/110609088653142644649" class="underline" rel="nofollow">Equator Bar Birmingham</a>, <a href="https://maps.google.com/maps/contrib/115364086343268711388" class="underline" rel="nofollow">Phil Oldershaw</a>, <a href="https://maps.google.com/maps/contrib/116343282302162006233" class="underline" rel="nofollow">Debbie Pardoe</a>
+                            </p>
+                        </div>
+
+                        <!-- Google Reviews -->
+                        <div class="venue-card p-6 mb-6" id="reviews">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fab fa-google mr-3 text-accent-color"></i>Equator Bar Reviews
+                            </h2>
+                            <p class="text-gray-300 mb-4">Looking for reviews of Equator Bar? Here is what people are saying about this Birmingham venue.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Hannah O&#x27;Toole</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">A fantastic bar with a genuinely friendly atmosphere and a real sense of community. The staff are always attentive and welcoming, which makes every visit enjoyable. Prices are very reasonable, and the quality you get is great.
+
+They host excellent events, including live artists that really add to the vibe. The cocktails and coffees are top-notch, and there’s a great selection of bottled and tap drinks, plus a solid range of spirits and wines.
+
+Overall, a brilliant place to relax, socialise, and enjoy good drinks. Highly recommend!</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Karen Eyke</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Equator has been in my life for many years now. Over the years the bar has just got better and better. Service amazing, venue always clean and tidy and a warm welcome awaits you. Staff are always happy to help, nothing is too much trouble for any of them. Excellent bar - safe environment to be myself with my friends. Extremely 🏳️‍🌈 friendly.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Leigh Shepherd</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">One of the best places you can go in the area. Would highly recommend. Note… the venue doesn’t do food, except Crisps.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Mubasher Hussain</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Very nice place with excellent service. One of the few lgbtq+ venues that serve decent coffee that you can have on a comfy sofa. 5 stars for this venue .</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Mim Shemsin</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Whenever I visit this charming gem, the music is always good, the staff are friendly and the drinks are lush.. relaxing atmosphere in the afternoon and great vibes of an evening, customers are always friendly aswell</p>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-center">
+                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+
+                        <!-- Action Buttons -->
+
+                        <!-- Current Status is intentionally omitted: this is
+                             static HTML baked at build time, so openNow would
+                             be stale within minutes. The weekly opening hours
+                             table below is structural and stays accurate. -->
+
+                        <!-- Opening Hours -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <p>Monday: 3:00 – 10:30 PM</p>
+                                <p>Tuesday: 12:00 – 10:30 PM</p>
+                                <p>Wednesday: 12:00 – 10:30 PM</p>
+                                <p>Thursday: 12:00 – 10:30 PM</p>
+                                <p>Friday: 12:00 PM – 12:30 AM</p>
+                                <p>Saturday: 12:00 PM – 1:00 AM</p>
+                                <p>Sunday: 2:00 – 10:30 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Google Rating -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                            </h3>
+                            <div class="flex items-center space-x-2 text-xl mb-2">
+                                <div>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                                <p class="text-white font-semibold">4.6 <span class="text-gray-400">(238)</span></p>
+                            </div>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                                View on Google Maps
+                            </a>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-phone mr-2 text-accent-color"></i>Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Phone</p>
+                                    <a href="tel:0121 622 3124" class="text-blue-400 hover:underline">
+                                        0121 622 3124
+                                    </a>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Website</p>
+                                    <a href="https://www.equator-bar.co.uk/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">
+                                        Visit Website
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Share Venue -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Venue
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </aside>
+            </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid md:grid-cols-3 gap-12">
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
-                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
                 </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
-                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
-                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
-                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
-                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
-                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
-                    </div>
-                </div>
-                <div class="md:text-right">
-                    <div class="flex md:justify-end gap-4 mb-4">
-                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                 <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('menu-btn').addEventListener('click', function() {
-            document.getElementById('menu').classList.toggle('hidden');
-            document.getElementById('menu').classList.toggle('flex');
-        });
-
-        // Share button
-        document.getElementById('share-button').addEventListener('click', function() {
-            var btn = this;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Equator Bar - Brum Outloud',
-                    text: 'Hurst Street's "Little Gem"; Situated in the heart of Birmingham's Gay Village; At the heart of the community for over 20 years.',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                var original = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
-                btn.classList.add('!border-green-400', '!text-green-400');
-                setTimeout(function() {
-                    btn.innerHTML = original;
-                    btn.classList.remove('!border-green-400', '!text-green-400');
-                }, 2000);
-            }
-        });
-
-        // Load events for this venue
-        async function loadVenueEvents() {
-            try {
-                var response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=equator-bar');
-                if (!response.ok) throw new Error('Failed to fetch events');
-                var data = await response.json();
-
-                var eventsContainer = document.getElementById('events-container');
-
-                if (data.success && data.events && data.events.length > 0) {
-                    var html = '<div class="space-y-3">';
-                    data.events.forEach(function(event) {
-                        var d = new Date(event.date);
-                        var day = d.getDate();
-                        var month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
-                        var time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-
-                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
-                        html += '<div class="text-center w-16 flex-shrink-0">';
-                        html += '<p class="text-2xl font-bold text-[var(--color-toxic)]">' + day + '</p>';
-                        html += '<p class="text-sm text-gray-400 uppercase font-bold">' + month + '</p>';
-                        html += '</div>';
-                        html += '<div class="flex-grow">';
-                        html += '<h4 class="font-bold text-white text-lg">' + event.name + '</h4>';
-                        html += '<p class="text-sm text-gray-400">' + time + '</p>';
-                        html += '</div>';
-                        html += '<div class="text-[var(--color-toxic)]"><i class="fas fa-arrow-right"></i></div>';
-                        html += '</a>';
-                    });
-                    html += '</div>';
-                    eventsContainer.innerHTML = html;
-                } else {
-                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
-                }
-            } catch (error) {
-                console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadVenueEvents);
-    </script>
 </body>
 </html>

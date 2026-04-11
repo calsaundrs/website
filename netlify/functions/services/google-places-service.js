@@ -182,17 +182,19 @@ class GooglePlacesService {
 
   /**
    * Process Google Places photos.
-   * Places API (New) returns `photos[].name` like `places/{placeId}/photos/{photoId}`,
-   * fetched via `https://places.googleapis.com/v1/{name}/media`.
-   * We embed the API key in the URL so the browser can load images directly,
-   * matching the legacy behaviour.
+   *
+   * Places API (New) returns `photos[].name` like `places/{placeId}/photos/{photoId}`.
+   * Rather than embedding the backend API key in the rendered <img> URLs
+   * (which would leak it into every cached HTML file and Firestore doc),
+   * we emit URLs pointing at our own `/api/places-photo` proxy, which
+   * redirects to a short-lived, auth-free photoUri server-side. See
+   * `netlify/functions/places-photo.js`.
    */
   processPhotos(photos, maxImages) {
     return photos.slice(0, maxImages).map((photo) => {
       const attribution = photo.authorAttributions?.[0] || null;
       return {
-        url: `https://places.googleapis.com/v1/${photo.name}/media`
-          + `?maxWidthPx=800&maxHeightPx=600&key=${this.apiKey}`,
+        url: `/api/places-photo?name=${encodeURIComponent(photo.name)}`,
         width: photo.widthPx || 800,
         height: photo.heightPx || 600,
         source: 'google_places',

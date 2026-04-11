@@ -2,6 +2,13 @@ const admin = require('firebase-admin');
 const fs = require('fs').promises;
 const path = require('path');
 const Handlebars = require('handlebars');
+const GooglePlacesService = require('./netlify/functions/services/google-places-service');
+
+// Single shared Places service instance for the whole build run. If
+// GOOGLE_PLACES_API_KEY is missing the service gracefully returns empty
+// data, so the build still completes — venues just render without
+// Google-sourced content.
+const googlePlacesService = new GooglePlacesService();
 
 // Initialize Firebase Admin with error handling
 let firebaseInitialized = false;
@@ -508,28 +515,10 @@ const templateContent = `<!DOCTYPE html>
                         </div>
                         {{/if}}
 
-                        <!-- Current Status -->
-                        {{#if googlePlaces.isOpen}}
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
-                            </h3>
-                            <div class="p-3 rounded-lg border text-center bg-green-500/10 text-green-400 border-green-500/30 mb-4">
-                                <p class="font-bold text-lg">Open</p>
-                                <p class="text-sm">Currently open for business</p>
-                            </div>
-                        </div>
-                        {{else if (not googlePlaces.isOpen)}}
-                        <div class="venue-card p-6">
-                            <h3 class="text-xl font-bold text-white mb-4 text-center">
-                                <i class="fas fa-clock mr-2 text-accent-color"></i>Current Status
-                            </h3>
-                            <div class="p-3 rounded-lg border text-center bg-red-500/10 text-red-400 border-red-500/30 mb-4">
-                                <p class="font-bold text-lg">Closed</p>
-                                <p class="text-sm">Currently closed</p>
-                            </div>
-                        </div>
-                        {{/if}}
+                        <!-- Current Status is intentionally omitted: this is
+                             static HTML baked at build time, so openNow would
+                             be stale within minutes. The weekly opening hours
+                             table below is structural and stays accurate. -->
 
                         <!-- Opening Hours -->
                         {{#if googlePlaces.openingHours.length}}
@@ -766,7 +755,11 @@ function processVenueForPublic(venueData) {
         type: venueData.type || venueData['Type'] || 'venue',
         status: venueData.status || venueData['Status'] || venueData['Listing Status'] || 'Listed',
         openingHours: venueData.openingHours || venueData['Opening Hours'],
-        popular: venueData.popular || venueData['Popular'] || false
+        popular: venueData.popular || venueData['Popular'] || false,
+        googlePlaceId: venueData.googlePlaceId
+            || venueData['Google Place ID']
+            || venueData.google_place_id
+            || ''
     };
     
     if (!venue.category || venue.category.length === 0) {
@@ -812,20 +805,28 @@ async function getUpcomingEventsForVenue(venueId, limit = 6) {
     }
 }
 
-// Function to get Google Places data (simplified for SSG)
+// Function to get Google Places data at build time via the shared service.
+//
+// Graceful degradation: if a single venue fails (missing Place ID, API
+// error, rate limit, etc.) we log and fall back to an empty shape so the
+// rest of the build still completes. A broken deploy is worse than some
+// venues missing amenities for a few hours.
+//
+// Note on `isOpen`: we intentionally drop it here. `currentOpeningHours.openNow`
+// would be baked into static HTML at build time and become stale within
+// minutes. The weekly `openingHours` table is structural and remains accurate.
 async function getGooglePlacesData(venueData) {
-    // For SSG, we'll return empty data since Google Places API calls are expensive
-    // and the data changes frequently. This maintains the template structure.
-    return {
-        isOpen: null,
-        rating: null,
-        reviewCount: 0,
-        images: [],
-        reviews: [],
-        openingHours: [],
-        phone: null,
-        website: null
-    };
+    try {
+        const data = await googlePlacesService.getVenueGooglePlacesData(venueData, {
+            maxImages: 8,
+            maxReviews: 5,
+        });
+        // Strip openNow — it's a point-in-time value and we're baking HTML.
+        return { ...data, isOpen: null };
+    } catch (error) {
+        console.warn(`  ⚠️  Google Places fetch failed for ${venueData.name}:`, error.message);
+        return googlePlacesService.getEmptyGooglePlacesData();
+    }
 }
 
 // Function to generate category tags HTML

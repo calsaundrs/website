@@ -2,438 +2,552 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eden Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud</title>
-    <meta name="description" content="Gooch Street’s award-winning LGBTQ+ cabaret bar. Two floors, terrace and live shows from across the UK. See reviews, photos and what’s on.">
+    <title>Eden Bar Reviews, Photos & Events | LGBTQ+ Birmingham Gay Bar | Brum Outloud</title>
+    <meta name="description" content="Read reviews, view photos, and see upcoming events for Eden Bar, a popular LGBTQ+ venue and gay bar in Birmingham. Brings the best in live cabaret from across the U.K.; All-inclusive.">
     <meta name="keywords" content="Eden Bar birmingham, Eden Bar reviews, Eden Bar photos, gay bar birmingham, gay village birmingham venues">
-    <link rel="canonical" href="https://www.brumoutloud.co.uk/venue/eden-bar">
-
+    
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Eden Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta property="og:description" content="Gooch Street’s award-winning LGBTQ+ cabaret bar. Two floors, terrace and live shows from across the UK. See reviews, photos and what’s on.">
+    <meta property="og:title" content="Eden Bar">
+    <meta property="og:description" content="Brings the best in live cabaret from across the U.K.; All-inclusive.">
     <meta property="og:type" content="business.business">
-    <meta property="og:url" content="https://www.brumoutloud.co.uk/venue/eden-bar">
+    <meta property="og:url" content="https://brumoutloud.co.uk/venue/eden-bar">
     <meta property="og:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp">
-    <meta property="og:site_name" content="Brum Outloud">
-    <meta property="og:locale" content="en_GB">
-
+    
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Eden Bar Birmingham | Reviews, Photos & What’s On | Brum Outloud">
-    <meta name="twitter:description" content="Gooch Street’s award-winning LGBTQ+ cabaret bar. Two floors, terrace and live shows from across the UK. See reviews, photos and what’s on.">
+    <meta name="twitter:title" content="Eden Bar">
+    <meta name="twitter:description" content="Brings the best in live cabaret from across the U.K.; All-inclusive.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp">
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Eden Bar",
-      "description": "Brings the best in live cabaret from across the U.K.; All-inclusive.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "138 Gooch St, Birmingham, B5 7HF",
-        "addressLocality": "Birmingham",
-        "addressRegion": "West Midlands",
-        "addressCountry": "GB"
-      },
-      "url": "https://brumoutloud.co.uk/venue/eden-bar",
-      "image": "https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp",
-      "sameAs": [
-        "https://theedenbar.co.uk/"
-      ]
-    }
-    </script>
-
-    <!-- FAQPage Schema (AEO) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Where is Eden Bar in Birmingham?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Eden Bar is located at 138 Gooch St, Birmingham, B5 7HF, in Birmingham's Gay Village. It's a short walk from Birmingham New Street station."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is Eden Bar LGBTQ+ friendly?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Eden Bar is an LGBTQ+ venue in Birmingham's Gay Village. It welcomes everyone regardless of gender identity or sexual orientation."
-          }
-        }
-      ]
-    }
-    </script>
-
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-
+    
+    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
     <style>
-        :root {
-            --color-bg: #0D0115;
-            --color-light: #f3e8ff;
-            --color-toxic: #CCFF00;
-            --color-purple: #9B5DE5;
-            --color-pink: #E83A99;
+        /* FOUC Prevention - Hide content until styles are loaded */
+        .fouc-prevention {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        
+        .fouc-prevention.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-text {
+            color: #B564F7;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 100, 247, 0.3);
+            border-top: 3px solid #B564F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Critical CSS to prevent flashing */
         body {
-            background: var(--color-bg);
-            color: var(--color-light);
-            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
+            background-color: #121212;
+            color: #EAEAEA;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
         }
-        .font-display { font-family: 'Syne', sans-serif; }
-        .misprint { letter-spacing: -0.03em; line-height: 0.95; }
-
         
-
+        /* Basic layout styles to prevent layout shift */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
         
+        /* Prevent pride flag from flashing at full size */
+        img[src*="progressflag"] {
+            height: 1.5rem !important;
+            width: auto !important;
+            max-width: 1.5rem !important;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
         
-
-        .btn-neo {
-            background: var(--color-toxic);
-            color: #000;
-            font-weight: 700;
-            text-transform: uppercase;
+        /* Show flag after page loads */
+        .flag-loaded img[src*="progressflag"] {
+            opacity: 1;
+        }
+    </style>
+    
+    <!-- Performance: Optimized external resource loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="/css/main.css" as="style">
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- FOUC Prevention Script -->
+    <script src="/js/fouc-prevention.js"></script>
+    
+    <!-- Tailwind loaded with defer to avoid render blocking -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    
+    <style>
+        /* Base Styles */
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: #EAEAEA;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .font-anton {
+            font-family: 'Anton', sans-serif;
             letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            box-shadow: 4px 4px 0 var(--color-purple);
-            transition: all 0.2s ease;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-        }
-        .btn-neo:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0 var(--color-pink);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--color-light);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .btn-outline:hover {
-            background: var(--color-purple);
-            border-color: var(--color-purple);
+        /* Updated Core Colour Palette Classes */
+        .accent-color { color: #E83A99; }
+        .bg-accent-color { background-color: #E83A99; }
+        .border-accent-color { border-color: #E83A99; }
+        .accent-color-secondary { color: #8B5CF6; }
+        .bg-accent-color-secondary { background-color: #8B5CF6; }
+
+        /* Modern Glassmorphism Components */
+        .card-bg {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1.25rem;
         }
 
-        .category-tag {
-            display: inline-block;
+        .venue-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
+            border: 1px solid rgba(232, 58, 153, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(75, 85, 99, 0.3);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
             padding: 0.25rem 0.75rem;
-            border: 2px solid var(--color-toxic);
-            color: var(--color-toxic);
+            border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-weight: 600;
+            display: inline-block;
         }
-
-        
+        .status-badge.approved {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="fouc-prevention">
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="/progressflag.svg.png" alt="Brum Outloud" class="loading-logo">
+        <div class="loading-text">Loading Brum Outloud...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Header -->
-    <header class="sticky top-0 z-[100] transition-all duration-300">
-        <nav class="bg-black pt-4 px-4 pb-5 flex justify-between items-center relative z-10 shadow-[4px_4px_0_var(--color-toxic)]">
-            <div class="absolute bottom-0 left-0 w-full h-[6px] progress-pride-bg"></div>
-            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-                <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-            </div>
-            <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-                <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-                <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-                <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-                <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-                <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-                <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-                <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors">GET LISTED</a>
+    <header class="p-8">
+        <nav class="container mx-auto flex justify-between items-center">
+            <!-- Site name with consolidated flag image and fallback -->
+            <a href="/" class="flex items-center text-2xl tracking-widest text-white"
+               style="font-family: 'Omnes Pro', sans-serif;">
+                <span>Brum Outloud</span>
+                <!-- Consolidated flag image: tries to load header_flag.png, falls back to emoji placeholder -->
+                <img src="/progressflag.svg.png" alt="LGBTQ+ Flag" class="h-6 w-auto ml-2 inline-block rounded" loading="lazy"
+                     onerror="this.src='https://placehold.co/24x24/000000/FFFFFF?text=🏳️‍🌈'; this.onerror=null;"
+                     onload="document.body.classList.add('flag-loaded')">
+            </a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="/events.html" class="text-gray-300 hover:text-white">WHAT'S ON</a>
+                <a href="/all-venues.html" class="text-gray-300 hover:text-white">VENUES</a>
+                <a href="/community.html" class="text-gray-300 hover:text-white">COMMUNITY</a>
+                <a href="/contact.html" class="text-gray-300 hover:text-white">CONTACT</a>
+                <!-- GET LISTED button styling reverted to original Tailwind classes -->
+                <a href="/promoter-tool.html" class="inline-block bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-200">GET LISTED</a>
             </div>
             <div class="lg:hidden relative z-[60]">
-                <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-toxic">
+                <button id="menu-btn" class="text-white text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </nav>
-        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-6">
-            <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">WHAT'S ON</a>
-            <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">VENUES</a>
-            <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CLUBS</a>
-            <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">PRIDE</a>
-            <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">COMMUNITY</a>
-            <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)]">CONTACT</a>
-            <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl">GET LISTED</a>
+        <div id="menu" class="hidden lg:hidden fixed inset-0 bg-gray-900 z-50 flex-col items-center justify-center space-y-6">
+            <a href="/events.html" class="block text-white text-4xl py-4 hover:text-gray-300">WHAT'S ON</a>
+            <a href="/all-venues.html" class="block text-white text-4xl py-4 hover:text-gray-300">VENUES</a>
+            <a href="/community.html" class="block text-white text-4xl py-4 hover:text-gray-300">COMMUNITY</a>
+            <a href="/contact.html" class="block text-white text-4xl py-4 hover:text-gray-300">CONTACT</a>
+            <a href="/promoter-tool.html" class="block mt-4 text-center bg-purple-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-2xl px-8 py-4">GET LISTED</a>
         </div>
     </header>
 
-    <!-- Hero Section - Full Bleed -->
-    <section class="relative w-full" style="min-height: 50vh;">
-        <div class="absolute inset-0">
-            <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Photo of Eden Bar LGBTQ+ venue in Birmingham" class="w-full h-full object-cover" style="filter: contrast(1.1) brightness(0.9);">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-[var(--color-bg)]/70 to-[var(--color-bg)]/20"></div>
-        </div>
-
-        <div class="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 pb-12 pt-32" style="min-height: 50vh;">
-            <div class="max-w-7xl mx-auto w-full">
-                <!-- Breadcrumb -->
-                <nav class="mb-6 text-sm font-bold uppercase tracking-widest">
-                    <a href="/all-venues" class="text-gray-400 hover:text-[var(--color-toxic)] transition-colors">Venues</a>
-                    <span class="text-gray-600 mx-2">/</span>
-                    <span class="text-white">Eden Bar</span>
-                </nav>
-
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase font-display misprint mb-4">Eden Bar</h1>
-
-                <p class="text-xl text-[var(--color-toxic)] font-bold mb-4">
-                    <i class="fas fa-map-marker-alt mr-2"></i>138 Gooch St, Birmingham, B5 7HF
-                </p>
-
-                <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2">
-                    <span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Cabaret</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-purple-100/20 text-purple-300 text-sm px-3 py-1 rounded-full">Live Shows</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-14">
+    <main class="container mx-auto px-4 py-8">
 
-            <!-- Primary Content -->
-            <div class="lg:col-span-2 space-y-10">
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> About Eden Bar
-                    </h2>
-                    <div class="text-gray-300 leading-relaxed text-lg" style="line-height: 1.8;">
-                        <p>Brings the best in live cabaret from across the U.K.; All-inclusive.</p>
-                    </div>
-                </section>
-
-                <section id="photos">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Photos of Eden Bar
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6 text-center">
-                        <p class="text-gray-400 mb-4">View photos and imagery from Eden Bar in Birmingham.</p>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
-                            <!-- Placeholder for photos -->
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-toxic)] opacity-50"></div>
-                            <div class="aspect-square bg-gradient-to-br from-[var(--color-toxic)] to-[var(--color-purple)] opacity-50 hidden md:block"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="reviews">
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Eden Bar Reviews
-                    </h2>
-                    <div class="bg-white/5 border border-white/10 p-6">
-                        <p class="text-gray-300 mb-4">Are you looking for reviews of Eden Bar? Here is what people are saying about this Birmingham gay village venue.</p>
-                        <div class="space-y-4">
-                            <!-- Placeholder for reviews integration -->
-                            <div class="border-l-4 border-[var(--color-toxic)] pl-4 py-2">
-                                <div class="text-yellow-400 text-sm mb-1">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <p class="text-gray-400 italic text-sm">"Great atmosphere and a staple of the Birmingham gay scene!"</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Upcoming Events -->
-                <section>
-                    <h2 class="text-2xl font-bold text-white mb-5 uppercase font-display">
-                        <span class="text-[var(--color-toxic)] mr-2">///</span> Upcoming Events
-                    </h2>
-                    <div id="events-container">
-                        <div class="text-center py-8">
-                            <div class="animate-spin h-8 w-8 border-b-2 border-[var(--color-toxic)] mx-auto"></div>
-                            <p class="text-gray-400 mt-2">Loading events...</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Sidebar -->
-            <aside class="space-y-6">
-                <!-- Visit Website CTA -->
-                <div class="neo-card p-6">
-                    <a href="https://theedenbar.co.uk/" target="_blank" rel="noopener noreferrer" class="btn-neo w-full flex items-center justify-center text-lg">
-                        <i class="fas fa-external-link-alt mr-2"></i>VISIT WEBSITE
+        <!-- Venue Details -->
+        <div class="venue-card rounded-xl overflow-hidden">
+            <!-- Hero Image -->
+            <div class="aspect-[2/1] bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center relative">
+                <img src="https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750532560/brumoutloud_venues/tl9qhbq5u7s0p7tiopub.webp" alt="Eden Bar" class="w-full h-full object-cover">
+                <div class="absolute top-4 left-4">
+                    <a href="/all-venues.html" class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back
                     </a>
                 </div>
-
-                <!-- Opening Hours -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-clock mr-2 text-[var(--color-toxic)]"></i>Hours
-                    </h3>
-                    <div class="space-y-1 text-gray-300 text-sm">
-                        <div class="flex justify-between"><span>Monday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Tuesday</span><span>Closed</span></div>
-                                <div class="flex justify-between"><span>Wednesday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Thursday</span><span>8:00 PM - 2:00 AM</span></div>
-                                <div class="flex justify-between"><span>Friday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Saturday</span><span>8:00 PM - 3:00 AM</span></div>
-                                <div class="flex justify-between"><span>Sunday</span><span>8:00 PM - 2:00 AM</span></div>
+                <div class="absolute top-4 right-4">
+                    <button class="btn-secondary text-white px-3 py-1 rounded-lg text-sm">
+                        <i class="fas fa-share mr-1"></i>Share
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <!-- Venue Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-4">Eden Bar</h1>
+                    <p class="text-xl text-gray-300 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2 text-accent-color"></i>
+                        138 Gooch St, Birmingham, B5 7HF
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">LGBTQ+</span><span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full">Venue</span>
                     </div>
                 </div>
 
-                <!-- Contact -->
-                <div class="neo-card p-6">
-                    <h3 class="text-lg font-bold text-white mb-4 uppercase font-display">
-                        <i class="fas fa-address-card mr-2 text-[var(--color-toxic)]"></i>Contact
-                    </h3>
-                    <dl class="space-y-3 text-sm">
-                        <div class="flex items-start gap-3">
-                            <dt class="text-[var(--color-toxic)]"><i class="fas fa-map-marker-alt"></i></dt>
-                            <dd class="text-gray-300">138 Gooch St, Birmingham, B5 7HF</dd>
+                <!-- Venue Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-info-circle mr-3 text-accent-color"></i>About Eden Bar
+                            </h2>
+                            <p class="text-gray-300 leading-relaxed">Brings the best in live cabaret from across the U.K.; All-inclusive.</p>
                         </div>
-                    </dl>
-                </div>
 
-                <!-- Share -->
-                <div class="neo-card p-6">
-                    <button id="share-button" class="btn-outline w-full flex items-center justify-center">
-                        <i class="fas fa-share-alt mr-2"></i>SHARE VENUE
-                    </button>
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-glass-cheers mr-3 text-accent-color"></i>What you'll find
+                            </h2>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍸 Cocktails</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍺 Beer</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🍷 Wine</span>
+                                
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">🎤 Live music</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">☀️ Outdoor seating</span>
+                                <span class="inline-block bg-purple-900/50 text-purple-200 text-sm px-3 py-1 rounded-full">👯 Good for groups</span>
+                                
+                            </div>
+                        </div>
+
+                        <div class="venue-card p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-universal-access mr-3 text-accent-color"></i>Accessibility
+                            </h2>
+                            <ul class="text-gray-300 space-y-1 text-sm">
+                                
+                                
+                                <li>✓ Wheelchair accessible restroom</li>
+                                
+                            </ul>
+                            <p class="text-xs text-gray-500 mt-3">Accessibility data from Google. If anything's wrong, <a href="/contact.html" class="underline">let us know</a>.</p>
+                        </div>
+
+                        <!-- Gallery -->
+                        <div class="venue-card p-6 mb-6" id="photos">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-images mr-3 text-accent-color"></i>Photos of Eden Bar
+                            </h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEHmIRXbCOy07VxnpjoeyRRRUm5QdXIaWOEH03OixH8xf3zhbwWvx7gfks9TbbCSxwyQhakbaR4tbC4qx8kKFrTfJxa1slbjKmEUeGuPzU6E5xdw5U7EcXu2lTTHSsyY4ldFLdeDhK7h-fb8-DhOczD6KAqCA9bTbItfnZGBAI3yLzNY-sD5sAMZVemtzx-PD2mqmIWi1mMT8QXn57-VvV04WVbqmLQpu4A-4BfK4jD9XAijp7V-vi1wri_m6_tHUy-CEPvNZZQEC7xMf91eNdds_TlldmfrzKVew9ITCYTltg" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEHuraZLr6hJkyWndFXzjdmtIcvTZojpmWuaUjGlUKSz7QwzsfA7dTj_F60mKc74nCpRNdBCGxk74_IJxJrseT0-2Z4DmmhdXuZRbucXUrzxYU4cr2jdnIe06arPo5tjJu9ZiNCd2Spkj7yfhan27K_AHtm9OaWORtu82aLRt10IGKL3dK3u29MqhWwLwbQpLHa7Psco0KgivB4wEZjdXVyfp4gJBRBCMay8pLBG5DHrzjL7zuRa_ctIvvR-YZJ2Q6fHsKoLVqRDpM-Kf2pjQdlSV9KhpslyLPQWvQufbAEEQJfYrySjLyfmrH8TbbdJT1Asp9fCkPlhpzo0NBv_kvm7uqXclSncNqgDxi0qog74S8LMpLh_p6vOCyGl-PPLRpuP9cVzBcCogW9W8yX1Q3XZGo_b4hQb5QkQaEJL_zcn7C23U_HKo4I7KdFupEBe" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEGHrZZYW2Xe6Pohxv2vl-DAs5oBKWaMAFZjnQsefThW7hR9WY5vYW-HNgdGJNoVkxGZFXuLJZJ7OEGUOsg0YJC7fVC8b6xERTc0R6gq9cjdih_90cUUnhzKN32kjv-a1Yqp3o200BBkUPMILb9pGyCEBPMgCJcDdOJXRUY0Q56UB5hHWxvF99fIJtR3UKrdwLY6rc1Mu23q27UooLxsEAQXHVRfMlxxErd_J1C3eNk1klPKhuyjyhV7h6Bit8YpWt7bpecIEV8VdNyA1UpUv_M7pf98uUrApr-f_z1t9_6p7BwewThdibyFMpEU0aq4nCZhzP3BNmJHJlFooUSZnCiaAnSt2W9Oz_Ag6rrbC4g8mP96pZQL1eHFlTu6ugte2rwe4UwZajn8e1t18KQnNhAAXYzVgyvQ8dyBYkQL-gD_DzA" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEGrccjlzmcWGvUbTmg3Yg2ga4k-r52uQCkLfEOwbOm8k5DtvbSzy9vNvxqQExFLK20BF4i0gdmk57nPXVYbu8LFAWK2XQkuE0nHw_MblIyaChYACcW69UsTvWITciIFFEiOZScssPZgkzLDj4tNIB9nkGuETyFqZFLFSBKuSQTctQPX7uKgJ2bvqrSv79t6yFaCNUFwUO09hSuQYy3JMA04nrewVctEUuo9IgZI4LcgvqXh3l3OaOoB7ABoL0rzTBBpDYY_r8B7hXnM7JayxDhISW0ctVvIGFMGKBZ2MnHI1jXT6f4eIH9By7swDVJMmEgzcQlkyMZZ6jneR2s6b0gd5R6jerqNQJWvmN3fQPPFBrpllFFAY_qyUQPY0ji7b67s-5owtT_yGuWcLrOOmVDDNw00MP1JDW02Zt2fl7keHjc4" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEERCmefuRWz5Tlj4YNyr1oDuqEgNh_wl5pqXhAaiesv56a6aeCEHAhOI9hrsGUvf5fhu79gHnXhLyxzJwXZjiGi-UpB9wppVZpZmutrndz-mrbpbsVRAuSUCZCDlNXJuVX3wFFnyKPP-4IWKsckgTEFggY4PNUFaCd3hpitPCwKqYIWXnpiesMfk-vShT99H8oZ-sW7gbGXKW9NRUQowxqIMqdgNxEvL1Nk_RiYG_GFNLgdac-TQ2lQHpUTuMe-NDsmX74uvHA0u7NUinpzm7ZflaFiGWFsHk5wSZXopyNgJQ" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEEDC1Jt7cHhCHm9Eh-LfWxZrv61gxdzEOaGBxk7lz87P55igbONyTpvb3Zleai78QrIs4Ix9etbUahxBrgRrqaP8uEeW1nTbYtPqQZDd13IcfrQdlCMq-yAkYlWvxpiatUr91MrlKo_in-vj0VaIXCVgLNj-7pMTaSWZiNKUOW0eRu77D6FagEkqDaxYmAIdgi0CLyWtNzshmtr9-4aRHNSTExOtXsbibwg7FCRTqw999l7avzdp4yoKLo3KCw_biOZr43LM0DD8lF_T5VZ-Cu32_NalbqOrAjc1po3eVRftQ" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEHJ_smtj1m8jy4mWr6fTeZR0zymYrHbefPxGObcz_B9YZd7bmYtIMh7WgUg-4QqUOckjC5bto1JmkHvC5PMJ_zgPyHJ9Pv2GoPgO9xNgyIjcyPkGC_9V3BMXARINNvE4j5K8ZUn7K-vbQ1KkjF3rxT8GjYTOZONCA2TV7NDcjJ2LTen28j2RBNhh8mkhAQk-JV2esb8vwyTDkuEHXto4KrgIDnEuJ7dUlfgy5GIioDQ5LYQXnLRPtece0ZxoZJtkhgihSz9Yk32XiwYaZ9enBpCKmep0ja4BlYLDJUhQrZ_v7og_cW_4a_o1MqScjMLaUFFEKTwgXwLcWGbMNVPynHslYgRWqi8tTJZSYwo3bGFIOzPuk5K-KFNeq-Eb2ciosv8Ey1Rqt11n9LNWPFQ3onoWjLwMDC4D-Wygw6MLUi7NHRu" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-lg overflow-hidden">
+                                    <img src="/api/places-photo?name&#x3D;places%2FChIJG98EJGO8cEgR1a6tD5V7iDA%2Fphotos%2FAU_ZVEGb7PoIjARkLzgCNmPbJv-nsOjIUV55siKsH9tJP96bGOpiHxzkfi_GNlYyvq7nRh8n98-2-KvsSpG1zwVRq7XkkSf4A96OmG5xZx4Ye96gRzON6tzY9Ehkgv_iKYS2XJMMtbF1R3H0tg1K_HljvfF-fTnIChIeci9CLD4Reb2hRWo1E66SffMA_70hURakNQkE3wgu4ea8cISKuXJSerHlU5LMFHpVb_j-cFT0dCT-axtttpO-mgrtxx4xuui3QS_okyY61YV3m5gqK92qAjrXlL9gKhd4k783EFm0Z3lzZtTrMOls_fs55StpZXvhsZgqfnvjWVeyrh6FnCIFifyX4l4Kf3jwXm4kAaP_9fFce0XRD2bSpa3snUwDv9g1Jt1jQLfG6n6DQTZ2vQobUkJAHmBW4GL2UnJhCbD1GZrPCg" alt="Venue photo" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4 text-center">
+                                Photos via Google · By
+                                <a href="https://maps.google.com/maps/contrib/114580193945612731041" class="underline" rel="nofollow">Eden Bar</a>, <a href="https://maps.google.com/maps/contrib/102138748829891393129" class="underline" rel="nofollow">Adam Prettyjohns</a>, <a href="https://maps.google.com/maps/contrib/110221191779238833278" class="underline" rel="nofollow">Stephen Tonks</a>, <a href="https://maps.google.com/maps/contrib/107143889180882943673" class="underline" rel="nofollow">Bernard Headland</a>, <a href="https://maps.google.com/maps/contrib/118052449728275634564" class="underline" rel="nofollow">David Oleksiewicz</a>
+                            </p>
+                        </div>
+
+                        <!-- Google Reviews -->
+                        <div class="venue-card p-6 mb-6" id="reviews">
+                            <h2 class="text-2xl font-bold text-white mb-4">
+                                <i class="fab fa-google mr-3 text-accent-color"></i>Eden Bar Reviews
+                            </h2>
+                            <p class="text-gray-300 mb-4">Looking for reviews of Eden Bar? Here is what people are saying about this Birmingham venue.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Ros</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">The best gay bar in Birmingham. A great vibe, friendly staff, and a well-kept, clean venue. I only discovered it recently but always enjoy my time at Eden :)</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Addy</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                            <i class="far fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">So im from St Austell and a few friends and I decided to visit Birmingham for the weekend. Now I&#x27;ve never been to Eden nor have my friends, but we have heard good things about Eden. It&#x27;s nice and big with 2 levels and a terraces with a photo booth and a pool table all good. Now I don&#x27;t drink alcohol so I stuck to soft drinks, J20, cola etc.
+
+The 2nd time I went to the bar to get a J20 i was told that ive had enough! &#x27;Enough of what exactly&#x27; I said. The question was completely ignored and I was refused service from there on. No explanation at all. If I was drunk I could understand, but I don&#x27;t drink alcohol!
+
+This member of staff was just rude and on power trip maybe. Will not be returning.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Storm</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Came here for an event this weekend. Very friendly bar staff and the lady on the bar is amazing with me. Service is always fast and the venue is very roomy. Thank you for a great Saturday</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Ashley Brabbin</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Absolutely fantastic venue and very clean always make you feel welcome they have fantastic acts every weekend we always have a brilliant night the staff are all very friendly and a credit to the venue #bestplaceinbirminghamgayvillage</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="font-semibold text-white">Danielle Mooney</p>
+                                        <div class="text-xs">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm">Came here last month and the lady bouncer was an absolute babe. Spoke to us while we waited for our taxi, she deserves everything cos what a sweet woman! Drag act was amazing too! First time I’d came in years and it didn’t disappoint.</p>
+                                </div>
+                            </div>
+                            <div class="mt-8 text-center">
+                                <img src="https://www.gstatic.com/marketing-cms/assets/images/c5/3a/200414104c669203c62270f7884f/google-wordmarks-2x.webp" alt="Powered by Google" style="max-width:120px; height: auto; margin: 0 auto;">
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Events -->
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+
+                        <!-- Action Buttons -->
+
+                        <!-- Current Status is intentionally omitted: this is
+                             static HTML baked at build time, so openNow would
+                             be stale within minutes. The weekly opening hours
+                             table below is structural and stays accurate. -->
+
+                        <!-- Opening Hours -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-clock mr-2 text-accent-color"></i>Opening Hours
+                            </h3>
+                            <div class="space-y-2 text-gray-300 text-sm">
+                                <p>Monday: Closed</p>
+                                <p>Tuesday: Closed</p>
+                                <p>Wednesday: 5:00 PM – 12:30 AM</p>
+                                <p>Thursday: 5:00 – 11:00 PM</p>
+                                <p>Friday: 5:00 PM – 3:00 AM</p>
+                                <p>Saturday: 5:00 PM – 4:00 AM</p>
+                                <p>Sunday: 2:00 PM – 12:30 AM</p>
+                            </div>
+                        </div>
+
+                        <!-- Google Rating -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fab fa-google mr-2 text-accent-color"></i>Google Rating
+                            </h3>
+                            <div class="flex items-center space-x-2 text-xl mb-2">
+                                <div>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="far fa-star text-yellow-400"></i>
+                                </div>
+                                <p class="text-white font-semibold">4.7 <span class="text-gray-400">(174)</span></p>
+                            </div>
+                            <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">
+                                View on Google Maps
+                            </a>
+                        </div>
+
+                        <!-- Contact Info -->
+
+                        <!-- Share Venue -->
+                        <div class="venue-card p-6">
+                            <h3 class="text-xl font-bold text-white mb-4 text-center">
+                                <i class="fas fa-share-alt mr-2 text-accent-color"></i>Share This Venue
+                            </h3>
+                            <button class="btn-primary text-white w-full py-3 px-6 rounded-lg font-bold">
+                                <i class="fas fa-share-alt mr-2"></i>Share Venue
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </aside>
+            </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16">
-        <div class="h-[6px] progress-pride-bg"></div>
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid md:grid-cols-3 gap-12">
+    <footer class="border-t-2 border-gray-800 p-8">
+        <div class="container mx-auto grid md:grid-cols-2">
+            <div>
+                 <h3 class="font-anton text-5xl leading-tight text-white">BE SEEN,<br>BE HEARD.</h3>
+                 <div class="flex space-x-6 text-2xl mt-6 text-gray-400">
+                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="hover:accent-color"><i class="fab fa-instagram"></i></a>
+                 </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mt-8 md:mt-0">
                 <div>
-                    <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                        BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+                    <h4 class="font-bold text-lg mb-4 text-white">Explore</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/events.html" class="text-gray-400 hover:text-white">Events</a></li>
+                        <li class="mb-2"><a href="/all-venues.html" class="text-gray-400 hover:text-white">Venues</a></li>
+                        <li class="mb-2"><a href="/promoter-tool" class="text-gray-400 hover:text-white">Promoter Tools</a></li>
+                        <li class="mb-2"><a href="/admin/settings" class="text-gray-400 hover:text-white">ADMIN</a></li>
+                    </ul>
                 </div>
-                <div>
-                    <h4 class="font-bold text-sm mb-4 text-[var(--color-toxic)] uppercase tracking-widest">Explore</h4>
-                    <div class="flex flex-col gap-3 font-bold text-sm uppercase tracking-widest">
-                        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Events</a>
-                        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Venues</a>
-                        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Community</a>
-                        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Contact</a>
-                        <a href="/promoter-tool" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-2 underline-offset-4">Promoter Tools</a>
-                    </div>
-                </div>
-                <div class="md:text-right">
-                    <div class="flex md:justify-end gap-4 mb-4">
-                        <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-3xl hover:text-[var(--color-toxic)] transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                    <p class="font-bold text-sm text-[var(--color-purple)] uppercase tracking-widest">&copy; 2026 BRUM OUTLOUD</p>
+                 <div>
+                    <h4 class="font-bold text-lg mb-4 text-white">About</h4>
+                    <ul>
+                        <li class="mb-2"><a href="/community.html" class="text-gray-400 hover:text-white">Community & FAQ</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li class="mb-2"><a href="/privacy-policy.html" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="/terms-and-conditions.html" class="text-gray-400 hover:text-white">Terms and Conditions</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('menu-btn').addEventListener('click', function() {
-            document.getElementById('menu').classList.toggle('hidden');
-            document.getElementById('menu').classList.toggle('flex');
-        });
-
-        // Share button
-        document.getElementById('share-button').addEventListener('click', function() {
-            var btn = this;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Eden Bar - Brum Outloud',
-                    text: 'Brings the best in live cabaret from across the U.K.; All-inclusive.',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                var original = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i>LINK COPIED!';
-                btn.classList.add('!border-green-400', '!text-green-400');
-                setTimeout(function() {
-                    btn.innerHTML = original;
-                    btn.classList.remove('!border-green-400', '!text-green-400');
-                }, 2000);
-            }
-        });
-
-        // Load events for this venue
-        async function loadVenueEvents() {
-            try {
-                var response = await fetch('/.netlify/functions/get-events-by-venue?venueSlug=eden-bar');
-                if (!response.ok) throw new Error('Failed to fetch events');
-                var data = await response.json();
-
-                var eventsContainer = document.getElementById('events-container');
-
-                if (data.success && data.events && data.events.length > 0) {
-                    var html = '<div class="space-y-3">';
-                    data.events.forEach(function(event) {
-                        var d = new Date(event.date);
-                        var day = d.getDate();
-                        var month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
-                        var time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-
-                        html += '<a href="/event/' + event.slug + '" class="block border-2 border-[#f3e8ff]/20 p-4 flex items-center space-x-4 hover:border-[var(--color-toxic)] hover:bg-white/5 transition-all duration-200">';
-                        html += '<div class="text-center w-16 flex-shrink-0">';
-                        html += '<p class="text-2xl font-bold text-[var(--color-toxic)]">' + day + '</p>';
-                        html += '<p class="text-sm text-gray-400 uppercase font-bold">' + month + '</p>';
-                        html += '</div>';
-                        html += '<div class="flex-grow">';
-                        html += '<h4 class="font-bold text-white text-lg">' + event.name + '</h4>';
-                        html += '<p class="text-sm text-gray-400">' + time + '</p>';
-                        html += '</div>';
-                        html += '<div class="text-[var(--color-toxic)]"><i class="fas fa-arrow-right"></i></div>';
-                        html += '</a>';
-                    });
-                    html += '</div>';
-                    eventsContainer.innerHTML = html;
-                } else {
-                    eventsContainer.innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-calendar-times text-4xl text-gray-600 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">No Upcoming Events</h3><p class="text-gray-400 mb-6">Check back soon for new events.</p><a href="/promoter-tool" class="btn-neo inline-flex items-center"><i class="fas fa-plus mr-2"></i>Submit an Event</a></div>';
-                }
-            } catch (error) {
-                console.error('Error loading events:', error);
-                document.getElementById('events-container').innerHTML = '<div class="text-center py-12 border-2 border-[#f3e8ff]/10"><i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4 block"></i><h3 class="text-xl font-bold text-white mb-2 uppercase font-display">Error Loading Events</h3><p class="text-gray-400">Please try again later.</p></div>';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadVenueEvents);
-    </script>
 </body>
 </html>
