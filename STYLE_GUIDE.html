@@ -13,7 +13,7 @@
     <title>Brum Outloud | Brutalist Style Guide</title>
 
     <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
@@ -113,6 +113,8 @@
 </head>
 
 <body>
+    <!-- Giant Background Watermark -->
+    <div class="watermark-bg text-[var(--color-pink)]">STYLE</div>
     <div class="noise-overlay"></div>
 
     <!-- Header / Navigation Preview -->
@@ -315,6 +317,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Bungee Outline block -->
+                <div class="grid md:grid-cols-12 gap-8 items-start">
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-2">WATERMARK FONT</div>
+                        <h3 class="font-accent text-4xl tracking-widest text-[#FFF]">Bungee Outline</h3>
+                        <p class="text-base opacity-80">Used specifically for massive, viewport-spanning background watermarks. This font has aggressive impact but with zero visual weight thanks to the thin outline construction.</p>
+
+                        <div class="guide-rule-card mt-6">
+                            <h4 class="guide-rule-header text-[var(--color-toxic)]"><i class="fas fa-check mr-2"></i> DO:</h4>
+                            <ul class="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                                <li>Use via the <span class="code-block">.watermark-bg</span> component or <span class="code-block">.font-accent</span> utility.</li>
+                                <li>Render at absolutely massive scale (e.g. 25vw+).</li>
+                                <li>Set opacity extremely low (10-20%) so it sits deep in the background.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 bg-black border-4 border-white p-6 md:p-8 space-y-8 relative overflow-hidden h-64">
+                        <div class="watermark-bg !text-6xl !opacity-100 !static !transform-none !text-[var(--color-pink)] tracking-widest mt-4 ml-4">
+                            GAY SCENE
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -414,24 +440,24 @@
             <div class="space-y-16">
                 <!-- Standard Brutalist Cards -->
                 <div>
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Standard Content Cards</h3>
-                    <p class="text-sm text-gray-300 mb-6">The core layout component. Heavy borders, aggressive hover states, and stark contrast. Base class: <span class="code-block">.brutalist-card</span>.</p>
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--color-pink)]">Toxic Glass Cards</h3>
+                    <p class="text-sm text-gray-300 mb-6">The core layout component. We've shifted from flat solid black to a dynamic physics-based glass aesthetic. Base class: <span class="code-block">.brutalist-card</span>.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                         <!-- Generic Card -->
                         <div class="brutalist-card p-8 group">
-                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">DEFAULT SHADOW</div>
+                            <div class="sticker bg-[var(--color-purple)] text-white text-xs mb-4">GLASS DROP SHADOW</div>
                             <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-toxic)] transition-colors">Standard Card</h2>
-                            <p class="text-gray-300 mb-6">Notice the purple drop shadow that turns pink and expands on hover. The background is pure black.</p>
+                            <p class="text-gray-300 mb-6">Notice the brutalist physics when hovered. The background is no longer black; it's a semi-transparent blur using backdrop-filter to let the watermark show through.</p>
                             <div class="font-black text-[var(--color-toxic)] underline decoration-4 underline-offset-4">READ MORE →</div>
                         </div>
 
-                        <!-- Outline / Accent Card -->
-                        <div class="brutalist-card p-8 group border-[var(--color-toxic)] shadow-[6px_6px_0_var(--color-toxic)] hover:shadow-[10px_10px_0_var(--color-pink)]">
-                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4">CUSTOM BORDER</div>
-                            <h2 class="font-display font-black text-4xl uppercase mb-4 group-hover:text-[var(--color-pink)] transition-colors">Accent Card</h2>
-                            <p class="text-gray-300 mb-6">Cards can override the border and shadow colors using utility classes (e.g., <span class="code-block">shadow-[..._var(--color-toxic)]</span>).</p>
-                            <div class="font-black text-[var(--color-pink)] underline decoration-4 underline-offset-4">ACTION HERE →</div>
+                        <!-- AEO Glass Card -->
+                        <div class="aeo-glass-card p-8 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+                            <div class="sticker bg-[var(--color-toxic)] !text-black text-xs mb-4 mt-2">AEO COMPONENT</div>
+                            <h2 class="font-display font-black text-4xl uppercase mb-4 text-white">Answer Box</h2>
+                            <p class="text-gray-300 mb-6">Used specifically for semantic SEO/AEO blocks. Sits flush at the bottom of pages. Class: <span class="code-block">.aeo-glass-card</span>.</p>
                         </div>
                     </div>
                 </div>
