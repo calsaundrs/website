@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('Auth module not available or failed:', e);
             }
 
-            const response = await fetch('/.netlify/functions/get-pending-items', authOptions);
+            const response = await fetch('/.netlify/functions/get-pending-items-firestore', authOptions);
             
             if (response.ok) {
                 const data = await response.json();

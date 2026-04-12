@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let pendingEvents = [];
             try {
                 console.log('Fetching pending events...');
-                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items', authOptions);
+                const pendingEventsResponse = await fetch('/.netlify/functions/get-pending-items-firestore', authOptions);
                 if (!pendingEventsResponse.ok) {
                     throw new Error(`HTTP ${pendingEventsResponse.status}: ${pendingEventsResponse.statusText}`);
                 }
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let pendingVenues = [];
             try {
                 console.log('Fetching pending venues...');
-                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-items', authOptions);
+                const pendingVenuesResponse = await fetch('/.netlify/functions/get-pending-items-firestore', authOptions);
                 if (pendingVenuesResponse.ok) {
                     const venuesData = await pendingVenuesResponse.json();
 
@@ -106,38 +106,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 pendingVenues = [];
             }
 
-            // Load total counts (with fallbacks)
+            // Load total counts from existing admin endpoints
             let totalEvents = { count: 0 };
             let totalVenues = { count: 0 };
 
             try {
-                console.log('Fetching events count...');
-                const totalEventsResponse = await fetch('/.netlify/functions/get-events-count');
-                if (totalEventsResponse.ok) {
-                    totalEvents = await totalEventsResponse.json();
+                console.log('Fetching total events count...');
+                const eventsResponse = await fetch('/.netlify/functions/get-admin-events', authOptions);
+                if (eventsResponse.ok) {
+                    const eventsData = await eventsResponse.json();
+                    totalEvents = { count: eventsData.stats?.totalAllTime || eventsData.stats?.total || 0 };
                     console.log(`Total events: ${totalEvents.count}`);
                 } else {
-                    console.warn('Events count function returned error:', totalEventsResponse.status);
-                    totalEvents = { count: pendingEvents.length };
+                    console.warn('Admin events function returned error:', eventsResponse.status);
                 }
             } catch (error) {
-                console.warn('Events count function not available, using fallback:', error.message);
-                totalEvents = { count: pendingEvents.length };
+                console.warn('Events count not available:', error.message);
             }
 
             try {
-                console.log('Fetching venues count...');
-                const totalVenuesResponse = await fetch('/.netlify/functions/get-venues-count');
-                if (totalVenuesResponse.ok) {
-                    totalVenues = await totalVenuesResponse.json();
+                console.log('Fetching total venues count...');
+                const venuesResponse = await fetch('/.netlify/functions/get-venues');
+                if (venuesResponse.ok) {
+                    const venuesData = await venuesResponse.json();
+                    const venuesList = venuesData.venues || venuesData || [];
+                    totalVenues = { count: Array.isArray(venuesList) ? venuesList.length : 0 };
                     console.log(`Total venues: ${totalVenues.count}`);
                 } else {
-                    console.warn('Venues count function returned error:', totalVenuesResponse.status);
-                    totalVenues = { count: pendingVenues.length };
+                    console.warn('Venues function returned error:', venuesResponse.status);
                 }
             } catch (error) {
-                console.warn('Venues count function not available, using fallback:', error.message);
-                totalVenues = { count: pendingVenues.length };
+                console.warn('Venues count not available:', error.message);
             }
 
             // Update dashboard data
@@ -330,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('Auth module not available or failed:', e);
             }
 
-            const response = await fetch('/.netlify/functions/get-settings', authOptions);
+            const response = await fetch('/.netlify/functions/get-settings-firestore', authOptions);
             const settings = await response.json();
 
             // Populate form fields
@@ -423,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('Auth module not available or failed:', e);
             }
 
-            const response = await fetch('/.netlify/functions/get-pending-items', authOptions);
+            const response = await fetch('/.netlify/functions/get-pending-items-firestore', authOptions);
             const pendingItems = await response.json();
 
             const currentTime = Date.now();
