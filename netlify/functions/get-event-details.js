@@ -200,34 +200,7 @@ exports.handler = async function (event, context) {
 
     <!-- Event Schema (AEO) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      "name": "{{event.name}}",
-      "description": "{{event.description}}",
-      "startDate": "{{event.date}}",
-      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "eventStatus": "https://schema.org/EventScheduled",
-      "location": {
-        "@type": "Place",
-        "name": "{{event.venue.name}}",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Birmingham",
-          "addressRegion": "West Midlands",
-          "addressCountry": "GB"
-        }
-      },
-      {{#if event.image}}
-      "image": "{{event.image.url}}",
-      {{/if}}
-      "url": "https://www.brumoutloud.co.uk/event/{{event.slug}}",
-      "organizer": {
-        "@type": "Organization",
-        "name": "Brum Outloud",
-        "url": "https://www.brumoutloud.co.uk"
-      }
-    }
+    {{{eventJsonLd}}}
     </script>
 
     <!-- Favicon -->
@@ -706,6 +679,62 @@ exports.handler = async function (event, context) {
         // Compile the template
         const template = Handlebars.compile(templateContent);
 
+        // Generate JSON-LD schema
+        const eventSchema = {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": eventData.name,
+            "description": eventData.description || "LGBTQ+ Event in Birmingham",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+                "@type": "Place",
+                "name": eventData.venue?.name || "Birmingham",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": eventData.venue?.address || "",
+                    "addressLocality": "Birmingham",
+                    "addressRegion": "West Midlands",
+                    "addressCountry": "GB"
+                }
+            },
+            "startDate": eventData.date,
+            "url": "https://www.brumoutloud.co.uk/event/" + eventData.slug,
+            "organizer": {
+                "@type": "Organization",
+                "name": "Brum Outloud",
+                "url": "https://www.brumoutloud.co.uk"
+            }
+        };
+
+        if (eventData.image?.url) {
+            eventSchema.image = eventData.image.url;
+        }
+
+        if (eventData.details?.link) {
+            eventSchema.offers = {
+                "@type": "Offer",
+                "url": eventData.details.link
+            };
+        }
+
+        if (eventData.date) {
+            try {
+                const startDate = new Date(eventData.date);
+                if (!isNaN(startDate.getTime())) {
+                    // Normalise to ISO 8601 so the schema is always valid
+                    eventSchema.startDate = startDate.toISOString();
+                    const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000); // default 4h duration
+                    eventSchema.endDate = endDate.toISOString();
+                }
+            } catch (e) {
+                // Ignore date parsing errors — startDate keeps its raw value
+            }
+        }
+
+        // Escape '<' to prevent closing the <script> tag early (XSS).
+        const eventJsonLd = JSON.stringify(eventSchema).replace(/</g, '\\u003c');
+
         // Prepare template data
         const templateData = {
             event: eventData,
@@ -713,9 +742,11 @@ exports.handler = async function (event, context) {
             similarEvents: similarEvents,
             hasOtherInstances: otherInstances.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
-            categoryTags: (eventData.category || []).map(tag =>
-                '<span class="category-tag">' + tag + '</span>'
-            ).join('')
+            categoryTags: (eventData.category || []).map(tag => {
+                const safe = String(tag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                return '<span class="category-tag">' + safe + '</span>';
+            }).join(''),
+            eventJsonLd: eventJsonLd
         };
 
         // Render the page
