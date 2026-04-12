@@ -125,7 +125,7 @@ class SocialReelsGenerator {
             // Import auth headers
             let authOptions = {};
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders();
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
@@ -411,7 +411,7 @@ class SocialReelsGenerator {
                 }
             };
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders(authOptions);
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
@@ -447,7 +447,7 @@ class SocialReelsGenerator {
                 }
             };
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders(authOptions);
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);

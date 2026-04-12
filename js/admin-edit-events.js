@@ -155,7 +155,7 @@ async function loadVenues() {
         // Import auth headers
         let authOptions = {};
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders();
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -185,7 +185,7 @@ async function loadAllEvents() {
         // Import auth headers
         let authOptions = {};
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders();
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1100,7 +1100,7 @@ async function handleEditFormSubmit(event) {
     // Import auth headers
     let authModule;
     try {
-        authModule = await import('./auth-guard.js');
+        authModule = await import('/js/auth-guard.js');
     } catch (e) {
         console.warn('Auth module not available or failed:', e);
     }
@@ -1283,7 +1283,7 @@ async function handleDeleteEvent(eventId) {
         }
     };
     try {
-        const authModule = await import('./auth-guard.js');
+        const authModule = await import('/js/auth-guard.js');
         authOptions = await authModule.getAuthHeaders(authOptions);
     } catch (e) {
         console.warn('Auth module not available or failed:', e);
@@ -1449,7 +1449,7 @@ async function saveRecurringChanges(seriesId) {
             }
         };
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders(authOptions);
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1559,7 +1559,7 @@ async function handleEndRecurringSeries(seriesId) {
             }
         };
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders(authOptions);
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1601,7 +1601,7 @@ async function handleRegenerateInstances(seriesId) {
             }
         };
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders(authOptions);
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1749,7 +1749,7 @@ async function handleBulkStatusChange(newStatus) {
             }
         };
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders(authOptions);
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1801,7 +1801,7 @@ async function handleBulkDelete() {
             }
         };
         try {
-            const authModule = await import('./auth-guard.js');
+            const authModule = await import('/js/auth-guard.js');
             authOptions = await authModule.getAuthHeaders(authOptions);
         } catch (e) {
             console.warn('Auth module not available or failed:', e);
@@ -1944,7 +1944,7 @@ async function handleConvertToRecurringSubmit(event) {
         }
     };
     try {
-        const authModule = await import('./auth-guard.js');
+        const authModule = await import('/js/auth-guard.js');
         authOptions = await authModule.getAuthHeaders(authOptions);
     } catch (e) {
         console.warn('Auth module not available or failed:', e);

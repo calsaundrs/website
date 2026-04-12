@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Import auth headers
             let authOptions = {};
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders();
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Import auth headers
             let authOptions = {};
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders();
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' }
             };
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders(authOptions);
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
@@ -698,7 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Import auth headers
             let authModule;
             try {
-                authModule = await import('./auth-guard.js');
+                authModule = await import('/js/auth-guard.js');
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
             }
@@ -843,7 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' }
             };
             try {
-                const authModule = await import('./auth-guard.js');
+                const authModule = await import('/js/auth-guard.js');
                 authOptions = await authModule.getAuthHeaders(authOptions);
             } catch (e) {
                 console.warn('Auth module not available or failed:', e);
