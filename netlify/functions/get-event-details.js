@@ -169,6 +169,79 @@ exports.handler = async function (event, context) {
             }
         }
 
+        // Calculate end date (approx 4 hours after start)
+        let endDateStr = undefined;
+        if (eventData.date) {
+            try {
+                const startDate = new Date(eventData.date);
+                if (!isNaN(startDate.getTime())) {
+                    const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000);
+                    endDateStr = endDate.toISOString();
+                }
+            } catch (e) {
+                console.error('Error calculating end date:', e);
+            }
+        }
+
+        // Create a safe, never-empty description for schema
+        let schemaDescription = eventData.description || eventData.details || `LGBTQ+ Event: ${eventData.name} at ${eventData.venue?.name || 'Birmingham'}`;
+        if (typeof schemaDescription !== 'string') {
+            schemaDescription = String(schemaDescription);
+        }
+        // Strip HTML if present and truncate
+        schemaDescription = schemaDescription.replace(/<[^>]*>?/gm, '').trim() || "LGBTQ+ Event in Birmingham";
+        if (schemaDescription.length > 500) {
+            schemaDescription = schemaDescription.substring(0, 497) + "...";
+        }
+
+        // Ticket link for offers
+        const ticketUrl = eventData.details?.link || eventData.link || undefined;
+
+        // Build structured data object safely
+        const eventSchemaObj = {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": eventData.name,
+            "description": schemaDescription,
+            "startDate": eventData.date,
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+                "@type": "Place",
+                "name": eventData.venue?.name || "Birmingham",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Birmingham",
+                    "addressRegion": "West Midlands",
+                    "addressCountry": "GB"
+                }
+            },
+            "url": `https://www.brumoutloud.co.uk/event/${eventData.slug}`,
+            "organizer": {
+                "@type": "Organization",
+                "name": "Brum Outloud",
+                "url": "https://www.brumoutloud.co.uk"
+            }
+        };
+
+        if (eventData.image?.url) {
+            eventSchemaObj.image = eventData.image.url;
+        }
+
+        if (endDateStr) {
+            eventSchemaObj.endDate = endDateStr;
+        }
+
+        if (ticketUrl) {
+            eventSchemaObj.offers = {
+                "@type": "Offer",
+                "url": ticketUrl,
+                "availability": "https://schema.org/InStock"
+            };
+        }
+
+        const eventJsonLd = JSON.stringify(eventSchemaObj);
+
                 // Use embedded template matching the design system
         const templateContent = `<!DOCTYPE html>
 <html lang="en">
@@ -200,34 +273,7 @@ exports.handler = async function (event, context) {
 
     <!-- Event Schema (AEO) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      "name": "{{event.name}}",
-      "description": "{{event.description}}",
-      "startDate": "{{event.date}}",
-      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "eventStatus": "https://schema.org/EventScheduled",
-      "location": {
-        "@type": "Place",
-        "name": "{{event.venue.name}}",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Birmingham",
-          "addressRegion": "West Midlands",
-          "addressCountry": "GB"
-        }
-      },
-      {{#if event.image}}
-      "image": "{{event.image.url}}",
-      {{/if}}
-      "url": "https://www.brumoutloud.co.uk/event/{{event.slug}}",
-      "organizer": {
-        "@type": "Organization",
-        "name": "Brum Outloud",
-        "url": "https://www.brumoutloud.co.uk"
-      }
-    }
+    {{{eventJsonLd}}}
     </script>
 
     <!-- Favicon -->
@@ -715,7 +761,8 @@ exports.handler = async function (event, context) {
             calendarLinks: generateCalendarLinks(eventData),
             categoryTags: (eventData.category || []).map(tag =>
                 '<span class="category-tag">' + tag + '</span>'
-            ).join('')
+            ).join(''),
+            eventJsonLd: eventJsonLd
         };
 
         // Render the page
