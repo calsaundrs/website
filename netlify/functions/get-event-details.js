@@ -200,34 +200,7 @@ exports.handler = async function (event, context) {
 
     <!-- Event Schema (AEO) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      "name": "{{event.name}}",
-      "description": "{{event.description}}",
-      "startDate": "{{event.date}}",
-      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "eventStatus": "https://schema.org/EventScheduled",
-      "location": {
-        "@type": "Place",
-        "name": "{{event.venue.name}}",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Birmingham",
-          "addressRegion": "West Midlands",
-          "addressCountry": "GB"
-        }
-      },
-      {{#if event.image}}
-      "image": "{{event.image.url}}",
-      {{/if}}
-      "url": "https://www.brumoutloud.co.uk/event/{{event.slug}}",
-      "organizer": {
-        "@type": "Organization",
-        "name": "Brum Outloud",
-        "url": "https://www.brumoutloud.co.uk"
-      }
-    }
+    {{{eventJsonLd}}}
     </script>
 
     <!-- Favicon -->
@@ -706,6 +679,58 @@ exports.handler = async function (event, context) {
         // Compile the template
         const template = Handlebars.compile(templateContent);
 
+        // Build the JSON-LD object for the Event
+        let eventDateForJson;
+        try {
+            eventDateForJson = new Date(eventData.date);
+            if (isNaN(eventDateForJson.getTime())) {
+                eventDateForJson = new Date();
+            }
+        } catch (error) {
+            eventDateForJson = new Date();
+        }
+
+        const endDateForJson = new Date(eventDateForJson.getTime() + 4 * 60 * 60 * 1000);
+
+        const eventJsonLdObj = {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": eventData.name,
+            "description": eventData.description || eventData.details || "LGBTQ+ Event in Birmingham",
+            "startDate": eventData.date,
+            "endDate": endDateForJson.toISOString(),
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+                "@type": "Place",
+                "name": eventData.venue?.name || "Birmingham",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Birmingham",
+                    "addressRegion": "West Midlands",
+                    "addressCountry": "GB"
+                }
+            },
+            "url": `https://www.brumoutloud.co.uk/event/${eventData.slug}`,
+            "organizer": {
+                "@type": "Organization",
+                "name": "Brum Outloud",
+                "url": "https://www.brumoutloud.co.uk"
+            }
+        };
+
+        if (eventData.image?.url) {
+            eventJsonLdObj.image = eventData.image.url;
+        }
+
+        const ticketLink = eventData.details?.link || eventData.link;
+        if (ticketLink) {
+            eventJsonLdObj.offers = {
+                "@type": "Offer",
+                "url": ticketLink
+            };
+        }
+
         // Prepare template data
         const templateData = {
             event: eventData,
@@ -715,7 +740,8 @@ exports.handler = async function (event, context) {
             calendarLinks: generateCalendarLinks(eventData),
             categoryTags: (eventData.category || []).map(tag =>
                 '<span class="category-tag">' + tag + '</span>'
-            ).join('')
+            ).join(''),
+            eventJsonLd: JSON.stringify(eventJsonLdObj)
         };
 
         // Render the page
