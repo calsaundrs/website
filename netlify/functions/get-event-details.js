@@ -685,7 +685,6 @@ exports.handler = async function (event, context) {
             "@type": "Event",
             "name": eventData.name,
             "description": eventData.description || "LGBTQ+ Event in Birmingham",
-            "startDate": eventData.date,
             "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
             "eventStatus": "https://schema.org/EventScheduled",
             "location": {
@@ -693,11 +692,13 @@ exports.handler = async function (event, context) {
                 "name": eventData.venue?.name || "Birmingham",
                 "address": {
                     "@type": "PostalAddress",
+                    "streetAddress": eventData.venue?.address || "",
                     "addressLocality": "Birmingham",
                     "addressRegion": "West Midlands",
                     "addressCountry": "GB"
                 }
             },
+            "startDate": eventData.date,
             "url": "https://www.brumoutloud.co.uk/event/" + eventData.slug,
             "organizer": {
                 "@type": "Organization",
@@ -721,11 +722,13 @@ exports.handler = async function (event, context) {
             try {
                 const startDate = new Date(eventData.date);
                 if (!isNaN(startDate.getTime())) {
-                    const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000); // 4 hours later
+                    // Normalise to ISO 8601 so the schema is always valid
+                    eventSchema.startDate = startDate.toISOString();
+                    const endDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000); // default 4h duration
                     eventSchema.endDate = endDate.toISOString();
                 }
             } catch (e) {
-                // Ignore date parsing errors
+                // Ignore date parsing errors — startDate keeps its raw value
             }
         }
 
@@ -739,9 +742,10 @@ exports.handler = async function (event, context) {
             similarEvents: similarEvents,
             hasOtherInstances: otherInstances.length > 0,
             calendarLinks: generateCalendarLinks(eventData),
-            categoryTags: (eventData.category || []).map(tag =>
-                '<span class="category-tag">' + tag + '</span>'
-            ).join(''),
+            categoryTags: (eventData.category || []).map(tag => {
+                const safe = String(tag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                return '<span class="category-tag">' + safe + '</span>';
+            }).join(''),
             eventJsonLd: eventJsonLd
         };
 
