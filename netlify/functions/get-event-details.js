@@ -710,10 +710,10 @@ exports.handler = async function (event, context) {
             eventSchema.image = eventData.image.url;
         }
 
-        if (eventData.link) {
+         {
             eventSchema.offers = {
                 "@type": "Offer",
-                "url": eventData.link
+                "url": eventData.details.link
             };
         }
 
@@ -729,7 +729,7 @@ exports.handler = async function (event, context) {
             }
         }
 
-        const eventJsonLd = JSON.stringify(eventSchema);
+        const eventJsonLd = JSON.stringify(eventSchema).replace(/</g, '\\u003c');
 
         // Prepare template data
         const templateData = {
