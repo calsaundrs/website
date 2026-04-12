@@ -684,7 +684,7 @@ exports.handler = async function (event, context) {
             "@context": "https://schema.org",
             "@type": "Event",
             "name": eventData.name,
-            "description": eventData.description || eventData.details?.details || eventData.details?.generated_text || "LGBTQ+ Event in Birmingham",
+            "description": eventData.description || "LGBTQ+ Event in Birmingham",
             "startDate": eventData.date,
             "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
             "eventStatus": "https://schema.org/EventScheduled",
@@ -710,10 +710,10 @@ exports.handler = async function (event, context) {
             eventSchema.image = eventData.image.url;
         }
 
-        if (eventData.link) {
+        if (eventData.details?.link) {
             eventSchema.offers = {
                 "@type": "Offer",
-                "url": eventData.link
+                "url": eventData.details.link
             };
         }
 
@@ -729,7 +729,8 @@ exports.handler = async function (event, context) {
             }
         }
 
-        const eventJsonLd = JSON.stringify(eventSchema);
+        // Escape '<' to prevent closing the <script> tag early (XSS).
+        const eventJsonLd = JSON.stringify(eventSchema).replace(/</g, '\\u003c');
 
         // Prepare template data
         const templateData = {
