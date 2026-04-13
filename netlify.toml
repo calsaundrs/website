@@ -50,6 +50,16 @@
 
 # --- Page Redirect and Rewrite Rules ---
 
+# --- Host-based redirects (must come before path redirects) ---
+
+# Redirect the staging alias to production to kill the duplicate-content
+# leak Google was indexing under new.brumoutloud.co.uk.
+[[redirects]]
+  from = "https://new.brumoutloud.co.uk/*"
+  to = "https://www.brumoutloud.co.uk/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/promoter-submit"
   to = "/promoter-submit-new"
