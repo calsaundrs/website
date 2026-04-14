@@ -172,7 +172,88 @@
                         {{/if}}
                     </div>
                 </div>
-            </div>
+                </div>
+
+                <!-- Architectural Description -->
+                {{#if (hasDescription event.description)}}
+                <div class="w-full px-8 py-12 lg:py-16 border-b border-white/10 bg-[#050505]">
+                    <h2 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-6 font-display">ABOUT EVENT</h2>
+                    <div class="text-white/90 leading-relaxed text-sm md:text-base font-medium">
+                        {{{formatDescription event.description}}}
+                    </div>
+                </div>
+                {{/if}}
+
+                <!-- Architectural Secondary Info -->
+                <div class="w-full grid grid-cols-1 lg:grid-cols-2 border-b border-white/10 bg-[#050505]">
+                    <!-- Venue Details -->
+                    <div class="px-8 py-8 md:py-12 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col">
+                        <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-4 font-display">VENUE DETAILS</h3>
+                        <p class="text-[var(--color-toxic)] font-black text-xl mb-2 font-display uppercase">{{event.venue.name}}</p>
+                        {{#if event.venue.address}}
+                        <p class="text-white/60 text-sm mb-6">{{event.venue.address}}</p>
+                        {{/if}}
+                        {{#if event.venue.slug}}
+                        <a href="/venue/{{event.venue.slug}}" class="text-white text-xs font-bold uppercase tracking-widest hover:text-[var(--color-toxic)] transition-colors mt-auto w-max py-2 border-b border-white/20 hover:border-[var(--color-toxic)]">View Venue Profile <i class="fas fa-arrow-right ml-1"></i></a>
+                        {{/if}}
+                    </div>
+
+                    <!-- Calendar & Metadata -->
+                    <div class="px-8 py-8 md:py-12 flex flex-col gap-8">
+                        <div>
+                            <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-4 font-display">CALENDAR</h3>
+                            <div class="flex flex-col gap-3">
+                                {{#if event.googleCalendarUrl}}
+                                <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="text-white text-xs font-bold uppercase tracking-[0.1em] hover:text-[var(--color-toxic)] transition-colors flex items-center"><i class="fab fa-google mr-3 text-white/40"></i> Add to Google</a>
+                                {{/if}}
+                                {{#if event.icalUrl}}
+                                <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="text-white text-xs font-bold uppercase tracking-[0.1em] hover:text-[var(--color-pink)] transition-colors flex items-center"><i class="fas fa-calendar-alt mr-3 text-white/40"></i> Apple / Outlook</a>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        {{#if event.organizer}}
+                        <div>
+                            <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-2 font-display">ORGANIZER</h3>
+                            <p class="text-white text-sm font-medium">{{event.organizer}}</p>
+                        </div>
+                        {{/if}}
+
+                        {{#if event.accessibility}}
+                        <div>
+                            <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-2 font-display">ACCESSIBILITY</h3>
+                            <p class="text-white text-sm font-medium">{{event.accessibility}}</p>
+                        </div>
+                        {{/if}}
+                        
+                        {{#if event.isRecurring}}
+                        <div>
+                            <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-2 font-display">RECURRING</h3>
+                            <p class="text-[var(--color-toxic)] text-sm font-bold">{{event.recurringInfo}}</p>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <!-- Other Dates (If recurring) -->
+                {{#if otherInstances}}
+                <div class="w-full px-8 py-10 lg:py-12 bg-[#050505]">
+                    <h3 class="text-white/40 text-[10px] xl:text-xs font-bold uppercase tracking-[0.2em] mb-6 font-display">OTHER DATES</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {{#each otherInstances}}
+                        <a href="/event/{{this.slug}}" class="flex items-center border border-white/10 hover:border-white transition-colors bg-[#0A0A0A] group">
+                            <div class="bg-white/5 text-white px-4 py-3 border-r border-white/10 font-black font-display text-xl group-hover:bg-[var(--color-toxic)] group-hover:text-black transition-colors">{{this.dayOfMonth}}</div>
+                            <div class="px-4 py-2 flex flex-col">
+                                <span class="text-xs font-bold uppercase tracking-[0.1em] text-white/80">{{this.monthShort}} {{this.year}}</span>
+                                <span class="text-[10px] text-white/40 uppercase tracking-widest">{{this.time}}</span>
+                            </div>
+                        </a>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+
+            </div> <!-- END left/right flexible center content -->
 
             <!-- Absolute Bottom Geometry CTAs (Sticks to bottom of terminal) -->
             <div class="w-full flex flex-col sm:flex-row flex-shrink-0">
@@ -188,108 +269,6 @@
             </div>
 
         </div>
-    </main>
-
-    <!-- Description -->
-    <!-- Description -->
-    <section class="max-w-6xl mx-auto pb-12 mt-12 pt-12 border-t border-white/5">
-        {{#if (hasDescription event.description)}}
-        <div class="max-w-4xl aeo-glass-card p-8 md:p-12 mb-12 relative overflow-hidden group">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-pink)]"></div>
-            <h2 class="text-3xl font-black text-white mb-6 uppercase font-display tracking-widest">
-                <span class="text-[var(--color-toxic)] mr-2">///</span> ABOUT
-            </h2>
-            <div class="text-gray-200 leading-relaxed text-lg font-medium" style="line-height: 1.8;">
-                {{{formatDescription event.description}}}
-            </div>
-        </div>
-        {{/if}}
-
-        <!-- Secondary Info -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Venue -->
-            <div class="brutalist-card bg-black border-2 border-white/10 !p-6 hover:border-[var(--color-purple)] focus-within:border-[var(--color-purple)] transition-colors">
-                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4">
-                    <i class="fas fa-map-marker-alt mr-2 text-[var(--color-toxic)]"></i> VENUE
-                </h3>
-                <p class="text-white font-bold text-xl mb-2 font-display uppercase">{{event.venue.name}}</p>
-                {{#if event.venue.address}}
-                <p class="text-gray-400 text-sm mb-4">{{event.venue.address}}</p>
-                {{/if}}
-                {{#if event.venue.slug}}
-                <a href="/venue/{{event.venue.slug}}" class="inline-flex items-center text-[var(--color-pink)] font-black text-xs uppercase tracking-widest hover:text-white transition-colors group">
-                    <span class="border-b-2 border-transparent group-hover:border-white transition-colors pb-1">View Venue Profile</span> <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                </a>
-                {{/if}}
-            </div>
-
-            <!-- Calendar -->
-            <div class="brutalist-card bg-black border-2 border-white/10 !p-6 hover:border-[var(--color-purple)] transition-colors">
-                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4">
-                    <i class="fas fa-calendar-plus mr-2 text-[var(--color-toxic)]"></i> CALENDAR
-                </h3>
-                <div class="flex flex-col gap-3">
-                    {{#if event.googleCalendarUrl}}
-                    <a href="{{event.googleCalendarUrl}}" target="_blank" rel="noopener noreferrer" class="text-white font-bold text-sm bg-white/5 border border-white/10 px-4 py-3 hover:bg-[var(--color-toxic)] hover:text-black hover:border-[var(--color-toxic)] transition-all flex items-center">
-                        <i class="fab fa-google mr-3"></i> Add to Google
-                    </a>
-                    {{/if}}
-                    {{#if event.icalUrl}}
-                    <a href="{{event.icalUrl}}" download="{{event.slug}}.ics" class="text-white font-bold text-sm bg-white/5 border border-white/10 px-4 py-3 hover:bg-[var(--color-pink)] hover:text-white hover:border-[var(--color-pink)] transition-all flex items-center">
-                        <i class="fas fa-calendar-alt mr-3"></i> Apple / Outlook
-                    </a>
-                    {{/if}}
-                </div>
-            </div>
-
-            <!-- Extra Details -->
-            <div class="brutalist-card bg-black border-2 border-white/10 !p-6 hover:border-[var(--color-purple)] transition-colors">
-                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4">
-                    <i class="fas fa-info-circle mr-2 text-[var(--color-toxic)]"></i> DETAILS
-                </h3>
-                <div class="space-y-4 text-sm">
-                    {{#if event.isRecurring}}
-                    <p class="text-[var(--color-toxic)] font-bold flex items-start"><i class="fas fa-redo mt-1 w-5 shrink-0"></i> <span>{{event.recurringInfo}}</span></p>
-                    {{/if}}
-                    {{#if event.organizer}}
-                    <p class="text-white font-bold flex items-start"><i class="fas fa-user-circle mt-1 w-5 text-gray-400 shrink-0"></i> <span>{{event.organizer}}</span></p>
-                    {{/if}}
-                    {{#if event.accessibility}}
-                    <p class="text-gray-300 flex items-start"><i class="fas fa-universal-access mt-1 w-5 text-[var(--color-toxic)] shrink-0"></i> <span>{{event.accessibility}}</span></p>
-                    {{/if}}
-                </div>
-            </div>
-        </div>
-
-        <!-- Other Dates -->
-        {{#if otherInstances}}
-        <div class="mt-16 pt-12 border-t border-white/10">
-            <div class="sticker bg-[var(--color-purple)] text-white text-[10px] mb-4 inline-block transform -rotate-1 uppercase tracking-widest font-black">MORE LIKE THIS</div>
-            <h2 class="text-3xl font-black text-white mb-6 uppercase font-display misprint">
-                Other Dates
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {{#each otherInstances}}
-                <a href="/event/{{this.slug}}" class="brutalist-card !border-2 !border-white/20 bg-black hover:!border-[var(--color-toxic)] !p-0 flex transition-all duration-300 group hover:-translate-y-1 hover:shadow-glow focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">
-                    <div class="bg-[var(--color-toxic)] text-black w-20 flex flex-col justify-center items-center flex-shrink-0 group-hover:bg-white transition-colors border-r-2 border-white/20">
-                        <p class="text-3xl font-black font-display misprint">{{this.dayOfMonth}}</p>
-                        <p class="text-xs uppercase font-black tracking-widest">{{this.monthAbbr}}</p>
-                    </div>
-                    <div class="p-4 flex-grow flex items-center justify-between">
-                        <div>
-                            <h4 class="font-black text-white uppercase font-display leading-tight group-hover:text-[var(--color-toxic)] transition-colors">{{this.name}}</h4>
-                            <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-wider"><i class="fas fa-clock text-[var(--color-pink)] mr-1"></i> {{this.time}}</p>
-                        </div>
-                        <div class="text-[var(--color-toxic)] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ml-2">
-                            <i class="fas fa-chevron-right text-xl"></i>
-                        </div>
-                    </div>
-                </a>
-                {{/each}}
-            </div>
-        </div>
-        {{/if}}
-    </section>
     </main>
 
     <!-- Sticky mobile bar: Tickets + Share -->
