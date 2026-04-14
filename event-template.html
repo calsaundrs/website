@@ -74,7 +74,6 @@
     <script src="/js/fouc-prevention.js"></script>
 </head>
 <body>
-    <div class="watermark-bg text-[var(--color-toxic)]">EVENT</div>
     <!-- Header -->
     <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
     <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
@@ -110,42 +109,40 @@
     <!-- The Architectural Poster Layout -->
     <main class="w-full bg-[#050505] min-h-screen">
         
-        <!-- Top Poster Section: Edge-to-edge, precise, no borders -->
-        <div class="w-full relative aspect-square md:aspect-[21/9] lg:aspect-[2.5/1] bg-black overflow-hidden flex items-center justify-center">
+        <!-- Top Poster Section: Elegant Display, No Cropping -->
+        <div class="w-full relative h-[60vh] md:h-[80vh] bg-[#020202] flex items-center justify-center pt-8 pb-16 px-4 border-b border-white/5">
             {{#if event.image}}
-            <!-- Clean, unfiltered image source filling the container precisely -->
-            <img src="{{event.image.url}}" alt="Event Poster" class="absolute w-full h-full object-cover opacity-90 object-center">
+            <!-- Clean, unfiltered image source, fully visible -->
+            <img src="{{event.image.url}}" alt="Event Poster" class="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             {{else}}
             <div class="w-full h-full flex items-center justify-center bg-[#111]">
-                <span class="text-white/40 tracking-widest text-sm">NO IMAGE AVAILABLE</span>
+                <span class="text-white/40 tracking-widest text-sm uppercase">NO IMAGE AVAILABLE</span>
             </div>
             {{/if}}
-            <!-- Optional subtle gradient overlay at bottom to ensure breadcrumb visibility if image is bright -->
-            <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
         </div>
 
         <!-- Rigorous Content Grid -->
-        <div class="max-w-[1400px] mx-auto w-full flex flex-col relative z-20 -mt-16 md:-mt-20">
+        <div class="max-w-[1400px] mx-auto w-full flex flex-col relative z-20">
             
             <!-- Breadcrumbs / Top alignment -->
-            <nav class="w-full px-6 py-6 flex items-center justify-between text-xs font-medium uppercase tracking-widest text-white/50 border-b border-white/10 bg-[#050505]">
+            <nav class="w-full px-6 py-6 flex items-center justify-between text-xs font-medium uppercase tracking-[0.2em] text-white/50 border-b border-white/10 bg-[#050505]">
                 <a href="/events" class="hover:text-white transition-colors">BACK TO EVENTS</a>
-                <span class="text-[var(--color-toxic)]">{{event.category.[0]}}</span>
+                <span class="text-[var(--color-toxic)] tracking-[0.2em]">{{event.category.[0]}}</span>
             </nav>
 
             <!-- Massive Title Block -->
-            <div class="w-full px-6 py-12 md:py-24 border-b border-white/10 bg-[#050505]">
-                <h1 class="text-white font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-[0.85] tracking-tighter m-0 font-display break-words">
+            <div class="w-full px-6 py-16 md:py-32 border-b border-white/10 bg-[#050505]">
+                <h1 class="text-white font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase leading-[0.8] tracking-[-0.04em] m-0 font-display break-words max-w-[1200px]">
                     {{event.name}}
                 </h1>
                 
                 <!-- Auxiliary Tags -->
-                <div class="flex flex-wrap gap-2 mt-8 opacity-80">
+                <div class="flex flex-wrap gap-3 mt-12 opacity-80">
                     {{#each event.category}}
-                    <span class="text-white border border-white/20 px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{this}}</span>
+                    <span class="text-white border border-white/20 px-4 py-2 font-bold text-[10px] sm:text-xs uppercase tracking-[0.25em]">{{this}}</span>
                     {{/each}}
                     {{#if event.ageRestriction}}
-                    <span class="text-[var(--color-toxic)] border border-[var(--color-toxic)] px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{event.ageRestriction}}</span>
+                    <span class="text-[var(--color-toxic)] border border-[var(--color-toxic)] px-4 py-2 font-bold text-[10px] sm:text-xs uppercase tracking-[0.25em]">{{event.ageRestriction}}</span>
                     {{/if}}
                 </div>
             </div>
