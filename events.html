@@ -449,7 +449,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const rangeParam = urlParams.get('range');
         if (rangeParam) {
-            const btn = document.querySelector(`.date-filter[data-filter="${rangeParam}"]`);
+            const btn = Array.from(document.querySelectorAll('.date-filter')).find(b => b.dataset.filter === rangeParam);
             if (btn) {
                 document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');

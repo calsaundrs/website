@@ -48,7 +48,6 @@ async function generateComprehensiveSitemap() {
   const staticPages = [
     { url: '/', changefreq: 'weekly', priority: '1.0' },
     { url: '/events', changefreq: 'daily', priority: '0.9' },
-    { url: '/tonight', changefreq: 'daily', priority: '0.8' },
     { url: '/all-venues', changefreq: 'weekly', priority: '0.8' },
     { url: '/clubs', changefreq: 'weekly', priority: '0.8' },
     { url: '/birmingham-pride', changefreq: 'weekly', priority: '0.8' },
