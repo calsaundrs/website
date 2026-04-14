@@ -301,82 +301,74 @@ exports.handler = async function (event, context) {
                 <span class="text-[var(--color-toxic)]">Event</span>
             </nav>
 
-            <!-- Split Hero Layout -->
-            <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-                
-                <!-- Left: Poster -->
-                {{#if event.image}}
-                <div class="w-full lg:w-5/12 flex-shrink-0 relative group">
-                    <div class="absolute -inset-3 bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-20 blur-2xl group-hover:opacity-50 transition-opacity duration-700"></div>
-                    <div class="brutalist-card !p-0 !border-4 !border-white overflow-hidden shadow-glow transform transition-transform duration-500 hover:-translate-y-2 group-hover:shadow-[8px_8px_0_var(--color-toxic)]">
-                        <img src="{{event.image.url}}" alt="Promo image for {{event.name}} at {{event.venue.name}}" class="w-full h-auto object-cover bg-black" style="max-height: 85vh;">
-                    </div>
-                </div>
-                {{/if}}
-
-                <!-- Right: Content & Typography -->
-                <div class="w-full lg:flex-1 pt-2 lg:pt-8 flex flex-col justify-center">
-                    <!-- Top Graphic Accent -->
-                    <div class="flex items-center gap-3 mb-6 opacity-80">
-                        <div class="h-3 w-16 bg-[var(--color-toxic)] skew-x-12"></div>
-                        <div class="h-3 w-4 bg-[var(--color-pink)] -skew-x-12"></div>
-                        <div class="h-1 w-full bg-gradient-to-r from-white/30 to-transparent flex-1"></div>
-                    </div>
-
-                    <!-- Category Tags -->
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        {{#each event.category}}
-                        <span class="category-tag bg-[var(--color-purple)] text-white !border-[var(--color-purple)] !text-[11px] !px-3 py-1.5 shadow-[3px_3px_0_#000] transform -skew-x-6 hover:translate-x-1 transition-transform cursor-default">{{this}}</span>
-                        {{/each}}
-                        {{#if event.ageRestriction}}
-                        <span class="category-tag bg-[var(--color-toxic)] text-black !border-[var(--color-toxic)] !text-[11px] !px-3 py-1.5 shadow-[3px_3px_0_#000] transform -skew-x-6 hover:translate-x-1 transition-transform cursor-default">{{event.ageRestriction}}</span>
+            <!-- Central Immersive Sticker Layout -->
+            <div class="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center mt-8 mb-20 z-10 group">
+                <!-- Outer Poster Container -->
+                <div class="brutalist-card !p-0 overflow-hidden relative w-full shadow-[16px_16px_0_var(--color-toxic)] transition-all duration-500 hover:shadow-[24px_24px_0_var(--color-pink)] bg-black group-hover:-translate-y-2">
+                    
+                    <!-- Background Backdrop inside the card -->
+                    <div class="absolute inset-0 z-0">
+                        {{#if event.image}}
+                        <img src="{{event.image.url}}" alt="" class="w-full h-full object-cover filter contrast-[1.1] saturate-[0.8] opacity-60 mix-blend-luminosity">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
                         {{/if}}
                     </div>
+                    
+                    <!-- Inner Black Box (The Sticker) -->
+                    <div class="relative z-10 bg-[#0A0A0A] border-4 border-white mx-auto my-16 md:my-24 w-[90%] md:w-[75%] p-6 md:p-12 shadow-[8px_8px_0_var(--color-purple)] transform rotate-[1deg]">
+                        
+                        <!-- Top Accent Bar -->
+                        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[var(--color-toxic)] via-[var(--color-pink)] to-[var(--color-purple)]"></div>
 
-                    <!-- Title Block -->
-                    <div class="relative mb-8">
-                        <!-- Bauhaus style background accent -->
-                        <div class="absolute -inset-x-6 -inset-y-4 bg-gradient-to-r from-[var(--color-purple)]/20 to-transparent skew-y-2 -z-10 mix-blend-screen hidden md:block"></div>
-                        <h1 class="text-[clamp(2.2rem,4.5vw,4.5rem)] font-black text-white uppercase font-display misprint leading-[0.9] tracking-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
-                            {{event.name}}
-                        </h1>
-                    </div>
-
-                    <!-- Ticket Stub Info Pills Layout -->
-                    <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 text-base md:text-lg mb-10 w-full">
-                        <div class="bg-black border-l-8 border-[var(--color-toxic)] p-4 font-bold uppercase tracking-widest text-white text-sm w-full sm:flex-1 shadow-[4px_4px_0_var(--color-pink)] transform transition-transform hover:-translate-y-1 hover:shadow-[6px_6px_0_var(--color-pink)] border-y border-r border-white/10">
-                            <span class="block text-[10px] text-[var(--color-toxic)] mb-2 tracking-[0.2em] font-black">DATE & TIME ///</span>
-                            <div class="flex flex-col gap-1">
-                                <span class="flex items-center gap-2"><i class="fas fa-calendar-day opacity-50 w-4"></i> {{formatDateOnly event.date}}</span>
-                                <span class="flex items-center gap-2 text-[var(--color-pink)]"><i class="fas fa-clock opacity-50 w-4"></i> {{formatTime event.date}}</span>
-                            </div>
-                        </div>
-                        <div class="bg-black border-l-8 border-[var(--color-purple)] p-4 font-bold uppercase tracking-widest text-white text-sm w-full sm:flex-1 shadow-[4px_4px_0_var(--color-toxic)] transform transition-transform hover:-translate-y-1 hover:shadow-[6px_6px_0_var(--color-toxic)] border-y border-r border-white/10">
-                            <span class="block text-[10px] text-[var(--color-purple)] mb-2 tracking-[0.2em] font-black">LOCATION ///</span>
-                            <div class="flex flex-col gap-1">
-                                <span class="flex items-center gap-2"><i class="fas fa-map-marker-alt opacity-50 w-4"></i> {{event.venue.name}}</span>
-                                {{#if event.price}}
-                                <span class="flex items-center gap-2 text-gray-400 mt-1 pt-1 border-t border-white/10"><i class="fas fa-ticket-alt opacity-50 w-4"></i> {{event.price}}</span>
+                        <!-- Content wrapper to reverse the inner rotation slightly if needed, or just let it spin -->
+                        <div class="transform rotate-[-1deg]">
+                            
+                            <!-- Tags -->
+                            <div class="flex flex-wrap items-center justify-center gap-3 mb-8 w-full">
+                                {{#each event.category}}
+                                <span class="font-display font-black text-white text-xs md:text-sm tracking-[0.3em] uppercase bg-black px-3 py-1 border border-white/20">[ {{this}} ]</span>
+                                {{/each}}
+                                {{#if event.ageRestriction}}
+                                <span class="font-display font-black text-white text-xs md:text-sm tracking-[0.3em] uppercase bg-[var(--color-toxic)] !text-black px-3 py-1">[ {{event.ageRestriction}} ]</span>
                                 {{/if}}
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Action Blocks -->
-                    <div class="flex flex-col sm:flex-row gap-4 w-full mt-2">
-                        {{#if event.details.link}}
-                        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="group relative inline-flex items-center justify-center px-8 py-5 font-bold text-black border-4 border-[var(--color-toxic)] bg-[var(--color-toxic)] overflow-hidden transition-all hover:bg-black hover:text-[var(--color-toxic)] active:scale-95 shadow-[6px_6px_0_var(--color-purple)] hover:shadow-[8px_8px_0_var(--color-purple)] flex-1 min-w-[200px]">
-                            <div class="relative flex items-center gap-4 font-display font-black text-2xl uppercase tracking-widest misprint">
-                                <i class="fas fa-ticket-alt group-hover:-rotate-12 transition-transform duration-300 transform-gpu text-2xl"></i> GET TICKETS
+                            <!-- Title -->
+                            <h1 class="text-[clamp(3rem,6vw,6rem)] font-black text-white uppercase font-display misprint leading-[0.9] tracking-tighter mb-10 w-full text-center drop-shadow-[0_4px_4px_black]">
+                                {{event.name}}
+                            </h1>
+
+                            <!-- Rigid Information Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 w-full text-left mb-10 pt-8 border-t-2 border-white/20 border-dashed">
+                                <!-- Date -->
+                                <div class="bg-black/50 p-4 border border-white/5">
+                                    <span class="block text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase mb-1 font-display">DATE</span>
+                                    <span class="block font-black text-[var(--color-toxic)] text-lg md:text-xl tracking-tight uppercase misprint drop-shadow-md">[ {{formatDateOnly event.date}} ]</span>
+                                </div>
+                                <!-- Time -->
+                                <div class="bg-black/50 p-4 border border-white/5">
+                                    <span class="block text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase mb-1 font-display">TIME</span>
+                                    <span class="block font-black text-[var(--color-toxic)] text-lg md:text-xl tracking-tight uppercase misprint drop-shadow-md">[ {{formatTime event.date}} ]</span>
+                                </div>
+                                <!-- Location -->
+                                <div class="md:col-span-2 bg-black/50 p-4 border border-white/5">
+                                    <span class="block text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase mb-1 font-display">LOCATION</span>
+                                    <span class="block font-black text-[var(--color-toxic)] text-lg md:text-xl tracking-tight uppercase misprint drop-shadow-md">[ {{event.venue.name}} ]</span>
+                                </div>
                             </div>
-                        </a>
-                        {{/if}}
-                        
-                        <button id="share-button" class="group relative inline-flex items-center justify-center px-8 py-5 font-bold text-white bg-black border-4 border-white overflow-hidden transition-all hover:bg-white hover:-translate-y-1 active:scale-95 shadow-[6px_6px_0_var(--color-pink)] hover:shadow-[8px_8px_0_var(--color-pink)] sm:flex-none">
-                            <div class="relative flex items-center gap-4 font-display font-black text-2xl uppercase tracking-widest misprint group-hover:text-black">
-                                <i class="fas fa-share-alt group-hover:rotate-12 transition-transform duration-300 transform-gpu text-2xl"></i> SHARE
+
+                            <!-- Mega Actions -->
+                            <div class="flex flex-col sm:flex-row w-full gap-4 mt-6">
+                                {{#if event.details.link}}
+                                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-[var(--color-pink)] text-black font-black uppercase font-display tracking-[0.1em] text-xl py-6 px-4 hover:bg-[var(--color-toxic)] transition-colors duration-300 text-center border-2 border-[var(--color-pink)] border-dashed hover:border-[var(--color-toxic)] flex items-center justify-center group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white">
+                                    <i class="fas fa-ticket-alt mr-3 group-hover:-rotate-12 transition-transform text-2xl"></i> [ TICKETS + INFO ]
+                                </a>
+                                {{/if}}
+                                <button id="share-button" class="flex-none bg-black text-white font-black uppercase font-display tracking-[0.1em] text-xl py-6 px-10 hover:bg-white hover:text-black transition-colors duration-300 text-center border-2 border-white flex items-center justify-center group focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white {{#unless event.details.link}}w-full{{/unless}}">
+                                    <i class="fas fa-share-alt mr-3 group-hover:rotate-12 transition-transform text-2xl"></i> [ SHARE ]
+                                </button>
                             </div>
-                        </button>
+                        </div>
                     </div>
                 </div>
             </div>
