@@ -11,6 +11,10 @@
 # Main section redirects (clean URL rewrites handled by netlify.toml)
 /whats-on           /events             301
 /venues             /all-venues         301
+/tonight            /events?range=today         301
+/week               /events?range=this-week     301
+/weekend            /events?range=this-weekend  301
+/submit             /promoter-submit-new        301
 /pride              /birmingham-pride   301
 /pride-guide        /birmingham-pride   301
 

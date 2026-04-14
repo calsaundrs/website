@@ -309,6 +309,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div class="flex flex-wrap gap-2 items-center">
                     <button class="filter-pill date-filter active focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="all">All</button>
+                    <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="today">Today</button>
                     <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-week">This Week</button>
                     <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-weekend">This Weekend</button>
                     <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-month">This Month</button>
@@ -444,6 +445,18 @@
             });
         });
 
+        // Apply URL query param filter on load
+        const urlParams = new URLSearchParams(window.location.search);
+        const rangeParam = urlParams.get('range');
+        if (rangeParam) {
+            const btn = Array.from(document.querySelectorAll('.date-filter')).find(b => b.dataset.filter === rangeParam);
+            if (btn) {
+                document.querySelectorAll('.date-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = rangeParam;
+            }
+        }
+
         // NSFW toggle
         const nsfwToggle = document.getElementById('nsfw-toggle');
         if (nsfwToggle) {
@@ -506,6 +519,12 @@
         function getDateRange(filter) {
             const now = new Date();
             const today = startOfDay(now);
+
+            if (filter === 'today') {
+                const end = new Date(today);
+                end.setUTCHours(23, 59, 59, 999);
+                return { start: today, end };
+            }
 
             if (filter === 'this-week') {
                 const day = today.getUTCDay();
