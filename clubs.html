@@ -145,25 +145,32 @@
         /* Filter pills */
         .filter-pill {
             padding: 0.5rem 1.25rem;
-            font-weight: 700;
+            font-weight: 900;
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border: 3px solid var(--color-light);
-            background: transparent;
+            border: 2px solid var(--color-light);
+            background: #000;
             color: var(--color-light);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 0 var(--color-purple);
         }
         .filter-pill:hover {
             background: var(--color-purple);
-            border-color: var(--color-purple);
+            border-color: var(--color-toxic);
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0 var(--color-toxic);
         }
         .filter-pill.active {
             background: var(--color-toxic);
             color: #000;
-            border-color: var(--color-toxic);
+            border-color: #000;
+            box-shadow: 4px 4px 0 var(--color-purple);
         }
 
         /* Club cards */
@@ -310,17 +317,16 @@
             </div>
         </div>
     </section>
-    </section>
 
     <!-- Filters -->
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-12">
         <p class="text-gray-200 text-xs uppercase tracking-widest mb-4"><i class="fas fa-check-circle text-[var(--color-toxic)] mr-1"></i> Last verified: March 2026 · <a href="/contact" class="text-[var(--color-pink)] hover:text-white">Report outdated info</a></p>
         <div class="flex flex-wrap gap-3 items-center">
-            <button class="bg-[var(--color-toxic)] text-black border-2 border-black px-6 py-2 font-display font-black text-sm uppercase shadow-[4px_4px_0_var(--color-purple)] active hover:bg-white transition-all filter-pill" data-filter="all" aria-pressed="true">All</button>
-            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="sports" aria-pressed="false">Sports & Fitness</button>
-            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="arts" aria-pressed="false">Arts & Culture</button>
-            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="social" aria-pressed="false">Social & Gaming</button>
-            <button class="bg-black/40 text-white border-2 border-white/20 px-6 py-2 font-display font-black text-sm uppercase hover:bg-[var(--color-purple)] hover:border-[var(--color-purple)] transition-all filter-pill" data-filter="community" aria-pressed="false">Community & Support</button>
+            <button class="filter-pill active focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-pill focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="sports" aria-pressed="false">Sports & Fitness</button>
+            <button class="filter-pill focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="arts" aria-pressed="false">Arts & Culture</button>
+            <button class="filter-pill focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="social" aria-pressed="false">Social & Gaming</button>
+            <button class="filter-pill focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="community" aria-pressed="false">Community & Support</button>
         </div>
     </section>
 
@@ -742,13 +748,11 @@
         document.querySelectorAll('.filter-pill').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-pill').forEach(b => { 
-                    b.classList.remove('bg-[var(--color-toxic)]', 'text-black', 'shadow-[4px_4px_0_var(--color-purple)]', 'active');
-                    b.classList.add('bg-black/40', 'text-white', 'border-white/20');
+                    b.classList.remove('active');
                     b.setAttribute('aria-pressed', 'false'); 
                 });
                 
-                btn.classList.add('bg-[var(--color-toxic)]', 'text-black', 'shadow-[4px_4px_0_var(--color-purple)]', 'active');
-                btn.classList.remove('bg-black/40', 'text-white', 'border-white/20');
+                btn.classList.add('active');
                 btn.setAttribute('aria-pressed', 'true');
                 
                 const filter = btn.dataset.filter;
