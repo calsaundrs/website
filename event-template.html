@@ -53,14 +53,6 @@
     <link rel="stylesheet" href="/css/main.css">
 
     <style>
-        @keyframes marquee {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
-        }
-        .animate-marquee {
-            animation: marquee 15s linear infinite;
-            will-change: transform;
-        }
 
         .category-tag {
             display: inline-block;
@@ -115,85 +107,85 @@
 </header>
 
 
-    <!-- The Digital Poster Board Layout -->
-    <main class="relative z-10 w-full min-h-screen bg-[#0A0A0A] overflow-hidden pt-4 pb-12">
+    <!-- The Architectural Poster Layout -->
+    <main class="w-full bg-[#050505] min-h-screen">
         
-        <!-- Neon Ticker Tape Title -->
-        <div class="w-full bg-black border-y-4 border-[var(--color-toxic)] py-3 overflow-hidden relative shadow-[0_0_20px_rgba(204,255,0,0.2)] z-20 mb-6 md:mb-10">
-            <div class="whitespace-nowrap flex animate-marquee">
-                <div class="text-[var(--color-toxic)] font-black uppercase text-3xl tracking-widest font-display inline-block shrink-0 px-2 drop-shadow-[0_0_8px_rgba(204,255,0,0.5)]">
-                    {{event.name}} <span class="text-white mx-4">///</span> {{event.name}} <span class="text-[var(--color-pink)] mx-4">///</span> {{event.name}} <span class="text-white mx-4">///</span> {{event.name}} <span class="text-[var(--color-toxic)] mx-4">///</span>
-                </div>
-                <div class="text-[var(--color-toxic)] font-black uppercase text-3xl tracking-widest font-display inline-block shrink-0 px-2 drop-shadow-[0_0_8px_rgba(204,255,0,0.5)]">
-                    {{event.name}} <span class="text-white mx-4">///</span> {{event.name}} <span class="text-[var(--color-pink)] mx-4">///</span> {{event.name}} <span class="text-white mx-4">///</span> {{event.name}} <span class="text-[var(--color-toxic)] mx-4">///</span>
-                </div>
+        <!-- Top Poster Section: Edge-to-edge, precise, no borders -->
+        <div class="w-full relative aspect-square md:aspect-[21/9] lg:aspect-[2.5/1] bg-black overflow-hidden flex items-center justify-center">
+            {{#if event.image}}
+            <!-- Clean, unfiltered image source filling the container precisely -->
+            <img src="{{event.image.url}}" alt="Event Poster" class="absolute w-full h-full object-cover opacity-90 object-center">
+            {{else}}
+            <div class="w-full h-full flex items-center justify-center bg-[#111]">
+                <span class="text-white/40 tracking-widest text-sm">NO IMAGE AVAILABLE</span>
             </div>
+            {{/if}}
+            <!-- Optional subtle gradient overlay at bottom to ensure breadcrumb visibility if image is bright -->
+            <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#0A0A0A] to-transparent z-10"></div>
         </div>
 
-        <div class="max-w-[1400px] mx-auto px-4 md:px-8 space-y-6 md:space-y-0 text-center flex flex-col items-center">
+        <!-- Rigorous Content Grid -->
+        <div class="max-w-[1400px] mx-auto w-full flex flex-col relative z-20 -mt-16 md:-mt-20">
             
-            <!-- Breadcrumbs -->
-            <nav class="w-full text-center mb-6 text-xs font-black uppercase tracking-[0.2em] relative z-20 opacity-60">
-                <a href="/events" class="text-white hover:text-[var(--color-toxic)] transition-colors">EVENTS</a>
-                <span class="text-white mx-2">/</span>
-                <span class="text-[var(--color-toxic)]">{{event.name}}</span>
+            <!-- Breadcrumbs / Top alignment -->
+            <nav class="w-full px-6 py-6 flex items-center justify-between text-xs font-medium uppercase tracking-widest text-white/50 border-b border-white/10 bg-[#050505]">
+                <a href="/events" class="hover:text-white transition-colors">BACK TO EVENTS</a>
+                <span class="text-[var(--color-toxic)]">{{event.category.[0]}}</span>
             </nav>
 
-            <!-- Massive Unobstructed Poster -->
-            <div class="relative w-full max-w-sm md:max-w-xl lg:max-w-2xl mx-auto shadow-[0_0_50px_rgba(232,58,153,0.3)] hover:scale-[1.01] transition-transform duration-500 ease-out z-20 mb-8 mt-2">
-                {{#if event.image}}
-                <div class="absolute -inset-1.5 md:-inset-2 bg-gradient-to-tr from-[var(--color-toxic)] via-[var(--color-purple)] to-[var(--color-pink)] z-0 rounded-sm"></div>
-                <img src="{{event.image.url}}" alt="Official Flyer for {{event.name}}" class="relative z-10 w-full h-auto object-contain border-4 border-black bg-black">
-                {{else}}
-                <div class="absolute -inset-1.5 md:-inset-2 bg-gradient-to-tr from-[var(--color-toxic)] via-[var(--color-purple)] to-[var(--color-pink)] z-0 rounded-sm"></div>
-                <div class="relative z-10 w-full aspect-[4/5] bg-black border-4 border-black flex items-center justify-center">
-                    <span class="text-[var(--color-toxic)] font-black text-2xl font-display misprint">[ POSTER UNAVAILABLE ]</span>
-                </div>
-                {{/if}}
-            </div>
-
-            <!-- Tabular Metadata Grid (Under the poster) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 w-full max-w-4xl mx-auto gap-0 border-4 border-white/20 divide-y md:divide-y-0 md:divide-x divide-white/20 bg-black z-20 mb-8">
-                <div class="p-4 flex flex-col items-start text-left justify-center min-h-[5rem]">
-                    <span class="text-white/50 font-bold uppercase tracking-[0.2em] text-[10px] mb-1">DATE</span>
-                    <span class="text-[var(--color-toxic)] font-black uppercase tracking-tight text-sm md:text-md">[ {{formatDateOnly event.date}} ]</span>
-                </div>
-                <div class="p-4 flex flex-col items-start text-left justify-center min-h-[5rem] border-l border-white/20 md:border-l-0">
-                    <span class="text-white/50 font-bold uppercase tracking-[0.2em] text-[10px] mb-1">TIME</span>
-                    <span class="text-[var(--color-pink)] font-black uppercase tracking-tight text-sm md:text-md">[ {{formatTime event.date}} ]</span>
-                </div>
-                <div class="p-4 flex flex-col items-start text-left justify-center min-h-[5rem] col-span-2 relative">
-                    <span class="text-white/50 font-bold uppercase tracking-[0.2em] text-[10px] mb-1">LOCATION</span>
-                    <span class="text-white font-black uppercase tracking-tight text-sm md:text-md truncate max-w-full">[ {{event.venue.name}} ]</span>
-                    {{#if event.venue.slug}}
-                    <a href="/venue/{{event.venue.slug}}" class="absolute top-4 right-4 text-white/40 hover:text-[var(--color-toxic)]"><i class="fas fa-arrow-right"></i></a>
+            <!-- Massive Title Block -->
+            <div class="w-full px-6 py-12 md:py-24 border-b border-white/10 bg-[#050505]">
+                <h1 class="text-white font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-[0.85] tracking-tighter m-0 font-display break-words">
+                    {{event.name}}
+                </h1>
+                
+                <!-- Auxiliary Tags -->
+                <div class="flex flex-wrap gap-2 mt-8 opacity-80">
+                    {{#each event.category}}
+                    <span class="text-white border border-white/20 px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{this}}</span>
+                    {{/each}}
+                    {{#if event.ageRestriction}}
+                    <span class="text-[var(--color-toxic)] border border-[var(--color-toxic)] px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{event.ageRestriction}}</span>
                     {{/if}}
                 </div>
             </div>
 
-            <!-- Mega CTAs -->
-            <div class="flex flex-col sm:flex-row w-full max-w-4xl mx-auto gap-4 z-20">
-                <button id="share-button" class="group flex-1 bg-[var(--color-toxic)] text-black font-black uppercase font-display text-4xl tracking-tighter py-6 md:py-8 shadow-[8px_8px_0_var(--color-purple)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0_var(--color-purple)] flex items-center justify-center">
+            <!-- Architectural Metadata Table -->
+            <div class="w-full grid grid-cols-1 md:grid-cols-3 border-b border-white/10 bg-[#050505]">
+                <!-- Date -->
+                <div class="px-6 py-8 md:py-12 border-b md:border-b-0 md:border-r border-white/10 flex flex-col">
+                    <span class="text-white/40 text-xs font-bold uppercase tracking-[0.2em] mb-3 font-display">DATE</span>
+                    <span class="text-white text-2xl font-black uppercase tracking-tight">{{formatDateOnly event.date}}</span>
+                </div>
+                <!-- Time -->
+                <div class="px-6 py-8 md:py-12 border-b md:border-b-0 md:border-r border-white/10 flex flex-col">
+                    <span class="text-white/40 text-xs font-bold uppercase tracking-[0.2em] mb-3 font-display">TIME</span>
+                    <span class="text-white text-2xl font-black uppercase tracking-tight">{{formatTime event.date}}</span>
+                </div>
+                <!-- Location -->
+                <div class="px-6 py-8 md:py-12 flex flex-col relative group">
+                    <span class="text-white/40 text-xs font-bold uppercase tracking-[0.2em] mb-3 font-display">LOCATION</span>
+                    <span class="text-white text-2xl font-black uppercase tracking-tight truncate">{{event.venue.name}}</span>
+                    {{#if event.venue.slug}}
+                    <a href="/venue/{{event.venue.slug}}" class="absolute inset-0 z-10" aria-label="View Venue"></a>
+                    <i class="fas fa-arrow-right absolute right-6 top-1/2 -translate-y-1/2 text-white/20 group-hover:text-white transition-colors"></i>
+                    {{/if}}
+                </div>
+            </div>
+
+            <!-- Solid Geometric CTAs -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-2 bg-[#050505]">
+                <button id="share-button" class="w-full py-10 md:py-12 bg-[var(--color-toxic)] text-black font-black text-3xl md:text-5xl font-display uppercase tracking-tighter hover:bg-white transition-colors group">
                     SHARE
                 </button>
-
+                
                 {{#if event.details.link}}
-                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="group flex-1 bg-[var(--color-pink)] text-black font-black uppercase font-display text-4xl tracking-tighter py-6 md:py-8 shadow-[8px_8px_0_var(--color-toxic)] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0_var(--color-toxic)] flex items-center justify-center">
+                <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="w-full py-10 md:py-12 bg-[var(--color-pink)] text-black font-black text-3xl md:text-5xl font-display uppercase tracking-tighter hover:bg-white transition-colors flex items-center justify-center sm:border-l border-black/20">
                     TICKETS
                 </a>
                 {{/if}}
             </div>
 
-            <!-- Tags Section -->
-            <div class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-2 mt-8 opacity-80 relative z-20">
-                {{#each event.category}}
-                <span class="text-white border border-white/30 px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{this}}</span>
-                {{/each}}
-                {{#if event.ageRestriction}}
-                <span class="text-[var(--color-toxic)] border border-[var(--color-toxic)] px-3 py-1 font-bold text-xs uppercase tracking-[0.2em]">{{event.ageRestriction}}</span>
-                {{/if}}
-            </div>
-            
         </div>
     </main>
 
