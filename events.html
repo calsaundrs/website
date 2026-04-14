@@ -310,7 +310,7 @@
             What's <br><span class="text-[var(--color-toxic)]">On.</span>
         </h1>
         
-        <p class="text-xl md:text-2xl font-bold text-white opacity-90 max-w-xl italic italic">Your complete guide to LGBTQ+ events in Birmingham. From high-energy nights in the village to community gatherings.</p>
+        <p class="text-xl md:text-2xl font-bold text-white opacity-90 max-w-xl italic">Your complete guide to LGBTQ+ events in Birmingham. From high-energy nights in the village to community gatherings.</p>
     </section>
 
     <!-- Filters -->
@@ -646,6 +646,17 @@
             renderEvents();
         }
 
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                 .toString()
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
         // Format date
         function formatDate(dateStr) {
             const d = new Date(dateStr);
@@ -681,13 +692,13 @@
                 imgHtml = '<div class="event-placeholder"><i class="fas fa-image"></i></div>';
             } else {
                 if (isFirst) {
-                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" fetchpriority="high">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" fetchpriority="high">';
                     // Dynamically inject preload link to document head for the first image
-                    if (!document.querySelector('link[rel="preload"][href="' + rawUrl + '"]')) {
-                        document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + rawUrl + '" fetchpriority="high">');
+                    if (!document.querySelector('link[rel="preload"][href="' + escapeHtml(rawUrl) + '"]')) {
+                        document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + escapeHtml(rawUrl) + '" fetchpriority="high">');
                     }
                 } else {
-                    imgHtml = '<img src="' + rawUrl + '" alt="' + (ev.name || '').replace(/"/g, '&quot;') + '" loading="lazy">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" loading="lazy">';
                 }
             }
 
@@ -727,8 +738,8 @@
                 + '<i class="fas fa-calendar-day mr-2 opacity-70"></i>' + date
                 + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-2 text-[var(--color-toxic)] opacity-70"></i>' + time + '</span>' : '')
                 + '</p>'
-                + '<h3 class="text-2xl font-black text-white uppercase font-display leading-[1.1] tracking-tight mb-4 group-hover:text-[var(--color-toxic)] transition-colors">' + (ev.name || 'Untitled Event') + '</h3>'
-                + (venue ? '<p class="text-white font-bold text-sm mb-4 opacity-70"><i class="fas fa-map-marker-alt mr-2 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
+                + '<h3 class="text-2xl font-black text-white uppercase font-display leading-[1.1] tracking-tight mb-4 group-hover:text-[var(--color-toxic)] transition-colors">' + escapeHtml(ev.name || 'Untitled Event') + '</h3>'
+                + (venue ? '<p class="text-white font-bold text-sm mb-4 opacity-70"><i class="fas fa-map-marker-alt mr-2 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
                 + '</div>'
                 + '<div class="flex flex-wrap gap-2">'
                 + (cats.includes('Pride') ? '<span class="sticker bg-[var(--color-toxic)] !text-black text-[10px] uppercase font-black px-2 py-1 shadow-none">PRIDE</span>' : '')
