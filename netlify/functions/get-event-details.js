@@ -344,7 +344,6 @@ exports.handler = async function (event, context) {
                         {{/if}}
                     </div>
                 </div>
-                </div>
 
                 <!-- Architectural Description -->
                 {{#if (hasDescription event.description)}}
