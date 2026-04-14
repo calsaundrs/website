@@ -18,13 +18,13 @@
     <meta property="og:description" content="{{event.description}}">
     <meta property="og:type" content="event">
     <meta property="og:url" content="https://brumoutloud.co.uk/event/{{event.slug}}">
-    <meta property="og:image" content="{{event.imageUrl}}">
+    <meta property="og:image" content="{{event.image.url}}">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{event.name}} | Brum Outloud">
     <meta name="twitter:description" content="{{event.description}}">
-    <meta name="twitter:image" content="{{event.imageUrl}}">
+    <meta name="twitter:image" content="{{event.image.url}}">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -38,7 +38,7 @@
         "@type": "Place",
         "name": "{{event.venue.name}}"
       },
-      "image": "{{event.imageUrl}}",
+      "image": "{{event.image.url}}",
       "url": "https://brumoutloud.co.uk/event/{{event.slug}}"
     }
     </script>
@@ -110,11 +110,11 @@
 
 
     <!-- Ambient Hero Background -->
-    {{#if event.imageUrl}}
+    {{#if event.image}}
     <div class="absolute top-0 left-0 w-full h-[90vh] md:h-[80vh] z-0 overflow-hidden pointer-events-none">
         <div class="absolute inset-0 bg-[#0d0115]/80 z-10 mix-blend-multiply"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-[#0d0115]/50 via-[#0d0115]/80 to-[#0d0115] z-20"></div>
-        <img src="{{event.imageUrl}}" alt="" class="w-full h-full object-cover blur-[100px] opacity-70 scale-125 transform-gpu saturate-200">
+        <img src="{{event.image.url}}" alt="" class="w-full h-full object-cover blur-[100px] opacity-70 scale-125 transform-gpu saturate-200">
     </div>
     {{/if}}
 
@@ -133,11 +133,11 @@
             <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
                 
                 <!-- Left: Poster -->
-                {{#if event.imageUrl}}
+                {{#if event.image}}
                 <div class="w-full lg:w-5/12 flex-shrink-0 relative group">
                     <div class="absolute -inset-3 bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-pink)] opacity-20 blur-2xl group-hover:opacity-50 transition-opacity duration-700"></div>
                     <div class="brutalist-card !p-0 !border-4 !border-white overflow-hidden shadow-glow transform transition-transform duration-500 hover:-translate-y-2 group-hover:shadow-[8px_8px_0_var(--color-toxic)]">
-                        <img src="{{event.imageUrl}}" alt="Promo image for {{event.name}} at {{event.venue.name}}" class="w-full h-auto object-cover bg-black" style="max-height: 85vh;">
+                        <img src="{{event.image.url}}" alt="Promo image for {{event.name}} at {{event.venue.name}}" class="w-full h-auto object-cover bg-black" style="max-height: 85vh;">
                     </div>
                 </div>
                 {{/if}}
@@ -160,10 +160,10 @@
                     <!-- Core Info Pills Layout -->
                     <div class="flex flex-wrap items-center gap-3 text-base md:text-lg mb-12">
                         <div class="border-2 border-[var(--color-toxic)] px-4 py-2 font-bold uppercase tracking-widest text-[var(--color-toxic)] text-sm shadow-[2px_2px_0_#000] bg-black/60 backdrop-blur flex items-center gap-3">
-                            <i class="fas fa-calendar-day opacity-80 text-lg"></i> {{event.formattedDate}}
+                            <i class="fas fa-calendar-day opacity-80 text-lg"></i> {{formatDateOnly event.date}}
                         </div>
                         <div class="border-2 border-[var(--color-toxic)] px-4 py-2 font-bold uppercase tracking-widest text-white text-sm shadow-[2px_2px_0_#000] bg-black/60 backdrop-blur flex items-center gap-3">
-                            <i class="fas fa-clock opacity-80 text-[var(--color-toxic)] text-lg"></i> {{event.time}}
+                            <i class="fas fa-clock opacity-80 text-[var(--color-toxic)] text-lg"></i> {{formatTime event.date}}
                         </div>
                         <div class="border-2 border-white px-4 py-2 font-bold uppercase tracking-widest text-white text-sm shadow-[2px_2px_0_#000] bg-black/60 backdrop-blur flex items-center gap-3">
                             <i class="fas fa-map-marker-alt text-[var(--color-pink)] opacity-80 text-lg"></i> {{event.venue.name}}
@@ -177,15 +177,15 @@
 
                     <!-- Action Blocks -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
-                        {{#if event.ticketLink}}
-                        <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="brutalist-card !p-5 !bg-[var(--color-toxic)] !text-black flex items-center justify-center group hover:!bg-white transition-all text-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white">
+                        {{#if event.details.link}}
+                        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="brutalist-card !p-5 !bg-[var(--color-toxic)] !text-black flex items-center justify-center group hover:!bg-white transition-all text-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white">
                             <div class="flex items-center gap-4 font-display font-black text-2xl uppercase tracking-widest misprint">
                                 <i class="fas fa-ticket-alt group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300 transform-gpu text-3xl"></i> TICKETS
                             </div>
                         </a>
                         {{/if}}
                         
-                        <button id="share-button" class="brutalist-card !p-5 !bg-[var(--color-purple)] !text-white flex items-center justify-center group cursor-pointer hover:!bg-[var(--color-pink)] transition-all text-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white {{#unless event.ticketLink}}sm:col-span-2{{/unless}}">
+                        <button id="share-button" class="brutalist-card !p-5 !bg-[var(--color-purple)] !text-white flex items-center justify-center group cursor-pointer hover:!bg-[var(--color-pink)] transition-all text-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white {{#unless event.details.link}}sm:col-span-2{{/unless}}">
                             <div class="flex items-center gap-4 font-display font-black text-2xl uppercase tracking-widest misprint">
                                 <i class="fas fa-share-alt group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300 transform-gpu text-3xl"></i> SHARE
                             </div>
@@ -266,14 +266,14 @@
         </div>
 
         <!-- Other Dates -->
-        {{#if event.otherInstances}}
+        {{#if otherInstances}}
         <div class="mt-16 pt-12 border-t border-white/10">
             <div class="sticker bg-[var(--color-purple)] text-white text-[10px] mb-4 inline-block transform -rotate-1 uppercase tracking-widest font-black">MORE LIKE THIS</div>
             <h2 class="text-3xl font-black text-white mb-6 uppercase font-display misprint">
                 Other Dates
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {{#each event.otherInstances}}
+                {{#each otherInstances}}
                 <a href="/event/{{this.slug}}" class="brutalist-card !border-2 !border-white/20 bg-black hover:!border-[var(--color-toxic)] !p-0 flex transition-all duration-300 group hover:-translate-y-1 hover:shadow-glow focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">
                     <div class="bg-[var(--color-toxic)] text-black w-20 flex flex-col justify-center items-center flex-shrink-0 group-hover:bg-white transition-colors border-r-2 border-white/20">
                         <p class="text-3xl font-black font-display misprint">{{this.dayOfMonth}}</p>
@@ -298,12 +298,12 @@
 
     <!-- Sticky mobile bar: Tickets + Share -->
     <div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black border-t-4 border-[var(--color-toxic)] p-3 flex gap-2">
-        {{#if event.ticketLink}}
-        <a href="{{event.ticketLink}}" target="_blank" rel="noopener noreferrer" class="bg-[var(--color-toxic)] text-black font-bold uppercase tracking-wider border-[3px] border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--color-pink)] transition-all flex-1 flex items-center justify-center">
+        {{#if event.details.link}}
+        <a href="{{event.details.link}}" target="_blank" rel="noopener noreferrer" class="bg-[var(--color-toxic)] text-black font-bold uppercase tracking-wider border-[3px] border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_var(--color-pink)] transition-all flex-1 flex items-center justify-center">
             <i class="fas fa-ticket-alt mr-2"></i>TICKETS
         </a>
         {{/if}}
-        <button id="share-button-mobile" class="bg-[var(--color-pink)] text-white font-bold uppercase tracking-wider px-4 py-3 border-3 border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] flex items-center justify-center cursor-pointer {{#unless event.ticketLink}}flex-1{{/unless}}">
+        <button id="share-button-mobile" class="bg-[var(--color-pink)] text-white font-bold uppercase tracking-wider px-4 py-3 border-3 border-[var(--color-light)] shadow-[4px_4px_0_var(--color-purple)] flex items-center justify-center cursor-pointer {{#unless event.details.link}}flex-1{{/unless}}">
             <i class="fas fa-share-alt mr-2"></i>SHARE
         </button>
     </div>
