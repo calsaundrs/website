@@ -4,16 +4,28 @@
 
 import { getIdToken } from './auth-guard.js';
 
-const EVENTS_ENDPOINT = '/.netlify/functions/get-events-for-reels';
+// Use the main public events endpoint (same one the site uses). Date-range
+// filtering happens client-side against the normalized events list.
+const EVENTS_ENDPOINT = '/.netlify/functions/get-events';
 
 const state = {
     events: [],
     selectedIds: new Set(),
     activeId: null,
     preset: 'this-week',
-    format: 'square',      // square | portrait | story
-    template: 'sticker',   // sticker | card
+    format: 'square',        // square | portrait | story
+    template: 'sticker',     // sticker | card | lineup | highlight
+    lineupTitle: 'This Week',
+    highlightLabel: 'Tonight',
+    highlightAccent: 'toxic', // toxic | pink | purple | pride
 };
+
+// Templates that must render as 1080×1920 story
+const STORY_ONLY_TEMPLATES = new Set(['lineup', 'highlight']);
+// Templates that aggregate multiple events instead of using the active one
+const AGGREGATE_TEMPLATES = new Set(['lineup']);
+// Templates that don't need any event data at all
+const EVENTLESS_TEMPLATES = new Set(['highlight']);
 
 // -- Event fetching ---------------------------------------------------------
 
@@ -26,10 +38,13 @@ async function fetchEvents() {
     try {
         const token = await getIdToken();
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch(`${EVENTS_ENDPOINT}?preset=${encodeURIComponent(state.preset)}`, { headers });
+        // Fetch a generous pool; client-side filter by preset window.
+        const res = await fetch(`${EVENTS_ENDPOINT}?limit=200&includeAdult=true`, { headers });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        state.events = Array.isArray(data) ? data : (data.events || []);
+        const raw = Array.isArray(data) ? data : (data.events || []);
+        const normalized = raw.map(normalizeEvent).filter(Boolean);
+        state.events = filterByPreset(normalized, state.preset);
     } catch (err) {
         console.error('Failed to load events:', err);
         listEl.innerHTML = `<div class="text-center py-10 text-sm text-red-400">Couldn't load events — ${err.message}</div>`;
@@ -39,6 +54,94 @@ async function fetchEvents() {
 
     countEl.textContent = `${state.events.length} event${state.events.length === 1 ? '' : 's'}`;
     renderEventList();
+}
+
+// Normalize a raw event from /get-events into the shape the templates expect.
+function normalizeEvent(raw) {
+    if (!raw || !raw.id) return null;
+    const dateStr = raw.date || raw.Date;
+    const d = dateStr ? new Date(dateStr) : null;
+    const hasTime = d && !isNaN(d.getTime());
+    const time = hasTime
+        ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : '';
+    const venueName = (raw.venue && raw.venue.name)
+        ? (Array.isArray(raw.venue.name) ? raw.venue.name[0] : raw.venue.name)
+        : (raw.venueName || raw['Venue Name'] || '');
+    const category = Array.isArray(raw.category)
+        ? raw.category
+        : (raw.category ? [raw.category] : (raw.categories || []));
+    return {
+        id: raw.id,
+        name: raw.name || raw['Event Name'] || 'Untitled',
+        date: dateStr,
+        time,
+        venue: { name: venueName },
+        venueName,
+        image: raw.image,
+        category
+    };
+}
+
+function filterByPreset(events, preset) {
+    const now = new Date();
+    const start = new Date(now); start.setHours(0, 0, 0, 0);
+    let from = new Date(start);
+    let to = null;
+
+    switch (preset) {
+        case 'today': {
+            to = new Date(start); to.setDate(to.getDate() + 1);
+            break;
+        }
+        case 'this-week': {
+            // Mon–Sun week containing today
+            const dow = (start.getDay() + 6) % 7; // 0 = Mon
+            from = new Date(start); from.setDate(from.getDate() - dow);
+            to = new Date(from); to.setDate(to.getDate() + 7);
+            break;
+        }
+        case 'this-weekend': {
+            // Fri-start through Sun-end of this week
+            const day = start.getDay(); // 0 Sun .. 6 Sat
+            from = new Date(start);
+            if (day === 0) {
+                // Sunday: "this weekend" started Friday
+                from.setDate(from.getDate() - 2);
+            } else if (day >= 5) {
+                from.setDate(from.getDate() - (day - 5));
+            } else {
+                from.setDate(from.getDate() + (5 - day));
+            }
+            to = new Date(from); to.setDate(to.getDate() + 3); // Fri, Sat, Sun
+            break;
+        }
+        case 'next-week': {
+            const dow = (start.getDay() + 6) % 7;
+            from = new Date(start); from.setDate(from.getDate() - dow + 7);
+            to = new Date(from); to.setDate(to.getDate() + 7);
+            break;
+        }
+        case 'next-30-days': {
+            to = new Date(start); to.setDate(to.getDate() + 30);
+            break;
+        }
+        case 'this-month': {
+            from = new Date(start.getFullYear(), start.getMonth(), 1);
+            to = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+            break;
+        }
+        default: {
+            to = new Date(start); to.setDate(to.getDate() + 30);
+        }
+    }
+
+    return events.filter(ev => {
+        if (!ev.date) return false;
+        const d = new Date(ev.date);
+        if (isNaN(d.getTime())) return false;
+        return d >= from && d < to;
+    });
 }
 
 function renderEventList() {
@@ -52,6 +155,9 @@ function renderEventList() {
     state.events.forEach(ev => {
         const row = document.createElement('div');
         row.className = 'event-row';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('aria-pressed', state.selectedIds.has(ev.id) ? 'true' : 'false');
         if (state.selectedIds.has(ev.id)) row.classList.add('selected');
         if (state.activeId === ev.id) row.style.outline = '2px solid var(--color-pink)';
 
@@ -71,9 +177,8 @@ function renderEventList() {
         `;
         row.appendChild(meta);
 
-        row.addEventListener('click', (e) => {
-            // Toggle selection on shift/cmd/ctrl click, else make active + add to selection
-            if (e.shiftKey || e.metaKey || e.ctrlKey) {
+        const handleSelect = (multi) => {
+            if (multi) {
                 if (state.selectedIds.has(ev.id)) state.selectedIds.delete(ev.id);
                 else state.selectedIds.add(ev.id);
             } else {
@@ -83,6 +188,16 @@ function renderEventList() {
             renderEventList();
             renderPreview();
             updateDownloadButtons();
+        };
+
+        row.addEventListener('click', (e) => {
+            handleSelect(e.shiftKey || e.metaKey || e.ctrlKey);
+        });
+        row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelect(e.shiftKey || e.metaKey || e.ctrlKey);
+            }
         });
 
         listEl.appendChild(row);
@@ -94,11 +209,12 @@ function renderEventList() {
 function thumbUrl(ev) {
     return toImageUrl(ev, 'w_200,h_200,c_fill,g_auto');
 }
-function heroUrl(ev) {
-    // Square/portrait use 1080×1080 crop; story uses 1080×1920
-    const t = state.format === 'story'
-        ? 'w_1080,h_1920,c_fill,g_auto'
-        : 'w_1080,h_1350,c_fill,g_auto';
+function heroUrl(ev, { format } = {}) {
+    const fmt = format || state.format;
+    let t;
+    if (fmt === 'story')         t = 'w_1080,h_1920,c_fill,g_auto';
+    else if (fmt === 'portrait') t = 'w_1080,h_1350,c_fill,g_auto';
+    else                         t = 'w_1080,h_1080,c_fill,g_auto'; // square
     return toImageUrl(ev, t);
 }
 function toImageUrl(ev, transform) {
@@ -106,10 +222,8 @@ function toImageUrl(ev, transform) {
     if (!raw) return placeholder();
     if (typeof raw === 'object' && raw.url) return raw.url;
     if (typeof raw !== 'string') return placeholder();
-    // If it's already a Cloudinary URL, slot transforms in
     const m = raw.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/);
     if (m) {
-        // If existing transforms are present, prepend ours
         return `${m[1]}${transform}/${m[2].replace(/^[^/]+,[^/]+\//, '')}`;
     }
     return raw;
@@ -135,7 +249,7 @@ function formatEventDate(ev) {
 }
 
 function formatForAsset(ev) {
-    if (!ev.date) return { day: 'TBC', dateLine: '', time: '' };
+    if (!ev || !ev.date) return { day: 'TBC', dateLine: '', time: '' };
     const d = new Date(ev.date);
     const day = d.toLocaleDateString('en-GB', { weekday: 'long' }).toUpperCase();
     const dateLine = d.toLocaleDateString('en-GB', {
@@ -152,14 +266,16 @@ function formatForAsset(ev) {
 function renderPreview() {
     const container = document.getElementById('preview-container');
     const meta = document.getElementById('preview-meta');
+    const needsEvent = !EVENTLESS_TEMPLATES.has(state.template) && !AGGREGATE_TEMPLATES.has(state.template);
     const ev = state.events.find(e => e.id === state.activeId);
-    if (!ev) {
+
+    if (needsEvent && !ev) {
         container.innerHTML = `<div class="opacity-50 text-sm p-16">Select an event to preview</div>`;
         meta.textContent = 'Select an event to preview';
         return;
     }
 
-    const stage = buildStage(ev);
+    const stage = buildStage(ev, { format: state.format, template: state.template });
     container.innerHTML = '';
     container.appendChild(stage);
 
@@ -173,21 +289,105 @@ function renderPreview() {
     const fmt = state.format === 'square' ? '1080×1080'
               : state.format === 'portrait' ? '1080×1350'
               : '1080×1920';
-    meta.textContent = `${ev.name} — ${fmt} • ${state.template}`;
+    const label =
+        state.template === 'lineup'    ? `${state.selectedIds.size} event${state.selectedIds.size === 1 ? '' : 's'} in lineup`
+      : state.template === 'highlight' ? `"${state.highlightLabel}" highlight cover`
+      : ev ? ev.name : '';
+    meta.textContent = `${label} — ${fmt} • ${state.template}`;
 }
 
-function buildStage(ev) {
+function buildStage(ev, opts = {}) {
+    const format = opts.format || state.format;
+    const template = opts.template || state.template;
     const stage = document.createElement('div');
-    stage.className = `asset-stage ${state.format}`;
-    if (state.format === 'story') stage.classList.add('safe-zone');
+    stage.className = `asset-stage ${format}`;
+    if (format === 'story') stage.classList.add('safe-zone');
 
-    if (state.template === 'sticker') stage.appendChild(buildStickerTemplate(ev));
-    else stage.appendChild(buildCardTemplate(ev));
-
+    switch (template) {
+        case 'card':      stage.appendChild(buildCardTemplate(ev, { format })); break;
+        case 'lineup':    stage.appendChild(buildLineupTemplate()); break;
+        case 'highlight': stage.appendChild(buildHighlightTemplate()); break;
+        case 'sticker':
+        default:          stage.appendChild(buildStickerTemplate(ev, { format }));
+    }
     return stage;
 }
 
-function buildStickerTemplate(ev) {
+function buildLineupTemplate() {
+    // Aggregate templates read current selection/state — they're always
+    // invoked synchronously during preview or the user's export click, so
+    // there's no async window for state to drift.
+    const frag = document.createDocumentFragment();
+    const events = state.events.filter(e => state.selectedIds.has(e.id));
+    const MAX_ITEMS = 6;
+    const shown = events.slice(0, MAX_ITEMS);
+    const overflow = Math.max(0, events.length - MAX_ITEMS);
+
+    const tpl = document.createElement('div');
+    tpl.className = 'tpl-lineup';
+    tpl.innerHTML = `
+        <div class="halftone"></div>
+        <div class="header">
+            <div class="kicker">BRUM OUT LOUD</div>
+            <div class="heading">${escapeHtml(state.lineupTitle || 'This Week')}</div>
+        </div>
+        <div class="list">
+            ${shown.map(ev => {
+                const d = ev.date ? new Date(ev.date) : null;
+                const day = d ? d.toLocaleDateString('en-GB', { day: '2-digit' }) : '—';
+                const mon = d ? d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase() : '';
+                const time = ev.time || (d ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) : '');
+                return `
+                    <div class="item">
+                        <div class="daybox">
+                            <div class="d">${escapeHtml(day)}</div>
+                            <div class="m">${escapeHtml(mon)}</div>
+                        </div>
+                        <div class="body">
+                            <div class="title">${escapeHtml(ev.name)}</div>
+                            <div class="sub">${escapeHtml(ev.venue?.name || '')}${time ? ' • ' + escapeHtml(time) : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+            ${overflow > 0 ? `<div class="overflow-pill">+ ${overflow} more at brumoutloud.co.uk</div>` : ''}
+            ${shown.length === 0 ? `<div class="overflow-pill" style="color:var(--color-light);opacity:0.6;">Select events on the left →</div>` : ''}
+        </div>
+        <div class="footer">
+            <div class="footer-inner">
+                <span>@brumoutloud</span>
+                <span class="url">brumoutloud.co.uk</span>
+            </div>
+        </div>
+        <div class="pride-bar"></div>
+    `;
+    frag.appendChild(tpl);
+    return frag;
+}
+
+function buildHighlightTemplate() {
+    const frag = document.createDocumentFragment();
+    const label = (state.highlightLabel || 'Tonight').trim();
+    const sizeClass = label.length > 10 ? 'very-long'
+                    : label.length > 7  ? 'long'
+                    : '';
+
+    const tpl = document.createElement('div');
+    tpl.className = 'tpl-highlight';
+    tpl.innerHTML = `
+        <div class="halftone"></div>
+        <div class="ring"></div>
+        <div class="badge acc-${escapeHtml(state.highlightAccent)}">
+            <div class="label-text ${sizeClass}">${escapeHtml(label)}</div>
+        </div>
+        <div class="corner-sticker">Brum<br>Out Loud</div>
+        <div class="brandmark">BRUMOUTLOUD.CO.UK</div>
+    `;
+    frag.appendChild(tpl);
+    return frag;
+}
+
+function buildStickerTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
     const { day, dateLine, time } = formatForAsset(ev);
 
@@ -196,7 +396,7 @@ function buildStickerTemplate(ev) {
     tpl.style.position = 'absolute';
     tpl.style.inset = '0';
     tpl.innerHTML = `
-        <div class="bg-img" style="background-image:url('${heroUrl(ev)}')"></div>
+        <div class="bg-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
         <div class="overlay"></div>
         <div class="top-sticker">${escapeHtml(primaryCategory(ev))}</div>
         <div class="date-pill">${escapeHtml(day)}</div>
@@ -214,7 +414,7 @@ function buildStickerTemplate(ev) {
     return frag;
 }
 
-function buildCardTemplate(ev) {
+function buildCardTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
     const { day, dateLine, time } = formatForAsset(ev);
 
@@ -226,7 +426,7 @@ function buildCardTemplate(ev) {
         <div class="card">
             <div class="kicker">${escapeHtml(day)} • ${escapeHtml(primaryCategory(ev))}</div>
             <div class="title">${escapeHtml(ev.name)}</div>
-            <div class="event-img" style="background-image:url('${heroUrl(ev)}')"></div>
+            <div class="event-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
             <div class="meta">
                 <div><i class="fas fa-calendar"></i>${escapeHtml(dateLine)}${time ? ' • ' + escapeHtml(time) : ''}</div>
                 <div><i class="fas fa-location-dot"></i>${escapeHtml(ev.venue?.name || 'Birmingham')}</div>
@@ -242,6 +442,7 @@ function buildCardTemplate(ev) {
 }
 
 function primaryCategory(ev) {
+    if (!ev) return 'Tonight';
     const cats = Array.isArray(ev.category) ? ev.category : (ev.category ? [ev.category] : []);
     return (cats[0] || 'Tonight').toString();
 }
@@ -249,7 +450,6 @@ function primaryCategory(ev) {
 // -- PNG / ZIP export -------------------------------------------------------
 
 async function renderEventToBlob(ev, format, template) {
-    // Build an off-screen stage at full pixel dimensions
     const off = document.createElement('div');
     off.style.position = 'fixed';
     off.style.left = '-20000px';
@@ -257,24 +457,17 @@ async function renderEventToBlob(ev, format, template) {
     off.style.zIndex = '-1';
     document.body.appendChild(off);
 
-    // Temporarily override state so builders render for the target format
-    const savedFmt = state.format, savedTpl = state.template;
-    state.format = format; state.template = template;
-
-    const stage = buildStage(ev);
-    // Exported PNGs should NOT show safe-zone guides
+    // No global state mutation — buildStage receives format/template explicitly.
+    const stage = buildStage(ev, { format, template });
     stage.classList.add('hide-safe-zone');
     off.appendChild(stage);
 
-    // Give remote images a beat to load
     await waitForImages(stage);
-
-    state.format = savedFmt; state.template = savedTpl;
 
     const canvas = await html2canvas(stage, {
         backgroundColor: null,
         useCORS: true,
-        allowTaint: true,
+        allowTaint: false,
         scale: 1,
         width: stage.offsetWidth,
         height: stage.offsetHeight,
@@ -286,8 +479,6 @@ async function renderEventToBlob(ev, format, template) {
 }
 
 async function waitForImages(root) {
-    // html2canvas handles <img>, but our templates use background-image.
-    // Preload the hero URL so it's in the browser cache before rasterizing.
     const bgEls = root.querySelectorAll('.bg-img, .event-img');
     const urls = [...bgEls].map(el => {
         const m = el.style.backgroundImage.match(/url\(["']?([^"')]+)/);
@@ -311,43 +502,84 @@ function fileNameFor(ev, format, template) {
 }
 
 async function downloadSingle() {
-    const ev = state.events.find(e => e.id === state.activeId);
-    if (!ev) return;
     const btn = document.getElementById('download-single');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Rendering…';
     try {
-        const blob = await renderEventToBlob(ev, state.format, state.template);
-        triggerDownload(blob, fileNameFor(ev, state.format, state.template));
+        let blob, filename;
+        if (state.template === 'lineup') {
+            blob = await renderAggregateToBlob(state.format, state.template);
+            filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.png`;
+        } else if (state.template === 'highlight') {
+            blob = await renderAggregateToBlob(state.format, state.template);
+            filename = `brum-outloud-highlight-${slugify(state.highlightLabel)}-${state.highlightAccent}.png`;
+        } else {
+            const ev = state.events.find(e => e.id === state.activeId);
+            if (!ev) return;
+            blob = await renderEventToBlob(ev, state.format, state.template);
+            filename = fileNameFor(ev, state.format, state.template);
+        }
+        triggerDownload(blob, filename);
     } catch (err) {
         console.error(err);
         alert(`Render failed: ${err.message}`);
     } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="fas fa-download mr-2"></i> Download PNG';
+        btn.disabled = false;
         updateDownloadButtons();
     }
 }
 
 async function downloadBatch() {
+    if (AGGREGATE_TEMPLATES.has(state.template) || EVENTLESS_TEMPLATES.has(state.template)) return;
     const selected = state.events.filter(e => state.selectedIds.has(e.id));
     if (selected.length === 0) return;
     const btn = document.getElementById('download-batch');
     btn.disabled = true;
     const zip = new JSZip();
+    // Snapshot format/template at click time — avoids mid-batch drift if user
+    // clicks another control while we iterate.
+    const fmt = state.format;
+    const tpl = state.template;
     for (let i = 0; i < selected.length; i++) {
         const ev = selected[i];
         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i + 1}/${selected.length}`;
         try {
-            const blob = await renderEventToBlob(ev, state.format, state.template);
-            zip.file(fileNameFor(ev, state.format, state.template), blob);
+            const blob = await renderEventToBlob(ev, fmt, tpl);
+            zip.file(fileNameFor(ev, fmt, tpl), blob);
         } catch (err) {
             console.error(`Failed to render ${ev.name}:`, err);
         }
     }
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    triggerDownload(zipBlob, `brum-outloud-${state.format}-${state.template}.zip`);
-    btn.disabled = false; btn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)';
+    triggerDownload(zipBlob, `brum-outloud-${fmt}-${tpl}.zip`);
+    btn.disabled = false;
     updateDownloadButtons();
+}
+
+async function renderAggregateToBlob(format, template) {
+    const off = document.createElement('div');
+    off.style.position = 'fixed';
+    off.style.left = '-20000px';
+    off.style.top = '0';
+    off.style.zIndex = '-1';
+    document.body.appendChild(off);
+
+    const stage = buildStage(null, { format, template });
+    stage.classList.add('hide-safe-zone');
+    off.appendChild(stage);
+    await waitForImages(stage);
+
+    const canvas = await html2canvas(stage, {
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: false,
+        scale: 1,
+        width: stage.offsetWidth,
+        height: stage.offsetHeight,
+        logging: false,
+    });
+    off.remove();
+    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
 function triggerDownload(blob, filename) {
@@ -359,13 +591,43 @@ function triggerDownload(blob, filename) {
 }
 
 function updateDownloadButtons() {
-    document.getElementById('download-single').disabled = !state.activeId;
-    document.getElementById('download-batch').disabled = state.selectedIds.size === 0;
+    const singleBtn = document.getElementById('download-single');
     const batchBtn = document.getElementById('download-batch');
-    const count = state.selectedIds.size;
-    batchBtn.innerHTML = count > 0
-        ? `<i class="fas fa-file-archive mr-2"></i> Download ZIP (${count})`
-        : '<i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)';
+
+    if (state.template === 'lineup') {
+        singleBtn.disabled = state.selectedIds.size === 0;
+        singleBtn.innerHTML = `<i class="fas fa-download mr-2"></i> Download Lineup (${state.selectedIds.size})`;
+        batchBtn.disabled = true;
+        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> ZIP not used for Lineup';
+    } else if (state.template === 'highlight') {
+        singleBtn.disabled = !(state.highlightLabel || '').trim();
+        singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Cover PNG';
+        batchBtn.disabled = true;
+        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> ZIP not used for Cover';
+    } else {
+        singleBtn.disabled = !state.activeId;
+        singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download PNG';
+        const count = state.selectedIds.size;
+        batchBtn.disabled = count === 0;
+        batchBtn.innerHTML = count > 0
+            ? `<i class="fas fa-file-archive mr-2"></i> Download ZIP (${count})`
+            : '<i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)';
+    }
+}
+
+function syncTemplateOptions() {
+    const lineup = document.getElementById('lineup-options');
+    const highlight = document.getElementById('highlight-options');
+    lineup.classList.toggle('hidden', state.template !== 'lineup');
+    highlight.classList.toggle('hidden', state.template !== 'highlight');
+
+    const storyOnly = STORY_ONLY_TEMPLATES.has(state.template);
+    document.querySelectorAll('#format-controls button').forEach(b => {
+        const isStory = b.dataset.format === 'story';
+        b.disabled = storyOnly && !isStory;
+        b.style.opacity = b.disabled ? '0.4' : '';
+        b.style.cursor = b.disabled ? 'not-allowed' : '';
+    });
 }
 
 // -- Wire-up ----------------------------------------------------------------
@@ -384,7 +646,7 @@ function wireControls() {
 
     document.getElementById('format-controls').addEventListener('click', e => {
         const btn = e.target.closest('button[data-format]');
-        if (!btn) return;
+        if (!btn || btn.disabled) return;
         state.format = btn.dataset.format;
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         renderPreview();
@@ -394,8 +656,39 @@ function wireControls() {
         const btn = e.target.closest('button[data-template]');
         if (!btn) return;
         state.template = btn.dataset.template;
-        [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
+        [...e.currentTarget.querySelectorAll('button[data-template]')].forEach(
+            b => b.classList.toggle('active', b === btn)
+        );
+        if (btn.dataset.forceFormat) {
+            state.format = btn.dataset.forceFormat;
+            document.querySelectorAll('#format-controls button').forEach(
+                b => b.classList.toggle('active', b.dataset.format === state.format)
+            );
+        }
+        syncTemplateOptions();
         renderPreview();
+        updateDownloadButtons();
+    });
+
+    document.getElementById('lineup-title').addEventListener('input', e => {
+        state.lineupTitle = e.target.value;
+        if (state.template === 'lineup') renderPreview();
+    });
+
+    document.getElementById('highlight-label').addEventListener('input', e => {
+        state.highlightLabel = e.target.value;
+        if (state.template === 'highlight') {
+            renderPreview();
+            updateDownloadButtons();
+        }
+    });
+
+    document.getElementById('highlight-accent').addEventListener('click', e => {
+        const btn = e.target.closest('button[data-accent]');
+        if (!btn) return;
+        state.highlightAccent = btn.dataset.accent;
+        [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
+        if (state.template === 'highlight') renderPreview();
     });
 
     document.getElementById('download-single').addEventListener('click', downloadSingle);

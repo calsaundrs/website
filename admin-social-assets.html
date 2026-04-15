@@ -263,6 +263,211 @@
         }
         .tpl-card .brand-bar .url { color: var(--color-toxic); }
 
+        /* Template: Weekly Lineup (story 1080x1920 only) ------------ */
+        .tpl-lineup {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+        }
+        .tpl-lineup .halftone {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(
+                rgba(155, 93, 229, 0.22) 2px, transparent 2.2px);
+            background-size: 22px 22px;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .tpl-lineup .header {
+            position: relative;
+            padding: 300px 60px 40px;
+        }
+        .tpl-lineup .kicker {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 18px;
+        }
+        .tpl-lineup .heading {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 160px;
+            line-height: 0.9;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -3px -2px 0 var(--color-pink),
+                3px 2px 0 var(--color-purple);
+        }
+        .tpl-lineup .list {
+            position: relative;
+            flex: 1;
+            padding: 40px 60px 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: hidden;
+        }
+        .tpl-lineup .item {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+            background: rgba(20, 20, 25, 0.78);
+            border: 3px solid rgba(243, 232, 255, 0.2);
+            padding: 20px 24px;
+            box-shadow: 6px 6px 0 var(--color-pink);
+        }
+        .tpl-lineup .item .daybox {
+            flex-shrink: 0;
+            width: 120px;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: var(--color-toxic);
+            color: #000;
+            padding: 14px 0;
+            border: 3px solid #000;
+        }
+        .tpl-lineup .item .daybox .d { font-size: 42px; line-height: 1; }
+        .tpl-lineup .item .daybox .m { font-size: 18px; letter-spacing: 0.15em; margin-top: 4px; }
+        .tpl-lineup .item .body { flex: 1; min-width: 0; }
+        .tpl-lineup .item .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 36px;
+            line-height: 1.05;
+            text-transform: uppercase;
+            color: #fff;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .tpl-lineup .item .sub {
+            margin-top: 8px;
+            font-size: 22px;
+            color: var(--color-light);
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tpl-lineup .footer {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 0 60px 90px;
+        }
+        .tpl-lineup .footer-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 26px;
+            color: var(--color-light);
+        }
+        .tpl-lineup .footer-inner .url { color: var(--color-toxic); }
+        .tpl-lineup .pride-bar {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 14px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
+        }
+        .tpl-lineup .overflow-pill {
+            align-self: center;
+            margin-top: 8px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--color-toxic);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        /* Template: Highlight Cover (story 1080x1920 only) ---------- */
+        /* IG crops to a center circle ~432x432 — keep focal content inside. */
+        .tpl-highlight {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .tpl-highlight .halftone {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.18) 2px, transparent 2.2px);
+            background-size: 20px 20px;
+            opacity: 0.8;
+        }
+        .tpl-highlight .ring {
+            position: absolute;
+            width: 760px; height: 760px;
+            border-radius: 50%;
+            border: 4px dashed rgba(243, 232, 255, 0.18);
+        }
+        .tpl-highlight .badge {
+            position: relative;
+            width: 540px; height: 540px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 40px;
+            line-height: 0.9;
+            box-shadow: 0 0 0 8px #000, 12px 12px 0 12px var(--color-pink);
+        }
+        .tpl-highlight .badge.acc-toxic  { background: var(--color-toxic);  color: #000; }
+        .tpl-highlight .badge.acc-pink   { background: var(--color-pink);   color: #fff; }
+        .tpl-highlight .badge.acc-purple { background: var(--color-purple); color: #fff; }
+        .tpl-highlight .badge.acc-pride {
+            background: linear-gradient(135deg,
+                #E40303 0%, #FF8C00 20%, #FFF430 40%,
+                #008026 60%, #004DFF 80%, #750787 100%);
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .tpl-highlight .badge .label-text {
+            font-size: clamp(80px, 16vw, 160px);
+        }
+        .tpl-highlight .badge .label-text.long { font-size: 110px; }
+        .tpl-highlight .badge .label-text.very-long { font-size: 80px; }
+        .tpl-highlight .brandmark {
+            position: absolute;
+            bottom: 120px;
+            left: 0; right: 0;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: 0.35em;
+            color: rgba(243, 232, 255, 0.6);
+        }
+        .tpl-highlight .corner-sticker {
+            position: absolute;
+            top: 320px; right: 80px;
+            background: #fff; color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            padding: 12px 20px;
+            font-size: 22px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 var(--color-toxic);
+            transform: rotate(-6deg);
+        }
+
         /* Event selector ---------------------------------------------- */
         .event-row {
             display: flex;
@@ -377,6 +582,29 @@
                     <div class="flex flex-wrap gap-2" id="template-controls">
                         <button class="seg-btn active" data-template="sticker">Sticker Poster</button>
                         <button class="seg-btn" data-template="card">Brutalist Card</button>
+                        <button class="seg-btn" data-template="lineup" data-force-format="story">Weekly Lineup</button>
+                        <button class="seg-btn" data-template="highlight" data-force-format="story">Highlight Cover</button>
+                    </div>
+                    <div id="lineup-options" class="hidden mt-3">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Header Title</label>
+                        <input id="lineup-title" type="text" value="This Week" maxlength="24"
+                            class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                    </div>
+                    <div id="highlight-options" class="hidden mt-3 space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Label</label>
+                            <input id="highlight-label" type="text" value="Tonight" maxlength="16"
+                                class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Accent</label>
+                            <div class="flex gap-2" id="highlight-accent">
+                                <button class="seg-btn active" data-accent="toxic">Lime</button>
+                                <button class="seg-btn" data-accent="pink">Pink</button>
+                                <button class="seg-btn" data-accent="purple">Purple</button>
+                                <button class="seg-btn" data-accent="pride">Pride</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
