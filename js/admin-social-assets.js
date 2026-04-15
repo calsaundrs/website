@@ -21,7 +21,10 @@ const state = {
     highlightAccent: 'toxic', // toxic | pink | purple | pride
 };
 
-const LINEUP_MAX_ITEMS = 6;
+// Cap per page. Picked so 2-line titles never collide with the pride-bar
+// footer at 1080×1920. If you bump this, re-check layout with 6 events
+// that all have long titles + subs.
+const LINEUP_MAX_ITEMS = 5;
 
 // Templates that must render as 1080×1920 story
 const STORY_ONLY_TEMPLATES = new Set(['lineup', 'highlight']);
