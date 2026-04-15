@@ -361,8 +361,12 @@
             text-overflow: ellipsis;
         }
         .tpl-lineup .item .sub {
-            margin-top: 8px;
+            margin-top: 6px;
             font-size: 22px;
+            /* Same html2canvas line-box offset as .title — bumped line-height
+               + bottom padding so descenders ('g', 'y', etc.) aren't clipped. */
+            line-height: 1.5;
+            padding-bottom: 2px;
             color: var(--color-light);
             opacity: 0.8;
             white-space: nowrap;
