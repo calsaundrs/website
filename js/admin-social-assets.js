@@ -528,7 +528,9 @@ function buildLineupHookTemplate({ format } = {}) {
     const frag = document.createDocumentFragment();
     const title = state.lineupTitle || lineupRangeLabel();
     const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 80);
-    const count = state.selectedIds.size;
+    // Count from the actual pages that will render — not selectedIds —
+    // so the cover copy can never drift from what's in the carousel.
+    const count = lineupPages().reduce((n, p) => n + p.length, 0);
     // Sub line says exactly what's inside the carousel — no jargon.
     const sub = count > 0
         ? `${count} queer event${count === 1 ? '' : 's'} to know about ↓`
@@ -836,6 +838,12 @@ function updateDownloadButtons() {
     const singleBtn = document.getElementById('download-single');
     const batchBtn = document.getElementById('download-batch');
 
+    // Batch button is only meaningful for the single-event templates
+    // with multiple events selected. Lineup and Highlight produce their
+    // own outputs from the single button, so hide batch in those modes.
+    batchBtn.classList.add('hidden');
+    batchBtn.disabled = true;
+
     if (state.template === 'lineup') {
         const slides = lineupSlides();
         // Even with zero events we let the user export hook+cta as covers.
@@ -843,21 +851,21 @@ function updateDownloadButtons() {
         singleBtn.innerHTML = slides.length > 1
             ? `<i class="fas fa-file-archive mr-2"></i> Download Carousel ZIP (${slides.length} slides)`
             : `<i class="fas fa-download mr-2"></i> Download Slide`;
-        batchBtn.disabled = true;
-        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> Multi-slide output auto-ZIPs';
     } else if (state.template === 'highlight') {
         singleBtn.disabled = !(state.highlightLabel || '').trim();
         singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Cover PNG';
-        batchBtn.disabled = true;
-        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> ZIP not used for Cover';
     } else {
         singleBtn.disabled = !state.activeId;
         singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download PNG';
         const count = state.selectedIds.size;
-        batchBtn.disabled = count === 0;
-        batchBtn.innerHTML = count > 0
-            ? `<i class="fas fa-file-archive mr-2"></i> Download ZIP (${count})`
-            : '<i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)';
+        // Only surface the ZIP button when there's something worth zipping
+        // (≥2 events). A "ZIP (1)" of a single PNG is confusing, and the
+        // empty-state label "Download ZIP (1)" looked like a bug.
+        if (count >= 2) {
+            batchBtn.classList.remove('hidden');
+            batchBtn.disabled = false;
+            batchBtn.innerHTML = `<i class="fas fa-file-archive mr-2"></i> Download ZIP (${count})`;
+        }
     }
 }
 
@@ -869,15 +877,25 @@ function syncTemplateOptions() {
 
     const storyOnly = STORY_ONLY_TEMPLATES.has(state.template);
     const allowed = TEMPLATE_ALLOWED_FORMATS[state.template];
+    // Hide (don't just dim) disallowed formats. Dimmed buttons looked
+    // clickable enough that testers thought clicks were silently dropped
+    // instead of forbidden — an opacity-0.4 button is indistinguishable
+    // from a hover state for anyone not in DevTools.
+    let visibleCount = 0;
     document.querySelectorAll('#format-controls button').forEach(b => {
         const fmt = b.dataset.format;
-        let disabled = false;
-        if (storyOnly) disabled = fmt !== 'story';
-        else if (allowed) disabled = !allowed.has(fmt);
-        b.disabled = disabled;
-        b.style.opacity = disabled ? '0.4' : '';
-        b.style.cursor = disabled ? 'not-allowed' : '';
+        let hidden = false;
+        if (storyOnly) hidden = fmt !== 'story';
+        else if (allowed) hidden = !allowed.has(fmt);
+        b.disabled = hidden;
+        b.classList.toggle('hidden', hidden);
+        if (!hidden) visibleCount++;
     });
+    // Hide the entire format selector when there's only one valid choice
+    // — no value in showing a one-button "selector".
+    const controls = document.getElementById('format-controls');
+    const wrapper = controls.closest('[data-format-wrapper]') || controls;
+    wrapper.classList.toggle('hidden', visibleCount <= 1);
 }
 
 // -- Wire-up ----------------------------------------------------------------
@@ -896,7 +914,7 @@ function wireControls() {
         const presetTitles = {
             'today': 'Tonight',
             'this-week': 'This Week',
-            'this-weekend': 'This Wknd',
+            'this-weekend': 'This Weekend',
             'next-week': 'Next Week',
             'this-month': 'This Month',
             'next-30-days': 'Coming Up'
