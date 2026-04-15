@@ -20,6 +20,9 @@ const state = {
     lineupSlideIdx: 0,       // index into lineupSlides() for preview pager
     lineupHook: true,        // include a hook (cover) slide at the start
     lineupCta: true,         // include a CTA slide at the end
+    cardTitle: 'This Week',  // title used on card-template Hook cover
+    cardHook: false,         // include a hook cover in card-template batch ZIPs
+    cardCta: false,          // include a CTA slide in card-template batch ZIPs
     highlightLabel: 'Tonight',
     highlightAccent: 'toxic', // toxic | pink | purple | pride
 };
@@ -384,7 +387,7 @@ function buildStage(ev, opts = {}) {
         // Lineup dispatches by slide kind (hook / page / cta) so the
         // same buildStage drives preview, single export, and ZIP pages.
         const kind = opts.lineupSlideKind || 'page';
-        if (kind === 'hook')      stage.appendChild(buildLineupHookTemplate({ format }));
+        if (kind === 'hook')      stage.appendChild(buildLineupHookTemplate({ format, titleOverride: opts.titleOverride, countOverride: opts.countOverride }));
         else if (kind === 'cta')  stage.appendChild(buildLineupCtaTemplate());
         else                      stage.appendChild(buildLineupTemplate({
             pageItems: opts.lineupPageItems,
@@ -524,13 +527,15 @@ function lineupRangeLabel() {
     return map[state.preset] || 'Coming Up';
 }
 
-function buildLineupHookTemplate({ format } = {}) {
+function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) {
     const frag = document.createDocumentFragment();
-    const title = state.lineupTitle || lineupRangeLabel();
+    const title = titleOverride || state.lineupTitle || lineupRangeLabel();
     const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 80);
     // Count from the actual pages that will render — not selectedIds —
     // so the cover copy can never drift from what's in the carousel.
-    const count = lineupPages().reduce((n, p) => n + p.length, 0);
+    const count = typeof countOverride === 'number'
+        ? countOverride
+        : lineupPages().reduce((n, p) => n + p.length, 0);
     // Sub line says exactly what's inside the carousel — no jargon.
     const sub = count > 0
         ? `${count} queer event${count === 1 ? '' : 's'} to know about ↓`
@@ -710,7 +715,9 @@ function slugify(s) {
 }
 
 function fileNameFor(ev, format, template) {
-    return `${slugify(ev.name)}-${format}-${template}.png`;
+    // Match the batch-ZIP naming convention: slug-template-format.png.
+    // Single-event downloads aren't numbered (no carousel ordering needed).
+    return `${slugify(ev.name)}-${template}-${format}.png`;
 }
 
 // Translate a lineupSlides() entry into the buildStage opts shape
@@ -737,6 +744,7 @@ async function downloadSingle() {
                 // Multi-slide carousel: ZIP with one PNG per slide,
                 // ordered hook → pages → cta.
                 const zip = new JSZip();
+                const titleSlug = slugify(state.lineupTitle || 'lineup');
                 for (let i = 0; i < slides.length; i++) {
                     const s = slides[i];
                     const tag = s.kind === 'hook' ? 'hook'
@@ -744,7 +752,10 @@ async function downloadSingle() {
                               : `page-${String(s.idx + 1).padStart(2, '0')}`;
                     btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Slide ${i + 1}/${slides.length}`;
                     const slideBlob = await renderAggregateToBlob(state.format, state.template, slideOptsFor(s));
-                    zip.file(`${String(i + 1).padStart(2, '0')}-${tag}.png`, slideBlob);
+                    // Same naming scheme as the card batch: nn-slug-template-format.png
+                    // so Finder / IG carousel uploads sort correctly in one glance.
+                    const prefix = String(i + 1).padStart(2, '0');
+                    zip.file(`${prefix}-${titleSlug}-${tag}-lineup-${state.format}.png`, slideBlob);
                 }
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
                 blob = await zip.generateAsync({ type: 'blob' });
@@ -783,19 +794,58 @@ async function downloadBatch() {
     // clicks another control while we iterate.
     const fmt = state.format;
     const tpl = state.template;
-    for (let i = 0; i < selected.length; i++) {
-        const ev = selected[i];
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i + 1}/${selected.length}`;
+
+    // Build the ordered list of render tasks: optional Hook cover, one slide
+    // per event, optional CTA. Prefix order chosen so the zip's alphabetical
+    // sort matches display order: 00- hook, 01-NN event slides, 99- cta.
+    // (Users have asked for this so "unzip → upload to IG in order" is a
+    // one-click workflow.)
+    const includeHook = tpl === 'card' && state.cardHook;
+    const includeCta  = tpl === 'card' && state.cardCta;
+    const tasks = [];
+    if (includeHook) {
+        tasks.push({ kind: 'hook', prefix: '00' });
+    }
+    selected.forEach((ev, i) => {
+        tasks.push({
+            kind: 'event',
+            ev,
+            prefix: String(i + 1).padStart(2, '0')
+        });
+    });
+    if (includeCta) {
+        tasks.push({ kind: 'cta', prefix: '99' });
+    }
+
+    for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i + 1}/${tasks.length}`;
         try {
-            const blob = await renderEventToBlob(ev, fmt, tpl);
-            zip.file(fileNameFor(ev, fmt, tpl), blob);
+            let blob, name;
+            if (task.kind === 'event') {
+                blob = await renderEventToBlob(task.ev, fmt, tpl);
+                name = `${task.prefix}-${slugify(task.ev.name)}-${tpl}-${fmt}.png`;
+            } else {
+                // Reuse the lineup hook/cta slide designs — they're
+                // format-aware and already brand-tight. Override the title
+                // and count so the cover reflects the batch, not the
+                // (possibly unused) lineup state.
+                blob = await renderAggregateToBlob(fmt, 'lineup', {
+                    lineupSlideKind: task.kind,
+                    titleOverride: state.cardTitle,
+                    countOverride: selected.length
+                });
+                name = `${task.prefix}-${task.kind}-${tpl}-${fmt}.png`;
+            }
+            zip.file(name, blob);
         } catch (err) {
-            console.error(`Failed to render ${ev.name}:`, err);
+            console.error(`Failed to render task ${task.kind}:`, err);
         }
     }
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    triggerDownload(zipBlob, `brum-outloud-${fmt}-${tpl}.zip`);
+    const zipTitle = tpl === 'card' ? slugify(state.cardTitle || 'batch') : tpl;
+    triggerDownload(zipBlob, `brum-outloud-${zipTitle}-${fmt}-${tpl}.zip`);
     btn.disabled = false;
     updateDownloadButtons();
 }
@@ -872,8 +922,10 @@ function updateDownloadButtons() {
 function syncTemplateOptions() {
     const lineup = document.getElementById('lineup-options');
     const highlight = document.getElementById('highlight-options');
+    const card = document.getElementById('card-options');
     lineup.classList.toggle('hidden', state.template !== 'lineup');
     highlight.classList.toggle('hidden', state.template !== 'highlight');
+    if (card) card.classList.toggle('hidden', state.template !== 'card');
 
     const storyOnly = STORY_ONLY_TEMPLATES.has(state.template);
     const allowed = TEMPLATE_ALLOWED_FORMATS[state.template];
@@ -924,6 +976,12 @@ function wireControls() {
             state.lineupTitle = matchedTitle;
             const titleInput = document.getElementById('lineup-title');
             if (titleInput) titleInput.value = matchedTitle;
+        }
+        // Same auto-sync for the card-batch carousel title.
+        if (matchedTitle && Object.values(presetTitles).includes(state.cardTitle)) {
+            state.cardTitle = matchedTitle;
+            const cardTitleInput = document.getElementById('card-title');
+            if (cardTitleInput) cardTitleInput.value = matchedTitle;
         }
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         fetchEvents();
@@ -992,6 +1050,23 @@ function wireControls() {
         }
     });
 
+    // Brutalist Card Hook / CTA / title toggles. Only affect the batch
+    // ZIP — single-event downloads stay unchanged.
+    const cardTitleEl = document.getElementById('card-title');
+    if (cardTitleEl) {
+        cardTitleEl.addEventListener('input', e => {
+            state.cardTitle = e.target.value;
+        });
+    }
+    const cardHookEl = document.getElementById('card-hook');
+    if (cardHookEl) {
+        cardHookEl.addEventListener('change', e => { state.cardHook = e.target.checked; });
+    }
+    const cardCtaEl = document.getElementById('card-cta');
+    if (cardCtaEl) {
+        cardCtaEl.addEventListener('change', e => { state.cardCta = e.target.checked; });
+    }
+
     document.getElementById('highlight-label').addEventListener('input', e => {
         state.highlightLabel = e.target.value;
         if (state.template === 'highlight') {
@@ -1036,3 +1111,44 @@ function wireControls() {
 
 wireControls();
 fetchEvents();
+
+// -- External automation surface --------------------------------------------
+// Exposed so headless agents (Claude Code, Cowork, etc.) can capture any
+// slide without triggering a browser download. Returns a PNG Blob that the
+// caller can turn into base64 and write directly to their workspace.
+//
+// Usage:
+//   const blob = await window.renderSlide(eventId, 'card', 'portrait');
+//   const buf  = await blob.arrayBuffer();
+//
+// Aggregate templates (lineup, highlight) ignore eventId — pass null.
+// Lineup returns slide #1 (the hook by default); pass `{ slideIdx: 2 }` as
+// a 4th arg to grab a specific slide.
+window.renderSlide = async function renderSlide(eventId, template, format, opts = {}) {
+    const tpl = template || state.template;
+    const fmt = format || state.format;
+
+    if (AGGREGATE_TEMPLATES.has(tpl)) {
+        if (tpl === 'lineup') {
+            const slides = lineupSlides();
+            if (slides.length === 0) {
+                throw new Error('renderSlide: no lineup slides — select events first');
+            }
+            const idx = Math.min(Math.max(opts.slideIdx ?? 0, 0), slides.length - 1);
+            return await renderAggregateToBlob(fmt, tpl, slideOptsFor(slides[idx]));
+        }
+        return await renderAggregateToBlob(fmt, tpl, opts);
+    }
+
+    if (EVENTLESS_TEMPLATES.has(tpl)) {
+        return await renderAggregateToBlob(fmt, tpl);
+    }
+
+    // Per-event templates need a real event. If eventId is null, fall back
+    // to the currently active event (useful for quick captures without
+    // having to look up the ID).
+    const id = eventId || state.activeId;
+    const ev = state.events.find(e => e.id === id);
+    if (!ev) throw new Error(`renderSlide: event "${eventId}" not found`);
+    return await renderEventToBlob(ev, fmt, tpl);
+};
