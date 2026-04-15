@@ -17,6 +17,9 @@ const state = {
     template: 'sticker',     // sticker | card | lineup | highlight
     lineupTitle: 'This Week',
     lineupPage: 0,           // which page to show when selection > MAX_ITEMS
+    lineupSlideIdx: 0,       // index into lineupSlides() for preview pager
+    lineupHook: true,        // include a hook (cover) slide at the start
+    lineupCta: true,         // include a CTA slide at the end
     highlightLabel: 'Tonight',
     highlightAccent: 'toxic', // toxic | pink | purple | pride
 };
@@ -27,7 +30,12 @@ const state = {
 const LINEUP_MAX_ITEMS = 5;
 
 // Templates that must render as 1080×1920 story
-const STORY_ONLY_TEMPLATES = new Set(['lineup', 'highlight']);
+const STORY_ONLY_TEMPLATES = new Set(['highlight']);
+// Templates with a restricted set of allowed formats (square doesn't make
+// sense for a vertical event list).
+const TEMPLATE_ALLOWED_FORMATS = {
+    lineup: new Set(['portrait', 'story'])
+};
 // Templates that aggregate multiple events instead of using the active one
 const AGGREGATE_TEMPLATES = new Set(['lineup']);
 // Templates that don't need any event data at all
@@ -206,6 +214,8 @@ function renderEventList() {
             // Keep lineup pager in range after selection changes.
             const pages = lineupPages();
             if (state.lineupPage >= pages.length) state.lineupPage = Math.max(0, pages.length - 1);
+            const slides = lineupSlides();
+            if (state.lineupSlideIdx >= slides.length) state.lineupSlideIdx = Math.max(0, slides.length - 1);
             renderEventList();
             renderPreview();
             updateDownloadButtons();
@@ -294,7 +304,19 @@ function renderPreview() {
         return;
     }
 
-    const stage = buildStage(ev, { format: state.format, template: state.template });
+    let stageOpts = { format: state.format, template: state.template };
+    if (state.template === 'lineup') {
+        const slides = lineupSlides();
+        const idx = Math.min(state.lineupSlideIdx, slides.length - 1);
+        const slide = slides[idx] || { kind: 'page', page: [], idx: 0, total: 1 };
+        stageOpts.lineupSlideKind = slide.kind;
+        if (slide.kind === 'page') {
+            stageOpts.lineupPageItems = slide.page;
+            stageOpts.lineupPageIdx = slide.idx;
+            stageOpts.lineupTotalPages = slide.total;
+        }
+    }
+    const stage = buildStage(ev, stageOpts);
     container.innerHTML = '';
     container.appendChild(stage);
 
@@ -310,10 +332,14 @@ function renderPreview() {
               : '1080×1920';
     let label;
     if (state.template === 'lineup') {
-        const pages = lineupPages();
+        const slides = lineupSlides();
+        const idx = Math.min(state.lineupSlideIdx, slides.length - 1);
+        const slide = slides[idx];
         const n = state.selectedIds.size;
-        label = `${n} event${n === 1 ? '' : 's'} in lineup` +
-            (pages.length > 1 ? ` • page ${Math.min(state.lineupPage, pages.length - 1) + 1} of ${pages.length}` : '');
+        const slideName = slide?.kind === 'hook' ? 'Hook'
+                        : slide?.kind === 'cta'  ? 'CTA'
+                        : `Page ${(slide?.idx ?? 0) + 1}`;
+        label = `${n} event${n === 1 ? '' : 's'} • ${slideName} (${idx + 1} / ${slides.length})`;
     } else if (state.template === 'highlight') {
         label = `"${state.highlightLabel}" highlight cover`;
     } else {
@@ -331,16 +357,20 @@ function updateLineupPager() {
         pager.classList.add('hidden');
         return;
     }
-    const pages = lineupPages();
-    if (pages.length <= 1) {
+    const slides = lineupSlides();
+    if (slides.length <= 1) {
         pager.classList.add('hidden');
         return;
     }
     pager.classList.remove('hidden');
-    const current = Math.min(state.lineupPage, pages.length - 1);
-    pager.querySelector('[data-pager-label]').textContent = `Page ${current + 1} / ${pages.length}`;
+    const current = Math.min(state.lineupSlideIdx, slides.length - 1);
+    const slide = slides[current];
+    const name = slide.kind === 'hook' ? 'Hook'
+              : slide.kind === 'cta'  ? 'CTA'
+              : `Page ${slide.idx + 1}`;
+    pager.querySelector('[data-pager-label]').textContent = `${name} (${current + 1} / ${slides.length})`;
     pager.querySelector('[data-pager-prev]').disabled = current === 0;
-    pager.querySelector('[data-pager-next]').disabled = current >= pages.length - 1;
+    pager.querySelector('[data-pager-next]').disabled = current >= slides.length - 1;
 }
 
 function buildStage(ev, opts = {}) {
@@ -350,9 +380,22 @@ function buildStage(ev, opts = {}) {
     stage.className = `asset-stage ${format}`;
     if (format === 'story') stage.classList.add('safe-zone');
 
+    if (template === 'lineup') {
+        // Lineup dispatches by slide kind (hook / page / cta) so the
+        // same buildStage drives preview, single export, and ZIP pages.
+        const kind = opts.lineupSlideKind || 'page';
+        if (kind === 'hook')      stage.appendChild(buildLineupHookTemplate({ format }));
+        else if (kind === 'cta')  stage.appendChild(buildLineupCtaTemplate());
+        else                      stage.appendChild(buildLineupTemplate({
+            pageItems: opts.lineupPageItems,
+            pageIdx: opts.lineupPageIdx,
+            totalPages: opts.lineupTotalPages
+        }));
+        return stage;
+    }
+
     switch (template) {
         case 'card':      stage.appendChild(buildCardTemplate(ev, { format })); break;
-        case 'lineup':    stage.appendChild(buildLineupTemplate(opts.lineupPage)); break;
         case 'highlight': stage.appendChild(buildHighlightTemplate()); break;
         case 'sticker':
         default:          stage.appendChild(buildStickerTemplate(ev, { format }));
@@ -382,6 +425,22 @@ function fitHeadingSize(text, maxWidth = 960, maxSize = 160, minSize = 60) {
     return best;
 }
 
+// Returns the full ordered list of slides for the current lineup:
+// optional hook → 1+ event pages → optional CTA. If no events selected,
+// hook/CTA still render (useful as standalone covers).
+function lineupSlides() {
+    const slides = [];
+    if (state.lineupHook) slides.push({ kind: 'hook' });
+    const pages = lineupPages();
+    pages.forEach((page, idx) => slides.push({ kind: 'page', page, idx, total: pages.length }));
+    if (pages.length === 0) {
+        // Empty placeholder so the preview shows something useful
+        slides.push({ kind: 'page', page: [], idx: 0, total: 1 });
+    }
+    if (state.lineupCta) slides.push({ kind: 'cta' });
+    return slides;
+}
+
 function lineupPages() {
     // Order selected events by date, then chunk into pages of LINEUP_MAX_ITEMS.
     const selected = state.events
@@ -399,22 +458,22 @@ function lineupPages() {
     return pages;
 }
 
-function buildLineupTemplate(pageOverride = null) {
-    // Aggregate templates read current selection/state — they're always
-    // invoked synchronously during preview or the user's export click, so
-    // there's no async window for state to drift.
+function buildLineupTemplate(opts = {}) {
+    // Aggregate template — reads current state but always invoked
+    // synchronously during preview / export click, so no async drift.
     const frag = document.createDocumentFragment();
     const pages = lineupPages();
-    const pageIdx = pageOverride != null
-        ? pageOverride
+    const pageIdx = opts.pageIdx != null
+        ? opts.pageIdx
         : Math.min(state.lineupPage, Math.max(0, pages.length - 1));
-    const shown = pages[pageIdx] || [];
+    const shown = opts.pageItems || pages[pageIdx] || [];
+    const totalPages = opts.totalPages != null ? opts.totalPages : pages.length;
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup';
     tpl.innerHTML = `
         <div class="halftone"></div>
-        ${pages.length > 1 ? `<div class="page-marker">${pageIdx + 1} / ${pages.length}</div>` : ''}
+        ${totalPages > 1 ? `<div class="page-marker">${pageIdx + 1} / ${totalPages}</div>` : ''}
         <div class="header">
             <div class="kicker">BRUM OUT LOUD</div>
             <div class="heading" style="font-size:${fitHeadingSize(state.lineupTitle || 'This Week')}px">${escapeHtml(state.lineupTitle || 'This Week')}</div>
@@ -445,6 +504,63 @@ function buildLineupTemplate(pageOverride = null) {
                 <span class="cta">See more →</span>
                 <span class="url">brumoutloud.co.uk</span>
             </div>
+        </div>
+        <div class="pride-bar"></div>
+    `;
+    frag.appendChild(tpl);
+    return frag;
+}
+
+// Pretty label for the date range (used as hook subtitle)
+function lineupRangeLabel() {
+    const map = {
+        'today': 'Tonight',
+        'this-week': 'This Week',
+        'this-weekend': 'This Weekend',
+        'next-week': 'Next Week',
+        'this-month': 'This Month',
+        'next-30-days': 'The Next 30 Days'
+    };
+    return map[state.preset] || 'Coming Up';
+}
+
+function buildLineupHookTemplate({ format } = {}) {
+    const frag = document.createDocumentFragment();
+    const title = state.lineupTitle || lineupRangeLabel();
+    // Hook gets a bigger headline budget than the page header (shorter
+    // padding, no daybox column constraint), so we measure against 940px.
+    const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 80);
+    const count = state.selectedIds.size;
+    const sub = count > 0
+        ? `${count} queer night${count === 1 ? '' : 's'} out across Birmingham`
+        : 'Queer nights out across Birmingham';
+
+    const tpl = document.createElement('div');
+    tpl.className = 'tpl-lineup-hook';
+    tpl.innerHTML = `
+        <div class="halftone"></div>
+        <div class="kicker">BRUM OUT LOUD ✦ ${escapeHtml(lineupRangeLabel())}</div>
+        <div class="heading" style="font-size:${fontSize}px">${escapeHtml(title)}</div>
+        <div class="sub">${escapeHtml(sub)}</div>
+        <div class="swipe">SWIPE →</div>
+        <div class="pride-bar"></div>
+    `;
+    frag.appendChild(tpl);
+    return frag;
+}
+
+function buildLineupCtaTemplate() {
+    const frag = document.createDocumentFragment();
+    const tpl = document.createElement('div');
+    tpl.className = 'tpl-lineup-cta';
+    tpl.innerHTML = `
+        <div class="halftone"></div>
+        <div class="kicker">SEE THE FULL LINEUP</div>
+        <div class="heading">Find Your<br>People.</div>
+        <div class="url">brumoutloud.co.uk</div>
+        <div class="actions">
+            <span class="chip">Save this</span>
+            <span class="chip">Tap →</span>
         </div>
         <div class="pride-bar"></div>
     `;
@@ -588,26 +704,44 @@ function fileNameFor(ev, format, template) {
     return `${slugify(ev.name)}-${format}-${template}.png`;
 }
 
+// Translate a lineupSlides() entry into the buildStage opts shape
+function slideOptsFor(slide) {
+    if (!slide) return { lineupSlideKind: 'page' };
+    if (slide.kind === 'hook') return { lineupSlideKind: 'hook' };
+    if (slide.kind === 'cta')  return { lineupSlideKind: 'cta' };
+    return {
+        lineupSlideKind: 'page',
+        lineupPageItems: slide.page,
+        lineupPageIdx: slide.idx,
+        lineupTotalPages: slide.total
+    };
+}
+
 async function downloadSingle() {
     const btn = document.getElementById('download-single');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Rendering…';
     try {
         let blob, filename;
         if (state.template === 'lineup') {
-            const pages = lineupPages();
-            if (pages.length > 1) {
-                // Multi-page lineup: ZIP with one PNG per page.
+            const slides = lineupSlides();
+            if (slides.length > 1) {
+                // Multi-slide carousel: ZIP with one PNG per slide,
+                // ordered hook → pages → cta.
                 const zip = new JSZip();
-                for (let i = 0; i < pages.length; i++) {
-                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Page ${i + 1}/${pages.length}`;
-                    const pageBlob = await renderAggregateToBlob(state.format, state.template, { lineupPage: i });
-                    zip.file(`${String(i + 1).padStart(2, '0')}-lineup.png`, pageBlob);
+                for (let i = 0; i < slides.length; i++) {
+                    const s = slides[i];
+                    const tag = s.kind === 'hook' ? 'hook'
+                              : s.kind === 'cta'  ? 'cta'
+                              : `page-${String(s.idx + 1).padStart(2, '0')}`;
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Slide ${i + 1}/${slides.length}`;
+                    const slideBlob = await renderAggregateToBlob(state.format, state.template, slideOptsFor(s));
+                    zip.file(`${String(i + 1).padStart(2, '0')}-${tag}.png`, slideBlob);
                 }
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
                 blob = await zip.generateAsync({ type: 'blob' });
                 filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.zip`;
             } else {
-                blob = await renderAggregateToBlob(state.format, state.template);
+                blob = await renderAggregateToBlob(state.format, state.template, slideOptsFor(slides[0]));
                 filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.png`;
             }
         } else if (state.template === 'highlight') {
@@ -696,13 +830,14 @@ function updateDownloadButtons() {
     const batchBtn = document.getElementById('download-batch');
 
     if (state.template === 'lineup') {
-        const pages = lineupPages();
-        singleBtn.disabled = state.selectedIds.size === 0;
-        singleBtn.innerHTML = pages.length > 1
-            ? `<i class="fas fa-file-archive mr-2"></i> Download Lineup ZIP (${pages.length} pages)`
-            : `<i class="fas fa-download mr-2"></i> Download Lineup (${state.selectedIds.size})`;
+        const slides = lineupSlides();
+        // Even with zero events we let the user export hook+cta as covers.
+        singleBtn.disabled = slides.length === 0;
+        singleBtn.innerHTML = slides.length > 1
+            ? `<i class="fas fa-file-archive mr-2"></i> Download Carousel ZIP (${slides.length} slides)`
+            : `<i class="fas fa-download mr-2"></i> Download Slide`;
         batchBtn.disabled = true;
-        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> Multi-page output auto-ZIPs';
+        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> Multi-slide output auto-ZIPs';
     } else if (state.template === 'highlight') {
         singleBtn.disabled = !(state.highlightLabel || '').trim();
         singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Cover PNG';
@@ -726,11 +861,15 @@ function syncTemplateOptions() {
     highlight.classList.toggle('hidden', state.template !== 'highlight');
 
     const storyOnly = STORY_ONLY_TEMPLATES.has(state.template);
+    const allowed = TEMPLATE_ALLOWED_FORMATS[state.template];
     document.querySelectorAll('#format-controls button').forEach(b => {
-        const isStory = b.dataset.format === 'story';
-        b.disabled = storyOnly && !isStory;
-        b.style.opacity = b.disabled ? '0.4' : '';
-        b.style.cursor = b.disabled ? 'not-allowed' : '';
+        const fmt = b.dataset.format;
+        let disabled = false;
+        if (storyOnly) disabled = fmt !== 'story';
+        else if (allowed) disabled = !allowed.has(fmt);
+        b.disabled = disabled;
+        b.style.opacity = disabled ? '0.4' : '';
+        b.style.cursor = disabled ? 'not-allowed' : '';
     });
 }
 
@@ -744,6 +883,7 @@ function wireControls() {
         state.selectedIds.clear();
         state.activeId = null;
         state.lineupPage = 0;
+        state.lineupSlideIdx = 0;
         // Sync Lineup header title to the chosen range (only if user hasn't
         // customized it — we match the button label for each known preset).
         const presetTitles = {
@@ -796,17 +936,35 @@ function wireControls() {
         if (state.template === 'lineup') renderPreview();
     });
 
-    // Lineup pager (prev / next)
+    // Lineup pager (prev / next) — cycles through hook + pages + cta
     document.getElementById('lineup-pager').addEventListener('click', e => {
         const prev = e.target.closest('[data-pager-prev]');
         const next = e.target.closest('[data-pager-next]');
         if (!prev && !next) return;
-        const pages = lineupPages();
-        if (pages.length <= 1) return;
-        const cur = Math.min(state.lineupPage, pages.length - 1);
-        if (prev && cur > 0) state.lineupPage = cur - 1;
-        if (next && cur < pages.length - 1) state.lineupPage = cur + 1;
+        const slides = lineupSlides();
+        if (slides.length <= 1) return;
+        const cur = Math.min(state.lineupSlideIdx, slides.length - 1);
+        if (prev && cur > 0) state.lineupSlideIdx = cur - 1;
+        if (next && cur < slides.length - 1) state.lineupSlideIdx = cur + 1;
         renderPreview();
+    });
+
+    // Hook / CTA toggles
+    document.getElementById('lineup-hook').addEventListener('change', e => {
+        state.lineupHook = e.target.checked;
+        state.lineupSlideIdx = 0;
+        if (state.template === 'lineup') {
+            renderPreview();
+            updateDownloadButtons();
+        }
+    });
+    document.getElementById('lineup-cta').addEventListener('change', e => {
+        state.lineupCta = e.target.checked;
+        state.lineupSlideIdx = 0;
+        if (state.template === 'lineup') {
+            renderPreview();
+            updateDownloadButtons();
+        }
     });
 
     document.getElementById('highlight-label').addEventListener('input', e => {
@@ -834,6 +992,7 @@ function wireControls() {
         if (!state.activeId) state.activeId = state.events[0].id;
         // Reset to first page in case the new selection extends beyond it.
         state.lineupPage = 0;
+        state.lineupSlideIdx = 0;
         renderEventList();
         renderPreview();
         updateDownloadButtons();
@@ -843,6 +1002,7 @@ function wireControls() {
         state.selectedIds.clear();
         state.activeId = null;
         state.lineupPage = 0;
+        state.lineupSlideIdx = 0;
         renderEventList();
         renderPreview();
         updateDownloadButtons();

@@ -283,6 +283,11 @@
             padding: 300px 60px 40px;
             overflow: hidden;
         }
+        /* Portrait carousel variant — no story safe-zone, tighter header */
+        .asset-stage.portrait .tpl-lineup .header { padding: 80px 60px 30px; }
+        .asset-stage.portrait .tpl-lineup .list { padding: 20px 60px 130px; }
+        .asset-stage.portrait .tpl-lineup .page-marker { top: 50px; }
+        .asset-stage.portrait .tpl-lineup .footer { padding: 0 60px 70px; }
         .tpl-lineup .kicker {
             font-family: 'Syne', sans-serif;
             font-weight: 700;
@@ -419,6 +424,152 @@
             color: var(--color-toxic);
             letter-spacing: 0.2em;
             text-transform: uppercase;
+        }
+
+        /* Lineup Hook slide — opener that invites the swipe.
+           Brand mark, big lineup title, range subtitle, swipe arrow. */
+        .tpl-lineup-hook {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 90px 70px;
+            overflow: hidden;
+        }
+        .tpl-lineup-hook .halftone {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.22) 2px, transparent 2.2px);
+            background-size: 24px 24px;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .tpl-lineup-hook .kicker {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 30px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 28px;
+        }
+        .tpl-lineup-hook .heading {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -4px -3px 0 var(--color-pink),
+                4px 3px 0 var(--color-purple);
+            white-space: nowrap;
+            margin-bottom: 36px;
+        }
+        .tpl-lineup-hook .sub {
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            font-size: 38px;
+            line-height: 1.2;
+            color: var(--color-light);
+            opacity: 0.85;
+            max-width: 80%;
+        }
+        .tpl-lineup-hook .swipe {
+            position: absolute;
+            right: 70px; bottom: 110px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 40px;
+            letter-spacing: 0.25em;
+            color: var(--color-toxic);
+            text-transform: uppercase;
+        }
+        .tpl-lineup-hook .pride-bar {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 14px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
+        }
+
+        /* Lineup CTA slide — closer urging save / share / visit site. */
+        .tpl-lineup-cta {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 90px 80px;
+            overflow: hidden;
+        }
+        .tpl-lineup-cta .halftone {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(
+                rgba(155, 93, 229, 0.22) 2px, transparent 2.2px);
+            background-size: 24px 24px;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+        .tpl-lineup-cta .kicker {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 32px;
+        }
+        .tpl-lineup-cta .heading {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 130px;
+            line-height: 0.95;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -4px -3px 0 var(--color-pink),
+                4px 3px 0 var(--color-purple);
+            margin-bottom: 40px;
+        }
+        .tpl-lineup-cta .url {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 56px;
+            color: var(--color-toxic);
+            letter-spacing: 0.05em;
+            margin-bottom: 60px;
+        }
+        .tpl-lineup-cta .actions {
+            position: relative;
+            display: flex;
+            gap: 24px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--color-light);
+        }
+        .tpl-lineup-cta .actions .chip {
+            border: 3px solid var(--color-light);
+            padding: 14px 22px;
+        }
+        .tpl-lineup-cta .pride-bar {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 14px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
         }
 
         /* Template: Highlight Cover (story 1080x1920 only) ---------- */
@@ -623,19 +774,29 @@
                     <div class="flex flex-wrap gap-2" id="template-controls">
                         <button class="seg-btn active" data-template="sticker">Sticker Poster</button>
                         <button class="seg-btn" data-template="card">Brutalist Card</button>
-                        <button class="seg-btn" data-template="lineup" data-force-format="story">Weekly Lineup</button>
+                        <button class="seg-btn" data-template="lineup" data-force-format="portrait">Weekly Lineup</button>
                         <button class="seg-btn" data-template="highlight" data-force-format="story">Highlight Cover</button>
                     </div>
                     <div id="lineup-options" class="hidden mt-3">
                         <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Header Title</label>
                         <input id="lineup-title" type="text" value="This Week" maxlength="24"
                             class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="lineup-hook" type="checkbox" checked class="accent-[var(--color-toxic)]">
+                                Hook slide
+                            </label>
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="lineup-cta" type="checkbox" checked class="accent-[var(--color-toxic)]">
+                                CTA slide
+                            </label>
+                        </div>
                         <div class="mt-2 text-[11px] opacity-60 leading-snug">
-                            Up to 5 events per page. Extra events auto-split into a multi-page ZIP — perfect for an Instagram carousel or a sequence of stories.
+                            Best for Instagram carousels in 4:5 portrait. Hook slide opens with the title to earn the swipe; CTA slide closes with a "save / see more" prompt. Up to 5 events per content page; extra events auto-split into multiple slides.
                         </div>
                         <div id="lineup-pager" class="hidden mt-3 flex items-center gap-2">
                             <button type="button" class="seg-btn" data-pager-prev><i class="fas fa-chevron-left"></i></button>
-                            <span class="text-xs font-bold uppercase tracking-widest flex-1 text-center" data-pager-label>Page 1 / 1</span>
+                            <span class="text-xs font-bold uppercase tracking-widest flex-1 text-center" data-pager-label>Slide 1 / 1</span>
                             <button type="button" class="seg-btn" data-pager-next><i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
