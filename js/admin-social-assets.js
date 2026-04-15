@@ -16,9 +16,12 @@ const state = {
     format: 'square',        // square | portrait | story
     template: 'sticker',     // sticker | card | lineup | highlight
     lineupTitle: 'This Week',
+    lineupPage: 0,           // which page to show when selection > MAX_ITEMS
     highlightLabel: 'Tonight',
     highlightAccent: 'toxic', // toxic | pink | purple | pride
 };
+
+const LINEUP_MAX_ITEMS = 6;
 
 // Templates that must render as 1080×1920 story
 const STORY_ONLY_TEMPLATES = new Set(['lineup', 'highlight']);
@@ -177,26 +180,33 @@ function renderEventList() {
         `;
         row.appendChild(meta);
 
-        const handleSelect = (multi) => {
-            if (multi) {
-                if (state.selectedIds.has(ev.id)) state.selectedIds.delete(ev.id);
-                else state.selectedIds.add(ev.id);
+        const handleSelect = () => {
+            // Plain click toggles selection. If selecting, also make active.
+            // If unselecting the active event, promote another selected
+            // event (or null) to active so the preview doesn't go stale.
+            if (state.selectedIds.has(ev.id)) {
+                state.selectedIds.delete(ev.id);
+                if (state.activeId === ev.id) {
+                    const next = state.events.find(e => state.selectedIds.has(e.id));
+                    state.activeId = next ? next.id : null;
+                }
             } else {
-                state.activeId = ev.id;
                 state.selectedIds.add(ev.id);
+                state.activeId = ev.id;
             }
+            // Keep lineup pager in range after selection changes.
+            const pages = lineupPages();
+            if (state.lineupPage >= pages.length) state.lineupPage = Math.max(0, pages.length - 1);
             renderEventList();
             renderPreview();
             updateDownloadButtons();
         };
 
-        row.addEventListener('click', (e) => {
-            handleSelect(e.shiftKey || e.metaKey || e.ctrlKey);
-        });
+        row.addEventListener('click', () => handleSelect());
         row.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                handleSelect(e.shiftKey || e.metaKey || e.ctrlKey);
+                handleSelect();
             }
         });
 
@@ -289,11 +299,39 @@ function renderPreview() {
     const fmt = state.format === 'square' ? '1080×1080'
               : state.format === 'portrait' ? '1080×1350'
               : '1080×1920';
-    const label =
-        state.template === 'lineup'    ? `${state.selectedIds.size} event${state.selectedIds.size === 1 ? '' : 's'} in lineup`
-      : state.template === 'highlight' ? `"${state.highlightLabel}" highlight cover`
-      : ev ? ev.name : '';
+    let label;
+    if (state.template === 'lineup') {
+        const pages = lineupPages();
+        const n = state.selectedIds.size;
+        label = `${n} event${n === 1 ? '' : 's'} in lineup` +
+            (pages.length > 1 ? ` • page ${Math.min(state.lineupPage, pages.length - 1) + 1} of ${pages.length}` : '');
+    } else if (state.template === 'highlight') {
+        label = `"${state.highlightLabel}" highlight cover`;
+    } else {
+        label = ev ? ev.name : '';
+    }
     meta.textContent = `${label} — ${fmt} • ${state.template}`;
+
+    updateLineupPager();
+}
+
+function updateLineupPager() {
+    const pager = document.getElementById('lineup-pager');
+    if (!pager) return;
+    if (state.template !== 'lineup') {
+        pager.classList.add('hidden');
+        return;
+    }
+    const pages = lineupPages();
+    if (pages.length <= 1) {
+        pager.classList.add('hidden');
+        return;
+    }
+    pager.classList.remove('hidden');
+    const current = Math.min(state.lineupPage, pages.length - 1);
+    pager.querySelector('[data-pager-label]').textContent = `Page ${current + 1} / ${pages.length}`;
+    pager.querySelector('[data-pager-prev]').disabled = current === 0;
+    pager.querySelector('[data-pager-next]').disabled = current >= pages.length - 1;
 }
 
 function buildStage(ev, opts = {}) {
@@ -305,7 +343,7 @@ function buildStage(ev, opts = {}) {
 
     switch (template) {
         case 'card':      stage.appendChild(buildCardTemplate(ev, { format })); break;
-        case 'lineup':    stage.appendChild(buildLineupTemplate()); break;
+        case 'lineup':    stage.appendChild(buildLineupTemplate(opts.lineupPage)); break;
         case 'highlight': stage.appendChild(buildHighlightTemplate()); break;
         case 'sticker':
         default:          stage.appendChild(buildStickerTemplate(ev, { format }));
@@ -313,15 +351,34 @@ function buildStage(ev, opts = {}) {
     return stage;
 }
 
-function buildLineupTemplate() {
+function lineupPages() {
+    // Order selected events by date, then chunk into pages of LINEUP_MAX_ITEMS.
+    const selected = state.events
+        .filter(e => state.selectedIds.has(e.id))
+        .slice()
+        .sort((a, b) => {
+            const da = a.date ? new Date(a.date).getTime() : Infinity;
+            const db = b.date ? new Date(b.date).getTime() : Infinity;
+            return da - db;
+        });
+    const pages = [];
+    for (let i = 0; i < selected.length; i += LINEUP_MAX_ITEMS) {
+        pages.push(selected.slice(i, i + LINEUP_MAX_ITEMS));
+    }
+    return pages;
+}
+
+function buildLineupTemplate(pageOverride = null) {
     // Aggregate templates read current selection/state — they're always
     // invoked synchronously during preview or the user's export click, so
     // there's no async window for state to drift.
     const frag = document.createDocumentFragment();
-    const events = state.events.filter(e => state.selectedIds.has(e.id));
-    const MAX_ITEMS = 6;
-    const shown = events.slice(0, MAX_ITEMS);
-    const overflow = Math.max(0, events.length - MAX_ITEMS);
+    const pages = lineupPages();
+    const pageIdx = pageOverride != null
+        ? pageOverride
+        : Math.min(state.lineupPage, Math.max(0, pages.length - 1));
+    const shown = pages[pageIdx] || [];
+    const pageSuffix = pages.length > 1 ? ` ${pageIdx + 1}/${pages.length}` : '';
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup';
@@ -329,7 +386,7 @@ function buildLineupTemplate() {
         <div class="halftone"></div>
         <div class="header">
             <div class="kicker">BRUM OUT LOUD</div>
-            <div class="heading">${escapeHtml(state.lineupTitle || 'This Week')}</div>
+            <div class="heading">${escapeHtml((state.lineupTitle || 'This Week') + pageSuffix)}</div>
         </div>
         <div class="list">
             ${shown.map(ev => {
@@ -350,8 +407,8 @@ function buildLineupTemplate() {
                     </div>
                 `;
             }).join('')}
-            ${overflow > 0 ? `<div class="overflow-pill">+ ${overflow} more at brumoutloud.co.uk</div>` : ''}
             ${shown.length === 0 ? `<div class="overflow-pill" style="color:var(--color-light);opacity:0.6;">Select events on the left →</div>` : ''}
+            ${pages.length > 1 ? `<div class="overflow-pill">Swipe for page ${pageIdx + 1} of ${pages.length} • brumoutloud.co.uk</div>` : ''}
         </div>
         <div class="footer">
             <div class="footer-inner">
@@ -507,8 +564,22 @@ async function downloadSingle() {
     try {
         let blob, filename;
         if (state.template === 'lineup') {
-            blob = await renderAggregateToBlob(state.format, state.template);
-            filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.png`;
+            const pages = lineupPages();
+            if (pages.length > 1) {
+                // Multi-page lineup: ZIP with one PNG per page.
+                const zip = new JSZip();
+                for (let i = 0; i < pages.length; i++) {
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Page ${i + 1}/${pages.length}`;
+                    const pageBlob = await renderAggregateToBlob(state.format, state.template, { lineupPage: i });
+                    zip.file(`${String(i + 1).padStart(2, '0')}-lineup.png`, pageBlob);
+                }
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
+                blob = await zip.generateAsync({ type: 'blob' });
+                filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.zip`;
+            } else {
+                blob = await renderAggregateToBlob(state.format, state.template);
+                filename = `brum-outloud-lineup-${slugify(state.lineupTitle)}.png`;
+            }
         } else if (state.template === 'highlight') {
             blob = await renderAggregateToBlob(state.format, state.template);
             filename = `brum-outloud-highlight-${slugify(state.highlightLabel)}-${state.highlightAccent}.png`;
@@ -556,7 +627,7 @@ async function downloadBatch() {
     updateDownloadButtons();
 }
 
-async function renderAggregateToBlob(format, template) {
+async function renderAggregateToBlob(format, template, extra = {}) {
     const off = document.createElement('div');
     off.style.position = 'fixed';
     off.style.left = '-20000px';
@@ -564,7 +635,7 @@ async function renderAggregateToBlob(format, template) {
     off.style.zIndex = '-1';
     document.body.appendChild(off);
 
-    const stage = buildStage(null, { format, template });
+    const stage = buildStage(null, { format, template, ...extra });
     stage.classList.add('hide-safe-zone');
     off.appendChild(stage);
     await waitForImages(stage);
@@ -595,10 +666,13 @@ function updateDownloadButtons() {
     const batchBtn = document.getElementById('download-batch');
 
     if (state.template === 'lineup') {
+        const pages = lineupPages();
         singleBtn.disabled = state.selectedIds.size === 0;
-        singleBtn.innerHTML = `<i class="fas fa-download mr-2"></i> Download Lineup (${state.selectedIds.size})`;
+        singleBtn.innerHTML = pages.length > 1
+            ? `<i class="fas fa-file-archive mr-2"></i> Download Lineup ZIP (${pages.length} pages)`
+            : `<i class="fas fa-download mr-2"></i> Download Lineup (${state.selectedIds.size})`;
         batchBtn.disabled = true;
-        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> ZIP not used for Lineup';
+        batchBtn.innerHTML = '<i class="fas fa-file-archive mr-2"></i> Multi-page output auto-ZIPs';
     } else if (state.template === 'highlight') {
         singleBtn.disabled = !(state.highlightLabel || '').trim();
         singleBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Cover PNG';
@@ -639,6 +713,7 @@ function wireControls() {
         state.preset = btn.dataset.preset;
         state.selectedIds.clear();
         state.activeId = null;
+        state.lineupPage = 0;
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         fetchEvents();
         updateDownloadButtons();
@@ -673,6 +748,19 @@ function wireControls() {
     document.getElementById('lineup-title').addEventListener('input', e => {
         state.lineupTitle = e.target.value;
         if (state.template === 'lineup') renderPreview();
+    });
+
+    // Lineup pager (prev / next)
+    document.getElementById('lineup-pager').addEventListener('click', e => {
+        const prev = e.target.closest('[data-pager-prev]');
+        const next = e.target.closest('[data-pager-next]');
+        if (!prev && !next) return;
+        const pages = lineupPages();
+        if (pages.length <= 1) return;
+        const cur = Math.min(state.lineupPage, pages.length - 1);
+        if (prev && cur > 0) state.lineupPage = cur - 1;
+        if (next && cur < pages.length - 1) state.lineupPage = cur + 1;
+        renderPreview();
     });
 
     document.getElementById('highlight-label').addEventListener('input', e => {
