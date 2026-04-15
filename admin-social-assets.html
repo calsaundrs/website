@@ -281,6 +281,7 @@
         .tpl-lineup .header {
             position: relative;
             padding: 300px 60px 40px;
+            overflow: hidden;
         }
         .tpl-lineup .kicker {
             font-family: 'Syne', sans-serif;
@@ -319,10 +320,15 @@
             display: flex;
             gap: 26px;
             align-items: center;
-            background: rgba(20, 20, 25, 0.78);
-            border: 3px solid rgba(243, 232, 255, 0.2);
+            /* Solid bg + solid borders only — html2canvas paints rgba() and
+               box-shadow inconsistently and the "pink brick" rendering bug
+               came from a phantom-painted shadow over an alpha background. */
+            background: #14141A;
+            border-top: 3px solid #2a2a35;
+            border-bottom: 3px solid #2a2a35;
+            border-left: 6px solid var(--color-pink);
+            border-right: 3px solid #2a2a35;
             padding: 20px 24px;
-            box-shadow: 6px 6px 0 var(--color-pink);
         }
         .tpl-lineup .item .daybox {
             flex-shrink: 0;
@@ -342,14 +348,15 @@
         .tpl-lineup .item .title {
             font-family: 'Syne', sans-serif;
             font-weight: 800;
-            font-size: 36px;
+            font-size: 34px;
             line-height: 1.05;
             text-transform: uppercase;
             color: #fff;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            /* Single line + ellipsis — html2canvas doesn't render
+               -webkit-line-clamp and used to clip text mid-glyph. */
+            white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
         .tpl-lineup .item .sub {
             margin-top: 8px;

@@ -67,8 +67,14 @@ function normalizeEvent(raw) {
     if (!raw || !raw.id) return null;
     const dateStr = raw.date || raw.Date;
     const d = dateStr ? new Date(dateStr) : null;
-    const hasTime = d && !isNaN(d.getTime());
-    const time = hasTime
+    // Only treat the source as having a real time-of-day if the string
+    // includes a time portion (e.g. "T19:30") AND that time isn't midnight.
+    // Date-only strings like "2025-04-17" become UTC midnight → 01:00 BST,
+    // which we want to suppress entirely.
+    const hasExplicitTime = typeof dateStr === 'string'
+        && /T\d{2}:\d{2}/.test(dateStr)
+        && !/T00:00(:00)?(\.\d+)?Z?$/.test(dateStr);
+    const time = (d && !isNaN(d.getTime()) && hasExplicitTime)
         ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
         : '';
     const venueName = (raw.venue && raw.venue.name)
@@ -359,9 +365,9 @@ function buildStage(ev, opts = {}) {
 // Tiers are conservative — Syne 800 is ~0.55em per char.
 function headingSizeClass(text) {
     const len = String(text || '').trim().length;
-    if (len >= 16) return 'heading-xs';
-    if (len >= 13) return 'heading-sm';
-    if (len >= 11) return 'heading-md';
+    if (len >= 14) return 'heading-xs';
+    if (len >= 11) return 'heading-sm';
+    if (len >= 8)  return 'heading-md';
     return '';
 }
 
