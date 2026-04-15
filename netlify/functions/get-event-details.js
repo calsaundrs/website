@@ -711,11 +711,52 @@ exports.handler = async function (event, context) {
             eventSchema.image = eventData.image.url;
         }
 
-        if (eventData.details?.link) {
-            eventSchema.offers = {
+        if (eventData.details?.link || eventData.details?.price) {
+            const offers = {
                 "@type": "Offer",
-                "url": eventData.details.link
+                "priceCurrency": "GBP",
+                "availability": "https://schema.org/InStock"
             };
+
+            if (eventData.details?.link) {
+                offers.url = eventData.details.link;
+            }
+
+            // Parse price from freeform strings like "£10", "£5-£10", "Free", "£8 adv / £10 door"
+            const priceStr = eventData.details?.price;
+            if (priceStr) {
+                const match = String(priceStr).match(/(\d+(?:\.\d+)?)/);
+                if (match) {
+                    offers.price = match[1];
+                } else if (/free|gratis/i.test(priceStr)) {
+                    offers.price = "0";
+                } else {
+                    offers.price = "0";
+                }
+            } else {
+                offers.price = "0";
+            }
+
+            // validFrom — when the offer became available. Prefer createdAt/submittedAt/approvedAt,
+            // fall back to 7 days before the event start.
+            const validFromSource = eventData.createdAt || eventData.submittedAt || eventData.approvedAt;
+            if (validFromSource) {
+                try {
+                    const d = validFromSource.toDate ? validFromSource.toDate() : new Date(validFromSource);
+                    if (!isNaN(d.getTime())) {
+                        offers.validFrom = d.toISOString();
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            if (!offers.validFrom && eventData.date) {
+                try {
+                    const d = new Date(eventData.date);
+                    d.setDate(d.getDate() - 7);
+                    if (!isNaN(d.getTime())) offers.validFrom = d.toISOString();
+                } catch (e) { /* ignore */ }
+            }
+
+            eventSchema.offers = offers;
         }
 
         if (eventData.date) {
