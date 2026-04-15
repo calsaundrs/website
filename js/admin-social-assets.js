@@ -827,6 +827,26 @@ function wireControls() {
 
     document.getElementById('download-single').addEventListener('click', downloadSingle);
     document.getElementById('download-batch').addEventListener('click', downloadBatch);
+
+    document.getElementById('select-all-btn').addEventListener('click', () => {
+        if (state.events.length === 0) return;
+        state.events.forEach(ev => state.selectedIds.add(ev.id));
+        if (!state.activeId) state.activeId = state.events[0].id;
+        // Reset to first page in case the new selection extends beyond it.
+        state.lineupPage = 0;
+        renderEventList();
+        renderPreview();
+        updateDownloadButtons();
+    });
+
+    document.getElementById('clear-selection-btn').addEventListener('click', () => {
+        state.selectedIds.clear();
+        state.activeId = null;
+        state.lineupPage = 0;
+        renderEventList();
+        renderPreview();
+        updateDownloadButtons();
+    });
 }
 
 wireControls();

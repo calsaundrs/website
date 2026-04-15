@@ -348,11 +348,14 @@
             font-family: 'Syne', sans-serif;
             font-weight: 800;
             font-size: 34px;
-            line-height: 1.05;
+            /* line-height intentionally generous: html2canvas positions the
+               line box at the top of the element but the glyph baseline
+               sits lower, so anything tighter than ~1.4 clips the bottom
+               half of the letters when overflow is hidden. */
+            line-height: 1.5;
+            padding-bottom: 2px;
             text-transform: uppercase;
             color: #fff;
-            /* Single line + ellipsis — html2canvas doesn't render
-               -webkit-line-clamp and used to clip text mid-glyph. */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -579,9 +582,17 @@
                 </div>
 
                 <div class="p-4 border-2 border-white/10 rounded bg-black/20">
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-3 gap-2">
                         <label class="text-xs font-bold uppercase tracking-widest opacity-70">Events</label>
-                        <span class="text-xs opacity-60" id="event-count">—</span>
+                        <span class="text-xs opacity-60 flex-1 text-right" id="event-count">—</span>
+                        <button id="select-all-btn" type="button"
+                            class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-white/20 hover:border-[var(--color-toxic)] hover:text-[var(--color-toxic)] transition-colors">
+                            Select all
+                        </button>
+                        <button id="clear-selection-btn" type="button"
+                            class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-white/20 hover:border-[var(--color-pink)] hover:text-[var(--color-pink)] transition-colors">
+                            Clear
+                        </button>
                     </div>
                     <div class="space-y-2 max-h-[calc(100vh-340px)] overflow-y-auto pr-1" id="event-list">
                         <div class="text-center py-10 opacity-50 text-sm">Loading events...</div>
