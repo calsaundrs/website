@@ -1,6 +1,6 @@
-const CACHE_NAME = 'brumoutloud-cache-v5';
-const STATIC_CACHE = 'brumoutloud-static-v5';
-const DYNAMIC_CACHE = 'brumoutloud-dynamic-v5';
+const CACHE_NAME = 'brumoutloud-cache-v6';
+const STATIC_CACHE = 'brumoutloud-static-v6';
+const DYNAMIC_CACHE = 'brumoutloud-dynamic-v6';
 
 // Static assets that rarely change
 const STATIC_ASSETS = [
@@ -221,9 +221,12 @@ async function handleFetch(request) {
       }
     }
     
-    // Strategy 1: Cache First for static assets
+    // Strategy 1: Stale While Revalidate for static assets.
+    // (Cache-first stuck users on stale CSS/JS forever when we deployed new
+    // versions at the same URL — new HTML would reference classes that didn't
+    // exist in the cached CSS, stripping styles until a hard refresh.)
     if (isStaticAsset(url.pathname)) {
-      return await cacheFirst(request, STATIC_CACHE);
+      return await staleWhileRevalidate(request, STATIC_CACHE);
     }
     
     // Strategy 2: Network First for API calls and dynamic content
