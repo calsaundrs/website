@@ -354,6 +354,16 @@ function buildStage(ev, opts = {}) {
     return stage;
 }
 
+// Pick a heading size class so longer titles ("THIS WEEKEND") don't run
+// past the 1080px stage edge. Measured against the 60px padding on
+// either side of the header.
+function headingSizeClass(text) {
+    const longest = String(text || '').split(/\s+/).reduce((m, w) => Math.max(m, w.length), 0);
+    if (longest >= 9) return 'heading-sm';
+    if (longest >= 7) return 'heading-md';
+    return '';
+}
+
 function lineupPages() {
     // Order selected events by date, then chunk into pages of LINEUP_MAX_ITEMS.
     const selected = state.events
@@ -389,7 +399,7 @@ function buildLineupTemplate(pageOverride = null) {
         ${pages.length > 1 ? `<div class="page-marker">${pageIdx + 1} / ${pages.length}</div>` : ''}
         <div class="header">
             <div class="kicker">BRUM OUT LOUD</div>
-            <div class="heading">${escapeHtml(state.lineupTitle || 'This Week')}</div>
+            <div class="heading ${headingSizeClass(state.lineupTitle || 'This Week')}">${escapeHtml(state.lineupTitle || 'This Week')}</div>
         </div>
         <div class="list">
             ${shown.map(ev => {
@@ -414,7 +424,7 @@ function buildLineupTemplate(pageOverride = null) {
         </div>
         <div class="footer">
             <div class="footer-inner">
-                <span>@brumoutloud</span>
+                <span class="cta">See more →</span>
                 <span class="url">brumoutloud.co.uk</span>
             </div>
         </div>
