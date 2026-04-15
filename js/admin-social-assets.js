@@ -531,8 +531,8 @@ function buildLineupHookTemplate({ format } = {}) {
     const count = state.selectedIds.size;
     // Sub line says exactly what's inside the carousel — no jargon.
     const sub = count > 0
-        ? `${count} queer night${count === 1 ? '' : 's'} out, picked for you ↓`
-        : 'The best queer nights out in Birmingham ↓';
+        ? `${count} queer event${count === 1 ? '' : 's'} to know about ↓`
+        : 'Queer events across Birmingham ↓';
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup-hook';
@@ -564,6 +564,10 @@ function buildLineupCtaTemplate() {
         <div class="actions">
             <span class="chip"><i class="fas fa-bookmark"></i> Save for later</span>
             <span class="chip"><i class="fas fa-paper-plane"></i> Send to a mate</span>
+        </div>
+        <div class="organiser">
+            <div class="organiser-kicker">Run a venue or event?</div>
+            <div class="organiser-line">List it free &rarr; brumoutloud.co.uk/submit</div>
         </div>
         <div class="pride-bar"></div>
     `;
