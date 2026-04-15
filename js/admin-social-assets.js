@@ -354,13 +354,14 @@ function buildStage(ev, opts = {}) {
     return stage;
 }
 
-// Pick a heading size class so longer titles ("THIS WEEKEND") don't run
-// past the 1080px stage edge. Measured against the 60px padding on
-// either side of the header.
+// Pick a heading size so the title always fits on a single line within
+// the 960px header content width (1080px stage − 60px padding × 2).
+// Tiers are conservative — Syne 800 is ~0.55em per char.
 function headingSizeClass(text) {
-    const longest = String(text || '').split(/\s+/).reduce((m, w) => Math.max(m, w.length), 0);
-    if (longest >= 9) return 'heading-sm';
-    if (longest >= 7) return 'heading-md';
+    const len = String(text || '').trim().length;
+    if (len >= 16) return 'heading-xs';
+    if (len >= 13) return 'heading-sm';
+    if (len >= 11) return 'heading-md';
     return '';
 }
 
