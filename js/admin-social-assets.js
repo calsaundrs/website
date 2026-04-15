@@ -749,7 +749,7 @@ function wireControls() {
         const presetTitles = {
             'today': 'Tonight',
             'this-week': 'This Week',
-            'this-weekend': 'This Weekend',
+            'this-weekend': 'This Wknd',
             'next-week': 'Next Week',
             'this-month': 'This Month',
             'next-30-days': 'Coming Up'
