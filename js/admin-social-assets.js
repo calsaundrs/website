@@ -381,15 +381,15 @@ function buildLineupTemplate(pageOverride = null) {
         ? pageOverride
         : Math.min(state.lineupPage, Math.max(0, pages.length - 1));
     const shown = pages[pageIdx] || [];
-    const pageSuffix = pages.length > 1 ? ` ${pageIdx + 1}/${pages.length}` : '';
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup';
     tpl.innerHTML = `
         <div class="halftone"></div>
+        ${pages.length > 1 ? `<div class="page-marker">${pageIdx + 1} / ${pages.length}</div>` : ''}
         <div class="header">
             <div class="kicker">BRUM OUT LOUD</div>
-            <div class="heading">${escapeHtml((state.lineupTitle || 'This Week') + pageSuffix)}</div>
+            <div class="heading">${escapeHtml(state.lineupTitle || 'This Week')}</div>
         </div>
         <div class="list">
             ${shown.map(ev => {
@@ -411,7 +411,6 @@ function buildLineupTemplate(pageOverride = null) {
                 `;
             }).join('')}
             ${shown.length === 0 ? `<div class="overflow-pill" style="color:var(--color-light);opacity:0.6;">Select events on the left →</div>` : ''}
-            ${pages.length > 1 ? `<div class="overflow-pill">Swipe for page ${pageIdx + 1} of ${pages.length} • brumoutloud.co.uk</div>` : ''}
         </div>
         <div class="footer">
             <div class="footer-inner">
@@ -717,6 +716,22 @@ function wireControls() {
         state.selectedIds.clear();
         state.activeId = null;
         state.lineupPage = 0;
+        // Sync Lineup header title to the chosen range (only if user hasn't
+        // customized it — we match the button label for each known preset).
+        const presetTitles = {
+            'today': 'Tonight',
+            'this-week': 'This Week',
+            'this-weekend': 'This Weekend',
+            'next-week': 'Next Week',
+            'this-month': 'This Month',
+            'next-30-days': 'Coming Up'
+        };
+        const matchedTitle = presetTitles[state.preset];
+        if (matchedTitle && Object.values(presetTitles).includes(state.lineupTitle)) {
+            state.lineupTitle = matchedTitle;
+            const titleInput = document.getElementById('lineup-title');
+            if (titleInput) titleInput.value = matchedTitle;
+        }
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         fetchEvents();
         updateDownloadButtons();

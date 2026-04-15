@@ -378,6 +378,17 @@
                 #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
                 #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
         }
+        .tpl-lineup .page-marker {
+            position: absolute;
+            top: 260px; right: 60px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 0.3em;
+            color: var(--color-light);
+            opacity: 0.45;
+            z-index: 2;
+        }
         .tpl-lineup .overflow-pill {
             align-self: center;
             margin-top: 8px;
@@ -549,6 +560,7 @@
                     <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Date Range</label>
                     <div class="flex flex-wrap gap-2" id="range-controls">
                         <button class="seg-btn active" data-preset="this-week">This Week</button>
+                        <button class="seg-btn" data-preset="this-weekend">This Weekend</button>
                         <button class="seg-btn" data-preset="next-week">Next Week</button>
                         <button class="seg-btn" data-preset="this-month">This Month</button>
                         <button class="seg-btn" data-preset="next-30-days">Next 30 Days</button>
