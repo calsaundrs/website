@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Social Assets Generator | Admin | Brum Out Loud</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+
+    <script type="module" src="/js/auth-guard.js"></script>
+
+    <!-- html2canvas for client-side PNG rendering, JSZip for carousel bundles -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        /* Canvas / stage where the asset lives at full 1080px. Rendered at
+           scale for preview; html2canvas captures at native size. */
+        .asset-stage {
+            position: relative;
+            transform-origin: top left;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .asset-stage.square   { width: 1080px; height: 1080px; }
+        .asset-stage.portrait { width: 1080px; height: 1350px; }
+        .asset-stage.story    { width: 1080px; height: 1920px; }
+
+        /* Story safe-zone guides — top 250 + bottom 250 hidden by IG UI.
+           Only visible in the editor, not in exported PNG. */
+        .safe-zone::before,
+        .safe-zone::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(204, 255, 0, 0.15) 0 12px,
+                transparent 12px 24px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+        .safe-zone::before { top: 0;    height: 250px; }
+        .safe-zone::after  { bottom: 0; height: 250px; }
+        .asset-stage.hide-safe-zone.safe-zone::before,
+        .asset-stage.hide-safe-zone.safe-zone::after { display: none; }
+
+        /* Preview wrapper scales the stage down to fit the viewport. */
+        .preview-frame {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(243, 232, 255, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Template: Sticker Poster ----------------------------------- */
+        .tpl-sticker .bg-img {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: saturate(1.1);
+        }
+        .tpl-sticker .overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(13,1,21,0.1) 0%,
+                rgba(13,1,21,0.4) 55%,
+                rgba(13,1,21,0.92) 100%
+            );
+        }
+        .tpl-sticker .top-sticker {
+            position: absolute;
+            top: 60px; left: 60px;
+            background: var(--color-toxic);
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 14px 24px;
+            font-size: 32px;
+            letter-spacing: 0.08em;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 #000;
+            transform: rotate(-3deg);
+        }
+        .tpl-sticker .date-pill {
+            position: absolute;
+            top: 60px; right: 60px;
+            background: #fff;
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            padding: 12px 22px;
+            font-size: 24px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 var(--color-pink);
+            transform: rotate(2deg);
+        }
+        .tpl-sticker .bottom-block {
+            position: absolute;
+            left: 60px; right: 60px; bottom: 80px;
+        }
+        .tpl-sticker .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 0.95;
+            text-shadow:
+                -3px -2px 0 var(--color-pink),
+                3px 2px 0 var(--color-purple);
+        }
+        .square   .tpl-sticker .title,
+        .portrait .tpl-sticker .title { font-size: 96px; }
+        .story    .tpl-sticker .title { font-size: 128px; }
+        .tpl-sticker .meta {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--color-light);
+        }
+        .tpl-sticker .meta i {
+            color: var(--color-toxic);
+            margin-right: 12px;
+            width: 36px;
+            text-align: center;
+        }
+        .tpl-sticker .footer-bar {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 12px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
+        }
+        .tpl-sticker .brand {
+            position: absolute;
+            left: 60px; bottom: 32px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(243, 232, 255, 0.6);
+        }
+
+        /* Template: Brutalist Card ---------------------------------- */
+        .tpl-card {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+        }
+        .tpl-card .halftone {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.18) 2px,
+                transparent 2.2px
+            );
+            background-size: 18px 18px;
+            opacity: 0.8;
+        }
+        .tpl-card .watermark {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bungee Outline', sans-serif;
+            font-size: 320px;
+            color: rgba(155, 93, 229, 0.15);
+            pointer-events: none;
+            line-height: 1;
+            transform: rotate(-8deg);
+        }
+        .tpl-card .card {
+            position: absolute;
+            left: 60px; right: 60px; top: 80px; bottom: 80px;
+            background: rgba(20, 20, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border: 3px solid rgba(243, 232, 255, 0.4);
+            box-shadow: 12px 12px 0 var(--color-toxic);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+        }
+        .tpl-card .kicker {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 24px;
+        }
+        .tpl-card .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 0.92;
+            text-shadow:
+                -2px -1px 0 var(--color-pink),
+                2px 1px 0 var(--color-purple);
+        }
+        .square   .tpl-card .title,
+        .portrait .tpl-card .title { font-size: 108px; }
+        .story    .tpl-card .title { font-size: 140px; }
+        .tpl-card .event-img {
+            margin-top: 44px;
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid #fff;
+            min-height: 300px;
+            box-shadow: 8px 8px 0 var(--color-pink);
+        }
+        .tpl-card .meta {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--color-light);
+        }
+        .tpl-card .meta i {
+            color: var(--color-toxic);
+            margin-right: 14px;
+            width: 36px;
+            text-align: center;
+        }
+        .tpl-card .brand-bar {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 28px;
+            border-top: 3px solid rgba(243, 232, 255, 0.25);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .tpl-card .brand-bar .url { color: var(--color-toxic); }
+
+        /* Event selector ---------------------------------------------- */
+        .event-row {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            border: 2px solid rgba(243, 232, 255, 0.12);
+            background: rgba(20, 20, 25, 0.4);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 4px;
+        }
+        .event-row:hover { border-color: rgba(204, 255, 0, 0.5); }
+        .event-row.selected {
+            border-color: var(--color-toxic);
+            background: rgba(204, 255, 0, 0.08);
+        }
+        .event-row img {
+            width: 72px; height: 72px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid rgba(243, 232, 255, 0.2);
+        }
+
+        /* Segmented control ----------------------------------------- */
+        .seg-btn {
+            padding: 10px 14px;
+            border: 2px solid rgba(243, 232, 255, 0.25);
+            background: transparent;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            color: var(--color-light);
+            transition: all 0.15s ease;
+        }
+        .seg-btn:hover { border-color: var(--color-toxic); }
+        .seg-btn.active {
+            background: var(--color-toxic);
+            color: #000;
+            border-color: var(--color-toxic);
+        }
+    </style>
+</head>
+<body class="bg-[var(--color-bg)] text-[var(--color-light)] min-h-screen">
+
+    <!-- Header (matches site) -->
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/90 backdrop-blur-xl border-b border-white/5">
+        <nav class="pt-4 px-4 pb-5 flex justify-between items-center max-w-7xl mx-auto relative">
+            <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none">
+                <a href="/admin-settings.html" class="hover:opacity-80">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
+                <a href="/admin-settings.html" class="hover:text-[var(--color-toxic)]">
+                    <i class="fas fa-arrow-left mr-1"></i> Admin
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-[1600px] mx-auto px-4 md:px-6 py-8">
+
+        <div class="mb-8">
+            <h1 class="font-display font-black text-4xl md:text-5xl uppercase misprint leading-none">
+                Social Assets
+            </h1>
+            <p class="mt-3 text-sm md:text-base opacity-70 max-w-2xl">
+                Generate on-brand Instagram posts &amp; stories for upcoming events.
+                Pick a date range, select events, choose a format and template, then download.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr_360px] gap-6">
+
+            <!-- LEFT: Event picker -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Date Range</label>
+                    <div class="flex flex-wrap gap-2" id="range-controls">
+                        <button class="seg-btn active" data-preset="this-week">This Week</button>
+                        <button class="seg-btn" data-preset="next-week">Next Week</button>
+                        <button class="seg-btn" data-preset="this-month">This Month</button>
+                        <button class="seg-btn" data-preset="next-30-days">Next 30 Days</button>
+                    </div>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-70">Events</label>
+                        <span class="text-xs opacity-60" id="event-count">—</span>
+                    </div>
+                    <div class="space-y-2 max-h-[calc(100vh-340px)] overflow-y-auto pr-1" id="event-list">
+                        <div class="text-center py-10 opacity-50 text-sm">Loading events...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIDDLE: Preview -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Format</label>
+                    <div class="flex flex-wrap gap-2" id="format-controls">
+                        <button class="seg-btn active" data-format="square">Square 1:1</button>
+                        <button class="seg-btn" data-format="portrait">Portrait 4:5</button>
+                        <button class="seg-btn" data-format="story">Story 9:16</button>
+                    </div>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Template</label>
+                    <div class="flex flex-wrap gap-2" id="template-controls">
+                        <button class="seg-btn active" data-template="sticker">Sticker Poster</button>
+                        <button class="seg-btn" data-template="card">Brutalist Card</button>
+                    </div>
+                </div>
+
+                <div class="preview-frame" id="preview-frame">
+                    <div id="preview-container"></div>
+                </div>
+
+                <div class="text-center text-xs opacity-50" id="preview-meta">Select an event to preview</div>
+            </section>
+
+            <!-- RIGHT: Download -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <h3 class="text-xs font-bold uppercase tracking-widest mb-3 opacity-70">Export</h3>
+                    <button id="download-single" disabled
+                        class="sticker w-full bg-[var(--color-toxic)] !text-black border-none shadow-[4px_4px_0_#000] py-3 mb-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fas fa-download mr-2"></i> Download PNG
+                    </button>
+                    <button id="download-batch" disabled
+                        class="sticker w-full bg-white !text-black border-none shadow-[4px_4px_0_var(--color-pink)] py-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)
+                    </button>
+                    <p class="text-[11px] opacity-50 mt-3 leading-relaxed">
+                        Batch uses the currently selected template &amp; format for every selected event.
+                        Stories include safe-zone guides in the editor only — exported PNGs are clean.
+                    </p>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20 text-xs leading-relaxed opacity-70 space-y-2">
+                    <p><strong class="text-[var(--color-toxic)]">Output sizes</strong></p>
+                    <ul class="space-y-1">
+                        <li>• Square: 1080 × 1080</li>
+                        <li>• Portrait: 1080 × 1350</li>
+                        <li>• Story: 1080 × 1920</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="/js/admin-social-assets.js"></script>
+</body>
+</html>
