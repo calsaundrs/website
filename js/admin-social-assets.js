@@ -527,19 +527,18 @@ function lineupRangeLabel() {
 function buildLineupHookTemplate({ format } = {}) {
     const frag = document.createDocumentFragment();
     const title = state.lineupTitle || lineupRangeLabel();
-    // Hook gets a bigger headline budget than the page header (shorter
-    // padding, no daybox column constraint), so we measure against 940px.
     const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 80);
     const count = state.selectedIds.size;
+    // Sub line says exactly what's inside the carousel — no jargon.
     const sub = count > 0
-        ? `${count} queer night${count === 1 ? '' : 's'} out across Birmingham`
-        : 'Queer nights out across Birmingham';
+        ? `${count} queer night${count === 1 ? '' : 's'} out, picked for you ↓`
+        : 'The best queer nights out in Birmingham ↓';
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup-hook';
     tpl.innerHTML = `
         <div class="halftone"></div>
-        <div class="kicker">BRUM OUT LOUD ✦ ${escapeHtml(lineupRangeLabel())}</div>
+        <div class="kicker">BRUM OUT LOUD</div>
         <div class="heading" style="font-size:${fontSize}px">${escapeHtml(title)}</div>
         <div class="sub">${escapeHtml(sub)}</div>
         <div class="swipe">SWIPE →</div>
@@ -553,14 +552,18 @@ function buildLineupCtaTemplate() {
     const frag = document.createDocumentFragment();
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup-cta';
+    // CTA does two jobs: (1) point people at the site for the full
+    // listings, (2) prompt the IG actions that boost reach. Each chip
+    // has an icon so the action is unmistakable.
     tpl.innerHTML = `
         <div class="halftone"></div>
-        <div class="kicker">SEE THE FULL LINEUP</div>
-        <div class="heading">Find Your<br>People.</div>
+        <div class="kicker">FOR THE FULL LISTINGS</div>
+        <div class="heading">Visit<br>the site</div>
         <div class="url">brumoutloud.co.uk</div>
+        <div class="sub">Hundreds of events. Updated daily.</div>
         <div class="actions">
-            <span class="chip">Save this</span>
-            <span class="chip">Tap →</span>
+            <span class="chip"><i class="fas fa-bookmark"></i> Save for later</span>
+            <span class="chip"><i class="fas fa-paper-plane"></i> Send to a mate</span>
         </div>
         <div class="pride-bar"></div>
     `;
