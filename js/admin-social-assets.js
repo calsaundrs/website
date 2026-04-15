@@ -274,10 +274,10 @@ function formatForAsset(ev) {
     const dateLine = d.toLocaleDateString('en-GB', {
         day: 'numeric', month: 'long'
     });
-    const time = ev.time || d.toLocaleTimeString('en-GB', {
-        hour: '2-digit', minute: '2-digit', hour12: false
-    });
-    return { day, dateLine, time };
+    // Trust normalizeEvent — if it set ev.time to '' that means the source
+    // date had no real time-of-day (and we'd get a phantom 01:00 BST from
+    // a UTC-midnight reparse).
+    return { day, dateLine, time: ev.time || '' };
 }
 
 // -- Preview rendering ------------------------------------------------------
@@ -360,15 +360,26 @@ function buildStage(ev, opts = {}) {
     return stage;
 }
 
-// Pick a heading size so the title always fits on a single line within
-// the 960px header content width (1080px stage − 60px padding × 2).
-// Tiers are conservative — Syne 800 is ~0.55em per char.
-function headingSizeClass(text) {
-    const len = String(text || '').trim().length;
-    if (len >= 14) return 'heading-xs';
-    if (len >= 11) return 'heading-sm';
-    if (len >= 8)  return 'heading-md';
-    return '';
+// Measure text width in Syne 800 and pick a font-size that fits the
+// header's 960px content area on a single line. Returns a px value.
+const _measureCtx = (() => {
+    try { return document.createElement('canvas').getContext('2d'); }
+    catch { return null; }
+})();
+function fitHeadingSize(text, maxWidth = 960, maxSize = 160, minSize = 60) {
+    if (!_measureCtx) return maxSize;
+    const txt = String(text || '').toUpperCase();
+    if (!txt) return maxSize;
+    // Binary-search the largest font-size where measured width ≤ maxWidth.
+    let lo = minSize, hi = maxSize, best = minSize;
+    while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        _measureCtx.font = `800 ${mid}px "Syne", sans-serif`;
+        const w = _measureCtx.measureText(txt).width;
+        if (w <= maxWidth) { best = mid; lo = mid + 1; }
+        else { hi = mid - 1; }
+    }
+    return best;
 }
 
 function lineupPages() {
@@ -406,14 +417,14 @@ function buildLineupTemplate(pageOverride = null) {
         ${pages.length > 1 ? `<div class="page-marker">${pageIdx + 1} / ${pages.length}</div>` : ''}
         <div class="header">
             <div class="kicker">BRUM OUT LOUD</div>
-            <div class="heading ${headingSizeClass(state.lineupTitle || 'This Week')}">${escapeHtml(state.lineupTitle || 'This Week')}</div>
+            <div class="heading" style="font-size:${fitHeadingSize(state.lineupTitle || 'This Week')}px">${escapeHtml(state.lineupTitle || 'This Week')}</div>
         </div>
         <div class="list">
             ${shown.map(ev => {
                 const d = ev.date ? new Date(ev.date) : null;
                 const day = d ? d.toLocaleDateString('en-GB', { day: '2-digit' }) : '—';
                 const mon = d ? d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase() : '';
-                const time = ev.time || (d ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) : '');
+                const time = ev.time || ''; // empty when source had no real time
                 return `
                     <div class="item">
                         <div class="daybox">
