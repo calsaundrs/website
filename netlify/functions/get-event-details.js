@@ -707,9 +707,11 @@ exports.handler = async function (event, context) {
             }
         };
 
-        if (eventData.image?.url) {
-            eventSchema.image = eventData.image.url;
-        }
+        // Google Search Console flags missing 'image' as a non-critical
+        // structured-data issue. Always provide one — fall back to the site's
+        // OG image so the schema is valid even for imageless events.
+        eventSchema.image = eventData.image?.url
+            || 'https://www.brumoutloud.co.uk/progressflag.svg.png';
 
         if (eventData.details?.link) {
             eventSchema.offers = {

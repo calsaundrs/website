@@ -137,16 +137,21 @@ function processEventForPublic(eventData, eventId) {
         }
     }
 
+    // Resolve the best available image. Fall back to the site's OG image so
+    // structured data always carries a valid 'image' field (Google Search
+    // Console flags the omission as a non-critical issue).
+    const FALLBACK_IMAGE = 'https://www.brumoutloud.co.uk/progressflag.svg.png';
     let imageUrl = null;
     if (eventData.cloudinaryPublicId) {
         imageUrl = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,h_675,c_limit/${eventData.cloudinaryPublicId}`;
     } else if (eventData.promoImage) {
-        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage : 
+        imageUrl = typeof eventData.promoImage === 'string' ? eventData.promoImage :
                    (eventData.promoImage.url || eventData.promoImage[0]?.url);
     } else if (eventData.image) {
-        imageUrl = typeof eventData.image === 'string' ? eventData.image : 
+        imageUrl = typeof eventData.image === 'string' ? eventData.image :
                    (eventData.image.url || eventData.image[0]?.url);
     }
+    imageUrl = imageUrl || FALLBACK_IMAGE;
     
     // Correctly process venue data from raw fields
     const venueData = { id: '', name: 'Venue TBC', slug: '' };
