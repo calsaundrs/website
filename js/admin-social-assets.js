@@ -670,7 +670,7 @@ function buildCardTemplate(ev, opts = {}) {
         <div class="card-shadow"></div>
         <div class="card">
             <div class="kicker">${escapeHtml(day)} • ${escapeHtml(primaryCategory(ev))}</div>
-            <div class="title" style="font-size:${titleSize}px">${escapeHtml(ev.name)}</div>
+            <div class="title" style="font-size:${titleSize}px"><span class="title-inner">${escapeHtml(ev.name)}</span></div>
             <div class="event-img-wrap">
                 <div class="event-img-shadow"></div>
                 <div class="event-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>

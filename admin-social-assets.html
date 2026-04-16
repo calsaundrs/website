@@ -221,32 +221,35 @@
             color: var(--color-toxic);
             margin-bottom: 24px;
         }
+        /* Outer wrapper owns the -webkit-line-clamp + overflow:hidden.
+           Inner element owns typography (line-height, padding-bottom).
+           This split matters because -webkit-box clips at the CONTENT
+           edge, so padding-bottom on the clamp element itself is
+           absorbed (computedStyle can even report it as 0 in some
+           WebKit paths). Moving padding to the inner span makes the
+           clamp clip below the visible glyph row. */
         .tpl-card .title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #fff;
-            line-height: 0.92;
-            /* Inline font-size set per-render by fitCardTitleSize() so
-               the longest word never overflows the card inner width. */
-            font-size: 108px;
-            /* Break long words (e.g. "NIGHTINGALE") across lines instead of
-               clipping off the right edge of the card. */
-            overflow-wrap: break-word;
-            word-break: break-word;
-            hyphens: auto;
-            /* Cap title at 3 lines so the flyer image and meta zones stay
-               visible even when the title is very long. fitCardTitleSize()
-               aims for ≤3 lines first, this is the visual safety net. */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            /* Syne 800's descenders + text-shadow offset extend below the
-               line box with line-height 0.92. overflow:hidden (from the
-               line-clamp) was slicing the bottom glyph row. Padding-bottom
-               gives the visible area headroom before the clip kicks in. */
+            /* Inline font-size set per-render by fitCardTitleSize() so
+               the longest word never overflows the card inner width. */
+            font-size: 108px;
+        }
+        .tpl-card .title .title-inner {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            /* Same 1.15 value that fixed .tpl-lineup-hook .heading in
+               ae86345. Syne 800 glyph bounds extend well below the
+               line box at line-height 0.92; 1.15 gives real headroom. */
+            line-height: 1.15;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
             padding-bottom: 0.25em;
             text-shadow:
                 -2px -1px 0 var(--color-pink),
