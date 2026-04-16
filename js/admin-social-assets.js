@@ -634,16 +634,26 @@ function buildStickerTemplate(ev, opts = {}) {
 function buildCardTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
     const { day, dateLine, time } = formatForAsset(ev);
+    const format = opts.format || state.format;
+    // Card inner content width = stage 1080 - card offset 60 left/right
+    // - card padding 60 left/right = 840. Cap font-size at the format's
+    // original default (108 for square/portrait, 140 for story).
+    const maxSize = format === 'story' ? 140 : 108;
+    const titleSize = fitCardTitleSize(ev.name, 840, maxSize, 56);
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-card';
     tpl.innerHTML = `
         <div class="halftone"></div>
         <div class="watermark">BRUM</div>
+        <div class="card-shadow"></div>
         <div class="card">
             <div class="kicker">${escapeHtml(day)} • ${escapeHtml(primaryCategory(ev))}</div>
-            <div class="title">${escapeHtml(ev.name)}</div>
-            <div class="event-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
+            <div class="title" style="font-size:${titleSize}px">${escapeHtml(ev.name)}</div>
+            <div class="event-img-wrap">
+                <div class="event-img-shadow"></div>
+                <div class="event-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
+            </div>
             <div class="meta">
                 <div><i class="fas fa-calendar"></i>${escapeHtml(dateLine)}${time ? ' • ' + escapeHtml(time) : ''}</div>
                 <div><i class="fas fa-location-dot"></i>${escapeHtml(ev.venue?.name || 'Birmingham')}</div>
@@ -658,6 +668,25 @@ function buildCardTemplate(ev, opts = {}) {
     return frag;
 }
 
+// Pick the largest font-size where the *longest word* fits maxWidth —
+// the title wraps, so each word must fit on its own line. Returns px.
+function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 56) {
+    if (!_measureCtx) return maxSize;
+    const words = String(text || '').toUpperCase().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return maxSize;
+    // The single longest word is the binding constraint.
+    const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
+    let lo = minSize, hi = maxSize, best = minSize;
+    while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        _measureCtx.font = `800 ${mid}px "Syne", sans-serif`;
+        const w = _measureCtx.measureText(longest).width;
+        if (w <= maxWidth) { best = mid; lo = mid + 1; }
+        else { hi = mid - 1; }
+    }
+    return best;
+}
+
 function primaryCategory(ev) {
     if (!ev) return 'Tonight';
     const cats = Array.isArray(ev.category) ? ev.category : (ev.category ? [ev.category] : []);
@@ -665,6 +694,15 @@ function primaryCategory(ev) {
 }
 
 // -- PNG / ZIP export -------------------------------------------------------
+
+// Canonical output size per format. Pulled from the stage's format class
+// so we always match the visible CSS dimensions and never trust
+// offsetWidth/offsetHeight (off-screen layout can underreport).
+function canvasDimsFor(stage) {
+    if (stage.classList.contains('story'))    return { w: 1080, h: 1920 };
+    if (stage.classList.contains('portrait')) return { w: 1080, h: 1350 };
+    return { w: 1080, h: 1080 }; // square
+}
 
 async function renderEventToBlob(ev, format, template) {
     const off = document.createElement('div');
@@ -677,17 +715,27 @@ async function renderEventToBlob(ev, format, template) {
     // No global state mutation — buildStage receives format/template explicitly.
     const stage = buildStage(ev, { format, template });
     stage.classList.add('hide-safe-zone');
+    // Inline the brand bg so html2canvas has a solid colour to fall back
+    // on even if CSS-var resolution misfires off-screen.
+    stage.style.backgroundColor = '#0D0115';
     off.appendChild(stage);
 
     await waitForImages(stage);
 
+    // Explicit pixel dimensions + solid brand-dark fallback background.
+    // offsetWidth/offsetHeight off-screen occasionally reports slightly
+    // smaller than 1080×<target> which produces a letterbox border around
+    // the card. Force the canonical canvas size per format.
+    const dims = canvasDimsFor(stage);
     const canvas = await html2canvas(stage, {
-        backgroundColor: null,
+        backgroundColor: '#0D0115',
         useCORS: true,
         allowTaint: false,
         scale: 1,
-        width: stage.offsetWidth,
-        height: stage.offsetHeight,
+        width: dims.w,
+        height: dims.h,
+        windowWidth: dims.w,
+        windowHeight: dims.h,
         logging: false,
     });
 
@@ -695,18 +743,42 @@ async function renderEventToBlob(ev, format, template) {
     return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
+// Fetch each background-image as a blob, convert to data URL, and rewrite
+// the inline style to reference the data URL. html2canvas then captures
+// the image without any CORS issue — the bytes are embedded in the DOM.
+// If the fetch fails (CDN down, offline, no-cors from opaque response),
+// we leave the original URL and let html2canvas try — it'll fall back to
+// its own loader.
 async function waitForImages(root) {
     const bgEls = root.querySelectorAll('.bg-img, .event-img');
-    const urls = [...bgEls].map(el => {
+    await Promise.all([...bgEls].map(async el => {
         const m = el.style.backgroundImage.match(/url\(["']?([^"')]+)/);
-        return m ? m[1] : null;
-    }).filter(Boolean);
-    await Promise.all(urls.map(url => new Promise(resolve => {
-        const im = new Image();
-        im.crossOrigin = 'anonymous';
-        im.onload = im.onerror = () => resolve();
-        im.src = url;
-    })));
+        const url = m && m[1];
+        if (!url) return;
+        if (url.startsWith('data:')) return;
+        try {
+            const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const blob = await res.blob();
+            const dataUrl = await new Promise((resolve, reject) => {
+                const r = new FileReader();
+                r.onload = () => resolve(r.result);
+                r.onerror = reject;
+                r.readAsDataURL(blob);
+            });
+            el.style.backgroundImage = `url("${dataUrl}")`;
+        } catch (err) {
+            // Fall back to warming the HTTP cache so html2canvas' own
+            // fetch is a browser-cache hit.
+            console.warn('Image preload failed, falling back:', url, err.message);
+            await new Promise(resolve => {
+                const im = new Image();
+                im.crossOrigin = 'anonymous';
+                im.onload = im.onerror = () => resolve();
+                im.src = url;
+            });
+        }
+    }));
 }
 
 function slugify(s) {
@@ -860,16 +932,24 @@ async function renderAggregateToBlob(format, template, extra = {}) {
 
     const stage = buildStage(null, { format, template, ...extra });
     stage.classList.add('hide-safe-zone');
+    stage.style.backgroundColor = '#0D0115';
     off.appendChild(stage);
     await waitForImages(stage);
 
+    // Explicit pixel dimensions + solid brand-dark fallback background.
+    // offsetWidth/offsetHeight off-screen occasionally reports slightly
+    // smaller than 1080×<target> which produces a letterbox border around
+    // the card. Force the canonical canvas size per format.
+    const dims = canvasDimsFor(stage);
     const canvas = await html2canvas(stage, {
-        backgroundColor: null,
+        backgroundColor: '#0D0115',
         useCORS: true,
         allowTaint: false,
         scale: 1,
-        width: stage.offsetWidth,
-        height: stage.offsetHeight,
+        width: dims.w,
+        height: dims.h,
+        windowWidth: dims.w,
+        windowHeight: dims.h,
         logging: false,
     });
     off.remove();

@@ -194,14 +194,24 @@
         .tpl-card .card {
             position: absolute;
             left: 60px; right: 60px; top: 80px; bottom: 80px;
-            background: rgba(20, 20, 25, 0.85);
-            backdrop-filter: blur(12px);
+            /* Solid bg (no rgba + no backdrop-filter) — html2canvas 1.4.1
+               doesn't honour backdrop-filter and renders rgba() overlays
+               unreliably. Solid #14141A matches the preview closely. */
+            background: #14141A;
             border: 3px solid rgba(243, 232, 255, 0.4);
-            box-shadow: 12px 12px 0 var(--color-toxic);
             padding: 80px 60px;
             display: flex;
             flex-direction: column;
         }
+        /* Fake the toxic offset shadow with a real sibling so html2canvas
+           doesn't blob it into the card face. */
+        .tpl-card .card-shadow {
+            position: absolute;
+            left: 72px; right: 48px; top: 92px; bottom: 68px;
+            background: var(--color-toxic);
+            z-index: 0;
+        }
+        .tpl-card .card { z-index: 1; }
         .tpl-card .kicker {
             font-family: 'Syne', sans-serif;
             font-weight: 800;
@@ -217,21 +227,41 @@
             text-transform: uppercase;
             color: #fff;
             line-height: 0.92;
+            /* Inline font-size set per-render by fitCardTitleSize() so
+               the longest word never overflows the card inner width. */
+            font-size: 108px;
+            /* Break long words (e.g. "NIGHTINGALE") across lines instead of
+               clipping off the right edge of the card. */
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
             text-shadow:
                 -2px -1px 0 var(--color-pink),
                 2px 1px 0 var(--color-purple);
         }
-        .square   .tpl-card .title,
-        .portrait .tpl-card .title { font-size: 108px; }
-        .story    .tpl-card .title { font-size: 140px; }
-        .tpl-card .event-img {
+        /* event-img wrapper: lets us fake the pink offset shadow with a
+           real sibling div so html2canvas doesn't paint box-shadow as a
+           solid fill that swallows the flyer image. */
+        .tpl-card .event-img-wrap {
+            position: relative;
             margin-top: 44px;
             flex: 1;
+            min-height: 300px;
+        }
+        .tpl-card .event-img-shadow {
+            position: absolute;
+            inset: 8px -8px -8px 8px;
+            background: var(--color-pink);
+            z-index: 0;
+        }
+        .tpl-card .event-img {
+            position: absolute;
+            inset: 0;
             background-size: cover;
             background-position: center;
+            background-color: #14141A;
             border: 3px solid #fff;
-            min-height: 300px;
-            box-shadow: 8px 8px 0 var(--color-pink);
+            z-index: 1;
         }
         .tpl-card .meta {
             margin-top: 40px;
