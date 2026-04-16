@@ -235,6 +235,14 @@
             overflow-wrap: break-word;
             word-break: break-word;
             hyphens: auto;
+            /* Cap title at 3 lines so the flyer image and meta zones stay
+               visible even when the title is very long. fitCardTitleSize()
+               aims for ≤3 lines first, this is the visual safety net. */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
             text-shadow:
                 -2px -1px 0 var(--color-pink),
                 2px 1px 0 var(--color-purple);

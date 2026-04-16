@@ -672,20 +672,37 @@ function buildCardTemplate(ev, opts = {}) {
     return frag;
 }
 
-// Pick the largest font-size where the *longest word* fits maxWidth —
-// the title wraps, so each word must fit on its own line. Returns px.
-function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 56) {
+// Pick the largest font-size where (a) the longest word still fits
+// maxWidth on its own line AND (b) greedy-wrapping all words into lines
+// produces ≤ maxLines. Without the line-count constraint, long titles
+// like "SUM TING WONG AT EDEN SUNDAY CLUB" wrap to 5 lines at 108px
+// and push the flyer + meta off the bottom of the card.
+function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 48, maxLines = 3) {
     if (!_measureCtx) return maxSize;
     const words = String(text || '').toUpperCase().split(/\s+/).filter(Boolean);
     if (words.length === 0) return maxSize;
-    // The single longest word is the binding constraint.
     const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
+
+    const linesAt = size => {
+        _measureCtx.font = `800 ${size}px "Syne", sans-serif`;
+        const spaceW = _measureCtx.measureText(' ').width;
+        let lines = 1, lineW = 0;
+        for (const word of words) {
+            const wW = _measureCtx.measureText(word).width;
+            const gap = lineW === 0 ? 0 : spaceW;
+            if (lineW + gap + wW <= maxWidth) lineW += gap + wW;
+            else { lines++; lineW = wW; }
+        }
+        return lines;
+    };
+
     let lo = minSize, hi = maxSize, best = minSize;
     while (lo <= hi) {
         const mid = (lo + hi) >> 1;
         _measureCtx.font = `800 ${mid}px "Syne", sans-serif`;
-        const w = _measureCtx.measureText(longest).width;
-        if (w <= maxWidth) { best = mid; lo = mid + 1; }
+        const longestW = _measureCtx.measureText(longest).width;
+        const fits = longestW <= maxWidth && linesAt(mid) <= maxLines;
+        if (fits) { best = mid; lo = mid + 1; }
         else { hi = mid - 1; }
     }
     return best;
