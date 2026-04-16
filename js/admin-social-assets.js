@@ -478,7 +478,7 @@ function buildLineupTemplate(opts = {}) {
         <div class="halftone"></div>
         ${totalPages > 1 ? `<div class="page-marker">${pageIdx + 1} / ${totalPages}</div>` : ''}
         <div class="header">
-            <div class="kicker">BRUM OUT LOUD</div>
+            <div class="kicker">BRUM OUTLOUD</div>
             <div class="heading" style="font-size:${fitHeadingSize(state.lineupTitle || 'This Week')}px">${escapeHtml(state.lineupTitle || 'This Week')}</div>
         </div>
         <div class="list">
@@ -530,7 +530,11 @@ function lineupRangeLabel() {
 function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) {
     const frag = document.createDocumentFragment();
     const title = titleOverride || state.lineupTitle || lineupRangeLabel();
-    const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 80);
+    // minSize lowered from 80 → 48 so the binary search has a real
+    // downward floor for long compound titles like "WKND HIGHLIGHTS".
+    // Combined with the CSS-side wrap safety net the heading either
+    // lands on one line at a smaller size or wraps to two.
+    const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 48);
     // Count from the actual pages that will render — not selectedIds —
     // so the cover copy can never drift from what's in the carousel.
     const count = typeof countOverride === 'number'
@@ -545,7 +549,7 @@ function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) 
     tpl.className = 'tpl-lineup-hook';
     tpl.innerHTML = `
         <div class="halftone"></div>
-        <div class="kicker">BRUM OUT LOUD</div>
+        <div class="kicker">BRUM OUTLOUD</div>
         <div class="heading" style="font-size:${fontSize}px">${escapeHtml(title)}</div>
         <div class="sub">${escapeHtml(sub)}</div>
         <div class="swipe">SWIPE →</div>

@@ -496,7 +496,14 @@
             text-shadow:
                 -4px -3px 0 var(--color-pink),
                 4px 3px 0 var(--color-purple);
-            white-space: nowrap;
+            /* Allow wrapping so multi-word titles ("WKND HIGHLIGHTS")
+               break onto a second line instead of clipping the edge.
+               overflow-hidden + word-break guard against any single
+               word still too wide at the smallest sized font. */
+            max-width: 940px;
+            overflow: hidden;
+            overflow-wrap: break-word;
+            word-break: break-word;
             margin-bottom: 36px;
         }
         .tpl-lineup-hook .sub {
