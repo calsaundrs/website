@@ -498,18 +498,19 @@
             position: relative;
             font-family: 'Syne', sans-serif;
             font-weight: 800;
-            line-height: 0.9;
+            /* Syne 800 glyphs extend noticeably below the line-box at
+               large sizes — line-height 0.9 + overflow:hidden was
+               clipping the bottom half of every letter. Give the line
+               box enough vertical room for the real glyph bounds. */
+            line-height: 1.15;
             text-transform: uppercase;
             color: #fff;
             text-shadow:
                 -4px -3px 0 var(--color-pink),
                 4px 3px 0 var(--color-purple);
             /* Allow wrapping so multi-word titles ("WKND HIGHLIGHTS")
-               break onto a second line instead of clipping the edge.
-               overflow-hidden + word-break guard against any single
-               word still too wide at the smallest sized font. */
+               break onto a second line instead of clipping the edge. */
             max-width: 940px;
-            overflow: hidden;
             overflow-wrap: break-word;
             word-break: break-word;
             margin-bottom: 36px;
