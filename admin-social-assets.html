@@ -243,6 +243,11 @@
             line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            /* Syne 800's descenders + text-shadow offset extend below the
+               line box with line-height 0.92. overflow:hidden (from the
+               line-clamp) was slicing the bottom glyph row. Padding-bottom
+               gives the visible area headroom before the clip kicks in. */
+            padding-bottom: 0.25em;
             text-shadow:
                 -2px -1px 0 var(--color-pink),
                 2px 1px 0 var(--color-purple);
