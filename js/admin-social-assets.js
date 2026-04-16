@@ -406,22 +406,39 @@ function buildStage(ev, opts = {}) {
     return stage;
 }
 
-// Measure text width in Syne 800 and pick a font-size that fits the
-// header's 960px content area on a single line. Returns a px value.
-const _measureCtx = (() => {
-    try { return document.createElement('canvas').getContext('2d'); }
-    catch { return null; }
+// DOM-based text measurer. Canvas 2D contexts don't automatically inherit
+// loaded web fonts — setting `ctx.font = '800 108px "Syne"…'` silently
+// falls back to sans-serif, which is much narrower than Syne, so the
+// binary searches were picking sizes that overflow in the real DOM.
+// A hidden span inherits the document's real font-face cache.
+const SYNE_FONT = '800 16px "Syne", sans-serif';
+const _measureEl = (() => {
+    try {
+        const el = document.createElement('span');
+        // white-space: nowrap so multi-word strings measure as one line;
+        // visibility: hidden keeps it out of the visible viewport but
+        // still lets the browser lay it out (offsetWidth works).
+        el.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;top:-9999px;left:-9999px;pointer-events:none;';
+        document.body.appendChild(el);
+        return el;
+    } catch { return null; }
 })();
+function measureWidth(text, size) {
+    if (!_measureEl) return null;
+    _measureEl.style.font = `800 ${size}px "Syne", sans-serif`;
+    _measureEl.textContent = text;
+    return _measureEl.offsetWidth;
+}
+
 function fitHeadingSize(text, maxWidth = 960, maxSize = 160, minSize = 60) {
-    if (!_measureCtx) return maxSize;
+    if (!_measureEl) return maxSize;
     const txt = String(text || '').toUpperCase();
     if (!txt) return maxSize;
     // Binary-search the largest font-size where measured width ≤ maxWidth.
     let lo = minSize, hi = maxSize, best = minSize;
     while (lo <= hi) {
         const mid = (lo + hi) >> 1;
-        _measureCtx.font = `800 ${mid}px "Syne", sans-serif`;
-        const w = _measureCtx.measureText(txt).width;
+        const w = measureWidth(txt, mid);
         if (w <= maxWidth) { best = mid; lo = mid + 1; }
         else { hi = mid - 1; }
     }
@@ -678,17 +695,18 @@ function buildCardTemplate(ev, opts = {}) {
 // like "SUM TING WONG AT EDEN SUNDAY CLUB" wrap to 5 lines at 108px
 // and push the flyer + meta off the bottom of the card.
 function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 48, maxLines = 3) {
-    if (!_measureCtx) return maxSize;
+    if (!_measureEl) return maxSize;
     const words = String(text || '').toUpperCase().split(/\s+/).filter(Boolean);
     if (words.length === 0) return maxSize;
     const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
 
     const linesAt = size => {
-        _measureCtx.font = `800 ${size}px "Syne", sans-serif`;
-        const spaceW = _measureCtx.measureText(' ').width;
+        // Measure a joined-with-NBSP string and rely on the greedy wrap
+        // algorithm below. We need per-word widths.
+        const spaceW = measureWidth('\u00A0', size);
         let lines = 1, lineW = 0;
         for (const word of words) {
-            const wW = _measureCtx.measureText(word).width;
+            const wW = measureWidth(word, size);
             const gap = lineW === 0 ? 0 : spaceW;
             if (lineW + gap + wW <= maxWidth) lineW += gap + wW;
             else { lines++; lineW = wW; }
@@ -699,8 +717,7 @@ function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 48, max
     let lo = minSize, hi = maxSize, best = minSize;
     while (lo <= hi) {
         const mid = (lo + hi) >> 1;
-        _measureCtx.font = `800 ${mid}px "Syne", sans-serif`;
-        const longestW = _measureCtx.measureText(longest).width;
+        const longestW = measureWidth(longest, mid);
         const fits = longestW <= maxWidth && linesAt(mid) <= maxLines;
         if (fits) { best = mid; lo = mid + 1; }
         else { hi = mid - 1; }
@@ -1212,6 +1229,17 @@ function wireControls() {
 
 wireControls();
 fetchEvents();
+
+// Re-render any existing preview once web fonts settle. Before Syne is
+// loaded, measureWidth() returns fallback-sans widths which makes the
+// first pass of fitCardTitleSize / fitHeadingSize pick sizes that are
+// too large. Once fonts are ready, retrigger the preview so inline
+// font-size attributes are recomputed against the real font metrics.
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+        try { renderPreview(); } catch {}
+    });
+}
 
 // -- External automation surface --------------------------------------------
 // Exposed so headless agents (Claude Code, Cowork, etc.) can capture any
