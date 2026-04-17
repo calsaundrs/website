@@ -53,6 +53,30 @@ const AGGREGATE_TEMPLATES = new Set([TEMPLATES.LINEUP]);
 // Templates that don't need any event data at all
 const EVENTLESS_TEMPLATES = new Set([TEMPLATES.HIGHLIGHT]);
 
+// Suggested batch-title for each preset. Used to auto-update the lineup
+// and card carousel titles when the range changes, unless the user has
+// typed something custom.
+const PRESET_TITLES = Object.freeze({
+    'today':        'Tonight',
+    'this-week':    'This Week',
+    'this-weekend': 'This Weekend',
+    'next-week':    'Next Week',
+    'this-month':   'This Month',
+    'next-30-days': 'Coming Up',
+});
+
+// Replace state[key] + its matching input.value with the new preset
+// title, but only when the current value matches the PREVIOUS preset
+// title — i.e. the user hasn't customised it since the last range
+// change. Prevents silent stomps on custom titles.
+function syncBatchTitle(stateKey, inputId, previousPresetTitle, newPresetTitle) {
+    if (!previousPresetTitle) return;
+    if (state[stateKey] !== previousPresetTitle) return;
+    state[stateKey] = newPresetTitle;
+    const input = document.getElementById(inputId);
+    if (input) input.value = newPresetTitle;
+}
+
 // -- Event fetching ---------------------------------------------------------
 
 async function fetchEvents() {
@@ -75,6 +99,13 @@ async function fetchEvents() {
         console.error('Failed to load events:', err);
         listEl.innerHTML = `<div class="text-center py-10 text-sm text-red-400">Couldn't load events — ${err.message}</div>`;
         countEl.textContent = '—';
+        // Make sure the download buttons are disabled — a failed fetch
+        // leaves state.events empty and selectedIds cleared, but
+        // updateDownloadButtons() still needs to run to flip the UI.
+        state.events = [];
+        state.selectedIds.clear();
+        state.activeId = null;
+        updateDownloadButtons();
         return;
     }
 
@@ -560,10 +591,8 @@ function lineupRangeLabel() {
 function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) {
     const frag = document.createDocumentFragment();
     const title = titleOverride || state.lineupTitle || lineupRangeLabel();
-    // minSize lowered from 80 → 48 so the binary search has a real
-    // downward floor for long compound titles like "WKND HIGHLIGHTS".
-    // Combined with the CSS-side wrap safety net the heading either
-    // lands on one line at a smaller size or wraps to two.
+    // 48px floor so long compound titles ("Wknd Highlights") can shrink;
+    // the CSS word-break net catches anything still too wide.
     const fontSize = fitHeadingSize(title, 940, format === 'story' ? 220 : 200, 48);
     // Count from the actual pages that will render — not selectedIds —
     // so the cover copy can never drift from what's in the carousel.
@@ -640,9 +669,20 @@ function buildHighlightTemplate() {
     return frag;
 }
 
+// Calendar + venue meta row — shared between sticker and card templates.
+function eventMetaRow(ev) {
+    const { dateLine, time } = formatForAsset(ev);
+    return `
+        <div class="meta">
+            <div><i class="fas fa-calendar"></i>${escapeHtml(dateLine)}${time ? ' • ' + escapeHtml(time) : ''}</div>
+            <div><i class="fas fa-location-dot"></i>${escapeHtml(ev.venue?.name || 'Birmingham')}</div>
+        </div>
+    `;
+}
+
 function buildStickerTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
-    const { day, dateLine, time } = formatForAsset(ev);
+    const { day } = formatForAsset(ev);
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-sticker';
@@ -655,10 +695,7 @@ function buildStickerTemplate(ev, opts = {}) {
         <div class="date-pill">${escapeHtml(day)}</div>
         <div class="bottom-block">
             <div class="title">${escapeHtml(ev.name)}</div>
-            <div class="meta">
-                <div><i class="fas fa-calendar"></i>${escapeHtml(dateLine)}${time ? ' • ' + escapeHtml(time) : ''}</div>
-                <div><i class="fas fa-location-dot"></i>${escapeHtml(ev.venue?.name || 'Birmingham')}</div>
-            </div>
+            ${eventMetaRow(ev)}
         </div>
         <div class="brand">BRUMOUTLOUD.CO.UK</div>
         <div class="footer-bar"></div>
@@ -669,7 +706,7 @@ function buildStickerTemplate(ev, opts = {}) {
 
 function buildCardTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
-    const { day, dateLine, time } = formatForAsset(ev);
+    const { day } = formatForAsset(ev);
     const format = opts.format || state.format;
     // Card inner content width = stage 1080 - card offset 60 left/right
     // - card padding 60 left/right = 840. Cap font-size at the format's
@@ -690,10 +727,7 @@ function buildCardTemplate(ev, opts = {}) {
                 <div class="event-img-shadow"></div>
                 <div class="event-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
             </div>
-            <div class="meta">
-                <div><i class="fas fa-calendar"></i>${escapeHtml(dateLine)}${time ? ' • ' + escapeHtml(time) : ''}</div>
-                <div><i class="fas fa-location-dot"></i>${escapeHtml(ev.venue?.name || 'Birmingham')}</div>
-            </div>
+            ${eventMetaRow(ev)}
             <div class="brand-bar">
                 <span>Brum Out Loud</span>
                 <span class="url">/events</span>
@@ -948,11 +982,9 @@ async function downloadBatch() {
     const fmt = state.format;
     const tpl = state.template;
 
-    // Build the ordered list of render tasks: optional Hook cover, one slide
-    // per event, optional CTA. Prefix order chosen so the zip's alphabetical
-    // sort matches display order: 00- hook, 01-NN event slides, 99- cta.
-    // (Users have asked for this so "unzip → upload to IG in order" is a
-    // one-click workflow.)
+    // Task order: optional hook (00-) → one per event (01..NN-) → optional
+    // CTA (99-). The numeric prefix makes ZIP alphabetical sort match
+    // carousel display order so "unzip → drag into IG" works in one pass.
     const includeHook = tpl === TEMPLATES.CARD && state.cardHook;
     const includeCta  = tpl === TEMPLATES.CARD && state.cardCta;
     const tasks = [];
@@ -1092,31 +1124,20 @@ function wireControls() {
     document.getElementById('range-controls').addEventListener('click', e => {
         const btn = e.target.closest('button[data-preset]');
         if (!btn) return;
+        const previousPreset = state.preset;
         state.preset = btn.dataset.preset;
         state.selectedIds.clear();
         state.activeId = null;
         state.lineupSlideIdx = 0;
-        // Sync Lineup header title to the chosen range (only if user hasn't
-        // customized it — we match the button label for each known preset).
-        const presetTitles = {
-            'today': 'Tonight',
-            'this-week': 'This Week',
-            'this-weekend': 'This Weekend',
-            'next-week': 'Next Week',
-            'this-month': 'This Month',
-            'next-30-days': 'Coming Up'
-        };
-        const matchedTitle = presetTitles[state.preset];
-        if (matchedTitle && Object.values(presetTitles).includes(state.lineupTitle)) {
-            state.lineupTitle = matchedTitle;
-            const titleInput = document.getElementById('lineup-title');
-            if (titleInput) titleInput.value = matchedTitle;
-        }
-        // Same auto-sync for the card-batch carousel title.
-        if (matchedTitle && Object.values(presetTitles).includes(state.cardTitle)) {
-            state.cardTitle = matchedTitle;
-            const cardTitleInput = document.getElementById('card-title');
-            if (cardTitleInput) cardTitleInput.value = matchedTitle;
+        // Sync batch titles to the new preset only if the user hasn't
+        // customised them — detected by comparing against the *previous*
+        // preset's label, not any known preset value (so a user who types
+        // "Tonight" keeps it even when they switch between ranges).
+        const previousMatch = PRESET_TITLES[previousPreset] || '';
+        const matchedTitle  = PRESET_TITLES[state.preset];
+        if (matchedTitle) {
+            syncBatchTitle('lineupTitle', 'lineup-title', previousMatch, matchedTitle);
+            syncBatchTitle('cardTitle',   'card-title',   previousMatch, matchedTitle);
         }
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         fetchEvents();
