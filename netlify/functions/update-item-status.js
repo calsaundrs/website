@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const { verifyAuth } = require('./utils/auth');
+const EmailService = require('./services/email-service');
 
 exports.handler = async function (event, context) {
     console.log('Firestore-only status update called');
@@ -50,7 +51,7 @@ exports.handler = async function (event, context) {
 
         // Parse request body
         const body = JSON.parse(event.body);
-        const { itemId, newStatus, itemType } = body;
+        const { itemId, newStatus, itemType, reason } = body;
 
         if (!itemId || !newStatus || !itemType) {
             return {
@@ -90,6 +91,57 @@ exports.handler = async function (event, context) {
         });
 
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
+
+        // Send promoter email notification. Pull contact + naming info
+        // directly off the doc so the admin UI doesn't need to round-trip
+        // them. Skips silently when no valid submitter email exists.
+        let emailResult = null;
+        try {
+            const docData = doc.data() || {};
+            const contactEmail = docData.submittedBy || docData.submitterEmail;
+            const displayName  = docData.name || 'your submission';
+            const slug         = docData.slug;
+
+            const isAnonymous = !contactEmail || contactEmail === 'anonymous@brumoutloud.co.uk';
+            if (!isAnonymous) {
+                const emailService = new EmailService();
+                const status = newStatus.toLowerCase();
+
+                if (status === 'approved') {
+                    const liveUrl = slug
+                        ? `https://brumoutloud.co.uk/${itemType}/${slug}.html`
+                        : 'https://brumoutloud.co.uk';
+                    emailResult = await emailService.sendApprovalNotification(
+                        contactEmail,
+                        displayName,
+                        liveUrl,
+                        // Extra context the celebration template renders as
+                        // a mini-poster. Safe to pass for venues too — the
+                        // template only uses the fields it's given.
+                        {
+                            image: docData.image || docData.imageUrl,
+                            eventDate: docData.eventDate,
+                            eventTime: docData.eventTime,
+                            venueName: docData.venueName || (docData.venue && docData.venue.name),
+                        }
+                    );
+                    console.log('✅ Approval email dispatched:', emailResult?.messageId || emailResult?.error);
+                } else if (status === 'rejected') {
+                    emailResult = await emailService.sendRejectionNotification(
+                        contactEmail,
+                        displayName,
+                        reason || 'Please review your submission and ensure all required information is provided.'
+                    );
+                    console.log('✅ Rejection email dispatched:', emailResult?.messageId || emailResult?.error);
+                }
+            } else {
+                console.log('ℹ️ No valid submitter email on doc; skipping notification.');
+            }
+        } catch (notifyError) {
+            // Never let email failure block the status update.
+            console.error('❌ Email notification failed:', notifyError);
+            emailResult = { success: false, error: notifyError.message };
+        }
 
         // Trigger SSG rebuild if an event or venue was approved
         let ssgRebuildResult = null;
@@ -146,6 +198,8 @@ exports.handler = async function (event, context) {
                 newStatus: newStatus,
                 itemType: itemType,
                 ssgRebuild: ssgRebuildResult,
+                emailSent: emailResult?.success || false,
+                emailError: emailResult?.error,
                 note: 'This update was processed using Firestore only'
             })
         };

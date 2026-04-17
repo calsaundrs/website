@@ -64,7 +64,7 @@ exports.handler = async (event, context) => {
       }
 
       try {
-        const eventUrl = `https://brumoutloud.co.uk/event/${eventData.slug}`;
+        const eventUrl = `https://brumoutloud.co.uk/event/${eventData.slug}.html`;
         const eventDate = `${eventData.eventDate} at ${eventData.eventTime || 'TBD'}`;
 
         const emailResult = await emailService.sendEventReminder(

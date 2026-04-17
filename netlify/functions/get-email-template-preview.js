@@ -54,7 +54,13 @@ exports.handler = async (event, context) => {
       case 'approval_notification':
         ({ html: htmlContent } = templates.getApprovalTemplate(
           sampleData.eventName,
-          sampleData.eventUrl
+          sampleData.eventUrl,
+          {
+            image: sampleData.image,
+            eventDate: sampleData.eventDate,
+            eventTime: sampleData.eventTime,
+            venueName: sampleData.venueName,
+          }
         ));
         subject = `You're live on Brum Outloud — ${sampleData.eventName}`;
         break;

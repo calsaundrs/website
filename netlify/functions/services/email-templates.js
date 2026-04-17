@@ -177,40 +177,129 @@ class EmailTemplates {
     return { html, text };
   }
 
-  /** Promoter: "you're live". */
-  getApprovalTemplate(eventName, eventUrl) {
+  /**
+   * Promoter: "you're live" — mini-poster celebration.
+   * `extras` may include: { image, eventDate, eventTime, venueName }.
+   * Each field is optional; the template only renders what it's given,
+   * so this is safe to call for venues too.
+   */
+  getApprovalTemplate(eventName, eventUrl, extras = {}) {
+    const c = this.colors;
     const name = this.esc(eventName);
     const url = eventUrl || this.siteUrl;
+
+    // Resolve an image URL, trimming Cloudinary transforms so we can
+    // re-insert the right size for email (600px wide, bounded height).
+    const imgUrl = this.resolveEmailImage(extras.image, 600, 520);
+
+    const dateLine = this.formatDateLine(extras.eventDate, extras.eventTime);
+    const venue = extras.venueName ? this.esc(extras.venueName) : '';
+
+    // Mini-poster block: image at top, toxic-lime "YOU'RE LIVE" band
+    // underneath as a separator, then the headline + meta.
+    const posterHtml = `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;border:2px solid ${c.ink};">
+        ${imgUrl ? `
+          <tr><td style="padding:0;font-size:0;line-height:0;">
+            <img src="${this.esc(imgUrl)}" width="596" alt="${name}"
+                 style="display:block;width:100%;max-width:596px;height:auto;border:0;outline:0;">
+          </td></tr>
+        ` : ''}
+        <tr><td style="background:${c.toxic};padding:10px 16px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.28em;color:${c.ink};text-transform:uppercase;">
+          You're live
+        </td></tr>
+        <tr><td style="background:${c.bg};padding:22px 22px 18px 22px;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:32px;line-height:1.04;letter-spacing:0.01em;color:${c.paper};text-transform:uppercase;margin:0 0 10px 0;">
+            ${name}
+          </div>
+          ${(dateLine || venue) ? `
+            <div style="font-size:14px;line-height:1.5;color:${c.toxic};letter-spacing:0.05em;">
+              ${dateLine ? `<span>${dateLine}</span>` : ''}${(dateLine && venue) ? ` · ` : ''}${venue ? `<span>${venue}</span>` : ''}
+            </div>
+          ` : ''}
+        </td></tr>
+      </table>
+    `;
+
+    // Share-prompt callout: two concrete asks to ride the listing's reach.
+    const shareHtml = `
+      <div style="margin:8px 0 6px 0;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:20px;letter-spacing:0.02em;color:${c.ink};text-transform:uppercase;">
+        Help it travel
+      </div>
+      <p style="margin:0 0 10px 0;font-size:15px;line-height:1.55;">Two things that genuinely move turnout:</p>
+      <ol style="margin:0 0 14px 22px;padding:0;font-size:15px;line-height:1.7;">
+        <li style="margin-bottom:8px;">
+          <strong>Add <a href="https://instagram.com/brumoutloud" style="color:${c.ink};">@brumoutloud</a> as a collaborator</strong> when you post your event on Instagram. Our audience sees your post in their feed and you get the reach without double-posting.
+        </li>
+        <li>
+          <strong>Repost anything we put up</strong> — grid post, story, reel. If we cover your event and you share it on, both lists see it and the algorithm treats it as signal.
+        </li>
+      </ol>
+      <p style="margin:0 0 4px 0;font-size:14px;color:${c.mute};">If anything about the listing looks wrong, just reply to this email and we'll fix it.</p>
+    `;
+
     const html = this.getBaseTemplate(`
-      ${this.heading(`You're live`)}
-      ${this.para(`<strong>${name}</strong> is now listed on Brum Outloud — visible to everyone browsing the site.`)}
+      ${posterHtml}
       ${this.button('View your listing', url)}
-      ${this.para('Two things that make a real difference to turnout:')}
-      <ul style="margin:0 0 14px 20px;padding:0;font-size:16px;line-height:1.7;">
-        <li>Share the direct link with your followers on the day or the day before.</li>
-        <li>Repost from our social accounts if you see us cover it — it boosts everyone's reach.</li>
-      </ul>
-      ${this.para(`If anything about the listing looks wrong, just reply and we'll fix it.`)}
+      ${shareHtml}
     `, `You're live — ${eventName}`);
 
     const text = [
-      `You're live`,
+      `You're live on Brum Outloud`,
       ``,
-      `"${eventName}" is now listed on Brum Outloud — visible to everyone browsing the site.`,
+      `${eventName}`,
+      dateLine ? (venue ? `${dateLine.replace(/<[^>]+>/g, '')} · ${extras.venueName}` : dateLine.replace(/<[^>]+>/g, '')) : (venue ? extras.venueName : ''),
       ``,
       `View your listing: ${url}`,
       ``,
-      `Two things that make a real difference to turnout:`,
-      `  - Share the direct link with your followers on the day or the day before.`,
-      `  - Repost from our social accounts if you see us cover it — it boosts everyone's reach.`,
+      `HELP IT TRAVEL`,
+      `Two things that genuinely move turnout:`,
       ``,
-      `If anything about the listing looks wrong, just reply and we'll fix it.`,
+      `  1. Add @brumoutloud as a collaborator when you post your event on Instagram — our audience sees your post in their feed and you get the reach without double-posting.`,
+      ``,
+      `  2. Repost anything we put up about your event (grid, story, reel). If we cover it and you share it on, both lists see it and the algorithm treats it as signal.`,
+      ``,
+      `If anything about the listing looks wrong, just reply to this email and we'll fix it.`,
       ``,
       `— Brum Outloud`,
       `${this.siteUrl}`,
-    ].join('\n');
+    ].filter(Boolean).join('\n');
 
     return { html, text };
+  }
+
+  /**
+   * Normalise a Cloudinary image reference into a 600px-wide JPG so
+   * the email renders at a predictable size across clients.
+   * Returns null if no usable URL can be built.
+   */
+  resolveEmailImage(raw, width = 600, maxHeight = 520) {
+    if (!raw) return null;
+    const str = typeof raw === 'object' && raw.url ? raw.url : raw;
+    if (typeof str !== 'string' || !str) return null;
+    const m = str.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/);
+    if (m) {
+      // Strip any existing transforms and apply a consistent email
+      // preset: width 600, capped height, fill, auto format + quality.
+      const tail = m[2].replace(/^[^/]+,[^/]+\//, '');
+      return `${m[1]}w_${width},h_${maxHeight},c_fill,g_auto,f_jpg,q_auto/${tail}`;
+    }
+    return str;
+  }
+
+  /** Build a readable date line like "Sat 19 Apr · 8pm". */
+  formatDateLine(eventDate, eventTime) {
+    if (!eventDate) return '';
+    try {
+      const d = new Date(eventDate);
+      if (Number.isNaN(d.getTime())) return this.esc(eventDate);
+      const fmt = d.toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short',
+      });
+      return eventTime ? `${fmt} · ${this.esc(eventTime)}` : fmt;
+    } catch {
+      return this.esc(eventDate);
+    }
   }
 
   /** Promoter: "we can't publish this, here's why". */

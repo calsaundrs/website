@@ -163,12 +163,17 @@ class EmailService {
     );
   }
 
-  async sendApprovalNotification(promoterEmail, eventName, eventUrl) {
+  /**
+   * `extras` is optional; when provided, the approval template
+   * renders a mini-poster with the flyer image + date/venue meta.
+   * Supported keys: { image, eventDate, eventTime, venueName }.
+   */
+  async sendApprovalNotification(promoterEmail, eventName, eventUrl, extras = {}) {
     const subject = `You're live on Brum Outloud — ${eventName}`;
     return await this.sendEmail(
       promoterEmail,
       subject,
-      this.templates.getApprovalTemplate(eventName, eventUrl)
+      this.templates.getApprovalTemplate(eventName, eventUrl, extras)
     );
   }
 
