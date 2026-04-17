@@ -44,45 +44,51 @@ exports.handler = async (event, context) => {
 
     switch (templateType) {
       case 'submission_confirmation':
-        htmlContent = templates.getSubmissionConfirmationTemplate(
+        ({ html: htmlContent } = templates.getSubmissionConfirmationTemplate(
           sampleData.eventName,
           sampleData.eventId
-        );
-        subject = `✅ Event Submitted Successfully - "${sampleData.eventName}"`;
+        ));
+        subject = `Submission received — ${sampleData.eventName}`;
         break;
 
       case 'approval_notification':
-        htmlContent = templates.getApprovalTemplate(
+        ({ html: htmlContent } = templates.getApprovalTemplate(
           sampleData.eventName,
-          sampleData.eventUrl
-        );
-        subject = `🎉 Your Event is Live! - "${sampleData.eventName}"`;
+          sampleData.eventUrl,
+          {
+            image: sampleData.image,
+            eventDate: sampleData.eventDate,
+            eventTime: sampleData.eventTime,
+            venueName: sampleData.venueName,
+          }
+        ));
+        subject = `You're live on Brum Outloud — ${sampleData.eventName}`;
         break;
 
       case 'rejection_notification':
-        htmlContent = templates.getRejectionTemplate(
+        ({ html: htmlContent } = templates.getRejectionTemplate(
           sampleData.eventName,
           sampleData.reason
-        );
-        subject = `⚠️ Event Submission Update - "${sampleData.eventName}"`;
+        ));
+        subject = `Submission update — ${sampleData.eventName}`;
         break;
 
       case 'event_reminder':
-        htmlContent = templates.getEventReminderTemplate(
+        ({ html: htmlContent } = templates.getEventReminderTemplate(
           sampleData.eventName,
           sampleData.eventDate,
           sampleData.eventUrl
-        );
-        subject = `📅 Reminder: Your Event is Tomorrow - "${sampleData.eventName}"`;
+        ));
+        subject = `Tomorrow: ${sampleData.eventName}`;
         break;
 
       case 'admin_submission_alert':
-        htmlContent = templates.getAdminSubmissionTemplate(
+        ({ html: htmlContent } = templates.getAdminSubmissionTemplate(
           sampleData.eventName,
           sampleData.promoterEmail,
           sampleData.eventId
-        );
-        subject = `🔔 New Event Submission - "${sampleData.eventName}"`;
+        ));
+        subject = `New submission — ${sampleData.eventName}`;
         break;
 
       default:

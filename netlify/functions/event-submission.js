@@ -3,6 +3,7 @@ const cloudinary = require('cloudinary').v2;
 const RecurringEventsManager = require('./services/recurring-events-manager');
 const EmailService = require('./services/email-service');
 const multipart = require('lambda-multipart-parser');
+const { verify: verifyResubmitToken } = require('./utils/resubmit-token');
 
 // AI Poster Parsing Function
 async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
@@ -458,36 +459,145 @@ exports.handler = async function (event, context) {
             }
         }
         
-        // Save to Firestore
-        const firestoreDoc = await db.collection('events').add(firestoreData);
-        console.log('Event saved to Firestore with ID:', firestoreDoc.id);
+        // ----- Upsert resolution ----------------------------------------
+        // Two ways an event can be an UPDATE rather than an INSERT:
+        //   1. A valid signed resubmit token — the HMAC payload carries
+        //      the doc id. We NEVER trust a raw doc id from the client:
+        //      anyone could read an event's Firestore id off the public
+        //      get-events response and clobber it.
+        //   2. Match-key collision — same name + eventDate + venueId
+        //      as an existing non-rejected doc. Anonymous submissions
+        //      hitting this branch get a 409 so third parties can't
+        //      stomp someone else's listing.
+        const normalizedName = String(firestoreData.name || '').trim().toLowerCase();
+        const resubmitToken = (submission['resubmit-token'] || '').trim() || null;
+        const hasRealEmail = firestoreData.submittedBy
+          && firestoreData.submittedBy !== 'anonymous@brumoutloud.co.uk';
+
+        let targetDocRef = null;
+        let matchReason = null;
+
+        if (resubmitToken) {
+            let verifyResult;
+            try {
+                verifyResult = verifyResubmitToken(resubmitToken);
+            } catch (err) {
+                // Misconfig (missing secret) — log but don't block the
+                // submission; fall through to match-key / insert paths.
+                console.error('Resubmit token misconfig; ignoring token:', err.message);
+                verifyResult = { ok: false, reason: 'misconfig' };
+            }
+            if (verifyResult.ok) {
+                const existing = await db.collection('events').doc(verifyResult.docId).get();
+                if (existing.exists) {
+                    targetDocRef = existing.ref;
+                    matchReason = 'resubmit-token';
+                } else {
+                    console.warn('Resubmit token refers to missing doc:', verifyResult.docId);
+                }
+            } else {
+                console.warn('Resubmit token rejected:', verifyResult.reason);
+            }
+        }
+
+        if (!targetDocRef && normalizedName && firestoreData.eventDate && firestoreData.venueId) {
+            const collisionQ = await db.collection('events')
+                .where('eventDate', '==', firestoreData.eventDate)
+                .where('venueId',   '==', firestoreData.venueId)
+                .get();
+            const collisions = collisionQ.docs.filter(d => {
+                const dn = String((d.data() || {}).name || '').trim().toLowerCase();
+                const st = String((d.data() || {}).status || '').toLowerCase();
+                // Ignore rejected dupes — a rejected listing shouldn't
+                // block a fresh submission at the same slot.
+                return dn === normalizedName && st !== 'rejected';
+            });
+
+            if (collisions.length > 0) {
+                // Ownership gate: anonymous submitter trying to alter
+                // someone else's event → refuse rather than silently
+                // stomping. Signed-link resubmits bypass this branch
+                // above by setting targetDocRef directly.
+                if (!hasRealEmail) {
+                    return {
+                        statusCode: 409,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            success: false,
+                            code: 'duplicate',
+                            message: "Looks like this event is already listed. Reply to our rejection email or email hello@brumoutloud.co.uk and we'll edit it for you.",
+                        }),
+                    };
+                }
+                // With a real email, match the first collision. Multiple
+                // collisions would mean we already have duplicate events
+                // in the DB, which this upsert won't make worse.
+                targetDocRef = collisions[0].ref;
+                matchReason = 'match-key';
+            }
+        }
+
+        // ----- Insert / Update -----------------------------------------
+        let firestoreDoc;
+        let isUpsert = false;
+        if (targetDocRef) {
+            const existing = (await targetDocRef.get()).data() || {};
+            // Preserve the original createdAt; everything else gets
+            // overwritten. Always flip status back to pending so an
+            // update forces a fresh editorial review.
+            const updateData = {
+                ...firestoreData,
+                createdAt: existing.createdAt || firestoreData.createdAt,
+                status: 'pending',
+                updatedAt: new Date(),
+                lastResubmittedAt: new Date(),
+                lastResubmitReason: matchReason,
+                // Clear any previous approval trail — this is a new
+                // pending review.
+                approvedBy: null,
+                approvedAt: null,
+                // Retain the original rejection reason only long enough
+                // to display it once on the prefilled form; clear on
+                // resubmit so it doesn't stick.
+                rejectionReason: null,
+            };
+            await targetDocRef.set(updateData, { merge: true });
+            firestoreDoc = { id: targetDocRef.id };
+            isUpsert = true;
+            console.log(`Upserted event ${targetDocRef.id} (via ${matchReason})`);
+        } else {
+            firestoreDoc = await db.collection('events').add(firestoreData);
+            console.log('Event saved to Firestore with ID:', firestoreDoc.id);
+        }
         
         // Determine promoter email (needed by both email and push notification blocks)
         const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
         
-        // Send email notifications
+        // Send email notifications. Admin alert fires unconditionally
+        // (Cal wants an inbox ping for every submission, including
+        // anonymous ones). Promoter confirmation only fires when we
+        // actually have a real submitter address.
         try {
             const emailService = new EmailService();
-            
-            if (promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk') {
-                // Send submission confirmation to promoter
+            const hasPromoterEmail = promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk';
+
+            if (hasPromoterEmail) {
                 await emailService.sendSubmissionConfirmation(
                     promoterEmail,
                     firestoreData.name,
                     firestoreDoc.id
                 );
                 console.log('✅ Submission confirmation email sent to:', promoterEmail);
-                
-                // Send admin notification
-                await emailService.sendAdminSubmissionAlert(
-                    firestoreData.name,
-                    promoterEmail,
-                    firestoreDoc.id
-                );
-                console.log('✅ Admin notification email sent');
             } else {
-                console.log('⚠️ No valid promoter email found, skipping email notifications');
+                console.log('ℹ️ No valid promoter email; skipping confirmation.');
             }
+
+            await emailService.sendAdminSubmissionAlert(
+                firestoreData.name,
+                hasPromoterEmail ? promoterEmail : null,
+                firestoreDoc.id
+            );
+            console.log('✅ Admin notification email sent');
         } catch (emailError) {
             console.error('❌ Email notification failed:', emailError);
             // Don't fail the entire submission if email fails

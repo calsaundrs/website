@@ -1,1071 +1,504 @@
 /**
- * Professional Email Templates for Brum Outloud
- * Based on the design system with brand consistency
+ * Brum Outloud email templates — brutalist-lite, email-safe.
+ *
+ * Voice direction: Brummie direct, queer, cheeky. No corporate flab,
+ * no "kindly" or "we are pleased to". Signed from a human — these are
+ * personal emails about somebody's event, not transactional receipts.
+ *
+ * Visual signatures carried across every template:
+ *  - Header dark band with halftone pink dots (data-URI SVG tile so
+ *    Apple Mail and Gmail web render the dots; Outlook strips and
+ *    falls back to solid dark — still on-brand).
+ *  - Misprint text-shadow on main headings (pink + purple offsets,
+ *    mirroring the site's Syne treatment). Degrades to flat text in
+ *    Outlook.
+ *  - Pride 6-stripe footer rainbow — full-width table row.
+ *  - Signed sign-off block ("— Cal / Brum Outloud") above the small
+ *    print so every email feels like a mate typed it, not a SaaS.
+ *
+ * Email-client safety: 100% inline styles, table-based layout,
+ * no webfonts, no CSS variables, no position:absolute, no CSS grid,
+ * no background-image gradients. Every style that matters has a
+ * solid-colour fallback.
  */
 
 class EmailTemplates {
   constructor() {
-    this.brandColors = {
-      primary: '#E83A99',
-      secondary: '#8B5CF6',
-      background: '#111827',
-      text: '#EAEAEA',
-      textLight: '#D1D5DB',
-      textMuted: '#9CA3AF',
-      success: '#10B981',
-      warning: '#F59E0B',
-      error: '#EF4444'
+    this.colors = {
+      bg: '#0D0115',          // brand dark — header band + poster card
+      toxic: '#CCFF00',       // accent stripe, uppercase metadata
+      pink: '#E83A99',        // primary CTA, step-1 rail, misprint shadow
+      purple: '#9B5DE5',      // misprint shadow right
+      paper: '#FFFFFF',       // body card bg
+      ink: '#111111',         // body text
+      mute: '#6B7280',        // small-print grey
+      rule: '#E5E7EB',        // dividers
     };
-    
-    this.fonts = {
-      primary: 'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: 'Anton, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    };
+
+    // 1978 six-stripe flag (the 2018 eight-stripe is too many columns
+    // at 600px to read as a clean rainbow).
+    this.pride = ['#E40303', '#FF8C00', '#FFF430', '#008026', '#004DFF', '#750787'];
+
+    this.siteUrl = 'https://brumoutloud.co.uk';
+    this.addressLine = 'Brum Outloud · Birmingham';
+    this.signature = 'Cal';
+    this.signatureTitle = 'Brum Outloud';
+
+    // Halftone dots SVG inlined as a data URI and tiled on the dark
+    // header band. Apple Mail and Gmail webmail render it; Outlook
+    // strips data URIs and sees the background-color fallback instead.
+    const halftoneSvg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">'
+      + '<circle cx="10" cy="10" r="1.4" fill="#E83A99" fill-opacity="0.28"/>'
+      + '</svg>';
+    this.halftoneDataUri = `data:image/svg+xml;base64,${Buffer.from(halftoneSvg).toString('base64')}`;
   }
 
+  // ---- Base chrome --------------------------------------------------------
+
   /**
-   * Base email template with Brum Outloud branding
+   * Wrap content in the shared brutalist-lite shell.
+   * `content` can be a string or { hero, body }. `hero` sits
+   * edge-to-edge below the header (no side padding).
    */
   getBaseTemplate(content, title = 'Brum Outloud') {
-    return `
-<!DOCTYPE html>
+    const c = this.colors;
+    const { hero, body } = typeof content === 'string'
+      ? { hero: '', body: content }
+      : (content || {});
+    const prideRow = this.pride.map(hex =>
+      `<td width="16.6667%" height="8" style="background:${hex};line-height:8px;font-size:0;">&nbsp;</td>`
+    ).join('');
+
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: ${this.fonts.primary};
-            line-height: 1.6;
-            color: ${this.brandColors.text};
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 50%, #0a0a0a 100%);
-            margin: 0;
-            padding: 0;
-        }
-        
-        .email-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: ${this.brandColors.background};
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .email-header {
-            background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .email-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
-            background-size: 20px 20px;
-            opacity: 0.3;
-        }
-        
-        .logo {
-            font-family: ${this.fonts.heading};
-            font-size: 32px;
-            font-weight: 900;
-            color: white;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .email-content {
-            padding: 40px 30px;
-            background: ${this.brandColors.background};
-        }
-        
-        .email-footer {
-            background: rgba(17, 24, 39, 0.8);
-            padding: 30px;
-            text-align: center;
-            border-top: 1px solid rgba(75, 85, 99, 0.3);
-        }
-        
-        .footer-text {
-            color: ${this.brandColors.textMuted};
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .social-link {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
-            color: white;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-        
-        .social-link:hover {
-            transform: translateY(-2px);
-        }
-        
-        .unsubscribe {
-            color: ${this.brandColors.textMuted};
-            font-size: 12px;
-            text-decoration: none;
-        }
-        
-        /* Responsive design */
-        @media only screen and (max-width: 600px) {
-            .email-container {
-                margin: 0;
-                border-radius: 0;
-            }
-            
-            .email-header, .email-content, .email-footer {
-                padding: 30px 20px;
-            }
-            
-            .logo {
-                font-size: 28px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="x-apple-disable-message-reformatting">
+<title>${this.esc(title)}</title>
 </head>
-<body>
-    <div class="email-container">
-        <div class="email-header">
-            <a href="https://brumoutloud.co.uk" class="logo">BRUM OUTLOUD</a>
+<body style="margin:0;padding:0;background:#F3F4F6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${c.ink};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F3F4F6;">
+  <tr><td align="center" style="padding:24px 12px;">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:${c.paper};border:2px solid ${c.ink};">
+      <!-- Dark header band with halftone-dot overlay -->
+      <tr><td style="background:${c.bg} url('${this.halftoneDataUri}') repeat;padding:22px 28px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:24px;letter-spacing:0.14em;color:${c.paper};text-transform:uppercase;">Brum Outloud</td>
+            <td align="right" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:11px;letter-spacing:0.22em;color:${c.toxic};text-transform:uppercase;">Birmingham's queer nights, one list</td>
+          </tr>
+        </table>
+      </td></tr>
+      <!-- Toxic accent stripe -->
+      <tr><td height="8" style="background:${c.toxic};line-height:8px;font-size:0;">&nbsp;</td></tr>
+
+      ${hero ? `
+      <!-- Edge-to-edge hero (full 600px, no side padding) -->
+      <tr><td style="padding:0;">${hero}</td></tr>
+      ` : ''}
+
+      <!-- Padded body -->
+      <tr><td style="padding:36px 28px 12px 28px;font-size:16px;line-height:1.6;color:${c.ink};">
+        ${body}
+      </td></tr>
+
+      <!-- Signed sign-off — reads as a human, not a transactional receipt -->
+      <tr><td style="padding:0 28px 32px 28px;">
+        <div style="border-top:3px solid ${c.toxic};width:56px;margin:8px 0 14px 0;font-size:0;line-height:0;">&nbsp;</div>
+        <div style="font-size:16px;line-height:1.5;color:${c.ink};">
+          Cheers,<br>
+          <strong>${this.esc(this.signature)}</strong> <span style="color:${c.mute};"> · ${this.esc(this.signatureTitle)}</span>
         </div>
-        
-        <div class="email-content">
-            ${content}
-        </div>
-        
-        <div class="email-footer">
-            <p class="footer-text">
-                Thanks for being part of Birmingham's LGBTQ+ community!<br>
-                <strong>The Brum Outloud Team</strong>
-            </p>
-            
-            <div class="social-links">
-                <a href="https://instagram.com/brumoutloud" class="social-link">📷</a>
-                <a href="https://twitter.com/brumoutloud" class="social-link">🐦</a>
-                <a href="https://facebook.com/brumoutloud" class="social-link">📘</a>
-            </div>
-            
-            <a href="https://brumoutloud.co.uk/unsubscribe" class="unsubscribe">
-                Unsubscribe from these emails
-            </a>
-        </div>
-    </div>
+      </td></tr>
+
+      <!-- Small-print footer -->
+      <tr><td style="border-top:1px solid ${c.rule};padding:18px 28px;font-size:12px;line-height:1.55;color:${c.mute};">
+        <div>${this.addressLine}</div>
+        <div style="margin-top:6px;"><a href="${this.siteUrl}" style="color:${c.mute};text-decoration:underline;">${this.siteUrl.replace(/^https?:\/\//, '')}</a> &nbsp;·&nbsp; <a href="https://instagram.com/brumoutloud" style="color:${c.mute};text-decoration:underline;">@brumoutloud</a> &nbsp;·&nbsp; <a href="{{unsubscribe}}" style="color:${c.mute};text-decoration:underline;">Unsubscribe</a></div>
+      </td></tr>
+
+      <!-- Pride rainbow strip -->
+      <tr><td style="padding:0;font-size:0;line-height:0;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${prideRow}</tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
 </body>
 </html>`;
   }
 
+  // ---- Shared bits --------------------------------------------------------
+
   /**
-   * Submission Confirmation Template
+   * Main headline with a misprint double-shadow (pink + purple offsets)
+   * that mirrors the Syne treatment on the site's carousel slides.
+   * Gmail + Apple Mail honour text-shadow; Outlook ignores silently.
    */
+  heading(text, { size = 38 } = {}) {
+    const c = this.colors;
+    const shadow = `-3px -2px 0 ${c.pink}, 3px 2px 0 ${c.purple}`;
+    return `<div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:${size}px;line-height:1.02;letter-spacing:0.01em;color:${c.ink};text-transform:uppercase;margin:0 0 20px 0;text-shadow:${shadow};">${this.esc(text)}</div>`;
+  }
+
+  /** Plain paragraph with comfortable line-height for reading. */
+  para(text) {
+    return `<p style="margin:0 0 16px 0;font-size:16px;line-height:1.6;">${text}</p>`;
+  }
+
+  /** Pink CTA — full-width block button, hard edges. */
+  button(label, href, { size = 18 } = {}) {
+    const c = this.colors;
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0;"><tr>
+      <td align="center" style="background:${c.pink};border:2px solid ${c.ink};">
+        <a href="${this.esc(href)}" style="display:block;padding:16px 22px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:${size}px;letter-spacing:0.14em;color:${c.paper};text-transform:uppercase;text-decoration:none;">${this.esc(label)} &rarr;</a>
+      </td>
+    </tr></table>`;
+  }
+
+  /** Key/value detail table for event summaries and IDs. */
+  kvTable(rows) {
+    const c = this.colors;
+    const body = rows.map(([k, v]) => `
+      <tr>
+        <td style="padding:10px 14px;border-bottom:1px solid ${c.rule};font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:${c.mute};width:35%;vertical-align:top;">${this.esc(k)}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid ${c.rule};font-size:15px;color:${c.ink};">${v}</td>
+      </tr>`).join('');
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${c.rule};margin:6px 0 18px 0;">${body}</table>`;
+  }
+
+  /** Escape untrusted strings before interpolating into HTML. */
+  esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[ch]));
+  }
+
+  // ---- Templates ---------------------------------------------------------
+
+  /** Promoter: "we've got your submission, it's queued". */
   getSubmissionConfirmationTemplate(eventName, eventId) {
-    const content = `
-      <style>
-        .success-icon {
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, ${this.brandColors.success} 0%, #059669 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 36px;
-          color: white;
-          box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-        
-        .event-details {
-          background: rgba(31, 41, 55, 0.5);
-          border: 1px solid rgba(75, 85, 99, 0.3);
-          border-radius: 12px;
-          padding: 25px;
-          margin: 30px 0;
-        }
-        
-        .event-id {
-          background: rgba(232, 58, 153, 0.1);
-          border: 1px solid rgba(232, 58, 153, 0.3);
-          border-radius: 8px;
-          padding: 15px;
-          margin: 20px 0;
-          text-align: center;
-        }
-        
-        .cta-button {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          color: white;
-          text-decoration: none;
-          padding: 16px 32px;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 25px 0;
-          transition: transform 0.3s ease;
-          box-shadow: 0 8px 25px rgba(232, 58, 153, 0.3);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-2px);
-        }
-        
-        .next-steps {
-          background: rgba(139, 92, 246, 0.1);
-          border-left: 4px solid ${this.brandColors.secondary};
-          padding: 20px;
-          margin: 25px 0;
-          border-radius: 0 8px 8px 0;
-        }
-        
-        .next-steps h3 {
-          color: ${this.brandColors.secondary};
-          margin-bottom: 15px;
-          font-size: 18px;
-        }
-        
-        .next-steps ul {
-          list-style: none;
-          padding: 0;
-        }
-        
-        .next-steps li {
-          padding: 8px 0;
-          position: relative;
-          padding-left: 25px;
-        }
-        
-        .next-steps li::before {
-          content: '✓';
-          position: absolute;
-          left: 0;
-          color: ${this.brandColors.success};
-          font-weight: bold;
-        }
-      </style>
-      
-      <div class="success-icon">🎉</div>
-      
-      <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: white;">
-        Event Submitted Successfully!
-      </h1>
-      
-      <p style="text-align: center; font-size: 18px; color: ${this.brandColors.textLight}; margin-bottom: 30px;">
-        Thank you for your submission! We've received your event and it's now in our review queue.
-      </p>
-      
-      <div class="event-details">
-        <h2 style="color: white; margin-bottom: 15px; font-size: 22px;">Event Details</h2>
-        <p style="color: ${this.brandColors.textLight}; font-size: 16px; margin-bottom: 10px;">
-          <strong>Event Name:</strong> ${eventName}
-        </p>
-        <p style="color: ${this.brandColors.textMuted}; font-size: 14px;">
-          <strong>Submitted:</strong> ${new Date().toLocaleString()}
-        </p>
-      </div>
-      
-      <div class="event-id">
-        <p style="color: ${this.brandColors.primary}; font-weight: 600; margin: 0;">
-          Event ID: <span style="font-family: monospace; background: rgba(232, 58, 153, 0.2); padding: 4px 8px; border-radius: 4px;">${eventId}</span>
-        </p>
-        <p style="color: ${this.brandColors.textMuted}; font-size: 12px; margin: 8px 0 0 0;">
-          Keep this ID handy for future reference
-        </p>
-      </div>
-      
-      <div class="next-steps">
-        <h3>What happens next?</h3>
-        <ul>
-          <li>Our team will review your event details</li>
-          <li>We'll check that all information is complete and accurate</li>
-          <li>You'll receive an email once your event is approved or if we need any changes</li>
-          <li>Approved events go live immediately on our platform</li>
-        </ul>
-      </div>
-      
-      <div style="text-align: center; margin: 35px 0;">
-        <a href="https://brumoutloud.co.uk/promoter-tool" class="cta-button">
-          View Promoter Tools
-        </a>
-      </div>
-      
-      <p style="text-align: center; color: ${this.brandColors.textMuted}; font-size: 14px; margin-top: 30px;">
-        Questions? Reply to this email or visit our <a href="https://brumoutloud.co.uk/contact" style="color: ${this.brandColors.primary}; text-decoration: none;">contact page</a>.
-      </p>
-    `;
-    
-    return this.getBaseTemplate(content, `Event Submitted - ${eventName}`);
+    const name = this.esc(eventName);
+    const html = this.getBaseTemplate(`
+      ${this.heading(`Cheers, we've got it`)}
+      ${this.para(`<strong>${name}</strong> is sitting in the queue with us. We look at everything that comes through — usually within a day or two.`)}
+      ${this.para(`You'll hear either way: either it's live on the site, or we'll flag what needs a quick tweak and you can send it back.`)}
+      ${this.kvTable([
+        ['Event', name],
+        ['Submission ID', this.esc(eventId)],
+        ['Status', 'Waiting on review'],
+      ])}
+      ${this.para(`Anything to add or change in the meantime? Just reply.`)}
+    `, `Cheers — we've got your submission`);
+
+    const text = [
+      `Cheers, we've got it`,
+      ``,
+      `"${eventName}" is sitting in the queue with us. We look at everything that comes through — usually within a day or two.`,
+      ``,
+      `You'll hear either way: either it's live on the site, or we'll flag what needs a quick tweak and you can send it back.`,
+      ``,
+      `Event: ${eventName}`,
+      `Submission ID: ${eventId}`,
+      `Status: Waiting on review`,
+      ``,
+      `Anything to add or change in the meantime? Just reply.`,
+      ``,
+      `Cheers,`,
+      `${this.signature} — ${this.signatureTitle}`,
+      `${this.siteUrl}`,
+    ].join('\n');
+
+    return { html, text };
   }
 
   /**
-   * Approval Notification Template
+   * Promoter: "right, you're on" — big celebratory mini-poster.
+   * `extras`: { image, eventDate, eventTime, venueName }. All optional.
    */
-  getApprovalTemplate(eventName, eventUrl) {
-    const content = `
-      <style>
-        .celebration-icon {
-          width: 100px;
-          height: 100px;
-          background: linear-gradient(135deg, ${this.brandColors.success} 0%, #059669 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 48px;
-          color: white;
-          box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
-          animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-        
-        .live-badge {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.success} 0%, #059669 100%);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 20px;
-          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-        
-        .event-card {
-          background: rgba(31, 41, 55, 0.5);
-          border: 1px solid rgba(75, 85, 99, 0.3);
-          border-radius: 16px;
-          padding: 30px;
-          margin: 30px 0;
-          text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .event-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-        }
-        
-        .cta-button {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          color: white;
-          text-decoration: none;
-          padding: 18px 36px;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 18px;
-          margin: 25px 0;
-          transition: transform 0.3s ease;
-          box-shadow: 0 10px 30px rgba(232, 58, 153, 0.4);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-3px);
-        }
-        
-        .share-section {
-          background: rgba(139, 92, 246, 0.1);
-          border: 1px solid rgba(139, 92, 246, 0.3);
-          border-radius: 12px;
-          padding: 25px;
-          margin: 30px 0;
-          text-align: center;
-        }
-        
-        .share-buttons {
-          display: flex;
-          justify-content: center;
-          gap: 15px;
-          margin-top: 20px;
-          flex-wrap: wrap;
-        }
-        
-        .share-button {
-          display: inline-block;
-          padding: 12px 20px;
-          border-radius: 8px;
-          text-decoration: none;
-          font-weight: 600;
-          font-size: 14px;
-          transition: transform 0.3s ease;
-        }
-        
-        .share-button.instagram {
-          background: linear-gradient(135deg, #E4405F 0%, #C13584 100%);
-          color: white;
-        }
-        
-        .share-button.twitter {
-          background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);
-          color: white;
-        }
-        
-        .share-button.facebook {
-          background: linear-gradient(135deg, #4267B2 0%, #365899 100%);
-          color: white;
-        }
-        
-        .share-button:hover {
-          transform: translateY(-2px);
-        }
-      </style>
-      
-      <div class="celebration-icon">🎉</div>
-      
-      <div style="text-align: center; margin-bottom: 30px;">
-        <span class="live-badge">✨ LIVE NOW ✨</span>
-        <h1 style="font-size: 32px; margin-bottom: 15px; color: white;">
-          Your Event is Live!
-        </h1>
-        <p style="font-size: 20px; color: ${this.brandColors.textLight};">
-          Congratulations! Your event is now live on Brum Outloud
-        </p>
-      </div>
-      
-      <div class="event-card">
-        <h2 style="color: white; margin-bottom: 15px; font-size: 24px;">${eventName}</h2>
-        <p style="color: ${this.brandColors.textMuted}; font-size: 14px; margin-bottom: 20px;">
-          Now live and discoverable by the Birmingham LGBTQ+ community
-        </p>
-        
-        <a href="${eventUrl}" class="cta-button">
-          View Your Event
-        </a>
-      </div>
-      
-      <div class="share-section">
-        <h3 style="color: ${this.brandColors.secondary}; margin-bottom: 15px; font-size: 20px;">
-          Share Your Success! 🚀
-        </h3>
-        <p style="color: ${this.brandColors.textLight}; margin-bottom: 20px;">
-          Help spread the word! Share your event on social media and with your network.
-        </p>
-        
-        <div class="share-buttons">
-          <a href="https://www.instagram.com/brumoutloud" class="share-button instagram">
-            📷 Share on Instagram
-          </a>
-          <a href="https://twitter.com/brumoutloud" class="share-button twitter">
-            🐦 Share on Twitter
-          </a>
-          <a href="https://facebook.com/brumoutloud" class="share-button facebook">
-            📘 Share on Facebook
-          </a>
-        </div>
-      </div>
-      
-      <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid ${this.brandColors.success}; padding: 20px; margin: 30px 0; border-radius: 0 8px 8px 0;">
-        <h3 style="color: ${this.brandColors.success}; margin-bottom: 15px; font-size: 18px;">
-          What's Next?
-        </h3>
-        <ul style="list-style: none; padding: 0; color: ${this.brandColors.textLight};">
-          <li style="padding: 5px 0;">✓ Your event is now discoverable on our platform</li>
-          <li style="padding: 5px 0;">✓ Community members can find and attend your event</li>
-          <li style="padding: 5px 0;">✓ You can track engagement and attendance</li>
-          <li style="padding: 5px 0;">✓ Consider sharing on your own social channels</li>
-        </ul>
-      </div>
-      
-      <p style="text-align: center; color: ${this.brandColors.textMuted}; font-size: 14px; margin-top: 30px;">
-        Need help promoting your event? Check out our <a href="https://brumoutloud.co.uk/promoter-tool" style="color: ${this.brandColors.primary}; text-decoration: none;">promoter resources</a>.
+  getApprovalTemplate(eventName, eventUrl, extras = {}) {
+    const c = this.colors;
+    const name = this.esc(eventName);
+    const url = eventUrl || this.siteUrl;
+
+    const imgUrl = this.resolveEmailImage(extras.image, 600, 520);
+    const dateLine = this.formatDateLine(extras.eventDate, extras.eventTime);
+    const venue = extras.venueName ? this.esc(extras.venueName) : '';
+
+    // Confetti strip between the CTA and the share section.
+    const confetti = `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 22px 0;">
+        <tr>${this.pride.map(hex =>
+          `<td width="16.6667%" height="14" style="background:${hex};line-height:14px;font-size:0;">&nbsp;</td>`
+        ).join('')}</tr>
+      </table>
+    `;
+
+    // Hero: flyer → toxic YOU'RE ON badge → dark poster card with
+    // event name + meta. Badge copy is the voice marker — "RIGHT,
+    // YOU'RE ON" reads like a mate, not a confirmation email.
+    const heroHtml = `
+      ${imgUrl ? `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr><td style="padding:0;font-size:0;line-height:0;background:${c.bg};">
+            <img src="${this.esc(imgUrl)}" width="600" alt="${name}"
+                 style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:0;">
+          </td></tr>
+        </table>
+      ` : ''}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td align="center" style="background:${c.toxic};padding:18px 20px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:30px;line-height:1;letter-spacing:0.18em;color:${c.ink};text-transform:uppercase;">
+          Right, you're on.
+        </td></tr>
+        <tr><td style="background:${c.bg} url('${this.halftoneDataUri}') repeat;padding:30px 26px;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:44px;line-height:1.02;letter-spacing:0.01em;color:${c.paper};text-transform:uppercase;margin:0 0 14px 0;text-shadow:-3px -2px 0 ${c.pink}, 3px 2px 0 ${c.purple};">
+            ${name}
+          </div>
+          ${(dateLine || venue) ? `
+            <div style="font-size:15px;line-height:1.55;color:${c.toxic};letter-spacing:0.1em;font-weight:700;text-transform:uppercase;">
+              ${dateLine ? `<span>${dateLine}</span>` : ''}${(dateLine && venue) ? `<span style="opacity:0.5;">  ·  </span>` : ''}${venue ? `<span>${venue}</span>` : ''}
+            </div>
+          ` : ''}
+        </td></tr>
+      </table>
+    `;
+
+    const leadCopy = `
+      <p style="margin:0 0 8px 0;font-size:18px;line-height:1.5;font-weight:600;">
+        <strong>${name}</strong> is on the site. Birmingham can find you.
+      </p>
+      <p style="margin:0 0 0 0;font-size:16px;line-height:1.6;color:${c.mute};">
+        Now the fun bit — getting people through the door.
       </p>
     `;
-    
-    return this.getBaseTemplate(content, `Event Approved - ${eventName}`);
+
+    const ctaHtml = this.button('See it live', url, { size: 20 });
+
+    // Share-prompt cards — each ask gets a coloured rail so they
+    // read as a playbook rather than a bullet list.
+    const shareHtml = `
+      <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:32px;line-height:1.02;letter-spacing:0.01em;color:${c.ink};text-transform:uppercase;margin:0 0 6px 0;text-shadow:-2px -1px 0 ${c.pink}, 2px 1px 0 ${c.purple};">
+        Now make it travel
+      </div>
+      <p style="margin:0 0 22px 0;font-size:16px;line-height:1.6;">Two things that genuinely move the door:</p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;border-left:6px solid ${c.pink};">
+        <tr><td style="padding:16px 20px;background:#FAFAFA;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:13px;letter-spacing:0.24em;color:${c.pink};text-transform:uppercase;margin:0 0 8px 0;">Step 1 · The Insta collab</div>
+          <div style="font-size:16px;line-height:1.6;">
+            Add <strong><a href="https://instagram.com/brumoutloud" style="color:${c.ink};">@brumoutloud</a></strong> as a collaborator when you post about this on Instagram. Your post, our audience, one upload — their followers see it in their feed too. Free reach.
+          </div>
+        </td></tr>
+      </table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;border-left:6px solid ${c.toxic};">
+        <tr><td style="padding:16px 20px;background:#FAFAFA;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:13px;letter-spacing:0.24em;color:${c.ink};text-transform:uppercase;margin:0 0 8px 0;">Step 2 · The repost</div>
+          <div style="font-size:16px;line-height:1.6;">
+            Repost anything we put up about your event — grid, story, reel. If we shout, you shout. Both audiences see it and the algorithm reads it as real momentum.
+          </div>
+        </td></tr>
+      </table>
+
+      <p style="margin:20px 0 0 0;font-size:15px;color:${c.mute};line-height:1.6;">Anything off on the listing? Reply — we'll fix it same day.</p>
+    `;
+
+    const html = this.getBaseTemplate({
+      hero: heroHtml,
+      body: `
+        <div style="margin-top:-12px;margin-bottom:18px;">${leadCopy}</div>
+        ${ctaHtml}
+        ${confetti}
+        ${shareHtml}
+      `,
+    }, `Right, you're on — ${eventName}`);
+
+    const text = [
+      `Right, you're on.`,
+      ``,
+      `${eventName}`,
+      dateLine ? (venue ? `${dateLine} · ${extras.venueName}` : dateLine) : (venue ? extras.venueName : ''),
+      ``,
+      `${eventName} is on the site. Birmingham can find you.`,
+      `Now the fun bit — getting people through the door.`,
+      ``,
+      `See it live: ${url}`,
+      ``,
+      `NOW MAKE IT TRAVEL`,
+      `Two things that genuinely move the door:`,
+      ``,
+      `  1. The Insta collab — add @brumoutloud as a collaborator when you post about this on Instagram. Your post, our audience, one upload — their followers see it in their feed too. Free reach.`,
+      ``,
+      `  2. The repost — repost anything we put up about your event. Grid, story, reel. If we shout, you shout. Both audiences see it and the algorithm reads it as real momentum.`,
+      ``,
+      `Anything off on the listing? Reply — we'll fix it same day.`,
+      ``,
+      `Cheers,`,
+      `${this.signature} — ${this.signatureTitle}`,
+      `${this.siteUrl}`,
+    ].filter(Boolean).join('\n');
+
+    return { html, text };
+  }
+
+  /** Normalise a Cloudinary image to a 600px-wide JPG for email. */
+  resolveEmailImage(raw, width = 600, maxHeight = 520) {
+    if (!raw) return null;
+    const str = typeof raw === 'object' && raw.url ? raw.url : raw;
+    if (typeof str !== 'string' || !str) return null;
+    const m = str.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.+)$/);
+    if (m) {
+      const tail = m[2].replace(/^[^/]+,[^/]+\//, '');
+      return `${m[1]}w_${width},h_${maxHeight},c_fill,g_auto,f_jpg,q_auto/${tail}`;
+    }
+    return str;
+  }
+
+  /** "Sat 19 Apr · 8pm" — compact human date. */
+  formatDateLine(eventDate, eventTime) {
+    if (!eventDate) return '';
+    try {
+      const d = new Date(eventDate);
+      if (Number.isNaN(d.getTime())) return this.esc(eventDate);
+      const fmt = d.toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short',
+      });
+      return eventTime ? `${fmt} · ${this.esc(eventTime)}` : fmt;
+    } catch {
+      return this.esc(eventDate);
+    }
   }
 
   /**
-   * Rejection Notification Template
+   * Promoter: "nearly there, here's what to tweak".
+   * When `resubmitUrl` is provided, the button deep-links back into
+   * the form with the submission prefilled; otherwise we fall back
+   * to a blank /submit link.
    */
-  getRejectionTemplate(eventName, reason) {
-    const content = `
-      <style>
-        .feedback-icon {
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, ${this.brandColors.warning} 0%, #D97706 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 36px;
-          color: white;
-          box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-        }
-        
-        .feedback-box {
-          background: rgba(245, 158, 11, 0.1);
-          border: 1px solid rgba(245, 158, 11, 0.3);
-          border-radius: 12px;
-          padding: 25px;
-          margin: 30px 0;
-        }
-        
-        .feedback-box h3 {
-          color: ${this.brandColors.warning};
-          margin-bottom: 15px;
-          font-size: 18px;
-        }
-        
-        .cta-button {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          color: white;
-          text-decoration: none;
-          padding: 16px 32px;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 25px 0;
-          transition: transform 0.3s ease;
-          box-shadow: 0 8px 25px rgba(232, 58, 153, 0.3);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-2px);
-        }
-        
-        .help-section {
-          background: rgba(139, 92, 246, 0.1);
-          border-left: 4px solid ${this.brandColors.secondary};
-          padding: 20px;
-          margin: 25px 0;
-          border-radius: 0 8px 8px 0;
-        }
-        
-        .help-section h3 {
-          color: ${this.brandColors.secondary};
-          margin-bottom: 15px;
-          font-size: 18px;
-        }
-        
-        .help-section ul {
-          list-style: none;
-          padding: 0;
-        }
-        
-        .help-section li {
-          padding: 8px 0;
-          position: relative;
-          padding-left: 25px;
-          color: ${this.brandColors.textLight};
-        }
-        
-        .help-section li::before {
-          content: '💡';
-          position: absolute;
-          left: 0;
-        }
-      </style>
-      
-      <div class="feedback-icon">📝</div>
-      
-      <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: white;">
-        Event Submission Update
-      </h1>
-      
-      <p style="text-align: center; font-size: 18px; color: ${this.brandColors.textLight}; margin-bottom: 30px;">
-        Thank you for your submission! We've reviewed your event and need some additional information.
-      </p>
-      
-      <div style="background: rgba(31, 41, 55, 0.5); border: 1px solid rgba(75, 85, 99, 0.3); border-radius: 12px; padding: 25px; margin: 30px 0;">
-        <h2 style="color: white; margin-bottom: 15px; font-size: 22px;">Event Details</h2>
-        <p style="color: ${this.brandColors.textLight}; font-size: 16px; margin-bottom: 10px;">
-          <strong>Event Name:</strong> ${eventName}
-        </p>
-        <p style="color: ${this.brandColors.textMuted}; font-size: 14px;">
-          <strong>Submitted:</strong> ${new Date().toLocaleString()}
-        </p>
-      </div>
-      
-      <div class="feedback-box">
-        <h3>Feedback from our team:</h3>
-        <p style="color: ${this.brandColors.textLight}; line-height: 1.6;">
-          ${reason}
-        </p>
-      </div>
-      
-      <div class="help-section">
-        <h3>Don't worry - this is easily fixed!</h3>
-        <ul>
-          <li>Review the feedback above carefully</li>
-          <li>Make the necessary changes to your event details</li>
-          <li>Resubmit your event using our promoter tools</li>
-          <li>Our team will review your updated submission promptly</li>
-        </ul>
-      </div>
-      
-      <div style="text-align: center; margin: 35px 0;">
-        <a href="https://brumoutloud.co.uk/promoter-tool" class="cta-button">
-          Resubmit Your Event
-        </a>
-      </div>
-      
-      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
-        <h3 style="color: ${this.brandColors.success}; margin-bottom: 10px; font-size: 18px;">
-          Need Help?
-        </h3>
-        <p style="color: ${this.brandColors.textLight}; margin-bottom: 15px;">
-          Our team is here to help you create the perfect event listing.
-        </p>
-        <a href="https://brumoutloud.co.uk/contact" style="color: ${this.brandColors.primary}; text-decoration: none; font-weight: 600;">
-          Contact Support →
-        </a>
-      </div>
-      
-      <p style="text-align: center; color: ${this.brandColors.textMuted}; font-size: 14px; margin-top: 30px;">
-        Thanks for your patience and for contributing to Birmingham's LGBTQ+ community!
-      </p>
-    `;
-    
-    return this.getBaseTemplate(content, `Event Update - ${eventName}`);
+  getRejectionTemplate(eventName, reason, { resubmitUrl } = {}) {
+    const name = this.esc(eventName);
+    const why = this.esc(reason || 'We need a bit more information before we can put it live.');
+    const editUrl = resubmitUrl || `${this.siteUrl}/submit`;
+    const html = this.getBaseTemplate(`
+      ${this.heading('Nearly there')}
+      ${this.para(`We can't put <strong>${name}</strong> live just yet — one or two bits need a tweak first.`)}
+      ${this.kvTable([
+        ['What to change', why],
+      ])}
+      ${this.para(`Hit the button below and we'll open your submission prefilled — sort the bits we've flagged and send it back. We'll turn it around fast.`)}
+      ${this.button('Edit & resubmit', editUrl)}
+      ${this.para(`Rather chat it through? Just reply — we'd rather help than bounce it.`)}
+    `, `Nearly there — ${eventName}`);
+
+    const text = [
+      `Nearly there`,
+      ``,
+      `We can't put "${eventName}" live just yet — one or two bits need a tweak first.`,
+      ``,
+      `What to change: ${reason || 'We need a bit more information before we can put it live.'}`,
+      ``,
+      `Hit the link below and we'll open your submission prefilled — sort the bits we've flagged and send it back. We'll turn it around fast.`,
+      `Edit & resubmit: ${editUrl}`,
+      ``,
+      `Rather chat it through? Just reply — we'd rather help than bounce it.`,
+      ``,
+      `Cheers,`,
+      `${this.signature} — ${this.signatureTitle}`,
+      `${this.siteUrl}`,
+    ].join('\n');
+
+    return { html, text };
   }
 
-  /**
-   * Event Reminder Template
-   */
+  /** Promoter: "quick nudge — tomorrow". */
   getEventReminderTemplate(eventName, eventDate, eventUrl) {
-    const content = `
-      <style>
-        .reminder-icon {
-          width: 90px;
-          height: 90px;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 42px;
-          color: white;
-          box-shadow: 0 12px 35px rgba(232, 58, 153, 0.4);
-          animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-10px); }
-          60% { transform: translateY(-5px); }
-        }
-        
-        .event-card {
-          background: rgba(31, 41, 55, 0.5);
-          border: 1px solid rgba(75, 85, 99, 0.3);
-          border-radius: 16px;
-          padding: 30px;
-          margin: 30px 0;
-          text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .event-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-        }
-        
-        .date-badge {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.secondary} 0%, #7C3AED 100%);
-          color: white;
-          padding: 10px 20px;
-          border-radius: 25px;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 20px;
-          box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
-        }
-        
-        .cta-button {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          color: white;
-          text-decoration: none;
-          padding: 18px 36px;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 18px;
-          margin: 25px 0;
-          transition: transform 0.3s ease;
-          box-shadow: 0 10px 30px rgba(232, 58, 153, 0.4);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-3px);
-        }
-        
-        .checklist {
-          background: rgba(16, 185, 129, 0.1);
-          border: 1px solid rgba(16, 185, 129, 0.3);
-          border-radius: 12px;
-          padding: 25px;
-          margin: 30px 0;
-        }
-        
-        .checklist h3 {
-          color: ${this.brandColors.success};
-          margin-bottom: 20px;
-          font-size: 20px;
-          text-align: center;
-        }
-        
-        .checklist ul {
-          list-style: none;
-          padding: 0;
-        }
-        
-        .checklist li {
-          padding: 12px 0;
-          position: relative;
-          padding-left: 35px;
-          color: ${this.brandColors.textLight};
-          border-bottom: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        
-        .checklist li:last-child {
-          border-bottom: none;
-        }
-        
-        .checklist li::before {
-          content: '☐';
-          position: absolute;
-          left: 0;
-          color: ${this.brandColors.success};
-          font-size: 18px;
-          font-weight: bold;
-        }
-        
-        .motivation-section {
-          background: rgba(139, 92, 246, 0.1);
-          border-left: 4px solid ${this.brandColors.secondary};
-          padding: 25px;
-          margin: 30px 0;
-          border-radius: 0 12px 12px 0;
-          text-align: center;
-        }
-        
-        .motivation-section h3 {
-          color: ${this.brandColors.secondary};
-          margin-bottom: 15px;
-          font-size: 22px;
-        }
-      </style>
-      
-      <div class="reminder-icon">📅</div>
-      
-      <h1 style="text-align: center; font-size: 32px; margin-bottom: 20px; color: white;">
-        Your Event is Tomorrow!
-      </h1>
-      
-      <p style="text-align: center; font-size: 18px; color: ${this.brandColors.textLight}; margin-bottom: 30px;">
-        Just a friendly reminder that your event is coming up soon. Make sure you're all set!
-      </p>
-      
-      <div class="event-card">
-        <span class="date-badge">📅 ${eventDate}</span>
-        <h2 style="color: white; margin-bottom: 15px; font-size: 26px;">${eventName}</h2>
-        <p style="color: ${this.brandColors.textMuted}; font-size: 14px; margin-bottom: 25px;">
-          Your event is live and ready for the community to discover
-        </p>
-        
-        <a href="${eventUrl}" class="cta-button">
-          View Your Event
-        </a>
-      </div>
-      
-      <div class="checklist">
-        <h3>Final Checklist</h3>
-        <ul>
-          <li>Double-check your event details and timing</li>
-          <li>Share on social media one more time</li>
-          <li>Prepare any materials or equipment needed</li>
-          <li>Arrive early to set up</li>
-          <li>Have a backup plan for any technical issues</li>
-          <li>Bring contact information for attendees</li>
-        </ul>
-      </div>
-      
-      <div class="motivation-section">
-        <h3>You've Got This! 🚀</h3>
-        <p style="color: ${this.brandColors.textLight}; font-size: 16px; line-height: 1.6;">
-          Your event is going to be amazing! The Birmingham LGBTQ+ community is excited to join you. 
-          Take a deep breath, trust your preparation, and get ready to create some incredible memories.
-        </p>
-      </div>
-      
-      <div style="background: rgba(232, 58, 153, 0.1); border: 1px solid rgba(232, 58, 153, 0.3); border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
-        <h3 style="color: ${this.brandColors.primary}; margin-bottom: 10px; font-size: 18px;">
-          Last-Minute Promotion
-        </h3>
-        <p style="color: ${this.brandColors.textLight}; margin-bottom: 15px;">
-          Share your event one more time to maximize attendance!
-        </p>
-        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-          <a href="https://www.instagram.com/brumoutloud" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #E4405F 0%, #C13584 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-            📷 Instagram
-          </a>
-          <a href="https://twitter.com/brumoutloud" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-            🐦 Twitter
-          </a>
-        </div>
-      </div>
-      
-      <p style="text-align: center; color: ${this.brandColors.textMuted}; font-size: 14px; margin-top: 30px;">
-        Good luck with your event! We hope it's a huge success. 🌟
-      </p>
-    `;
-    
-    return this.getBaseTemplate(content, `Event Reminder - ${eventName}`);
+    const name = this.esc(eventName);
+    const when = this.esc(eventDate);
+    const url = eventUrl || this.siteUrl;
+    const html = this.getBaseTemplate(`
+      ${this.heading(`Tomorrow: ${eventName}`, { size: 34 })}
+      ${this.para(`Quick nudge — your event's on <strong>tomorrow</strong>. If you've got one last post in you, now's the moment.`)}
+      ${this.kvTable([
+        ['Event', name],
+        ['When', when],
+      ])}
+      ${this.button('Your listing', url)}
+      ${this.para(`Plans changed? Reply and we'll update it tonight.`)}
+    `, `Tomorrow — ${eventName}`);
+
+    const text = [
+      `Tomorrow: ${eventName}`,
+      ``,
+      `Quick nudge — your event's on tomorrow. If you've got one last post in you, now's the moment.`,
+      ``,
+      `Event: ${eventName}`,
+      `When:  ${eventDate}`,
+      ``,
+      `Your listing: ${url}`,
+      ``,
+      `Plans changed? Reply and we'll update it tonight.`,
+      ``,
+      `Cheers,`,
+      `${this.signature} — ${this.signatureTitle}`,
+      `${this.siteUrl}`,
+    ].join('\n');
+
+    return { html, text };
   }
 
-  /**
-   * Admin Submission Alert Template
-   */
+  /** Admin: "fresh one in the queue". Internal alert — terser. */
   getAdminSubmissionTemplate(eventName, promoterEmail, eventId) {
-    const content = `
-      <style>
-        .alert-icon {
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, ${this.brandColors.warning} 0%, #D97706 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 36px;
-          color: white;
-          box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-          animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-        
-        .submission-card {
-          background: rgba(31, 41, 55, 0.5);
-          border: 1px solid rgba(75, 85, 99, 0.3);
-          border-radius: 16px;
-          padding: 30px;
-          margin: 30px 0;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .submission-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(135deg, ${this.brandColors.warning} 0%, #D97706 100%);
-        }
-        
-        .info-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 20px;
-          margin: 20px 0;
-        }
-        
-        .info-item {
-          background: rgba(75, 85, 99, 0.2);
-          border-radius: 8px;
-          padding: 15px;
-        }
-        
-        .info-label {
-          color: ${this.brandColors.textMuted};
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 5px;
-        }
-        
-        .info-value {
-          color: white;
-          font-weight: 600;
-          font-size: 16px;
-        }
-        
-        .cta-button {
-          display: inline-block;
-          background: linear-gradient(135deg, ${this.brandColors.primary} 0%, ${this.brandColors.secondary} 100%);
-          color: white;
-          text-decoration: none;
-          padding: 16px 32px;
-          border-radius: 12px;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 25px 0;
-          transition: transform 0.3s ease;
-          box-shadow: 0 8px 25px rgba(232, 58, 153, 0.3);
-        }
-        
-        .cta-button:hover {
-          transform: translateY(-2px);
-        }
-        
-        .priority-notice {
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          border-radius: 12px;
-          padding: 20px;
-          margin: 25px 0;
-          text-align: center;
-        }
-        
-        .priority-notice h3 {
-          color: ${this.brandColors.error};
-          margin-bottom: 10px;
-          font-size: 18px;
-        }
-        
-        @media only screen and (max-width: 600px) {
-          .info-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      </style>
-      
-      <div class="alert-icon">🔔</div>
-      
-      <h1 style="text-align: center; font-size: 28px; margin-bottom: 20px; color: white;">
-        New Event Submission
-      </h1>
-      
-      <p style="text-align: center; font-size: 18px; color: ${this.brandColors.textLight}; margin-bottom: 30px;">
-        A new event has been submitted and is waiting for your review.
-      </p>
-      
-      <div class="submission-card">
-        <h2 style="color: white; margin-bottom: 20px; font-size: 24px; text-align: center;">
-          ${eventName}
-        </h2>
-        
-        <div class="info-grid">
-          <div class="info-item">
-            <div class="info-label">Event Name</div>
-            <div class="info-value">${eventName}</div>
-          </div>
-          
-          <div class="info-item">
-            <div class="info-label">Event ID</div>
-            <div class="info-value" style="font-family: monospace; font-size: 14px;">${eventId}</div>
-          </div>
-          
-          <div class="info-item">
-            <div class="info-label">Promoter Email</div>
-            <div class="info-value">${promoterEmail}</div>
-          </div>
-          
-          <div class="info-item">
-            <div class="info-label">Submitted</div>
-            <div class="info-value">${new Date().toLocaleString()}</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="priority-notice">
-        <h3>Action Required</h3>
-        <p style="color: ${this.brandColors.textLight};">
-          Please review this submission as soon as possible to ensure timely approval for the promoter.
-        </p>
-      </div>
-      
-      <div style="text-align: center; margin: 35px 0;">
-        <a href="https://brumoutloud.co.uk/admin-approvals.html" class="cta-button">
-          Review Submission
-        </a>
-      </div>
-      
-      <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid ${this.brandColors.secondary}; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-        <h3 style="color: ${this.brandColors.secondary}; margin-bottom: 15px; font-size: 18px;">
-          Quick Actions
-        </h3>
-        <ul style="list-style: none; padding: 0; color: ${this.brandColors.textLight};">
-          <li style="padding: 5px 0;">✓ Review event details and images</li>
-          <li style="padding: 5px 0;">✓ Check venue information accuracy</li>
-          <li style="padding: 5px 0;">✓ Verify event date and time</li>
-          <li style="padding: 5px 0;">✓ Approve or request changes</li>
-        </ul>
-      </div>
-      
-      <p style="text-align: center; color: ${this.brandColors.textMuted}; font-size: 14px; margin-top: 30px;">
-        This is an automated notification from the Brum Outloud admin system.
-      </p>
-    `;
-    
-    return this.getBaseTemplate(content, `New Submission - ${eventName}`);
+    const name = this.esc(eventName);
+    const who = this.esc(promoterEmail || 'anonymous submitter');
+    const reviewUrl = `${this.siteUrl}/admin-approvals.html`;
+    const html = this.getBaseTemplate(`
+      ${this.heading('Fresh one in the queue')}
+      ${this.para(`<strong>${name}</strong> just landed. From <strong>${who}</strong>.`)}
+      ${this.kvTable([
+        ['Event', name],
+        ['From', who],
+        ['Submission ID', this.esc(eventId)],
+      ])}
+      ${this.button('Review it', reviewUrl)}
+    `, `New submission — ${eventName}`);
+
+    const text = [
+      `Fresh one in the queue`,
+      ``,
+      `"${eventName}" just landed. From ${promoterEmail || 'anonymous submitter'}.`,
+      ``,
+      `Event: ${eventName}`,
+      `From:  ${promoterEmail || 'anonymous submitter'}`,
+      `Submission ID: ${eventId}`,
+      ``,
+      `Review it: ${reviewUrl}`,
+    ].join('\n');
+
+    return { html, text };
   }
 
-  /**
-   * Get plain text version of any template
-   */
+  // ---- Back-compat --------------------------------------------------------
+
+  /** Legacy callers that pass HTML through expecting text. */
   getPlainTextVersion(htmlContent) {
-    // Simple HTML to text conversion
-    return htmlContent
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
-      .replace(/&amp;/g, '&') // Replace HTML entities
+    if (!htmlContent) return '';
+    return String(htmlContent)
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
-      .replace(/\s+/g, ' ') // Normalize whitespace
+      .replace(/&#39;/g, "'")
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
   }
 }

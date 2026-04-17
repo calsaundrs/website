@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let extractedEventData = null;
     let currentObjectURL = null;
 
+    // Resubmit-link prefill runs first so other init steps (venue
+    // search, category selection) see the prefilled values.
+    initializeResubmitPrefill();
+
     // Initialize poster parser
     initializePosterParser();
     
@@ -970,5 +974,115 @@ document.addEventListener('DOMContentLoaded', () => {
         if (addNewVenueBtn) addNewVenueBtn.classList.remove('hidden');
         // Update preview
         updateRecurringPreview();
+    }
+
+    // -- Resubmit prefill ------------------------------------------------
+    // When the page is opened with ?resubmit=<token>, fetch the
+    // original submission via the token-gated endpoint and prefill
+    // every field. The hidden #resubmit-doc-id is set so the backend
+    // upserts instead of inserting a new doc. A toxic-lime banner is
+    // shown at the top summarising what needs to change.
+    async function initializeResubmitPrefill() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('resubmit');
+        if (!token) return;
+
+        const banner      = document.getElementById('resubmit-banner');
+        const bannerEvent = document.getElementById('resubmit-banner-event');
+        const bannerReason = document.getElementById('resubmit-banner-reason');
+        const errorBox    = document.getElementById('resubmit-error');
+        const errorMsg    = document.getElementById('resubmit-error-msg');
+
+        try {
+            const res = await fetch(`/.netlify/functions/get-submission-for-resubmit?token=${encodeURIComponent(token)}`);
+            const payload = await res.json();
+            if (!res.ok || !payload.success) {
+                if (errorBox) {
+                    errorBox.classList.remove('hidden');
+                    if (errorMsg) errorMsg.textContent = payload.error || 'Link not recognised.';
+                }
+                return;
+            }
+
+            const sub = payload.submission || {};
+            if (sub.status === 'approved') {
+                if (errorBox) {
+                    errorBox.classList.remove('hidden');
+                    if (errorMsg) errorMsg.textContent = 'This event is already live. Submit a new one instead.';
+                }
+                return;
+            }
+
+            // Pass the signed token through to the submit handler so the
+            // backend can re-verify it and extract the doc id from the
+            // signed payload (never trust the raw id from a hidden input).
+            const tokenInput = document.getElementById('resubmit-token');
+            if (tokenInput) tokenInput.value = token;
+
+            // Core fields
+            setVal('event-name', sub.name);
+            setVal('description', sub.description);
+            setVal('date', sub.eventDate);
+            setVal('start-time', sub.eventTime || sub.startTime);
+            setVal('end-time', sub.endTime);
+            setVal('price', sub.price);
+            setVal('age-restriction', sub.ageRestriction);
+            setVal('link', sub.link);
+            setVal('email', sub.submitterEmail);
+            setVal('contact-email', sub.submitterEmail);
+
+            // Venue prefill — if we've got an existing venueId, pin it
+            // directly via the hidden input (the existing venue-search
+            // flow already reads this). Otherwise fall back to typing
+            // the name into the search box.
+            if (sub.venueId) {
+                if (venueIdInput)  venueIdInput.value = sub.venueId;
+                if (venueSearch)   venueSearch.value = sub.venueName || '';
+                if (selectedVenueDetails) selectedVenueDetails.classList.remove('hidden');
+                if (venueDetailsContent) venueDetailsContent.textContent = sub.venueName || '';
+            } else if (sub.venueName) {
+                if (venueSearch) venueSearch.value = sub.venueName;
+            }
+
+            // Categories — tick whichever checkboxes match.
+            const cats = Array.isArray(sub.category) ? sub.category : (sub.category ? [sub.category] : []);
+            cats.forEach(cat => {
+                const cb = document.querySelector(`input[name="categories"][value="${cat}"]`);
+                if (cb) cb.checked = true;
+                else {
+                    // Fallback: case-insensitive match across all
+                    // category checkboxes (the canonical labels are
+                    // capitalised but saved values may drift).
+                    document.querySelectorAll('input[name="categories"]').forEach(box => {
+                        if (String(box.value).toLowerCase() === String(cat).toLowerCase()) {
+                            box.checked = true;
+                        }
+                    });
+                }
+            });
+
+            // Show the banner with event name + rejection reason.
+            if (banner) banner.classList.remove('hidden');
+            if (bannerEvent)  bannerEvent.textContent = sub.name || 'Your submission';
+            if (bannerReason) {
+                bannerReason.textContent = sub.rejectionReason
+                    || 'Review the details below, update anything that needs changing, and submit again when you\'re ready.';
+            }
+
+            // Scroll the banner into view so the promoter lands on it.
+            banner && banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+            console.error('Resubmit prefill failed:', err);
+            if (errorBox) {
+                errorBox.classList.remove('hidden');
+                if (errorMsg) errorMsg.textContent = 'Could not load your submission. Try again later.';
+            }
+        }
+
+        function setVal(id, value) {
+            if (value == null) return;
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        }
     }
 });

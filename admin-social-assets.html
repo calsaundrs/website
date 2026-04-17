@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Social Assets Generator | Admin | Brum Out Loud</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+
+    <script type="module" src="/js/auth-guard.js"></script>
+
+    <!-- html2canvas for client-side PNG rendering, JSZip for carousel bundles -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        /* Canvas / stage where the asset lives at full 1080px. Rendered at
+           scale for preview; html2canvas captures at native size. */
+        .asset-stage {
+            position: relative;
+            transform-origin: top left;
+            background: var(--color-bg);
+            color: var(--color-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .asset-stage.square   { width: 1080px; height: 1080px; }
+        .asset-stage.portrait { width: 1080px; height: 1350px; }
+        .asset-stage.story    { width: 1080px; height: 1920px; }
+
+        /* Story safe-zone guides — top 250 + bottom 250 hidden by IG UI.
+           Only visible in the editor, not in exported PNG. */
+        .safe-zone::before,
+        .safe-zone::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(204, 255, 0, 0.15) 0 12px,
+                transparent 12px 24px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+        .safe-zone::before { top: 0;    height: 250px; }
+        .safe-zone::after  { bottom: 0; height: 250px; }
+        .asset-stage.hide-safe-zone.safe-zone::before,
+        .asset-stage.hide-safe-zone.safe-zone::after { display: none; }
+
+        /* Preview wrapper scales the stage down to fit the viewport. */
+        .preview-frame {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(243, 232, 255, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Shared chrome across templates ------------------------------ */
+        /* Radial-dot halftone — template rules override background-image /
+           background-size / opacity for colour + density variations. */
+        .halftone {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        /* Pride rainbow bottom bar — identical across every template
+           that uses it. */
+        .pride-bar {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 14px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
+        }
+
+        /* Template: Sticker Poster ----------------------------------- */
+        .tpl-sticker .bg-img {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            /* Saturation boost is baked into the Cloudinary URL in
+               heroUrl() — html2canvas drops CSS `filter` silently. */
+        }
+        .tpl-sticker .overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(13,1,21,0.1) 0%,
+                rgba(13,1,21,0.4) 55%,
+                rgba(13,1,21,0.92) 100%
+            );
+        }
+        .tpl-sticker .top-sticker {
+            position: absolute;
+            top: 60px; left: 60px;
+            background: var(--color-toxic);
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 14px 24px;
+            font-size: 32px;
+            letter-spacing: 0.08em;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 #000;
+            transform: rotate(-3deg);
+        }
+        .tpl-sticker .date-pill {
+            position: absolute;
+            top: 60px; right: 60px;
+            background: #fff;
+            color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            padding: 12px 22px;
+            font-size: 24px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 var(--color-pink);
+            transform: rotate(2deg);
+        }
+        .tpl-sticker .bottom-block {
+            position: absolute;
+            left: 60px; right: 60px; bottom: 80px;
+        }
+        .tpl-sticker .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 0.95;
+            text-shadow:
+                -3px -2px 0 var(--color-pink),
+                3px 2px 0 var(--color-purple);
+        }
+        .square   .tpl-sticker .title,
+        .portrait .tpl-sticker .title { font-size: 96px; }
+        .story    .tpl-sticker .title { font-size: 128px; }
+        .tpl-sticker .meta {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--color-light);
+        }
+        .tpl-sticker .meta i {
+            color: var(--color-toxic);
+            margin-right: 12px;
+            width: 36px;
+            text-align: center;
+        }
+        .tpl-sticker .footer-bar {
+            position: absolute; left: 0; right: 0; bottom: 0;
+            height: 12px;
+            background: linear-gradient(90deg,
+                #000, #784F17, #55CDFC, #F7A8B8, #FFF, #FFF430,
+                #FF8C00, #E40303, #008026, #004DFF, #750787, #000);
+        }
+        .tpl-sticker .brand {
+            position: absolute;
+            left: 60px; bottom: 32px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(243, 232, 255, 0.6);
+        }
+
+        /* Template: Brutalist Card ---------------------------------- */
+        .tpl-card {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+        }
+        .tpl-card .halftone {
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.18) 2px,
+                transparent 2.2px
+            );
+            background-size: 18px 18px;
+            opacity: 0.8;
+        }
+        .tpl-card .watermark {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bungee Outline', sans-serif;
+            font-size: 320px;
+            color: rgba(155, 93, 229, 0.15);
+            pointer-events: none;
+            line-height: 1;
+            transform: rotate(-8deg);
+        }
+        .tpl-card .card {
+            position: absolute;
+            left: 60px; right: 60px; top: 80px; bottom: 80px;
+            /* Solid bg (no rgba + no backdrop-filter) — html2canvas 1.4.1
+               doesn't honour backdrop-filter and renders rgba() overlays
+               unreliably. Solid #14141A matches the preview closely. */
+            background: #14141A;
+            border: 3px solid rgba(243, 232, 255, 0.4);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Fake the toxic offset shadow with a real sibling so html2canvas
+           doesn't blob it into the card face. */
+        .tpl-card .card-shadow {
+            position: absolute;
+            left: 72px; right: 48px; top: 92px; bottom: 68px;
+            background: var(--color-toxic);
+            z-index: 0;
+        }
+        .tpl-card .card { z-index: 1; }
+        .tpl-card .kicker {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 24px;
+        }
+        /* Outer wrapper owns the -webkit-line-clamp + overflow:hidden.
+           Inner element owns typography (line-height, padding-bottom).
+           This split matters because -webkit-box clips at the CONTENT
+           edge, so padding-bottom on the clamp element itself is
+           absorbed (computedStyle can even report it as 0 in some
+           WebKit paths). Moving padding to the inner span makes the
+           clamp clip below the visible glyph row. */
+        .tpl-card .title {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            /* Inline font-size set per-render by fitCardTitleSize() so
+               the longest word never overflows the card inner width. */
+            font-size: 108px;
+        }
+        .tpl-card .title .title-inner {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #fff;
+            /* Syne 800 glyph bounds extend well below the line box at
+               line-height 0.92; 1.15 gives real headroom so line-clamp
+               doesn't slice descenders. */
+            line-height: 1.15;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            padding-bottom: 0.25em;
+            text-shadow:
+                -2px -1px 0 var(--color-pink),
+                2px 1px 0 var(--color-purple);
+        }
+        /* event-img wrapper: lets us fake the pink offset shadow with a
+           real sibling div so html2canvas doesn't paint box-shadow as a
+           solid fill that swallows the flyer image. */
+        .tpl-card .event-img-wrap {
+            position: relative;
+            margin-top: 44px;
+            flex: 1;
+            min-height: 300px;
+        }
+        .tpl-card .event-img-shadow {
+            position: absolute;
+            inset: 8px -8px -8px 8px;
+            background: var(--color-pink);
+            z-index: 0;
+        }
+        .tpl-card .event-img {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-color: #14141A;
+            border: 3px solid #fff;
+            z-index: 1;
+        }
+        .tpl-card .meta {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--color-light);
+        }
+        .tpl-card .meta i {
+            color: var(--color-toxic);
+            margin-right: 14px;
+            width: 36px;
+            text-align: center;
+        }
+        .tpl-card .brand-bar {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 28px;
+            border-top: 3px solid rgba(243, 232, 255, 0.25);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .tpl-card .brand-bar .url { color: var(--color-toxic); }
+
+        /* Template: Weekly Lineup (story 1080x1920 only) ------------ */
+        .tpl-lineup {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+        }
+        .tpl-lineup .halftone {
+            background-image: radial-gradient(
+                rgba(155, 93, 229, 0.22) 2px, transparent 2.2px);
+            background-size: 22px 22px;
+            opacity: 0.9;
+        }
+        .tpl-lineup .header {
+            position: relative;
+            padding: 300px 60px 40px;
+            overflow: hidden;
+        }
+        /* Portrait carousel variant — no story safe-zone, tighter header */
+        .asset-stage.portrait .tpl-lineup .header { padding: 80px 60px 30px; }
+        .asset-stage.portrait .tpl-lineup .list { padding: 20px 60px 130px; }
+        .asset-stage.portrait .tpl-lineup .page-marker { top: 50px; }
+        .asset-stage.portrait .tpl-lineup .footer { padding: 0 60px 70px; }
+        .tpl-lineup .kicker {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 18px;
+        }
+        .tpl-lineup .heading {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 160px;
+            line-height: 0.9;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -3px -2px 0 var(--color-pink),
+                3px 2px 0 var(--color-purple);
+            white-space: nowrap;
+        }
+        /* Heading font-size is set inline by fitHeadingSize() in the JS so
+           the title always fits the 960px content area in Syne 800. */
+        .tpl-lineup .list {
+            position: relative;
+            flex: 1;
+            /* Bottom padding reserves room for the footer + pride bar
+               (~140px). Anything more left empty space below the last
+               card. */
+            padding: 30px 60px 160px;
+            display: flex;
+            flex-direction: column;
+            /* Spread items evenly across the available height so 1, 3,
+               or 5 selected events all look composed instead of bunched
+               at the top with a void below. gap is the minimum spacing. */
+            justify-content: space-evenly;
+            gap: 18px;
+            overflow: hidden;
+        }
+        .tpl-lineup .item {
+            display: flex;
+            gap: 26px;
+            align-items: center;
+            /* Solid bg + solid borders only — html2canvas paints rgba() and
+               box-shadow inconsistently and the "pink brick" rendering bug
+               came from a phantom-painted shadow over an alpha background. */
+            background: #14141A;
+            border-top: 3px solid #2a2a35;
+            border-bottom: 3px solid #2a2a35;
+            border-left: 6px solid var(--color-pink);
+            border-right: 3px solid #2a2a35;
+            padding: 26px 28px;
+        }
+        .tpl-lineup .item .daybox {
+            flex-shrink: 0;
+            width: 120px;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: var(--color-toxic);
+            color: #000;
+            padding: 14px 0;
+            border: 3px solid #000;
+        }
+        .tpl-lineup .item .daybox .d { font-size: 42px; line-height: 1; }
+        .tpl-lineup .item .daybox .m { font-size: 18px; letter-spacing: 0.15em; margin-top: 4px; }
+        .tpl-lineup .item .body {
+            flex: 1;
+            min-width: 0;
+            /* Clip horizontal overflow on the WRAPPER, not on the text
+               elements. html2canvas chops descenders ('g', 'y') off any
+               text element that has overflow:hidden, so we let the text
+               render naturally and let the body cut off wide titles. */
+            overflow: hidden;
+        }
+        .tpl-lineup .item .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 34px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            color: #fff;
+            white-space: nowrap;
+        }
+        .tpl-lineup .item .sub {
+            margin-top: 6px;
+            font-size: 22px;
+            line-height: 1.3;
+            color: var(--color-light);
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        .tpl-lineup .footer {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 0 60px 90px;
+        }
+        .tpl-lineup .footer-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 26px;
+            color: var(--color-light);
+        }
+        .tpl-lineup .footer-inner .cta { color: var(--color-light); opacity: 0.75; }
+        .tpl-lineup .footer-inner .url { color: var(--color-toxic); }
+        .tpl-lineup .page-marker {
+            position: absolute;
+            top: 260px; right: 60px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 0.3em;
+            color: var(--color-light);
+            opacity: 0.45;
+            z-index: 2;
+        }
+        .tpl-lineup .overflow-pill {
+            align-self: center;
+            margin-top: 8px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--color-toxic);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        /* Lineup Hook slide — opener that invites the swipe.
+           Brand mark, big lineup title, range subtitle, swipe arrow. */
+        .tpl-lineup-hook {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 90px 70px;
+            overflow: hidden;
+        }
+        .tpl-lineup-hook .halftone {
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.22) 2px, transparent 2.2px);
+            background-size: 24px 24px;
+            opacity: 0.9;
+        }
+        .tpl-lineup-hook .kicker {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 30px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 28px;
+        }
+        .tpl-lineup-hook .heading {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            /* Syne 800 glyphs extend noticeably below the line-box at
+               large sizes — line-height 0.9 + overflow:hidden was
+               clipping the bottom half of every letter. Give the line
+               box enough vertical room for the real glyph bounds. */
+            line-height: 1.15;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -4px -3px 0 var(--color-pink),
+                4px 3px 0 var(--color-purple);
+            /* Allow wrapping so multi-word titles ("WKND HIGHLIGHTS")
+               break onto a second line instead of clipping the edge. */
+            max-width: 940px;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            margin-bottom: 36px;
+        }
+        .tpl-lineup-hook .sub {
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            font-size: 38px;
+            line-height: 1.2;
+            color: var(--color-light);
+            opacity: 0.85;
+            max-width: 80%;
+        }
+        .tpl-lineup-hook .swipe {
+            position: absolute;
+            right: 70px; bottom: 110px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 40px;
+            letter-spacing: 0.25em;
+            color: var(--color-toxic);
+            text-transform: uppercase;
+        }
+
+        /* Lineup CTA slide — closer urging save / share / visit site. */
+        .tpl-lineup-cta {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 90px 80px;
+            overflow: hidden;
+        }
+        .tpl-lineup-cta .halftone {
+            background-image: radial-gradient(
+                rgba(155, 93, 229, 0.22) 2px, transparent 2.2px);
+            background-size: 24px 24px;
+            opacity: 0.9;
+        }
+        .tpl-lineup-cta .kicker {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-bottom: 32px;
+        }
+        .tpl-lineup-cta .heading {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 130px;
+            line-height: 0.95;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow:
+                -4px -3px 0 var(--color-pink),
+                4px 3px 0 var(--color-purple);
+            margin-bottom: 40px;
+        }
+        .tpl-lineup-cta .url {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 56px;
+            color: var(--color-toxic);
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+        }
+        .tpl-lineup-cta .sub {
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            font-size: 32px;
+            line-height: 1.3;
+            color: var(--color-light);
+            opacity: 0.7;
+            margin-bottom: 36px;
+        }
+        .tpl-lineup-cta .actions {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--color-light);
+        }
+        .tpl-lineup-cta .actions .chip {
+            border: 3px solid var(--color-light);
+            padding: 14px 26px;
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .tpl-lineup-cta .actions .chip i { color: var(--color-toxic); }
+        /* Organiser prompt — subdued secondary block so it doesn't
+           compete with the primary visit-the-site CTA but still gets seen. */
+        .tpl-lineup-cta .organiser {
+            position: relative;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 2px solid rgba(243, 232, 255, 0.18);
+            width: 72%;
+            color: var(--color-light);
+        }
+        .tpl-lineup-cta .organiser-kicker {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--color-pink);
+            margin-bottom: 10px;
+        }
+        .tpl-lineup-cta .organiser-line {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 26px;
+            line-height: 1.3;
+            opacity: 0.9;
+        }
+
+        /* Template: Highlight Cover (story 1080x1920 only) ---------- */
+        /* IG crops to a center circle ~432x432 — keep focal content inside. */
+        .tpl-highlight {
+            position: absolute; inset: 0;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .tpl-highlight .halftone {
+            background-image: radial-gradient(
+                rgba(232, 58, 153, 0.18) 2px, transparent 2.2px);
+            background-size: 20px 20px;
+            opacity: 0.8;
+        }
+        .tpl-highlight .ring {
+            position: absolute;
+            width: 760px; height: 760px;
+            border-radius: 50%;
+            border: 4px dashed rgba(243, 232, 255, 0.18);
+        }
+        .tpl-highlight .badge {
+            position: relative;
+            z-index: 2;
+            width: 540px; height: 540px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 40px;
+            line-height: 0.9;
+        }
+        /* Fake the badge's multi-layer box-shadow with real sibling
+           circles — html2canvas 1.4.1 renders spread/multi-layer shadows
+           on rounded elements unreliably, same class of issue that was
+           painting pink over the card flyer. */
+        .tpl-highlight .badge-outline,
+        .tpl-highlight .badge-offset {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            border-radius: 50%;
+        }
+        .tpl-highlight .badge-outline {
+            z-index: 1;
+            width: 556px; height: 556px;
+            background: #000;
+        }
+        .tpl-highlight .badge-offset {
+            z-index: 0;
+            width: 564px; height: 564px;
+            background: var(--color-pink);
+            transform: translate(12px, 12px);
+        }
+        .tpl-highlight .badge.acc-toxic  { background: var(--color-toxic);  color: #000; }
+        .tpl-highlight .badge.acc-pink   { background: var(--color-pink);   color: #fff; }
+        .tpl-highlight .badge.acc-purple { background: var(--color-purple); color: #fff; }
+        .tpl-highlight .badge.acc-pride {
+            background: linear-gradient(135deg,
+                #E40303 0%, #FF8C00 20%, #FFF430 40%,
+                #008026 60%, #004DFF 80%, #750787 100%);
+            color: #fff;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .tpl-highlight .badge .label-text {
+            font-size: clamp(80px, 16vw, 160px);
+        }
+        .tpl-highlight .badge .label-text.long { font-size: 110px; }
+        .tpl-highlight .badge .label-text.very-long { font-size: 80px; }
+        .tpl-highlight .brandmark {
+            position: absolute;
+            bottom: 120px;
+            left: 0; right: 0;
+            text-align: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: 0.35em;
+            color: rgba(243, 232, 255, 0.6);
+        }
+        .tpl-highlight .corner-sticker {
+            position: absolute;
+            top: 320px; right: 80px;
+            background: #fff; color: #000;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            padding: 12px 20px;
+            font-size: 22px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 var(--color-toxic);
+            transform: rotate(-6deg);
+        }
+
+        /* Event selector ---------------------------------------------- */
+        .event-row {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            border: 2px solid rgba(243, 232, 255, 0.12);
+            background: rgba(20, 20, 25, 0.4);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 4px;
+        }
+        .event-row:hover { border-color: rgba(204, 255, 0, 0.5); }
+        .event-row.selected {
+            border-color: var(--color-toxic);
+            background: rgba(204, 255, 0, 0.08);
+        }
+        .event-row img {
+            width: 72px; height: 72px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid rgba(243, 232, 255, 0.2);
+        }
+
+        /* Segmented control ----------------------------------------- */
+        .seg-btn {
+            padding: 10px 14px;
+            border: 2px solid rgba(243, 232, 255, 0.25);
+            background: transparent;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            color: var(--color-light);
+            transition: all 0.15s ease;
+        }
+        .seg-btn:hover { border-color: var(--color-toxic); }
+        .seg-btn.active {
+            background: var(--color-toxic);
+            color: #000;
+            border-color: var(--color-toxic);
+        }
+    </style>
+</head>
+<body class="bg-[var(--color-bg)] text-[var(--color-light)] min-h-screen">
+
+    <!-- Header (matches site) -->
+    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/90 backdrop-blur-xl border-b border-white/5">
+        <nav class="pt-4 px-4 pb-5 flex justify-between items-center max-w-7xl mx-auto relative">
+            <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+            <div class="font-display font-black text-2xl md:text-3xl misprint leading-none">
+                <a href="/admin-settings.html" class="hover:opacity-80">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+            </div>
+            <div class="flex items-center gap-4 text-xs uppercase tracking-widest font-bold">
+                <a href="/admin-settings.html" class="hover:text-[var(--color-toxic)]">
+                    <i class="fas fa-arrow-left mr-1"></i> Admin
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-[1600px] mx-auto px-4 md:px-6 py-8">
+
+        <div class="mb-8">
+            <h1 class="font-display font-black text-4xl md:text-5xl uppercase misprint leading-none">
+                Social Assets
+            </h1>
+            <p class="mt-3 text-sm md:text-base opacity-70 max-w-2xl">
+                Generate on-brand Instagram posts &amp; stories for upcoming events.
+                Pick a date range, select events, choose a format and template, then download.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr_360px] gap-6">
+
+            <!-- LEFT: Event picker -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Date Range</label>
+                    <div class="flex flex-wrap gap-2" id="range-controls">
+                        <button class="seg-btn active" data-preset="this-week">This Week</button>
+                        <button class="seg-btn" data-preset="this-weekend">This Weekend</button>
+                        <button class="seg-btn" data-preset="next-week">Next Week</button>
+                        <button class="seg-btn" data-preset="this-month">This Month</button>
+                        <button class="seg-btn" data-preset="next-30-days">Next 30 Days</button>
+                    </div>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <div class="flex items-center justify-between mb-3 gap-2">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-70">Events</label>
+                        <span class="text-xs opacity-60 flex-1 text-right" id="event-count">—</span>
+                        <button id="select-all-btn" type="button"
+                            class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-white/20 hover:border-[var(--color-toxic)] hover:text-[var(--color-toxic)] transition-colors">
+                            Select all
+                        </button>
+                        <button id="clear-selection-btn" type="button"
+                            class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-white/20 hover:border-[var(--color-pink)] hover:text-[var(--color-pink)] transition-colors">
+                            Clear
+                        </button>
+                    </div>
+                    <div class="space-y-2 max-h-[calc(100vh-340px)] overflow-y-auto pr-1" id="event-list">
+                        <div class="text-center py-10 opacity-50 text-sm">Loading events...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIDDLE: Preview -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20" data-format-wrapper>
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Format</label>
+                    <div class="flex flex-wrap gap-2" id="format-controls">
+                        <button class="seg-btn active" data-format="square">Square 1:1</button>
+                        <button class="seg-btn" data-format="portrait">Portrait 4:5</button>
+                        <button class="seg-btn" data-format="story">Story 9:16</button>
+                    </div>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-2 opacity-70">Template</label>
+                    <div class="flex flex-wrap gap-2" id="template-controls">
+                        <button class="seg-btn active" data-template="sticker">Sticker Poster</button>
+                        <button class="seg-btn" data-template="card">Brutalist Card</button>
+                        <button class="seg-btn" data-template="lineup" data-force-format="portrait">Weekly Lineup</button>
+                        <button class="seg-btn" data-template="highlight" data-force-format="story">Highlight Cover</button>
+                    </div>
+                    <div id="card-options" class="hidden mt-3">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Carousel Title</label>
+                        <input id="card-title" type="text" value="This Week" maxlength="24"
+                            class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="card-hook" type="checkbox" class="accent-[var(--color-toxic)]">
+                                Hook slide
+                            </label>
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="card-cta" type="checkbox" class="accent-[var(--color-toxic)]">
+                                CTA slide
+                            </label>
+                        </div>
+                        <div class="mt-2 text-[11px] opacity-60 leading-snug">
+                            When batching multiple events, wrap the ZIP with a Hook cover slide at the start and a "save / see more" CTA slide at the end. Both reuse the same format and aspect as the event cards.
+                        </div>
+                    </div>
+                    <div id="lineup-options" class="hidden mt-3">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Header Title</label>
+                        <input id="lineup-title" type="text" value="This Week" maxlength="24"
+                            class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="lineup-hook" type="checkbox" checked class="accent-[var(--color-toxic)]">
+                                Hook slide
+                            </label>
+                            <label class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest opacity-80 cursor-pointer">
+                                <input id="lineup-cta" type="checkbox" checked class="accent-[var(--color-toxic)]">
+                                CTA slide
+                            </label>
+                        </div>
+                        <div class="mt-2 text-[11px] opacity-60 leading-snug">
+                            Best for Instagram carousels in 4:5 portrait. Hook slide opens with the title to earn the swipe; CTA slide closes with a "save / see more" prompt. Up to 5 events per content page; extra events auto-split into multiple slides.
+                        </div>
+                        <div id="lineup-pager" class="hidden mt-3 flex items-center gap-2">
+                            <button type="button" class="seg-btn" data-pager-prev><i class="fas fa-chevron-left"></i></button>
+                            <span class="text-xs font-bold uppercase tracking-widest flex-1 text-center" data-pager-label>Slide 1 / 1</span>
+                            <button type="button" class="seg-btn" data-pager-next><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div id="highlight-options" class="hidden mt-3 space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Label</label>
+                            <input id="highlight-label" type="text" value="Tonight" maxlength="16"
+                                class="w-full bg-black/40 border-2 border-white/15 px-3 py-2 text-sm font-bold uppercase tracking-wider text-[var(--color-light)] focus:border-[var(--color-toxic)] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest mb-1 opacity-60">Accent</label>
+                            <div class="flex gap-2" id="highlight-accent">
+                                <button class="seg-btn active" data-accent="toxic">Lime</button>
+                                <button class="seg-btn" data-accent="pink">Pink</button>
+                                <button class="seg-btn" data-accent="purple">Purple</button>
+                                <button class="seg-btn" data-accent="pride">Pride</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-frame" id="preview-frame">
+                    <div id="preview-container"></div>
+                </div>
+
+                <div class="text-center text-xs opacity-50" id="preview-meta">Select an event to preview</div>
+            </section>
+
+            <!-- RIGHT: Download -->
+            <section class="space-y-4">
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20">
+                    <h3 class="text-xs font-bold uppercase tracking-widest mb-3 opacity-70">Export</h3>
+                    <button id="download-single" disabled
+                        class="sticker w-full bg-[var(--color-toxic)] !text-black border-none shadow-[4px_4px_0_#000] py-3 mb-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fas fa-download mr-2"></i> Download PNG
+                    </button>
+                    <button id="download-batch" disabled
+                        class="sticker w-full bg-white !text-black border-none shadow-[4px_4px_0_var(--color-pink)] py-3 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fas fa-file-archive mr-2"></i> Download All Selected (ZIP)
+                    </button>
+                    <p class="text-[11px] opacity-50 mt-3 leading-relaxed">
+                        Batch uses the currently selected template &amp; format for every selected event.
+                        Stories include safe-zone guides in the editor only — exported PNGs are clean.
+                    </p>
+                </div>
+
+                <div class="p-4 border-2 border-white/10 rounded bg-black/20 text-xs leading-relaxed opacity-70 space-y-2">
+                    <p><strong class="text-[var(--color-toxic)]">Output sizes</strong></p>
+                    <ul class="space-y-1">
+                        <li>• Square: 1080 × 1080</li>
+                        <li>• Portrait: 1080 × 1350</li>
+                        <li>• Story: 1080 × 1920</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="/js/admin-social-assets.js"></script>
+</body>
+</html>

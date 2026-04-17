@@ -1,13 +1,16 @@
 const admin = require('firebase-admin');
 const { verifyAuth } = require('./utils/auth');
+const EmailService = require('./services/email-service');
 
 exports.handler = async function (event, context) {
     console.log('Firestore-only status update called');
 
     try {
-        // Verify authentication
+        // Verify authentication — capture the decoded token so we can
+        // record who approved/rejected on the doc for audit.
+        let decodedAuth;
         try {
-            await verifyAuth(event);
+            decodedAuth = await verifyAuth(event);
         } catch (authError) {
             return {
                 statusCode: authError.statusCode || 401,
@@ -50,7 +53,7 @@ exports.handler = async function (event, context) {
 
         // Parse request body
         const body = JSON.parse(event.body);
-        const { itemId, newStatus, itemType } = body;
+        const { itemId, newStatus, itemType, reason } = body;
 
         if (!itemId || !newStatus || !itemType) {
             return {
@@ -83,13 +86,83 @@ exports.handler = async function (event, context) {
             };
         }
 
-        // Update the document
-        await docRef.update({
-            status: newStatus.toLowerCase(),
-            updatedAt: new Date()
-        });
+        // Update the document. Persist an audit trail:
+        //   - approve:  approvedAt + approvedBy (admin email from token)
+        //   - reject:   rejectedAt + rejectionReason so the resubmit-
+        //               link prefill can surface it as the banner copy.
+        const statusLower = newStatus.toLowerCase();
+        const adminId = decodedAuth?.email || decodedAuth?.uid || null;
+        const updatePayload = {
+            status: statusLower,
+            updatedAt: new Date(),
+        };
+        if (statusLower === 'approved') {
+            updatePayload.approvedAt = new Date();
+            updatePayload.approvedBy = adminId;
+        } else if (statusLower === 'rejected') {
+            updatePayload.rejectionReason = reason || null;
+            updatePayload.rejectedAt = new Date();
+            updatePayload.rejectedBy = adminId;
+        }
+        await docRef.update(updatePayload);
 
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
+
+        // Send promoter email notification. Pull contact + naming info
+        // directly off the doc so the admin UI doesn't need to round-trip
+        // them. Skips silently when no valid submitter email exists.
+        let emailResult = null;
+        try {
+            const docData = doc.data() || {};
+            const contactEmail = docData.submittedBy || docData.submitterEmail;
+            const displayName  = docData.name || 'your submission';
+            const slug         = docData.slug;
+
+            const isAnonymous = !contactEmail || contactEmail === 'anonymous@brumoutloud.co.uk';
+            if (!isAnonymous) {
+                const emailService = new EmailService();
+                const status = newStatus.toLowerCase();
+
+                if (status === 'approved') {
+                    const liveUrl = slug
+                        ? `https://brumoutloud.co.uk/${itemType}/${slug}.html`
+                        : 'https://brumoutloud.co.uk';
+                    emailResult = await emailService.sendApprovalNotification(
+                        contactEmail,
+                        displayName,
+                        liveUrl,
+                        // Extra context the celebration template renders as
+                        // a mini-poster. Safe to pass for venues too — the
+                        // template only uses the fields it's given.
+                        {
+                            image: docData.image || docData.imageUrl,
+                            eventDate: docData.eventDate,
+                            eventTime: docData.eventTime,
+                            venueName: docData.venueName || (docData.venue && docData.venue.name),
+                        }
+                    );
+                    console.log('✅ Approval email dispatched:', emailResult?.messageId || emailResult?.error);
+                } else if (status === 'rejected') {
+                    emailResult = await emailService.sendRejectionNotification(
+                        contactEmail,
+                        displayName,
+                        reason || 'Please review your submission and ensure all required information is provided.',
+                        // Signed-token deep link works for events only
+                        // right now (the resubmit fn looks up by events
+                        // collection). Venues skip the signed link and
+                        // get a plain /submit fallback.
+                        { docId: itemType === 'event' ? itemId : null }
+                    );
+                    console.log('✅ Rejection email dispatched:', emailResult?.messageId || emailResult?.error);
+                }
+            } else {
+                console.log('ℹ️ No valid submitter email on doc; skipping notification.');
+            }
+        } catch (notifyError) {
+            // Never let email failure block the status update.
+            console.error('❌ Email notification failed:', notifyError);
+            emailResult = { success: false, error: notifyError.message };
+        }
 
         // Trigger SSG rebuild if an event or venue was approved
         let ssgRebuildResult = null;
@@ -146,6 +219,8 @@ exports.handler = async function (event, context) {
                 newStatus: newStatus,
                 itemType: itemType,
                 ssgRebuild: ssgRebuildResult,
+                emailSent: emailResult?.success || false,
+                emailError: emailResult?.error,
                 note: 'This update was processed using Firestore only'
             })
         };
