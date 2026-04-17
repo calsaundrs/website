@@ -1,6 +1,9 @@
-const CACHE_NAME = 'brumoutloud-cache-v6';
-const STATIC_CACHE = 'brumoutloud-static-v6';
-const DYNAMIC_CACHE = 'brumoutloud-dynamic-v6';
+// Cache version bumped to v7 — on activation any older cache is deleted.
+// This evicts the stale-style-inducing entries that stuck users on
+// drifted HTML/CSS pairs from earlier SW generations.
+const CACHE_NAME = 'brumoutloud-cache-v7';
+const STATIC_CACHE = 'brumoutloud-static-v7';
+const DYNAMIC_CACHE = 'brumoutloud-dynamic-v7';
 
 // Static assets that rarely change
 const STATIC_ASSETS = [
@@ -221,25 +224,30 @@ async function handleFetch(request) {
       }
     }
     
-    // Strategy 1: Stale While Revalidate for static assets.
-    // (Cache-first stuck users on stale CSS/JS forever when we deployed new
-    // versions at the same URL — new HTML would reference classes that didn't
-    // exist in the cached CSS, stripping styles until a hard refresh.)
+    // CSS / JS / fonts / images → network-first with cache fallback.
+    // Every asset on a page comes from the same deploy so we always fetch
+    // the current deploy's copy. Cache is only consulted if the network
+    // fails (offline / flaky connection). Previous staleWhileRevalidate
+    // caused cross-cache version drift: stale HTML in CACHE_NAME paired
+    // with freshly revalidated CSS in STATIC_CACHE, producing unstyled
+    // back-nav renders until a hard refresh bypassed the SW.
     if (isStaticAsset(url.pathname)) {
-      return await staleWhileRevalidate(request, STATIC_CACHE);
+      return await networkFirst(request, STATIC_CACHE);
     }
-    
-    // Strategy 2: Network First for API calls and dynamic content
+
+    // API calls — always network first.
     if (isAPICall(url.pathname)) {
       return await networkFirst(request, DYNAMIC_CACHE);
     }
-    
-    // Strategy 3: Stale While Revalidate for pages
+
+    // Page navigations — same story: always go to network first so the
+    // HTML and the assets it references come from the same deploy. Cache
+    // is offline fallback only.
     if (isPageRequest(url.pathname)) {
-      return await staleWhileRevalidate(request, CACHE_NAME);
+      return await networkFirst(request, CACHE_NAME);
     }
-    
-    // Strategy 4: Network First with Cache Fallback for everything else
+
+    // Anything else → network-first with cache fallback.
     return await networkFirst(request, DYNAMIC_CACHE);
     
   } catch (error) {
@@ -257,74 +265,29 @@ async function handleFetch(request) {
   }
 }
 
-// Cache First strategy - good for static assets
-async function cacheFirst(request, cacheName) {
-  try {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    const networkResponse = await fetch(request);
-    // Only cache successful responses that are not partial (206)
-    if (networkResponse.ok && networkResponse.status !== 206) {
-      try {
-        const cache = await caches.open(cacheName);
-        await cache.put(request, networkResponse.clone());
-      } catch (cacheError) {
-        console.log('Service Worker: Failed to cache response:', cacheError.message);
-      }
-    }
-    return networkResponse;
-  } catch (error) {
-    console.log('Service Worker: Cache first strategy failed:', error.message);
-    // Return cached version if available, otherwise throw
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    throw error;
-  }
-}
-
-// Network First strategy - good for dynamic content
+// Network-first with cache fallback. On network success the fresh
+// response replaces the cached copy so offline navigations have the
+// most recent version. On network failure we serve whatever we've got
+// (including cross-cache lookups via caches.match() when the specific
+// cacheName doesn't have the request).
 async function networkFirst(request, cacheName) {
+  let networkResponse;
   try {
-    const networkResponse = await fetch(request);
-    // Only cache successful responses that are not partial (206)
-    if (networkResponse.ok && networkResponse.status !== 206) {
-      const cache = await caches.open(cacheName);
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
+    networkResponse = await fetch(request);
   } catch (error) {
     const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
+    if (cachedResponse) return cachedResponse;
     throw error;
   }
-}
-
-// Stale While Revalidate strategy - good for pages
-async function staleWhileRevalidate(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cachedResponse = await cache.match(request);
-  
-  // Start fetch in background
-  const fetchPromise = fetch(request).then(networkResponse => {
-    // Only cache successful responses that are not partial (206)
-    if (networkResponse.ok && networkResponse.status !== 206) {
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  }).catch(err => {
-    console.log('Background fetch failed:', err);
-    return cachedResponse;
-  });
-  
-  // Return cached version immediately if available, otherwise wait for network
-  return cachedResponse || fetchPromise;
+  // Fire-and-forget cache write. Cache-storage failures (quota, private
+  // mode, rare transient errors) must never discard a successful fetch,
+  // so the put happens outside the fetch try-block.
+  if (networkResponse.ok && networkResponse.status !== 206) {
+    caches.open(cacheName)
+      .then(cache => cache.put(request, networkResponse.clone()))
+      .catch(err => console.log('Service Worker: cache write failed:', err.message));
+  }
+  return networkResponse;
 }
 
 // Helper functions to determine caching strategy
