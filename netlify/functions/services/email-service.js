@@ -1,6 +1,7 @@
 const { Resend } = require('resend');
 const admin = require('firebase-admin');
 const EmailTemplates = require('./email-templates');
+const { sign: signResubmitToken } = require('../utils/resubmit-token');
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -177,12 +178,29 @@ class EmailService {
     );
   }
 
-  async sendRejectionNotification(promoterEmail, eventName, reason) {
+  /**
+   * Promoter rejection email. When `docId` is provided we mint a
+   * signed resubmit token so the Edit & resubmit button deep-links
+   * into the form with all the original fields prefilled. Token
+   * signing can fail if RESUBMIT_TOKEN_SECRET isn't set — in that
+   * case we fall back to the plain /submit link rather than blocking
+   * the whole rejection email.
+   */
+  async sendRejectionNotification(promoterEmail, eventName, reason, { docId } = {}) {
     const subject = `Submission update — ${eventName}`;
+    let resubmitUrl;
+    if (docId) {
+      try {
+        const token = signResubmitToken(docId);
+        resubmitUrl = `${this.templates.siteUrl}/promoter-submit-new?resubmit=${encodeURIComponent(token)}`;
+      } catch (err) {
+        console.warn('Could not mint resubmit token; falling back to plain /submit:', err.message);
+      }
+    }
     return await this.sendEmail(
       promoterEmail,
       subject,
-      this.templates.getRejectionTemplate(eventName, reason)
+      this.templates.getRejectionTemplate(eventName, reason, { resubmitUrl })
     );
   }
 

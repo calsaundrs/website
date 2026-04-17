@@ -458,9 +458,104 @@ exports.handler = async function (event, context) {
             }
         }
         
-        // Save to Firestore
-        const firestoreDoc = await db.collection('events').add(firestoreData);
-        console.log('Event saved to Firestore with ID:', firestoreDoc.id);
+        // ----- Upsert resolution ----------------------------------------
+        // Two ways an event can be an UPDATE rather than an INSERT:
+        //   1. resubmit-doc-id hidden input set by the signed-link flow
+        //      (token already proved ownership server-side).
+        //   2. Match-key collision — same name + eventDate + venueId
+        //      as an existing non-rejected doc. Anonymous submissions
+        //      that hit this branch get rejected with 409 so random
+        //      third parties can't silently overwrite someone else's
+        //      listing; signed-in or owner resubmissions upsert.
+        const normalizedName = String(firestoreData.name || '').trim().toLowerCase();
+        const resubmitDocId = (submission['resubmit-doc-id'] || '').trim() || null;
+        const hasRealEmail = firestoreData.submittedBy
+          && firestoreData.submittedBy !== 'anonymous@brumoutloud.co.uk';
+
+        let targetDocRef = null;
+        let matchReason = null;
+
+        if (resubmitDocId) {
+            // Trust the signed-link flow. If the doc has vanished we
+            // fall through to insert so the promoter doesn't lose work.
+            const existing = await db.collection('events').doc(resubmitDocId).get();
+            if (existing.exists) {
+                targetDocRef = existing.ref;
+                matchReason = 'resubmit-token';
+            } else {
+                console.warn('resubmit-doc-id references missing doc:', resubmitDocId);
+            }
+        }
+
+        if (!targetDocRef && normalizedName && firestoreData.eventDate && firestoreData.venueId) {
+            const collisionQ = await db.collection('events')
+                .where('eventDate', '==', firestoreData.eventDate)
+                .where('venueId',   '==', firestoreData.venueId)
+                .get();
+            const collisions = collisionQ.docs.filter(d => {
+                const dn = String((d.data() || {}).name || '').trim().toLowerCase();
+                const st = String((d.data() || {}).status || '').toLowerCase();
+                // Ignore rejected dupes — a rejected listing shouldn't
+                // block a fresh submission at the same slot.
+                return dn === normalizedName && st !== 'rejected';
+            });
+
+            if (collisions.length > 0) {
+                // Ownership gate: anonymous submitter trying to alter
+                // someone else's event → refuse rather than silently
+                // stomping. Signed-link resubmits bypass this branch
+                // above by setting targetDocRef directly.
+                if (!hasRealEmail) {
+                    return {
+                        statusCode: 409,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            success: false,
+                            code: 'duplicate',
+                            message: "Looks like this event is already listed. Reply to our rejection email or email hello@brumoutloud.co.uk and we'll edit it for you.",
+                        }),
+                    };
+                }
+                // With a real email, match the first collision. Multiple
+                // collisions would mean we already have duplicate events
+                // in the DB, which this upsert won't make worse.
+                targetDocRef = collisions[0].ref;
+                matchReason = 'match-key';
+            }
+        }
+
+        // ----- Insert / Update -----------------------------------------
+        let firestoreDoc;
+        let isUpsert = false;
+        if (targetDocRef) {
+            const existing = (await targetDocRef.get()).data() || {};
+            // Preserve the original createdAt; everything else gets
+            // overwritten. Always flip status back to pending so an
+            // update forces a fresh editorial review.
+            const updateData = {
+                ...firestoreData,
+                createdAt: existing.createdAt || firestoreData.createdAt,
+                status: 'pending',
+                updatedAt: new Date(),
+                lastResubmittedAt: new Date(),
+                lastResubmitReason: matchReason,
+                // Clear any previous approval trail — this is a new
+                // pending review.
+                approvedBy: null,
+                approvedAt: null,
+                // Retain the original rejection reason only long enough
+                // to display it once on the prefilled form; clear on
+                // resubmit so it doesn't stick.
+                rejectionReason: null,
+            };
+            await targetDocRef.set(updateData, { merge: true });
+            firestoreDoc = { id: targetDocRef.id };
+            isUpsert = true;
+            console.log(`Upserted event ${targetDocRef.id} (via ${matchReason})`);
+        } else {
+            firestoreDoc = await db.collection('events').add(firestoreData);
+            console.log('Event saved to Firestore with ID:', firestoreDoc.id);
+        }
         
         // Determine promoter email (needed by both email and push notification blocks)
         const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;

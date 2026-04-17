@@ -373,18 +373,24 @@ class EmailTemplates {
     }
   }
 
-  /** Promoter: "nearly there, here's what to tweak". */
-  getRejectionTemplate(eventName, reason) {
+  /**
+   * Promoter: "nearly there, here's what to tweak".
+   * When `resubmitUrl` is provided, the button deep-links back into
+   * the form with the submission prefilled; otherwise we fall back
+   * to a blank /submit link.
+   */
+  getRejectionTemplate(eventName, reason, { resubmitUrl } = {}) {
     const name = this.esc(eventName);
     const why = this.esc(reason || 'We need a bit more information before we can put it live.');
+    const editUrl = resubmitUrl || `${this.siteUrl}/submit`;
     const html = this.getBaseTemplate(`
       ${this.heading('Nearly there')}
       ${this.para(`We can't put <strong>${name}</strong> live just yet — one or two bits need a tweak first.`)}
       ${this.kvTable([
         ['What to change', why],
       ])}
-      ${this.para(`Sort it and send it back — we'll turn it around fast.`)}
-      ${this.button('Edit & resubmit', `${this.siteUrl}/submit`)}
+      ${this.para(`Hit the button below and we'll open your submission prefilled — sort the bits we've flagged and send it back. We'll turn it around fast.`)}
+      ${this.button('Edit & resubmit', editUrl)}
       ${this.para(`Rather chat it through? Just reply — we'd rather help than bounce it.`)}
     `, `Nearly there — ${eventName}`);
 
@@ -395,8 +401,8 @@ class EmailTemplates {
       ``,
       `What to change: ${reason || 'We need a bit more information before we can put it live.'}`,
       ``,
-      `Sort it and send it back — we'll turn it around fast.`,
-      `Edit & resubmit: ${this.siteUrl}/submit`,
+      `Hit the link below and we'll open your submission prefilled — sort the bits we've flagged and send it back. We'll turn it around fast.`,
+      `Edit & resubmit: ${editUrl}`,
       ``,
       `Rather chat it through? Just reply — we'd rather help than bounce it.`,
       ``,

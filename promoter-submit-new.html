@@ -86,8 +86,31 @@
             <p class="text-gray-200 text-lg max-w-xl mx-auto">Share your LGBTQ+ event with the Birmingham community. Our streamlined form makes it easy to get your event listed quickly.</p>
         </div>
 
+        <!-- Resubmit banner: only shown when the page is opened with
+             a valid ?resubmit=<token> query param. Populated by the
+             submit JS after it fetches get-submission-for-resubmit. -->
+        <div id="resubmit-banner" class="hidden mb-8 border-4 border-[var(--color-toxic)] bg-black/70 p-6">
+            <div class="flex items-start gap-4">
+                <i class="fas fa-pen-to-square text-3xl text-[var(--color-toxic)] mt-1"></i>
+                <div class="flex-1">
+                    <div class="font-black text-xl uppercase tracking-wide text-[var(--color-toxic)] mb-1" id="resubmit-banner-title">Editing your submission</div>
+                    <div class="text-gray-200 text-sm leading-relaxed mb-2" id="resubmit-banner-event"></div>
+                    <div class="bg-[var(--color-toxic)] text-black font-bold uppercase text-xs tracking-widest inline-block px-3 py-1 mb-3">What to change</div>
+                    <div class="text-white text-base leading-relaxed" id="resubmit-banner-reason"></div>
+                </div>
+            </div>
+        </div>
+        <div id="resubmit-error" class="hidden mb-8 border-4 border-red-500 bg-black/70 p-6">
+            <div class="font-black text-xl uppercase tracking-wide text-red-400 mb-2">This edit link isn't valid</div>
+            <div class="text-gray-200 text-sm leading-relaxed" id="resubmit-error-msg"></div>
+            <div class="text-gray-400 text-xs mt-3">You can still submit the event from scratch below.</div>
+        </div>
+
         <!-- Form -->
         <form id="event-submission-form" class="space-y-8">
+            <!-- Set by the resubmit flow so event-submission upserts the
+                 correct Firestore doc rather than inserting a new one. -->
+            <input type="hidden" id="resubmit-doc-id" name="resubmit-doc-id" value="">
             <!-- Poster Upload Section -->
             <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">

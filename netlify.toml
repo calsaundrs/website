@@ -339,6 +339,7 @@
   FIREBASE_PRIVATE_KEY = ""
   RESEND_API_KEY = ""
   ADMIN_EMAIL = ""
+  RESUBMIT_TOKEN_SECRET = ""
   GEMINI_API_KEY = ""
 
 [context.deploy-preview.environment]
@@ -350,4 +351,5 @@
   FIREBASE_PRIVATE_KEY = ""
   RESEND_API_KEY = ""
   ADMIN_EMAIL = ""
+  RESUBMIT_TOKEN_SECRET = ""
   GEMINI_API_KEY = ""

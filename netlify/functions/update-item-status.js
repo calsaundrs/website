@@ -84,11 +84,19 @@ exports.handler = async function (event, context) {
             };
         }
 
-        // Update the document
-        await docRef.update({
-            status: newStatus.toLowerCase(),
-            updatedAt: new Date()
-        });
+        // Update the document. When rejecting, persist the reason so
+        // the resubmit-link prefill can surface it as the "what to
+        // change" banner on the prefilled form.
+        const statusLower = newStatus.toLowerCase();
+        const updatePayload = {
+            status: statusLower,
+            updatedAt: new Date(),
+        };
+        if (statusLower === 'rejected') {
+            updatePayload.rejectionReason = reason || null;
+            updatePayload.rejectedAt = new Date();
+        }
+        await docRef.update(updatePayload);
 
         console.log(`Successfully updated ${itemType} ${itemId} to status: ${newStatus}`);
 
@@ -130,7 +138,12 @@ exports.handler = async function (event, context) {
                     emailResult = await emailService.sendRejectionNotification(
                         contactEmail,
                         displayName,
-                        reason || 'Please review your submission and ensure all required information is provided.'
+                        reason || 'Please review your submission and ensure all required information is provided.',
+                        // Signed-token deep link works for events only
+                        // right now (the resubmit fn looks up by events
+                        // collection). Venues skip the signed link and
+                        // get a plain /submit fallback.
+                        { docId: itemType === 'event' ? itemId : null }
                     );
                     console.log('✅ Rejection email dispatched:', emailResult?.messageId || emailResult?.error);
                 }
