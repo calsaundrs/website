@@ -19,10 +19,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 class EmailService {
   constructor() {
     // Sends from the verified Resend subdomain. The apex
-    // (brumoutloud.co.uk) is NOT verified in Resend — only the mail
-    // subdomain — so sending from @brumoutloud.co.uk gets a 403.
-    // Override via RESEND_FROM if you verify a different address.
+    // (brumoutloud.co.uk) is NOT verified in Resend — only
+    // email.brumoutloud.co.uk — so sending from @brumoutloud.co.uk
+    // returns 403. Override via RESEND_FROM if the verified address
+    // changes.
     this.fromEmail = process.env.RESEND_FROM || 'Brum Outloud <hello@email.brumoutloud.co.uk>';
+    // Where replies go — the apex address the user actually checks.
+    this.replyTo   = process.env.RESEND_REPLY_TO || 'hello@brumoutloud.co.uk';
     // Admin address(es) — comma-separated ADMIN_EMAIL env var wins;
     // the fallback routes to the watched domain inbox so submission
     // alerts never land in a shared mailbox that isn't monitored.
@@ -30,31 +33,51 @@ class EmailService {
     this.adminRecipients = raw.split(',').map(s => s.trim()).filter(Boolean);
     this.adminEmail = this.adminRecipients[0]; // back-compat
     this.templates = new EmailTemplates();
+    // One-click unsubscribe endpoint — must return 200 OK.
+    this.unsubscribeUrl = `${this.templates.siteUrl}/unsubscribe.html`;
   }
 
   /**
-   * Send email using Resend API. `to` may be a string or an array of
-   * recipient addresses.
+   * Send email via Resend. Accepts a single address or an array.
+   * `content` can be either { html, text } or a raw HTML string for
+   * back-compat with older callers.
    */
-  async sendEmail(to, subject, htmlContent, textContent = null) {
+  async sendEmail(to, subject, content, legacyTextContent = null) {
+    const { html, text } = typeof content === 'string'
+      ? { html: content, text: legacyTextContent }
+      : (content || {});
+
+    const recipients = Array.isArray(to) ? to : [to];
+
+    // Bake the unsubscribe URL into the template placeholder. Base
+    // template emits {{unsubscribe}} in the footer; replace here so
+    // the same HTML body can be resent later without re-templating.
+    const htmlBody = (html || '').replace(/\{\{unsubscribe\}\}/g, this.unsubscribeUrl);
+
     try {
-      const recipients = Array.isArray(to) ? to : [to];
       const emailData = {
         from: this.fromEmail,
         to: recipients,
-        subject: subject,
-        html: htmlContent,
-        ...(textContent && { text: textContent })
+        reply_to: this.replyTo,
+        subject,
+        html: htmlBody,
+        ...(text && { text }),
+        // Gmail + Apple Mail look for List-Unsubscribe to render the
+        // native "unsubscribe" UI and to avoid spam-folder penalties.
+        // Link-only variant is used here until a one-click POST
+        // endpoint exists (RFC 8058 requires one for -Post header).
+        headers: {
+          'List-Unsubscribe': `<${this.unsubscribeUrl}>`,
+        },
       };
 
       console.log('📧 Sending email:', { to: recipients, subject });
 
       const result = await resend.emails.send(emailData);
 
-      // The Resend SDK does NOT throw on error — it returns
-      // { data: null, error: { ... } }. Treat that as a failure so the
-      // admin-email-logs UI doesn't show a phantom "sent" entry and so
-      // the handler's `success` field is actually truthful.
+      // Resend's SDK does NOT throw on 4xx/5xx — it returns
+      // { data: null, error: { ... } }. Treat that as a failure so
+      // the log status matches reality.
       if (result.error) {
         throw new Error(result.error.message || result.error.name || 'Resend error');
       }
@@ -65,7 +88,7 @@ class EmailService {
         status: 'sent',
         messageId: result.data?.id,
         sentAt: new Date(),
-        content: { html: htmlContent, text: textContent }
+        content: { html: htmlBody, text },
       });
 
       console.log('✅ Email sent successfully:', result.data?.id);
@@ -74,142 +97,113 @@ class EmailService {
     } catch (error) {
       console.error('❌ Email sending failed:', error);
 
-      // Log failed email
       await this.logEmail({
-        to: Array.isArray(to) ? to.join(', ') : to,
+        to: recipients.join(', '),
         subject,
         status: 'failed',
         error: error.message,
         sentAt: new Date(),
-        content: { html: htmlContent, text: textContent }
+        content: { html: htmlBody, text },
       });
 
       return { success: false, error: error.message };
     }
   }
 
-  /**
-   * Log email to Firestore for tracking and management
-   */
   async logEmail(emailLog) {
     try {
       await db.collection('email_logs').add({
         ...emailLog,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
     } catch (error) {
       console.error('Failed to log email:', error);
     }
   }
 
-  /**
-   * Get email logs for admin management
-   */
   async getEmailLogs(limit = 50, status = null) {
     try {
       let query = db.collection('email_logs').orderBy('sentAt', 'desc').limit(limit);
-
-      if (status) {
-        query = query.where('status', '==', status);
-      }
-
+      if (status) query = query.where('status', '==', status);
       const snapshot = await query.get();
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error('Failed to get email logs:', error);
       return [];
     }
   }
 
-  /**
-   * Resend a failed email
-   */
   async resendEmail(logId) {
     try {
       const logDoc = await db.collection('email_logs').doc(logId).get();
-      if (!logDoc.exists) {
-        throw new Error('Email log not found');
-      }
-
+      if (!logDoc.exists) throw new Error('Email log not found');
       const logData = logDoc.data();
-      const result = await this.sendEmail(
+      return await this.sendEmail(
         logData.to,
         logData.subject,
-        logData.content.html,
-        logData.content.text
+        { html: logData.content?.html, text: logData.content?.text }
       );
-
-      return result;
     } catch (error) {
       console.error('Failed to resend email:', error);
       return { success: false, error: error.message };
     }
   }
 
-  /**
-   * Send promoter submission confirmation
-   */
+  // ---- Per-template senders ---------------------------------------------
+  // Subject lines deliberately contain no leading emojis — the 2026
+  // Gmail/Outlook spam heuristics treat "🎉 / 🔔 / ⚠️" prefixes as a
+  // mild negative signal, especially on new subdomains.
+
   async sendSubmissionConfirmation(promoterEmail, eventName, eventId) {
-    const subject = `✅ Event Submitted Successfully - "${eventName}"`;
-    const htmlContent = this.templates.getSubmissionConfirmationTemplate(eventName, eventId);
-    const textContent = this.templates.getPlainTextVersion(htmlContent);
-
-    return await this.sendEmail(promoterEmail, subject, htmlContent, textContent);
+    const subject = `Submission received — ${eventName}`;
+    return await this.sendEmail(
+      promoterEmail,
+      subject,
+      this.templates.getSubmissionConfirmationTemplate(eventName, eventId)
+    );
   }
 
-  /**
-   * Send promoter approval notification
-   */
   async sendApprovalNotification(promoterEmail, eventName, eventUrl) {
-    const subject = `🎉 Your Event is Live! - "${eventName}"`;
-    const htmlContent = this.templates.getApprovalTemplate(eventName, eventUrl);
-    const textContent = this.templates.getPlainTextVersion(htmlContent);
-
-    return await this.sendEmail(promoterEmail, subject, htmlContent, textContent);
+    const subject = `You're live on Brum Outloud — ${eventName}`;
+    return await this.sendEmail(
+      promoterEmail,
+      subject,
+      this.templates.getApprovalTemplate(eventName, eventUrl)
+    );
   }
 
-  /**
-   * Send promoter rejection notification
-   */
   async sendRejectionNotification(promoterEmail, eventName, reason) {
-    const subject = `⚠️ Event Submission Update - "${eventName}"`;
-    const htmlContent = this.templates.getRejectionTemplate(eventName, reason);
-    const textContent = this.templates.getPlainTextVersion(htmlContent);
-
-    return await this.sendEmail(promoterEmail, subject, htmlContent, textContent);
+    const subject = `Submission update — ${eventName}`;
+    return await this.sendEmail(
+      promoterEmail,
+      subject,
+      this.templates.getRejectionTemplate(eventName, reason)
+    );
   }
 
-  /**
-   * Send event reminder to promoter
-   */
   async sendEventReminder(promoterEmail, eventName, eventDate, eventUrl) {
-    const subject = `📅 Reminder: Your Event is Tomorrow - "${eventName}"`;
-    const htmlContent = this.templates.getEventReminderTemplate(eventName, eventDate, eventUrl);
-    const textContent = this.templates.getPlainTextVersion(htmlContent);
-
-    return await this.sendEmail(promoterEmail, subject, htmlContent, textContent);
+    const subject = `Tomorrow: ${eventName}`;
+    return await this.sendEmail(
+      promoterEmail,
+      subject,
+      this.templates.getEventReminderTemplate(eventName, eventDate, eventUrl)
+    );
   }
 
   /**
-   * Send admin notification for new submission. Fires for every
-   * submission — including anonymous ones where the promoter didn't
-   * provide an email — so Cal gets an inbox alert whenever something
-   * needs reviewing. Routes to the full adminRecipients list.
+   * Admin submission alert. Fires for every submission — including
+   * anonymous ones — so nothing slips past the queue. Routes to the
+   * full adminRecipients list.
    */
   async sendAdminSubmissionAlert(eventName, promoterEmail, eventId) {
     const displayPromoter = promoterEmail || 'anonymous submitter';
-    const subject = `🔔 New Event Submission - "${eventName}"`;
-    const htmlContent = this.templates.getAdminSubmissionTemplate(eventName, displayPromoter, eventId);
-    const textContent = this.templates.getPlainTextVersion(htmlContent);
-
-    return await this.sendEmail(this.adminRecipients, subject, htmlContent, textContent);
+    const subject = `New submission — ${eventName}`;
+    return await this.sendEmail(
+      this.adminRecipients,
+      subject,
+      this.templates.getAdminSubmissionTemplate(eventName, displayPromoter, eventId)
+    );
   }
-
-
-
 }
 
 module.exports = EmailService;
