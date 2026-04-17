@@ -18,7 +18,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 class EmailService {
   constructor() {
-    this.fromEmail = 'Brum Outloud <hello@brumoutloud.co.uk>';
+    // Sends from the verified Resend subdomain. The apex
+    // (brumoutloud.co.uk) is NOT verified in Resend — only the mail
+    // subdomain — so sending from @brumoutloud.co.uk gets a 403.
+    // Override via RESEND_FROM if you verify a different address.
+    this.fromEmail = process.env.RESEND_FROM || 'Brum Outloud <hello@email.brumoutloud.co.uk>';
     // Admin address(es) — comma-separated ADMIN_EMAIL env var wins; the
     // fallback routes directly to Cal's personal inbox so submission
     // alerts never land in a shared mailbox that isn't watched.
