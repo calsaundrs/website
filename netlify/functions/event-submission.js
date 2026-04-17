@@ -465,29 +465,31 @@ exports.handler = async function (event, context) {
         // Determine promoter email (needed by both email and push notification blocks)
         const promoterEmail = firestoreData.submittedBy || firestoreData.submitterEmail;
         
-        // Send email notifications
+        // Send email notifications. Admin alert fires unconditionally
+        // (Cal wants an inbox ping for every submission, including
+        // anonymous ones). Promoter confirmation only fires when we
+        // actually have a real submitter address.
         try {
             const emailService = new EmailService();
-            
-            if (promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk') {
-                // Send submission confirmation to promoter
+            const hasPromoterEmail = promoterEmail && promoterEmail !== 'anonymous@brumoutloud.co.uk';
+
+            if (hasPromoterEmail) {
                 await emailService.sendSubmissionConfirmation(
                     promoterEmail,
                     firestoreData.name,
                     firestoreDoc.id
                 );
                 console.log('✅ Submission confirmation email sent to:', promoterEmail);
-                
-                // Send admin notification
-                await emailService.sendAdminSubmissionAlert(
-                    firestoreData.name,
-                    promoterEmail,
-                    firestoreDoc.id
-                );
-                console.log('✅ Admin notification email sent');
             } else {
-                console.log('⚠️ No valid promoter email found, skipping email notifications');
+                console.log('ℹ️ No valid promoter email; skipping confirmation.');
             }
+
+            await emailService.sendAdminSubmissionAlert(
+                firestoreData.name,
+                hasPromoterEmail ? promoterEmail : null,
+                firestoreDoc.id
+            );
+            console.log('✅ Admin notification email sent');
         } catch (emailError) {
             console.error('❌ Email notification failed:', emailError);
             // Don't fail the entire submission if email fails

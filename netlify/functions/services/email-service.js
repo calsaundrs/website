@@ -19,30 +19,38 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 class EmailService {
   constructor() {
     this.fromEmail = 'Brum Outloud <hello@brumoutloud.co.uk>';
-    this.adminEmail = process.env.ADMIN_EMAIL || 'admin@brumoutloud.co.uk';
+    // Admin address(es) — comma-separated ADMIN_EMAIL env var wins; the
+    // fallback routes directly to Cal's personal inbox so submission
+    // alerts never land in a shared mailbox that isn't watched.
+    const raw = process.env.ADMIN_EMAIL || 'csaunders339@gmail.com';
+    this.adminRecipients = raw.split(',').map(s => s.trim()).filter(Boolean);
+    this.adminEmail = this.adminRecipients[0]; // back-compat
     this.templates = new EmailTemplates();
   }
 
   /**
-   * Send email using Resend API
+   * Send email using Resend API. `to` may be a string or an array of
+   * recipient addresses.
    */
   async sendEmail(to, subject, htmlContent, textContent = null) {
     try {
+      const recipients = Array.isArray(to) ? to : [to];
       const emailData = {
         from: this.fromEmail,
-        to: [to],
+        to: recipients,
         subject: subject,
         html: htmlContent,
         ...(textContent && { text: textContent })
       };
 
-      console.log('📧 Sending email:', { to, subject });
+      console.log('📧 Sending email:', { to: recipients, subject });
 
       const result = await resend.emails.send(emailData);
 
-      // Log email to Firestore
+      // Log email to Firestore (stringified recipient list for easy
+      // filtering in the admin-email-logs UI).
       await this.logEmail({
-        to,
+        to: recipients.join(', '),
         subject,
         status: 'sent',
         messageId: result.data?.id,
@@ -58,7 +66,7 @@ class EmailService {
 
       // Log failed email
       await this.logEmail({
-        to,
+        to: Array.isArray(to) ? to.join(', ') : to,
         subject,
         status: 'failed',
         error: error.message,
@@ -176,14 +184,18 @@ class EmailService {
   }
 
   /**
-   * Send admin notification for new submission
+   * Send admin notification for new submission. Fires for every
+   * submission — including anonymous ones where the promoter didn't
+   * provide an email — so Cal gets an inbox alert whenever something
+   * needs reviewing. Routes to the full adminRecipients list.
    */
   async sendAdminSubmissionAlert(eventName, promoterEmail, eventId) {
+    const displayPromoter = promoterEmail || 'anonymous submitter';
     const subject = `🔔 New Event Submission - "${eventName}"`;
-    const htmlContent = this.templates.getAdminSubmissionTemplate(eventName, promoterEmail, eventId);
+    const htmlContent = this.templates.getAdminSubmissionTemplate(eventName, displayPromoter, eventId);
     const textContent = this.templates.getPlainTextVersion(htmlContent);
 
-    return await this.sendEmail(this.adminEmail, subject, htmlContent, textContent);
+    return await this.sendEmail(this.adminRecipients, subject, htmlContent, textContent);
   }
 
 
