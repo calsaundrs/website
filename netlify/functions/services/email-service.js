@@ -23,10 +23,10 @@ class EmailService {
     // subdomain — so sending from @brumoutloud.co.uk gets a 403.
     // Override via RESEND_FROM if you verify a different address.
     this.fromEmail = process.env.RESEND_FROM || 'Brum Outloud <hello@email.brumoutloud.co.uk>';
-    // Admin address(es) — comma-separated ADMIN_EMAIL env var wins; the
-    // fallback routes directly to Cal's personal inbox so submission
-    // alerts never land in a shared mailbox that isn't watched.
-    const raw = process.env.ADMIN_EMAIL || 'csaunders339@gmail.com';
+    // Admin address(es) — comma-separated ADMIN_EMAIL env var wins;
+    // the fallback routes to the watched domain inbox so submission
+    // alerts never land in a shared mailbox that isn't monitored.
+    const raw = process.env.ADMIN_EMAIL || 'callum@brumoutloud.co.uk';
     this.adminRecipients = raw.split(',').map(s => s.trim()).filter(Boolean);
     this.adminEmail = this.adminRecipients[0]; // back-compat
     this.templates = new EmailTemplates();
