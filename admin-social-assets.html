@@ -73,7 +73,8 @@
             position: absolute; inset: 0;
             background-size: cover;
             background-position: center;
-            filter: saturate(1.1);
+            /* Saturation boost is baked into the Cloudinary URL in
+               heroUrl() — html2canvas drops CSS `filter` silently. */
         }
         .tpl-sticker .overlay {
             position: absolute; inset: 0;
@@ -692,6 +693,7 @@
         }
         .tpl-highlight .badge {
             position: relative;
+            z-index: 2;
             width: 540px; height: 540px;
             border-radius: 50%;
             display: flex;
@@ -703,7 +705,28 @@
             text-align: center;
             padding: 40px;
             line-height: 0.9;
-            box-shadow: 0 0 0 8px #000, 12px 12px 0 12px var(--color-pink);
+        }
+        /* Fake the badge's multi-layer box-shadow with real sibling
+           circles — html2canvas 1.4.1 renders spread/multi-layer shadows
+           on rounded elements unreliably, same class of issue that was
+           painting pink over the card flyer. */
+        .tpl-highlight .badge-outline,
+        .tpl-highlight .badge-offset {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            border-radius: 50%;
+        }
+        .tpl-highlight .badge-outline {
+            z-index: 1;
+            width: 556px; height: 556px;
+            background: #000;
+        }
+        .tpl-highlight .badge-offset {
+            z-index: 0;
+            width: 564px; height: 564px;
+            background: var(--color-pink);
+            transform: translate(12px, 12px);
         }
         .tpl-highlight .badge.acc-toxic  { background: var(--color-toxic);  color: #000; }
         .tpl-highlight .badge.acc-pink   { background: var(--color-pink);   color: #fff; }

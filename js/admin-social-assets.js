@@ -16,7 +16,6 @@ const state = {
     format: 'square',        // square | portrait | story
     template: 'sticker',     // sticker | card | lineup | highlight
     lineupTitle: 'This Week',
-    lineupPage: 0,           // which page to show when selection > MAX_ITEMS
     lineupSlideIdx: 0,       // index into lineupSlides() for preview pager
     lineupHook: true,        // include a hook (cover) slide at the start
     lineupCta: true,         // include a CTA slide at the end
@@ -32,17 +31,27 @@ const state = {
 // that all have long titles + subs.
 const LINEUP_MAX_ITEMS = 5;
 
+// Enums — frozen so a typo in a dataset attribute or an opts arg is
+// caught near the source rather than silently rendering the default
+// template/format. Referenced by the validating assertions below.
+const FORMATS    = Object.freeze({ SQUARE: 'square', PORTRAIT: 'portrait', STORY: 'story' });
+const TEMPLATES  = Object.freeze({ STICKER: 'sticker', CARD: 'card', LINEUP: 'lineup', HIGHLIGHT: 'highlight' });
+const SLIDE_KIND = Object.freeze({ HOOK: 'hook', PAGE: 'page', CTA: 'cta' });
+const FORMAT_VALUES    = new Set(Object.values(FORMATS));
+const TEMPLATE_VALUES  = new Set(Object.values(TEMPLATES));
+const SLIDE_KIND_VALUES = new Set(Object.values(SLIDE_KIND));
+
 // Templates that must render as 1080×1920 story
-const STORY_ONLY_TEMPLATES = new Set(['highlight']);
+const STORY_ONLY_TEMPLATES = new Set([TEMPLATES.HIGHLIGHT]);
 // Templates with a restricted set of allowed formats (square doesn't make
 // sense for a vertical event list).
 const TEMPLATE_ALLOWED_FORMATS = {
-    lineup: new Set(['portrait', 'story'])
+    [TEMPLATES.LINEUP]: new Set([FORMATS.PORTRAIT, FORMATS.STORY])
 };
 // Templates that aggregate multiple events instead of using the active one
-const AGGREGATE_TEMPLATES = new Set(['lineup']);
+const AGGREGATE_TEMPLATES = new Set([TEMPLATES.LINEUP]);
 // Templates that don't need any event data at all
-const EVENTLESS_TEMPLATES = new Set(['highlight']);
+const EVENTLESS_TEMPLATES = new Set([TEMPLATES.HIGHLIGHT]);
 
 // -- Event fetching ---------------------------------------------------------
 
@@ -215,8 +224,6 @@ function renderEventList() {
                 state.activeId = ev.id;
             }
             // Keep lineup pager in range after selection changes.
-            const pages = lineupPages();
-            if (state.lineupPage >= pages.length) state.lineupPage = Math.max(0, pages.length - 1);
             const slides = lineupSlides();
             if (state.lineupSlideIdx >= slides.length) state.lineupSlideIdx = Math.max(0, slides.length - 1);
             renderEventList();
@@ -241,12 +248,16 @@ function renderEventList() {
 function thumbUrl(ev) {
     return toImageUrl(ev, 'w_200,h_200,c_fill,g_auto');
 }
-function heroUrl(ev, { format } = {}) {
+function heroUrl(ev, { format, saturate } = {}) {
     const fmt = format || state.format;
     let t;
     if (fmt === 'story')         t = 'w_1080,h_1920,c_fill,g_auto';
     else if (fmt === 'portrait') t = 'w_1080,h_1350,c_fill,g_auto';
     else                         t = 'w_1080,h_1080,c_fill,g_auto'; // square
+    // Bake saturation into the Cloudinary transform when requested —
+    // html2canvas drops CSS `filter` silently, so baking at fetch time
+    // is the only way to keep the export matching the preview.
+    if (saturate) t += ',e_saturation:10';
     return toImageUrl(ev, t);
 }
 function toImageUrl(ev, transform) {
@@ -379,17 +390,20 @@ function updateLineupPager() {
 function buildStage(ev, opts = {}) {
     const format = opts.format || state.format;
     const template = opts.template || state.template;
+    if (!FORMAT_VALUES.has(format))     throw new Error(`buildStage: unknown format "${format}"`);
+    if (!TEMPLATE_VALUES.has(template)) throw new Error(`buildStage: unknown template "${template}"`);
     const stage = document.createElement('div');
     stage.className = `asset-stage ${format}`;
-    if (format === 'story') stage.classList.add('safe-zone');
+    if (format === FORMATS.STORY) stage.classList.add('safe-zone');
 
-    if (template === 'lineup') {
+    if (template === TEMPLATES.LINEUP) {
         // Lineup dispatches by slide kind (hook / page / cta) so the
         // same buildStage drives preview, single export, and ZIP pages.
-        const kind = opts.lineupSlideKind || 'page';
-        if (kind === 'hook')      stage.appendChild(buildLineupHookTemplate({ format, titleOverride: opts.titleOverride, countOverride: opts.countOverride }));
-        else if (kind === 'cta')  stage.appendChild(buildLineupCtaTemplate());
-        else                      stage.appendChild(buildLineupTemplate({
+        const kind = opts.lineupSlideKind || SLIDE_KIND.PAGE;
+        if (!SLIDE_KIND_VALUES.has(kind)) throw new Error(`buildStage: unknown slide kind "${kind}"`);
+        if (kind === SLIDE_KIND.HOOK)     stage.appendChild(buildLineupHookTemplate({ format, titleOverride: opts.titleOverride, countOverride: opts.countOverride }));
+        else if (kind === SLIDE_KIND.CTA) stage.appendChild(buildLineupCtaTemplate());
+        else                              stage.appendChild(buildLineupTemplate({
             pageItems: opts.lineupPageItems,
             pageIdx: opts.lineupPageIdx,
             totalPages: opts.lineupTotalPages
@@ -398,10 +412,11 @@ function buildStage(ev, opts = {}) {
     }
 
     switch (template) {
-        case 'card':      stage.appendChild(buildCardTemplate(ev, { format })); break;
-        case 'highlight': stage.appendChild(buildHighlightTemplate()); break;
-        case 'sticker':
-        default:          stage.appendChild(buildStickerTemplate(ev, { format }));
+        case TEMPLATES.CARD:      stage.appendChild(buildCardTemplate(ev, { format })); break;
+        case TEMPLATES.HIGHLIGHT: stage.appendChild(buildHighlightTemplate()); break;
+        case TEMPLATES.STICKER:   stage.appendChild(buildStickerTemplate(ev, { format })); break;
+        // No default — unknown templates already threw above; the lineup
+        // case is handled in the pre-switch block.
     }
     return stage;
 }
@@ -450,14 +465,14 @@ function fitHeadingSize(text, maxWidth = 960, maxSize = 160, minSize = 60) {
 // hook/CTA still render (useful as standalone covers).
 function lineupSlides() {
     const slides = [];
-    if (state.lineupHook) slides.push({ kind: 'hook' });
+    if (state.lineupHook) slides.push({ kind: SLIDE_KIND.HOOK });
     const pages = lineupPages();
-    pages.forEach((page, idx) => slides.push({ kind: 'page', page, idx, total: pages.length }));
+    pages.forEach((page, idx) => slides.push({ kind: SLIDE_KIND.PAGE, page, idx, total: pages.length }));
     if (pages.length === 0) {
         // Empty placeholder so the preview shows something useful
-        slides.push({ kind: 'page', page: [], idx: 0, total: 1 });
+        slides.push({ kind: SLIDE_KIND.PAGE, page: [], idx: 0, total: 1 });
     }
-    if (state.lineupCta) slides.push({ kind: 'cta' });
+    if (state.lineupCta) slides.push({ kind: SLIDE_KIND.CTA });
     return slides;
 }
 
@@ -483,9 +498,7 @@ function buildLineupTemplate(opts = {}) {
     // synchronously during preview / export click, so no async drift.
     const frag = document.createDocumentFragment();
     const pages = lineupPages();
-    const pageIdx = opts.pageIdx != null
-        ? opts.pageIdx
-        : Math.min(state.lineupPage, Math.max(0, pages.length - 1));
+    const pageIdx = opts.pageIdx != null ? opts.pageIdx : 0;
     const shown = opts.pageItems || pages[pageIdx] || [];
     const totalPages = opts.totalPages != null ? opts.totalPages : pages.length;
 
@@ -615,6 +628,8 @@ function buildHighlightTemplate() {
     tpl.innerHTML = `
         <div class="halftone"></div>
         <div class="ring"></div>
+        <div class="badge-offset"></div>
+        <div class="badge-outline"></div>
         <div class="badge acc-${escapeHtml(state.highlightAccent)}">
             <div class="label-text ${sizeClass}">${escapeHtml(label)}</div>
         </div>
@@ -634,7 +649,7 @@ function buildStickerTemplate(ev, opts = {}) {
     tpl.style.position = 'absolute';
     tpl.style.inset = '0';
     tpl.innerHTML = `
-        <div class="bg-img" style="background-image:url('${heroUrl(ev, opts)}')"></div>
+        <div class="bg-img" style="background-image:url('${heroUrl(ev, { ...opts, saturate: true })}')"></div>
         <div class="overlay"></div>
         <div class="top-sticker">${escapeHtml(primaryCategory(ev))}</div>
         <div class="date-pill">${escapeHtml(day)}</div>
@@ -742,7 +757,12 @@ function canvasDimsFor(stage) {
     return { w: 1080, h: 1080 }; // square
 }
 
-async function renderEventToBlob(ev, format, template) {
+// Shared render path for both per-event and aggregate (lineup / highlight /
+// hook / cta) stages. Builds the stage off-screen, preloads images, runs
+// html2canvas with pinned dimensions, cleans up, and returns a PNG blob.
+// Rejects rather than returning null on toBlob failure so callers can
+// record the failed item instead of crashing the whole batch.
+async function stageToBlob(ev, { format, template, ...extra } = {}) {
     const off = document.createElement('div');
     off.style.position = 'fixed';
     off.style.left = '-20000px';
@@ -750,64 +770,87 @@ async function renderEventToBlob(ev, format, template) {
     off.style.zIndex = '-1';
     document.body.appendChild(off);
 
-    // No global state mutation — buildStage receives format/template explicitly.
-    const stage = buildStage(ev, { format, template });
-    stage.classList.add('hide-safe-zone');
-    // Inline the brand bg so html2canvas has a solid colour to fall back
-    // on even if CSS-var resolution misfires off-screen.
-    stage.style.backgroundColor = '#0D0115';
-    off.appendChild(stage);
+    try {
+        const stage = buildStage(ev, { format, template, ...extra });
+        stage.classList.add('hide-safe-zone');
+        // Inline the brand bg so html2canvas has a solid colour to fall
+        // back on if CSS-var resolution misfires off-screen.
+        stage.style.backgroundColor = '#0D0115';
+        off.appendChild(stage);
 
-    await waitForImages(stage);
+        await waitForImages(stage);
 
-    // Explicit pixel dimensions + solid brand-dark fallback background.
-    // offsetWidth/offsetHeight off-screen occasionally reports slightly
-    // smaller than 1080×<target> which produces a letterbox border around
-    // the card. Force the canonical canvas size per format.
-    const dims = canvasDimsFor(stage);
-    const canvas = await html2canvas(stage, {
-        backgroundColor: '#0D0115',
-        useCORS: true,
-        allowTaint: false,
-        scale: 1,
-        width: dims.w,
-        height: dims.h,
-        windowWidth: dims.w,
-        windowHeight: dims.h,
-        logging: false,
-    });
+        // Pin canvas dimensions to the canonical CSS size rather than
+        // offsetWidth/offsetHeight — off-screen layout can underreport by
+        // a few px and produce a letterbox border around the rendered card.
+        const dims = canvasDimsFor(stage);
+        const canvas = await html2canvas(stage, {
+            backgroundColor: '#0D0115',
+            useCORS: true,
+            allowTaint: false,
+            scale: 1,
+            width: dims.w,
+            height: dims.h,
+            windowWidth: dims.w,
+            windowHeight: dims.h,
+            logging: false,
+        });
 
-    off.remove();
-    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png');
+        });
+        return blob;
+    } finally {
+        off.remove();
+    }
 }
 
-// Fetch each background-image as a blob, convert to data URL, and rewrite
-// the inline style to reference the data URL. html2canvas then captures
-// the image without any CORS issue — the bytes are embedded in the DOM.
-// If the fetch fails (CDN down, offline, no-cors from opaque response),
-// we leave the original URL and let html2canvas try — it'll fall back to
-// its own loader.
+async function renderEventToBlob(ev, format, template) {
+    return stageToBlob(ev, { format, template });
+}
+
+// Module-level cache of url -> dataUrl so the same hero image doesn't get
+// re-fetched + re-encoded on every preview / single / batch render. Keyed
+// on the already-transformed Cloudinary URL so different format variants
+// stay separate.
+const _imageDataUrlCache = new Map();
+
+async function urlToDataUrl(url) {
+    if (_imageDataUrlCache.has(url)) return _imageDataUrlCache.get(url);
+    const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    // An opaque response (SW served with no-cors) gives a 0-byte blob that
+    // would render as a blank hero in the exported PNG — reject here and
+    // let the caller fall back to the Image-warming path.
+    if (res.type === 'opaque' || res.type === 'opaqueredirect') {
+        throw new Error('Opaque response');
+    }
+    const blob = await res.blob();
+    if (!blob || blob.size === 0) throw new Error('Empty blob');
+    const dataUrl = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+    });
+    _imageDataUrlCache.set(url, dataUrl);
+    return dataUrl;
+}
+
+// Rewrite each background-image url() to a data URL so html2canvas never
+// touches a remote URL at capture time. If the fetch fails (CDN down,
+// opaque SW response, offline) fall back to warming the browser HTTP
+// cache and let html2canvas' own loader try.
 async function waitForImages(root) {
     const bgEls = root.querySelectorAll('.bg-img, .event-img');
     await Promise.all([...bgEls].map(async el => {
         const m = el.style.backgroundImage.match(/url\(["']?([^"')]+)/);
         const url = m && m[1];
-        if (!url) return;
-        if (url.startsWith('data:')) return;
+        if (!url || url.startsWith('data:')) return;
         try {
-            const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const blob = await res.blob();
-            const dataUrl = await new Promise((resolve, reject) => {
-                const r = new FileReader();
-                r.onload = () => resolve(r.result);
-                r.onerror = reject;
-                r.readAsDataURL(blob);
-            });
+            const dataUrl = await urlToDataUrl(url);
             el.style.backgroundImage = `url("${dataUrl}")`;
         } catch (err) {
-            // Fall back to warming the HTTP cache so html2canvas' own
-            // fetch is a browser-cache hit.
             console.warn('Image preload failed, falling back:', url, err.message);
             await new Promise(resolve => {
                 const im = new Image();
@@ -832,11 +875,11 @@ function fileNameFor(ev, format, template) {
 
 // Translate a lineupSlides() entry into the buildStage opts shape
 function slideOptsFor(slide) {
-    if (!slide) return { lineupSlideKind: 'page' };
-    if (slide.kind === 'hook') return { lineupSlideKind: 'hook' };
-    if (slide.kind === 'cta')  return { lineupSlideKind: 'cta' };
+    if (!slide) return { lineupSlideKind: SLIDE_KIND.PAGE };
+    if (slide.kind === SLIDE_KIND.HOOK) return { lineupSlideKind: SLIDE_KIND.HOOK };
+    if (slide.kind === SLIDE_KIND.CTA)  return { lineupSlideKind: SLIDE_KIND.CTA };
     return {
-        lineupSlideKind: 'page',
+        lineupSlideKind: SLIDE_KIND.PAGE,
         lineupPageItems: slide.page,
         lineupPageIdx: slide.idx,
         lineupTotalPages: slide.total
@@ -910,23 +953,18 @@ async function downloadBatch() {
     // sort matches display order: 00- hook, 01-NN event slides, 99- cta.
     // (Users have asked for this so "unzip → upload to IG in order" is a
     // one-click workflow.)
-    const includeHook = tpl === 'card' && state.cardHook;
-    const includeCta  = tpl === 'card' && state.cardCta;
+    const includeHook = tpl === TEMPLATES.CARD && state.cardHook;
+    const includeCta  = tpl === TEMPLATES.CARD && state.cardCta;
     const tasks = [];
-    if (includeHook) {
-        tasks.push({ kind: 'hook', prefix: '00' });
-    }
-    selected.forEach((ev, i) => {
-        tasks.push({
-            kind: 'event',
-            ev,
-            prefix: String(i + 1).padStart(2, '0')
-        });
-    });
-    if (includeCta) {
-        tasks.push({ kind: 'cta', prefix: '99' });
-    }
+    if (includeHook) tasks.push({ kind: SLIDE_KIND.HOOK, prefix: '00' });
+    selected.forEach((ev, i) => tasks.push({
+        kind: 'event',
+        ev,
+        prefix: String(i + 1).padStart(2, '0'),
+    }));
+    if (includeCta) tasks.push({ kind: SLIDE_KIND.CTA, prefix: '99' });
 
+    const failures = [];
     for (let i = 0; i < tasks.length; i++) {
         const task = tasks[i];
         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i + 1}/${tasks.length}`;
@@ -936,10 +974,9 @@ async function downloadBatch() {
                 blob = await renderEventToBlob(task.ev, fmt, tpl);
                 name = `${task.prefix}-${slugify(task.ev.name)}-${tpl}-${fmt}.png`;
             } else {
-                // Reuse the lineup hook/cta slide designs — they're
-                // format-aware and already brand-tight. Override the title
-                // and count so the cover reflects the batch, not the
-                // (possibly unused) lineup state.
+                // Reuse the lineup hook/cta slide designs — format-aware
+                // and brand-tight. Override title + count so the cover
+                // reflects the batch rather than lineup state.
                 blob = await renderAggregateToBlob(fmt, 'lineup', {
                     lineupSlideKind: task.kind,
                     titleOverride: state.cardTitle,
@@ -949,49 +986,30 @@ async function downloadBatch() {
             }
             zip.file(name, blob);
         } catch (err) {
-            console.error(`Failed to render task ${task.kind}:`, err);
+            const label = task.kind === 'event' ? task.ev.name : task.kind;
+            console.error(`Failed to render ${label}:`, err);
+            failures.push({ label, error: err.message || String(err) });
         }
+    }
+    // Include a manifest of any renders that failed so the user isn't
+    // surprised by a silently-short ZIP.
+    if (failures.length > 0) {
+        const report = failures.map(f => `- ${f.label}: ${f.error}`).join('\n');
+        zip.file('FAILED.txt', `${failures.length} slide(s) failed to render:\n\n${report}\n`);
     }
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Packaging…';
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     const zipTitle = tpl === 'card' ? slugify(state.cardTitle || 'batch') : tpl;
     triggerDownload(zipBlob, `brum-outloud-${zipTitle}-${fmt}-${tpl}.zip`);
+    if (failures.length > 0) {
+        alert(`${failures.length} slide(s) failed — see FAILED.txt in the ZIP.`);
+    }
     btn.disabled = false;
     updateDownloadButtons();
 }
 
 async function renderAggregateToBlob(format, template, extra = {}) {
-    const off = document.createElement('div');
-    off.style.position = 'fixed';
-    off.style.left = '-20000px';
-    off.style.top = '0';
-    off.style.zIndex = '-1';
-    document.body.appendChild(off);
-
-    const stage = buildStage(null, { format, template, ...extra });
-    stage.classList.add('hide-safe-zone');
-    stage.style.backgroundColor = '#0D0115';
-    off.appendChild(stage);
-    await waitForImages(stage);
-
-    // Explicit pixel dimensions + solid brand-dark fallback background.
-    // offsetWidth/offsetHeight off-screen occasionally reports slightly
-    // smaller than 1080×<target> which produces a letterbox border around
-    // the card. Force the canonical canvas size per format.
-    const dims = canvasDimsFor(stage);
-    const canvas = await html2canvas(stage, {
-        backgroundColor: '#0D0115',
-        useCORS: true,
-        allowTaint: false,
-        scale: 1,
-        width: dims.w,
-        height: dims.h,
-        windowWidth: dims.w,
-        windowHeight: dims.h,
-        logging: false,
-    });
-    off.remove();
-    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    return stageToBlob(null, { format, template, ...extra });
 }
 
 function triggerDownload(blob, filename) {
@@ -1077,7 +1095,6 @@ function wireControls() {
         state.preset = btn.dataset.preset;
         state.selectedIds.clear();
         state.activeId = null;
-        state.lineupPage = 0;
         state.lineupSlideIdx = 0;
         // Sync Lineup header title to the chosen range (only if user hasn't
         // customized it — we match the button label for each known preset).
@@ -1109,6 +1126,10 @@ function wireControls() {
     document.getElementById('format-controls').addEventListener('click', e => {
         const btn = e.target.closest('button[data-format]');
         if (!btn || btn.disabled) return;
+        if (!FORMAT_VALUES.has(btn.dataset.format)) {
+            console.warn(`Ignoring unknown format "${btn.dataset.format}"`);
+            return;
+        }
         state.format = btn.dataset.format;
         [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === btn));
         renderPreview();
@@ -1117,6 +1138,10 @@ function wireControls() {
     document.getElementById('template-controls').addEventListener('click', e => {
         const btn = e.target.closest('button[data-template]');
         if (!btn) return;
+        if (!TEMPLATE_VALUES.has(btn.dataset.template)) {
+            console.warn(`Ignoring unknown template "${btn.dataset.template}"`);
+            return;
+        }
         state.template = btn.dataset.template;
         [...e.currentTarget.querySelectorAll('button[data-template]')].forEach(
             b => b.classList.toggle('active', b === btn)
@@ -1208,8 +1233,6 @@ function wireControls() {
         if (state.events.length === 0) return;
         state.events.forEach(ev => state.selectedIds.add(ev.id));
         if (!state.activeId) state.activeId = state.events[0].id;
-        // Reset to first page in case the new selection extends beyond it.
-        state.lineupPage = 0;
         state.lineupSlideIdx = 0;
         renderEventList();
         renderPreview();
@@ -1219,7 +1242,6 @@ function wireControls() {
     document.getElementById('clear-selection-btn').addEventListener('click', () => {
         state.selectedIds.clear();
         state.activeId = null;
-        state.lineupPage = 0;
         state.lineupSlideIdx = 0;
         renderEventList();
         renderPreview();
@@ -1243,29 +1265,49 @@ if (document.fonts && document.fonts.ready) {
 
 // -- External automation surface --------------------------------------------
 // Exposed so headless agents (Claude Code, Cowork, etc.) can capture any
-// slide without triggering a browser download. Returns a PNG Blob that the
-// caller can turn into base64 and write directly to their workspace.
+// slide without triggering a browser download. Returns a PNG Blob.
 //
 // Usage:
 //   const blob = await window.renderSlide(eventId, 'card', 'portrait');
-//   const buf  = await blob.arrayBuffer();
 //
 // Aggregate templates (lineup, highlight) ignore eventId — pass null.
-// Lineup returns slide #1 (the hook by default); pass `{ slideIdx: 2 }` as
-// a 4th arg to grab a specific slide.
+// For fully-headless lineup capture, pass opts to avoid depending on UI
+// selection state:
+//   { eventIds: [...], title, lineupHook, lineupCta, slideIdx }
 window.renderSlide = async function renderSlide(eventId, template, format, opts = {}) {
     const tpl = template || state.template;
     const fmt = format || state.format;
 
-    if (AGGREGATE_TEMPLATES.has(tpl)) {
-        if (tpl === 'lineup') {
+    if (tpl === 'lineup') {
+        // Callers that supply eventIds explicitly get a headless lineup
+        // that doesn't require the UI to be in a particular selection.
+        // Preserve live state and restore it after rendering.
+        const headless = Array.isArray(opts.eventIds);
+        const snapshot = headless ? {
+            selectedIds: new Set(state.selectedIds),
+            lineupHook: state.lineupHook,
+            lineupCta: state.lineupCta,
+            lineupTitle: state.lineupTitle,
+        } : null;
+        try {
+            if (headless) {
+                state.selectedIds = new Set(opts.eventIds);
+                if (opts.lineupHook != null) state.lineupHook = !!opts.lineupHook;
+                if (opts.lineupCta  != null) state.lineupCta  = !!opts.lineupCta;
+                if (opts.title != null)      state.lineupTitle = String(opts.title);
+            }
             const slides = lineupSlides();
             if (slides.length === 0) {
-                throw new Error('renderSlide: no lineup slides — select events first');
+                throw new Error('renderSlide: no lineup slides — select events or pass eventIds');
             }
             const idx = Math.min(Math.max(opts.slideIdx ?? 0, 0), slides.length - 1);
             return await renderAggregateToBlob(fmt, tpl, slideOptsFor(slides[idx]));
+        } finally {
+            if (snapshot) Object.assign(state, snapshot);
         }
+    }
+
+    if (AGGREGATE_TEMPLATES.has(tpl)) {
         return await renderAggregateToBlob(fmt, tpl, opts);
     }
 
@@ -1273,9 +1315,8 @@ window.renderSlide = async function renderSlide(eventId, template, format, opts 
         return await renderAggregateToBlob(fmt, tpl);
     }
 
-    // Per-event templates need a real event. If eventId is null, fall back
-    // to the currently active event (useful for quick captures without
-    // having to look up the ID).
+    // Per-event templates. Fall back to the active event when eventId is
+    // null so quick DevTools captures don't require an ID lookup.
     const id = eventId || state.activeId;
     const ev = state.events.find(e => e.id === id);
     if (!ev) throw new Error(`renderSlide: event "${eventId}" not found`);
