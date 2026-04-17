@@ -46,9 +46,19 @@ class EmailTemplates {
 
   // ---- Base chrome --------------------------------------------------------
 
-  /** Wrap `bodyHtml` in the shared brutalist-lite shell. */
-  getBaseTemplate(bodyHtml, title = 'Brum Outloud') {
+  /**
+   * Wrap content in the shared brutalist-lite shell.
+   * `content` can be:
+   *   - a string  → rendered inside the padded body only
+   *   - an object → { hero, body }; `hero` sits edge-to-edge below
+   *     the header (no side padding) so images can fill the 600px
+   *     column; `body` sits in the padded body area below.
+   */
+  getBaseTemplate(content, title = 'Brum Outloud') {
     const c = this.colors;
+    const { hero, body } = typeof content === 'string'
+      ? { hero: '', body: content }
+      : (content || {});
     const prideRow = this.pride.map(hex =>
       `<td width="16.6667%" height="8" style="background:${hex};line-height:8px;font-size:0;">&nbsp;</td>`
     ).join('');
@@ -79,9 +89,14 @@ class EmailTemplates {
       <!-- Toxic-lime accent stripe -->
       <tr><td height="8" style="background:${c.toxic};line-height:8px;font-size:0;">&nbsp;</td></tr>
 
-      <!-- Body -->
+      ${hero ? `
+      <!-- Edge-to-edge hero (opts into full 600px width, no side padding) -->
+      <tr><td style="padding:0;">${hero}</td></tr>
+      ` : ''}
+
+      <!-- Padded body -->
       <tr><td style="padding:36px 28px 28px 28px;font-size:16px;line-height:1.55;color:${c.ink};">
-        ${bodyHtml}
+        ${body}
       </td></tr>
 
       <!-- Small-print footer -->
@@ -178,7 +193,7 @@ class EmailTemplates {
   }
 
   /**
-   * Promoter: "you're live" — mini-poster celebration.
+   * Promoter: "you're live" — big celebratory mini-poster.
    * `extras` may include: { image, eventDate, eventTime, venueName }.
    * Each field is optional; the template only renders what it's given,
    * so this is safe to call for venues too.
@@ -188,61 +203,95 @@ class EmailTemplates {
     const name = this.esc(eventName);
     const url = eventUrl || this.siteUrl;
 
-    // Resolve an image URL, trimming Cloudinary transforms so we can
-    // re-insert the right size for email (600px wide, bounded height).
     const imgUrl = this.resolveEmailImage(extras.image, 600, 520);
-
     const dateLine = this.formatDateLine(extras.eventDate, extras.eventTime);
     const venue = extras.venueName ? this.esc(extras.venueName) : '';
 
-    // Mini-poster block: image at top, toxic-lime "YOU'RE LIVE" band
-    // underneath as a separator, then the headline + meta.
-    const posterHtml = `
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;border:2px solid ${c.ink};">
-        ${imgUrl ? `
-          <tr><td style="padding:0;font-size:0;line-height:0;">
-            <img src="${this.esc(imgUrl)}" width="596" alt="${name}"
-                 style="display:block;width:100%;max-width:596px;height:auto;border:0;outline:0;">
+    // Confetti strip — 6 equal pride cells, visible as a row of colour
+    // between sections. Renders as a real rainbow bar in every client
+    // because it's just table cells with solid backgrounds.
+    const confetti = `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0;">
+        <tr>${this.pride.map(hex =>
+          `<td width="16.6667%" height="14" style="background:${hex};line-height:14px;font-size:0;">&nbsp;</td>`
+        ).join('')}</tr>
+      </table>
+    `;
+
+    // Hero: image, then toxic-lime YOU'RE LIVE badge spanning full
+    // width (big, unmistakable), then a dark poster card with the
+    // event name and date/venue in celebration sizing.
+    const heroHtml = `
+      ${imgUrl ? `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 0 0;">
+          <tr><td style="padding:0;font-size:0;line-height:0;background:${c.bg};">
+            <img src="${this.esc(imgUrl)}" width="600" alt="${name}"
+                 style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:0;">
           </td></tr>
-        ` : ''}
-        <tr><td style="background:${c.toxic};padding:10px 16px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.28em;color:${c.ink};text-transform:uppercase;">
+        </table>
+      ` : ''}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
+        <tr><td align="center" style="background:${c.toxic};padding:18px 20px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:30px;line-height:1;letter-spacing:0.18em;color:${c.ink};text-transform:uppercase;">
           You're live
         </td></tr>
-        <tr><td style="background:${c.bg};padding:22px 22px 18px 22px;">
-          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:32px;line-height:1.04;letter-spacing:0.01em;color:${c.paper};text-transform:uppercase;margin:0 0 10px 0;">
+        <tr><td style="background:${c.bg};padding:28px 24px 28px 24px;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:42px;line-height:1.02;letter-spacing:0.01em;color:${c.paper};text-transform:uppercase;margin:0 0 14px 0;">
             ${name}
           </div>
           ${(dateLine || venue) ? `
-            <div style="font-size:14px;line-height:1.5;color:${c.toxic};letter-spacing:0.05em;">
-              ${dateLine ? `<span>${dateLine}</span>` : ''}${(dateLine && venue) ? ` · ` : ''}${venue ? `<span>${venue}</span>` : ''}
+            <div style="font-size:16px;line-height:1.55;color:${c.toxic};letter-spacing:0.08em;font-weight:700;text-transform:uppercase;">
+              ${dateLine ? `<span>${dateLine}</span>` : ''}${(dateLine && venue) ? `<span style="opacity:0.6;">  ·  </span>` : ''}${venue ? `<span>${venue}</span>` : ''}
             </div>
           ` : ''}
         </td></tr>
       </table>
     `;
 
-    // Share-prompt callout: two concrete asks to ride the listing's reach.
-    const shareHtml = `
-      <div style="margin:8px 0 6px 0;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:20px;letter-spacing:0.02em;color:${c.ink};text-transform:uppercase;">
-        Help it travel
-      </div>
-      <p style="margin:0 0 10px 0;font-size:15px;line-height:1.55;">Two things that genuinely move turnout:</p>
-      <ol style="margin:0 0 14px 22px;padding:0;font-size:15px;line-height:1.7;">
-        <li style="margin-bottom:8px;">
-          <strong>Add <a href="https://instagram.com/brumoutloud" style="color:${c.ink};">@brumoutloud</a> as a collaborator</strong> when you post your event on Instagram. Our audience sees your post in their feed and you get the reach without double-posting.
-        </li>
-        <li>
-          <strong>Repost anything we put up</strong> — grid post, story, reel. If we cover your event and you share it on, both lists see it and the algorithm treats it as signal.
-        </li>
-      </ol>
-      <p style="margin:0 0 4px 0;font-size:14px;color:${c.mute};">If anything about the listing looks wrong, just reply to this email and we'll fix it.</p>
+    // Big bold CTA — centred, full-width feel with extra vertical weight.
+    const ctaHtml = `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:22px 0 0 0;">
+        <tr><td align="center" style="background:${c.pink};border:2px solid ${c.ink};">
+          <a href="${this.esc(url)}" style="display:block;padding:18px 22px;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:20px;letter-spacing:0.14em;color:${c.paper};text-transform:uppercase;text-decoration:none;">
+            View your listing &rarr;
+          </a>
+        </td></tr>
+      </table>
     `;
 
-    const html = this.getBaseTemplate(`
-      ${posterHtml}
-      ${this.button('View your listing', url)}
-      ${shareHtml}
-    `, `You're live — ${eventName}`);
+    // Share-prompt cards — each ask gets its own coloured left rail so
+    // the two actions read as distinct, concrete steps rather than a
+    // bullet list.
+    const shareHtml = `
+      <div style="margin:4px 0 10px 0;font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:30px;line-height:1.02;letter-spacing:0.01em;color:${c.ink};text-transform:uppercase;">
+        Now make it travel
+      </div>
+      <p style="margin:0 0 20px 0;font-size:16px;line-height:1.55;">The listing's up — here's how you double the reach:</p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;border-left:6px solid ${c.pink};">
+        <tr><td style="padding:14px 18px;background:#FAFAFA;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.22em;color:${c.pink};text-transform:uppercase;margin:0 0 6px 0;">Step 1 · Instagram</div>
+          <div style="font-size:16px;line-height:1.55;">
+            <strong>Add <a href="https://instagram.com/brumoutloud" style="color:${c.ink};">@brumoutloud</a> as a collaborator</strong> when you post about this event. Your post surfaces in our followers' feeds too — free reach, no double-posting.
+          </div>
+        </td></tr>
+      </table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;border-left:6px solid ${c.toxic};">
+        <tr><td style="padding:14px 18px;background:#FAFAFA;">
+          <div style="font-family:Impact,'Arial Black',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.22em;color:${c.ink};text-transform:uppercase;margin:0 0 6px 0;">Step 2 · Repost us</div>
+          <div style="font-size:16px;line-height:1.55;">
+            <strong>Repost anything we put up</strong> about your event — grid, story, reel. Sharing it on means both audiences see it and the algorithm treats it as real signal.
+          </div>
+        </td></tr>
+      </table>
+
+      <p style="margin:18px 0 0 0;font-size:14px;color:${c.mute};">Anything wrong with the listing? Just reply to this email — we'll fix it same day.</p>
+    `;
+
+    const html = this.getBaseTemplate({
+      hero: heroHtml,
+      body: `${ctaHtml}${confetti}${shareHtml}`,
+    }, `You're live — ${eventName}`);
 
     const text = [
       `You're live on Brum Outloud`,
