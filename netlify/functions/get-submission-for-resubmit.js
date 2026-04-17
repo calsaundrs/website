@@ -92,6 +92,20 @@ exports.handler = async (event) => {
       return { statusCode: 404, headers, body: JSON.stringify({ error: 'Submission not found' }) };
     }
     const data = doc.data() || {};
+    // Defence in depth: refuse to prefill against an already-live event
+    // server-side, not just in the UI. Stops a leaked 14-day link being
+    // used to clobber an approved listing back to pending.
+    const statusLower = String(data.status || '').toLowerCase();
+    if (statusLower === 'approved' || statusLower === 'live') {
+      return {
+        statusCode: 409,
+        headers,
+        body: JSON.stringify({
+          error: 'This event is already live. Submit a fresh one if you want to change it.',
+          reason: 'already-approved',
+        }),
+      };
+    }
     return {
       statusCode: 200,
       headers,

@@ -1013,9 +1013,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Remember the doc id for the upsert on submit.
-            const docIdInput = document.getElementById('resubmit-doc-id');
-            if (docIdInput) docIdInput.value = sub.id || '';
+            // Pass the signed token through to the submit handler so the
+            // backend can re-verify it and extract the doc id from the
+            // signed payload (never trust the raw id from a hidden input).
+            const tokenInput = document.getElementById('resubmit-token');
+            if (tokenInput) tokenInput.value = token;
 
             // Core fields
             setVal('event-name', sub.name);

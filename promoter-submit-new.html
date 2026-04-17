@@ -108,9 +108,11 @@
 
         <!-- Form -->
         <form id="event-submission-form" class="space-y-8">
-            <!-- Set by the resubmit flow so event-submission upserts the
-                 correct Firestore doc rather than inserting a new one. -->
-            <input type="hidden" id="resubmit-doc-id" name="resubmit-doc-id" value="">
+            <!-- Signed resubmit token from the rejection-email deep link.
+                 event-submission.js verifies this server-side and uses the
+                 doc id inside the payload to upsert — never trusts a raw
+                 doc id passed from the client. -->
+            <input type="hidden" id="resubmit-token" name="resubmit-token" value="">
             <!-- Poster Upload Section -->
             <div class="brutalist-card p-8 group">
                 <h2 class="text-2xl font-black font-display mb-6 text-[var(--color-toxic)]">

@@ -6,9 +6,11 @@ exports.handler = async function (event, context) {
     console.log('Firestore-only status update called');
 
     try {
-        // Verify authentication
+        // Verify authentication — capture the decoded token so we can
+        // record who approved/rejected on the doc for audit.
+        let decodedAuth;
         try {
-            await verifyAuth(event);
+            decodedAuth = await verifyAuth(event);
         } catch (authError) {
             return {
                 statusCode: authError.statusCode || 401,
@@ -84,17 +86,23 @@ exports.handler = async function (event, context) {
             };
         }
 
-        // Update the document. When rejecting, persist the reason so
-        // the resubmit-link prefill can surface it as the "what to
-        // change" banner on the prefilled form.
+        // Update the document. Persist an audit trail:
+        //   - approve:  approvedAt + approvedBy (admin email from token)
+        //   - reject:   rejectedAt + rejectionReason so the resubmit-
+        //               link prefill can surface it as the banner copy.
         const statusLower = newStatus.toLowerCase();
+        const adminId = decodedAuth?.email || decodedAuth?.uid || null;
         const updatePayload = {
             status: statusLower,
             updatedAt: new Date(),
         };
-        if (statusLower === 'rejected') {
+        if (statusLower === 'approved') {
+            updatePayload.approvedAt = new Date();
+            updatePayload.approvedBy = adminId;
+        } else if (statusLower === 'rejected') {
             updatePayload.rejectionReason = reason || null;
             updatePayload.rejectedAt = new Date();
+            updatePayload.rejectedBy = adminId;
         }
         await docRef.update(updatePayload);
 

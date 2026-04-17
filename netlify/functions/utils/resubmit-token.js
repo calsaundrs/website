@@ -70,13 +70,9 @@ function verify(token) {
   const payloadB64 = token.slice(0, dot);
   const sigB64 = token.slice(dot + 1);
 
-  let expected;
-  try {
-    expected = crypto.createHmac('sha256', getSecret()).update(payloadB64).digest();
-  } catch (err) {
-    // Propagate config error up — not a client problem.
-    throw err;
-  }
+  // Propagates distinct 500 to the caller when the secret is missing
+  // — a misconfiguration, not a client error.
+  const expected = crypto.createHmac('sha256', getSecret()).update(payloadB64).digest();
 
   const got = b64urlDecode(sigB64);
   // Length mismatch short-circuits before timingSafeEqual (which throws

@@ -3,6 +3,7 @@ const cloudinary = require('cloudinary').v2;
 const RecurringEventsManager = require('./services/recurring-events-manager');
 const EmailService = require('./services/email-service');
 const multipart = require('lambda-multipart-parser');
+const { verify: verifyResubmitToken } = require('./utils/resubmit-token');
 
 // AI Poster Parsing Function
 async function parsePosterWithAI(imageUrl, geminiModel = 'gemini-1.5-flash') {
@@ -460,30 +461,42 @@ exports.handler = async function (event, context) {
         
         // ----- Upsert resolution ----------------------------------------
         // Two ways an event can be an UPDATE rather than an INSERT:
-        //   1. resubmit-doc-id hidden input set by the signed-link flow
-        //      (token already proved ownership server-side).
+        //   1. A valid signed resubmit token — the HMAC payload carries
+        //      the doc id. We NEVER trust a raw doc id from the client:
+        //      anyone could read an event's Firestore id off the public
+        //      get-events response and clobber it.
         //   2. Match-key collision — same name + eventDate + venueId
         //      as an existing non-rejected doc. Anonymous submissions
-        //      that hit this branch get rejected with 409 so random
-        //      third parties can't silently overwrite someone else's
-        //      listing; signed-in or owner resubmissions upsert.
+        //      hitting this branch get a 409 so third parties can't
+        //      stomp someone else's listing.
         const normalizedName = String(firestoreData.name || '').trim().toLowerCase();
-        const resubmitDocId = (submission['resubmit-doc-id'] || '').trim() || null;
+        const resubmitToken = (submission['resubmit-token'] || '').trim() || null;
         const hasRealEmail = firestoreData.submittedBy
           && firestoreData.submittedBy !== 'anonymous@brumoutloud.co.uk';
 
         let targetDocRef = null;
         let matchReason = null;
 
-        if (resubmitDocId) {
-            // Trust the signed-link flow. If the doc has vanished we
-            // fall through to insert so the promoter doesn't lose work.
-            const existing = await db.collection('events').doc(resubmitDocId).get();
-            if (existing.exists) {
-                targetDocRef = existing.ref;
-                matchReason = 'resubmit-token';
+        if (resubmitToken) {
+            let verifyResult;
+            try {
+                verifyResult = verifyResubmitToken(resubmitToken);
+            } catch (err) {
+                // Misconfig (missing secret) — log but don't block the
+                // submission; fall through to match-key / insert paths.
+                console.error('Resubmit token misconfig; ignoring token:', err.message);
+                verifyResult = { ok: false, reason: 'misconfig' };
+            }
+            if (verifyResult.ok) {
+                const existing = await db.collection('events').doc(verifyResult.docId).get();
+                if (existing.exists) {
+                    targetDocRef = existing.ref;
+                    matchReason = 'resubmit-token';
+                } else {
+                    console.warn('Resubmit token refers to missing doc:', verifyResult.docId);
+                }
             } else {
-                console.warn('resubmit-doc-id references missing doc:', resubmitDocId);
+                console.warn('Resubmit token rejected:', verifyResult.reason);
             }
         }
 
