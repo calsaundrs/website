@@ -90,7 +90,7 @@
           "name": "When is Birmingham Pride 2026?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Birmingham Pride 2026 takes place from Friday 22nd May to Sunday 24th May. The main festival days are Saturday and Sunday."
+            "text": "Friday 22 May (free community evening), then the main festival runs Saturday 23 May and Sunday 24 May 2026 in the Gay Village. Ticketed stages open across the weekend."
           }
         },
         {
@@ -292,6 +292,17 @@
             margin-bottom: 1rem;
             padding-bottom: 0.75rem;
             border-bottom: 3px solid var(--color-toxic);
+        }
+
+        /* Set-time prefix on the Dance Arena + Cabaret Stage schedules.
+           Tabular figures keep the column aligned between 14:00 / 19:30
+           / 23:00 without juggling Tailwind w-N classes per row. */
+        .schedule-time {
+            display: inline-block;
+            width: 3.5rem;
+            color: var(--color-toxic);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
         }
 
         /* Bento lineup grid — 4 cols, headliners span 2×2 */
@@ -763,29 +774,29 @@
                     <div class="brutalist-card p-5 border-l-4 border-[var(--color-pink)]">
                         <h4 class="font-display text-xl font-black text-white uppercase mb-3">Saturday</h4>
                         <ol class="text-gray-200 text-sm space-y-1.5">
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">14:00</span>Local DJs</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:00</span>MS Mace</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:00</span>Sophie Lou</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:00</span>Arthi</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:00</span>Jaguar</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:00</span>Soulqu3st</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">21:00</span>RX B2B Misha</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">22:00</span>Ringers &amp; Cola B</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">23:00</span>Sai Sounds</li>
+                            <li><span class="schedule-time">14:00</span>Local DJs</li>
+                            <li><span class="schedule-time">16:00</span>MS Mace</li>
+                            <li><span class="schedule-time">17:00</span>Sophie Lou</li>
+                            <li><span class="schedule-time">18:00</span>Arthi</li>
+                            <li><span class="schedule-time">19:00</span>Jaguar</li>
+                            <li><span class="schedule-time">20:00</span>Soulqu3st</li>
+                            <li><span class="schedule-time">21:00</span>RX B2B Misha</li>
+                            <li><span class="schedule-time">22:00</span>Ringers &amp; Cola B</li>
+                            <li><span class="schedule-time">23:00</span>Sai Sounds</li>
                         </ol>
                     </div>
                     <div class="brutalist-card p-5 border-l-4 border-[var(--color-purple)]">
                         <h4 class="font-display text-xl font-black text-white uppercase mb-3">Sunday</h4>
                         <ol class="text-gray-200 text-sm space-y-1.5">
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">14:00</span>Local DJs</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:00</span>Lisa Sharred B2B Yan Simonski</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:00</span>Josh Aldridge</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:00</span>Big Ang</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:00</span>Gandalf</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:00</span>DJ Jedi B2B Just Soriah</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">21:00</span>Wiles</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">22:00</span>Forbid</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">23:00</span>Simon H Tribute Set</li>
+                            <li><span class="schedule-time">14:00</span>Local DJs</li>
+                            <li><span class="schedule-time">16:00</span>Lisa Sharred B2B Yan Simonski</li>
+                            <li><span class="schedule-time">17:00</span>Josh Aldridge</li>
+                            <li><span class="schedule-time">18:00</span>Big Ang</li>
+                            <li><span class="schedule-time">19:00</span>Gandalf</li>
+                            <li><span class="schedule-time">20:00</span>DJ Jedi B2B Just Soriah</li>
+                            <li><span class="schedule-time">21:00</span>Wiles</li>
+                            <li><span class="schedule-time">22:00</span>Forbid</li>
+                            <li><span class="schedule-time">23:00</span>Simon H Tribute Set</li>
                         </ol>
                     </div>
                 </div>
@@ -799,37 +810,37 @@
                     <div class="brutalist-card p-5 border-l-4 border-[var(--color-pink)]">
                         <h4 class="font-display text-xl font-black text-white uppercase mb-3">Saturday</h4>
                         <ol class="text-gray-200 text-sm space-y-1.5">
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">15:00</span>Samba Band</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">15:15</span>Sandra</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:00</span>Marie La Rae</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:30</span>Lady Imelda</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:00</span>Blu Romantic</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:30</span>Dahliah Rivers</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:00</span>Blanche</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:30</span>Tiana Biscuit</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:00</span>Shania Pain</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:30</span>Tonya Kneez</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:00</span>Twiggy</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:30</span>Victoria Scone</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">21:00</span>Rachel Fuller</li>
+                            <li><span class="schedule-time">15:00</span>Samba Band</li>
+                            <li><span class="schedule-time">15:15</span>Sandra</li>
+                            <li><span class="schedule-time">16:00</span>Marie La Rae</li>
+                            <li><span class="schedule-time">16:30</span>Lady Imelda</li>
+                            <li><span class="schedule-time">17:00</span>Blu Romantic</li>
+                            <li><span class="schedule-time">17:30</span>Dahliah Rivers</li>
+                            <li><span class="schedule-time">18:00</span>Blanche</li>
+                            <li><span class="schedule-time">18:30</span>Tiana Biscuit</li>
+                            <li><span class="schedule-time">19:00</span>Shania Pain</li>
+                            <li><span class="schedule-time">19:30</span>Tonya Kneez</li>
+                            <li><span class="schedule-time">20:00</span>Twiggy</li>
+                            <li><span class="schedule-time">20:30</span>Victoria Scone</li>
+                            <li><span class="schedule-time">21:00</span>Rachel Fuller</li>
                         </ol>
                     </div>
                     <div class="brutalist-card p-5 border-l-4 border-[var(--color-purple)]">
                         <h4 class="font-display text-xl font-black text-white uppercase mb-3">Sunday</h4>
                         <ol class="text-gray-200 text-sm space-y-1.5">
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">15:00</span>Sandra</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">15:15</span>House of Allure</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:00</span>Marty</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">16:30</span>Donna Trump</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:00</span>Alanna Boden</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">17:30</span>Pam Catz</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:00</span>Gloria Love</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">18:30</span>Polly Glamorous</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:00</span>Amy Laqueefa</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">19:30</span>Brenda Labeau</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:00</span>Martha D'Arthur</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">20:30</span>Miss Penny</li>
-                            <li><span class="text-[var(--color-toxic)] font-bold tabular-nums w-14 inline-block">21:00</span>Michelle Lawson</li>
+                            <li><span class="schedule-time">15:00</span>Sandra</li>
+                            <li><span class="schedule-time">15:15</span>House of Allure</li>
+                            <li><span class="schedule-time">16:00</span>Marty</li>
+                            <li><span class="schedule-time">16:30</span>Donna Trump</li>
+                            <li><span class="schedule-time">17:00</span>Alanna Boden</li>
+                            <li><span class="schedule-time">17:30</span>Pam Catz</li>
+                            <li><span class="schedule-time">18:00</span>Gloria Love</li>
+                            <li><span class="schedule-time">18:30</span>Polly Glamorous</li>
+                            <li><span class="schedule-time">19:00</span>Amy Laqueefa</li>
+                            <li><span class="schedule-time">19:30</span>Brenda Labeau</li>
+                            <li><span class="schedule-time">20:00</span>Martha D'Arthur</li>
+                            <li><span class="schedule-time">20:30</span>Miss Penny</li>
+                            <li><span class="schedule-time">21:00</span>Michelle Lawson</li>
                         </ol>
                     </div>
                 </div>
@@ -838,7 +849,7 @@
                 <h3 class="font-bold text-sm text-white uppercase tracking-widest mb-3">Festival Stages</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-music text-[var(--color-pink)] mr-2"></i>Main Stage</p><p class="text-gray-300 text-sm mt-1">Live PAs, LGBTQIA+ performers, keynote speeches</p></div>
-                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-theater-masks text-[var(--color-purple)] mr-2"></i>Cabaret Marquee</p><p class="text-gray-300 text-sm mt-1">Drag royalty, burlesque, comedy</p></div>
+                    <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-theater-masks text-[var(--color-purple)] mr-2"></i>Cabaret Stage</p><p class="text-gray-300 text-sm mt-1">Drag royalty, burlesque, comedy</p></div>
                     <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-headphones text-[var(--color-toxic)] mr-2"></i>Dance Arena</p><p class="text-gray-300 text-sm mt-1">DJs, queer club anthems, underground bangers</p></div>
                     <div class="brutalist-card p-4 group"><p class="text-white font-bold uppercase"><i class="fas fa-users text-[var(--color-pink)] mr-2"></i>Community Stage</p><p class="text-gray-300 text-sm mt-1">Local talent, activism, spoken word, grassroots</p></div>
                 </div>
