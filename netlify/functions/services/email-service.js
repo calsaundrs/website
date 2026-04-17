@@ -47,8 +47,14 @@ class EmailService {
 
       const result = await resend.emails.send(emailData);
 
-      // Log email to Firestore (stringified recipient list for easy
-      // filtering in the admin-email-logs UI).
+      // The Resend SDK does NOT throw on error — it returns
+      // { data: null, error: { ... } }. Treat that as a failure so the
+      // admin-email-logs UI doesn't show a phantom "sent" entry and so
+      // the handler's `success` field is actually truthful.
+      if (result.error) {
+        throw new Error(result.error.message || result.error.name || 'Resend error');
+      }
+
       await this.logEmail({
         to: recipients.join(', '),
         subject,
