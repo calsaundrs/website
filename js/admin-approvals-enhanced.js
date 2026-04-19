@@ -321,10 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl opacity-80 ${status === 'Approved' ? 'bg-green-500' : (status === 'Pending Review' || status === 'pending' ? 'bg-yellow-500' : 'bg-red-500')}"></div>
 
                 <!-- Entity Image -->
-                <div class="w-full md:w-32 h-24 flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#111]">
+                <div class="w-full md:w-16 h-40 md:h-16 flex-shrink-0 relative rounded border border-white/5 bg-[#111]">
                     ${imageUrl ? 
-                        `<img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform" onclick="openImageModal('${imageUrl}', '${item.name}')">` : 
-                        `<div class="w-full h-full flex items-center justify-center"><i class="fas fa-${item.type === 'venue' ? 'map-marker-alt' : 'image'} text-xl text-gray-600"></i></div>`}
+                        `<img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover rounded cursor-pointer hover:scale-105 transition-transform" onclick="openImageModal('${imageUrl}', '${item.name}')">` : 
+                        `<div class="w-full h-full flex items-center justify-center"><i class="fas fa-${item.type === 'venue' ? 'map-marker-alt' : 'image'} text-gray-600"></i></div>`}
                 </div>
                 
                 <!-- Content Area -->
