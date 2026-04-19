@@ -271,114 +271,116 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSelected = selectedItems.has(item.id);
         const isRecurring = item.type === 'event' && (item.recurringInfo || item.series || item.isRecurring || 
                                                      item.recurringPattern || item.recurringGroupId || item.seriesId);
+        const isPast = item.isPastEvent;
         const compactClass = isCompactView ? 'compact' : '';
-        const selectedClass = isSelected ? 'selected' : '';
         
-        const statusBadge = getStatusBadge(item.status);
+        let status = item.status || 'Pending Review';
+        if(status === 'pending') status = 'Pending Review';
+        if(status === 'approved') status = 'Approved';
+        if(status === 'rejected') status = 'Rejected';
+
+        // Same badge logic from admin-edit-events.js
+        let statusBadge = '';
+        if (status === 'Approved') {
+            statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-green-500/10 text-green-500 border border-green-500/20"><i class="fas fa-check mr-1"></i>Approved</span>';
+        } else if (status === 'Pending Review' || status === 'pending') {
+            statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"><i class="fas fa-clock mr-1"></i>Pending</span>';
+        } else {
+            statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-500 border border-red-500/20"><i class="fas fa-times mr-1"></i>Rejected</span>';
+        }
+
         const categoryBadges = (item.category || []).map(cat => 
-            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-300 border border-white/10 mr-1 mb-1">${cat}</span>`
         ).join('');
         
-        const venueInfo = item.venue ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Venue</div>
-                <div class="detail-value">${item.venue.name || 'Unknown'}</div>
-            </div>
-        ` : '';
+        const imageUrl = item.image && item.image.url ? item.image.url : null;
         
-        const dateInfo = item.date ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Event Date</div>
-                <div class="detail-value">${formatDate(item.date)}</div>
-            </div>
-        ` : '';
+        let dateDisplay = 'No date';
+        if(item.date) {
+            try {
+                const parts = item.date.split('-');
+                if(parts.length === 3) {
+                    const d = new Date(parts[0], parts[1]-1, parts[2]);
+                    if(!isNaN(d.getTime())) {
+                        dateDisplay = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                        if(item.time) dateDisplay += ` — ${item.time}`;
+                        else dateDisplay += ' — Time TBC';
+                    } else dateDisplay = item.date;
+                } else dateDisplay = item.date;
+            } catch(e) { dateDisplay = item.date; }
+        } else if(item.createdAt) {
+            dateDisplay = `Created: ${formatDate(item.createdAt)}`;
+        }
         
-        const descriptionInfo = item.description ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Description</div>
-                <div class="detail-value expandable">${item.description}</div>
-            </div>
-        ` : '';
-        
-        const recurringInfo = isRecurring ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Recurring Pattern</div>
-                <div class="detail-value text-purple-300">
-                    <i class="fas fa-redo mr-2"></i>${item.recurringInfo || item.recurringPattern || item.customRecurrenceDesc || 'Series event'}
-                    ${item.isPastEvent ? '<span class="text-orange-400 ml-2">(Past event)</span>' : ''}
-                </div>
-            </div>
-        ` : '';
-        
-        const submittedInfo = item.submittedBy ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Submitted By</div>
-                <div class="detail-value">${item.submittedBy}</div>
-            </div>
-        ` : '';
-        
-        const createdAtInfo = item.createdAt ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Submitted</div>
-                <div class="detail-value">${formatDate(item.createdAt)}</div>
-            </div>
-        ` : '';
-        
-        // Image display
-        const imageInfo = item.image && item.image.url ? `
-            <div class="approval-card-detail-item">
-                <div class="detail-label">Image</div>
-                <div class="detail-value">
-                    <img src="${item.image.url}" alt="${item.name}" class="w-32 h-20 object-cover rounded-lg border border-gray-600 hover:scale-105 transition-transform cursor-pointer" onclick="openImageModal('${item.image.url}', '${item.name}')">
-                </div>
-            </div>
-        ` : '';
+        const venueText = item.venue?.name || item.venue || 'TBC';
         
         return `
-            <div class="approval-card ${compactClass} ${selectedClass}" data-id="${item.id}" data-type="${item.type}">
-                <input type="checkbox" class="selection-checkbox" ${isSelected ? 'checked' : ''} data-id="${item.id}">
+            <div class="approval-card bg-[#0A0A0A] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors shadow-sm relative group flex flex-col md:flex-row gap-6 ${isPast ? 'opacity-75 relative' : ''} ${isSelected ? 'ring-1 ring-[var(--color-toxic)]' : ''}" data-id="${item.id}" data-type="${item.type}">
                 
-                <div class="approval-card-header">
-                    <div class="flex items-start space-x-3 flex-1 min-w-0">
-                        <div class="text-2xl ${item.type === 'event' ? 'text-blue-400' : 'text-green-400'} flex-shrink-0 mt-1">
-                            <i class="${item.type === 'event' ? 'fas fa-calendar' : 'fas fa-map-marker-alt'}"></i>
+                <!-- Status Bar Indicator -->
+                <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl opacity-80 ${status === 'Approved' ? 'bg-green-500' : (status === 'Pending Review' || status === 'pending' ? 'bg-yellow-500' : 'bg-red-500')}"></div>
+
+                <!-- Entity Image -->
+                <div class="w-full md:w-32 h-24 flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#111]">
+                    ${imageUrl ? 
+                        `<img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform" onclick="openImageModal('${imageUrl}', '${item.name}')">` : 
+                        `<div class="w-full h-full flex items-center justify-center"><i class="fas fa-${item.type === 'venue' ? 'map-marker-alt' : 'image'} text-xl text-gray-600"></i></div>`}
+                </div>
+                
+                <!-- Content Area -->
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h3 class="text-lg font-bold text-white truncate">${item.name || 'Untitled'}</h3>
+                        ${statusBadge}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">${item.type}</span>
+                        ${isPast ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-500/10 text-gray-500 border border-gray-500/20">Past</span>' : ''}
+                        ${isRecurring ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20"><i class="fas fa-redo mr-1"></i>Recurring</span>` : ''}
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-400 mb-3">
+                        <div class="flex items-center">
+                            <i class="fas ${item.type === 'venue' ? 'fa-map-marker-alt' : 'fa-calendar-alt'} w-4 text-center mr-1 text-gray-500"></i>
+                            ${item.type === 'venue' && item.address ? item.address : dateDisplay}
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <h3 class="text-xl font-bold text-white truncate">${item.name}</h3>
-                            <div class="flex items-center gap-2 mt-2">
-                                ${statusBadge}
-                                <span class="text-sm text-gray-400">${item.type}</span>
-                                ${isRecurring ? '<span class="text-sm text-purple-400"><i class="fas fa-redo mr-1"></i>Recurring</span>' : ''}
-                                ${item.isPastEvent ? '<span class="text-sm text-orange-400"><i class="fas fa-clock mr-1"></i>Past</span>' : ''}
-                            </div>
-                            ${categoryBadges ? `<div class="mt-2">${categoryBadges}</div>` : ''}
+                        ${item.type === 'event' ? `
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt w-4 text-center mr-1 text-gray-500"></i>
+                            <span class="truncate max-w-[200px]">${venueText}</span>
+                        </div>
+                        ` : ''}
+                        <div class="flex items-center">
+                            <i class="fas fa-user w-4 text-center mr-1 text-gray-500"></i>
+                            ${item.submittedBy || 'Unknown User'}
                         </div>
                     </div>
-                    <div class="text-sm text-gray-400 flex-shrink-0">
-                        ${formatDate(item.createdAt)}
+                    
+                    ${item.description ? `<p class="text-xs text-gray-500 truncate mt-1 mb-3">${item.description}</p>` : ''}
+                    
+                    <div class="flex flex-wrap gap-1 mt-auto">
+                        ${categoryBadges}
                     </div>
                 </div>
                 
-                <div class="approval-card-details">
-                    ${venueInfo}
-                    ${dateInfo}
-                    ${descriptionInfo}
-                    ${recurringInfo}
-                    ${submittedInfo}
-                    ${createdAtInfo}
-                    ${imageInfo}
-                </div>
-                
-                <div class="approval-card-actions">
-                    <button class="button-edit edit-btn" data-id="${item.id}" data-type="${item.type}">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </button>
-                    <button class="button-approve approve-btn" data-id="${item.id}" data-type="${item.type}">
-                        <i class="fas fa-check mr-2"></i>Approve
-                    </button>
-                    <button class="button-reject reject-btn" data-id="${item.id}" data-type="${item.type}">
-                        <i class="fas fa-times mr-2"></i>Reject
-                    </button>
+                <!-- Actions -->
+                <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
+                    <label class="flex items-center cursor-pointer md:hidden group">
+                        <input type="checkbox" class="selection-checkbox form-checkbox h-4 w-4 text-[var(--color-toxic)] bg-black border-white/20 rounded focus:ring-[var(--color-toxic)] focus:ring-offset-0" data-id="${item.id}" ${isSelected ? 'checked' : ''}>
+                        <span class="ml-2 text-gray-400 text-xs uppercase tracking-wider font-bold group-hover:text-white transition-colors">Select</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <button class="edit-btn bg-[#111] hover:bg-[#1A1A1A] border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" data-id="${item.id}" data-type="${item.type}" title="Edit">
+                            <i class="fas fa-edit group-hover/btn:text-white text-gray-400 transition-colors"></i>
+                        </button>
+                        <button class="approve-btn bg-[#111] hover:bg-green-900/20 hover:border-green-500/30 border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" data-id="${item.id}" data-type="${item.type}" title="Approve">
+                            <i class="fas fa-check group-hover/btn:text-green-500 text-gray-400 transition-colors"></i>
+                        </button>
+                        <button class="reject-btn bg-[#111] hover:bg-red-900/20 hover:border-red-500/30 border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" data-id="${item.id}" data-type="${item.type}" title="Reject">
+                            <i class="fas fa-times group-hover/btn:text-red-500 text-gray-400 transition-colors"></i>
+                        </button>
+                    </div>
+                    <label class="hidden md:flex items-center cursor-pointer mt-2 group tooltip-trigger">
+                        <input type="checkbox" class="selection-checkbox form-checkbox h-4 w-4 text-[var(--color-toxic)] bg-black border-white/20 rounded focus:ring-[var(--color-toxic)] focus:ring-offset-0 cursor-pointer transition-colors" data-id="${item.id}" ${isSelected ? 'checked' : ''}>
+                    </label>
                 </div>
             </div>
         `;

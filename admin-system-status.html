@@ -239,33 +239,75 @@
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Breadcrumb Navigation -->
-        <nav class="flex mb-8" aria-label="Breadcrumb">
-            <ol role="list" class="flex items-center space-x-4">
-                <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin-settings.html"
-                            class="ml-4 text-gray-400 hover:text-white transition-colors">Admin</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <a href="/admin-settings.html#system-status"
-                            class="ml-4 text-gray-400 hover:text-white transition-colors">Dashboard</a>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right fa-xs text-gray-500 flex-shrink-0"></i>
-                        <span class="ml-4 font-medium text-white">System Status</span>
-                    </div>
-                </li>
-            </ol>
+<div class="flex h-screen overflow-hidden bg-[#050505]">
+    <!-- Persistent Sidebar -->
+    <aside class="w-64 flex-shrink-0 bg-[#0A0A0A] border-r border-white/5 flex flex-col h-full hidden lg:flex relative z-30">
+        <!-- Sidebar Brand -->
+        <div class="p-6 border-b border-white/5">
+            <a href="/admin-settings.html" class="flex items-center space-x-3 text-white hover:text-gray-300 transition-colors">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                    <i class="fas fa-bolt text-sm text-white"></i>
+                </div>
+                <span class="font-display font-bold tracking-wider uppercase text-sm">EVENTFLOW</span>
+            </a>
+        </div>
+        <!-- Sidebar Links -->
+        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+            <a href="admin-approvals.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i class="fas fa-check-circle w-5 mr-3 text-center text-gray-500"></i> Approvals
+            </a>
+            <a href="admin-edit-events.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i class="fas fa-calendar-alt w-5 mr-3 text-center text-gray-500"></i> Events
+            </a>
+            <a href="admin-manage-venues.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i class="fas fa-map-marker-alt w-5 mr-3 text-center text-gray-500"></i> Venues
+            </a>
+            <a href="admin-import-events.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                <i class="fas fa-cloud-upload-alt w-5 mr-3 text-center text-gray-500"></i> Import
+            </a>
+            <div class="pt-6 mt-6 border-t border-white/5 space-y-2">
+                <p class="px-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/30 mb-2">SYSTEM</p>
+                <a href="admin-settings.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+                    <i class="fas fa-cog w-5 mr-3 text-center text-gray-500"></i> Settings
+                </a>
+                <a href="admin-system-status.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-white/10 border border-white/5 shadow-[inset_0_1px_rgba(255,255,255,0.1)] transition-all">
+                    <i class="fas fa-heartbeat w-5 mr-3 text-center text-[var(--color-toxic)]"></i> Status
+                </a>
+            </div>
         </nav>
+        <!-- Sidebar Bottom -->
+        <div class="p-4 border-t border-white/5">
+            <a href="/" target="_blank" class="flex justify-center items-center px-4 py-3 text-xs font-bold tracking-widest uppercase rounded-lg text-gray-400 hover:text-white bg-white/5 hover:bg-[var(--color-toxic)] hover:text-black transition-colors w-full border border-white/5 hover:border-[var(--color-toxic)] shadow-sm">
+                <i class="fas fa-external-link-alt mr-2"></i> Live Site
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
+        <!-- Dashboard Top Header -->
+        <header class="h-16 flex-shrink-0 bg-[#050505] border-b border-white/5 flex items-center justify-between px-8 relative z-20">
+            <div class="flex items-center">
+                <button class="lg:hidden text-gray-400 hover:text-white mr-6 transition-colors">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-white font-semibold text-sm tracking-wide hidden sm:flex items-center">
+                    <span class="text-gray-500 mr-2">System</span> <span class="text-gray-600 mx-2">/</span> Status Monitor
+                </h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="h-8 w-8 rounded bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-purple-500/20 ring-2 ring-black">
+                    A
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
 
         <!-- Header -->
         <div class="text-center mb-8">
@@ -414,7 +456,10 @@
                 </div>
             </div>
         </div>
+            </div>
+        </main>
     </div>
+</div>
 
     <!-- Notification Modal -->
     <div id="notification-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
@@ -795,6 +840,11 @@
                 btn.classList.add('btn-success');
             }
         }
+
+        // Mobile menu toggle
+        document.querySelector('button.lg\\:hidden')?.addEventListener('click', function() {
+            document.querySelector('aside').classList.toggle('hidden');
+        });
     </script>
 </body>
 
