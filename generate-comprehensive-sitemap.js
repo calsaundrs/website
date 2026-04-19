@@ -44,13 +44,20 @@ async function generateComprehensiveSitemap() {
   const baseUrl = 'https://www.brumoutloud.co.uk';
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
   
+  // Today's date for per-page lastmod overrides below. Use ISO (YYYY-MM-DD)
+  // which is the form Google prefers.
+  const today = new Date().toISOString().slice(0, 10);
+
   // Add static pages (using clean canonical URLs without .html extensions)
   const staticPages = [
     { url: '/', changefreq: 'weekly', priority: '1.0' },
     { url: '/events', changefreq: 'daily', priority: '0.9' },
     { url: '/all-venues', changefreq: 'weekly', priority: '0.8' },
     { url: '/clubs', changefreq: 'weekly', priority: '0.8' },
-    { url: '/birmingham-pride', changefreq: 'weekly', priority: '0.8' },
+    // Pride page: weeks before the festival we want Google to recrawl
+    // daily — priority bumped to 0.95 during the seasonal surge and
+    // lastmod set to today so the page is re-queued on every build.
+    { url: '/birmingham-pride', changefreq: 'daily', priority: '0.95', lastmod: today },
     { url: '/community', changefreq: 'monthly', priority: '0.7' },
     { url: '/contact', changefreq: 'monthly', priority: '0.6' },
     { url: '/promoter-submit-new', changefreq: 'monthly', priority: '0.6' },
@@ -72,7 +79,8 @@ async function generateComprehensiveSitemap() {
 
   console.log('Adding static pages...');
   staticPages.forEach(page => {
-    sitemap += `  <url>\n    <loc>${baseUrl}${page.url}</loc>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+    const lastmodLine = page.lastmod ? `    <lastmod>${page.lastmod}</lastmod>\n` : '';
+    sitemap += `  <url>\n    <loc>${baseUrl}${page.url}</loc>\n${lastmodLine}    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
   });
 
   // Add ALL events
