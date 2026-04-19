@@ -274,7 +274,7 @@ function renderEvents(events) {
         const status = event.status || event.Status || event['Status'] || 'Unknown';
         const statusBadge = getStatusBadge(status);
         const categoryBadges = (event.category || event.Category || []).map(cat => 
-            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-300 border border-white/10 mr-1 mb-1">${cat}</span>`
         ).join('');
 
         const eventDate = new Date(event.date || event.Date);
@@ -335,93 +335,76 @@ function renderEvents(events) {
             </div>`;
 
         return `
-            <div class="event-card ${isPast ? 'opacity-75' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}">
-                <div class="event-card-header">
-                    <div class="flex items-start space-x-3 flex-1 min-w-0">
-                        <div class="text-2xl text-blue-400 flex-shrink-0 mt-1">
-                            <i class="fas fa-calendar"></i>
+            <div class="bg-[#0A0A0A] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors shadow-sm relative group flex flex-col md:flex-row gap-6 ${isPast ? 'opacity-75 relative' : ''} ${isSelected ? 'ring-1 ring-[var(--color-toxic)]' : ''}">
+                
+                <!-- Status Bar Indicator -->
+                <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl opacity-80 ${status === 'Approved' ? 'bg-green-500' : (status === 'Pending Review' ? 'bg-yellow-500' : 'bg-gray-500')}"></div>
+
+                <!-- Event Image -->
+                <div class="w-full md:w-32 h-24 flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#111]">
+                    ${imageUrl ? 
+                        `<img src="${imageUrl}" alt="Event image" class="w-full h-full object-cover">` : 
+                        `<div class="w-full h-full flex items-center justify-center"><i class="fas fa-image text-xl text-gray-600"></i></div>`}
+                </div>
+                
+                <!-- Content Area -->
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h3 class="text-lg font-bold text-white truncate">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
+                        ${statusBadge}
+                        ${isToday ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--color-toxic)]/10 text-[var(--color-toxic)] border border-[var(--color-toxic)]/20">Today</span>' : ''}
+                        ${isPast ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-500/10 text-gray-500 border border-gray-500/20">Past</span>' : ''}
+                        ${recurringDisplay ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span>` : ''}
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-400 mb-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt w-4 text-center mr-1 text-gray-500"></i>
+                            ${(() => {
+                                const dateStr = event.date || event.Date || '';
+                                const hasNoTime = typeof dateStr === 'string' && (!dateStr.includes('T') || dateStr.includes('T00:00'));
+                                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                                if (!hasNoTime) { options.hour = '2-digit'; options.minute = '2-digit'; }
+                                return eventDate.toLocaleDateString('en-GB', options) + (hasNoTime ? ' — Time TBC' : '');
+                            })()}
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <h3 class="text-xl font-bold text-white truncate">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                            <div class="flex items-center gap-2 mt-1">
-                                ${statusBadge}
-                                ${isToday ? '<span class="inline-block bg-purple-100/20 text-purple-300 text-xs px-2 py-1 rounded-full">Today</span>' : ''}
-                                ${isPast ? '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full">Past</span>' : ''}
-                                ${recurringDisplay ? `<span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full"><i class="fas fa-redo mr-1"></i>${recurringDisplay}</span>` : ''}
-                            </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt w-4 text-center mr-1 text-gray-500"></i>
+                            <span class="truncate max-w-[200px]">${event.venue || event.VenueText || event['Venue Name'] || event.venueName || 'TBC'}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-user w-4 text-center mr-1 text-gray-500"></i>
+                            ${event.submittedBy || event['Submitted By'] || 'Unknown'}
                         </div>
                     </div>
-                    <div class="text-sm text-gray-400 flex-shrink-0">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" 
-                                   class="bulk-select-checkbox form-checkbox h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500" 
-                                   data-event-id="${event.id}"
-                                   ${isSelected ? 'checked' : ''}>
-                            <span class="ml-2 text-gray-400 text-xs">Select</span>
-                        </label>
+                    
+                    <div class="flex flex-wrap gap-1">
+                        ${categoryBadges}
                     </div>
                 </div>
                 
-                <div class="event-card-details">
-                    <div class="event-card-detail-item">
-                        <p class="detail-label">Description</p>
-                        <p class="detail-value">${event.description || event.Description || 'No description available'}</p>
-                    </div>
-                    
-                    <div class="event-card-detail-item">
-                        <p class="detail-label">Event Date</p>
-                        <p class="detail-value">${(() => {
-                            const dateStr = event.date || event.Date || '';
-                            const hasNoTime = typeof dateStr === 'string' && (!dateStr.includes('T') || dateStr.includes('T00:00'));
-                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                            if (!hasNoTime) { options.hour = '2-digit'; options.minute = '2-digit'; }
-                            return eventDate.toLocaleDateString('en-GB', options) + (hasNoTime ? ' — Time TBC' : '');
-                        })()}</p>
-                    </div>
-                    
-                    <div class="event-card-detail-item">
-                        <p class="detail-label">Venue</p>
-                        <p class="detail-value">${event.venue || event.VenueText || event['Venue Name'] || event.venueName || 'TBC'}</p>
-                    </div>
-                    
-                    ${event.category && event.category.length > 0 ? `
-                        <div class="event-card-detail-item">
-                            <p class="detail-label">Categories</p>
-                            <div class="flex flex-wrap gap-1">
-                                ${categoryBadges}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="event-card-detail-item">
-                        <p class="detail-label">Submitted By</p>
-                        <p class="detail-value">${event.submittedBy || event['Submitted By'] || 'Unknown'}</p>
-                    </div>
-                    
-                    ${(event.isRecurring || event.isRecurringGroup) ? `
-                        <div class="event-card-detail-item">
-                            <p class="detail-label">Recurring Event</p>
-                            <p class="detail-value">
-                                ${recurringDisplay}
-                                ${event.totalInstances ? ` (${event.totalInstances} instances)` : ''}
-                                ${event.recurringInstance ? ` (Instance ${event.recurringInstance})` : ''}
-                            </p>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div class="event-card-actions">
-                    <button onclick="openEditModal('${event.id}')" class="button-edit">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </button>
-                    ${!(event.isRecurring || event.isRecurringGroup || event.recurringGroupId) ? `
-                        <button onclick="openConvertToRecurringModal('${event.id}')" class="button-convert">
-                            <i class="fas fa-redo mr-2"></i>Make Recurring
+                <!-- Actions -->
+                <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
+                    <label class="flex items-center cursor-pointer md:hidden group">
+                        <input type="checkbox" class="bulk-select-checkbox form-checkbox h-4 w-4 text-[var(--color-toxic)] bg-black border-white/20 rounded focus:ring-[var(--color-toxic)] focus:ring-offset-0" data-event-id="${event.id}" ${isSelected ? 'checked' : ''}>
+                        <span class="ml-2 text-gray-400 text-xs uppercase tracking-wider font-bold group-hover:text-white transition-colors">Select</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openEditModal('${event.id}')" class="bg-[#111] hover:bg-[#1A1A1A] border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" title="Edit">
+                            <i class="fas fa-edit group-hover/btn:text-white text-gray-400 transition-colors"></i>
                         </button>
-                    ` : ''}
-                    <button onclick="handleDeleteEvent('${event.id}')" class="button-delete">
-                        <i class="fas fa-trash mr-2"></i>Delete
-                    </button>
+                        ${!(event.isRecurring || event.isRecurringGroup || event.recurringGroupId) ? `
+                            <button onclick="openConvertToRecurringModal('${event.id}')" class="bg-[#111] hover:bg-[#1A1A1A] border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" title="Make Recurring">
+                                <i class="fas fa-redo group-hover/btn:text-purple-400 text-gray-400 transition-colors"></i>
+                            </button>
+                        ` : ''}
+                        <button onclick="handleDeleteEvent('${event.id}')" class="bg-[#111] hover:bg-red-900/20 hover:border-red-500/30 border border-white/5 text-white font-semibold w-9 h-9 rounded text-sm transition-all flex items-center justify-center group/btn" title="Delete">
+                            <i class="fas fa-trash-alt group-hover/btn:text-red-500 text-gray-400 transition-colors"></i>
+                        </button>
+                    </div>
+                    <label class="hidden md:flex items-center cursor-pointer mt-2 group tooltip-trigger">
+                        <input type="checkbox" class="bulk-select-checkbox form-checkbox h-4 w-4 text-[var(--color-toxic)] bg-black border-white/20 rounded focus:ring-[var(--color-toxic)] focus:ring-offset-0 cursor-pointer transition-colors" data-event-id="${event.id}" ${isSelected ? 'checked' : ''}>
+                    </label>
                 </div>
             </div>
         `;
@@ -463,12 +446,12 @@ function renderRecurringEvents(events) {
         const status = event.status || event.Status || event['Status'] || 'Unknown';
         const statusBadge = getStatusBadge(status);
         const categoryBadges = (event.category || event.Category || []).map(cat => 
-            `<span class="inline-block bg-blue-100/20 text-blue-300 text-xs px-2 py-1 rounded-full mr-1 mb-1">${cat}</span>`
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-300 border border-white/10 mr-1 mb-1">${cat}</span>`
         ).join('');
         
         const activeBadge = event.isActive ? 
-            '<span class="inline-block bg-green-100/20 text-green-300 text-xs px-2 py-1 rounded-full mr-2">Active</span>' :
-            '<span class="inline-block bg-gray-100/20 text-gray-300 text-xs px-2 py-1 rounded-full mr-2">Ended</span>';
+            '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border bg-green-500/10 text-green-500 border-green-500/20">Active</span>' :
+            '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border bg-gray-500/10 text-gray-500 border-gray-500/20">Ended</span>';
         
         const nextInstanceInfo = event.nextInstance ? 
             `<div class="text-sm text-gray-400 mt-2">
@@ -494,55 +477,66 @@ function renderRecurringEvents(events) {
             </div>`;
 
         return `
-            <div class="event-card rounded-xl p-6 transition-all duration-300 ${!event.isActive ? 'opacity-75' : ''}">
-                <!-- Event Image - Moved to top for better visibility -->
-                ${imageHtml}
+            <div class="bg-[#0A0A0A] border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors shadow-sm relative group flex flex-col md:flex-row gap-6 ${!event.isActive ? 'opacity-75 relative' : ''}">
                 
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="text-center w-16 flex-shrink-0">
-                                <div class="text-2xl font-bold text-white">
-                                    <i class="fas fa-redo"></i>
-                                </div>
-                                <div class="text-sm text-gray-400">
-                                    Series
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold text-white mb-1">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
-                                <p class="text-gray-400 text-sm">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</p>
-                            </div>
+                <!-- Status Bar Indicator -->
+                <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl opacity-80 ${event.isActive ? 'bg-[var(--color-toxic)]' : 'bg-gray-500'}"></div>
+
+                <!-- Event Image -->
+                <div class="w-full md:w-32 h-24 flex-shrink-0 relative rounded-lg overflow-hidden border border-white/5 bg-[#111]">
+                    ${imageUrl ? 
+                        `<img src="${imageUrl}" alt="Event image" class="w-full h-full object-cover">` : 
+                        `<div class="w-full h-full flex items-center justify-center"><i class="fas fa-image text-xl text-gray-600"></i></div>`}
+                </div>
+                
+                <!-- Content Area -->
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-1">
+                        <div class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center">
+                            <i class="fas fa-redo mr-1 text-[8px]"></i> Series
                         </div>
-                        
-                        <div class="flex items-center gap-2 mb-3">
-                            ${activeBadge}
-                            ${statusBadge}
+                        <h3 class="text-lg font-bold text-white truncate">${event.name || event['Event Name'] || 'Untitled Event'}</h3>
+                        ${activeBadge}
+                        ${statusBadge}
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-400 mb-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt w-4 text-center mr-1 text-gray-500"></i>
+                            <span class="truncate max-w-[200px]">${event.venue || event.VenueText || event['Venue Name'] || 'TBC'}</span>
                         </div>
-                        
-                        <p class="text-gray-300 mb-3 line-clamp-2">${event.description || event.Description || 'No description available'}</p>
-                        
-                        <div class="text-sm text-purple-300 mb-3">
-                            <i class="fas fa-clock mr-1"></i>
+                        <div class="flex items-center text-purple-300">
+                            <i class="fas fa-clock w-4 text-center mr-1"></i>
                             ${event.recurringInfo || event['Recurring Info'] || 'Recurring Event'}
-                        </div>
-                        
-                        ${nextInstanceInfo}
-                        ${instanceCounts}
-                        
-                        <div class="flex flex-wrap gap-1 mt-4">
-                            ${categoryBadges}
                         </div>
                     </div>
                     
-                    <div class="flex flex-col gap-2 ml-4">
-                        <button onclick="openRecurringModal('${event.seriesId || event.id}')" class="btn-primary text-white px-4 py-2 rounded-lg text-sm transition-all">
-                            <i class="fas fa-cog mr-1"></i>Manage
-                        </button>
-                        <button onclick="handleEndRecurringSeries('${event.seriesId || event.id}')" class="btn-danger text-white px-4 py-2 rounded-lg text-sm transition-all">
-                            <i class="fas fa-stop mr-1"></i>End Series
-                        </button>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:gap-6 text-sm text-gray-500 mb-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-layer-group w-4 text-center mr-1"></i>
+                            <span class="text-gray-300 font-medium mr-1">${event.totalInstances}</span> Instances (${event.futureInstances} upcoming)
+                        </div>
+                        ${event.nextInstance ? `
+                        <div class="flex items-center mt-1 sm:mt-0">
+                            <i class="fas fa-calendar-alt w-4 text-center mr-1 text-[var(--color-toxic)] opacity-70"></i>
+                            Next: <span class="text-gray-300 ml-1">${formatDate(event.nextInstance.date)}</span>
+                        </div>
+                        ` : ''}
                     </div>
+
+                    <div class="flex flex-wrap gap-1">
+                        ${categoryBadges}
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
+                    <button onclick="openRecurringModal('${event.seriesId || event.id}')" class="bg-white/5 hover:bg-white/10 text-white border border-white/10 uppercase tracking-widest text-xs font-bold px-4 py-2 rounded transition-all flex items-center justify-center w-full md:w-auto text-nowrap">
+                        <i class="fas fa-cog mr-2 text-gray-400"></i> Manage
+                    </button>
+                    <button onclick="handleEndRecurringSeries('${event.seriesId || event.id}')" class="bg-[#111] hover:bg-red-900/20 text-gray-400 hover:text-red-500 border border-transparent hover:border-red-500/30 uppercase tracking-widest text-[10px] font-bold px-4 py-2 rounded transition-all flex items-center justify-center w-full md:w-auto">
+                        <i class="fas fa-stop mr-2"></i> End Series
+                    </button>
                 </div>
             </div>
         `;
@@ -553,14 +547,14 @@ function renderRecurringEvents(events) {
 
 // Get status badge HTML
 function getStatusBadge(status) {
-    const statusClasses = {
-        'Approved': 'status-badge approved',
-        'Pending Review': 'status-badge pending',
-        'Rejected': 'status-badge rejected'
+    const statusConfig = {
+        'Approved': 'bg-green-500/10 text-green-500 border-green-500/20',
+        'Pending Review': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+        'Rejected': 'bg-red-500/10 text-red-500 border-red-500/20'
     };
     
-    const classes = statusClasses[status] || 'status-badge';
-    return `<span class="inline-block ${classes} text-xs px-2 py-1 rounded-full">${status}</span>`;
+    const classes = statusConfig[status] || 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+    return `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${classes}">${status}</span>`;
 }
 
 // Format date
