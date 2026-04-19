@@ -22,8 +22,9 @@
   </url>
   <url>
     <loc>https://www.brumoutloud.co.uk/birmingham-pride</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.brumoutloud.co.uk/community</loc>
@@ -106,103 +107,13 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/birmingham-lgbtq-writers-2026-04-09</loc>
-    <lastmod>2026-04-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-04-09</loc>
-    <lastmod>2026-04-09</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/friday-night-fever-missing-bar-2026-04-10</loc>
-    <lastmod>2026-04-10</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-04-11</loc>
-    <lastmod>2026-04-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/rainbow-roundtable-neurodivergence-the-trans-non-binary-community-2026-04-11</loc>
-    <lastmod>2026-04-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/yarana-2026-04-11</loc>
-    <lastmod>2026-04-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/saturday-night-party-missing-bar-2026-04-11</loc>
-    <lastmod>2026-04-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/take-your-pick-sundays-missing-bar-2026-04-12</loc>
-    <lastmod>2026-04-12</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/bards-and-books-2026-04-13</loc>
-    <lastmod>2026-04-13</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/trans-masc-brum-2026-04-15</loc>
-    <lastmod>2026-04-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/journey-film-club-2026-04-16</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-04-16</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/cray-cray-cabaret-cheddar-gorgeous--2026-04-18</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-04-18</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/rainbow-spirit-2026-04-18</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/rainbow-roundtable-neurodivergence-the-lgbtq-community-2026-04-18</loc>
-    <lastmod>2026-04-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.brumoutloud.co.uk/event/the-big-gay-poetry-night--2026-04-19</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/sum-ting-wong-at-eden-sunday-club-2026-04-19</loc>
     <lastmod>2026-04-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -220,7 +131,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-04-23</loc>
+    <loc>https://www.brumoutloud.co.uk/event/transanctuary-2026-04-23</loc>
     <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -232,14 +143,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/transanctuary-2026-04-23</loc>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-04-23</loc>
     <lastmod>2026-04-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-04-25</loc>
-    <lastmod>2026-04-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -250,14 +155,50 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.brumoutloud.co.uk/event/kv-kelly-at-eden-2026-04-25</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-04-25</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/beverly-bacon-at-eden-sunday-club-2026-04-26</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-04-30</loc>
     <lastmod>2026-04-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.brumoutloud.co.uk/event/dolls-club-cabaret-pageant-2026-05-01</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.brumoutloud.co.uk/event/the-nightingale-club-presents-nova-may-live--2026-05-02</loc>
     <lastmod>2026-05-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/big-brum-boogaloo-old-new-borrowed-blue-2026-05-03</loc>
+    <lastmod>2026-05-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/big-brum-boogaloo-old-new-borrowed-blue-2026-05-03</loc>
+    <lastmod>2026-05-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -304,12 +245,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-05-23</loc>
-    <lastmod>2026-05-23</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.brumoutloud.co.uk/event/birmingham-pride-2026-2026-05-23</loc>
     <lastmod>2026-05-23</lastmod>
     <changefreq>daily</changefreq>
@@ -328,14 +263,14 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/birmingham-pride-2026-day-2-2026-05-24</loc>
-    <lastmod>2026-05-24</lastmod>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-05-23</loc>
+    <lastmod>2026-05-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/springfield-cabaret-birmingham-2026-05-28</loc>
-    <lastmod>2026-05-28</lastmod>
+    <loc>https://www.brumoutloud.co.uk/event/birmingham-pride-2026-day-2-2026-05-24</loc>
+    <lastmod>2026-05-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -388,12 +323,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.brumoutloud.co.uk/event/drag-me-to-bonkers-bingo-2026-06-12</loc>
-    <lastmod>2026-06-12</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-06-13</loc>
     <lastmod>2026-06-13</lastmod>
     <changefreq>daily</changefreq>
@@ -402,6 +331,78 @@
   <url>
     <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-06-18</loc>
     <lastmod>2026-06-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-06-20</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-club-thursdays-2026-06-25</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/drag-bingo-2026-06-26</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/nightingale-saturdays-2026-06-27</loc>
+    <lastmod>2026-06-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/drag-bingo-2026-07-24</loc>
+    <lastmod>2026-07-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/drag-bingo-2026-07-31</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/walsall-pride-2026-2026-08-29</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/ultimate-drag-night-longbridge-2026-09-05</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/uk-pleasure-boys-wet-wild-tour-2026-10-03</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/the-allure-games-birmingham-drag-burlesque-festival-2026-11-06</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/birmingham-drag-burlesque-festival-worlds-away-2-0-2026-11-08</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.brumoutloud.co.uk/event/worlds-away-2-0-birmingham-drag-burlesque-festival-2026-11-08</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
