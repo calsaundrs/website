@@ -79,8 +79,19 @@ async function generateComprehensiveSitemap() {
 
   console.log('Adding static pages...');
   staticPages.forEach(page => {
-    const lastmodLine = page.lastmod ? `    <lastmod>${page.lastmod}</lastmod>\n` : '';
-    sitemap += `  <url>\n    <loc>${baseUrl}${page.url}</loc>\n${lastmodLine}    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+    // Build the <url> block as a filter-joined list so optional fields
+    // (just <lastmod> today, but the same pattern holds if more get
+    // added later) drop cleanly without leaving stray blank lines or
+    // double newlines in the output.
+    const lines = [
+      '  <url>',
+      `    <loc>${baseUrl}${page.url}</loc>`,
+      page.lastmod ? `    <lastmod>${page.lastmod}</lastmod>` : null,
+      `    <changefreq>${page.changefreq}</changefreq>`,
+      `    <priority>${page.priority}</priority>`,
+      '  </url>',
+    ].filter(Boolean);
+    sitemap += lines.join('\n') + '\n';
   });
 
   // Add ALL events
