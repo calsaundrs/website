@@ -21,274 +21,9 @@
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
     <link rel="icon" href="/faviconV2.png" type="image/png">
-    <style>
-        .card-bg {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-        }
+    
 
-        .btn-primary {
-            background: linear-gradient(135deg, #E83A99 0%, #8B5CF6 100%);
-            border: 1px solid rgba(232, 58, 153, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #D61F69 0%, #7C3AED 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: rgba(75, 85, 99, 0.3);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(75, 85, 99, 0.5);
-        }
-
-        .heading-gradient {
-            background: linear-gradient(135deg, #FFFFFF 0%, #E83A99 50%, #8B5CF6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Mobile-specific heading gradient fix */
-        @media (max-width: 768px) {
-            .heading-gradient {
-                background: none;
-                -webkit-background-clip: initial;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                color: #FFFFFF;
-                text-shadow: 0 0 10px rgba(232, 58, 153, 0.5);
-            }
-        }
-
-        .accent-color {
-            color: #E83A99;
-        }
-
-        .accent-color-secondary {
-            color: #8B5CF6;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #EF4444;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        .stats-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
-            box-shadow: 0 8px 25px rgba(232, 58, 153, 0.15);
-        }
-
-        .urgent {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.2) 100%);
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .urgent .notification-badge {
-            background: #EF4444;
-            animation: pulse 1s infinite;
-        }
-
-        .admin-link {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .admin-link:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
-            background: rgba(232, 58, 153, 0.1);
-        }
-
-        .stats-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(232, 58, 153, 0.3);
-        }
-
-        .stats-card.urgent {
-            border-color: rgba(239, 68, 68, 0.5);
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            min-width: 1.5rem;
-            text-align: center;
-            border: 2px solid rgba(17, 24, 39, 0.7);
-        }
-    </style>
-
-    <!-- FOUC Prevention: Critical CSS and Loading Screen -->
-    <style>
-        /* FOUC Prevention - Hide content until styles are loaded */
-        .fouc-prevention {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .fouc-prevention.loaded {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #121212 0%, #1a1a1a 50%, #2d1b69 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        .loading-text {
-            color: #B564F7;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(181, 100, 247, 0.3);
-            border-top: 3px solid #B564F7;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 0.8;
-            }
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Critical CSS to prevent flashing */
-        body {
-            background-color: #121212;
-            color: #EAEAEA;
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Basic layout styles to prevent layout shift */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Prevent pride flag from flashing at full size */
-        img[src*="progressflag"] {
-            height: 1.5rem !important;
-            width: auto !important;
-            max-width: 1.5rem !important;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Show flag after page loads */
-        .flag-loaded img[src*="progressflag"] {
-            opacity: 1;
-        }
-    </style>
-</head>
+    </head>
 
 <body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
     <!-- Google Tag Manager (noscript) -->
@@ -306,10 +41,7 @@
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
     <!-- End Google Tag Manager -->
-    <div class="bg-yellow-500 text-black text-center p-2 text-sm font-semibold">
-        <p>Please note: This website is in active development. Things may break unexpectedly. Thank you for your
-            patience!</p>
-    </div>
+    
 
     <!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
 
@@ -388,16 +120,14 @@
 
         <section class="text-center mb-8">
             <div class="text-center mb-16">
-                <h1 class="font-anton text-7xl md:text-8xl leading-none tracking-wider heading-gradient">ADMIN <span
-                        class="accent-color">DASHBOARD</span></h1>
-                <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">Manage your LGBTQ+ events platform with powerful
-                    admin tools.</p>
+                <h1 class="text-2xl font-bold uppercase tracking-widest text-white mb-2">Admin Dashboard</h1>
+                <p class="text-sm text-gray-500 font-medium tracking-wide uppercase">Manage your LGBTQ+ events platform</p>
             </div>
 
             <!-- Dashboard Stats -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 <a href="/admin-approvals.html"
-                    class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
+                    class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Events</p>
@@ -414,7 +144,7 @@
                 </a>
 
                 <a href="/admin-approvals.html"
-                    class="stats-card rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
+                    class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-xl p-6 relative group hover:scale-105 transition-transform cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Pending Venues</p>
@@ -430,7 +160,7 @@
                     </div>
                 </a>
 
-                <div class="stats-card rounded-xl p-6 relative">
+                <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-xl p-6 relative">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Total Events</p>
@@ -442,7 +172,7 @@
                     </div>
                 </div>
 
-                <div class="stats-card rounded-xl p-6 relative">
+                <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-xl p-6 relative">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Total Venues</p>
@@ -456,14 +186,14 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="card-bg p-8 md:p-12 mb-8 rounded-2xl">
+            <div class="bg-[#0A0A0A] border border-white/5 shadow-2xl p-8 md:p-12 mb-8 rounded-2xl">
                 <h2 class="font-anton text-3xl text-white mb-6 border-b border-gray-700 pb-2">
-                    <i class="fas fa-bolt mr-3 accent-color"></i>Quick Actions
+                    <i class="fas fa-bolt mr-3 text-[var(--color-toxic)]"></i>Quick Actions
                 </h2>
                 <p class="text-gray-400 mb-8">Essential tools for managing submissions and content.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <a href="/admin-approvals.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-approvals.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-tasks"></i>
@@ -477,7 +207,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-edit-events.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-edit-events.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-edit"></i>
@@ -490,7 +220,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-manage-venues.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-manage-venues.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-building"></i>
@@ -503,7 +233,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-poster-tool.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-poster-tool.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-image"></i>
@@ -516,7 +246,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-email-management.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-email-management.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-envelope"></i>
@@ -531,7 +261,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-social-assets.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-social-assets.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-images"></i>
@@ -546,7 +276,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-add-venue.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-add-venue.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-plus-circle"></i>
@@ -559,7 +289,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin-migrate.html" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin-migrate.html" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-database"></i>
@@ -572,7 +302,7 @@
                         </div>
                     </a>
 
-                    <a href="/admin/import-events" class="admin-link rounded-xl p-6 relative group">
+                    <a href="/admin/import-events" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-file-import"></i>
@@ -586,7 +316,7 @@
                         </div>
                     </a>
 
-                    <button id="rebuild-venues-btn" class="admin-link rounded-xl p-6 relative group text-left w-full">
+                    <button id="rebuild-venues-btn" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group text-left w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-sync-alt"></i>
@@ -607,7 +337,7 @@
                         </div>
                     </button>
 
-                    <button id="rebuild-events-btn" class="admin-link rounded-xl p-6 relative group text-left w-full">
+                    <button id="rebuild-events-btn" class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6 relative group text-left w-full">
                         <div class="flex items-center justify-between mb-4">
                             <div class="text-2xl text-accent-color">
                                 <i class="fas fa-calendar-alt"></i>
@@ -631,10 +361,10 @@
             </div>
 
             <!-- System Status -->
-            <div id="system-status" class="card-bg p-8 md:p-12 rounded-2xl">
+            <div id="system-status" class="bg-[#0A0A0A] border border-white/5 shadow-2xl p-8 md:p-12 rounded-2xl">
                 <div class="flex items-center justify-between mb-6 border-b border-gray-700 pb-2">
                     <h2 class="font-anton text-3xl text-white">
-                        <i class="fas fa-server mr-3 accent-color"></i>System Status
+                        <i class="fas fa-server mr-3 text-[var(--color-toxic)]"></i>System Status
                     </h2>
                     <div class="flex items-center gap-3">
                         <div class="flex items-center space-x-2">
@@ -642,7 +372,7 @@
                             <span id="system-status-text" class="text-gray-400 text-sm">Checking...</span>
                         </div>
                         <a href="/admin-system-status.html"
-                            class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                            class="bg-[var(--color-toxic)] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                             <i class="fas fa-chart-line"></i>
                             Detailed View
                         </a>
@@ -651,7 +381,7 @@
                 <p class="text-gray-400 mb-8">Real-time system health monitoring and performance metrics.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="admin-link rounded-xl p-6">
+                    <div class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-bold text-white">API Status</h3>
                             <div class="flex items-center space-x-2">
@@ -662,7 +392,7 @@
                         <p class="text-gray-400 text-sm">All backend services are running normally</p>
                     </div>
 
-                    <div class="admin-link rounded-xl p-6">
+                    <div class="bg-[#111] border border-white/5 rounded-xl block hover:border-[var(--color-toxic)] hover:bg-[#1A1A1A] rounded-xl p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-xl font-bold text-white">Database</h3>
                             <div class="flex items-center space-x-2">
@@ -676,19 +406,19 @@
 
                 <!-- Quick Status Overview -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="stats-card rounded-lg p-4 text-center">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4 text-center">
                         <div id="overall-status" class="text-2xl font-bold text-gray-400 mb-1">--</div>
                         <div class="text-xs text-gray-500">Overall Status</div>
                     </div>
-                    <div class="stats-card rounded-lg p-4 text-center">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4 text-center">
                         <div id="last-check" class="text-2xl font-bold text-gray-400 mb-1">--</div>
                         <div class="text-xs text-gray-500">Last Check</div>
                     </div>
-                    <div class="stats-card rounded-lg p-4 text-center">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4 text-center">
                         <div id="tests-passed" class="text-2xl font-bold text-gray-400 mb-1">--</div>
                         <div class="text-xs text-gray-500">Tests Passed</div>
                     </div>
-                    <div class="stats-card rounded-lg p-4 text-center">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4 text-center">
                         <div id="notifications" class="text-2xl font-bold text-gray-400 mb-1">--</div>
                         <div class="text-xs text-gray-500">Notifications</div>
                     </div>
@@ -696,7 +426,7 @@
 
                 <!-- System Metrics -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="stats-card rounded-lg p-4">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="text-sm text-gray-400">Uptime</div>
@@ -707,7 +437,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="stats-card rounded-lg p-4">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="text-sm text-gray-400">Response Time</div>
@@ -718,7 +448,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="stats-card rounded-lg p-4">
+                    <div class="bg-[#111] border border-white/5 rounded-xl hover:bg-[#1A1A1A] rounded-lg p-4">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="text-sm text-gray-400">Cache Status</div>
@@ -734,22 +464,22 @@
                 <!-- Quick Actions -->
                 <div class="flex flex-wrap gap-3 mt-6">
                     <button id="quick-health-check"
-                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        class="bg-[#111] border border-white/10 text-white font-bold uppercase tracking-widest hover:bg-[#1A1A1A] transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-heartbeat"></i>
                         Quick Health Check
                     </button>
                     <button id="refresh-status"
-                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        class="bg-[#111] border border-white/10 text-white font-bold uppercase tracking-widest hover:bg-[#1A1A1A] transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-sync-alt"></i>
                         Refresh Status
                     </button>
                     <button id="test-notification"
-                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        class="bg-[#111] border border-white/10 text-white font-bold uppercase tracking-widest hover:bg-[#1A1A1A] transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-bell"></i>
                         Test Notification
                     </button>
                     <button id="test-notification-system"
-                        class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+                        class="bg-[#111] border border-white/10 text-white font-bold uppercase tracking-widest hover:bg-[#1A1A1A] transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-cog"></i>
                         Test System
                     </button>

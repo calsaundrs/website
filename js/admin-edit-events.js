@@ -889,7 +889,7 @@ function openRecurringModal(seriesId) {
             <!-- Action Buttons -->
             <div class="flex justify-between items-center pt-6 border-t border-gray-700">
                 <div class="flex gap-4">
-                    <button onclick="handleEndRecurringSeries('${seriesId}')" class="btn-danger text-white px-6 py-3 rounded-lg transition-all">
+                    <button onclick="handleEndRecurringSeries('${seriesId}')" class="bg-red-900/20 text-red-500 border border-red-500/30 hover:bg-red-900/40 text-white px-6 py-3 rounded-lg transition-all">
                         <i class="fas fa-stop mr-2"></i>End Series
                     </button>
                     <button onclick="handleRegenerateInstances('${seriesId}')" class="bg-blue-900/50 border border-blue-700 text-blue-300 px-6 py-3 rounded-lg transition-all hover:bg-blue-800/50">
@@ -897,10 +897,10 @@ function openRecurringModal(seriesId) {
                     </button>
                 </div>
                 <div class="flex gap-4">
-                    <button onclick="closeRecurringModal()" class="btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                    <button onclick="closeRecurringModal()" class="bg-[#111] text-white border border-white/10 hover:bg-[#1A1A1A] px-6 py-3 rounded-lg transition-all">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
-                    <button onclick="saveRecurringChanges('${seriesId}')" class="btn-primary text-white px-8 py-3 rounded-lg transition-all">
+                    <button onclick="saveRecurringChanges('${seriesId}')" class="bg-white text-black font-bold border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-gray-200 px-8 py-3 rounded-lg transition-all">
                         <i class="fas fa-save mr-2"></i>Save Changes
                     </button>
                 </div>
@@ -1636,12 +1636,12 @@ function updateBulkActionsVisibility() {
     if (bulkActionsBtn) {
         if (selectedEvents.size > 0) {
             bulkActionsBtn.innerHTML = `<i class="fas fa-tasks mr-2"></i>Bulk Actions (${selectedEvents.size})`;
-            bulkActionsBtn.classList.remove('btn-secondary');
-            bulkActionsBtn.classList.add('btn-primary');
+            bulkActionsBtn.classList.remove('bg-[#111] text-white border border-white/10 flex items-center justify-center cursor-pointer');
+            bulkActionsBtn.classList.add('bg-white text-black font-bold h-full');
         } else {
             bulkActionsBtn.innerHTML = `<i class="fas fa-tasks mr-2"></i>Bulk Actions`;
-            bulkActionsBtn.classList.remove('btn-primary');
-            bulkActionsBtn.classList.add('btn-secondary');
+            bulkActionsBtn.classList.remove('bg-white text-black font-bold h-full');
+            bulkActionsBtn.classList.add('bg-[#111] text-white border border-white/10 flex items-center justify-center cursor-pointer');
         }
     }
 }
@@ -1679,13 +1679,13 @@ function openBulkActionsModal() {
                 <div class="bg-gray-800/50 rounded-lg p-6">
                     <h4 class="text-xl font-bold text-white mb-4">Available Actions</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="handleBulkStatusChange('Approved')" class="btn-primary text-white p-4 rounded-lg transition-all text-left">
+                        <button onclick="handleBulkStatusChange('Approved')" class="bg-white text-black font-bold border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-gray-200 p-4 rounded-lg transition-all text-left">
                             <i class="fas fa-check-circle mr-2"></i>
                             <div class="font-bold">Approve All</div>
                             <div class="text-sm opacity-75">Mark all selected events as approved</div>
                         </button>
                         
-                        <button onclick="handleBulkStatusChange('Rejected')" class="btn-danger text-white p-4 rounded-lg transition-all text-left">
+                        <button onclick="handleBulkStatusChange('Rejected')" class="bg-red-900/20 text-red-500 border border-red-500/30 hover:bg-red-900/40 text-white p-4 rounded-lg transition-all text-left">
                             <i class="fas fa-times-circle mr-2"></i>
                             <div class="font-bold">Reject All</div>
                             <div class="text-sm opacity-75">Mark all selected events as rejected</div>
@@ -1697,7 +1697,7 @@ function openBulkActionsModal() {
                             <div class="text-sm opacity-75">Permanently delete all selected events</div>
                         </button>
                         
-                        <button onclick="handleBulkCategoryUpdate()" class="btn-secondary text-white p-4 rounded-lg transition-all text-left">
+                        <button onclick="handleBulkCategoryUpdate()" class="bg-[#111] text-white border border-white/10 hover:bg-[#1A1A1A] p-4 rounded-lg transition-all text-left">
                             <i class="fas fa-tags mr-2"></i>
                             <div class="font-bold">Update Categories</div>
                             <div class="text-sm opacity-75">Add/remove categories from all events</div>
@@ -1706,7 +1706,7 @@ function openBulkActionsModal() {
                 </div>
                 
                 <div class="flex justify-end gap-4">
-                    <button class="close-bulk-modal-btn btn-secondary text-white px-6 py-3 rounded-lg transition-all">
+                    <button class="close-bulk-modal-btn bg-[#111] text-white border border-white/10 hover:bg-[#1A1A1A] px-6 py-3 rounded-lg transition-all">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
                 </div>
