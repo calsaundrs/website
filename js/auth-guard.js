@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -62,7 +62,7 @@ onAuthStateChanged(auth, (user) => {
   if (!user && window.location.pathname !== '/admin-login.html') {
     // ...redirect them to the login page.
     console.log("No user found, redirecting to login.");
-    window.location.href = '/admin/login';
+    window.location.href = '/admin-login.html';
   } else {
     // If they are logged in, make the page content visible
     document.body.style.display = 'block';
@@ -70,4 +70,21 @@ onAuthStateChanged(auth, (user) => {
 });
 
 // Hide the body by default to prevent a flash of content before the check runs
-document.body.style.display = 'none';
+if (window.location.pathname !== '/admin-login.html') {
+    document.body.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = '/admin-login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        });
+    }
+});
