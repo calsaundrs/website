@@ -46,20 +46,36 @@ async function generateEventsListingPage() {
         const eventsHtmlPath = path.join(process.cwd(), 'events.html');
         let eventsHtml = await fs.readFile(eventsHtmlPath, 'utf8');
 
-        // Generate event cards matching the existing createCard() format in events.html
-        const eventCardsHtml = futureEvents.map(ev => {
+        // Generate event cards with date group headers matching the client-side renderEvents() loop
+        let eventCardsHtml = '';
+        let currentGroup = '';
+
+        futureEvents.forEach(ev => {
             const date = formatDate(ev.date);
             const time = formatTime(ev.date);
             const name = ev.name || 'Untitled Event';
             const escapedName = escapeHtml(name);
             const slug = ev.slug || '';
 
+            // Date group header
+            const dateObj = new Date(ev.date);
+            let groupLabel = 'DATE TBC';
+            if (!isNaN(dateObj.getTime())) {
+                groupLabel = dateObj.toLocaleDateString('en-GB', {
+                    weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'
+                }).toUpperCase();
+            }
+            if (groupLabel !== currentGroup) {
+                eventCardsHtml += `\n            <div class="col-span-full mt-8 mb-2 border-b border-white/10 pb-3 flex items-center gap-4"><h2 class="text-white font-bold text-lg md:text-xl tracking-widest uppercase m-0 leading-none">${groupLabel}</h2></div>`;
+                currentGroup = groupLabel;
+            }
+
             // Get image URL
             const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
             const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
             const imgHtml = isPlaceholder
                 ? '<div class="w-full aspect-[4/3] bg-gradient-to-br from-[#1a0a2e] to-[#0D0115] flex items-center justify-center"><i class="fas fa-image text-4xl text-gray-800"></i></div>'
-                : `<img src="${escapeHtml(rawUrl)}" alt="${escapedName} — LGBTQ+ event in Birmingham" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111]">`;
+                : `<img src="${escapeHtml(rawUrl)}" alt="${escapedName} — LGBTQ+ event in Birmingham" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111] transition-transform duration-500 group-hover:scale-[1.03]">`;
 
             // Get venue name
             let venue = '';
@@ -75,7 +91,7 @@ async function generateEventsListingPage() {
             
             const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
 
-            return `<a href="/event/${slug}" class="group flex flex-col bg-[#0A0A0A] border-2 border-[#1E1E1E] hover:border-[var(--color-purple)] rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(155,93,229,0.3)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">`
+            eventCardsHtml += `\n            <a href="/event/${slug}" class="group flex flex-col bg-[#0A0A0A] border-2 border-[#1E1E1E] hover:border-[var(--color-purple)] rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(155,93,229,0.3)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">`
                 + imgHtml
                 + '<div class="p-4 md:p-5 flex flex-col flex-grow justify-between">'
                 + '<div>'
@@ -92,11 +108,11 @@ async function generateEventsListingPage() {
                 + '</div>'
                 + '</div>'
                 + '</a>';
-        }).join('\n            ');
+        });
 
         // Replace skeleton loaders inside #event-grid with pre-rendered cards
         const skeletonRegex = /<div id="event-grid"[^>]*>[\s\S]*?<\/main>/;
-        const replacement = `<div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        const replacement = `<div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
             ${eventCardsHtml}
         </div>
     </main>`;

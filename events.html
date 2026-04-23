@@ -116,35 +116,69 @@
 
         
 
-        /* Filter pills */
+        /* Segmented Filter Pills */
+        .filter-group {
+            background: #111;
+            padding: 4px;
+            border-radius: 9999px;
+            display: inline-flex;
+            gap: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
         .filter-pill {
             padding: 0.5rem 1.25rem;
-            font-weight: 900;
-            font-size: 0.875rem;
+            font-weight: 700;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border: 2px solid var(--color-light);
-            background: #000;
-            color: var(--color-light);
+            background: transparent;
+            color: #888;
+            border-radius: 9999px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 2px 2px 0 var(--color-purple);
         }
         .filter-pill:hover {
-            background: var(--color-purple);
-            border-color: var(--color-toxic);
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0 var(--color-toxic);
+            color: white;
+            background: rgba(255,255,255,0.05);
         }
         .filter-pill.active {
-            background: var(--color-toxic);
-            color: #000;
-            border-color: #000;
-            box-shadow: 4px 4px 0 var(--color-purple);
+            background: #222;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        /* Search Input */
+        .search-input-wrapper {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 2px rgba(155, 93, 229, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            transition: color 0.2s ease;
+        }
+        .search-input:focus + .search-icon {
+            color: var(--color-purple);
         }
 
         /* NSFW toggle */
@@ -233,10 +267,10 @@
             color: #333;
         }
 
-        /* Loading skeleton */
         .skeleton-card {
-            border: 4px solid #333;
-            background: #000;
+            border: 2px solid #1E1E1E;
+            background: #0A0A0A;
+            border-radius: 0.5rem;
             overflow: hidden;
         }
         .skeleton-img {
@@ -248,19 +282,13 @@
         }
         .skeleton-text {
             height: 1rem;
-            background: #222;
-            border-radius: 2px;
+            background: #1a1a1a;
+            border-radius: 4px;
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
         }
     </style>
 
@@ -317,12 +345,21 @@
     <section class="max-w-6xl mx-auto px-6 md:px-12 pb-8 sticky top-[84px] md:top-[92px] z-40 bg-[var(--color-bg)]/90 backdrop-blur py-4 border-b border-white/5 -mx-6 md:mx-auto md:-mx-12 mb-8">
         <div class="px-6 md:px-12 max-w-6xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div class="flex flex-wrap gap-2 items-center">
-                    <button class="filter-pill date-filter active focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="all">All</button>
-                    <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="today">Today</button>
-                    <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-week">This Week</button>
-                    <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-weekend">This Weekend</button>
-                    <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)] rounded-sm" data-filter="this-month">This Month</button>
+                <div class="flex flex-wrap gap-4 items-center flex-grow">
+                    <!-- Segmented Filters -->
+                    <div class="filter-group">
+                        <button class="filter-pill date-filter active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-filter="all">All</button>
+                        <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-filter="today">Today</button>
+                        <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-filter="this-week">This Week</button>
+                        <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-filter="this-weekend">This Weekend</button>
+                        <button class="filter-pill date-filter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-filter="this-month">This Month</button>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <div class="search-input-wrapper">
+                        <input type="text" id="event-search" class="search-input" placeholder="Search events, venues, DJs..." aria-label="Search events">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
                 </div>
                 <div class="flex items-center">
                     <button id="nsfw-toggle" class="nsfw-toggle rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]" aria-pressed="false">
@@ -437,6 +474,7 @@
         // State
         let allEvents = [];
         let activeFilter = 'all';
+        let searchQuery = '';
         let currentOffset = 0;
         let hasMoreEvents = false;
         let isLoadingMore = false;
@@ -444,6 +482,15 @@
         const PAGE_SIZE = 30;
         const grid = document.getElementById('event-grid');
         const countEl = document.getElementById('event-count');
+
+        // Search
+        const searchInput = document.getElementById('event-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderEvents();
+            });
+        }
 
         // Filter buttons
         document.querySelectorAll('.date-filter').forEach(btn => {
@@ -588,6 +635,22 @@
                 if (range) {
                     if (d < range.start || d > range.end) return false;
                 }
+
+                // Apply search filter
+                if (searchQuery) {
+                    let vName = '';
+                    if (ev.venueName) {
+                        vName = Array.isArray(ev.venueName) ? ev.venueName[0] : ev.venueName;
+                    } else if (ev.venue && ev.venue.name) {
+                        vName = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
+                    }
+                    const eventName = (ev.name || '').toLowerCase();
+                    const venueNameStr = vName.toLowerCase();
+                    if (!eventName.includes(searchQuery) && !venueNameStr.includes(searchQuery)) {
+                        return false;
+                    }
+                }
+
                 return true;
             });
 
@@ -605,17 +668,31 @@
             // Render
             if (filtered.length === 0) {
                 prideBanner.classList.add('hidden');
-                grid.innerHTML = `
-                    <div class="empty-state col-span-full">
-                        <i class="fas fa-calendar-xmark text-5xl text-gray-700 mb-4"></i>
-                        <h2 class="text-2xl font-bold text-white font-display uppercase mb-2">No Events Found</h2>
-                        <p class="text-gray-400">${activeFilter === 'all'
-                            ? 'Check back soon — new events are added regularly.'
-                            : 'Try a different time range or check back later.'
-                        }</p>
-                        ${activeFilter !== 'all' ? '<button class="filter-pill active mt-6" onclick="resetFilter()">Show All Events</button>' : ''}
-                    </div>
-                `;
+
+                let emptyMsg = '';
+                if (searchQuery) {
+                    emptyMsg = 'We couldn\'t find any events matching "<span class="text-white font-bold">' + escapeHtml(searchQuery) + '</span>".';
+                } else if (activeFilter === 'all') {
+                    emptyMsg = 'Check back soon — new events are added regularly.';
+                } else {
+                    emptyMsg = 'There are no events falling in this specific timeframe.';
+                }
+
+                let resetBtn = '';
+                if (activeFilter !== 'all' || searchQuery) {
+                    resetBtn = '<button class="filter-pill active mx-auto" onclick="resetSearchAndFilter()" style="display:inline-flex;">View All Events</button>';
+                }
+
+                grid.innerHTML = '<div class="col-span-full">'
+                    + '<div class="bg-[#111] border border-white/10 rounded-2xl p-12 text-center max-w-2xl mx-auto shadow-2xl">'
+                    + '<div class="w-20 h-20 bg-black/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">'
+                    + '<i class="fas fa-search text-3xl text-gray-500"></i>'
+                    + '</div>'
+                    + '<h2 class="text-2xl font-bold text-white font-display uppercase mb-3 tracking-wide">No Events Found</h2>'
+                    + '<p class="text-gray-400 text-lg mb-8 max-w-md mx-auto leading-relaxed">' + emptyMsg + '</p>'
+                    + resetBtn
+                    + '</div>'
+                    + '</div>';
                 return;
             }
 
@@ -623,20 +700,49 @@
             const hasPride = filtered.some(ev => (Array.isArray(ev.category) ? ev.category : []).includes('Pride'));
             prideBanner.classList.toggle('hidden', !hasPride);
 
-            let html = filtered.map((ev, index) => createCard(ev, index === 0)).join('');
+            let html = '';
+            let currentGroup = '';
+
+            filtered.forEach((ev, index) => {
+                const dateObj = new Date(ev.date);
+                let dateStr = 'Date TBC';
+                
+                if (!isNaN(dateObj.getTime())) {
+                    dateStr = dateObj.toLocaleDateString('en-GB', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        timeZone: 'UTC'
+                    }).toUpperCase();
+                }
+
+                if (dateStr !== currentGroup) {
+                    html += '<div class="col-span-full mt-8 mb-2 border-b border-white/10 pb-3 flex items-center gap-4">'
+                        + '<h2 class="text-white font-bold text-lg md:text-xl tracking-widest uppercase m-0 leading-none">' + dateStr + '</h2>'
+                        + '</div>';
+                    currentGroup = dateStr;
+                }
+                html += createCard(ev, index === 0);
+            });
 
             // Show "Load More" button if the server has more events and we're on the unfiltered view
-            if (hasMoreEvents && activeFilter === 'all') {
+            if (hasMoreEvents && activeFilter === 'all' && !searchQuery) {
                 html += `
                     <div class="col-span-full flex justify-center mt-8">
                         <button id="load-more-btn" onclick="loadMoreEvents()"
-                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem;">
+                            class="filter-pill" style="font-size:1rem; padding:0.75rem 2.5rem; background:#111; border:1px solid rgba(255,255,255,0.1);">
                             LOAD MORE EVENTS
                         </button>
                     </div>`;
             }
 
             grid.innerHTML = html;
+        }
+
+        function resetSearchAndFilter() {
+            if (searchInput) searchInput.value = '';
+            searchQuery = '';
+            resetFilter();
         }
 
         function resetFilter() {
@@ -692,13 +798,13 @@
                 imgHtml = '<div class="w-full aspect-[4/3] bg-gradient-to-br from-[#1a0a2e] to-[#0D0115] flex items-center justify-center"><i class="fas fa-image text-4xl text-gray-800"></i></div>';
             } else {
                 if (isFirst) {
-                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" fetchpriority="high" class="w-full aspect-[4/3] object-cover bg-[#111]">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" fetchpriority="high" class="w-full aspect-[4/3] object-cover bg-[#111] transition-transform duration-500 group-hover:scale-[1.03]">';
                     // Dynamically inject preload link to document head for the first image
                     if (!document.querySelector('link[rel="preload"][href="' + escapeHtml(rawUrl) + '"]')) {
                         document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + escapeHtml(rawUrl) + '" fetchpriority="high">');
                     }
                 } else {
-                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111]">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111] transition-transform duration-500 group-hover:scale-[1.03]">';
                 }
             }
 
