@@ -479,6 +479,7 @@
         let hasMoreEvents = false;
         let isLoadingMore = false;
         let showNSFW = false;
+        let totalUpcomingCount = 0; // Total events in DB (from API)
         const PAGE_SIZE = 30;
         const grid = document.getElementById('event-grid');
         const countEl = document.getElementById('event-count');
@@ -542,6 +543,7 @@
                         allEvents = data.events;
                     }
                     hasMoreEvents = data.hasMore || false;
+                    totalUpcomingCount = data.totalCount || allEvents.length;
                     currentOffset += data.events.length;
                 } else {
                     throw new Error('No events in response');
@@ -657,10 +659,16 @@
             // Sort by date ascending
             filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            // Update count
-            countEl.textContent = filtered.length === 1
-                ? '1 event'
-                : filtered.length + ' events';
+            // Update count — show filtered vs total when filtering
+            if (searchQuery || activeFilter !== 'all') {
+                countEl.textContent = filtered.length + ' of ' + totalUpcomingCount + ' events';
+            } else if (hasMoreEvents) {
+                countEl.textContent = 'Showing ' + filtered.length + ' of ' + totalUpcomingCount + ' upcoming events';
+            } else {
+                countEl.textContent = filtered.length === 1
+                    ? '1 upcoming event'
+                    : filtered.length + ' upcoming events';
+            }
 
             // Hide Pride banner when no results
             const prideBanner = document.getElementById('pride-banner');
