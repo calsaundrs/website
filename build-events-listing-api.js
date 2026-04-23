@@ -58,8 +58,8 @@ async function generateEventsListingPage() {
             const rawUrl = ev.image ? (typeof ev.image === 'string' ? ev.image : ev.image.url) : null;
             const isPlaceholder = !rawUrl || rawUrl.includes('placehold');
             const imgHtml = isPlaceholder
-                ? '<div class="event-placeholder"><i class="fas fa-image"></i></div>'
-                : `<img src="${escapeHtml(rawUrl)}" alt="${escapedName} — LGBTQ+ event in Birmingham" loading="lazy">`;
+                ? '<div class="w-full aspect-[4/3] bg-gradient-to-br from-[#1a0a2e] to-[#0D0115] flex items-center justify-center"><i class="fas fa-image text-4xl text-gray-800"></i></div>'
+                : `<img src="${escapeHtml(rawUrl)}" alt="${escapedName} — LGBTQ+ event in Birmingham" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111]">`;
 
             // Get venue name
             let venue = '';
@@ -69,15 +69,27 @@ async function generateEventsListingPage() {
                 venue = Array.isArray(ev.venue.name) ? ev.venue.name[0] : ev.venue.name;
             }
 
-            return `<a href="/event/${slug}" class="event-card">`
+            let cats = [];
+            if (Array.isArray(ev.category)) cats = ev.category;
+            else if (typeof ev.category === 'string') cats = ev.category.split(',').map(s => s.trim());
+            
+            const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
+
+            return `<a href="/event/${slug}" class="group flex flex-col bg-[#0A0A0A] border-2 border-[#1E1E1E] hover:border-[var(--color-purple)] rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(155,93,229,0.3)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">`
                 + imgHtml
-                + '<div class="card-body">'
-                + '<p class="text-[var(--color-toxic)] font-bold text-sm mb-1">'
-                + '<i class="fas fa-calendar-day mr-1"></i>' + date
-                + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-1 text-[var(--color-toxic)]"></i>' + time + '</span>' : '')
+                + '<div class="p-4 md:p-5 flex flex-col flex-grow justify-between">'
+                + '<div>'
+                + '<p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2 flex items-center">'
+                + '<i class="fas fa-calendar-day mr-1.5 opacity-80"></i>' + date
+                + (time ? ' <span class="text-white ml-2 flex items-center"><i class="fas fa-clock mr-1.5 text-[var(--color-toxic)] opacity-80"></i>' + time + '</span>' : '')
                 + '</p>'
-                + '<h3 class="text-xl font-black text-white uppercase font-display leading-tight mb-2">' + escapedName + '</h3>'
-                + (venue ? '<p class="text-gray-400 text-sm"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
+                + '<h3 class="text-xl font-bold text-white font-display leading-tight mb-2 group-hover:text-[var(--color-toxic)] transition-colors">' + escapedName + '</h3>'
+                + (venue ? '<p class="text-gray-300 font-medium text-sm mb-4"><i class="fas fa-map-marker-alt mr-1.5 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
+                + '</div>'
+                + '<div class="flex flex-wrap gap-2 mt-auto">'
+                + (cats.includes('Pride') ? '<span class="bg-[var(--color-toxic)] text-black text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm">PRIDE</span>' : '')
+                + (isNSFW ? '<span class="bg-[var(--color-pink)] text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm">18+</span>' : '')
+                + '</div>'
                 + '</div>'
                 + '</a>';
         }).join('\n            ');

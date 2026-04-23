@@ -689,16 +689,16 @@
             let imgHtml = '';
 
             if (isPlaceholder) {
-                imgHtml = '<div class="event-placeholder"><i class="fas fa-image"></i></div>';
+                imgHtml = '<div class="w-full aspect-[4/3] bg-gradient-to-br from-[#1a0a2e] to-[#0D0115] flex items-center justify-center"><i class="fas fa-image text-4xl text-gray-800"></i></div>';
             } else {
                 if (isFirst) {
-                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" fetchpriority="high">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" fetchpriority="high" class="w-full aspect-[4/3] object-cover bg-[#111]">';
                     // Dynamically inject preload link to document head for the first image
                     if (!document.querySelector('link[rel="preload"][href="' + escapeHtml(rawUrl) + '"]')) {
                         document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" href="' + escapeHtml(rawUrl) + '" fetchpriority="high">');
                     }
                 } else {
-                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" loading="lazy">';
+                    imgHtml = '<img src="' + escapeHtml(rawUrl) + '" alt="' + escapeHtml(ev.name || '') + '" loading="lazy" class="w-full aspect-[4/3] object-cover bg-[#111]">';
                 }
             }
 
@@ -718,32 +718,25 @@
                 cats = ev.category.split(',').map(s => s.trim());
             }
 
-            const prideBadge = cats.includes('Pride')
-                ? '<p class="text-xs font-bold mt-2" style="background:linear-gradient(90deg,#e40303,#ff8c00,#ffed00,#008026,#004dff,#750787);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🏳️‍🌈 Birmingham Pride Weekend</p>'
-                : '';
-
             // Adult/NSFW badge
             const isNSFW = cats.includes('Adult') || cats.includes('Kink') || ev.ageRestriction === '18+';
-            const adultBadge = isNSFW
-                ? '<p class="text-xs font-bold mt-1 text-[var(--color-pink)]"><i class="fas fa-exclamation-triangle mr-1"></i> NSFW</p>'
-                : '';
 
             const slug = ev.slug || '';
 
-            return '<a href="/event/' + slug + '" class="brutalist-card !p-0 group overflow-hidden transition-all duration-300 hover:shadow-glow focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">'
+            return '<a href="/event/' + slug + '" class="group flex flex-col bg-[#0A0A0A] border-2 border-[#1E1E1E] hover:border-[var(--color-purple)] rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(155,93,229,0.3)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-toxic)]">'
                 + imgHtml
-                + '<div class="p-6 flex flex-col justify-between h-full">'
+                + '<div class="p-4 md:p-5 flex flex-col flex-grow justify-between">'
                 + '<div>'
-                + '<p class="text-[var(--color-toxic)] font-black text-xs uppercase tracking-widest mb-3">'
-                + '<i class="fas fa-calendar-day mr-2 opacity-70"></i>' + date
-                + (time ? ' <span class="text-white ml-2"><i class="fas fa-clock mr-2 text-[var(--color-toxic)] opacity-70"></i>' + time + '</span>' : '')
+                + '<p class="text-[var(--color-toxic)] font-bold text-xs uppercase tracking-widest mb-2 flex items-center">'
+                + '<i class="fas fa-calendar-day mr-1.5 opacity-80"></i>' + date
+                + (time ? ' <span class="text-white ml-2 flex items-center"><i class="fas fa-clock mr-1.5 text-[var(--color-toxic)] opacity-80"></i>' + time + '</span>' : '')
                 + '</p>'
-                + '<h3 class="text-2xl font-black text-white uppercase font-display leading-[1.1] tracking-tight mb-4 group-hover:text-[var(--color-toxic)] transition-colors">' + escapeHtml(ev.name || 'Untitled Event') + '</h3>'
-                + (venue ? '<p class="text-white font-bold text-sm mb-4 opacity-70"><i class="fas fa-map-marker-alt mr-2 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
+                + '<h3 class="text-xl font-bold text-white font-display leading-tight mb-2 group-hover:text-[var(--color-toxic)] transition-colors">' + escapeHtml(ev.name || 'Untitled Event') + '</h3>'
+                + (venue ? '<p class="text-gray-300 font-medium text-sm mb-4"><i class="fas fa-map-marker-alt mr-1.5 text-[var(--color-pink)]"></i>' + escapeHtml(venue) + '</p>' : '')
                 + '</div>'
-                + '<div class="flex flex-wrap gap-2">'
-                + (cats.includes('Pride') ? '<span class="sticker bg-[var(--color-toxic)] !text-black text-[10px] uppercase font-black px-2 py-1 shadow-none">PRIDE</span>' : '')
-                + (isNSFW ? '<span class="sticker bg-[var(--color-pink)] text-white text-[10px] uppercase font-black px-2 py-1 shadow-none">18+</span>' : '')
+                + '<div class="flex flex-wrap gap-2 mt-auto">'
+                + (cats.includes('Pride') ? '<span class="bg-[var(--color-toxic)] text-black text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm">PRIDE</span>' : '')
+                + (isNSFW ? '<span class="bg-[var(--color-pink)] text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm">18+</span>' : '')
                 + '</div>'
                 + '</div>'
                 + '</a>';
