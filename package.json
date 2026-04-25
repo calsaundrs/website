@@ -33,7 +33,7 @@
     "@remotion/player": "^4.0.330",
     "@remotion/renderer": "^4.0.330",
     "cheerio": "^1.0.0-rc.12",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.10.0",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.1.0",
     "formidable": "^3.5.1",
@@ -45,8 +45,7 @@
     "react-dom": "^18.2.0",
     "resend": "^6.0.3",
     "sharp": "^0.33.2",
-    "uuid": "^9.0.1",
-    "xlsx": "^0.18.5"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
