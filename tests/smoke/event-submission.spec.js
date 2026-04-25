@@ -135,6 +135,83 @@ test.describe('Event submission end-to-end', () => {
     expect(submitted).toBe(true);
   });
 
+  test('shows an error toast when no venue is selected', async ({ page }) => {
+    let functionCalled = false;
+    await page.route(FUNCTION_URL, async (route) => {
+      functionCalled = true;
+      await route.fulfill({ status: 200, body: '{}' });
+    });
+
+    await page.fill('#event-name', 'No Venue Selected');
+    await page.fill('#description', 'Should not submit.');
+    await page.fill('#date', futureDate(30));
+    await page.fill('#start-time', '20:00');
+    await page.fill('#contact-name', 'Test');
+    await page.fill('#contact-email', 'test@example.com');
+    await page.locator('input[name="categories"]').first().check();
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByText(/please select a venue/i)).toBeVisible({ timeout: 5000 });
+    expect(functionCalled).toBe(false);
+  });
+
+  test('shows an error toast when contact email is malformed', async ({ page }) => {
+    let functionCalled = false;
+    await page.route(FUNCTION_URL, async (route) => {
+      functionCalled = true;
+      await route.fulfill({ status: 200, body: '{}' });
+    });
+
+    await page.fill('#event-name', 'Bad Email');
+    await page.fill('#description', 'Email validation test.');
+    await page.fill('#date', futureDate(30));
+    await page.fill('#start-time', '20:00');
+    await page.fill('#contact-name', 'Test');
+    await page.locator('input[name="categories"]').first().check();
+    await page.locator('#add-new-venue').click();
+    await page.fill('#new-venue-name', 'Test Venue');
+
+    await page.locator('#contact-email').evaluate((el) => {
+      el.removeAttribute('type');
+      el.value = 'not-a-valid-email';
+    });
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByText(/valid email address/i)).toBeVisible({ timeout: 5000 });
+    expect(functionCalled).toBe(false);
+  });
+
+  test('shows an error toast when event date is in the past', async ({ page }) => {
+    let functionCalled = false;
+    await page.route(FUNCTION_URL, async (route) => {
+      functionCalled = true;
+      await route.fulfill({ status: 200, body: '{}' });
+    });
+
+    await page.fill('#event-name', 'Past Date');
+    await page.fill('#description', 'Past date validation test.');
+    await page.fill('#start-time', '20:00');
+    await page.fill('#contact-name', 'Test');
+    await page.fill('#contact-email', 'test@example.com');
+    await page.locator('input[name="categories"]').first().check();
+    await page.locator('#add-new-venue').click();
+    await page.fill('#new-venue-name', 'Test Venue');
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    await page.locator('#date').evaluate((el, value) => {
+      el.removeAttribute('min');
+      el.value = value;
+    }, yesterday.toISOString().slice(0, 10));
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByText(/cannot be in the past/i)).toBeVisible({ timeout: 5000 });
+    expect(functionCalled).toBe(false);
+  });
+
   test('shows an error toast when the server returns 500', async ({ page }) => {
     await page.route(FUNCTION_URL, async (route) => {
       await route.fulfill({

@@ -896,7 +896,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Recurring event validation
+        // Recurring event validation. The recurrence-start-date branch is a
+        // safety net: in normal flow the is-recurring change handler copies
+        // the main event date into recurring-start-date as soon as the
+        // checkbox is ticked, so this branch is unreachable through the UI.
+        // Kept in case the auto-fill logic is ever removed or fails.
         if (isRecurringCheckbox.checked) {
             const pattern = document.querySelector('input[name="recurring-pattern"]:checked');
             const startDate = document.getElementById('recurring-start-date').value;
