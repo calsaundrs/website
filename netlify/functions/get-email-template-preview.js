@@ -1,128 +1,125 @@
 const EmailTemplates = require('./services/email-templates');
 
-exports.handler = async (event, context) => {
-  // Enable CORS
+const DEFAULTS = {
+  eventName: 'Pride Night at The Village Inn',
+  eventId: 'evt-pride-001',
+  eventUrl: 'https://brumoutloud.co.uk/event/pride-night-village-inn',
+  eventDate: '2026-05-23',
+  eventTime: '20:00',
+  venueName: 'The Village Inn',
+  image: '',
+  reason: 'The description was too short — could you flesh it out a bit so attendees know what to expect?',
+  resubmitUrl: '',
+  promoterEmail: 'promoter@example.com',
+};
+
+const SUBJECTS = {
+  submission_confirmation: (d) => `Submission received — ${d.eventName}`,
+  approval_notification: (d) => `You're live on Brum Outloud — ${d.eventName}`,
+  rejection_notification: (d) => `Submission update — ${d.eventName}`,
+  event_reminder: (d) => `Tomorrow: ${d.eventName}`,
+  admin_submission_alert: (d) => `New submission — ${d.eventName}`,
+};
+
+function render(templates, templateType, d) {
+  switch (templateType) {
+    case 'submission_confirmation':
+      return templates.getSubmissionConfirmationTemplate(d.eventName, d.eventId);
+    case 'approval_notification':
+      return templates.getApprovalTemplate(d.eventName, d.eventUrl, {
+        image: d.image || undefined,
+        eventDate: d.eventDate || undefined,
+        eventTime: d.eventTime || undefined,
+        venueName: d.venueName || undefined,
+      });
+    case 'rejection_notification':
+      return templates.getRejectionTemplate(d.eventName, d.reason, {
+        resubmitUrl: d.resubmitUrl || undefined,
+      });
+    case 'event_reminder':
+      return templates.getEventReminderTemplate(d.eventName, d.eventDate, d.eventUrl);
+    case 'admin_submission_alert':
+      return templates.getAdminSubmissionTemplate(
+        d.eventName,
+        d.promoterEmail || null,
+        d.eventId
+      );
+    default:
+      return null;
+  }
+}
+
+exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Content-Type': 'application/json',
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
+    return { statusCode: 200, headers, body: '' };
   }
 
   try {
     const templates = new EmailTemplates();
-    const { templateType, data } = event.queryStringParameters || {};
+
+    let templateType;
+    let overrides = {};
+
+    if (event.httpMethod === 'POST') {
+      const body = JSON.parse(event.body || '{}');
+      templateType = body.templateType;
+      overrides = body.data || {};
+    } else {
+      templateType = event.queryStringParameters?.templateType;
+    }
 
     if (!templateType) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Template type is required' })
+        body: JSON.stringify({ success: false, error: 'templateType is required' }),
       };
     }
 
-    let htmlContent = '';
-    let subject = '';
+    if (!SUBJECTS[templateType]) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Invalid templateType' }),
+      };
+    }
 
-    // Sample data for previews
-    const sampleData = {
-      eventName: data?.eventName || 'Pride Night at The Village Inn',
-      eventId: data?.eventId || 'pride-night-2024-001',
-      eventUrl: data?.eventUrl || 'https://brumoutloud.co.uk/event/pride-night-village-inn',
-      eventDate: data?.eventDate || '2024-01-15 at 20:00',
-      promoterEmail: data?.promoterEmail || 'promoter@example.com',
-      reason: data?.reason || 'Please provide more details about your event, including venue information and a clear description of what attendees can expect.'
-    };
+    const data = { ...DEFAULTS, ...overrides };
+    const rendered = render(templates, templateType, data);
 
-    switch (templateType) {
-      case 'submission_confirmation':
-        ({ html: htmlContent } = templates.getSubmissionConfirmationTemplate(
-          sampleData.eventName,
-          sampleData.eventId
-        ));
-        subject = `Submission received — ${sampleData.eventName}`;
-        break;
-
-      case 'approval_notification':
-        ({ html: htmlContent } = templates.getApprovalTemplate(
-          sampleData.eventName,
-          sampleData.eventUrl,
-          {
-            image: sampleData.image,
-            eventDate: sampleData.eventDate,
-            eventTime: sampleData.eventTime,
-            venueName: sampleData.venueName,
-          }
-        ));
-        subject = `You're live on Brum Outloud — ${sampleData.eventName}`;
-        break;
-
-      case 'rejection_notification':
-        ({ html: htmlContent } = templates.getRejectionTemplate(
-          sampleData.eventName,
-          sampleData.reason
-        ));
-        subject = `Submission update — ${sampleData.eventName}`;
-        break;
-
-      case 'event_reminder':
-        ({ html: htmlContent } = templates.getEventReminderTemplate(
-          sampleData.eventName,
-          sampleData.eventDate,
-          sampleData.eventUrl
-        ));
-        subject = `Tomorrow: ${sampleData.eventName}`;
-        break;
-
-      case 'admin_submission_alert':
-        ({ html: htmlContent } = templates.getAdminSubmissionTemplate(
-          sampleData.eventName,
-          sampleData.promoterEmail,
-          sampleData.eventId
-        ));
-        subject = `New submission — ${sampleData.eventName}`;
-        break;
-
-      default:
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({ error: 'Invalid template type' })
-        };
+    if (!rendered) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ success: false, error: 'Render failed' }),
+      };
     }
 
     return {
       statusCode: 200,
-      headers: {
-        ...headers,
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify({
         success: true,
         templateType,
-        subject,
-        htmlContent,
-        sampleData
-      })
+        subject: SUBJECTS[templateType](data),
+        htmlContent: rendered.html,
+        textContent: rendered.text,
+        sampleData: data,
+      }),
     };
-
   } catch (error) {
     console.error('Email template preview error:', error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({
-        success: false,
-        error: error.message
-      })
+      body: JSON.stringify({ success: false, error: error.message }),
     };
   }
 };
