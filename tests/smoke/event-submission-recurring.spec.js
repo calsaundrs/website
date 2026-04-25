@@ -79,6 +79,22 @@ test.describe('Recurring event submission', () => {
     expect(functionCalled).toBe(false);
   });
 
+  test('shows a validation error when recurring is checked but no pattern is picked', async ({ page }) => {
+    let functionCalled = false;
+    await page.route(FUNCTION_URL, async (route) => {
+      functionCalled = true;
+      await route.fulfill({ status: 200, body: '{}' });
+    });
+
+    await fillBaseFields(page);
+    await page.locator('#is-recurring').check();
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByText(/select a recurrence pattern/i)).toBeVisible({ timeout: 5000 });
+    expect(functionCalled).toBe(false);
+  });
+
   test('toggling is-recurring auto-fills recurring-start-date from the main event date', async ({ page }) => {
     const date = futureDate(30);
     await page.fill('#date', date);
