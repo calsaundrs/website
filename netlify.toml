@@ -42,7 +42,6 @@
     "node-fetch",
     "parse-multipart",
     "uuid",
-    "xlsx",
     "handlebars",
     "cheerio"
   ]
