@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script type="module" src="/js/auth-guard.js"></script>
+    <meta name="admin-breadcrumb-section" content="Overview">
+    <meta name="admin-breadcrumb-page" content="Review Submissions">
+    <script type="module" src="/js/admin-chrome.js"></script>
     
     <link rel="icon" href="/faviconV2.png" type="image/png">
 
@@ -42,75 +45,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <div class="flex h-screen overflow-hidden bg-[#050505]">
     <!-- Persistent Sidebar -->
-    <aside class="w-64 flex-shrink-0 bg-[#0A0A0A] border-r border-white/5 flex flex-col h-full hidden lg:flex relative z-30">
-        <!-- Sidebar Brand -->
-        <div class="p-6 border-b border-white/5">
-            <a href="/admin-settings.html" class="flex items-center space-x-3 text-white hover:text-gray-300 transition-colors">
-                <div class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-                    <i class="fas fa-bolt text-sm text-white"></i>
-                </div>
-                <span class="font-display font-bold tracking-wider uppercase text-sm">EVENTFLOW</span>
-            </a>
-        </div>
-        <!-- Sidebar Links -->
-        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
-            <a href="admin-approvals.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-white/10 border border-white/5 shadow-[inset_0_1px_rgba(255,255,255,0.1)] transition-all">
-                <i class="fas fa-check-circle w-5 mr-3 text-center text-[var(--color-toxic)]"></i> Approvals
-            </a>
-            <a href="admin-edit-events.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i class="fas fa-calendar-alt w-5 mr-3 text-center text-gray-500"></i> Events
-            </a>
-            <a href="admin-manage-venues.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i class="fas fa-map-marker-alt w-5 mr-3 text-center text-gray-500"></i> Venues
-            </a>
-            <a href="admin-import-events.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i class="fas fa-cloud-upload-alt w-5 mr-3 text-center text-gray-500"></i> Import
-            </a>
-            <a href="admin-social-assets.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                <i class="fas fa-images w-5 mr-3 text-center text-gray-500"></i> Social
-            </a>
-            <div class="pt-6 mt-6 border-t border-white/5 space-y-2">
-                <p class="px-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/30 mb-2">SYSTEM</p>
-                <a href="admin-settings.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                    <i class="fas fa-cog w-5 mr-3 text-center text-gray-500"></i> Settings
-                </a>
-                <a href="admin-system-status.html" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
-                    <i class="fas fa-heartbeat w-5 mr-3 text-center text-gray-500"></i> Status
-                </a>
-            </div>
-        </nav>
-        <!-- Sidebar Bottom -->
-        <div class="p-4 border-t border-white/5 space-y-2">
-            <button id="logout-btn" class="flex justify-center items-center px-4 py-3 text-xs font-bold tracking-widest uppercase rounded-lg text-gray-400 hover:text-white bg-white/5 hover:bg-red-500 hover:text-white transition-colors w-full border border-white/5 hover:border-red-500 shadow-sm">
-                <i class="fas fa-sign-out-alt mr-2"></i> Sign Out
-            </button>
-            <a href="/" target="_blank" class="flex justify-center items-center px-4 py-3 text-xs font-bold tracking-widest uppercase rounded-lg text-gray-400 hover:text-white bg-white/5 hover:bg-[var(--color-toxic)] hover:text-black transition-colors w-full border border-white/5 hover:border-[var(--color-toxic)] shadow-sm">
-                <i class="fas fa-external-link-alt mr-2"></i> Live Site
-            </a>
-        </div>
-    </aside>
+    <div data-admin-sidebar></div>
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
         <!-- Dashboard Top Header -->
-        <header class="h-16 flex-shrink-0 bg-[#050505] border-b border-white/5 flex items-center justify-between px-8 relative z-20">
-            <div class="flex items-center">
-                <button class="lg:hidden text-gray-400 hover:text-white mr-6 transition-colors">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <h2 class="text-white font-semibold text-sm tracking-wide hidden sm:flex items-center">
-                    <span class="text-gray-500 mr-2">Overview</span> <span class="text-gray-600 mx-2">/</span> Review Submissions
-                </h2>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="h-8 w-8 rounded bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-purple-500/20 ring-2 ring-black">
-                    A
-                </div>
-            </div>
-        </header>
+        <div data-admin-topbar></div>
 
         <!-- Main Scrollable Content -->
         <main class="flex-1 overflow-y-auto w-full">
