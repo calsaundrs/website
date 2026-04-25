@@ -75,9 +75,9 @@ test.describe('Admin venue management', () => {
     });
 
     const dialogs = [];
-    adminPage.on('dialog', async (d) => {
+    adminPage.on('dialog', (d) => {
       dialogs.push(d.message());
-      await d.accept();
+      d.accept().catch(() => {});
     });
 
     await adminPage.goto('/admin-manage-venues.html', { waitUntil: 'domcontentloaded' });
@@ -126,9 +126,9 @@ test.describe('Admin venue management', () => {
     });
 
     const dialogMessages = [];
-    adminPage.on('dialog', async (d) => {
+    adminPage.on('dialog', (d) => {
       dialogMessages.push(d.message());
-      await d.accept();
+      d.accept().catch(() => {});
     });
 
     await adminPage.goto('/admin-manage-venues.html', { waitUntil: 'domcontentloaded' });
