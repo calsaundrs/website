@@ -89,7 +89,7 @@ class EnhancedAnimations {
      * Setup staggered animations for cards
      */
     setupStaggeredAnimations() {
-        const cards = document.querySelectorAll('.item-card, .feature-card, .venue-card');
+        const cards = document.querySelectorAll('.feature-card, .venue-card');
         
         cards.forEach((card, index) => {
             // Add staggered delay
