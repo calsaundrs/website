@@ -4,6 +4,9 @@ node_modules
 .netlify
 
 .env
+.env.test
+.env.test.local
+tests/.auth/
 test-results/
 playwright-report/
 .claude/
