@@ -105,6 +105,36 @@ test.describe('Event submission end-to-end', () => {
     expect(requiredEmpty).toBe(true);
   });
 
+  test('submits when an existing venue is selected (regression: hidden #new-venue-name must not block submit)', async ({ page }) => {
+    let submitted = false;
+    await page.route(FUNCTION_URL, async (route) => {
+      submitted = true;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true }),
+      });
+    });
+
+    await page.fill('#event-name', 'Existing Venue Submission');
+    await page.fill('#description', 'Smoke test for the existing-venue path.');
+    await page.fill('#date', futureDate(30));
+    await page.fill('#start-time', '20:30');
+    await page.fill('#contact-name', 'Test');
+    await page.fill('#contact-email', 'test@example.com');
+    await page.locator('input[name="categories"]').first().check();
+
+    await page.evaluate(() => {
+      document.getElementById('venue-id').value = 'existing-venue-id';
+      document.getElementById('venue-search').value = 'Existing Venue';
+    });
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByText(/Event submitted successfully/i)).toBeVisible({ timeout: 10000 });
+    expect(submitted).toBe(true);
+  });
+
   test('shows an error toast when the server returns 500', async ({ page }) => {
     await page.route(FUNCTION_URL, async (route) => {
       await route.fulfill({
