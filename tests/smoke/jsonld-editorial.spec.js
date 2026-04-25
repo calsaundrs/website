@@ -22,7 +22,27 @@ async function extractJsonLd(page) {
 }
 
 function findByType(blocks, type) {
-  return blocks.find((b) => b && b['@type'] === type);
+  function walk(node) {
+    if (!node || typeof node !== 'object') return null;
+    if (node['@type'] === type) return node;
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        const hit = walk(item);
+        if (hit) return hit;
+      }
+      return null;
+    }
+    for (const value of Object.values(node)) {
+      const hit = walk(value);
+      if (hit) return hit;
+    }
+    return null;
+  }
+  for (const block of blocks) {
+    const hit = walk(block);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 test.describe('Editorial page JSON-LD', () => {

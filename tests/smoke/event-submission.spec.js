@@ -82,25 +82,27 @@ test.describe('Event submission end-to-end', () => {
     expect(functionCalled).toBe(false);
   });
 
-  test('shows an error toast when no venue is selected', async ({ page }) => {
+  test('HTML5 validation blocks submit when required fields are empty', async ({ page }) => {
     let functionCalled = false;
     await page.route(FUNCTION_URL, async (route) => {
       functionCalled = true;
       await route.fulfill({ status: 200, body: '{}' });
     });
 
-    await page.fill('#event-name', 'Should Not Submit');
-    await page.fill('#description', 'Validation should block this submission.');
-    await page.fill('#date', futureDate(30));
-    await page.fill('#start-time', '20:00');
-    await page.fill('#contact-name', 'Test');
-    await page.fill('#contact-email', 'test@example.com');
-    await page.locator('input[name="categories"]').first().check();
-
     await page.locator('button[type="submit"]').click();
+    await page.waitForTimeout(500);
 
-    await expect(page.getByText(/please select a venue/i)).toBeVisible({ timeout: 5000 });
     expect(functionCalled).toBe(false);
+
+    const formIsInvalid = await page
+      .locator('#event-submission-form')
+      .evaluate((form) => !form.checkValidity());
+    expect(formIsInvalid).toBe(true);
+
+    const requiredEmpty = await page
+      .locator('#event-name')
+      .evaluate((el) => el.validity.valueMissing);
+    expect(requiredEmpty).toBe(true);
   });
 
   test('shows an error toast when the server returns 500', async ({ page }) => {

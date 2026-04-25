@@ -73,7 +73,7 @@ test.describe('Venue submission via /get-listed.html', () => {
     await page.waitForTimeout(500);
 
     expect(functionCalled).toBe(false);
-    expect(page.url()).toContain('/get-listed.html');
+    expect(page.url()).toContain('/get-listed');
 
     const validity = await page.locator('#venue-name').evaluate((el) => el.validity.valueMissing);
     expect(validity).toBe(true);

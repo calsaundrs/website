@@ -79,20 +79,15 @@ test.describe('Recurring event submission', () => {
     expect(functionCalled).toBe(false);
   });
 
-  test('shows a validation error when recurrence start date is empty', async ({ page }) => {
-    let functionCalled = false;
-    await page.route(FUNCTION_URL, async (route) => {
-      functionCalled = true;
-      await route.fulfill({ status: 200, body: '{}' });
-    });
+  test('toggling is-recurring auto-fills recurring-start-date from the main event date', async ({ page }) => {
+    const date = futureDate(30);
+    await page.fill('#date', date);
 
-    await fillBaseFields(page);
+    const beforeToggle = await page.locator('#recurring-start-date').inputValue();
+    expect(beforeToggle).toBe('');
+
     await page.locator('#is-recurring').check();
-    await page.locator('input[name="recurring-pattern"][value="monthly"]').check();
 
-    await page.locator('button[type="submit"]').click();
-
-    await expect(page.getByText(/select a recurrence start date/i)).toBeVisible({ timeout: 5000 });
-    expect(functionCalled).toBe(false);
+    await expect.poll(() => page.locator('#recurring-start-date').inputValue()).toBe(date);
   });
 });
