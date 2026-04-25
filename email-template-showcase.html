@@ -2,490 +2,222 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Template Showcase - Brum Outloud</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Email Template Preview | Admin Panel</title>
     <link rel="stylesheet" href="/css/tailwind.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'accent-color': '#E83A99',
-                        'secondary-color': '#8B5CF6'
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <script type="module" src="/js/auth-guard.js"></script>
+    <meta name="admin-breadcrumb-section" content="System">
+    <meta name="admin-breadcrumb-page" content="Email Templates">
+    <script type="module" src="/js/admin-chrome.js"></script>
     <style>
-        .template-card {
-            background: linear-gradient(135deg, #111827 0%, #1a0d2e 50%, #111827 100%);
-            border: 1px solid rgba(75, 85, 99, 0.3);
-            transition: all 0.3s ease;
-        }
-        .template-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(232, 58, 153, 0.5);
-            box-shadow: 0 20px 40px rgba(232, 58, 153, 0.2);
-        }
-        .preview-frame {
-            background: white;
+        .preview-iframe {
+            width: 100%;
+            height: 720px;
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: #fff;
         }
-        .template-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            margin: 0 auto 20px;
+        .control-panel {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
         }
-        .submission-icon { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
-        .approval-icon { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
-        .rejection-icon { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
-        .reminder-icon { background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); }
-        .admin-icon { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
+        .variant-toggle {
+            cursor: pointer;
+        }
+        .variant-toggle input { accent-color: var(--color-toxic); }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-gray-800 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                    <a href="/admin-email-management.html" class="text-accent-color hover:text-white transition-colors">
-                        <i class="fas fa-arrow-left text-xl"></i>
-                    </a>
-                    <h1 class="text-2xl font-bold">Email Template Showcase</h1>
+<body class="antialiased bg-[#050505] min-h-screen">
+<div class="flex h-screen overflow-hidden">
+    <div data-admin-sidebar></div>
+    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
+        <div data-admin-topbar></div>
+        <main class="flex-1 overflow-y-auto w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
+                <div class="mb-8">
+                    <h1 class="font-display font-black tracking-wide text-3xl md:text-4xl text-white uppercase mb-2">Email Templates</h1>
+                    <p class="text-gray-400">Preview every promoter and admin email under varied input. Toggles re-render the iframe instantly.</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-400">Design System Integration</span>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-white via-accent-color to-secondary-color bg-clip-text text-transparent">
-                Professional Email Templates
-            </h1>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                Beautiful, responsive email templates built with the Brum Outloud design system. 
-                Each template is optimized for engagement and brand consistency.
-            </p>
-        </div>
-
-        <!-- Template Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
-            <!-- Submission Confirmation -->
-            <div class="template-card rounded-xl p-6">
-                <div class="template-icon submission-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3 class="text-xl font-bold text-center mb-4">Submission Confirmation</h3>
-                <p class="text-gray-400 text-center mb-6">
-                    Sent immediately when a promoter submits an event. Provides confirmation and next steps.
-                </p>
-                <div class="preview-frame mb-4" style="height: 300px; overflow: hidden;">
-                    <iframe id="submission-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('submission_confirmation')" 
-                            class="bg-accent-color hover:bg-pink-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                    <button onclick="testTemplate('submission_confirmation')" 
-                            class="bg-secondary-color hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Test
-                    </button>
-                </div>
+                <div id="previews" class="space-y-12"></div>
             </div>
-
-            <!-- Approval Notification -->
-            <div class="template-card rounded-xl p-6">
-                <div class="template-icon approval-icon">
-                    <i class="fas fa-thumbs-up"></i>
-                </div>
-                <h3 class="text-xl font-bold text-center mb-4">Approval Notification</h3>
-                <p class="text-gray-400 text-center mb-6">
-                    Celebratory email when an event is approved and goes live on the platform.
-                </p>
-                <div class="preview-frame mb-4" style="height: 300px; overflow: hidden;">
-                    <iframe id="approval-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('approval_notification')" 
-                            class="bg-accent-color hover:bg-pink-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                    <button onclick="testTemplate('approval_notification')" 
-                            class="bg-secondary-color hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Test
-                    </button>
-                </div>
-            </div>
-
-            <!-- Rejection Notification -->
-            <div class="template-card rounded-xl p-6">
-                <div class="template-icon rejection-icon">
-                    <i class="fas fa-times-circle"></i>
-                </div>
-                <h3 class="text-xl font-bold text-center mb-4">Rejection Notification</h3>
-                <p class="text-gray-400 text-center mb-6">
-                    Constructive feedback when an event needs changes before approval.
-                </p>
-                <div class="preview-frame mb-4" style="height: 300px; overflow: hidden;">
-                    <iframe id="rejection-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('rejection_notification')" 
-                            class="bg-accent-color hover:bg-pink-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                    <button onclick="testTemplate('rejection_notification')" 
-                            class="bg-secondary-color hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Test
-                    </button>
-                </div>
-            </div>
-
-            <!-- Event Reminder -->
-            <div class="template-card rounded-xl p-6">
-                <div class="template-icon reminder-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <h3 class="text-xl font-bold text-center mb-4">Event Reminder</h3>
-                <p class="text-gray-400 text-center mb-6">
-                    Friendly reminder sent the day before an event to help promoters prepare.
-                </p>
-                <div class="preview-frame mb-4" style="height: 300px; overflow: hidden;">
-                    <iframe id="reminder-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('event_reminder')" 
-                            class="bg-accent-color hover:bg-pink-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                    <button onclick="testTemplate('event_reminder')" 
-                            class="bg-secondary-color hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Test
-                    </button>
-                </div>
-            </div>
-
-            <!-- Admin Submission Alert -->
-            <div class="template-card rounded-xl p-6">
-                <div class="template-icon admin-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3 class="text-xl font-bold text-center mb-4">Admin Submission Alert</h3>
-                <p class="text-gray-400 text-center mb-6">
-                    Notification sent to admins when a new event is submitted for review.
-                </p>
-                <div class="preview-frame mb-4" style="height: 300px; overflow: hidden;">
-                    <iframe id="admin-preview" src="about:blank" class="w-full h-full border-0"></iframe>
-                </div>
-                <div class="flex justify-center space-x-3">
-                    <button onclick="loadTemplatePreview('admin_submission_alert')" 
-                            class="bg-accent-color hover:bg-pink-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-eye mr-2"></i>Preview
-                    </button>
-                    <button onclick="testTemplate('admin_submission_alert')" 
-                            class="bg-secondary-color hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Test
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Design System Integration -->
-        <div class="bg-gray-800 rounded-xl p-8 mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-center">Design System Integration</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-r from-accent-color to-secondary-color rounded-full mx-auto mb-3"></div>
-                    <h3 class="font-semibold mb-2">Brand Colors</h3>
-                    <p class="text-gray-400 text-sm">Consistent color palette across all templates</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-mobile-alt text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Mobile Responsive</h3>
-                    <p class="text-gray-400 text-sm">Optimized for all device sizes</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-eye text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Accessibility</h3>
-                    <p class="text-gray-400 text-sm">High contrast and readable fonts</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
-                        <i class="fas fa-palette text-2xl text-accent-color"></i>
-                    </div>
-                    <h3 class="font-semibold mb-2">Professional Design</h3>
-                    <p class="text-gray-400 text-sm">Clean, modern aesthetic</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Features -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-gray-800 rounded-xl p-6">
-                <h3 class="text-xl font-bold mb-4 text-accent-color">
-                    <i class="fas fa-magic mr-2"></i>Template Features
-                </h3>
-                <ul class="space-y-3 text-gray-300">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Gradient headers with brand colors
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Animated icons and visual elements
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Call-to-action buttons with hover effects
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Social media integration
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Professional typography
-                    </li>
-                </ul>
-            </div>
-
-            <div class="bg-gray-800 rounded-xl p-6">
-                <h3 class="text-xl font-bold mb-4 text-accent-color">
-                    <i class="fas fa-cogs mr-2"></i>Technical Features
-                </h3>
-                <ul class="space-y-3 text-gray-300">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        HTML and plain text versions
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Email client compatibility
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Dynamic content injection
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Template preview system
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        Automated delivery tracking
-                    </li>
-                </ul>
-            </div>
-        </div>
+        </main>
     </div>
+</div>
 
-    <!-- Test Email Modal -->
-    <div id="testEmailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-gray-800 rounded-xl max-w-md w-full p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-accent-color">Send Test Email</h3>
-                    <button onclick="closeTestModal()" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-                <form id="testEmailForm">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2">Email Address</label>
-                        <input type="email" id="testEmailAddress" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" 
-                               placeholder="test@example.com" required>
+<script>
+const TEMPLATES = [
+    {
+        type: 'submission_confirmation',
+        title: 'Submission confirmation',
+        sub: 'Sent to the promoter when an event submission lands in the queue.',
+        controls: [
+            { kind: 'select', key: 'preset', label: 'Event name', options: [
+                { value: 'short', label: 'Short — "Pride Night"', data: { eventName: 'Pride Night' } },
+                { value: 'apostrophe', label: 'With apostrophe — "Cal\'s Drag Brunch"', data: { eventName: "Cal's Drag Brunch" } },
+                { value: 'long', label: 'Long — "Saturday Night Drag Brunch Spectacular Featuring The Cast Of Drag Race UK"', data: { eventName: 'Saturday Night Drag Brunch Spectacular Featuring The Cast Of Drag Race UK' } },
+            ]},
+            { kind: 'select', key: 'idStyle', label: 'Submission ID', options: [
+                { value: 'short', label: 'Short — "evt-pride-001"', data: { eventId: 'evt-pride-001' } },
+                { value: 'uuid', label: 'UUID — "a3f9c8e2-..."', data: { eventId: 'a3f9c8e2-7d4b-4e1a-9f3c-8b2d1c4e5f6a' } },
+            ]},
+        ],
+    },
+    {
+        type: 'approval_notification',
+        title: 'Approval — "You\'re live"',
+        sub: 'Sent when an admin approves a submission. The hero image, date, and venue are optional extras.',
+        controls: [
+            { kind: 'checkbox', key: 'image', label: 'Hero image (mini-poster)', value: 'https://res.cloudinary.com/dbxhpjoiz/image/upload/v1750526040/brumoutloud_venues/cghnw3anncyelp8q6bqi.jpg' },
+            { kind: 'checkbox', key: 'eventDate', label: 'Date + time block', value: '2026-05-23' },
+            { kind: 'checkbox', key: 'venueName', label: 'Venue name', value: 'The Village Inn' },
+        ],
+    },
+    {
+        type: 'rejection_notification',
+        title: 'Rejection — "Needs a tweak"',
+        sub: 'Sent when an admin rejects with a reason. Resubmit token deep-links back into the prefilled form.',
+        controls: [
+            { kind: 'select', key: 'reason', label: 'Reason length', options: [
+                { value: 'short', label: 'Short — one sentence', data: { reason: 'The description is too short.' } },
+                { value: 'medium', label: 'Medium — typical', data: { reason: 'The description was too short — could you flesh it out a bit so attendees know what to expect?' } },
+                { value: 'long', label: 'Long — multi-paragraph', data: { reason: "The description was too short for what we need. We're looking for a few sentences covering the vibe of the night, what acts are performing, ticket info, and accessibility. Have a look at any of our approved listings for examples — drag brunch listings tend to land in the right shape. Drop the updated copy into the form via the button below and we'll get it back in the queue." } },
+            ]},
+            { kind: 'checkbox', key: 'resubmitUrl', label: 'Resubmit-link CTA (signed token)', value: 'https://brumoutloud.co.uk/promoter-submit-new?resubmit=test-token-abc' },
+        ],
+    },
+    {
+        type: 'event_reminder',
+        title: 'Event reminder — "Tomorrow"',
+        sub: 'Sent to the promoter the day before their event.',
+        controls: [
+            { kind: 'select', key: 'eventName', label: 'Event name', options: [
+                { value: 'short', label: 'Short', data: { eventName: 'Disco Inferno' } },
+                { value: 'apostrophe', label: 'With apostrophe', data: { eventName: "Saturday's Pride Quiz" } },
+            ]},
+        ],
+    },
+    {
+        type: 'admin_submission_alert',
+        title: 'Admin submission alert',
+        sub: 'Sent to the admin team for every submission, including anonymous ones.',
+        controls: [
+            { kind: 'checkbox', key: 'promoterEmail', label: 'Has promoter email (vs. anonymous)', value: 'promoter@example.com' },
+        ],
+    },
+];
+
+function buildControls(tpl, state) {
+    return tpl.controls.map((c) => {
+        if (c.kind === 'checkbox') {
+            return `
+                <label class="variant-toggle flex items-start gap-3 p-3 hover:bg-white/5 rounded">
+                    <input type="checkbox" data-key="${c.key}" data-value="${c.value}" ${state[c.key] ? 'checked' : ''} class="mt-1">
+                    <div>
+                        <div class="text-sm font-medium text-white">${c.label}</div>
+                        <div class="text-xs text-gray-500 mt-0.5 font-mono break-all">${c.value}</div>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeTestModal()" 
-                                class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="px-4 py-2 bg-accent-color hover:bg-pink-600 rounded-lg transition-colors">
-                            Send Test
-                        </button>
-                    </div>
-                </form>
+                </label>
+            `;
+        }
+        if (c.kind === 'select') {
+            const options = c.options.map((o) =>
+                `<option value="${o.value}" ${state[c.key] === o.value ? 'selected' : ''}>${o.label}</option>`
+            ).join('');
+            return `
+                <label class="block p-3">
+                    <div class="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">${c.label}</div>
+                    <select data-key="${c.key}" class="w-full bg-[#111] border border-white/10 text-white px-3 py-2 rounded text-sm">${options}</select>
+                </label>
+            `;
+        }
+        return '';
+    }).join('');
+}
+
+function buildData(tpl, state) {
+    const data = {};
+    for (const c of tpl.controls) {
+        if (c.kind === 'checkbox') {
+            if (state[c.key]) data[c.key] = c.value;
+        } else if (c.kind === 'select') {
+            const opt = c.options.find((o) => o.value === state[c.key]);
+            if (opt && opt.data) Object.assign(data, opt.data);
+        }
+    }
+    return data;
+}
+
+async function fetchPreview(templateType, data) {
+    const res = await fetch('/.netlify/functions/get-email-template-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ templateType, data }),
+    });
+    return res.json();
+}
+
+function buildSection(tpl) {
+    const state = {};
+    for (const c of tpl.controls) {
+        if (c.kind === 'select') state[c.key] = c.options[0].value;
+        if (c.kind === 'checkbox') state[c.key] = false;
+    }
+
+    const section = document.createElement('section');
+    section.className = 'control-panel p-6';
+    section.innerHTML = `
+        <header class="mb-4 pb-4 border-b border-white/5">
+            <h2 class="text-xl font-bold text-white mb-1">${tpl.title}</h2>
+            <p class="text-sm text-gray-400">${tpl.sub}</p>
+            <p class="text-xs text-gray-500 mt-2"><span class="font-bold">Subject:</span> <span data-subject>—</span></p>
+        </header>
+        <div class="grid lg:grid-cols-[260px_1fr] gap-6">
+            <div data-controls class="space-y-1">${buildControls(tpl, state)}</div>
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm" data-loading>Loading…</div>
+                <iframe class="preview-iframe" data-iframe sandbox></iframe>
             </div>
         </div>
-    </div>
+    `;
 
-    <script>
-        let currentTemplateType = '';
+    const iframe = section.querySelector('[data-iframe]');
+    const subjectEl = section.querySelector('[data-subject]');
+    const loading = section.querySelector('[data-loading]');
 
-        // Load template preview in iframe
-        async function loadTemplatePreview(templateType) {
-            const iframeId = templateType.replace('_', '-') + '-preview';
-            const iframe = document.getElementById(iframeId);
-            
-            try {
-                const response = await fetch(`/.netlify/functions/get-email-template-preview?templateType=${templateType}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Create a data URL with the HTML content
-                    const htmlContent = `
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <style>
-                                body { margin: 0; padding: 0; transform: scale(0.8); transform-origin: top left; width: 125%; }
-                            </style>
-                        </head>
-                        <body>
-                            ${data.htmlContent}
-                        </body>
-                        </html>
-                    `;
-                    
-                    const blob = new Blob([htmlContent], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    iframe.src = url;
-                } else {
-                    iframe.srcdoc = `
-                        <div style="padding: 20px; text-align: center; color: #666;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
-                            <p>Error loading template: ${data.error}</p>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                iframe.srcdoc = `
-                    <div style="padding: 20px; text-align: center; color: #666;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
-                        <p>Error loading template: ${error.message}</p>
-                    </div>
-                `;
-            }
+    async function refresh() {
+        loading.style.display = '';
+        const data = buildData(tpl, state);
+        const result = await fetchPreview(tpl.type, data);
+        if (result.success) {
+            subjectEl.textContent = result.subject;
+            iframe.srcdoc = result.htmlContent;
+            iframe.onload = () => { loading.style.display = 'none'; };
+        } else {
+            iframe.srcdoc = `<pre style="padding:1rem;color:#900">${result.error || 'Render failed'}</pre>`;
+            loading.style.display = 'none';
         }
+    }
 
-        // Test template function
-        function testTemplate(templateType) {
-            currentTemplateType = templateType;
-            document.getElementById('testEmailModal').classList.remove('hidden');
-        }
+    section.querySelector('[data-controls]').addEventListener('change', (e) => {
+        const key = e.target.dataset.key;
+        if (!key) return;
+        if (e.target.type === 'checkbox') state[key] = e.target.checked;
+        else state[key] = e.target.value;
+        refresh();
+    });
 
-        // Close test modal
-        function closeTestModal() {
-            document.getElementById('testEmailModal').classList.add('hidden');
-            document.getElementById('testEmailForm').reset();
-        }
+    refresh();
+    return section;
+}
 
-        // Handle test email form submission
-        document.getElementById('testEmailForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const emailAddress = document.getElementById('testEmailAddress').value;
-            
-            // Sample data for testing
-            const sampleData = {
-                eventName: 'Pride Night at The Village Inn',
-                eventId: 'pride-night-2024-001',
-                eventUrl: 'https://brumoutloud.co.uk/event/pride-night-village-inn',
-                eventDate: '2024-01-15 at 20:00',
-                promoterEmail: 'promoter@example.com',
-                reason: 'Please provide more details about your event, including venue information and a clear description of what attendees can expect.'
-            };
-
-            let data = {};
-            switch (currentTemplateType) {
-                case 'submission_confirmation':
-                    data = {
-                        promoterEmail: emailAddress,
-                        eventName: sampleData.eventName,
-                        eventId: sampleData.eventId
-                    };
-                    break;
-                case 'approval_notification':
-                    data = {
-                        promoterEmail: emailAddress,
-                        eventName: sampleData.eventName,
-                        eventUrl: sampleData.eventUrl
-                    };
-                    break;
-                case 'rejection_notification':
-                    data = {
-                        promoterEmail: emailAddress,
-                        eventName: sampleData.eventName,
-                        reason: sampleData.reason
-                    };
-                    break;
-                case 'event_reminder':
-                    data = {
-                        promoterEmail: emailAddress,
-                        eventName: sampleData.eventName,
-                        eventDate: sampleData.eventDate,
-                        eventUrl: sampleData.eventUrl
-                    };
-                    break;
-                case 'admin_submission_alert':
-                    data = {
-                        eventName: sampleData.eventName,
-                        promoterEmail: sampleData.promoterEmail,
-                        eventId: sampleData.eventId
-                    };
-                    break;
-            }
-
-            try {
-                const response = await fetch('/.netlify/functions/send-email-notification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        type: currentTemplateType,
-                        data: data
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('Test email sent successfully!');
-                    closeTestModal();
-                } else {
-                    alert('Failed to send test email: ' + result.error);
-                }
-            } catch (error) {
-                alert('Error sending test email: ' + error.message);
-            }
-        });
-
-        // Load all template previews on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const templates = ['submission_confirmation', 'approval_notification', 'rejection_notification', 'event_reminder', 'admin_submission_alert'];
-            templates.forEach(template => {
-                loadTemplatePreview(template);
-            });
-        });
-    </script>
+const root = document.getElementById('previews');
+TEMPLATES.forEach((tpl) => root.appendChild(buildSection(tpl)));
+</script>
 </body>
 </html>
