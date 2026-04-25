@@ -62,10 +62,9 @@ test.describe('Admin approval flow', () => {
     await expect(approveBtn).toBeVisible({ timeout: 10000 });
     await approveBtn.click();
 
-    await expect(adminPage.locator('.notification-toast.notification-success')).toContainText(
-      /approved successfully/i,
-      { timeout: 10000 }
-    );
+    await expect(
+      adminPage.locator('.notification-toast.notification-success', { hasText: /approved successfully/i })
+    ).toBeVisible({ timeout: 10000 });
 
     expect(approveBody).toEqual({
       itemId: event.id,
@@ -106,10 +105,9 @@ test.describe('Admin approval flow', () => {
     await adminPage.fill('#rejection-reason', 'Duplicate of an existing approved event');
     await adminPage.locator('#confirm-rejection-btn').click();
 
-    await expect(adminPage.locator('.notification-toast.notification-success')).toContainText(
-      /rejected successfully/i,
-      { timeout: 10000 }
-    );
+    await expect(
+      adminPage.locator('.notification-toast.notification-success', { hasText: /rejected successfully/i })
+    ).toBeVisible({ timeout: 10000 });
 
     expect(rejectBody).toEqual({
       itemId: event.id,
@@ -142,10 +140,9 @@ test.describe('Admin approval flow', () => {
 
     await adminPage.locator('#confirm-rejection-btn').click();
 
-    await expect(adminPage.locator('.notification-toast.notification-error')).toContainText(
-      /provide a reason/i,
-      { timeout: 5000 }
-    );
+    await expect(
+      adminPage.locator('.notification-toast.notification-error', { hasText: /provide a reason/i })
+    ).toBeVisible({ timeout: 5000 });
     expect(statusCalled).toBe(false);
   });
 });
