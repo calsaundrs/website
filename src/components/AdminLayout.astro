@@ -3,10 +3,9 @@
 // highlighted at build time, no client-side DOM injection. Pages slot
 // their content into the main scrollable area.
 //
-// During the spike this is a parallel implementation alongside
-// js/admin-chrome.js (which still drives the existing root HTML
-// pages). If the spike succeeds in M3 → M4, this layout becomes the
-// single source of truth and admin-chrome.js retires.
+// All migrated admin pages use this layout. js/admin-chrome.js still
+// exists because email-template-showcase.html (root HTML) loads it;
+// it can retire once that page is also ported to Astro.
 
 interface Props {
   title: string;

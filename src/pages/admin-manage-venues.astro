@@ -1,59 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Manage Venues | Admin Panel</title>
-    
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script type="module" src="/js/auth-guard.js"></script>
-    <meta name="admin-breadcrumb-section" content="Overview">
-    <meta name="admin-breadcrumb-page" content="Manage Venues">
-    <script type="module" src="/js/admin-chrome.js"></script>
-    
-    <link rel="icon" href="/faviconV2.png" type="image/png">
+---
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="Manage Venues" activeNav="admin-manage-venues.html" breadcrumbSection="Overview" breadcrumbPage="Manage Venues">
+  <Fragment slot="head">
+    <script is:inline src="/js/fouc-prevention.js"></script>
+    <script is:inline src="/js/main.js" defer></script>
+  </Fragment>
 
-    </head>
-<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-
-
-<!-- Removed the Google Fonts link as Omnes Pro is now loaded via main.css -->
-
-<div class="flex h-screen overflow-hidden bg-[#050505]">
-    <!-- Persistent Sidebar -->
-    <div data-admin-sidebar></div>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
-        <!-- Dashboard Top Header -->
-        <div data-admin-topbar></div>
-
-        <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto w-full">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
             
             <div class="flex items-end justify-between mb-8">
                 <div>
@@ -85,10 +39,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </button>
             </div>
             </div>
-        </main>
-    </div>
-</div>
-    <!-- Edit Venue Modal -->
+
+<!-- Edit Venue Modal -->
     <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
         <form id="edit-form" class="card-bg p-8 w-full max-w-3xl space-y-6 max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl">
              <div class="flex justify-between items-center mb-6">
@@ -113,19 +65,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </form>
     </div>
     
-    <script>
+    
+
+
+    
+    <!-- FOUC Prevention Script -->
+
+
+<script is:inline>
         // Mobile menu toggle
         document.querySelector('button.lg\\:hidden').addEventListener('click', function() {
             document.querySelector('aside').classList.toggle('hidden');
         });
     </script>
-
-
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js" defer></script>
-    <script>
+<script is:inline>
         // DOM Elements
         const venueList = document.getElementById('venue-list');
         const loadingState = document.getElementById('loading-state');
@@ -466,5 +419,4 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
         });
     </script>
-</body>
-</html>
+</AdminLayout>

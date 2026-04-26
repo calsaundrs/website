@@ -21,3 +21,14 @@ css/tailwind.css
 # must not be committed (otherwise it goes stale).
 /astro-hello.html
 /admin-system-status.html
+
+/admin-add-venue.html
+/admin-approvals.html
+/admin-edit-events.html
+/admin-email-management.html
+/admin-import-events.html
+/admin-manage-venues.html
+/admin-migrate.html
+/admin-poster-tool.html
+/admin-settings.html
+/admin-social-assets.html

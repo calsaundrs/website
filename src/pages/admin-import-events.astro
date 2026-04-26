@@ -1,29 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Import Events | Admin Panel</title>
-
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script type="module" src="/js/auth-guard.js"></script>
-    <meta name="admin-breadcrumb-section" content="Import">
-    <meta name="admin-breadcrumb-page" content="Import Manager">
-    <script type="module" src="/js/admin-chrome.js"></script>
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-
+---
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="Import Events" activeNav="admin-import-events.html" breadcrumbSection="Import" breadcrumbPage="Import Manager">
+  <Fragment slot="head">
     <style>
         .card-bg {
             background: rgba(17, 24, 39, 0.7);
@@ -42,21 +21,10 @@
             color: #E83A99;
         }
     </style>
-</head>
+    <script is:inline src="/js/main.js"></script>
+  </Fragment>
 
-<body class="bg-[#050505] text-white min-h-screen font-sans antialiased overflow-hidden">
-<div class="flex h-screen overflow-hidden bg-[#050505]">
-    <!-- Persistent Sidebar -->
-    <div data-admin-sidebar></div>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
-        <!-- Dashboard Top Header -->
-        <div data-admin-topbar></div>
-
-        <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto w-full">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
         <section class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
                 <h1 class="font-anton text-5xl md:text-7xl leading-none tracking-wider heading-gradient mb-4">
@@ -89,10 +57,9 @@
         </section>
         </section>
             </div>
-        </main>
-    </div>
-</div>
-    <script>
+
+
+<script is:inline>
         let debounceTimer;
         const jsonInput = document.getElementById('json-input');
         const statusContainer = document.getElementById('status-container');
@@ -223,7 +190,4 @@
             document.querySelector('aside').classList.toggle('hidden');
         });
     </script>
-    <script src="/js/main.js"></script>
-</body>
-
-</html>
+</AdminLayout>

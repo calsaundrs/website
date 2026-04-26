@@ -1,68 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Manage Approved Events | Admin Panel</title>
+---
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="Manage Approved Events" activeNav="admin-edit-events.html" breadcrumbSection="Overview" breadcrumbPage="Manage Events">
+  <Fragment slot="head">
+    <script is:inline src="/js/admin-edit-events.js?v=5&t=1703123456&r=1234"></script>
+    <script is:inline src="/js/main.js"></script>
+  </Fragment>
 
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script type="module" src="/js/auth-guard.js"></script>
-    <meta name="admin-breadcrumb-section" content="Overview">
-    <meta name="admin-breadcrumb-page" content="Manage Events">
-    <script type="module" src="/js/admin-chrome.js"></script>
-    <script>
-        // Force cache refresh
-        if (performance.navigation.type === 1) {
-            // Page was refreshed, clear any cached data
-            localStorage.clear();
-            sessionStorage.clear();
-        }
-    </script>
-    <script src="/js/admin-edit-events.js?v=5&t=1703123456&r=1234"></script>
-    
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-
-    </head>
-<body class="antialiased bg-gray-900 text-white min-h-screen">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MMTDFZGH');</script>
-<!-- End Google Tag Manager -->
-
-<div class="flex h-screen overflow-hidden bg-[#050505]">
-    <!-- Persistent Sidebar -->
-    <div data-admin-sidebar></div>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
-        <!-- Dashboard Top Header -->
-        <div data-admin-topbar></div>
-
-        <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto w-full">
-            <div class="px-6 lg:px-10 py-10 max-w-[1400px] mx-auto">
+<div class="px-6 lg:px-10 py-10 max-w-[1400px] mx-auto">
                 
                 <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                     <div>
@@ -142,11 +87,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
             </div>
             <!-- End of max-w container -->
-        </main>
-    </div>
-</div>
 
-    <!-- Edit Event Modal -->
+<!-- Edit Event Modal -->
     <div id="edit-modal" class="fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50 hidden">
         <div class="modal-content rounded-2xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
@@ -485,12 +427,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
 
-    <script>
+
+<script is:inline>
         // Mobile menu toggle
         document.querySelector('button.lg\\:hidden').addEventListener('click', function() {
             document.querySelector('aside').classList.toggle('hidden');
         });
     </script>
-    <script src="/js/main.js"></script>
-</body>
-</html>
+<script is:inline>
+        // Force cache refresh
+        if (performance.navigation.type === 1) {
+            // Page was refreshed, clear any cached data
+            localStorage.clear();
+            sessionStorage.clear();
+        }
+    </script>
+</AdminLayout>
