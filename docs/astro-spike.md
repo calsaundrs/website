@@ -184,5 +184,23 @@ If we'd seen any of the following, the recommendation would be no-go:
 ### Action
 
 - Close M3.
-- Seed M4 with concrete issues (admin pages port, public pages port, SSG retirement, build chain change, Tailwind v4) following the cost projection above.
-- M4 should land incrementally with the test suite gating each PR.
+- ~~Seed M4 with concrete issues following the cost projection.~~ **Deferred.** See note below.
+- M4 should land incrementally with the test suite gating each PR — when we eventually pick it up.
+
+## PM call: M4 deferred (2026-04-26)
+
+Re-read of the situation right after writing the recommendation above:
+
+- The site has real users and real seasonal traffic. **Birmingham Pride is 2026-05-22 to 2026-05-24** — 26 days from today. The May window is the peak relevance moment for this site.
+- M1 + M2 already closed the developer-experience pain points that motivated this whole project: 109 automated tests, a shared admin chrome (one edit instead of eleven), a hardened submission form, +120 follow-up tests in the form-hardening pass. None of that needed a framework migration.
+- M4 is ~6 weeks of focused work that ships **zero user-visible value**. Doing it now means showing up to Pride 2026 mid-rewrite.
+- The Astro spike landed clean and the data is preserved here. The recommendation stays "conditional go" — just not now.
+
+**Resequenced plan:** insert a time-boxed "Pride 2026 readiness" milestone before M4. Three concrete issues, due 2026-05-21:
+1. Audit + refresh `birmingham-pride.html` for the 2026 dates, lineup, FAQ, mobile rendering.
+2. Performance audit on `/events` and `/birmingham-pride` (Lighthouse — fix the top three regressions).
+3. Surface Pride-tagged events on `/events` (filter or featured row) so visitors land on what they came for.
+
+After Pride, revisit M4 — at which point we'll either still want it (and have a calmer window to do it), or we'll have learned that the sidebar fix in M2 was actually enough. Either outcome is fine.
+
+The spike work isn't wasted: `astro.config.mjs`, `AdminLayout.astro`, the spike page, and this whole doc stay in the repo as a frozen pointer. If M4 lands later, it picks up from here.
