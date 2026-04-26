@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Social Assets Generator | Admin | Brum Out Loud</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/faviconV2.png" type="image/png">
-
-    <script type="module" src="/js/auth-guard.js"></script>
-    <meta name="admin-breadcrumb-section" content="System">
-    <meta name="admin-breadcrumb-page" content="Social Assets">
-    <script type="module" src="/js/admin-chrome.js"></script>
-
-    <!-- html2canvas for client-side PNG rendering, JSZip for carousel bundles -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
+---
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="Social Assets Generator" activeNav="admin-social-assets.html" breadcrumbSection="System" breadcrumbPage="Social Assets">
+  <Fragment slot="head">
     <style>
         /* Canvas / stage where the asset lives at full 1080px. Rendered at
            scale for preview; html2canvas captures at native size. */
@@ -805,20 +785,10 @@
             border-color: var(--color-toxic);
         }
     </style>
-</head>
-<body class="bg-[#050505] text-[var(--color-light)] min-h-screen font-sans antialiased overflow-hidden">
-<div class="flex h-screen overflow-hidden bg-[#050505]">
-    <!-- Persistent Sidebar -->
-    <div data-admin-sidebar></div>
+    <script is:inline type="module" src="/js/admin-social-assets.js"></script>
+  </Fragment>
 
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
-        <!-- Dashboard Top Header -->
-        <div data-admin-topbar></div>
-
-        <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto w-full">
-            <div class="max-w-[1600px] mx-auto px-4 md:px-6 py-8">
+<div class="max-w-[1600px] mx-auto px-4 md:px-6 py-8">
 
         <div class="mb-8">
             <h1 class="font-display font-black text-4xl md:text-5xl uppercase misprint leading-none">
@@ -978,15 +948,12 @@
             </section>
         </div>
             </div>
-        </main>
-    </div>
-</div>
-    <script type="module" src="/js/admin-social-assets.js"></script>
-    <script>
+
+
+<script is:inline>
         // Mobile menu toggle
         document.querySelector('button.lg\\:hidden')?.addEventListener('click', function() {
             document.querySelector('aside').classList.toggle('hidden');
         });
     </script>
-</body>
-</html>
+</AdminLayout>

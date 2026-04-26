@@ -1,26 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Add Venue | Admin Panel</title>
-    
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script type="module" src="/js/auth-guard.js"></script>
-    <meta name="admin-breadcrumb-section" content="Venues">
-    <meta name="admin-breadcrumb-page" content="Add Venue">
-    <script type="module" src="/js/admin-chrome.js"></script>
+---
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="Add Venue" activeNav="admin-add-venue.html" breadcrumbSection="Venues" breadcrumbPage="Add Venue">
+  <Fragment slot="head">
     <style>
         .card-bg {
             background: rgba(17, 24, 39, 0.7);
@@ -77,22 +59,11 @@
             box-shadow: 0 0 0 3px rgba(232, 58, 153, 0.1);
         }
     </style>
-    <link rel="icon" href="/faviconV2.png" type="image/png">
+    <script is:inline src="/js/fouc-prevention.js"></script>
+    <script is:inline src="/js/main.js" defer></script>
+  </Fragment>
 
-    </head>
-<body class="bg-[#050505] text-[var(--color-light)] min-h-screen font-sans antialiased overflow-hidden">
-<div class="flex h-screen overflow-hidden bg-[#050505]">
-    <!-- Persistent Sidebar -->
-    <div data-admin-sidebar></div>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
-        <!-- Dashboard Top Header -->
-        <div data-admin-topbar></div>
-
-        <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto w-full">
-            <div class="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
+<div class="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
                 <!-- Google Tag Manager (noscript) -->
                 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0"
                         style="display:none;visibility:hidden"></iframe></noscript>
@@ -300,14 +271,11 @@
         </section>
         </section>
             </div>
-        </main>
-    </div>
-</div>
-    
-    <!-- FOUC Prevention Script -->
-    <script src="/js/fouc-prevention.js"></script>
-    <script src="/js/main.js" defer></script>
-    <script>
+
+<!-- FOUC Prevention Script -->
+
+
+<script is:inline>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('add-venue-form');
             const statusDiv = document.getElementById('form-status');
@@ -350,5 +318,4 @@
             document.querySelector('aside').classList.toggle('hidden');
         });
     </script>
-</body>
-</html>
+</AdminLayout>
