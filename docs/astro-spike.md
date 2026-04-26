@@ -81,8 +81,108 @@ Ported `admin-system-status` to a `.astro` page (output at `/admin-system-status
 
 ## Measurements (#153)
 
-_TBD — build time, output size, JS shipped, deploy story._
+### Build time
+
+| Run | Wall time | In-Astro | Notes |
+|---|---|---|---|
+| Cold (`rm -rf dist-astro .astro` first) | 1.55s | 482ms | one-time vite + content sync |
+| Warm | 1.01s | 412ms | typical CI/local re-build |
+
+For comparison, the existing pipeline:
+- `npm run build:css` — 1.5s
+- `npm run generate-sitemap` — 2.3s (Firestore fetch — network-bound)
+
+Astro's overhead is in the same ballpark as one of the existing build steps. Adding it to the chain wouldn't materially change overall build time.
+
+### Output size
+
+|  | Original `admin-system-status.html` | Astro `admin-system-status-spike.html` |
+|---|---|---|
+| HTML | 28,190 bytes | 25,841 bytes (−8.3%) |
+| Inline CSS | hand-written, full | minified by Vite (`#111827b3` instead of `rgba(17, 24, 39, 0.7)`) |
+| Inline JS | full 350-line script | full 350-line script (bundled in-place; not extracted) |
+
+### JS shipped beyond what the original page already loads
+
+- 56 bytes of inline `<script type="module">` for the logout + menu-toggle wiring (replaces the equivalent in `js/admin-chrome.js` for this page)
+- **No** Astro client runtime — there are no islands on this page, so Astro emits zero framework JS
+
+### Dev iteration
+
+- `npm run astro:dev` runs the Astro dev server on `:4321` (no clash with Playwright's `:8888`). Hot reload works on the `.astro` file edits.
+- The existing `npx serve . -l 8888` setup keeps working unchanged for the root HTML pages.
+
+### Deploy story
+
+Not deployed live during the spike. Two options for the migration:
+1. **Add `npm run astro:build` to the Netlify build chain** and copy `dist-astro/*` into project root pre-deploy. Risk: path collisions if an Astro page and a root HTML have the same name.
+2. **Change `publish` in `netlify.toml`** from `.` to a merged output dir that combines root HTML and `dist-astro`. Cleaner long-term — collisions become explicit.
+
+Option 2 is the right end-state. Option 1 is fine while the migration is partial.
 
 ## Decision (#154)
 
-_TBD — go / no-go._
+### Recommendation: **conditional go**
+
+Astro is the right tool for this codebase, and the spike removed the major risks. Migrate incrementally in M4 — admin pages first (lowest blast radius, highest tooling-pain payoff), public pages second.
+
+The "conditional" part: commit to **extracting page scripts as typed modules** rather than leaving them inline forever. The 350 lines inside `admin-system-status-spike.astro`'s `<script is:inline>` block are tolerable for one page; across 72 pages they would be a maintenance liability.
+
+### What worked
+
+- Component model fits the chrome problem cleanly. Sidebar + topbar take props, render server-side, no client-side DOM injection.
+- TypeScript props caught a typo at write time. Free upgrade vs. the current HTML+JS approach.
+- CSS scoping confines page-specific styles automatically.
+- Output is plain static HTML. No framework runtime ships unless you opt in via islands.
+- Build is fast and fits alongside the existing pipeline.
+
+### What didn't (workarounds applied)
+
+- `publicDir` can't be disabled — workaround: empty `src/public/`.
+- Inline scripts that read globals (`window.pushNotificationService`) need `is:inline` to opt out of bundling.
+- CSS in `<slot name="head">` isn't auto-scoped — that's the head, not a component's `<style>`. Acceptable.
+
+### Cost projection for full migration (M4)
+
+| Workstream | Estimate | Notes |
+|---|---|---|
+| Admin pages (11) port | 1.5 weeks | Reuse `AdminLayout`. First page ~1 day; later ones ~half a day with helpers in place. |
+| Page scripts → typed modules | bundled with each port | Don't carry 350-line `<script is:inline>` blocks into M4. |
+| Public pages (events, venues, editorial, detail) | 2 weeks | Events listing is the gnarly one — runtime fetch → build-time SSR is the right move and needs care to keep filter UX working. |
+| SSG scripts retirement | 3 days | `build-events-ssg.js`, `build-venues-ssg.js`, `generate-event-pages.js`, `generate-series-pages.js`, `generate-venue-pages.js`, the listing builders, the comprehensive sitemap generator. Most replace 1:1 with Astro's `getStaticPaths()`. |
+| Netlify build chain change | 1 day | Move `publish` to a merged dir. |
+| Tailwind v4 migration | 2 days | Separate, parallelisable; deferred to its own issue. |
+| Buffer / regression fixing | 1 week | Test suite catches a lot but expect surprises. |
+
+**Total: ~6 weeks of focused work.** The earlier doc estimated 2–4 weeks for an "Astro migration" — that was optimistic. Realistic with the data we now have.
+
+### Risks and mitigations
+
+| Risk | Mitigation |
+|---|---|
+| Breaking the promoter submission flow during a migration touch | The M1+M2 test suite (98 tests) exercises every critical promoter and admin path. Migrate one page at a time with the suite gate. |
+| URL shape changes regressing SEO | Keep all existing URLs identical. The spike already does this — `admin-system-status-spike.html` is at the same shape as the existing route. |
+| JSON-LD regressions on event/venue/editorial pages | The M1 JSON-LD specs lock the schema contract. Any structural change fails the build. |
+| Astro framework churn / lock-in | Output is plain HTML. If we ever want out, exporting Astro's `dist/` and serving statically is trivial. The lock-in is the layout component model, which is portable to anything else (Next, Eleventy, custom). |
+| Promoter form quirks (e.g. #138-style HTML5 traps) re-introduced during a port | The M2 form-hardening tests catch the specific shapes; the audit (#143) is the inspection pattern to repeat. |
+| Sidebar nav drift between Astro pages and remaining root HTML during the migration | Keep `js/admin-chrome.js` and `AdminLayout.astro` rendering the same nav until M4 retires the JS-driven version. Both currently have the same 7 nav items. |
+
+### Open questions to answer in M4
+
+1. Public-facing pages with runtime data — events listing, venue listing — do they benefit from build-time SSR (faster first paint, no skeleton) or stay client-fetched (always-fresh data)? Spike didn't try this.
+2. Does Tailwind v4 + Astro's component CSS feel right together, or is it overkill? Decide alongside the v4 migration.
+3. Where should the page scripts live? Options: `src/scripts/<page>.ts` (Astro's preferred), or component-local `<script>` tags. Pick a convention before porting the first batch.
+
+### If recommendation flipped to no-go
+
+If we'd seen any of the following, the recommendation would be no-go:
+- Output bigger than the original (didn't happen — −8.3% smaller)
+- Astro shipping framework runtime even on no-island pages (didn't happen — 0 bytes)
+- Build time bad enough to push CI past 10 minutes (didn't happen — 1s)
+- Auth/Firebase integration broken (didn't happen — same `auth-guard.js` works unchanged)
+
+### Action
+
+- Close M3.
+- Seed M4 with concrete issues (admin pages port, public pages port, SSG retirement, build chain change, Tailwind v4) following the cost projection above.
+- M4 should land incrementally with the test suite gating each PR.
