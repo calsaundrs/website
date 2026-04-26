@@ -1,9 +1,8 @@
 ---
-// Spike page (#152). Output: dist-astro/admin-system-status-spike.html
-// Side-by-side with the existing admin-system-status.html so the two
-// can be eyeballed against each other before any production routing
-// changes. The "-spike" suffix is intentional and goes away if M3
-// recommends go.
+// Production admin page. Renders to /admin-system-status.html via
+// the merge step in tools/merge-astro-output.js. First page promoted
+// from the M3 spike — see docs/astro-spike.md for the conversion
+// notes that informed AdminLayout.
 import AdminLayout from '../components/AdminLayout.astro';
 ---
 <AdminLayout title="System Status" activeNav="admin-system-status.html" breadcrumbSection="System" breadcrumbPage="Status Monitor">

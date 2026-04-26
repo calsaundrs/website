@@ -16,6 +16,8 @@ series/
 event/
 css/tailwind.css
 
-# Astro-built HTML merged into project root by tools/merge-astro-output.js
+# Astro-built HTML merged into project root by tools/merge-astro-output.js.
+# Each entry is generated at build time from src/pages/<name>.astro and
+# must not be committed (otherwise it goes stale).
 /astro-hello.html
-/admin-system-status-spike.html
+/admin-system-status.html
