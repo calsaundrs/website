@@ -1,57 +1,82 @@
-const EventService = require('./services/event-service');
+const admin = require('firebase-admin');
 
-const eventService = new EventService();
+// Lightweight pending-events endpoint used by js/admin-notification-poller.js
+// to drive new-submission push notifications. Replaces an older version
+// that required a non-existent ./services/event-service module and so
+// returned 500 on every invocation — the cause of a chunk of the 5xx
+// errors in GSC and the silent failure of admin push notifications.
+//
+// The richer admin-approvals UI uses get-pending-items-firestore (which
+// returns events + venues + pagination); this endpoint stays narrow:
+// just the events the poller cares about, in the shape it expects
+// ({ success: true, events: [...] }).
 
-exports.handler = async function (event, context) {
-    try {
-        console.log('Getting pending events...');
-        
-        // Use EventService to get pending events
-        const pendingEvents = await eventService.getEvents({}, { 
-            admin: true, 
-            status: 'Pending Review' 
-        });
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY
+        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        : undefined,
+    }),
+  });
+}
 
-        // Transform to match expected format
-        const transformedEvents = pendingEvents.map(event => ({
-            id: event.id,
-            type: 'Event',
-            fields: {
-                'Event Name': event.name,
-                'Description': event.description,
-                'VenueText': event.venue?.name || 'TBC',
-                'Contact Email': event.submitterEmail || 'No email provided',
-                'Date': event.date,
-                'Link': event.details?.link || '',
-                'Recurring Info': event.recurringInfo || '',
-                'Category': event.category || [],
-                'Promo Image': event.image ? [event.image] : [],
-                'Parent Event Name': event.series?.parentName || '',
-                'Status': event.status || 'Pending Review'
-            }
-        }));
+const db = admin.firestore();
 
-        return {
-            statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            },
-            body: JSON.stringify(transformedEvents),
-        };
+const PENDING_STATUSES = ['Pending Review', 'pending', 'pending review', 'submitted'];
 
-    } catch (error) {
-        console.error("Critical error in get-pending-events handler:", error);
-        return {
-            statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({ error: 'Failed to fetch pending events', details: error.toString() }),
-        };
-    }
+exports.handler = async (event) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
+  };
+
+  try {
+    const snapshot = await db.collection('events')
+      .where('status', 'in', PENDING_STATUSES)
+      .limit(50)
+      .get();
+
+    const events = snapshot.docs.map((doc) => {
+      const data = doc.data() || {};
+      return {
+        id: doc.id,
+        name: data.name,
+        date: data.date,
+        venueName: data.venue?.name || data.venueName || 'TBC',
+        category: data.category || [],
+        submittedBy: data.submittedBy,
+        submitterEmail: data.submitterEmail,
+        submittedAt: data.submittedAt || data.createdAt,
+        createdAt: data.createdAt,
+        status: data.status,
+      };
+    });
+
+    events.sort((a, b) => {
+      const ta = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+      const tb = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+      return tb - ta;
+    });
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ success: true, events }),
+    };
+  } catch (error) {
+    console.error('get-pending-events error:', error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: 'Failed to fetch pending events',
+        details: error.message,
+      }),
+    };
+  }
 };
