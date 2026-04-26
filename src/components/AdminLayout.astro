@@ -1,0 +1,160 @@
+---
+// Server-rendered admin chrome — sidebar + topbar with the active nav
+// highlighted at build time, no client-side DOM injection. Pages slot
+// their content into the main scrollable area.
+//
+// During the spike this is a parallel implementation alongside
+// js/admin-chrome.js (which still drives the existing root HTML
+// pages). If the spike succeeds in M3 → M4, this layout becomes the
+// single source of truth and admin-chrome.js retires.
+
+interface Props {
+  title: string;
+  activeNav?:
+    | 'admin-approvals.html'
+    | 'admin-edit-events.html'
+    | 'admin-manage-venues.html'
+    | 'admin-import-events.html'
+    | 'admin-social-assets.html'
+    | 'admin-settings.html'
+    | 'admin-system-status.html';
+  breadcrumbSection?: string;
+  breadcrumbPage?: string;
+}
+
+const { title, activeNav, breadcrumbSection, breadcrumbPage } = Astro.props;
+
+const NAV_ITEMS = [
+  { href: 'admin-approvals.html',     icon: 'fa-check-circle',     label: 'Approvals', accent: true },
+  { href: 'admin-edit-events.html',   icon: 'fa-calendar-alt',     label: 'Events' },
+  { href: 'admin-manage-venues.html', icon: 'fa-map-marker-alt',   label: 'Venues' },
+  { href: 'admin-import-events.html', icon: 'fa-cloud-upload-alt', label: 'Import' },
+  { href: 'admin-social-assets.html', icon: 'fa-images',           label: 'Social' },
+];
+
+const SYSTEM_ITEMS = [
+  { href: 'admin-settings.html',      icon: 'fa-cog',       label: 'Settings' },
+  { href: 'admin-system-status.html', icon: 'fa-heartbeat', label: 'Status' },
+];
+
+const linkClass = (href: string, accent = false) => {
+  const isActive = href === activeNav;
+  if (isActive) {
+    return {
+      anchor: 'flex items-center px-4 py-3 text-sm font-medium rounded-lg text-white bg-white/10 border border-white/5 shadow-[inset_0_1px_rgba(255,255,255,0.1)] transition-all',
+      icon: accent ? 'text-[var(--color-toxic)]' : 'text-white',
+    };
+  }
+  return {
+    anchor: 'flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all',
+    icon: 'text-gray-500',
+  };
+};
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{title} | Admin Panel</title>
+  <link rel="preload" href="/css/tailwind.css" as="style">
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" href="/faviconV2.png" type="image/png">
+  <script type="module" src="/js/auth-guard.js"></script>
+  <slot name="head" />
+</head>
+<body class="antialiased bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
+  <div class="flex h-screen overflow-hidden bg-[#050505]">
+    <aside class="w-64 flex-shrink-0 bg-[#0A0A0A] border-r border-white/5 flex-col h-full hidden lg:flex relative z-30" id="admin-sidebar">
+      <div class="p-6 border-b border-white/5">
+        <a href="/admin-settings.html" class="flex items-center space-x-3 text-white hover:text-gray-300 transition-colors">
+          <div class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+            <i class="fas fa-bolt text-sm text-white"></i>
+          </div>
+          <span class="font-display font-bold tracking-wider uppercase text-sm">EVENTFLOW</span>
+        </a>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+        {NAV_ITEMS.map((item) => {
+          const cls = linkClass(item.href, item.accent);
+          return (
+            <a href={item.href} class={cls.anchor}>
+              <i class={`fas ${item.icon} w-5 mr-3 text-center ${cls.icon}`}></i> {item.label}
+            </a>
+          );
+        })}
+        <div class="pt-6 mt-6 border-t border-white/5 space-y-2">
+          <p class="px-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/30 mb-2">SYSTEM</p>
+          {SYSTEM_ITEMS.map((item) => {
+            const cls = linkClass(item.href);
+            return (
+              <a href={item.href} class={cls.anchor}>
+                <i class={`fas ${item.icon} w-5 mr-3 text-center ${cls.icon}`}></i> {item.label}
+              </a>
+            );
+          })}
+        </div>
+      </nav>
+      <div class="p-4 border-t border-white/5 space-y-2">
+        <button id="logout-btn" class="flex justify-center items-center px-4 py-3 text-xs font-bold tracking-widest uppercase rounded-lg text-gray-400 hover:text-white bg-white/5 hover:bg-red-500 hover:text-white transition-colors w-full border border-white/5 hover:border-red-500 shadow-sm">
+          <i class="fas fa-sign-out-alt mr-2"></i> Sign Out
+        </button>
+        <a href="/" target="_blank" class="flex justify-center items-center px-4 py-3 text-xs font-bold tracking-widest uppercase rounded-lg text-gray-400 hover:text-white bg-white/5 hover:bg-[var(--color-toxic)] hover:text-black transition-colors w-full border border-white/5 hover:border-[var(--color-toxic)] shadow-sm">
+          <i class="fas fa-external-link-alt mr-2"></i> Live Site
+        </a>
+      </div>
+    </aside>
+    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#050505]">
+      <header class="h-16 flex-shrink-0 bg-[#050505] border-b border-white/5 flex items-center justify-between px-8 relative z-20">
+        <div class="flex items-center">
+          <button id="admin-menu-toggle" class="lg:hidden text-gray-400 hover:text-white mr-6 transition-colors" aria-label="Toggle navigation">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <h2 class="text-white font-semibold text-sm tracking-wide hidden sm:flex items-center">
+            {breadcrumbSection && (
+              <Fragment>
+                <span class="text-gray-500 mr-2">{breadcrumbSection}</span>
+                <span class="text-gray-600 mx-2">/</span>
+              </Fragment>
+            )}
+            {breadcrumbPage || title}
+          </h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="h-8 w-8 rounded bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-purple-500/20 ring-2 ring-black">A</div>
+        </div>
+      </header>
+      <main class="flex-1 overflow-y-auto w-full">
+        <slot />
+      </main>
+    </div>
+  </div>
+  <script type="module">
+    // Wire the chrome's interactive bits. auth-guard.js handles the
+    // sign-in redirect; this just hooks up the buttons that were
+    // server-rendered above.
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+    document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await signOut(getAuth());
+        window.location.href = '/admin-login.html';
+      } catch (err) {
+        console.error('Error signing out:', err);
+      }
+    });
+
+    document.getElementById('admin-menu-toggle')?.addEventListener('click', () => {
+      document.getElementById('admin-sidebar')?.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+---
+// Spike page (#152). Output: dist-astro/admin-system-status-spike.html
+// Side-by-side with the existing admin-system-status.html so the two
+// can be eyeballed against each other before any production routing
+// changes. The "-spike" suffix is intentional and goes away if M3
+// recommends go.
+import AdminLayout from '../components/AdminLayout.astro';
+---
+<AdminLayout title="System Status" activeNav="admin-system-status.html" breadcrumbSection="System" breadcrumbPage="Status Monitor">
+  <Fragment slot="head">
+    <style>
+      .status-card {
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(75, 85, 99, 0.3);
+        transition: all 0.3s ease;
+      }
+      .status-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(181, 100, 247, 0.3);
+      }
+      .status-healthy { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.1); }
+      .status-degraded { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.1); }
+      .status-failed { border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1); }
+      .status-unknown { border-color: rgba(75, 85, 99, 0.5); background: rgba(75, 85, 99, 0.1); }
+      .btn-primary { background: linear-gradient(135deg, #b564fb 0%, #8b5cf6 100%); transition: all 0.3s ease; }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(181, 100, 247, 0.4); }
+      .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+      .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+      .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+      .btn-secondary { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); transition: all 0.3s ease; }
+      .btn-secondary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4); }
+      .test-result { animation: slideIn 0.3s ease-out; }
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .pulse { animation: pulse 2s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
+    <script src="/js/push-notifications.js" is:inline></script>
+    <script src="/js/admin-notification-poller.js" is:inline></script>
+  </Fragment>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+        🔧 System Status Monitor
+      </h1>
+      <p class="text-gray-400">Real-time system health monitoring and automated testing</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div id="overall-status" class="status-card rounded-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-semibold">Overall Status</h3>
+          <div id="status-indicator" class="w-4 h-4 rounded-full pulse"></div>
+        </div>
+        <div id="status-content" class="text-center">
+          <div class="text-3xl font-bold mb-2">Loading...</div>
+          <div class="text-sm text-gray-400">Checking system health...</div>
+        </div>
+      </div>
+      <div class="status-card rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Last Check</h3>
+        <div id="last-check" class="text-center">
+          <div class="text-2xl font-bold mb-2">--</div>
+          <div class="text-sm text-gray-400">No recent checks</div>
+        </div>
+      </div>
+      <div class="status-card rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Uptime</h3>
+        <div id="uptime" class="text-center">
+          <div class="text-2xl font-bold mb-2">--</div>
+          <div class="text-sm text-gray-400">Calculating...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 mb-8 justify-center">
+      <a href="/admin-settings.html#system-status" class="btn-secondary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+      <button id="run-tests-btn" class="btn-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-play"></i> Run Health Check
+      </button>
+      <button id="auto-refresh-btn" class="btn-warning px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-sync-alt"></i> <span id="auto-refresh-text">Enable Auto Refresh</span>
+      </button>
+      <button id="view-notifications-btn" class="btn-danger px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-bell"></i> View Notifications
+      </button>
+      <button id="test-notification-btn" class="btn-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-paper-plane"></i> Test Notification
+      </button>
+      <button id="enable-notifications-btn" class="btn-success px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+        <i class="fas fa-bell-slash"></i> <span id="notification-status-text">Enable Notifications</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="status-card rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Recent Test Results</h3>
+        <div id="recent-results" class="space-y-3">
+          <div class="text-center text-gray-400 py-8">
+            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+            <div>Loading recent results...</div>
+          </div>
+        </div>
+      </div>
+      <div class="status-card rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Test Details</h3>
+        <div id="test-details" class="space-y-3">
+          <div class="text-center text-gray-400 py-8">
+            <i class="fas fa-info-circle text-2xl mb-2"></i>
+            <div>Select a test to view details</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h3 class="text-xl font-semibold mb-4">System Metrics</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="status-card rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-gray-400">API Response Time</div>
+              <div id="avg-response-time" class="text-xl font-bold">--</div>
+            </div>
+            <i class="fas fa-tachometer-alt text-2xl text-purple-400"></i>
+          </div>
+        </div>
+        <div class="status-card rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-gray-400">Cache Hit Rate</div>
+              <div id="cache-hit-rate" class="text-xl font-bold">--</div>
+            </div>
+            <i class="fas fa-database text-2xl text-blue-400"></i>
+          </div>
+        </div>
+        <div class="status-card rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-gray-400">Error Rate</div>
+              <div id="error-rate" class="text-xl font-bold">--</div>
+            </div>
+            <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+          </div>
+        </div>
+        <div class="status-card rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-gray-400">Active Tests</div>
+              <div id="active-tests" class="text-xl font-bold">--</div>
+            </div>
+            <i class="fas fa-check-circle text-2xl text-green-400"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-96 overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">System Notifications</h3>
+          <button id="close-modal" class="text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="notifications-list" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    let autoRefreshInterval = null;
+    let currentTestResults = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      loadSystemStatus();
+      setupEventListeners();
+      updateNotificationStatus();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('run-tests-btn').addEventListener('click', runHealthCheck);
+      document.getElementById('auto-refresh-btn').addEventListener('click', toggleAutoRefresh);
+      document.getElementById('view-notifications-btn').addEventListener('click', showNotifications);
+      document.getElementById('close-modal').addEventListener('click', hideNotifications);
+      document.getElementById('test-notification-btn').addEventListener('click', testNotification);
+      document.getElementById('enable-notifications-btn').addEventListener('click', toggleNotifications);
+    }
+
+    async function loadSystemStatus() {
+      try {
+        const response = await fetch('/.netlify/functions/get-system-status');
+        const data = await response.json();
+        if (data.success) updateSystemStatus(data.data);
+        else showError('Failed to load system status');
+      } catch (e) { showError('Failed to load system status'); }
+    }
+
+    async function runHealthCheck() {
+      const btn = document.getElementById('run-tests-btn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running Tests...';
+      try {
+        const response = await fetch('/.netlify/functions/run-system-tests', { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+          currentTestResults = data.data;
+          updateTestResults(data.data);
+          showSuccess(`Health check completed: ${data.data.passed}/${data.data.totalTests} tests passed`);
+        } else showError('Health check failed');
+      } catch (e) { showError('Health check failed'); }
+      finally { btn.disabled = false; btn.innerHTML = originalText; }
+    }
+
+    function updateSystemStatus(status) {
+      const overallCard = document.getElementById('overall-status');
+      const statusIndicator = document.getElementById('status-indicator');
+      const statusContent = document.getElementById('status-content');
+      overallCard.classList.remove('status-healthy', 'status-degraded', 'status-failed', 'status-unknown');
+      let statusClass, statusText, statusColor;
+      switch (status.overallStatus) {
+        case 'healthy':  statusClass = 'status-healthy';  statusText = 'All Systems Operational'; statusColor = 'bg-green-500'; break;
+        case 'degraded': statusClass = 'status-degraded'; statusText = 'Some Issues Detected';   statusColor = 'bg-yellow-500'; break;
+        case 'failed':   statusClass = 'status-failed';   statusText = 'Critical Issues';        statusColor = 'bg-red-500'; break;
+        default:         statusClass = 'status-unknown';  statusText = 'Status Unknown';         statusColor = 'bg-gray-500';
+      }
+      overallCard.classList.add(statusClass);
+      statusIndicator.className = `w-4 h-4 rounded-full ${statusColor}`;
+      statusContent.innerHTML = `<div class="text-3xl font-bold mb-2">${statusText}</div><div class="text-sm text-gray-400">System is ${status.overallStatus}</div>`;
+      if (status.lastRun) {
+        document.getElementById('last-check').innerHTML = `<div class="text-2xl font-bold mb-2">${getTimeAgo(new Date(status.lastRun))}</div><div class="text-sm text-gray-400">${new Date(status.lastRun).toLocaleString()}</div>`;
+      }
+      if (status.uptime) {
+        document.getElementById('uptime').innerHTML = `<div class="text-2xl font-bold mb-2">${status.uptime.uptime}</div><div class="text-sm text-gray-400">Since ${new Date(status.uptime.startTime).toLocaleString()}</div>`;
+      }
+      if (status.recentResults && status.recentResults.length > 0) updateRecentResults(status.recentResults);
+    }
+
+    function updateTestResults(results) {
+      updateRecentResults([{ timestamp: results.timestamp, totalTests: results.totalTests, passed: results.passed, failed: results.failed, results: results.results }]);
+      updateMetrics(results);
+    }
+
+    function updateRecentResults(recentResults) {
+      const container = document.getElementById('recent-results');
+      if (recentResults.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-400 py-8"><i class="fas fa-info-circle text-2xl mb-2"></i><div>No recent test results</div></div>';
+        return;
+      }
+      container.innerHTML = recentResults.map(result => {
+        const passRate = ((result.passed / result.totalTests) * 100).toFixed(1);
+        const statusClass = result.failed === 0 ? 'text-green-400' : 'text-yellow-400';
+        const statusIcon = result.failed === 0 ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        return `<div class="test-result status-card rounded-lg p-4 cursor-pointer hover:border-purple-400" onclick="showTestDetails('${result.timestamp}')"><div class="flex items-center justify-between"><div><div class="font-semibold">${new Date(result.timestamp).toLocaleString()}</div><div class="text-sm text-gray-400">${result.passed}/${result.totalTests} tests passed</div></div><div class="text-right"><div class="text-lg font-bold ${statusClass}">${passRate}%</div><i class="fas ${statusIcon} ${statusClass}"></i></div></div></div>`;
+      }).join('');
+    }
+
+    function updateMetrics(results) {
+      const avgResponseTime = results.results.reduce((sum, t) => sum + (t.duration || 0), 0) / results.results.length;
+      document.getElementById('avg-response-time').textContent = `${avgResponseTime.toFixed(0)}ms`;
+      document.getElementById('error-rate').textContent = `${((results.failed / results.totalTests) * 100).toFixed(1)}%`;
+      document.getElementById('active-tests').textContent = results.totalTests;
+      document.getElementById('cache-hit-rate').textContent = '85%';
+    }
+
+    function showTestDetails(timestamp) {
+      if (!currentTestResults) return;
+      const container = document.getElementById('test-details');
+      container.innerHTML = currentTestResults.results.map(test => {
+        const statusClass = test.status === 'pass' ? 'text-green-400' : 'text-red-400';
+        const statusIcon = test.status === 'pass' ? 'fa-check-circle' : 'fa-times-circle';
+        return `<div class="test-result status-card rounded-lg p-4"><div class="flex items-center justify-between mb-2"><div class="font-semibold">${test.name}</div><div class="flex items-center gap-2"><i class="fas ${statusIcon} ${statusClass}"></i><span class="text-sm ${statusClass}">${test.status.toUpperCase()}</span></div></div><div class="text-sm text-gray-400 mb-2">Duration: ${test.duration || 0}ms</div>${test.error ? `<div class="text-sm text-red-400">Error: ${test.error}</div>` : ''}${test.details ? `<div class="text-xs text-gray-500 mt-2">${JSON.stringify(test.details, null, 2)}</div>` : ''}</div>`;
+      }).join('');
+    }
+
+    function toggleAutoRefresh() {
+      const btn = document.getElementById('auto-refresh-btn');
+      const text = document.getElementById('auto-refresh-text');
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval); autoRefreshInterval = null;
+        text.textContent = 'Enable Auto Refresh';
+        btn.classList.remove('btn-success'); btn.classList.add('btn-warning');
+      } else {
+        autoRefreshInterval = setInterval(loadSystemStatus, 30000);
+        text.textContent = 'Auto Refresh Enabled';
+        btn.classList.remove('btn-warning'); btn.classList.add('btn-success');
+      }
+    }
+
+    async function showNotifications() {
+      const modal = document.getElementById('notification-modal');
+      const list = document.getElementById('notifications-list');
+      try {
+        const response = await fetch('/.netlify/functions/get-notifications');
+        const data = await response.json();
+        if (data.success && data.data.length > 0) {
+          list.innerHTML = data.data.map(n => `<div class="status-card rounded-lg p-4"><div class="flex items-center justify-between mb-2"><div class="font-semibold">${n.title}</div><span class="text-sm text-gray-400">${new Date(n.timestamp).toLocaleString()}</span></div><div class="text-sm text-gray-300 mb-2">${n.message}</div><div class="text-xs text-gray-500">Severity: ${n.severity}</div></div>`).join('');
+        } else {
+          list.innerHTML = '<div class="text-center text-gray-400 py-8"><i class="fas fa-bell-slash text-2xl mb-2"></i><div>No notifications</div></div>';
+        }
+      } catch (e) {
+        list.innerHTML = '<div class="text-center text-red-400 py-8"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i><div>Failed to load notifications</div></div>';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function hideNotifications() { document.getElementById('notification-modal').classList.add('hidden'); }
+
+    function getTimeAgo(date) {
+      const diff = Date.now() - date.getTime();
+      const m = Math.floor(diff / 60000), h = Math.floor(diff / 3600000), d = Math.floor(diff / 86400000);
+      if (d > 0) return `${d}d ago`;
+      if (h > 0) return `${h}h ago`;
+      if (m > 0) return `${m}m ago`;
+      return 'Just now';
+    }
+
+    function showSuccess(msg) { console.log('✅', msg); }
+    function showError(msg)   { console.error('❌', msg); }
+
+    async function testNotification() {
+      try {
+        const success = await window.pushNotificationService?.sendTestNotification?.();
+        success ? showSuccess('Test notification sent!') : showError('Failed to send test notification');
+      } catch (e) { showError('Error sending test notification: ' + e.message); }
+    }
+
+    async function toggleNotifications() {
+      try {
+        if (window.pushNotificationService?.isEnabled?.()) {
+          showSuccess('Notifications are already enabled!');
+        } else {
+          const granted = await window.pushNotificationService?.requestPermission?.();
+          granted ? showSuccess('Notifications enabled!') : showError('Notification permission denied');
+          updateNotificationStatus();
+        }
+      } catch (e) { showError('Error toggling notifications: ' + e.message); }
+    }
+
+    function updateNotificationStatus() {
+      const btn = document.getElementById('enable-notifications-btn');
+      const text = document.getElementById('notification-status-text');
+      const icon = btn.querySelector('i');
+      if (window.pushNotificationService?.isEnabled?.()) {
+        text.textContent = 'Notifications Enabled';
+        icon.className = 'fas fa-bell';
+        btn.classList.remove('btn-success'); btn.classList.add('btn-warning');
+      } else {
+        text.textContent = 'Enable Notifications';
+        icon.className = 'fas fa-bell-slash';
+        btn.classList.remove('btn-warning'); btn.classList.add('btn-success');
+      }
+    }
+  </script>
+</AdminLayout>
