@@ -5,7 +5,7 @@
   # Directory that contains the deploy-ready HTML files and assets.
   publish = "."
   functions = "netlify/functions"
-  command = "npm run build:css && node fix-pride-page.js && node generate-series-pages.js && npm run generate-sitemap"
+  command = "npm run build:css && node fix-pride-page.js && node generate-series-pages.js && npm run generate-sitemap && npm run astro:deploy"
   # Specify Node.js version to match package requirements
   environment = { NODE_VERSION = "20", NETLIFY_BUILD_TIMEOUT = "1800", NETLIFY_FUNCTION_TIMEOUT = "30" }
 

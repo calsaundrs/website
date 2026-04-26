@@ -12,6 +12,7 @@
     "astro:dev": "astro dev",
     "astro:build": "astro build",
     "astro:preview": "astro preview",
+    "astro:deploy": "astro build && node tools/merge-astro-output.js",
     "build:remotion": "cd remotion-templates && npm run build",
     "dev:remotion": "cd remotion-templates && npm run dev",
     "render:reel": "cd remotion-templates && npm run render",

@@ -15,3 +15,7 @@ dist-astro/
 series/
 event/
 css/tailwind.css
+
+# Astro-built HTML merged into project root by tools/merge-astro-output.js
+/astro-hello.html
+/admin-system-status-spike.html

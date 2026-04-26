@@ -2,6 +2,10 @@
 
 Living document for the Astro spike (issues [#151](https://github.com/calsaundrs/website/issues/151)–[#154](https://github.com/calsaundrs/website/issues/154)). Contains the setup decisions, conversion notes, measurements, and the eventual go / no-go recommendation.
 
+## Status: M3 closed, M4 in progress
+
+The decision was conditional-go and then deferred for Pride 2026. After Pride image-hardening landed, we resumed M4. This doc is the historical record of the spike; ongoing M4 work tracks in [milestone 4](https://github.com/calsaundrs/website/milestone/5).
+
 ## Setup (#151)
 
 ### Coexistence model
