@@ -1,0 +1,182 @@
+---
+import PublicLayout from '../components/PublicLayout.astro';
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: "Where is Birmingham's Gay Village located?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Right in the city centre, bab! It's centred around Hurst Street, just a hop, skip, and a jump away from New Street Station.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the best gay bars and clubs in Birmingham?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Where do we start? The Village Inn, The Fox, The Nightingale Club... the list goes on! Check out our venues page for all the deets.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are there any LGBTQ+ sports teams or social groups in the West Midlands?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Absolutely! Birmingham and the West Midlands have a thriving scene for LGBTQ+ sports and social clubs. From the Birmingham Bulls RFC (inclusive rugby) to the Swifts (running club) and various social groups, there are plenty of ways to get involved. Check out our full clubs and groups directory at brumoutloud.co.uk/clubs',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there a gay sauna in Birmingham?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "None in the city centre but there are a few options if you don't mind a short journey. The Greenhouse in Darlaston and Spartan in Erdington are popular choices.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How can I support Brum Outloud?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "The best way to support us is by using the site and spreading the word! You can also help keep our listings up-to-date by submitting events and venues using the 'Get Listed' button. As a community project, every bit of engagement helps.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "How does Birmingham's gay scene compare to other UK cities?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Let's set the record straight: Birmingham's queer scene is a force to be reckoned with! Our Gay Village boasts a vibrant array of bars and clubs, rivaling the likes of Manchester's Canal Street or London's Soho. We might not always get the spotlight, but we're proud to be a hidden gem of LGBTQ+ life in the UK.",
+      },
+    },
+  ],
+};
+
+const breadcrumbList = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.brumoutloud.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Community', item: 'https://www.brumoutloud.co.uk/community' },
+  ],
+};
+
+const faqs = [
+  {
+    q: "Where is Birmingham's Gay Village located?",
+    a: "Right in the city centre, bab! It's centred around Hurst Street, just a hop, skip, and a jump away from New Street Station.",
+  },
+  {
+    q: 'What are the best gay bars and clubs in Birmingham?',
+    a: 'Where do we start? The Village Inn, The Fox, The Nightingale Club... the list goes on! Check out our <a href="/all-venues" class="font-black underline decoration-4 underline-offset-4 hover:text-[var(--color-toxic)] transition-colors">venues page</a> for all the deets.',
+  },
+  {
+    q: 'Are there any LGBTQ+ sports teams or social groups?',
+    a: 'Absolutely! Birmingham has a thriving scene for LGBTQ+ sports and social clubs. From the Birmingham Bulls RFC (inclusive rugby) to the Swifts (running club) and various social groups, there are plenty of ways to get involved and meet new people outside of the bar scene. <a href="/clubs" class="underline font-bold text-[var(--color-pink)] hover:text-white transition-colors">Check out our full clubs &amp; groups directory</a>!',
+  },
+  {
+    q: 'Is there a gay sauna in Birmingham?',
+    a: "None in the city centre but there are a few options if you don't mind a short journey. The Greenhouse in Darlaston and Spartan in Erdington are popular choices.",
+  },
+  {
+    q: 'How can I support Brum Outloud?',
+    a: 'The best way to support us is by using the site and spreading the word! You can also help keep our listings up-to-date by submitting events and venues using the <a href="/promoter-submit-new" class="font-black underline decoration-4 underline-offset-4 text-[var(--color-pink)] hover:text-white transition-colors">\'Get Listed\'</a> button. As a community project, every bit of engagement helps.',
+  },
+  {
+    q: "How does Birmingham's gay scene compare to other UK cities?",
+    a: "Let's set the record straight: Birmingham's queer scene is a force to be reckoned with! Our Gay Village boasts a vibrant array of bars and clubs, rivaling the likes of Manchester's Canal Street or London's Soho. We might not always get the spotlight, but we're proud to be a hidden gem of LGBTQ+ life in the UK.",
+  },
+];
+---
+<PublicLayout
+  title="LGBTQ+ Community Birmingham | Support & Groups | Brum Outloud"
+  description="Connect with Birmingham's LGBTQ+ community. Find support groups, charities, community events, and organisations across the West Midlands."
+  canonical="https://www.brumoutloud.co.uk/community"
+  watermark="COMMUNITY"
+  jsonLd={[faqPage, breadcrumbList]}
+>
+  <Fragment slot="head">
+    <meta name="theme-color" content="#ff007f">
+    <style>
+      details summary::-webkit-details-marker { display: none; }
+      .noise-overlay {
+        position: fixed; inset: 0;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 9999; mix-blend-mode: overlay;
+      }
+    </style>
+  </Fragment>
+
+  <div class="noise-overlay"></div>
+
+  <main class="container mx-auto px-4 py-16 relative z-10">
+    <section class="max-w-6xl mx-auto mb-16">
+      <div class="text-center mb-16 relative">
+        <div class="sticker bg-[var(--color-purple)] text-white text-sm mb-4 inline-block transform -rotate-2">SAFE SPACE</div>
+        <h1 class="text-[clamp(4rem,10vw,8rem)] font-black text-white uppercase font-display misprint leading-[0.85] mb-6 shadow-glow">
+          LGBTQ+<br><span class="text-[var(--color-toxic)]">Community</span>
+        </h1>
+        <div class="aeo-glass-card p-8 max-w-4xl mx-auto text-left relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-full h-1 progress-pride-bg"></div>
+          <p class="text-white text-lg font-bold mb-3">Birmingham has a thriving LGBTQ+ community with dozens of support groups, sports teams, social clubs, and charities across the West Midlands.</p>
+          <p class="text-gray-300">Find <a href="/clubs" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors">25+ clubs and groups</a> from rugby to book clubs, explore the <a href="/all-venues" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors">Gay Village venues</a>, or browse <a href="/events" class="text-[var(--color-pink)] font-bold hover:text-white transition-colors">upcoming events</a>.</p>
+        </div>
+        <div class="mt-12 brutalist-card p-6 md:p-10 text-left relative transform rotate-[0.5deg]">
+          <div class="sticker bg-[var(--color-toxic)] !text-black absolute -top-4 -right-4 rotate-12">GUIDE</div>
+          <h2 class="font-display font-black text-2xl uppercase mb-6 text-[var(--color-toxic)]">Your guide to queer spaces, social groups, and support in the West Midlands.</h2>
+          <p class="text-xl font-medium text-white italic opacity-90">Brum Outloud isn't just a directory, we're building a network. Keep yourselves safe, look out for each other, and support the community venues keeping our scene alive.</p>
+        </div>
+      </div>
+
+      <div class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-4xl text-white uppercase misprint shrink-0">Frequently Asked Questions About LGBTQ+ Birmingham</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          {faqs.map((faq) => (
+            <details class="group brutalist-card !p-0 overflow-hidden transition-all duration-300 hover:shadow-glow">
+              <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6 bg-black/40 hover:bg-white/5 transition-colors focus:outline-none">
+                <span class="font-display font-black uppercase text-xl text-white">{faq.q}</span>
+                <span class="font-black text-3xl plus-icon group-open:rotate-45 transition-transform text-[var(--color-toxic)] ml-4 shrink-0">+</span>
+              </summary>
+              <div class="p-6 border-t-2 border-white/5 text-lg font-medium leading-relaxed bg-black/60 text-gray-200" set:html={faq.a}></div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto mt-20 mb-8 relative">
+      <div class="brutalist-card p-8 md:p-16 relative z-10 overflow-hidden transform rotate-[-0.5deg]">
+        <div class="flex flex-col lg:flex-row gap-12 items-center relative z-10">
+          <div class="lg:w-1/2">
+            <div class="sticker bg-[var(--color-pink)] text-white text-sm mb-6 inline-block transform -rotate-2">CRISIS & SUPPORT</div>
+            <h3 class="text-4xl lg:text-6xl font-black text-white uppercase font-display misprint leading-[0.85] mb-6 shadow-glow">Need<br><span class="text-[var(--color-toxic)]">Support?</span></h3>
+            <p class="text-xl md:text-2xl font-bold mb-8 leading-tight max-w-lg text-white opacity-90">If you need immediate help, advice or support regarding LGBTQ+ issues, there are organisations ready to listen. We've got your back.</p>
+          </div>
+          <div class="lg:w-1/2 flex flex-col gap-6 w-full">
+            <a href="https://switchboard.lgbt/" target="_blank" rel="noopener noreferrer" class="brutalist-card !bg-[var(--color-toxic)] !text-black flex items-center justify-between hover:!bg-white transition-all transform hover:-translate-y-1 group">
+              <div>
+                <span class="font-black uppercase tracking-tighter text-3xl block mb-2">Switchboard LGBT</span>
+                <span class="font-bold text-sm opacity-70">National LGBTQIA+ support line</span>
+              </div>
+              <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform text-4xl"></i>
+            </a>
+            <a href="https://www.stonewall.org.uk/" target="_blank" rel="noopener noreferrer" class="brutalist-card !bg-white !text-black flex items-center justify-between hover:!bg-[var(--color-toxic)] transition-all transform hover:-translate-y-1 group">
+              <div>
+                <span class="font-black uppercase tracking-tighter text-3xl block mb-2">Stonewall</span>
+                <span class="font-bold text-sm opacity-70">Advice, support, and campaigning</span>
+              </div>
+              <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform text-4xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</PublicLayout>
