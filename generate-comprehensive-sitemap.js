@@ -48,16 +48,18 @@ async function generateComprehensiveSitemap() {
   // which is the form Google prefers.
   const today = new Date().toISOString().slice(0, 10);
 
-  // Add static pages (using clean canonical URLs without .html extensions)
+  // Add static pages (using clean canonical URLs without .html extensions).
+  // Every entry gets a <lastmod> at build time. For frequently-edited
+  // pages this defaults to today; for slow-moving legal/info pages we
+  // can pin it (none currently — review if a real "last edited" date
+  // ever matters for trust signals).
   const staticPages = [
     { url: '/', changefreq: 'weekly', priority: '1.0' },
     { url: '/events', changefreq: 'daily', priority: '0.9' },
     { url: '/all-venues', changefreq: 'weekly', priority: '0.8' },
     { url: '/clubs', changefreq: 'weekly', priority: '0.8' },
-    // Pride page: weeks before the festival we want Google to recrawl
-    // daily — priority bumped to 0.95 during the seasonal surge and
-    // lastmod set to today so the page is re-queued on every build.
-    { url: '/birmingham-pride', changefreq: 'daily', priority: '0.95', lastmod: today },
+    // Pride: bumped priority during seasonal surge.
+    { url: '/birmingham-pride', changefreq: 'daily', priority: '0.95' },
     { url: '/community', changefreq: 'monthly', priority: '0.7' },
     { url: '/contact', changefreq: 'monthly', priority: '0.6' },
     { url: '/promoter-submit-new', changefreq: 'monthly', priority: '0.6' },
@@ -79,39 +81,41 @@ async function generateComprehensiveSitemap() {
 
   console.log('Adding static pages...');
   staticPages.forEach(page => {
-    // Build the <url> block as a filter-joined list so optional fields
-    // (just <lastmod> today, but the same pattern holds if more get
-    // added later) drop cleanly without leaving stray blank lines or
-    // double newlines in the output.
-    const lines = [
+    // Every entry gets a <lastmod> — defaults to today on each build so
+    // the entire sitemap signals "fresh" and Google re-queues whatever
+    // its crawl scheduler thinks is stale. Per-page overrides win.
+    sitemap += [
       '  <url>',
       `    <loc>${baseUrl}${page.url}</loc>`,
-      page.lastmod ? `    <lastmod>${page.lastmod}</lastmod>` : null,
+      `    <lastmod>${page.lastmod || today}</lastmod>`,
       `    <changefreq>${page.changefreq}</changefreq>`,
       `    <priority>${page.priority}</priority>`,
       '  </url>',
-    ].filter(Boolean);
-    sitemap += lines.join('\n') + '\n';
+    ].join('\n') + '\n';
   });
 
-  // Add ALL events
+  // Add ALL events. Recurring series can return the same slug for
+  // each instance; dedupe before writing so the sitemap doesn't list
+  // the same URL twice (Google sees it as a quality signal regression).
   try {
     console.log('Fetching all events...');
     const eventsData = await makeRequest('https://brumoutloud.co.uk/.netlify/functions/get-events');
     const events = eventsData.events || [];
     console.log(`Found ${events.length} events`);
 
+    const seenEventSlugs = new Set();
+    let dupeCount = 0;
     events.forEach(event => {
-      if (event.slug) {
-        const eventUrl = `${baseUrl}/event/${event.slug}`;
-        const lastmod = event.date ? formatDate(event.date) : '';
-        sitemap += `  <url>\n    <loc>${escapeXml(eventUrl)}</loc>\n`;
-        if (lastmod) {
-          sitemap += `    <lastmod>${lastmod}</lastmod>\n`;
-        }
-        sitemap += `    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
-      }
+      if (!event.slug) return;
+      if (seenEventSlugs.has(event.slug)) { dupeCount++; return; }
+      seenEventSlugs.add(event.slug);
+      const eventUrl = `${baseUrl}/event/${event.slug}`;
+      const lastmod = event.date ? formatDate(event.date) : today;
+      sitemap += `  <url>\n    <loc>${escapeXml(eventUrl)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
     });
+    if (dupeCount > 0) {
+      console.log(`Skipped ${dupeCount} duplicate event slug(s)`);
+    }
   } catch (eventError) {
     console.error('Error fetching events:', eventError.message);
   }
@@ -129,7 +133,8 @@ async function generateComprehensiveSitemap() {
       if (venue.slug && !excludedVenueSlugs.has(venue.slug)) {
         addedVenueSlugs.add(venue.slug);
         const venueUrl = `${baseUrl}/venue/${venue.slug}`;
-        sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+        const lastmod = venue.updatedAt ? formatDate(venue.updatedAt) : today;
+        sitemap += `  <url>\n    <loc>${escapeXml(venueUrl)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
       }
     });
   } catch (venueError) {
@@ -144,7 +149,7 @@ async function generateComprehensiveSitemap() {
   knownVenueSlugs.forEach(slug => {
     if (!addedVenueSlugs.has(slug)) {
       console.log(`Adding fallback venue: ${slug}`);
-      sitemap += `  <url>\n    <loc>${escapeXml(baseUrl + '/venue/' + slug)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+      sitemap += `  <url>\n    <loc>${escapeXml(baseUrl + '/venue/' + slug)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
     }
   });
 
