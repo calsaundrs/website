@@ -9,6 +9,8 @@ node_modules
 tests/.auth/
 test-results/
 playwright-report/
+dist-astro/
+.astro/
 .claude/
 series/
 event/

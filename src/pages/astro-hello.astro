@@ -1,0 +1,18 @@
+---
+// Hello world page to prove the Astro build works.
+// Output: dist-astro/astro-hello.html
+const buildTime = new Date().toISOString();
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astro Hello | Brum Outloud</title>
+</head>
+<body style="font-family: system-ui; padding: 2rem; max-width: 40rem; margin: 0 auto;">
+  <h1>Astro is alive</h1>
+  <p>Built at: <code>{buildTime}</code></p>
+  <p>This page exists only to verify <code>npm run astro:build</code> produces output without breaking the existing pipeline. It is not linked from anywhere on the live site.</p>
+</body>
+</html>
