@@ -1,0 +1,193 @@
+---
+// Shared layout for public pages. Pages provide title/description/canonical
+// + page-specific JSON-LD via the jsonLd[] prop, plus their main content via
+// the default slot and any extra <head> markup (page-only styles, og:image
+// overrides) via the "head" named slot.
+//
+// First page using this is /all-venues. As more public pages move in
+// (events listing, editorial, detail) they'll all share the same nav,
+// footer, head boilerplate, and analytics wiring.
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  jsonLd?: Record<string, unknown>[];
+  watermark?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = 'https://www.brumoutloud.co.uk/progressflag.svg.png',
+  ogImageWidth = 1200,
+  ogImageHeight = 630,
+  jsonLd = [],
+  watermark,
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://www.googleapis.com">
+  <link rel="dns-prefetch" href="https://www.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <title>{title}</title>
+  <meta name="description" content={description}>
+
+  <link rel="canonical" href={canonical}>
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonical}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:image:width" content={String(ogImageWidth)}>
+  <meta property="og:image:height" content={String(ogImageHeight)}>
+  <meta property="og:site_name" content="Brum Outloud">
+  <meta property="og:locale" content="en_GB">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={canonical}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  <meta name="twitter:creator" content="@brumoutloud">
+  <meta name="twitter:site" content="@brumoutloud">
+
+  <meta name="author" content="Brum Outloud">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <meta name="geo.region" content="GB-WMD">
+  <meta name="geo.placename" content="Birmingham, UK">
+  <meta name="geo.position" content="52.4862;-1.8904">
+  <meta name="ICBM" content="52.4862, -1.8904">
+
+  {jsonLd.map((schema) => (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  ))}
+
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Syne:wght@400;700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="preload" href="/css/fonts/Omnes Bold.woff" as="font" type="font/woff" crossorigin>
+
+  <script src="/js/fouc-prevention.js" is:inline></script>
+  <script src="https://cdn.tailwindcss.com" defer is:inline></script>
+  <script src="/js/main.js?v=2" defer is:inline></script>
+  <script src="/js/accessibility.js" defer is:inline></script>
+  <script src="/js/error-handling.js" defer is:inline></script>
+  <script src="/js/pwa-manager.js" defer is:inline></script>
+  <script src="/js/seo-manager.js" defer is:inline></script>
+
+  <link rel="icon" href="/faviconV2.png" type="image/png">
+  <link rel="apple-touch-icon" href="/faviconV2.png">
+  <link rel="manifest" href="/manifest.json?v=2">
+  <meta name="theme-color" content="#8a2be2">
+
+  <slot name="head" />
+</head>
+<body class="grain selection:bg-[var(--color-toxic)] selection:text-black">
+  {watermark && <div class="watermark-bg text-[var(--color-toxic)]">{watermark}</div>}
+
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMTDFZGH" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+  <script is:inline>(function (w, d, s, l, i) {
+    w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+    j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-MMTDFZGH');</script>
+
+  <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+      <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
+      <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
+        <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
+      </div>
+      <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
+        <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+        <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+        <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+        <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+        <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+        <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+        <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
+      </div>
+      <div class="lg:hidden">
+        <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
+      </div>
+    </nav>
+    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
+      <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
+      <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
+      <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
+      <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
+      <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
+      <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
+      <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
+    </div>
+  </header>
+
+  <slot />
+
+  <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
+    <div class="h-[6px] progress-pride-bg"></div>
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+      <div class="grid md:grid-cols-3 gap-12">
+        <div>
+          <div class="font-display font-black text-4xl misprint leading-none mb-6">
+            BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
+          <div class="flex gap-4">
+            <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
+          <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+            <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
+            <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
+            <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
+            <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
+          <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
+            <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
+            <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
+            <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
+        <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
+          <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
+          <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
+          <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/enhanced-animations.js" defer is:inline></script>
+  <slot name="scripts" />
+</body>
+</html>
