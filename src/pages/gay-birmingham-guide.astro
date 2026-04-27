@@ -1,0 +1,185 @@
+---
+import PublicLayout from '../components/PublicLayout.astro';
+
+const breadcrumbList = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.brumoutloud.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Gay Birmingham Guide', item: 'https://www.brumoutloud.co.uk/gay-birmingham-guide' },
+  ],
+};
+
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is Birmingham gay friendly?',
+      acceptedAnswer: { '@type': 'Answer', text: "Yes. Birmingham is one of the UK's most gay-friendly cities. It has a well-established Gay Village on Hurst Street with around a dozen LGBTQ+ bars and clubs, a Pride festival attracting over 40,000 people each May, and a wide network of LGBTQ+ community groups, sports teams and support organisations." },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where is the gay area in Birmingham?',
+      acceptedAnswer: { '@type': 'Answer', text: "Birmingham's gay area is the Gay Village, centred on Hurst Street in the Southside neighbourhood, about a mile south of the city centre. It is a 10-15 minute walk from Birmingham New Street station. The Village includes Hurst Street, Lower Essex Street, Kent Street and the surrounding roads." },
+    },
+    {
+      '@type': 'Question',
+      name: 'What LGBTQ+ events happen in Birmingham?',
+      acceptedAnswer: { '@type': 'Answer', text: "Birmingham has LGBTQ+ events year-round including club nights at The Nightingale Club (POUNDED Thursdays, Big Saturgay), drag shows at The Village Inn and Eden Bar, karaoke at The Fox, and community events across the city. Birmingham Pride takes place each May. See the Brum Outloud What's On page for daily updated listings." },
+    },
+    {
+      '@type': 'Question',
+      name: 'When is Birmingham Pride 2026?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Birmingham Pride 2026 takes place on 22-24 May 2026 in and around the Gay Village. It includes a free street parade through the city centre and a ticketed festival site with multiple stages.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What LGBTQ+ community groups are there in Birmingham?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Birmingham has over 25 active LGBTQ+ organisations including sports teams like the Birmingham Bulls RFC, choirs, arts groups, support organisations and social clubs. Birmingham LGBT is the city\'s main LGBTQ+ charity. The Brum Outloud Clubs and Groups page lists them all.' },
+    },
+  ],
+};
+---
+<PublicLayout
+  title="Gay Birmingham | The Complete LGBTQ+ Guide | Brum Outloud"
+  description="The essential guide to gay Birmingham — bars, clubs, events, Pride, community groups and everything you need to know about LGBTQ+ life in the city."
+  canonical="https://www.brumoutloud.co.uk/gay-birmingham-guide"
+  jsonLd={[breadcrumbList, faqPage]}
+>
+  <Fragment slot="head">
+    <meta name="theme-color" content="#ff007f">
+    <style>
+      details summary::-webkit-details-marker { display: none; }
+      .noise-overlay { position: fixed; inset: 0; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; mix-blend-mode: overlay; }
+      .answer-box { background: rgba(204, 255, 0, 0.08); border: 4px solid var(--color-toxic); box-shadow: 8px 8px 0 var(--color-purple); padding: 1.5rem 2rem; }
+      .answer-box strong { color: var(--color-toxic); }
+      .link-pink { color: var(--color-pink); font-weight: 800; text-decoration: underline; text-decoration-thickness: 4px; text-underline-offset: 4px; transition: color 0.2s; }
+      .link-pink:hover { color: var(--color-toxic); }
+    </style>
+  </Fragment>
+
+  <div class="noise-overlay"></div>
+
+  <main class="container mx-auto px-4 py-16 relative z-10">
+    <article class="max-w-4xl mx-auto">
+      <div class="text-center mb-12 relative">
+        <h1 class="text-[clamp(3rem,8vw,6rem)] font-black text-white uppercase font-display misprint leading-[0.85] pt-8 mb-6">
+          Gay<br><span class="text-[var(--color-toxic)]">Birmingham</span><br>Guide
+        </h1>
+        <p class="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed text-gray-200">Your complete LGBTQ+ guide to the city.</p>
+      </div>
+
+      <div class="answer-box mb-16">
+        <p class="text-lg font-medium leading-relaxed mb-4"><strong>Birmingham is one of the UK's most established LGBTQ+ cities.</strong> Its Gay Village on Hurst Street has around a dozen queer bars and clubs, from Victorian pubs to late-night superclubs. Birmingham Pride attracts over 40,000 people each May. The city has 25+ active LGBTQ+ community groups, sports teams and organisations. This guide covers the Gay Village, events, Pride, community life and how to get there.</p>
+      </div>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-3xl md:text-4xl text-white uppercase misprint shrink-0">Where is Birmingham's Gay Village?</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="neo-card p-6 md:p-10">
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6"><strong class="text-white">Birmingham's Gay Village is on Hurst Street in the Southside neighbourhood</strong>, about a mile south of the city centre. It's a 10-15 minute walk from Birmingham New Street station. The Village covers Hurst Street, Lower Essex Street, Kent Street and surrounding roads.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6">It's home to around a dozen LGBTQ+ venues, from Victorian pubs to late-night superclubs. It's compact, walkable, and at its best on Thursday through Sunday evenings. The anchor of the Village is <a href="/venue/the-nightingale-club" class="link-pink">The Nightingale Club</a> — one of the UK's longest-running LGBTQ+ nightclubs. Around it you'll find bars to suit every mood: <a href="/venue/the-fox" class="link-pink">The Fox</a> for something cosy, <a href="/venue/equator-bar" class="link-pink">Equator</a> for a relaxed evening, <a href="/venue/missing-bar" class="link-pink">Missing Bar</a> for energy and drag, and <a href="/venue/eden-bar" class="link-pink">Eden Bar</a> for live cabaret.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200"><a href="/birmingham-gay-bars" class="link-pink">See the full Birmingham Gay Bars guide</a> for details on every venue.</p>
+        </div>
+      </section>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-3xl md:text-4xl text-white uppercase misprint shrink-0">What LGBTQ+ Events Happen in Birmingham?</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="neo-card p-6 md:p-10">
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6"><strong class="text-white">Birmingham has LGBTQ+ events year-round</strong> — not just around Pride. Club nights at the Nightingale, drag shows at the Village Inn, cabaret at Eden Bar, and community events at venues across the city mean there's almost always something happening.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6"><strong class="text-white">Key regular nights:</strong> POUNDED at The Nightingale (Thursdays), Big Saturgay (Saturdays), drag Sundays at The Fox, and cabaret at Eden Bar (Wed-Sun).</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200"><a href="/events" class="link-pink">See all upcoming LGBTQ+ events in Birmingham</a></p>
+        </div>
+      </section>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-3xl md:text-4xl text-white uppercase misprint shrink-0">When is Birmingham Pride 2026?</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="neo-card p-6 md:p-10">
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6"><strong class="text-white">Birmingham Pride 2026 takes place on 22-24 May 2026.</strong> It is one of the UK's biggest LGBTQ+ festivals (<a href="https://birminghampride.com/" target="_blank" rel="noopener noreferrer" class="link-pink">birminghampride.com</a>), taking place in and around the Gay Village. It features a free street parade through the city centre and a ticketed festival site with multiple stages, headline performances and a full weekend of events.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200"><a href="/birmingham-pride" class="link-pink">See the full Birmingham Pride 2026 guide</a> for dates, lineup, parade route and ticket information.</p>
+        </div>
+      </section>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-3xl md:text-4xl text-white uppercase misprint shrink-0">LGBTQ+ Community Groups</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="neo-card p-6 md:p-10">
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6">Beyond the bars and clubs, <strong class="text-white">Birmingham has over 25 active LGBTQ+ organisations</strong> including sports teams (the Birmingham Bulls rugby club being one of the most well-known), choirs, arts groups, support organisations and social clubs.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200 mb-6"><a href="https://blgbt.org/" target="_blank" rel="noopener noreferrer" class="link-pink">Birmingham LGBT</a> is the city's main LGBTQ+ charity, offering support services, community programmes and a community centre. The <a href="https://lgbt.foundation/" target="_blank" rel="noopener noreferrer" class="link-pink">LGBT Foundation</a> also operates in Birmingham as part of its wider national network.</p>
+          <p class="text-lg font-medium leading-relaxed text-gray-200"><a href="/clubs" class="link-pink">Browse all LGBTQ+ clubs and groups in Birmingham</a></p>
+        </div>
+      </section>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-3xl md:text-4xl text-white uppercase misprint shrink-0">How to Get to Birmingham's Gay Village</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="neo-card p-6 md:p-10">
+          <ul class="space-y-3 text-lg font-medium leading-relaxed text-gray-200">
+            <li><strong class="text-white">By train:</strong> <a href="https://www.networkrail.co.uk/communities/passengers/our-stations/birmingham-new-street/" target="_blank" rel="noopener noreferrer" class="link-pink">Birmingham New Street station</a>, then 12-15 minute walk south, or a very short taxi ride.</li>
+            <li><strong class="text-white">By car:</strong> Hurst Street (B5 4BD) takes you to the heart of it. On-street parking is very limited — public transport or taxi is recommended.</li>
+            <li><strong class="text-white">By taxi:</strong> Ask for "Hurst Street, Southside".</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="mb-16">
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="font-display font-black text-4xl text-white uppercase misprint shrink-0">FAQs</h2>
+          <div class="w-full h-1 bg-[var(--color-purple)]"></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          <details class="group bg-[#000000] border-4 border-[var(--color-light)] shadow-[6px_6px_0_var(--color-purple)] hover:border-[var(--color-pink)] hover:shadow-[8px_8px_0_var(--color-toxic)] hover:-translate-y-1 hover:-translate-x-1 transition-all rounded-none overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6 bg-black hover:bg-[#111] transition-colors focus:outline-none focus:bg-[#111]">
+              <span class="font-display font-black uppercase text-xl text-[var(--color-light)]">Is Birmingham gay friendly?</span>
+              <span class="font-black text-3xl group-open:rotate-45 transition-transform text-[var(--color-toxic)] ml-4 shrink-0">+</span>
+            </summary>
+            <div class="p-6 border-t-4 border-[var(--color-light)] text-lg font-medium leading-relaxed bg-[#111] text-white">
+              Yes. Birmingham is one of the UK's most gay-friendly cities, with a well-established Gay Village, a major Pride festival each May, and a wide network of LGBTQ+ community organisations.
+            </div>
+          </details>
+          <details class="group bg-[#000000] border-4 border-[var(--color-light)] shadow-[6px_6px_0_var(--color-purple)] hover:border-[var(--color-pink)] hover:shadow-[8px_8px_0_var(--color-toxic)] hover:-translate-y-1 hover:-translate-x-1 transition-all rounded-none overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6 bg-black hover:bg-[#111] transition-colors focus:outline-none focus:bg-[#111]">
+              <span class="font-display font-black uppercase text-xl text-[var(--color-light)]">Where is the gay area in Birmingham?</span>
+              <span class="font-black text-3xl group-open:rotate-45 transition-transform text-[var(--color-toxic)] ml-4 shrink-0">+</span>
+            </summary>
+            <div class="p-6 border-t-4 border-[var(--color-light)] text-lg font-medium leading-relaxed bg-[#111] text-white">
+              The Gay Village is centred on Hurst Street in the Southside neighbourhood, about a mile south of the city centre. It is a 10-15 minute walk from Birmingham New Street station.
+            </div>
+          </details>
+          <details class="group bg-[#000000] border-4 border-[var(--color-light)] shadow-[6px_6px_0_var(--color-purple)] hover:border-[var(--color-pink)] hover:shadow-[8px_8px_0_var(--color-toxic)] hover:-translate-y-1 hover:-translate-x-1 transition-all rounded-none overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6 bg-black hover:bg-[#111] transition-colors focus:outline-none focus:bg-[#111]">
+              <span class="font-display font-black uppercase text-xl text-[var(--color-light)]">When is Birmingham Pride 2026?</span>
+              <span class="font-black text-3xl group-open:rotate-45 transition-transform text-[var(--color-toxic)] ml-4 shrink-0">+</span>
+            </summary>
+            <div class="p-6 border-t-4 border-[var(--color-light)] text-lg font-medium leading-relaxed bg-[#111] text-white">
+              Birmingham Pride 2026 takes place on 22-24 May. It includes a free street parade and a ticketed festival site. See the <a href="/birmingham-pride" class="font-black underline hover:text-[var(--color-toxic)]">full Pride guide</a>.
+            </div>
+          </details>
+          <details class="group bg-[#000000] border-4 border-[var(--color-light)] shadow-[6px_6px_0_var(--color-purple)] hover:border-[var(--color-pink)] hover:shadow-[8px_8px_0_var(--color-toxic)] hover:-translate-y-1 hover:-translate-x-1 transition-all rounded-none overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6 bg-black hover:bg-[#111] transition-colors focus:outline-none focus:bg-[#111]">
+              <span class="font-display font-black uppercase text-xl text-[var(--color-light)]">What LGBTQ+ community groups are in Birmingham?</span>
+              <span class="font-black text-3xl group-open:rotate-45 transition-transform text-[var(--color-toxic)] ml-4 shrink-0">+</span>
+            </summary>
+            <div class="p-6 border-t-4 border-[var(--color-light)] text-lg font-medium leading-relaxed bg-[#111] text-white">
+              Birmingham has over 25 active LGBTQ+ organisations, from the Birmingham Bulls rugby club to choirs, arts groups and support services. <a href="/clubs" class="font-black underline hover:text-[var(--color-toxic)]">See the full directory</a>.
+            </div>
+          </details>
+        </div>
+      </section>
+    </article>
+  </main>
+</PublicLayout>
