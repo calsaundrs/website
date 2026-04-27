@@ -1,145 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- Performance: DNS prefetch and preconnect for external resources -->
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.googleapis.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birmingham Pride 2026 | Dates, Lineup & Guide | Brum Outloud</title>
-    <meta name="description" content="Your complete guide to Birmingham Pride 2026 — 22-24 May. Parade route, stage lineup, tickets, accessibility info and accommodation.">
-    <link rel="canonical" href="https://www.brumoutloud.co.uk/birmingham-pride">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.brumoutloud.co.uk/birmingham-pride">
-    <meta property="og:title" content="Birmingham Pride 2026 | Ultimate Guide — Dates, Lineup, Parade, Tickets">
-    <meta property="og:description" content="Your complete guide to Birmingham Pride 2026 in the West Midlands. Fri 22 – Sun 24 May 2026 (free community kick-off Friday, ticketed festival Saturday and Sunday). Lineup, parade route, tickets, venues and more.">
-    <meta property="og:image" content="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png">
-    <meta property="og:image:width" content="1024">
-    <meta property="og:image:height" content="930">
-    <meta property="og:site_name" content="Brum Outloud">
-    <meta property="og:locale" content="en_GB">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Birmingham Pride 2026 | Ultimate Guide">
-    <meta name="twitter:description" content="Complete guide to Birmingham Pride 2026. Dates, lineup, parade, tickets, venues.">
-    <meta name="keywords" content="Birmingham Pride 2026, Birmingham Pride dates, Birmingham Pride lineup, West Midlands Pride, Birmingham Pride parade route, Birmingham Pride tickets, Birmingham Pride afterparties, LGBTQ+ Pride Birmingham, Gay Village Birmingham">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-    <meta name="geo.region" content="GB-WMD">
-    <meta name="geo.placename" content="Birmingham, UK">
-    <meta name="geo.position" content="52.4862;-1.8904">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+---
+import PublicLayout from '../components/PublicLayout.astro';
 
-    <!-- Event Schema -->
-    <script type="application/ld+json">
+const eventSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: 'Birmingham Pride 2026',
+  description: 'The official guide to Birmingham Pride 2026 in the West Midlands. Featuring a massive city centre parade, multi-stage music festival in the Gay Village, and celebrations across Hurst Street.',
+  startDate: '2026-05-22T18:00:00+01:00',
+  endDate: '2026-05-24T23:59:59+01:00',
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: 'Gay Village, Birmingham',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Birmingham',
+      addressRegion: 'West Midlands',
+      postalCode: 'B5 4TD',
+      addressCountry: 'GB',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 52.4744,
+      longitude: -1.8958,
+    },
+  },
+  image: ['https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png'],
+  organizer: {
+    '@type': 'Organization',
+    name: 'Birmingham Pride',
+    url: 'https://birminghampride.com',
+    logo: 'https://birminghampride.com/wp-content/uploads/2025/07/Pride25__Birmingham-signpost_Stacked_COL-1024x267.png',
+  },
+  offers: {
+    '@type': 'AggregateOffer',
+    url: 'https://birminghampride.com',
+    priceCurrency: 'GBP',
+    lowPrice: '0',
+    availability: 'https://schema.org/InStock',
+    validFrom: '2025-12-01T00:00:00Z',
+  },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
     {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      "name": "Birmingham Pride 2026",
-      "description": "The official guide to Birmingham Pride 2026 in the West Midlands. Featuring a massive city centre parade, multi-stage music festival in the Gay Village, and celebrations across Hurst Street.",
-      "startDate": "2026-05-22T18:00:00+01:00",
-      "endDate": "2026-05-24T23:59:59+01:00",
-      "eventStatus": "https://schema.org/EventScheduled",
-      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-      "location": {
-        "@type": "Place",
-        "name": "Gay Village, Birmingham",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Birmingham",
-          "addressRegion": "West Midlands",
-          "postalCode": "B5 4TD",
-          "addressCountry": "GB"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 52.4744,
-          "longitude": -1.8958
-        }
+      '@type': 'Question',
+      name: 'When is Birmingham Pride 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Friday 22 May (free community evening), then the main festival runs Saturday 23 May and Sunday 24 May 2026 in the Gay Village. Ticketed stages open across the weekend.',
       },
-      "image": [
-        "https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png"
-      ],
-      "organizer": {
-        "@type": "Organization",
-        "name": "Birmingham Pride",
-        "url": "https://birminghampride.com",
-        "logo": "https://birminghampride.com/wp-content/uploads/2025/07/Pride25__Birmingham-signpost_Stacked_COL-1024x267.png"
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the Birmingham Pride parade free to attend?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, the Birmingham Pride parade is completely free to watch. It starts at 12 noon on Saturday 23rd May from Centenary Square.',
       },
-      "offers": {
-        "@type": "AggregateOffer",
-        "url": "https://birminghampride.com",
-        "priceCurrency": "GBP",
-        "lowPrice": "0",
-        "availability": "https://schema.org/InStock",
-        "validFrom": "2025-12-01T00:00:00Z"
-      }
-    }
-    </script>
-
-    <!-- FAQ Schema -->
-    <script type="application/ld+json">
+    },
     {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "When is Birmingham Pride 2026?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Friday 22 May (free community evening), then the main festival runs Saturday 23 May and Sunday 24 May 2026 in the Gay Village. Ticketed stages open across the weekend."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is the Birmingham Pride parade free to attend?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, the Birmingham Pride parade is completely free to watch. It starts at 12 noon on Saturday 23rd May from Centenary Square."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Where is the Gay Village in Birmingham?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The Birmingham Gay Village is located in Southside, centred around Hurst Street, just a short walk from New Street Station."
-          }
-        }
-      ]
-    }
-    </script>
+      '@type': 'Question',
+      name: 'Where is the Gay Village in Birmingham?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Birmingham Gay Village is located in Southside, centred around Hurst Street, just a short walk from New Street Station.',
+      },
+    },
+  ],
+};
 
-    <!-- Breadcrumb Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.brumoutloud.co.uk/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Birmingham Pride",
-          "item": "https://www.brumoutloud.co.uk/birmingham-pride"
-        }
-      ]
-    }
-    </script>
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.brumoutloud.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Birmingham Pride', item: 'https://www.brumoutloud.co.uk/birmingham-pride' },
+  ],
+};
 
-    <link rel="stylesheet" href="/css/tailwind.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Bungee+Outline&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Birmingham Pride',
+  url: 'https://birminghampride.com',
+  logo: 'https://birminghampride.com/wp-content/uploads/2025/07/Pride25__Birmingham-signpost_Stacked_COL-1024x267.png',
+};
+---
+<PublicLayout
+  title="Birmingham Pride 2026 | Dates, Lineup & Guide | Brum Outloud"
+  description="Your complete guide to Birmingham Pride 2026 — 22-24 May. Parade route, stage lineup, tickets, accessibility info and accommodation."
+  canonical="https://www.brumoutloud.co.uk/birmingham-pride"
+  ogImage="https://birminghampride.com/wp-content/uploads/2025/02/pride-montage@4x-1024x930.png"
+  ogImageWidth={1024}
+  ogImageHeight={930}
+  jsonLd={[eventSchema, faqSchema, breadcrumbSchema, organizationSchema]}
+>
+  <Fragment slot="head">
     <style>
         body {
             background: var(--color-bg);
@@ -440,42 +401,10 @@
             100% { transform: translateX(-50%); }
         }
     </style>
-    <script src="/js/fouc-prevention.js"></script>
-</head>
-<body>
-    <div class="watermark-bg text-[var(--color-pink)]">PRIDE</div>
-    <div class="noise-overlay"></div>
-    <!-- Header -->
-    <header class="sticky top-0 z-[100] bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-    <nav class="pt-4 px-4 pb-5 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
-        <div class="absolute bottom-0 left-0 w-full h-[3px] progress-pride-bg opacity-80"></div>
-        <div class="font-display font-black text-2xl md:text-3xl misprint leading-none flex items-center">
-            <a href="/" class="hover:opacity-80 transition-opacity">BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD</a>
-        </div>
-        <div class="hidden lg:flex items-center space-x-8 font-bold text-sm uppercase tracking-widest">
-            <a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-            <a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-            <a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-            <a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-            <a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-            <a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-            <a href="/promoter-submit-new" class="sticker bg-[var(--color-toxic)] !text-black text-sm hover:bg-white transition-colors border-none shadow-[2px_2px_0_#000]">GET LISTED</a>
-        </div>
-        <div class="lg:hidden">
-            <button id="menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="menu" class="text-white text-2xl p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-toxic)]"><i class="fas fa-bars"></i></button>
-        </div>
-    </nav>
-    <div id="menu" class="hidden lg:hidden fixed inset-0 bg-[var(--color-bg)]/95 backdrop-blur-2xl z-50 flex-col items-center justify-center space-y-6">
-        <a href="/events" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">WHAT'S ON</a>
-        <a href="/all-venues" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">VENUES</a>
-        <a href="/clubs" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CLUBS</a>
-        <a href="/birmingham-pride" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">PRIDE</a>
-        <a href="/community" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">COMMUNITY</a>
-        <a href="/contact" class="block text-white text-4xl py-4 font-display font-black hover:text-[var(--color-toxic)] transition-colors">CONTACT</a>
-        <a href="/promoter-submit-new" class="block mt-4 sticker bg-[var(--color-toxic)] !text-black text-2xl border-none shadow-[4px_4px_0_#000]">GET LISTED</a>
-    </div>
-</header>
+  </Fragment>
 
+  <div class="watermark-bg text-[var(--color-pink)]">PRIDE</div>
+  <div class="noise-overlay"></div>
 
     <!-- Hero — full-bleed gradient background -->
     <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #0d0115 0%, #1a0a2e 50%, #0d0115 100%);">
@@ -1090,130 +1019,75 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-black border-t-4 border-[var(--color-light)] mt-16 pb-20 lg:pb-0">
-    <div class="h-[6px] progress-pride-bg"></div>
-    <div class="container mx-auto px-6 py-12 max-w-7xl">
-        <div class="grid md:grid-cols-3 gap-12">
-            <div>
-                <div class="font-display font-black text-4xl misprint leading-none mb-6">
-                    BRUM<br><span class="text-[var(--color-purple)]">OUT</span>LOUD
-                </div>
-                <p class="text-gray-400 text-sm leading-relaxed mb-6">Birmingham's home for LGBTQ+ events, venues, and community.</p>
-                <div class="flex gap-4">
-                    <a href="https://www.instagram.com/brumoutloud/" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-[var(--color-toxic)] transition-colors"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            
-            <div>
-                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-toxic)] mb-6">EXPLORE</h3>
-                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
-                    <li><a href="/events" class="hover:text-[var(--color-toxic)] transition-colors">What's On</a></li>
-                    <li><a href="/all-venues" class="hover:text-[var(--color-toxic)] transition-colors">Venues</a></li>
-                    <li><a href="/clubs" class="hover:text-[var(--color-toxic)] transition-colors">Clubs & Groups</a></li>
-                    <li><a href="/birmingham-pride" class="hover:text-[var(--color-toxic)] transition-colors">Pride Guide</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-pink)] mb-6">INFO</h3>
-                <ul class="space-y-4 font-bold text-sm uppercase tracking-widest">
-                    <li><a href="/community" class="hover:text-[var(--color-toxic)] transition-colors">Community</a></li>
-                    <li><a href="/contact" class="hover:text-[var(--color-toxic)] transition-colors">Contact</a></li>
-                    <li><a href="/promoter-submit-new" class="hover:text-[var(--color-toxic)] transition-colors underline decoration-[var(--color-toxic)] decoration-2">Get Listed</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p class="text-xs uppercase tracking-widest font-bold opacity-50">&copy; 2026 BRUM OUTLOUD.</p>
-            <div class="flex gap-6 text-[10px] uppercase tracking-[0.2em] font-bold opacity-40">
-                <a href="/privacy-policy" class="hover:opacity-100">Privacy</a>
-                <a href="/terms-and-conditions" class="hover:opacity-100">Terms</a>
-                <a href="/accessibility" class="hover:opacity-100">Accessibility</a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-
-    <script>
-        // Mobile menu
-        const menuBtn = document.getElementById('menu-btn');
-        const menu = document.getElementById('menu');
-        if (menuBtn && menu) {
-            menuBtn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
-            });
-        }
-
-        // Dynamic Pride events loader
-        async function loadPrideEvents() {
-            const grid = document.getElementById('pride-events-grid');
-            const empty = document.getElementById('pride-events-empty');
-            try {
-                const res = await fetch('/.netlify/functions/get-events');
-                if (!res.ok) throw new Error(res.status);
-                const data = await res.json();
-                const events = Array.isArray(data.events) ? data.events : (Array.isArray(data) ? data : []);
-
-                const prideEvents = events.filter(e => {
-                    const date = e.date || e.startDate || '';
-                    return date >= '2026-05-18' && date <= '2026-05-25';
-                }).slice(0, 6);
-
-                if (prideEvents.length === 0) {
-                    grid.style.display = 'none';
-                    empty.classList.remove('hidden');
-                    return;
-                }
-
-                grid.innerHTML = prideEvents.map(e => {
-                    const name = e.name || e.title || 'Pride Event';
-                    const date = e.date || e.startDate || '';
-                    const venue = e.venueName || (e.venue && e.venue.name) || '';
-                    const image = (e.image && e.image.url) ? e.image.url : (e.image || e.imageUrl || e.flyer || '');
-                    const slug = e.slug || '';
-                    const href = slug ? '/event/' + slug : '/events';
-                    const dateStr = date ? new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
-                    
-                    const imgHTML = image 
-                        ? '<div class="w-full h-40 overflow-hidden border-b-2 border-gray-800"><img src="' + image + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"></div>' 
-                        : '';
-
-                    return '<a href="' + href + '" class="pride-event-card group">'
-                        + imgHTML
-                        + '<div class="p-6 flex flex-col flex-grow">'
-                        + '<p class="text-white font-bold uppercase font-display leading-tight mb-2">' + name + '</p>'
-                        + (dateStr ? '<p class="text-[var(--color-toxic)] text-sm font-bold mt-auto"><i class="fas fa-calendar-day mr-1"></i>' + dateStr + '</p>' : '')
-                        + (venue ? '<p class="text-gray-300 text-sm mt-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
-                        + '</div></a>';
-                }).join('');
-            } catch (err) {
-                console.log('Could not load Pride events:', err);
-                grid.style.display = 'none';
-                empty.classList.remove('hidden');
-            }
-        }
-        document.addEventListener('DOMContentLoaded', loadPrideEvents);
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const d = new Date();
-            let year = d.getFullYear();
-            if (d.getMonth() > 4) { // June onwards
-                year += 1;
-            }
-            document.querySelectorAll('span.current-year').forEach(el => {
-                el.textContent = year;
-            });
-            document.title = `Birmingham Pride ${year} | Dates, Lineup & Parade Info | Brum Outloud`;
-            let metaDesc = document.querySelector('meta[name="description"]');
-            if (metaDesc) metaDesc.content = metaDesc.content.replace(/2026/g, year);
+  <Fragment slot="scripts">
+    <script is:inline>
+      // Mobile menu
+      const menuBtn = document.getElementById('menu-btn');
+      const menu = document.getElementById('menu');
+      if (menuBtn && menu) {
+        menuBtn.addEventListener('click', () => {
+          menu.classList.toggle('hidden');
+          menu.classList.toggle('flex');
         });
+      }
+
+      // Dynamic Pride events loader
+      async function loadPrideEvents() {
+        const grid = document.getElementById('pride-events-grid');
+        const empty = document.getElementById('pride-events-empty');
+        try {
+          const res = await fetch('/.netlify/functions/get-events');
+          if (!res.ok) throw new Error(res.status);
+          const data = await res.json();
+          const events = Array.isArray(data.events) ? data.events : (Array.isArray(data) ? data : []);
+
+          const prideEvents = events.filter(e => {
+            const date = e.date || e.startDate || '';
+            return date >= '2026-05-18' && date <= '2026-05-25';
+          }).slice(0, 6);
+
+          if (prideEvents.length === 0) {
+            grid.style.display = 'none';
+            empty.classList.remove('hidden');
+            return;
+          }
+
+          grid.innerHTML = prideEvents.map(e => {
+            const name = e.name || e.title || 'Pride Event';
+            const date = e.date || e.startDate || '';
+            const venue = e.venueName || (e.venue && e.venue.name) || '';
+            const image = (e.image && e.image.url) ? e.image.url : (e.image || e.imageUrl || e.flyer || '');
+            const slug = e.slug || '';
+            const href = slug ? '/event/' + slug : '/events';
+            const dateStr = date ? new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
+
+            const imgHTML = image
+              ? '<div class="w-full h-40 overflow-hidden border-b-2 border-gray-800"><img src="' + image + '" alt="" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"></div>'
+              : '';
+
+            return '<a href="' + href + '" class="pride-event-card group">'
+              + imgHTML
+              + '<div class="p-6 flex flex-col flex-grow">'
+              + '<p class="text-white font-bold uppercase font-display leading-tight mb-2">' + name + '</p>'
+              + (dateStr ? '<p class="text-[var(--color-toxic)] text-sm font-bold mt-auto"><i class="fas fa-calendar-day mr-1"></i>' + dateStr + '</p>' : '')
+              + (venue ? '<p class="text-gray-300 text-sm mt-1"><i class="fas fa-map-marker-alt mr-1 text-[var(--color-pink)]"></i>' + venue + '</p>' : '')
+              + '</div></a>';
+          }).join('');
+        } catch (err) {
+          console.log('Could not load Pride events:', err);
+          grid.style.display = 'none';
+          empty.classList.remove('hidden');
+        }
+      }
+      document.addEventListener('DOMContentLoaded', loadPrideEvents);
+
+      // Roll year forward after the festival ends each year
+      document.addEventListener('DOMContentLoaded', () => {
+        const d = new Date();
+        let year = d.getFullYear();
+        if (d.getMonth() > 4) year += 1;
+        document.querySelectorAll('span.current-year').forEach(el => { el.textContent = year; });
+      });
     </script>
-    <script src="/js/main.js"></script>
-</body>
-</html>
+  </Fragment>
+</PublicLayout>
