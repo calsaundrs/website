@@ -364,6 +364,9 @@ function renderPreview() {
     const stage = buildStage(ev, stageOpts);
     container.innerHTML = '';
     container.appendChild(stage);
+    // Same shrink that runs before export — keeps preview honest about
+    // what the exported PNG will look like.
+    shrinkClampedTitleToFit(stage);
 
     // Scale the preview to fit available width (~520px target)
     const targetW = 520;
@@ -588,6 +591,35 @@ function lineupRangeLabel() {
     return map[state.preset] || 'Coming Up';
 }
 
+// Earliest → latest date across the events that will actually render in the
+// carousel (lineupPages, not raw selectedIds — keeps the cover honest).
+// Returns "Fri 1 May" when all events are on the same day, or
+// "Fri 1 – Sun 3 May" when they straddle days. Empty string if no events.
+function lineupDateRangeLabel() {
+    const dates = lineupPages()
+        .flat()
+        .map(e => e?.date ? new Date(e.date) : null)
+        .filter(d => d && !isNaN(d.getTime()))
+        .sort((a, b) => a.getTime() - b.getTime());
+    if (dates.length === 0) return '';
+
+    const first = dates[0];
+    const last = dates[dates.length - 1];
+    const fmtDay = (d) => d.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'UTC' });
+    const fmtDayNum = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', timeZone: 'UTC' });
+    const fmtMonth = (d) => d.toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' });
+
+    const sameDay = first.toISOString().slice(0, 10) === last.toISOString().slice(0, 10);
+    if (sameDay) {
+        return `${fmtDay(first)} ${fmtDayNum(first)} ${fmtMonth(first)}`;
+    }
+    const sameMonth = first.getUTCMonth() === last.getUTCMonth() && first.getUTCFullYear() === last.getUTCFullYear();
+    if (sameMonth) {
+        return `${fmtDay(first)} ${fmtDayNum(first)} – ${fmtDay(last)} ${fmtDayNum(last)} ${fmtMonth(last)}`;
+    }
+    return `${fmtDay(first)} ${fmtDayNum(first)} ${fmtMonth(first)} – ${fmtDay(last)} ${fmtDayNum(last)} ${fmtMonth(last)}`;
+}
+
 function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) {
     const frag = document.createDocumentFragment();
     const title = titleOverride || state.lineupTitle || lineupRangeLabel();
@@ -603,6 +635,7 @@ function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) 
     const sub = count > 0
         ? `${count} queer event${count === 1 ? '' : 's'} to know about ↓`
         : 'Queer events across Birmingham ↓';
+    const range = lineupDateRangeLabel();
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-lineup-hook';
@@ -610,6 +643,7 @@ function buildLineupHookTemplate({ format, titleOverride, countOverride } = {}) 
         <div class="halftone"></div>
         <div class="kicker">BRUM OUTLOUD</div>
         <div class="heading" style="font-size:${fontSize}px">${escapeHtml(title)}</div>
+        ${range ? `<div class="range">${escapeHtml(range)}</div>` : ''}
         <div class="sub">${escapeHtml(sub)}</div>
         <div class="swipe">SWIPE →</div>
         <div class="pride-bar"></div>
@@ -708,11 +742,13 @@ function buildCardTemplate(ev, opts = {}) {
     const frag = document.createDocumentFragment();
     const { day } = formatForAsset(ev);
     const format = opts.format || state.format;
-    // Card inner content width = stage 1080 - card offset 60 left/right
-    // - card padding 60 left/right = 840. Cap font-size at the format's
-    // original default (108 for square/portrait, 140 for story).
+    // Card inner content width = stage 1080 - card offset 60 L/R
+    // - card border 3 L/R - card padding 60 L/R = 834. Use 810 for a
+    // safety buffer covering kerning + html2canvas rendering drift
+    // — the post-layout shrink in stageToBlob is the safety net.
+    // Cap font-size at the format's default (108 portrait, 140 story).
     const maxSize = format === 'story' ? 140 : 108;
-    const titleSize = fitCardTitleSize(ev.name, 840, maxSize, 56);
+    const titleSize = fitCardTitleSize(ev.name, 810, maxSize, 56);
 
     const tpl = document.createElement('div');
     tpl.className = 'tpl-card';
@@ -774,6 +810,30 @@ function fitCardTitleSize(text, maxWidth = 840, maxSize = 108, minSize = 48, max
     return best;
 }
 
+// After the off-screen stage is in the DOM, real layout sometimes wraps the
+// title onto more lines than the pre-render measurement predicted (border
+// width, kerning, hyphens, html2canvas font-metric drift). The CSS
+// `-webkit-line-clamp: 3` then visually clips the overflow — the original
+// title is silently truncated in the export. This guard reads the actual
+// scrollHeight of every clamped .title against its own clientHeight and
+// steps the font-size down 4px at a time until it fits, before
+// html2canvas captures. Idempotent: no-op if the title already fits.
+function shrinkClampedTitleToFit(stage) {
+    const titles = stage.querySelectorAll('.tpl-card .title');
+    titles.forEach(el => {
+        let size = parseFloat(el.style.fontSize);
+        if (!size || isNaN(size)) return;
+        const minSize = 32;
+        // 1px tolerance — sub-pixel rounding sometimes makes scrollHeight
+        // exceed clientHeight by 1 even when nothing is visually clipped.
+        let guard = 30;
+        while (el.scrollHeight > el.clientHeight + 1 && size > minSize && guard-- > 0) {
+            size -= 4;
+            el.style.fontSize = `${size}px`;
+        }
+    });
+}
+
 function primaryCategory(ev) {
     if (!ev) return 'Tonight';
     const cats = Array.isArray(ev.category) ? ev.category : (ev.category ? [ev.category] : []);
@@ -813,6 +873,7 @@ async function stageToBlob(ev, { format, template, ...extra } = {}) {
         off.appendChild(stage);
 
         await waitForImages(stage);
+        shrinkClampedTitleToFit(stage);
 
         // Pin canvas dimensions to the canonical CSS size rather than
         // offsetWidth/offsetHeight — off-screen layout can underreport by
