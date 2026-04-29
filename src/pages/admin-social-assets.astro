@@ -3,9 +3,14 @@ import AdminLayout from '../components/AdminLayout.astro';
 ---
 <AdminLayout title="Social Assets Generator" activeNav="admin-social-assets.html" breadcrumbSection="System" breadcrumbPage="Social Assets">
   <Fragment slot="head">
-    <style>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style is:global>
         /* Canvas / stage where the asset lives at full 1080px. Rendered at
-           scale for preview; html2canvas captures at native size. */
+           scale for preview; html2canvas captures at native size.
+           is:global because every .tpl-* element is injected at runtime
+           by admin-social-assets.js — Astro's data-astro-cid scoping
+           otherwise misses them and the cards render unstyled. */
         .asset-stage {
             position: relative;
             transform-origin: top left;
@@ -513,6 +518,17 @@ import AdminLayout from '../components/AdminLayout.astro';
             overflow-wrap: break-word;
             word-break: break-word;
             margin-bottom: 36px;
+        }
+        .tpl-lineup-hook .range {
+            position: relative;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 30px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-toxic);
+            margin-top: -22px;
+            margin-bottom: 28px;
         }
         .tpl-lineup-hook .sub {
             position: relative;
